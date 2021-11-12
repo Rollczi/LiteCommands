@@ -1,0 +1,35 @@
+dependencies {
+
+    // CDN configs
+    implementation 'net.dzikoysk:cdn:1.11.6'
+
+    // panda
+    implementation 'org.panda-lang:expressible:1.1.1'
+    implementation 'org.panda-lang.utilities:di:1.4.1'
+
+    // google & slf4j
+    implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+
+    // [test] kotlin
+    testImplementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    // [test] groovy
+    testImplementation 'org.codehaus.groovy:groovy-all:2.4.15'
+    // [test] junit-jupiter
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly    'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+publishing {
+    publications {
+        libraries(MavenPublication) {
+            artifactId = project.coreArtifact
+            from components.java
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+    forkEvery = 1
+    maxParallelForks = 10
+}

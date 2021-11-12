@@ -1,0 +1,50 @@
+buildscript {
+    ext {
+        coreArtifact = 'core'
+        velocityArtifact = 'velocity'
+    }
+}
+
+plugins {
+    id 'idea'
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.0-RC2'
+}
+
+allprojects {
+    group = 'dev.rollczi.litecommands'
+    version = '1.0'
+
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+
+    java {
+        withSourcesJar()
+    }
+}
+
+subprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        maven { url "https://repo.panda-lang.org/releases/" }
+    }
+
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+
+    publishing {
+        repositories {
+            mavenLocal()
+        }
+    }
+}
+
+idea {
+    project {
+        jdkName = "16"
+    }
+}

@@ -1,0 +1,15 @@
+dependencies {
+    implementation project(":litecommands-core").getProject()
+
+    compileOnly 'com.velocitypowered:velocity-api:3.0.1-SNAPSHOT'
+}
+
+publishing {
+    publications {
+        libraries(MavenPublication) {
+            artifactId = project.velocityArtifact
+
+            from components.java
+        }
+    }
+}

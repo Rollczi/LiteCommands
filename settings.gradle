@@ -1,0 +1,4 @@
+rootProject.name = 'LiteCommands'
+
+include ':litecommands-core'
+include ':litecommands-velocity'
