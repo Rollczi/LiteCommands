@@ -1,6 +1,6 @@
 # ☄️ LiteCommands
 #### Command framework for Velocity and your other implementations.
-
+Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
 
