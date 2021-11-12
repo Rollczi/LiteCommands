@@ -1,8 +1,4 @@
 dependencies {
-
-    // CDN configs
-    implementation 'net.dzikoysk:cdn:1.11.6'
-
     // panda
     implementation 'org.panda-lang:expressible:1.1.1'
     implementation 'org.panda-lang.utilities:di:1.4.1'
