@@ -21,7 +21,7 @@ public class VelocitySender implements LiteSender {
     }
 
     public CommandSource getSender() {
-        return null;
+        return source;
     }
 
 }
