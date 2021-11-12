@@ -14,20 +14,20 @@ public interface LiteComponent {
 
     class Data {
         private final LiteInvocation invocation;
-        private final List<LiteComponent> traces = new ArrayList<>();
+        private final List<LiteComponent> tracesOfResolvers = new ArrayList<>();
 
         private Data(Data data, LiteComponent resolver) {
             this.invocation = data.invocation;
-            this.traces.addAll(data.traces);
-            this.traces.add(resolver);
+            this.tracesOfResolvers.addAll(data.tracesOfResolvers);
+            this.tracesOfResolvers.add(resolver);
         }
 
         private Data(LiteInvocation invocation) {
             this.invocation = invocation;
         }
 
-        Data traceNesting(LiteComponent currentResolver) {
-            if (this.invocation.arguments().length + 1 < traces.size()) {
+        Data resolverNestingTracing(LiteComponent currentResolver) {
+            if (this.invocation.arguments().length + 1 < tracesOfResolvers.size()) {
                 throw new IllegalStateException();
             }
 
@@ -36,20 +36,27 @@ public interface LiteComponent {
 
         public int getCurrentArgsCount(LiteComponent context) {
             return context.getScope().getName().isEmpty()
-                    ? invocation.arguments().length + 1 - traces.size()
-                    : invocation.arguments().length - traces.size();
+                    ? invocation.arguments().length + 1 - tracesOfResolvers.size()
+                    : invocation.arguments().length - tracesOfResolvers.size();
         }
 
-        public String getNextCommandTrace() {
-            if (this.invocation.arguments().length == traces.size()) {
+        public String getNextPredictedResolverName() {
+            String[] arguments = this.invocation.arguments();
+            int size = tracesOfResolvers.size();
+            
+            if (arguments.length == size) {
                 return StringUtils.EMPTY;
             }
 
-            return this.invocation.arguments()[traces.size()];
+            if (arguments.length < size) {
+                throw new IllegalStateException();
+            }
+
+            return arguments[size];
         }
 
-        public List<LiteComponent> getTracedResolvers() {
-            return traces;
+        public List<LiteComponent> getTracesOfResolvers() {
+            return tracesOfResolvers;
         }
 
         public LiteInvocation getInvocation() {

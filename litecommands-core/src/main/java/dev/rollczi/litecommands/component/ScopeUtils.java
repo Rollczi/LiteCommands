@@ -12,7 +12,7 @@ public final class ScopeUtils {
 
     @Nullable
     public static String getLastMessage(ValidationInfo info, LiteComponent.Data data, LiteComponent current) {
-        ListIterator<LiteComponent> iterator = data.getTracedResolvers().listIterator();
+        ListIterator<LiteComponent> iterator = data.getTracesOfResolvers().listIterator();
         Option<String> message = current.getScope().getMessage(info);
 
         while (iterator.hasPrevious()) {

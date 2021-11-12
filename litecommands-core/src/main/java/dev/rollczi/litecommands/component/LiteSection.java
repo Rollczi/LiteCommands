@@ -25,11 +25,11 @@ public final class LiteSection extends AbstractComponent {
 
     @Override
     public void resolve(Data data) {
-        LiteComponent resolver = resolvers.getOrDefault(data.getNextCommandTrace(), resolvers.get(StringUtils.EMPTY));
+        LiteComponent resolver = resolvers.getOrDefault(data.getNextPredictedResolverName(), resolvers.get(StringUtils.EMPTY));
 
         whenWithContext(resolver == null, ValidationInfo.COMMAND_NO_FOUND, data, this);
 
-        resolver.resolve(data.traceNesting(this));
+        resolver.resolve(data.resolverNestingTracing(this));
     }
 
     public Collection<LiteComponent> getResolvers() {

@@ -30,7 +30,7 @@ public final class LiteExecution extends AbstractComponent {
 
         Set<String> permissions = new HashSet<>(this.scope.getPermissions());
 
-        PandaStream.of(data.getTracedResolvers()).map(LiteComponent::getScope).concat(this.scope).forEach(scope -> {
+        PandaStream.of(data.getTracesOfResolvers()).map(LiteComponent::getScope).concat(this.scope).forEach(scope -> {
             permissions.addAll(scope.getPermissions());
             permissions.removeAll(scope.getPermissionsExclude());
         });

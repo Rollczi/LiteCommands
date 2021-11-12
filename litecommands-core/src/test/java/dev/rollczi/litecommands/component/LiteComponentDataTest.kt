@@ -33,21 +33,21 @@ class LiteComponentDataTest : LiteCommandsSpec() {
     fun `component data test`() {
         val componentAc = TestComponent("ac")
 
-        dataAc = dataAc.traceNesting(componentAc)
+        dataAc = dataAc.resolverNestingTracing(componentAc)
         assertEquals(0, dataAc.getCurrentArgsCount(TestComponent(StringUtils.EMPTY)))
 
 
-        dataAcWithArgs = dataAcWithArgs.traceNesting(componentAc)
+        dataAcWithArgs = dataAcWithArgs.resolverNestingTracing(componentAc)
         assertEquals(1, dataAcWithArgs.getCurrentArgsCount(TestComponent(StringUtils.EMPTY)))
 
-        dataAcHelp = dataAcHelp.traceNesting(componentAc)
+        dataAcHelp = dataAcHelp.resolverNestingTracing(componentAc)
         assertEquals(0, dataAcHelp.getCurrentArgsCount(TestComponent("help")))
     }
 
     class TestComponent(private val name: String) : LiteComponent {
 
         override fun resolve(data: LiteComponent.Data) {
-            data.traceNesting(this)
+            data.resolverNestingTracing(this)
         }
 
         override fun getScope(): ScopeMetaData {

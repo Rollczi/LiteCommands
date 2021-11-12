@@ -13,7 +13,7 @@ public class InjectContext {
 
     public InjectContext(LiteComponent.Data data, LiteComponent current) {
         this.invocation = data.getInvocation();
-        this.traces.addAll(data.getTracedResolvers());
+        this.traces.addAll(data.getTracesOfResolvers());
         this.traces.add(current);
     }
 
