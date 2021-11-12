@@ -1,6 +1,9 @@
 # ☄️ LiteCommands
 #### Command framework for Velocity and your other implementations.
 
+- [Support Discord](https://discord.gg/6cUhkj6uZJ)
+- [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
+
 ### Dependencies (Maven or Gradle)
 Framework Core
 ```xml
