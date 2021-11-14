@@ -5,8 +5,8 @@ import panda.utilities.StringUtils;
 public enum ValidationInfo {
 
     COMMAND_NO_FOUND("&cCommand or subcommand not found"),
-    NO_PERMISSION("&cNie posiadasz permisji do tej komendy!"),
-    INCORRECT_USE("&cNie poprawne uzycie komendy!"),
+    NO_PERMISSION("&cYou don't have permission to this command"),
+    INVALID_USE("&cInvalid use of the command"),
     CUSTOM(StringUtils.EMPTY);
 
     private final String defaultMessage;
