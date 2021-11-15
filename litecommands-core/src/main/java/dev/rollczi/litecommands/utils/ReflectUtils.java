@@ -5,7 +5,9 @@ import panda.utilities.text.Joiner;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-public class ReflectUtils {
+public final class ReflectUtils {
+
+    private ReflectUtils() {}
 
     public static String formatMethod(Method method) {
         return method.getDeclaringClass().getSimpleName() + "#" + method.getName();

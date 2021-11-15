@@ -39,7 +39,7 @@ public final class LiteExecution extends AbstractComponent {
             Valid.whenWithContext(!sender.hasPermission(permission), ValidationInfo.NO_PERMISSION, data, this);
         }
 
-        Valid.whenWithContext(!scope.getArgsValidator().valid(data.getCurrentArgsCount(this)), ValidationInfo.INCORRECT_USE, data, this);
+        Valid.whenWithContext(!scope.getArgsValidator().valid(data.getCurrentArgsCount(this)), ValidationInfo.INVALID_USE, data, this);
 
         executor.execute(new InjectContext(data, this)).onError(error -> {
             if (error.getSecond() instanceof ValidationCommandException exception) {
