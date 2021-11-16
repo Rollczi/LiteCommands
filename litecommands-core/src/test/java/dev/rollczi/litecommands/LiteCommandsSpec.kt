@@ -14,7 +14,7 @@ open class LiteCommandsSpec {
     protected var factory = LiteComponentFactory(
         LoggerFactory.getLogger(LiteCommandsSpec::class.java),
         injector,
-        LiteAnnotationParser()
+        LiteAnnotationParser(mapOf(Pair(EmptyTestSender::class.java, EmptyTestSenderArgument())))
     )
 
 }

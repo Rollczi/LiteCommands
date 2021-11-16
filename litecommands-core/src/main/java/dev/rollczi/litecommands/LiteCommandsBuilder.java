@@ -33,7 +33,7 @@ public class LiteCommandsBuilder {
     private final Set<Class<?>> commandClasses = new HashSet<>();
     private final Set<Object> commandInstances = new HashSet<>();
     private final Set<Bind> binds = new HashSet<>();
-    private final Map<Class<?>, SingleArgumentHandler<?>> argumentParsers = new HashMap<>();
+    private final Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers = new HashMap<>();
     private final ValidationMessagesService messagesService = new ValidationMessagesService();
     private ValidationExceptionHandler validationExceptionHandler;
     private LiteCommandManager commandManager;
@@ -81,7 +81,7 @@ public class LiteCommandsBuilder {
     }
 
     public <T> LiteCommandsBuilder argument(Class<T> on, SingleArgumentHandler<T> singleArgumentHandler) {
-        this.argumentParsers.put(on, singleArgumentHandler);
+        this.argumentHandlers.put(on, singleArgumentHandler);
         return this;
     }
 
@@ -119,7 +119,7 @@ public class LiteCommandsBuilder {
                 InjectContext context = InjectUtils.getContextFromObjects(objects);
                 LiteInvocation invocation = context.getInvocation();
 
-                for (Map.Entry<Class<?>, SingleArgumentHandler<?>> entry : argumentParsers.entrySet()) {
+                for (Map.Entry<Class<?>, SingleArgumentHandler<?>> entry : argumentHandlers.entrySet()) {
                     Class<?> on = entry.getKey();
                     SingleArgumentHandler<?> singleArgumentHandler = entry.getValue();
 
@@ -134,7 +134,7 @@ public class LiteCommandsBuilder {
             });
         });
 
-        AnnotationParser parser = new LiteAnnotationParser();
+        AnnotationParser parser = new LiteAnnotationParser(argumentHandlers);
         LiteComponentFactory factory = new LiteComponentFactory(logger, injector, parser);
         Set<LiteSection> resolvers = new HashSet<>();
 
@@ -156,14 +156,14 @@ public class LiteCommandsBuilder {
         for (LiteSection resolver : resolvers) {
             commandManager.registerCommand(resolver.getScope(), invocation -> {
                 try {
-                    resolver.resolve(LiteComponent.Data.create(invocation));
+                    resolver.resolveExecution(LiteComponent.MetaData.create(invocation));
                 } catch (ValidationCommandException exception) {
                     validationExceptionHandler.handle(invocation, exception);
                 }
-            });
+            }, invocation -> resolver.resolveCompletion(LiteComponent.MetaData.create(invocation)));
         }
 
-        return new LiteCommands(resolvers, commandManager, messagesService,  injector, logger);
+        return new LiteCommands(resolvers, commandManager, messagesService, injector, logger);
     }
 
     public static LiteCommandsBuilder builder() {

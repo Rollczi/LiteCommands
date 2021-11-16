@@ -3,27 +3,23 @@ package dev.rollczi.litecommands;
 import dev.rollczi.litecommands.component.ScopeMetaData;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 
+import java.util.List;
+
 public interface LiteCommandManager {
 
-    void registerCommand(ScopeMetaData forScope, CommandInvocationExecutor execute);
-
-    void registerTabulation(ScopeMetaData forScope, TabCompleteInvocation completeInvocation);
+    void registerCommand(ScopeMetaData forScope, Executor execute, Suggester suggester);
 
     void unregisterCommands();
 
-    void registerTabulations();
-
-    @FunctionalInterface
-    interface CommandInvocationExecutor {
+    interface Executor {
 
         void execute(LiteInvocation invocation) throws ValidationCommandException;
 
     }
 
-    @FunctionalInterface
-    interface TabCompleteInvocation {
+    interface Suggester {
 
-        void execute(LiteInvocation invocation);
+        List<String> suggest(LiteInvocation invocation);
 
     }
 

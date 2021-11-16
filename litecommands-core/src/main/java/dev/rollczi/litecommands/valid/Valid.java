@@ -16,7 +16,7 @@ public class Valid {
     }
 
     @Contract("true, _, _, _ -> fail")
-    public static void whenWithContext(boolean bool, ValidationInfo info, LiteComponent.Data data, LiteComponent current) {
+    public static void whenWithContext(boolean bool, ValidationInfo info, LiteComponent.MetaData data, LiteComponent current) {
         if (!bool) {
             return;
         }

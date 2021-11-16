@@ -8,30 +8,32 @@ import java.util.List;
 
 public interface LiteComponent {
 
-    void resolve(Data data);
+    void resolveExecution(MetaData data);
+
+    List<String> resolveCompletion(MetaData data);
 
     ScopeMetaData getScope();
 
-    class Data {
-        private final LiteInvocation invocation;
-        private final List<LiteComponent> tracesOfResolvers = new ArrayList<>();
+    class MetaData {
+        protected final LiteInvocation invocation;
+        protected final List<LiteComponent> tracesOfResolvers = new ArrayList<>();
 
-        private Data(Data data, LiteComponent resolver) {
+        private MetaData(MetaData data, LiteComponent resolver) {
             this.invocation = data.invocation;
             this.tracesOfResolvers.addAll(data.tracesOfResolvers);
             this.tracesOfResolvers.add(resolver);
         }
 
-        private Data(LiteInvocation invocation) {
+        private MetaData(LiteInvocation invocation) {
             this.invocation = invocation;
         }
 
-        Data resolverNestingTracing(LiteComponent currentResolver) {
+        MetaData resolverNestingTracing(LiteComponent currentResolver) {
             if (this.invocation.arguments().length + 1 < tracesOfResolvers.size()) {
                 throw new IllegalStateException();
             }
 
-            return new Data(this, currentResolver);
+            return new MetaData(this, currentResolver);
         }
 
         public int getCurrentArgsCount(LiteComponent context) {
@@ -40,19 +42,24 @@ public interface LiteComponent {
                     : invocation.arguments().length - tracesOfResolvers.size();
         }
 
-        public String getNextPredictedResolverName() {
-            String[] arguments = this.invocation.arguments();
-            int size = tracesOfResolvers.size();
-            
-            if (arguments.length == size) {
+        public boolean isLastResolver() {
+            if (invocation.arguments().length != 0 && invocation.arguments()[0].isEmpty()) {
+                return invocation.arguments().length - 1 <= tracesOfResolvers.size();
+            }
+
+            return invocation.arguments().length <= tracesOfResolvers.size();
+        }
+
+        public String getNextPredictedPartOfSuggestion() {
+            if (this.isLastResolver()) {
                 return StringUtils.EMPTY;
             }
 
-            if (arguments.length < size) {
-                throw new IllegalStateException();
-            }
+            return this.invocation.arguments()[tracesOfResolvers.size()];
+        }
 
-            return arguments[size];
+        public String getCurrentPartOfCommand() {
+            return this.invocation.arguments()[tracesOfResolvers.size()];
         }
 
         public List<LiteComponent> getTracesOfResolvers() {
@@ -63,8 +70,8 @@ public interface LiteComponent {
             return invocation;
         }
 
-        public static Data create(LiteInvocation invocation) {
-            return new Data(invocation);
+        public static MetaData create(LiteInvocation invocation) {
+            return new MetaData(invocation);
         }
 
     }

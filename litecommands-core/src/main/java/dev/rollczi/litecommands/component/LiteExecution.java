@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.LiteInvocation;
 import dev.rollczi.litecommands.LiteSender;
+import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.valid.Valid;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
@@ -9,22 +10,26 @@ import dev.rollczi.litecommands.valid.ValidationInfo;
 import org.slf4j.Logger;
 import panda.std.stream.PandaStream;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class LiteExecution extends AbstractComponent {
 
     private final Logger logger;
+    private final AnnotationParser parser;
     private final MethodExecutor executor;
 
-    LiteExecution(Logger logger, ScopeMetaData scopeMetaData, MethodExecutor executor) {
+    LiteExecution(Logger logger, AnnotationParser parser, ScopeMetaData scopeMetaData, MethodExecutor executor) {
         super(scopeMetaData);
         this.logger = logger;
+        this.parser = parser;
         this.executor = executor;
     }
 
     @Override
-    public void resolve(Data data) {
+    public void resolveExecution(MetaData data) {
         LiteInvocation invocation = data.getInvocation();
         LiteSender sender = invocation.sender();
 
@@ -52,4 +57,17 @@ public final class LiteExecution extends AbstractComponent {
         });
     }
 
+    @Override
+    public List<String> resolveCompletion(MetaData data) {
+        return getExecutorCompletion(data, data.getCurrentArgsCount(this) - 1);
+    }
+
+    public List<String> getExecutorCompletion(MetaData data, int argNumber) {
+        LiteInvocation invocation = data.getInvocation();
+
+        return executor.getParameter(argNumber)
+                .flatMap(parser::getArgumentHandler)
+                .map(argumentHandler -> argumentHandler.tabulation(invocation.name(), invocation.arguments()))
+                .orElseGet(Collections.emptyList());
+    }
 }

@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteFactory;
 import dev.rollczi.litecommands.inject.basic.OriginalSenderBind;
 
-public class VelocityFactory {
+public final class VelocityFactory {
 
     public static LiteCommandsBuilder builder(ProxyServer proxy) {
         return LiteFactory.builder()
