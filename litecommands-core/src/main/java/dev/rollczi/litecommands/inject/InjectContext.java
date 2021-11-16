@@ -25,10 +25,10 @@ public class InjectContext {
         return invocation;
     }
 
-    public int getArgsCount() {
+    public int getArgsMargin() {
         return traces.get(traces.size() - 1).getScope().getName().isEmpty()
-                ? invocation.arguments().length + 1 - traces.size()
-                : invocation.arguments().length - traces.size();
+                ? traces.size() - 2
+                : traces.size() - 1;
     }
 
 }

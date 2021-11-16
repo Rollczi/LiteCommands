@@ -127,7 +127,7 @@ public class LiteCommandsBuilder {
                         continue;
                     }
 
-                    return singleArgumentHandler.parse(invocation.arguments()[context.getArgsCount() + arg.value()]);
+                    return singleArgumentHandler.parse(invocation.arguments()[context.getArgsMargin() + arg.value()]);
                 }
 
                 return null;
