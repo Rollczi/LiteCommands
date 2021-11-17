@@ -6,8 +6,8 @@ import groovy.transform.CompileStatic
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.Collections
+import java.util.logging.Logger
 
 @CompileStatic
 class LiteComponentFactoryTest : LiteCommandsSpec() {
@@ -16,7 +16,7 @@ class LiteComponentFactoryTest : LiteCommandsSpec() {
     fun `component factory test`() {
         val parser = LiteAnnotationParser(Collections.emptyMap())
         val factory = LiteComponentFactory(
-            LoggerFactory.getLogger("test"),
+            Logger.getLogger("test"),
             injector,
             parser
         )

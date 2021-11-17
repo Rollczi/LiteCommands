@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.component;
 
-import com.google.common.collect.ImmutableMap;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import panda.std.stream.PandaStream;
 import panda.utilities.StringUtils;
@@ -116,7 +115,7 @@ public final class LiteSection extends AbstractComponent {
         }
 
         public LiteSection build() {
-            return new LiteSection(scopeMetaData, ImmutableMap.copyOf(resolvers));
+            return new LiteSection(scopeMetaData, resolvers);
         }
 
     }

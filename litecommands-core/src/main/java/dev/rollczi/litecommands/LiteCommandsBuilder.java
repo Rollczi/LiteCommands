@@ -18,8 +18,6 @@ import dev.rollczi.litecommands.valid.handle.LiteValidationExceptionHandler;
 import dev.rollczi.litecommands.valid.handle.ValidationExceptionHandler;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class LiteCommandsBuilder {
 
@@ -106,7 +105,7 @@ public class LiteCommandsBuilder {
         }
 
         if (logger == null) {
-            logger = LoggerFactory.getLogger("LiteCommands");
+            logger = Logger.getLogger("LiteCommands");
         }
 
         if (validationExceptionHandler == null) {
