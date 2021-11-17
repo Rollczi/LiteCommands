@@ -20,12 +20,12 @@ public class LiteVelocityCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
-        executor.execute(VelocityUtils.adaptInvocation(scope.getName(), invocation));
+        executor.execute(LiteVelocityUtils.adaptInvocation(scope.getName(), invocation));
     }
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        return suggester.suggest(VelocityUtils.adaptInvocation(scope.getName(), invocation));
+        return suggester.suggest(LiteVelocityUtils.adaptInvocation(scope.getName(), invocation));
     }
 
 }

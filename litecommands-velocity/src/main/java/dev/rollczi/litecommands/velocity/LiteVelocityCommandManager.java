@@ -9,12 +9,12 @@ import dev.rollczi.litecommands.component.ScopeMetaData;
 import java.util.HashSet;
 import java.util.Set;
 
-public class VelocityLiteCommandManager implements LiteCommandManager {
+public class LiteVelocityCommandManager implements LiteCommandManager {
 
     private final Set<String> commands = new HashSet<>();
     private final ProxyServer proxyServer;
 
-    public VelocityLiteCommandManager(ProxyServer proxyServer) {
+    public LiteVelocityCommandManager(ProxyServer proxyServer) {
         this.proxyServer = proxyServer;
     }
 
