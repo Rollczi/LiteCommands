@@ -6,13 +6,13 @@ import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteFactory;
 import dev.rollczi.litecommands.inject.basic.OriginalSenderBind;
 
-public class VelocityFactory {
+public final class LiteVelocityFactory {
 
     public static LiteCommandsBuilder builder(ProxyServer proxy) {
         return LiteFactory.builder()
                 .bind(ProxyServer.class, proxy)
                 .bind(CommandSource.class, new OriginalSenderBind())
-                .registrationResolver(new VelocityLiteCommandManager(proxy));
+                .registrationResolver(new LiteVelocityCommandManager(proxy));
     }
 
 }

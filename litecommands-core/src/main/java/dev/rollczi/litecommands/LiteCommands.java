@@ -3,10 +3,11 @@ package dev.rollczi.litecommands;
 import dev.rollczi.litecommands.component.LiteSection;
 import dev.rollczi.litecommands.valid.ValidationMessagesService;
 import org.panda_lang.utilities.inject.Injector;
-import org.slf4j.Logger;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class LiteCommands {
 
@@ -24,8 +25,8 @@ public class LiteCommands {
         this.logger = logger;
     }
 
-    public Set<LiteSection> getResolvers() {
-        return Collections.unmodifiableSet(resolvers);
+    public Collection<LiteSection> getResolvers() {
+        return Collections.unmodifiableCollection(resolvers);
     }
 
     public LiteCommandManager getCommandManager() {

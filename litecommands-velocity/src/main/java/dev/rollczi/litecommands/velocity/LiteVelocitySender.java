@@ -4,11 +4,11 @@ import com.velocitypowered.api.command.CommandSource;
 import dev.rollczi.litecommands.LiteSender;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-public class VelocitySender implements LiteSender {
+public class LiteVelocitySender implements LiteSender {
 
     private final CommandSource source;
 
-    public VelocitySender(CommandSource source) {
+    public LiteVelocitySender(CommandSource source) {
         this.source = source;
     }
 

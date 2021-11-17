@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.component;
 
-import com.google.common.collect.ImmutableSet;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.valid.AmountValidator;
 import panda.std.Option;
@@ -118,7 +117,7 @@ public final class ScopeMetaData {
                 throw new IllegalStateException("name is null");
             }
 
-            return new ScopeMetaData(name, aliases, messages, amountValidator, ImmutableSet.copyOf(permissions), ImmutableSet.copyOf(permissionsExclude));
+            return new ScopeMetaData(name, aliases, messages, amountValidator, permissions, permissionsExclude);
         }
 
     }

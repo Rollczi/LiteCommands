@@ -4,6 +4,6 @@ import dev.rollczi.litecommands.component.LiteComponent;
 
 public interface InvocationCreator {
 
-     LiteComponent.Data get(LiteSender liteSender);
+     LiteComponent.MetaData get(LiteSender liteSender);
 
 }

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.permssion;
 
-import dev.rollczi.litecommands.component.EmptyTestSender;
+import dev.rollczi.litecommands.EmptyTestSender;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -2,13 +2,13 @@ package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import org.panda_lang.utilities.inject.Injector;
-import org.slf4j.Logger;
 import panda.std.Option;
 import panda.std.Result;
 import panda.std.stream.PandaStream;
 
 import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class LiteComponentFactory {
 
@@ -53,7 +53,7 @@ public class LiteComponentFactory {
 
     public Option<LiteExecution> createExecution(Object instance, Method executionMethod) {
         return parser.parse(executionMethod)
-                .map((scope) -> new LiteExecution(logger, scope, new MethodExecutor(executionMethod, instance, injector)));
+                .map((scope) -> new LiteExecution(logger, parser, scope, new MethodExecutor(executionMethod, instance, injector)));
     }
 
 }

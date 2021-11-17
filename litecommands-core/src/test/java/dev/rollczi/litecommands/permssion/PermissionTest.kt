@@ -18,30 +18,30 @@ class PermissionTest : LiteCommandsSpec() {
     private val section: LiteSection = factory.createSection(command).get()
 
     private val invocationMainPermOnly = InvocationCreator { sender ->
-        LiteComponent.Data.create(LiteInvocation("main", sender, arrayOf()))
+        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf()))
     }
     private val invocationAllPerm = InvocationCreator { sender ->
-        LiteComponent.Data.create(LiteInvocation("main", sender, arrayOf("inner", "all")))
+        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "all")))
     }
     private val invocationWithoutPerm = InvocationCreator { sender ->
-        LiteComponent.Data.create(LiteInvocation("main", sender, arrayOf("inner", "without")))
+        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "without")))
     }
     private val invocationInnerPerm = InvocationCreator { sender ->
-        LiteComponent.Data.create(LiteInvocation("main", sender, arrayOf("inner", "inner")))
+        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "inner")))
     }
     private val invocationMainPerm = InvocationCreator { sender ->
-        LiteComponent.Data.create(LiteInvocation("main", sender, arrayOf("inner", "main")))
+        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "main")))
     }
 
     @Test
     fun `test sender with out permission`() {
         val sender = TestPermissionSender()
 
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationMainPermOnly.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationWithoutPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationInnerPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationMainPerm.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPermOnly.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationAllPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationInnerPerm.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPerm.get(sender)) }
     }
 
     @Test
@@ -50,11 +50,11 @@ class PermissionTest : LiteCommandsSpec() {
             .permission("dev.rollczi.main")
             .permission("dev.rollczi.main.inner")
 
-        assertDoesNotThrow { section.resolve(invocationMainPermOnly.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationWithoutPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationInnerPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationMainPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationMainPermOnly.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationAllPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationInnerPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationMainPerm.get(sender)) }
     }
 
     @Test
@@ -62,11 +62,11 @@ class PermissionTest : LiteCommandsSpec() {
         val sender = TestPermissionSender()
             .permission("dev.rollczi.main")
 
-        assertDoesNotThrow { section.resolve(invocationMainPermOnly.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationWithoutPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationInnerPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationMainPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationMainPermOnly.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationAllPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationInnerPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationMainPerm.get(sender)) }
     }
 
     @Test
@@ -74,11 +74,11 @@ class PermissionTest : LiteCommandsSpec() {
         val sender = TestPermissionSender()
             .permission("dev.rollczi.main.inner")
 
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationMainPermOnly.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationWithoutPerm.get(sender)) }
-        assertDoesNotThrow { section.resolve(invocationInnerPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolve(invocationMainPerm.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPermOnly.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationAllPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
+        assertDoesNotThrow { section.resolveExecution(invocationInnerPerm.get(sender)) }
+        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPerm.get(sender)) }
     }
 
 }

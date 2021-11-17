@@ -2,27 +2,25 @@ package dev.rollczi.litecommands.velocity;
 
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
-import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.rollczi.litecommands.LiteCommandManager;
-import dev.rollczi.litecommands.LiteInvocation;
 import dev.rollczi.litecommands.component.ScopeMetaData;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class VelocityLiteCommandManager implements LiteCommandManager {
+public class LiteVelocityCommandManager implements LiteCommandManager {
 
     private final Set<String> commands = new HashSet<>();
     private final ProxyServer proxyServer;
 
-    public VelocityLiteCommandManager(ProxyServer proxyServer) {
+    public LiteVelocityCommandManager(ProxyServer proxyServer) {
         this.proxyServer = proxyServer;
     }
 
     @Override
-    public void registerCommand(ScopeMetaData scope, CommandInvocationExecutor function) {
-        SimpleCommand command = invocation -> function.execute(new LiteInvocation(scope.getName(), invocation.alias(), new VelocitySender(invocation.source()), invocation.arguments()));
+    public void registerCommand(ScopeMetaData scope, Executor executor, Suggester suggester) {
+        LiteVelocityCommand command = new LiteVelocityCommand(scope, executor, suggester);
 
         CommandManager commandManager = proxyServer.getCommandManager();
         CommandMeta meta = commandManager.metaBuilder(scope.getName())
@@ -34,6 +32,7 @@ public class VelocityLiteCommandManager implements LiteCommandManager {
         commands.addAll(scope.getAliases());
     }
 
+    @Override
     public void unregisterCommands() {
         for (String command : commands) {
             proxyServer.getCommandManager().unregister(command);
