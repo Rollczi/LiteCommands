@@ -44,7 +44,7 @@ public class HelloWorldCommand {
 ```
 Register your first command in plugin main class: (in this case for Velocity)
 ```java
-this.liteCommands = VelocityFactory.builder(proxy)
+this.liteCommands = LiteVelocityFactory.builder(proxy)
         .command(HelloWorldCommand.class)
         .register();
 ```
