@@ -38,7 +38,7 @@ public final class MethodExecutor {
     public Result<Object, Pair<String, Throwable>> execute(InjectContext context) {
         try {
             Object returned = injector.invokeMethod(method, instance, context);
-            return Result.ok(returned == null ? new Object() : returned);
+            return Result.ok(returned == null ? true : returned);
         } catch (IllegalAccessException illegalAccessException) {
             return Result.error(Pair.of("Method " + ReflectUtils.formatMethodParams(method) + " is " + ReflectUtils.modifier(method), illegalAccessException));
         } catch (IllegalArgumentException illegalArgumentException) {

@@ -18,6 +18,8 @@ class SuggestionTest : LiteCommandsSpec() {
     private var invocationAcHelp : LiteComponent.MetaData = metaDataHelper.apply("ac", arrayOf("help", ""))
     private var invocationAcManage : LiteComponent.MetaData = metaDataHelper.apply("ac", arrayOf("manage", ""))
     private var invocationAcMove : LiteComponent.MetaData = metaDataHelper.apply("ac", arrayOf("manage", "move", ""))
+    private var invocationAcMoveStart : LiteComponent.MetaData = metaDataHelper.apply("ac", arrayOf("manage", "mo"))
+    private var invocationAcMoveIn : LiteComponent.MetaData = metaDataHelper.apply("ac", arrayOf("manage", "move"))
 
     @Test
     fun `test correctness of component executing`() {
@@ -27,6 +29,8 @@ class SuggestionTest : LiteCommandsSpec() {
         assertArrayEquals(emptyArray<String>(), section.resolveCompletion(invocationAcHelp).toTypedArray())
         assertArrayEquals(arrayOf("move"), section.resolveCompletion(invocationAcManage).toTypedArray())
         assertArrayEquals(arrayOf("test1", "test2", "test3"), section.resolveCompletion(invocationAcMove).toTypedArray())
+        assertArrayEquals(arrayOf("move"), section.resolveCompletion(invocationAcMoveStart).toTypedArray())
+        assertArrayEquals(arrayOf("move"), section.resolveCompletion(invocationAcMoveIn).toTypedArray())
     }
 
 }

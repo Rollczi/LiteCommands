@@ -43,11 +43,7 @@ public interface LiteComponent {
         }
 
         public boolean isLastResolver() {
-            if (invocation.arguments().length != 0 && invocation.arguments()[0].isEmpty()) {
-                return invocation.arguments().length - 1 <= tracesOfResolvers.size();
-            }
-
-            return invocation.arguments().length <= tracesOfResolvers.size();
+            return invocation.arguments().length - 1 <= tracesOfResolvers.size();
         }
 
         public String getNextPredictedPartOfSuggestion() {
