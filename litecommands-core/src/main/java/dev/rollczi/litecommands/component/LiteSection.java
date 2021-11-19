@@ -26,7 +26,7 @@ public final class LiteSection extends AbstractComponent {
 
     @Override
     public void resolveExecution(MetaData data) {
-        LiteComponent resolver = resolvers.getOrDefault(data.getNextPredictedPartOfSuggestion(), resolvers.get(StringUtils.EMPTY));
+        LiteComponent resolver = resolvers.getOrDefault(data.getCurrentPartOfCommand(), resolvers.get(StringUtils.EMPTY));
 
         whenWithContext(resolver == null, ValidationInfo.COMMAND_NO_FOUND, data, this);
 
@@ -47,7 +47,7 @@ public final class LiteSection extends AbstractComponent {
             return suggestions;
         }
 
-        String partCommand = data.getCurrentPartOfCommand();
+        String partCommand = data.getNextPredictedPartOfSuggestion();
 
         if (partCommand.isEmpty()) {
             List<String> suggestions = new ArrayList<>(resolvers.keySet());
