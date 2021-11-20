@@ -62,8 +62,8 @@ implementation 'dev.rollczi.litecommands:velocity:1.2.0'
 ```
 
 #### Other examples: 
- - [Velocity Example](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(simple))
- - [Velocity Example (advanced)](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(advanced))
+ - [Wiki Velocity Example](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(simple))
+ - [Wiki Velocity Example (advanced)](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(advanced))
 
 See (Important dependencies used)
  - [panda-lang/expressible](https://github.com/panda-lang/expressible)
