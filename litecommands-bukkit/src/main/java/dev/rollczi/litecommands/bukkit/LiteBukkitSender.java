@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.LiteSender;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class LiteBukkitSender implements LiteSender {
@@ -16,7 +17,7 @@ public class LiteBukkitSender implements LiteSender {
     }
 
     public void sendMessage(String message) {
-        sender.sendMessage(message);
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
     public CommandSender getSender() {

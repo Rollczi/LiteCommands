@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.LiteCommandManager;
+import dev.rollczi.litecommands.LitePlatformManager;
 import dev.rollczi.litecommands.component.ScopeMetaData;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class LiteBukkitCommandManager implements LiteCommandManager {
+public class LiteBukkitPlatformManager implements LitePlatformManager {
 
     private final Set<String> commands = new HashSet<>();
     private final CommandMap commandMap;
@@ -20,7 +20,7 @@ public class LiteBukkitCommandManager implements LiteCommandManager {
     private final String fallbackPrefix;
 
     @SuppressWarnings("unchecked")
-    public LiteBukkitCommandManager(Server server, String fallbackPrefix) {
+    public LiteBukkitPlatformManager(Server server, String fallbackPrefix) {
         this.fallbackPrefix = fallbackPrefix;
 
         try {

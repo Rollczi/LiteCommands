@@ -35,7 +35,7 @@ public class LiteCommandsBuilder {
     private final Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers = new HashMap<>();
     private final ValidationMessagesService messagesService = new ValidationMessagesService();
     private ValidationExceptionHandler validationExceptionHandler;
-    private LiteCommandManager commandManager;
+    private LitePlatformManager platformManager;
     private Logger logger;
 
     public LiteCommandsBuilder() {
@@ -89,8 +89,8 @@ public class LiteCommandsBuilder {
         return this;
     }
 
-    public LiteCommandsBuilder registrationResolver(LiteCommandManager registrationResolver) {
-        this.commandManager = registrationResolver;
+    public LiteCommandsBuilder platform(LitePlatformManager platformManager) {
+        this.platformManager = platformManager;
         return this;
     }
 
@@ -100,7 +100,7 @@ public class LiteCommandsBuilder {
     }
 
     public LiteCommands register() {
-        if (commandManager == null) {
+        if (platformManager == null) {
             throw new NullPointerException();
         }
 
@@ -153,7 +153,7 @@ public class LiteCommandsBuilder {
         }
 
         for (LiteSection resolver : resolvers) {
-            commandManager.registerCommand(resolver.getScope(), invocation -> {
+            platformManager.registerCommand(resolver.getScope(), invocation -> {
                 try {
                     resolver.resolveExecution(LiteComponent.MetaData.create(invocation));
                 } catch (ValidationCommandException exception) {
@@ -162,7 +162,7 @@ public class LiteCommandsBuilder {
             }, invocation -> resolver.resolveCompletion(LiteComponent.MetaData.create(invocation)));
         }
 
-        return new LiteCommands(resolvers, commandManager, messagesService, injector, logger);
+        return new LiteCommands(resolvers, platformManager, messagesService, injector, logger);
     }
 
     public static LiteCommandsBuilder builder() {

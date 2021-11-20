@@ -12,7 +12,7 @@ public final class LiteBukkitFactory {
         return LiteFactory.builder()
                 .bind(Server.class, server)
                 .bind(CommandSender.class, new OriginalSenderBind())
-                .registrationResolver(new LiteBukkitCommandManager(server, fallbackPrefix));
+                .platform(new LiteBukkitPlatformManager(server, fallbackPrefix));
     }
 
 }

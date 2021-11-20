@@ -12,12 +12,12 @@ import java.util.logging.Logger;
 public class LiteCommands {
 
     private final Set<LiteSection> resolvers;
-    private final LiteCommandManager commandManager;
+    private final LitePlatformManager commandManager;
     private final ValidationMessagesService messagesService;
     private final Injector injector;
     private final Logger logger;
 
-    LiteCommands(Set<LiteSection> resolvers, LiteCommandManager commandManager, ValidationMessagesService messagesService, Injector injector, Logger logger) {
+    LiteCommands(Set<LiteSection> resolvers, LitePlatformManager commandManager, ValidationMessagesService messagesService, Injector injector, Logger logger) {
         this.resolvers = resolvers;
         this.commandManager = commandManager;
         this.messagesService = messagesService;
@@ -29,7 +29,7 @@ public class LiteCommands {
         return Collections.unmodifiableCollection(resolvers);
     }
 
-    public LiteCommandManager getCommandManager() {
+    public LitePlatformManager getCommandManager() {
         return commandManager;
     }
 
