@@ -2,6 +2,7 @@ buildscript {
     ext {
         coreArtifact = 'core'
         velocityArtifact = 'velocity'
+        bukkitArtifact = 'bukkit'
     }
 }
 

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.velocity;
 
 import com.velocitypowered.api.command.SimpleCommand;
-import dev.rollczi.litecommands.LiteCommandManager;
+import dev.rollczi.litecommands.LitePlatformManager;
 import dev.rollczi.litecommands.component.ScopeMetaData;
 
 import java.util.List;
@@ -9,10 +9,10 @@ import java.util.List;
 public class LiteVelocityCommand implements SimpleCommand {
 
     private final ScopeMetaData scope;
-    private final LiteCommandManager.Executor executor;
-    private final LiteCommandManager.Suggester suggester;
+    private final LitePlatformManager.Executor executor;
+    private final LitePlatformManager.Suggester suggester;
 
-    public LiteVelocityCommand(ScopeMetaData scope, LiteCommandManager.Executor executor, LiteCommandManager.Suggester suggester) {
+    public LiteVelocityCommand(ScopeMetaData scope, LitePlatformManager.Executor executor, LitePlatformManager.Suggester suggester) {
         this.scope = scope;
         this.executor = executor;
         this.suggester = suggester;

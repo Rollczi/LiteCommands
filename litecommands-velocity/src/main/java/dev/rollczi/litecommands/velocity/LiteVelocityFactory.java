@@ -12,7 +12,7 @@ public final class LiteVelocityFactory {
         return LiteFactory.builder()
                 .bind(ProxyServer.class, proxy)
                 .bind(CommandSource.class, new OriginalSenderBind())
-                .registrationResolver(new LiteVelocityCommandManager(proxy));
+                .platform(new LiteVelocityPlatformManager(proxy));
     }
 
 }

@@ -3,18 +3,18 @@ package dev.rollczi.litecommands.velocity;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.proxy.ProxyServer;
-import dev.rollczi.litecommands.LiteCommandManager;
+import dev.rollczi.litecommands.LitePlatformManager;
 import dev.rollczi.litecommands.component.ScopeMetaData;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class LiteVelocityCommandManager implements LiteCommandManager {
+public class LiteVelocityPlatformManager implements LitePlatformManager {
 
     private final Set<String> commands = new HashSet<>();
     private final ProxyServer proxyServer;
 
-    public LiteVelocityCommandManager(ProxyServer proxyServer) {
+    public LiteVelocityPlatformManager(ProxyServer proxyServer) {
         this.proxyServer = proxyServer;
     }
 

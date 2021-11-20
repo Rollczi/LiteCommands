@@ -1,0 +1,15 @@
+dependencies {
+    implementation project(":litecommands-core").getProject()
+
+    implementation "org.spigotmc:spigot:1.17-R0.1-SNAPSHOT"
+}
+
+publishing {
+    publications {
+        libraries(MavenPublication) {
+            artifactId = project.bukkitArtifact
+
+            from components.java
+        }
+    }
+}
