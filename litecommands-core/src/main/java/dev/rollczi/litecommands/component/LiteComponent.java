@@ -47,14 +47,14 @@ public interface LiteComponent {
         }
 
         public String getNextPredictedPartOfSuggestion() {
-            if (this.isLastResolver()) {
-                return StringUtils.EMPTY;
-            }
-
             return this.invocation.arguments()[tracesOfResolvers.size()];
         }
 
         public String getCurrentPartOfCommand() {
+            if (this.invocation.arguments().length < tracesOfResolvers.size() + 1) {
+                return StringUtils.EMPTY;
+            }
+
             return this.invocation.arguments()[tracesOfResolvers.size()];
         }
 
