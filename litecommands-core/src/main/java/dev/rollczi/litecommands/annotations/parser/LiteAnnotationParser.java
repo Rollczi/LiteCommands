@@ -48,19 +48,23 @@ public class LiteAnnotationParser implements AnnotationParser {
         }
 
         for (Annotation annotation : annotatedElement.getAnnotations()) {
-            if (annotation instanceof Section section) {
+            if (annotation instanceof Section) {
+                Section section = (Section) annotation;
                 builder
                     .name(section.route())
                     .aliases(section.aliases());
                 continue;
             }
 
-            if (annotation instanceof Execute execute) {
+            if (annotation instanceof Execute) {
+                Execute execute = (Execute) annotation;
                 builder.name(execute.route());
                 continue;
             }
 
-            if (annotation instanceof Permissions permissions) {
+            if (annotation instanceof Permissions) {
+                Permissions permissions = (Permissions) annotation;
+
                 for (Permission permission : permissions.value()) {
                     builder.permissions(permission.value());
                 }
@@ -68,12 +72,14 @@ public class LiteAnnotationParser implements AnnotationParser {
                 continue;
             }
 
-            if (annotation instanceof Permission permission) {
+            if (annotation instanceof Permission) {
+                Permission permission = (Permission) annotation;
                 builder.permissions(permission.value());
                 continue;
             }
 
-            if (annotation instanceof PermissionsExclude excludes) {
+            if (annotation instanceof PermissionsExclude) {
+                PermissionsExclude excludes = (PermissionsExclude) annotation;
                 for (PermissionExclude exclude : excludes.value()) {
                     builder.permissionsExclude(exclude.value());
                 }
@@ -81,32 +87,38 @@ public class LiteAnnotationParser implements AnnotationParser {
                 continue;
             }
 
-            if (annotation instanceof PermissionExclude exclude) {
+            if (annotation instanceof PermissionExclude) {
+                PermissionExclude exclude = (PermissionExclude) annotation;
                 builder.permissionsExclude(exclude.value());
                 continue;
             }
 
-            if (annotation instanceof UsageMessage usageMessage) {
+            if (annotation instanceof UsageMessage) {
+                UsageMessage usageMessage = (UsageMessage) annotation;
                 builder.message(ValidationInfo.INVALID_USE, usageMessage.value());
                 continue;
             }
 
-            if (annotation instanceof Required required) {
+            if (annotation instanceof Required) {
+                Required required = (Required) annotation;
                 builder.amountValidator(validator -> validator.equals(required.value()));
                 continue;
             }
 
-            if (annotation instanceof MinArgs min) {
-                builder.amountValidator(validator -> validator.min(min.value()));
+            if (annotation instanceof MinArgs) {
+                MinArgs minArgs = (MinArgs) annotation;
+                builder.amountValidator(validator -> validator.min((minArgs).value()));
                 continue;
             }
 
-            if (annotation instanceof MaxArgs max) {
+            if (annotation instanceof MaxArgs) {
+                MaxArgs max = (MaxArgs) annotation;
                 builder.amountValidator(validator -> validator.max(max.value()));
                 continue;
             }
 
-            if (annotation instanceof Between between) {
+            if (annotation instanceof Between) {
+                Between between = (Between) annotation;
                 builder.amountValidator(validator -> validator.min(between.min()).min(between.max()));
             }
         }

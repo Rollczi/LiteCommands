@@ -48,13 +48,17 @@ public final class LiteExecution extends AbstractComponent {
         Valid.whenWithContext(!scope.getArgsValidator().valid(data.getCurrentArgsCount(this)), ValidationInfo.INVALID_USE, data, this);
 
         executor.execute(new InjectContext(data, this)).onError(error -> {
-            if (error.getSecond() instanceof ValidationCommandException exception) {
-                Valid.whenWithContext(exception.getMessage() == null, exception.getValidationInfo(), data, this);
+            Throwable throwable = error.getSecond();
 
-                throw exception;
+            if (throwable instanceof ValidationCommandException) {
+                ValidationCommandException validationEx = (ValidationCommandException) throwable;
+
+                Valid.whenWithContext(validationEx.getMessage() == null, validationEx.getValidationInfo(), data, this);
+
+                throw validationEx;
             }
 
-            logger.log(Level.SEVERE, error.getFirst(), error.getSecond());
+            logger.log(Level.SEVERE, error.getFirst(), throwable);
         });
     }
 

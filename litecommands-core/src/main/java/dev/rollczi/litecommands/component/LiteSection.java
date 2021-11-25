@@ -72,7 +72,8 @@ public final class LiteSection extends AbstractComponent {
         String[] arguments = data.invocation.arguments();
         LiteComponent component = resolvers.get(StringUtils.EMPTY);
 
-        if (component != null && arguments.length != 0 && component instanceof LiteExecution liteExecution) {
+        if (component != null && arguments.length != 0 && component instanceof LiteExecution) {
+            LiteExecution liteExecution = (LiteExecution) component;
             List<String> oldSuggestions = liteExecution.getExecutorCompletion(data, nestedMetaData.getCurrentArgsCount(this) - 1);
 
             if (oldSuggestions.contains(arguments[arguments.length - 2])) {
