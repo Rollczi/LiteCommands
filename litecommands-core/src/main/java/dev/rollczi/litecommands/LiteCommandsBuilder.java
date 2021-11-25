@@ -89,6 +89,11 @@ public class LiteCommandsBuilder {
         return this;
     }
 
+    public LiteCommandsBuilder message(ValidationInfo validationInfo, ValidationInfo.ContextMessage message) {
+        this.messagesService.registerMessage(validationInfo, message);
+        return this;
+    }
+
     public LiteCommandsBuilder platform(LitePlatformManager platformManager) {
         this.platformManager = platformManager;
         return this;

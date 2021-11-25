@@ -15,7 +15,7 @@ public class LiteValidationExceptionHandler implements ValidationExceptionHandle
     @Override
     public void handle(LiteInvocation invocation, ValidationCommandException exception) {
         String message = exception.getMessage() == null
-                ? messagesService.getMessage(exception.getValidationInfo())
+                ? messagesService.getMessage(exception.getValidationInfo(), invocation)
                 : exception.getMessage();
 
         if (message == null || message.isEmpty()) {

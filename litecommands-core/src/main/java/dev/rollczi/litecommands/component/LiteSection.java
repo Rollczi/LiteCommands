@@ -28,7 +28,7 @@ public final class LiteSection extends AbstractComponent {
     public void resolveExecution(MetaData data) {
         LiteComponent resolver = resolvers.getOrDefault(data.getCurrentPartOfCommand(), resolvers.get(StringUtils.EMPTY));
 
-        whenWithContext(resolver == null, ValidationInfo.COMMAND_NO_FOUND, data, this);
+        whenWithContext(resolver == null, ValidationInfo.INVALID_USE, data, this);
 
         resolver.resolveExecution(data.resolverNestingTracing(this));
     }
