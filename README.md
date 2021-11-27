@@ -1,4 +1,4 @@
-# ☄️ LiteCommands ![test](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)
+# ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands)
 #### Command framework for Velocity and your other implementations.
 Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
