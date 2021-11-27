@@ -3,6 +3,7 @@ package dev.rollczi.litecommands;
 import dev.rollczi.litecommands.inject.SingleArgumentHandler;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class EmptyTestSenderArgument implements SingleArgumentHandler<EmptyTestSender> {
@@ -14,7 +15,7 @@ public class EmptyTestSenderArgument implements SingleArgumentHandler<EmptyTestS
 
     @Override
     public List<String> tabulation(String command, String[] args) {
-        return List.of("test1", "test2", "test3");
+        return Arrays.asList("test1", "test2", "test3");
     }
 
 }

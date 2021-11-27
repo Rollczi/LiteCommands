@@ -1,18 +1,15 @@
 package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.LiteInvocation;
-import dev.rollczi.litecommands.LiteSender;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.inject.InjectContext;
-import dev.rollczi.litecommands.valid.Valid;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
-import panda.std.stream.PandaStream;
+import panda.std.Pair;
+import panda.std.Result;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,44 +27,32 @@ public final class LiteExecution extends AbstractComponent {
     }
 
     @Override
-    public void resolveExecution(MetaData data) {
-        LiteInvocation invocation = data.getInvocation();
-        LiteSender sender = invocation.sender();
+    public ExecutionResult resolveExecution(ContextOfResolving context) {
+        Result<Object, Pair<String, Throwable>> result = executor.execute(new InjectContext(context, this));
 
-        Set<String> permissions = new HashSet<>(this.scope.getPermissions());
-
-        PandaStream.of(data.getTracesOfResolvers()).map(LiteComponent::getScope).concat(this.scope).forEach(scope -> {
-            permissions.addAll(scope.getPermissions());
-            permissions.removeAll(scope.getPermissionsExclude());
-        });
-
-        for (String permission : permissions) {
-            Valid.whenWithContext(!sender.hasPermission(permission), ValidationInfo.NO_PERMISSION, data, this);
+        if (result.isOk()) {
+            return ExecutionResult.valid();
         }
 
-        Valid.whenWithContext(!scope.getArgsValidator().valid(data.getCurrentArgsCount(this)), ValidationInfo.INVALID_USE, data, this);
+        Throwable throwable = result.getError().getSecond();
+        String errorMessage = result.getError().getFirst();
 
-        executor.execute(new InjectContext(data, this)).onError(error -> {
-            Throwable throwable = error.getSecond();
+        if (throwable instanceof ValidationCommandException) {
+            ValidationCommandException validationEx = (ValidationCommandException) throwable;
 
-            if (throwable instanceof ValidationCommandException) {
-                ValidationCommandException validationEx = (ValidationCommandException) throwable;
+            return ExecutionResult.invalid(validationEx.getValidationInfo(), validationEx.getMessage());
+        }
 
-                Valid.whenWithContext(validationEx.getMessage() == null, validationEx.getValidationInfo(), data, this);
-
-                throw validationEx;
-            }
-
-            logger.log(Level.SEVERE, error.getFirst(), throwable);
-        });
+        logger.log(Level.SEVERE, errorMessage, throwable);
+        return ExecutionResult.invalid(ValidationInfo.INTERNAL_ERROR, errorMessage);
     }
 
     @Override
-    public List<String> resolveCompletion(MetaData data) {
-        return getExecutorCompletion(data, data.getCurrentArgsCount(this) - 1);
+    public List<String> resolveCompletion(ContextOfResolving context) {
+        return generateCompletionByMetaData(context, context.getCurrentArgsCount(this) - 1);
     }
 
-    public List<String> getExecutorCompletion(MetaData data, int argNumber) {
+    public List<String> generateCompletionByMetaData(ContextOfResolving data, int argNumber) {
         LiteInvocation invocation = data.getInvocation();
 
         return executor.getParameter(argNumber)

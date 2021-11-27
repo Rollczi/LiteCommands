@@ -8,32 +8,36 @@ import java.util.List;
 
 public interface LiteComponent {
 
-    void resolveExecution(MetaData data);
+    ExecutionResult resolveExecution(ContextOfResolving data);
 
-    List<String> resolveCompletion(MetaData data);
+    List<String> resolveCompletion(ContextOfResolving data);
 
     ScopeMetaData getScope();
 
-    class MetaData {
+    boolean hasPermission(ContextOfResolving context);
+
+    boolean hasValidArgs(ContextOfResolving context);
+
+    class ContextOfResolving {
         protected final LiteInvocation invocation;
         protected final List<LiteComponent> tracesOfResolvers = new ArrayList<>();
 
-        private MetaData(MetaData data, LiteComponent resolver) {
+        private ContextOfResolving(ContextOfResolving data, LiteComponent resolver) {
             this.invocation = data.invocation;
             this.tracesOfResolvers.addAll(data.tracesOfResolvers);
             this.tracesOfResolvers.add(resolver);
         }
 
-        private MetaData(LiteInvocation invocation) {
+        private ContextOfResolving(LiteInvocation invocation) {
             this.invocation = invocation;
         }
 
-        MetaData resolverNestingTracing(LiteComponent currentResolver) {
+        public ContextOfResolving resolverNestingTracing(LiteComponent currentResolver) {
             if (this.invocation.arguments().length + 1 < tracesOfResolvers.size()) {
                 throw new IllegalStateException();
             }
 
-            return new MetaData(this, currentResolver);
+            return new ContextOfResolving(this, currentResolver);
         }
 
         public int getCurrentArgsCount(LiteComponent context) {
@@ -66,8 +70,8 @@ public interface LiteComponent {
             return invocation;
         }
 
-        public static MetaData create(LiteInvocation invocation) {
-            return new MetaData(invocation);
+        public static ContextOfResolving create(LiteInvocation invocation) {
+            return new ContextOfResolving(invocation);
         }
 
     }

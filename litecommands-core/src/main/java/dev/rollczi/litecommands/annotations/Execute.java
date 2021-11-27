@@ -8,5 +8,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Execute {
+
     String route() default "";
+
+    int required() default -1;
+
 }

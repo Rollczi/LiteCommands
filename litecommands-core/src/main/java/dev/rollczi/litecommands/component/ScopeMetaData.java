@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.valid.AmountValidator;
 import panda.std.Option;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -58,6 +59,19 @@ public final class ScopeMetaData {
         return new Builder();
     }
 
+    public static ScopeMetaData fromName(String name) {
+        return builder()
+                .name(name)
+                .build();
+    }
+
+    public static ScopeMetaData fromName(String name, Collection<String> aliases) {
+        return builder()
+                .name(name)
+                .aliases(aliases)
+                .build();
+    }
+
     public static class Builder {
 
         private String name;
@@ -72,7 +86,7 @@ public final class ScopeMetaData {
             return this;
         }
 
-        public Builder aliases(Set<String> aliases) {
+        public Builder aliases(Collection<String> aliases) {
             this.aliases.addAll(aliases);
             return this;
         }

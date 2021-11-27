@@ -3,17 +3,17 @@ package dev.rollczi.litecommands.component;
 import dev.rollczi.litecommands.annotations.Arg;
 import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.utils.ReflectUtils;
+import dev.rollczi.litecommands.valid.ValidationCommandException;
 import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
 import panda.std.Pair;
 import panda.std.Result;
 import panda.std.stream.PandaStream;
+import panda.utilities.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public final class MethodExecutor {
 
@@ -43,7 +43,15 @@ public final class MethodExecutor {
             return Result.error(Pair.of("Method " + ReflectUtils.formatMethodParams(method) + " is " + ReflectUtils.modifier(method), illegalAccessException));
         } catch (IllegalArgumentException illegalArgumentException) {
             return Result.error(Pair.of("Illegal arguments for method " + ReflectUtils.formatMethodParams(method), illegalArgumentException));
+        } catch (ValidationCommandException exception) {
+            return Result.error(Pair.of(StringUtils.EMPTY, exception));
         } catch (Throwable throwable) {
+            Throwable cause = throwable.getCause();
+
+            if (cause instanceof ValidationCommandException) {
+                return Result.error(Pair.of(StringUtils.EMPTY, cause));
+            }
+
             return Result.error(Pair.of("Can't invoke method " + ReflectUtils.formatMethodParams(method), throwable));
         }
     }

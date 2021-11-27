@@ -10,21 +10,21 @@ import panda.utilities.StringUtils
 import java.util.*
 
 @CompileStatic
-class LiteComponentMetaDataTest : LiteCommandsSpec() {
+class LiteComponentContextOfResolvingTest : LiteCommandsSpec() {
 
-    private var dataAc : LiteComponent.MetaData = LiteComponent.MetaData.create(
+    private var dataAc : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
             EmptyTestSender(), arrayOf()
         )
     )
-    private var dataAcWithArgs : LiteComponent.MetaData = LiteComponent.MetaData.create(
+    private var dataAcWithArgs : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
             EmptyTestSender(), arrayOf("test")
         )
     )
-    private var dataAcHelp : LiteComponent.MetaData = LiteComponent.MetaData.create(
+    private var dataAcHelp : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
             EmptyTestSender(), arrayOf("help")
@@ -46,19 +46,14 @@ class LiteComponentMetaDataTest : LiteCommandsSpec() {
         assertEquals(0, dataAcHelp.getCurrentArgsCount(TestComponent("help")))
     }
 
-    class TestComponent(private val name: String) : LiteComponent {
+    class TestComponent(name: String)
+        : AbstractComponent(ScopeMetaData.builder().name(name).build()) {
 
-        override fun resolveExecution(data: LiteComponent.MetaData) {
-            data.resolverNestingTracing(this)
+        override fun resolveExecution(data: LiteComponent.ContextOfResolving) : ExecutionResult {
+            return ExecutionResult.valid()
         }
 
-        override fun resolveCompletion(data: LiteComponent.MetaData): MutableList<String> = Collections.emptyList()
-
-        override fun getScope(): ScopeMetaData {
-            return ScopeMetaData.builder()
-                .name(name)
-                .build()
-        }
+        override fun resolveCompletion(data: LiteComponent.ContextOfResolving): MutableList<String> = Collections.emptyList()
 
     }
 

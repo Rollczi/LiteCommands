@@ -15,7 +15,7 @@ public interface AmountValidator {
         return this.and(length -> length <= max);
     }
 
-    default AmountValidator equals(int required) {
+    default AmountValidator required(int required) {
         return length -> length == required;
     }
 
