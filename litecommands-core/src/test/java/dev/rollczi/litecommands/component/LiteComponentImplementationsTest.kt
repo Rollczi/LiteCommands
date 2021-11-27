@@ -9,21 +9,21 @@ import org.junit.jupiter.api.Test
 class LiteComponentImplementationsTest : LiteCommandsSpec() {
 
     // on command invocation /ac
-    private var invocationAc : LiteComponent.MetaData = LiteComponent.MetaData.create(
+    private var invocationAc : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
             EmptyTestSender(), arrayOf()
         )
     )
     // on command invocation /ac test
-    private var invocationAcWithArgs : LiteComponent.MetaData = LiteComponent.MetaData.create(
+    private var invocationAcWithArgs : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
             EmptyTestSender(), arrayOf("test")
         )
     )
     // on command invocation /ac help
-    private var invocationAcHelp : LiteComponent.MetaData = LiteComponent.MetaData.create(
+    private var invocationAcHelp : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
             EmptyTestSender(), arrayOf("help")

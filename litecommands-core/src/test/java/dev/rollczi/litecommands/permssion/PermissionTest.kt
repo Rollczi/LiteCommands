@@ -5,10 +5,9 @@ import dev.rollczi.litecommands.LiteCommandsSpec
 import dev.rollczi.litecommands.LiteInvocation
 import dev.rollczi.litecommands.component.LiteComponent
 import dev.rollczi.litecommands.component.LiteSection
-import dev.rollczi.litecommands.valid.ValidationCommandException
+import dev.rollczi.litecommands.valid.ValidationInfo
 import groovy.transform.CompileStatic
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 @CompileStatic
@@ -18,30 +17,30 @@ class PermissionTest : LiteCommandsSpec() {
     private val section: LiteSection = factory.createSection(command).get()
 
     private val invocationMainPermOnly = InvocationCreator { sender ->
-        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf()))
+        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf()))
     }
     private val invocationAllPerm = InvocationCreator { sender ->
-        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "all")))
+        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "all")))
     }
     private val invocationWithoutPerm = InvocationCreator { sender ->
-        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "without")))
+        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "without")))
     }
     private val invocationInnerPerm = InvocationCreator { sender ->
-        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "inner")))
+        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "inner")))
     }
     private val invocationMainPerm = InvocationCreator { sender ->
-        LiteComponent.MetaData.create(LiteInvocation("main", sender, arrayOf("inner", "main")))
+        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "main")))
     }
 
     @Test
     fun `test sender with out permission`() {
         val sender = TestPermissionSender()
 
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPermOnly.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationInnerPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPerm.get(sender)) }
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
     }
 
     @Test
@@ -50,11 +49,11 @@ class PermissionTest : LiteCommandsSpec() {
             .permission("dev.rollczi.main")
             .permission("dev.rollczi.main.inner")
 
-        assertDoesNotThrow { section.resolveExecution(invocationMainPermOnly.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationInnerPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationMainPerm.get(sender)) }
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
     }
 
     @Test
@@ -62,11 +61,11 @@ class PermissionTest : LiteCommandsSpec() {
         val sender = TestPermissionSender()
             .permission("dev.rollczi.main")
 
-        assertDoesNotThrow { section.resolveExecution(invocationMainPermOnly.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationInnerPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationMainPerm.get(sender)) }
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
     }
 
     @Test
@@ -74,11 +73,11 @@ class PermissionTest : LiteCommandsSpec() {
         val sender = TestPermissionSender()
             .permission("dev.rollczi.main.inner")
 
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPermOnly.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationAllPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationWithoutPerm.get(sender)) }
-        assertDoesNotThrow { section.resolveExecution(invocationInnerPerm.get(sender)) }
-        assertThrows(ValidationCommandException::class.java) { section.resolveExecution(invocationMainPerm.get(sender)) }
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
+        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
     }
 
 }

@@ -15,13 +15,18 @@ public class Valid {
         throw new ValidationCommandException(info, message);
     }
 
-    @Contract("true, _, _, _ -> fail")
-    public static void whenWithContext(boolean bool, ValidationInfo info, LiteComponent.MetaData data, LiteComponent current) {
+    @Contract("true, _, _ -> fail")
+    public static void when(boolean bool, ValidationInfo info, LiteComponent.ContextOfResolving context) {
         if (!bool) {
             return;
         }
 
-        throw new ValidationCommandException(info, ScopeUtils.getLastMessage(info, data, current));
+        throw new ValidationCommandException(info, ScopeUtils.getLastMessage(info, context));
+    }
+
+    @Contract("_, _ -> fail")
+    public static void throwWithContext(ValidationInfo info, LiteComponent.ContextOfResolving context) {
+        throw new ValidationCommandException(info, ScopeUtils.getLastMessage(info, context));
     }
 
     @Contract("true, _ -> fail")

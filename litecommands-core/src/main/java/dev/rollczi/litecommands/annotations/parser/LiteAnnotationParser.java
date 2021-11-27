@@ -53,12 +53,22 @@ public class LiteAnnotationParser implements AnnotationParser {
                 builder
                     .name(section.route())
                     .aliases(section.aliases());
+
+                if (section.required() > - 1) {
+                    builder.amountValidator(validator -> validator.required(section.required()));
+                }
+
                 continue;
             }
 
             if (annotation instanceof Execute) {
                 Execute execute = (Execute) annotation;
                 builder.name(execute.route());
+
+                if (execute.required() > - 1) {
+                    builder.amountValidator(validator -> validator.required(execute.required()));
+                }
+
                 continue;
             }
 
@@ -101,7 +111,7 @@ public class LiteAnnotationParser implements AnnotationParser {
 
             if (annotation instanceof Required) {
                 Required required = (Required) annotation;
-                builder.amountValidator(validator -> validator.equals(required.value()));
+                builder.amountValidator(validator -> validator.required(required.value()));
                 continue;
             }
 

@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.valid.ValidationInfo;
+import panda.std.Option;
 import panda.std.stream.PandaStream;
 import panda.utilities.StringUtils;
 
@@ -13,8 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import static dev.rollczi.litecommands.valid.Valid.whenWithContext;
-
 public final class LiteSection extends AbstractComponent {
 
     private final Map<String, LiteComponent> resolvers;
@@ -25,23 +24,61 @@ public final class LiteSection extends AbstractComponent {
     }
 
     @Override
-    public void resolveExecution(MetaData data) {
-        LiteComponent resolver = resolvers.getOrDefault(data.getCurrentPartOfCommand(), resolvers.get(StringUtils.EMPTY));
+    public ExecutionResult resolveExecution(ContextOfResolving context) {
+        String command = context.getCurrentPartOfCommand();
+        ContextOfResolving currentContext = context.resolverNestingTracing(this);
 
-        whenWithContext(resolver == null, ValidationInfo.INVALID_USE, data, this);
+        List<LiteComponent> filteredComponents = PandaStream.of(this.resolvers.values())
+                .filter(component -> component.getScope().getName().equalsIgnoreCase(command))
+                .toList();
 
-        resolver.resolveExecution(data.resolverNestingTracing(this));
+        if (filteredComponents.isEmpty()) {
+            Option<LiteComponent> emptyComponentMatch = Option.of(this.resolvers.get(StringUtils.EMPTY));
+
+            if (emptyComponentMatch.isEmpty()) {
+                return ExecutionResult.invalid(ValidationInfo.INVALID_USE, currentContext, true);
+            }
+
+            filteredComponents.add(emptyComponentMatch.get());
+        }
+
+        //TODO [START]: LiteMultiSection and LiteSection has same logic
+        ContextOfResolving candidateContext = currentContext.resolverNestingTracing(filteredComponents.get(0));
+        filteredComponents.removeIf(component -> !component.hasPermission(currentContext));
+
+        if (filteredComponents.isEmpty()) {
+            return ExecutionResult.invalid(ValidationInfo.NO_PERMISSION, candidateContext);
+        }
+
+        Option<ExecutionResult> lastInvalid = Option.none();
+
+        for (LiteComponent component : filteredComponents) {
+            if (!component.hasValidArgs(currentContext)) {
+                continue;
+            }
+
+            ExecutionResult result = component.resolveExecution(currentContext);
+
+            if (result.isValid() || !result.canIgnore()) {
+                return result;
+            }
+
+            lastInvalid = Option.of(result);
+        }
+
+        return lastInvalid.orElseGet(ExecutionResult.invalid(ValidationInfo.INVALID_USE, candidateContext));
+        //TODO [END]
     }
 
     @Override
-    public List<String> resolveCompletion(MetaData data) {
-        MetaData nestedMetaData = data.resolverNestingTracing(this);
+    public List<String> resolveCompletion(ContextOfResolving data) {
+        ContextOfResolving currentContextOfResolving = data.resolverNestingTracing(this);
 
         if (data.isLastResolver()) {
             ArrayList<String> suggestions = new ArrayList<>(resolvers.keySet());
 
             if (suggestions.remove(StringUtils.EMPTY)) {
-                suggestions.addAll(resolvers.get(StringUtils.EMPTY).resolveCompletion(nestedMetaData));
+                suggestions.addAll(resolvers.get(StringUtils.EMPTY).resolveCompletion(currentContextOfResolving));
             }
 
             return suggestions;
@@ -55,7 +92,7 @@ public final class LiteSection extends AbstractComponent {
             suggestions.remove(StringUtils.EMPTY);
 
             if (executor != null) {
-                suggestions.addAll(executor.resolveCompletion(nestedMetaData));
+                suggestions.addAll(executor.resolveCompletion(currentContextOfResolving));
             }
 
             return suggestions;
@@ -66,7 +103,7 @@ public final class LiteSection extends AbstractComponent {
                 continue;
             }
 
-            return entry.getValue().resolveCompletion(nestedMetaData);
+            return entry.getValue().resolveCompletion(currentContextOfResolving);
         }
 
         String[] arguments = data.invocation.arguments();
@@ -74,10 +111,10 @@ public final class LiteSection extends AbstractComponent {
 
         if (component != null && arguments.length != 0 && component instanceof LiteExecution) {
             LiteExecution liteExecution = (LiteExecution) component;
-            List<String> oldSuggestions = liteExecution.getExecutorCompletion(data, nestedMetaData.getCurrentArgsCount(this) - 1);
+            List<String> oldSuggestions = liteExecution.generateCompletionByMetaData(data, currentContextOfResolving.getCurrentArgsCount(this) - 1);
 
             if (oldSuggestions.contains(arguments[arguments.length - 2])) {
-                return component.resolveCompletion(nestedMetaData);
+                return component.resolveCompletion(currentContextOfResolving);
             }
         }
 

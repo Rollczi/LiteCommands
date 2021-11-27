@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.component.ExecutionResult;
 import dev.rollczi.litecommands.component.LiteSection;
 import dev.rollczi.litecommands.inject.LiteBind;
 import dev.rollczi.litecommands.valid.ValidationInfo;
@@ -13,9 +14,8 @@ import dev.rollczi.litecommands.inject.Bind;
 import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.inject.InjectUtils;
 import dev.rollczi.litecommands.inject.SingleArgumentHandler;
-import dev.rollczi.litecommands.valid.ValidationCommandException;
-import dev.rollczi.litecommands.valid.handle.LiteValidationExceptionHandler;
-import dev.rollczi.litecommands.valid.handle.ValidationExceptionHandler;
+import dev.rollczi.litecommands.valid.handle.LiteExecutionResultHandler;
+import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 
@@ -34,7 +34,8 @@ public class LiteCommandsBuilder {
     private final Set<Bind> binds = new HashSet<>();
     private final Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers = new HashMap<>();
     private final ValidationMessagesService messagesService = new ValidationMessagesService();
-    private ValidationExceptionHandler validationExceptionHandler;
+    private final LiteRegisterResolvers registerResolvers = new LiteRegisterResolvers();
+    private ExecutionResultHandler executionResultHandler;
     private LitePlatformManager platformManager;
     private Logger logger;
 
@@ -113,8 +114,8 @@ public class LiteCommandsBuilder {
             logger = Logger.getLogger("LiteCommands");
         }
 
-        if (validationExceptionHandler == null) {
-            validationExceptionHandler = new LiteValidationExceptionHandler(messagesService);
+        if (executionResultHandler == null) {
+            executionResultHandler = new LiteExecutionResultHandler(messagesService);
         }
 
         Injector injector = DependencyInjection.createInjector(resources -> {
@@ -140,34 +141,27 @@ public class LiteCommandsBuilder {
 
         AnnotationParser parser = new LiteAnnotationParser(argumentHandlers);
         LiteComponentFactory factory = new LiteComponentFactory(logger, injector, parser);
-        Set<LiteSection> resolvers = new HashSet<>();
 
         for (Object instance : commandInstances) {
-            resolvers.add(factory.createSection(instance)
+            registerResolvers.register(factory.createSection(instance)
                     .orThrow(() -> new IllegalArgumentException(instance.getClass() + " instance isn't a section")));
         }
 
         for (Class<?> commandClass : commandClasses) {
-            try {
-                resolvers.add(factory.createSection(commandClass)
-                        .orThrow(() -> new IllegalArgumentException(commandClass + " class isn't a section")));
-            }
-            catch (Throwable throwable) {
-                throwable.printStackTrace();
-            }
+            registerResolvers.register(factory.createSection(commandClass)
+                    .orThrow(() -> new IllegalArgumentException(commandClass + " class isn't a section")));
         }
 
-        for (LiteSection resolver : resolvers) {
+        for (LiteComponent resolver : registerResolvers.getResolvers().values()) {
             platformManager.registerCommand(resolver.getScope(), invocation -> {
-                try {
-                    resolver.resolveExecution(LiteComponent.MetaData.create(invocation));
-                } catch (ValidationCommandException exception) {
-                    validationExceptionHandler.handle(invocation, exception);
-                }
-            }, invocation -> resolver.resolveCompletion(LiteComponent.MetaData.create(invocation)));
+                LiteComponent.ContextOfResolving context = LiteComponent.ContextOfResolving.create(invocation);
+                ExecutionResult executionResult = resolver.resolveExecution(context);
+
+                executionResultHandler.handle(executionResult, context.resolverNestingTracing(resolver));
+            }, invocation -> resolver.resolveCompletion(LiteComponent.ContextOfResolving.create(invocation)));
         }
 
-        return new LiteCommands(resolvers, platformManager, messagesService, injector, logger);
+        return new LiteCommands(registerResolvers, platformManager, messagesService, injector, logger);
     }
 
     public static LiteCommandsBuilder builder() {

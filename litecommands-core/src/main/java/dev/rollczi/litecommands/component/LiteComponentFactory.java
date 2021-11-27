@@ -47,8 +47,9 @@ public class LiteComponentFactory {
         });
     }
 
-    public Option<LiteSection> createSection(Class<?> sectionClass) throws Throwable {
-        return createSection(injector.newInstance(sectionClass));
+    public Option<LiteSection> createSection(Class<?> sectionClass) {
+        return Option.attempt(Throwable.class, () -> injector.newInstance(sectionClass))
+                .flatMap(this::createSection);
     }
 
     public Option<LiteExecution> createExecution(Object instance, Method executionMethod) {
