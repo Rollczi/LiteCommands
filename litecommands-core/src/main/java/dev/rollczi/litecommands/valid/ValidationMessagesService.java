@@ -1,16 +1,16 @@
 package dev.rollczi.litecommands.valid;
 
-import dev.rollczi.litecommands.LiteInvocation;
+import dev.rollczi.litecommands.component.ExecutionResult;
+import dev.rollczi.litecommands.component.LiteComponent;
 
 import java.util.EnumMap;
-import java.util.function.Function;
 
 public class ValidationMessagesService {
 
-    private final EnumMap<ValidationInfo, Function<LiteInvocation, String>> customMessages = new EnumMap<>(ValidationInfo.class);
+    private final EnumMap<ValidationInfo, ValidationInfo.ContextMessage> customMessages = new EnumMap<>(ValidationInfo.class);
 
     public ValidationMessagesService registerMessage(ValidationInfo validationInfo, String message) {
-        customMessages.put(validationInfo, invocation -> message);
+        customMessages.put(validationInfo, (context, result) -> message);
         return this;
     }
 
@@ -19,8 +19,8 @@ public class ValidationMessagesService {
         return this;
     }
 
-    public String getMessage(ValidationInfo validationInfo, LiteInvocation invocation) {
-        return customMessages.getOrDefault(validationInfo, validationInfo.getDefaultMessage()).apply(invocation);
+    public String getMessage(ValidationInfo validationInfo, LiteComponent.ContextOfResolving context, ExecutionResult result) {
+        return customMessages.getOrDefault(validationInfo, validationInfo.getDefaultMessage()).message(context, result);
     }
 
 }

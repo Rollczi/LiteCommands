@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 public final class LiteSection extends AbstractComponent {
@@ -42,12 +41,12 @@ public final class LiteSection extends AbstractComponent {
             filteredComponents.add(emptyComponentMatch.get());
         }
 
-        //TODO [START]: LiteMultiSection and LiteSection has same logic
-        ContextOfResolving candidateContext = currentContext.resolverNestingTracing(filteredComponents.get(0));
-        filteredComponents.removeIf(component -> !component.hasPermission(currentContext));
+        LiteComponent candidate = filteredComponents.get(0);
+        ContextOfResolving candidateContext = currentContext.resolverNestingTracing(candidate);
+        filteredComponents.removeIf(component -> !component.getMissedPermission(currentContext).isEmpty());
 
         if (filteredComponents.isEmpty()) {
-            return ExecutionResult.invalid(ValidationInfo.NO_PERMISSION, candidateContext);
+            return ExecutionResult.invalidPermission(candidate.getMissedPermission(currentContext));
         }
 
         Option<ExecutionResult> lastInvalid = Option.none();
@@ -67,7 +66,6 @@ public final class LiteSection extends AbstractComponent {
         }
 
         return lastInvalid.orElseGet(ExecutionResult.invalid(ValidationInfo.INVALID_USE, candidateContext));
-        //TODO [END]
     }
 
     @Override
@@ -139,7 +137,7 @@ public final class LiteSection extends AbstractComponent {
             return this;
         }
 
-        public <T extends LiteComponent> Builder resolvers(Set<T> resolvers) {
+        public <T extends LiteComponent> Builder resolvers(Collection<T> resolvers) {
             this.resolvers.putAll(PandaStream.of(resolvers)
                     .toMap(component -> component.getScope().getName(), Function.identity()));
             return this;

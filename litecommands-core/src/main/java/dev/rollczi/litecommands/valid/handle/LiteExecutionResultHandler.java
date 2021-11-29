@@ -29,7 +29,7 @@ public class LiteExecutionResultHandler implements ExecutionResultHandler {
         }
 
         String message = executionResult.getValidMessage() == null
-                        ? messagesService.getMessage(info, invocation)
+                        ? messagesService.getMessage(info, context, executionResult)
                         : executionResult.getValidMessage();
 
 

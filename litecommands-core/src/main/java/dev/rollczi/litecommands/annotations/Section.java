@@ -13,6 +13,8 @@ public @interface Section {
 
     String[] aliases() default {};
 
+    int priority() default -1;
+
     int required() default -1;
 
 }

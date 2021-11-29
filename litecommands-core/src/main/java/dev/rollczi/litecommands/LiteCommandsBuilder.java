@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public class LiteCommandsBuilder {
@@ -77,6 +78,11 @@ public class LiteCommandsBuilder {
 
     public <T> LiteCommandsBuilder bind(Class<T> on, Object instance) {
         this.bind((resources) -> resources.on(on).assignInstance(instance));
+        return this;
+    }
+
+    public <T> LiteCommandsBuilder bind(Class<T> on, Supplier<Object> supplier) {
+        this.bind((resources) -> resources.on(on).assignInstance(supplier));
         return this;
     }
 

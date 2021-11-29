@@ -1,12 +1,16 @@
 package dev.rollczi.litecommands.component;
 
+import dev.rollczi.litecommands.annotations.Section;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import org.jetbrains.annotations.Nullable;
 import panda.std.Option;
+import panda.utilities.text.Joiner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+@Section(route = "test", priority = 1, aliases = {""})
 public final class ScopeUtils {
 
     private ScopeUtils() {}
@@ -22,6 +26,19 @@ public final class ScopeUtils {
         }
 
         return message.getOrNull();
+    }
+
+
+    public static String annotationFormat(ScopeMetaData scope) {
+        ArrayList<String> list = new ArrayList<>();
+
+        list.add("route = \"" + scope.getName() + "\"");
+
+        if (scope.getPriority() != - 1) {
+            list.add("priority = " + scope.getPriority());
+        }
+
+        return "@Section(" + Joiner.on(", ").join(list) + ")";
     }
 
 

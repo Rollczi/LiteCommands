@@ -3,8 +3,11 @@ package dev.rollczi.litecommands.component;
 import dev.rollczi.litecommands.LiteSender;
 import panda.std.stream.PandaStream;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class AbstractComponent implements LiteComponent {
 
@@ -20,9 +23,9 @@ public abstract class AbstractComponent implements LiteComponent {
     }
 
     @Override
-    public boolean hasPermission(ContextOfResolving context) {
+    public List<String> getMissedPermission(ContextOfResolving context) {
         if (!(this instanceof LiteExecution)) {
-            return true;
+            return Collections.emptyList();
         }
 
         LiteSender sender = context.getInvocation().sender();
@@ -34,13 +37,9 @@ public abstract class AbstractComponent implements LiteComponent {
             permissions.removeAll(scope.getPermissionsExclude());
         });
 
-        for (String permission : permissions) {
-            if (!sender.hasPermission(permission)) {
-                return false;
-            }
-        }
-
-        return true;
+        return permissions.stream()
+                .filter(permission -> !sender.hasPermission(permission))
+                .collect(Collectors.toList());
     }
 
     @Override

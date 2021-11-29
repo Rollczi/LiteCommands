@@ -1,15 +1,14 @@
 package dev.rollczi.litecommands.valid;
 
-import dev.rollczi.litecommands.LiteInvocation;
+import dev.rollczi.litecommands.component.ExecutionResult;
+import dev.rollczi.litecommands.component.LiteComponent;
 import panda.utilities.StringUtils;
-
-import java.util.function.Function;
 
 public enum ValidationInfo {
 
-    COMMAND_NO_EXIST(invocation -> "&cCommand or subcommand not found"),
-    NO_PERMISSION(invocation -> "&cYou don't have permission to this command"),
-    INVALID_USE(invocation -> "&cInvalid use of the command"),
+    COMMAND_NO_EXIST((context, result) -> "&cCommand or subcommand not found"),
+    NO_PERMISSION((context, result) -> "&cYou don't have permission to this command"),
+    INVALID_USE((context, result) -> "&cInvalid use of the command"),
     CUSTOM,
     INTERNAL_ERROR,
     NONE;
@@ -21,7 +20,7 @@ public enum ValidationInfo {
     }
 
     ValidationInfo() {
-        this.defaultMessage = ignore -> StringUtils.EMPTY;
+        this.defaultMessage = (context, result) -> StringUtils.EMPTY;
     }
 
     public ContextMessage getDefaultMessage() {
@@ -29,10 +28,9 @@ public enum ValidationInfo {
     }
 
     @FunctionalInterface
-    public interface ContextMessage extends Function<LiteInvocation, String> {
+    public interface ContextMessage {
 
-        @Override
-        String apply(LiteInvocation invocation);
+        String message(LiteComponent.ContextOfResolving context, ExecutionResult result);
 
     }
 

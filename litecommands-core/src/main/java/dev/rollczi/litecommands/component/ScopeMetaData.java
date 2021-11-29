@@ -16,14 +16,16 @@ import java.util.function.Function;
 public final class ScopeMetaData {
 
     private final String name;
+    private final int priority;
     private final Set<String> aliases = new HashSet<>();
     private final Map<ValidationInfo, String> messages = new EnumMap<>(ValidationInfo.class);
     private final AmountValidator argCountValidator;
     private final Set<String> permissions = new HashSet<>();
     private final Set<String> permissionsExclude = new HashSet<>();
 
-    private ScopeMetaData(String name, Set<String> aliases, Map<ValidationInfo, String> messages, AmountValidator argCountValidator, Set<String> permissions, Set<String> permissionsExclude) {
+    private ScopeMetaData(String name, int priority, Map<ValidationInfo, String> messages, AmountValidator argCountValidator, Set<String> permissions, Set<String> permissionsExclude, Set<String> aliases) {
         this.name = name;
+        this.priority = priority;
         this.aliases.addAll(aliases);
         this.messages.putAll(messages);
         this.argCountValidator = argCountValidator;
@@ -33,6 +35,10 @@ public final class ScopeMetaData {
 
     public String getName() {
         return name;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
     public Set<String> getAliases() {
@@ -75,6 +81,7 @@ public final class ScopeMetaData {
     public static class Builder {
 
         private String name;
+        private int priority = 0;
         private final Set<String> aliases = new HashSet<>();
         private final Map<ValidationInfo, String> messages = new EnumMap<>(ValidationInfo.class);
         private AmountValidator amountValidator = AmountValidator.NONE;
@@ -83,6 +90,11 @@ public final class ScopeMetaData {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder priority(int priority) {
+            this.priority = priority;
             return this;
         }
 
@@ -131,7 +143,7 @@ public final class ScopeMetaData {
                 throw new IllegalStateException("name is null");
             }
 
-            return new ScopeMetaData(name, aliases, messages, amountValidator, permissions, permissionsExclude);
+            return new ScopeMetaData(name, priority, messages, amountValidator, permissions, permissionsExclude, aliases);
         }
 
     }
