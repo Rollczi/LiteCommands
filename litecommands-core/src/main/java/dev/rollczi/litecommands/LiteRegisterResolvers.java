@@ -1,50 +1,41 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.component.LiteComponent;
-import dev.rollczi.litecommands.component.LiteMultiSection;
 import dev.rollczi.litecommands.component.LiteSection;
 import dev.rollczi.litecommands.component.ScopeMetaData;
+import dev.rollczi.litecommands.component.ScopeUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class LiteRegisterResolvers {
 
-    private final Map<String, LiteComponent> resolvers = new HashMap<>();
+    private final Map<String, LiteSection> resolvers = new HashMap<>();
 
     public void register(LiteSection section) {
-        String name = section.getScope().getName();
-        Set<String> aliases = section.getScope().getAliases();
+        ScopeMetaData scope = section.getScope();
+        String name = scope.getName();
 
         if (!resolvers.containsKey(name)) {
             resolvers.put(name, section);
             return;
         }
 
-        LiteComponent removed = resolvers.remove(name);
-        ScopeMetaData.Builder scope = ScopeMetaData.builder()
-                .name(name)
-                .aliases(aliases);
-        LiteMultiSection.Builder multi = LiteMultiSection.builder()
-                .name(name)
-                .sections(section);
+        LiteSection removed = resolvers.remove(name);
+        ScopeMetaData scopeRemoved = removed.getScope();
 
-        if (removed instanceof LiteMultiSection) {
-            LiteMultiSection oldMultiSection = (LiteMultiSection) removed;
-
-            scope.aliases(oldMultiSection.getScope().getAliases());
-            multi.sections(oldMultiSection.getSections());
-        } else if (removed instanceof LiteSection) {
-            LiteSection oldSection = (LiteSection) removed;
-
-            scope.aliases(oldSection.getScope().getAliases());
-            multi.sections(oldSection);
+        if (scopeRemoved.getPriority() == scope.getPriority()) {
+            throw new UnsupportedOperationException(ScopeUtils.annotationFormat(scopeRemoved) + " sections have the same priorities!");
         }
 
-        multi.scopeInformation(scope.build());
-        resolvers.put(name, multi.build());
+        LiteSection build = LiteSection.builder()
+                .resolvers(removed.getResolvers())
+                .resolvers(section.getResolvers())
+                .scopeInformation(scopeRemoved.getPriority() > scope.getPriority() ? scopeRemoved : scope)
+                .build();
+
+        resolvers.put(name, build);
     }
 
     public Map<String, LiteComponent> getResolvers() {

@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.annotations.Section;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 
-@Section(route = "ac")
+@Section(route = "ac", priority = 1)
 public class AppendMultiSectionTestCommand {
 
     @Execute(route = "tp")

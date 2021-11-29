@@ -9,8 +9,12 @@ public final class ReflectUtils {
 
     private ReflectUtils() {}
 
+    public static String formatClass(Class<?> clazz) {
+        return clazz.getSimpleName();
+    }
+
     public static String formatMethod(Method method) {
-        return method.getDeclaringClass().getSimpleName() + "#" + method.getName();
+        return formatClass(method.getDeclaringClass()) + "#" + method.getName();
     }
 
     public static String formatMethodParams(Method method) {

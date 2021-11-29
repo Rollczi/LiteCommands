@@ -52,7 +52,8 @@ public class LiteAnnotationParser implements AnnotationParser {
                 Section section = (Section) annotation;
                 builder
                     .name(section.route())
-                    .aliases(section.aliases());
+                    .aliases(section.aliases())
+                    .priority(section.priority());
 
                 if (section.required() > - 1) {
                     builder.amountValidator(validator -> validator.required(section.required()));
