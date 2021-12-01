@@ -29,6 +29,7 @@ subprojects {
         mavenLocal()
         mavenCentral()
 
+        maven { url "https://nexus.velocitypowered.com/repository/maven-public/" }
         maven { url "https://repo.panda-lang.org/releases/" }
     }
 
@@ -44,10 +45,10 @@ subprojects {
                 name = "panda-repository"
                 url = uri("https://repo.panda-lang.org/releases")
 
-                credentials {
-                    username = "$panda_user_litecommands"
-                    password = "$panda_pass_litecommands"
-                }
+//                credentials {
+//                    username = "$panda_user_litecommands"
+//                    password = "$panda_pass_litecommands"
+//                }
             }
         }
     }
