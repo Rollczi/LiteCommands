@@ -7,7 +7,7 @@ dependencies {
     // [test] kotlin
     testImplementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31'
     // [test] groovy
-    testImplementation 'org.codehaus.groovy:groovy-all:3.0.8'
+    testImplementation 'org.codehaus.groovy:groovy-all:3.0.9'
     // [test] junit-jupiter
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly    'org.junit.jupiter:junit-jupiter-engine:5.8.1'
