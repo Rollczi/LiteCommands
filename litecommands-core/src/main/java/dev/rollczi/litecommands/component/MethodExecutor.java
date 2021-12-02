@@ -35,10 +35,10 @@ public final class MethodExecutor {
         return Option.of(cachedParameters.get(currentArgsCount));
     }
 
-    public Result<Object, Pair<String, Throwable>> execute(InjectContext context) {
+    public Result<Option<Object>, Pair<String, Throwable>> execute(InjectContext context) {
         try {
             Object returned = injector.invokeMethod(method, instance, context);
-            return Result.ok(returned == null ? true : returned);
+            return Result.ok(Option.of(returned));
         } catch (IllegalAccessException illegalAccessException) {
             return Result.error(Pair.of("Method " + ReflectUtils.formatMethodParams(method) + " is " + ReflectUtils.modifier(method), illegalAccessException));
         } catch (IllegalArgumentException illegalArgumentException) {

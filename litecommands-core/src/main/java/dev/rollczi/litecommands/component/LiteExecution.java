@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
+import panda.std.Option;
 import panda.std.Pair;
 import panda.std.Result;
 
@@ -28,7 +29,7 @@ public final class LiteExecution extends AbstractComponent {
 
     @Override
     public ExecutionResult resolveExecution(ContextOfResolving context) {
-        Result<Object, Pair<String, Throwable>> result = executor.execute(new InjectContext(context, this));
+        Result<Option<Object>, Pair<String, Throwable>> result = executor.execute(new InjectContext(context, this));
 
         if (result.isOk()) {
             return ExecutionResult.valid();
