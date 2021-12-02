@@ -45,10 +45,10 @@ subprojects {
                 name = "panda-repository"
                 url = uri("https://repo.panda-lang.org/releases")
 
-                credentials {
-                    username = "$panda_user_litecommands"
-                    password = "$panda_pass_litecommands"
-                }
+//                credentials {
+//                    username = "$panda_user_litecommands"
+//                    password = "$panda_pass_litecommands"
+//                }
             }
         }
     }
