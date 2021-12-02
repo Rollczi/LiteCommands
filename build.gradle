@@ -14,7 +14,7 @@ plugins {
 
 allprojects {
     group = 'dev.rollczi.litecommands'
-    version = '1.3.0'
+    version = '1.3.1'
 
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -45,10 +45,10 @@ subprojects {
                 name = "panda-repository"
                 url = uri("https://repo.panda-lang.org/releases")
 
-//                credentials {
-//                    username = "$panda_user_litecommands"
-//                    password = "$panda_pass_litecommands"
-//                }
+                credentials {
+                    username = "$panda_user_litecommands"
+                    password = "$panda_pass_litecommands"
+                }
             }
         }
     }
