@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.component.ExecutionResult;
-import dev.rollczi.litecommands.component.LiteSection;
 import dev.rollczi.litecommands.inject.LiteBind;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.valid.ValidationMessagesService;
@@ -18,6 +17,7 @@ import dev.rollczi.litecommands.valid.handle.LiteExecutionResultHandler;
 import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
+import panda.utilities.text.Formatter;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,6 +36,7 @@ public class LiteCommandsBuilder {
     private final Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers = new HashMap<>();
     private final ValidationMessagesService messagesService = new ValidationMessagesService();
     private final LiteRegisterResolvers registerResolvers = new LiteRegisterResolvers();
+    private final Formatter placeholders = new Formatter();
     private ExecutionResultHandler executionResultHandler;
     private LitePlatformManager platformManager;
     private Logger logger;
@@ -101,6 +102,21 @@ public class LiteCommandsBuilder {
         return this;
     }
 
+    public LiteCommandsBuilder placeholder(String key, Supplier<String> supplier) {
+        this.placeholders.register(key, supplier);
+        return this;
+    }
+
+    public LiteCommandsBuilder placeholder(String key, String text) {
+        this.placeholders.register(key, text);
+        return this;
+    }
+
+    public LiteCommandsBuilder placeholders(Map<String, Supplier<String>> placeholders) {
+        placeholders.forEach(this.placeholders::register);
+        return this;
+    }
+
     public LiteCommandsBuilder platform(LitePlatformManager platformManager) {
         this.platformManager = platformManager;
         return this;
@@ -145,7 +161,7 @@ public class LiteCommandsBuilder {
             });
         });
 
-        AnnotationParser parser = new LiteAnnotationParser(argumentHandlers);
+        AnnotationParser parser = new LiteAnnotationParser(argumentHandlers, placeholders);
         LiteComponentFactory factory = new LiteComponentFactory(logger, injector, parser);
 
         for (Object instance : commandInstances) {

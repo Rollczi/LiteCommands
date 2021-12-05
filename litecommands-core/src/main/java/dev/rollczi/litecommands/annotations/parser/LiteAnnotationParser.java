@@ -17,18 +17,29 @@ import dev.rollczi.litecommands.annotations.Execute;
 import dev.rollczi.litecommands.annotations.IgnoreMethod;
 import dev.rollczi.litecommands.annotations.MinArgs;
 import panda.std.Option;
+import panda.utilities.text.Formatter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LiteAnnotationParser implements AnnotationParser {
 
     private final Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers;
+    private final Formatter placeholders;
 
     public LiteAnnotationParser(Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers) {
         this.argumentHandlers = argumentHandlers;
+        this.placeholders = new Formatter();
+    }
+
+    public LiteAnnotationParser(Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers, Formatter placeholders) {
+        this.argumentHandlers = argumentHandlers;
+        this.placeholders = placeholders;
     }
 
     @Override
@@ -50,9 +61,13 @@ public class LiteAnnotationParser implements AnnotationParser {
         for (Annotation annotation : annotatedElement.getAnnotations()) {
             if (annotation instanceof Section) {
                 Section section = (Section) annotation;
+                List<String> aliases = Arrays.stream(section.aliases())
+                        .map(placeholders::format)
+                        .collect(Collectors.toList());
+
                 builder
-                    .name(section.route())
-                    .aliases(section.aliases())
+                    .name(placeholders.format(section.route()))
+                    .aliases(aliases)
                     .priority(section.priority());
 
                 if (section.required() > - 1) {
@@ -64,7 +79,7 @@ public class LiteAnnotationParser implements AnnotationParser {
 
             if (annotation instanceof Execute) {
                 Execute execute = (Execute) annotation;
-                builder.name(execute.route());
+                builder.name(placeholders.format(execute.route()));
 
                 if (execute.required() > - 1) {
                     builder.amountValidator(validator -> validator.required(execute.required()));
@@ -77,7 +92,7 @@ public class LiteAnnotationParser implements AnnotationParser {
                 Permissions permissions = (Permissions) annotation;
 
                 for (Permission permission : permissions.value()) {
-                    builder.permissions(permission.value());
+                    builder.permissions(placeholders.format(permission.value()));
                 }
 
                 continue;
@@ -85,14 +100,14 @@ public class LiteAnnotationParser implements AnnotationParser {
 
             if (annotation instanceof Permission) {
                 Permission permission = (Permission) annotation;
-                builder.permissions(permission.value());
+                builder.permissions(placeholders.format(permission.value()));
                 continue;
             }
 
             if (annotation instanceof PermissionsExclude) {
                 PermissionsExclude excludes = (PermissionsExclude) annotation;
                 for (PermissionExclude exclude : excludes.value()) {
-                    builder.permissionsExclude(exclude.value());
+                    builder.permissionsExclude(placeholders.format(exclude.value()));
                 }
 
                 continue;
@@ -100,13 +115,13 @@ public class LiteAnnotationParser implements AnnotationParser {
 
             if (annotation instanceof PermissionExclude) {
                 PermissionExclude exclude = (PermissionExclude) annotation;
-                builder.permissionsExclude(exclude.value());
+                builder.permissionsExclude(placeholders.format(exclude.value()));
                 continue;
             }
 
             if (annotation instanceof UsageMessage) {
                 UsageMessage usageMessage = (UsageMessage) annotation;
-                builder.message(ValidationInfo.INVALID_USE, usageMessage.value());
+                builder.message(ValidationInfo.INVALID_USE, placeholders.format(usageMessage.value()));
                 continue;
             }
 
