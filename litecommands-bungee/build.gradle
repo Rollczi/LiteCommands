@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(":litecommands-core").getProject()
+    api project(":litecommands-core").getProject()
 
     compileOnly "net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT"
 }

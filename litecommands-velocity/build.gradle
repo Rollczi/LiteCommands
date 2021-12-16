@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(":litecommands-core").getProject()
+    api project(":litecommands-core").getProject()
 
     compileOnly 'com.velocitypowered:velocity-api:3.0.2-SNAPSHOT'
 }

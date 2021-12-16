@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(":litecommands-core").getProject()
+    api project(":litecommands-core").getProject()
 
     compileOnly "org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT"
 }

@@ -11,6 +11,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version '1.6.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
 allprojects {
@@ -19,6 +20,7 @@ allprojects {
 
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     java {
         withSourcesJar()
