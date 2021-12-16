@@ -64,10 +64,12 @@ implementation 'dev.rollczi.litecommands:velocity:1.3.2'
 #### All extensions: 
  - [Velocity](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-velocity)
  - [Bukkit](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit)
+ - [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
 #### Other examples: 
  - [Wiki Velocity Example](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(simple))
  - [Wiki Velocity Example (advanced)](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(advanced))
  - [(Rollczi) Bukkit Example](https://github.com/Rollczi/LiteCommands-BukkitExample)
+ - [(shitzuu) BungeeCord Example](https://github.com/shitzuu/LiteCommands-BungeeExample)
 
 See (Important dependencies used)
  - [panda-lang/expressible](https://github.com/panda-lang/expressible)
