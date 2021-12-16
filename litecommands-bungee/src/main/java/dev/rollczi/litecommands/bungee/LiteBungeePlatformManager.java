@@ -2,14 +2,12 @@ package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.LitePlatformManager;
 import dev.rollczi.litecommands.component.ScopeMetaData;
-import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class LiteBungeePlatformManager implements LitePlatformManager {
 
@@ -32,13 +30,9 @@ public class LiteBungeePlatformManager implements LitePlatformManager {
     @Override
     public void unregisterCommands() {
         PluginManager pluginManager = plugin.getProxy().getPluginManager();
-
-        Set<Command> registeredCommands = pluginManager.getCommands().stream()
+        pluginManager.getCommands().stream()
                 .filter(entry -> commands.contains(entry.getKey()))
                 .map(Map.Entry::getValue)
-                .collect(Collectors.toSet());
-        for (Command command : registeredCommands) {
-            pluginManager.unregisterCommand(command);
-        }
+                .forEach(pluginManager::unregisterCommand);
     }
 }
