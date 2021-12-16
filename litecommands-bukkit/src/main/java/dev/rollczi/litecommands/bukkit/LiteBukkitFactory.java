@@ -8,6 +8,10 @@ import org.bukkit.command.CommandSender;
 
 public final class LiteBukkitFactory {
 
+    private LiteBukkitFactory() {
+
+    }
+
     public static LiteCommandsBuilder builder(Server server, String fallbackPrefix) {
         return LiteFactory.builder()
                 .bind(Server.class, server)

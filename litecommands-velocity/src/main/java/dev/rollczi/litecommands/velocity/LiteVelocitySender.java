@@ -12,14 +12,17 @@ public class LiteVelocitySender implements LiteSender {
         this.source = source;
     }
 
+    @Override
     public boolean hasPermission(String permission) {
         return source.hasPermission(permission);
     }
 
+    @Override
     public void sendMessage(String message) {
         source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
     }
 
+    @Override
     public CommandSource getSender() {
         return source;
     }

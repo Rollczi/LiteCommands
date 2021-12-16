@@ -3,6 +3,7 @@ buildscript {
         coreArtifact = 'core'
         velocityArtifact = 'velocity'
         bukkitArtifact = 'bukkit'
+        bungeeArtifact = 'bungee'
     }
 }
 
@@ -32,6 +33,7 @@ subprojects {
         maven { url "https://nexus.velocitypowered.com/repository/maven-public/" }
         maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
         maven { url "https://repo.panda-lang.org/releases/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 
     apply plugin: 'org.jetbrains.kotlin.jvm'

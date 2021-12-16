@@ -1,14 +1,15 @@
-package dev.rollczi.litecommands.bukkit;
+package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.LiteSender;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 
-public class LiteBukkitSender implements LiteSender {
+public class LiteBungeeSender implements LiteSender {
 
     private final CommandSender sender;
 
-    public LiteBukkitSender(CommandSender sender) {
+    public LiteBungeeSender(CommandSender sender) {
         this.sender = sender;
     }
 
@@ -19,7 +20,7 @@ public class LiteBukkitSender implements LiteSender {
 
     @Override
     public void sendMessage(String message) {
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        sender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message)));
     }
 
     @Override
