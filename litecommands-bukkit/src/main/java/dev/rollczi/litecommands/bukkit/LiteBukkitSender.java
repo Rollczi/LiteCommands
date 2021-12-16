@@ -12,14 +12,17 @@ public class LiteBukkitSender implements LiteSender {
         this.sender = sender;
     }
 
+    @Override
     public boolean hasPermission(String permission) {
         return sender.hasPermission(permission);
     }
 
+    @Override
     public void sendMessage(String message) {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
+    @Override
     public CommandSender getSender() {
         return sender;
     }

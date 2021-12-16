@@ -8,6 +8,10 @@ import dev.rollczi.litecommands.inject.basic.OriginalSenderBind;
 
 public final class LiteVelocityFactory {
 
+    private LiteVelocityFactory() {
+
+    }
+
     public static LiteCommandsBuilder builder(ProxyServer proxy) {
         return LiteFactory.builder()
                 .bind(ProxyServer.class, proxy)

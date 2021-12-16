@@ -9,6 +9,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public final class LiteBungeeFactory {
 
+    private LiteBungeeFactory() {
+
+    }
+
     public static LiteCommandsBuilder builder(Plugin plugin) {
         return LiteFactory.builder()
                 .bind(Plugin.class, plugin)
