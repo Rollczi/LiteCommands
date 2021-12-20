@@ -23,7 +23,7 @@ class LiteComponentFactoryTest : LiteCommandsSpec() {
 
         val sectionOption = factory.createSection(TestCommand::class.java)
 
-        assertTrue(sectionOption.isPresent)
+        assertTrue(sectionOption.isOk)
 
         val section = sectionOption.get()
         val scope = section.scope

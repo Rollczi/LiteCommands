@@ -22,7 +22,7 @@ public class LiteComponentFactory {
         this.parser = parser;
     }
 
-    public Option<LiteSection> createSection(Object sectionInstance) {
+    public Result<LiteSection, Throwable> createSection(Object sectionInstance) {
         Class<?> sectionClass = sectionInstance.getClass();
 
         return parser.parse(sectionClass).map(scope -> {
@@ -35,7 +35,7 @@ public class LiteComponentFactory {
             Set<LiteSection> innerSections = PandaStream.of(sectionClass.getClasses())
                     .concat(sectionClass.getDeclaredClasses())
                     .distinct()
-                    .mapOpt(innerClass -> Result.attempt(Throwable.class, () -> createSection(innerClass))
+                    .map(innerClass -> createSection(innerClass)
                             .orElseThrow(error -> new RuntimeException("Can't create inner class " + innerClass, error)))
                     .toSet();
 
@@ -44,11 +44,11 @@ public class LiteComponentFactory {
                     .resolvers(innerSections)
                     .resolvers(executions)
                     .build();
-        });
+        }).toResult(new RuntimeException(sectionInstance.getClass() + " class isn't a section"));
     }
 
-    public Option<LiteSection> createSection(Class<?> sectionClass) {
-        return Option.attempt(Throwable.class, () -> injector.newInstance(sectionClass))
+    public Result<LiteSection, Throwable> createSection(Class<?> sectionClass) {
+        return Result.attempt(Throwable.class, () -> injector.newInstance(sectionClass))
                 .flatMap(this::createSection);
     }
 

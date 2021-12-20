@@ -171,12 +171,12 @@ public class LiteCommandsBuilder {
 
         for (Object instance : commandInstances) {
             registerResolvers.register(factory.createSection(instance)
-                    .orThrow(() -> new IllegalArgumentException(instance.getClass() + " instance isn't a section")));
+                    .orElseThrow(RuntimeException::new));
         }
 
         for (Class<?> commandClass : commandClasses) {
             registerResolvers.register(factory.createSection(commandClass)
-                    .orThrow(() -> new IllegalArgumentException(commandClass + " class isn't a section")));
+                    .orElseThrow(RuntimeException::new));
         }
 
         for (LiteComponent resolver : registerResolvers.getResolvers().values()) {
