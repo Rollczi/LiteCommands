@@ -39,7 +39,8 @@ public class LiteCommandsBuilder {
     private final Formatter placeholders = new Formatter();
     private ExecutionResultHandler executionResultHandler;
     private LitePlatformManager platformManager;
-    private Logger logger;
+    private Injector baseInjector = DependencyInjection.createInjector();
+    private Logger logger = Logger.getLogger("LiteCommands");
 
     public LiteCommandsBuilder() {
     }
@@ -64,6 +65,11 @@ public class LiteCommandsBuilder {
 
     public LiteCommandsBuilder bind(Collection<Bind> binds) {
         this.binds.addAll(binds);
+        return this;
+    }
+
+    public LiteCommandsBuilder baseInjector(Injector baseInjector) {
+        this.baseInjector = baseInjector;
         return this;
     }
 
@@ -132,16 +138,15 @@ public class LiteCommandsBuilder {
             throw new NullPointerException();
         }
 
-        if (logger == null) {
-            logger = Logger.getLogger("LiteCommands");
-        }
-
         if (executionResultHandler == null) {
             executionResultHandler = new LiteExecutionResultHandler(messagesService);
         }
 
-        Injector injector = DependencyInjection.createInjector(resources -> {
-            binds.forEach(bind -> bind.bind(resources));
+        Injector injector = baseInjector.fork(resources -> {
+            for (Bind bind : binds) {
+                bind.bind(resources);
+            }
+
             resources.annotatedWith(Arg.class).assignHandler((property, arg, objects) -> {
                 InjectContext context = InjectUtils.getContextFromObjects(objects);
                 LiteInvocation invocation = context.getInvocation();
