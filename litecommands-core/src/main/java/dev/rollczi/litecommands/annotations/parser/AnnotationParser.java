@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.parser;
 import dev.rollczi.litecommands.annotations.IgnoreClass;
 import dev.rollczi.litecommands.annotations.IgnoreMethod;
 import dev.rollczi.litecommands.component.ScopeMetaData;
-import dev.rollczi.litecommands.inject.SingleArgumentHandler;
+import dev.rollczi.litecommands.inject.ArgumentHandler;
 import panda.std.Option;
 
 import java.lang.reflect.AnnotatedElement;
@@ -21,6 +21,6 @@ public interface AnnotationParser {
      */
     Option<ScopeMetaData> parse(AnnotatedElement annotatedElement);
 
-    Option<SingleArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass);
+    Option<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass);
 
 }

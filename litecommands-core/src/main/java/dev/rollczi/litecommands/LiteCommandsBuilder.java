@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.component.ExecutionResult;
+import dev.rollczi.litecommands.inject.ArgumentHandler;
 import dev.rollczi.litecommands.inject.LiteBind;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.valid.ValidationMessagesService;
@@ -12,7 +13,6 @@ import dev.rollczi.litecommands.component.LiteComponentFactory;
 import dev.rollczi.litecommands.inject.Bind;
 import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.inject.InjectUtils;
-import dev.rollczi.litecommands.inject.SingleArgumentHandler;
 import dev.rollczi.litecommands.valid.handle.LiteExecutionResultHandler;
 import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
 import org.panda_lang.utilities.inject.DependencyInjection;
@@ -33,7 +33,7 @@ public class LiteCommandsBuilder {
     private final Set<Class<?>> commandClasses = new HashSet<>();
     private final Set<Object> commandInstances = new HashSet<>();
     private final Set<Bind> binds = new HashSet<>();
-    private final Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers = new HashMap<>();
+    private final Map<Class<?>, ArgumentHandler<?>> argumentHandlers = new HashMap<>();
     private final ValidationMessagesService messagesService = new ValidationMessagesService();
     private final LiteRegisterResolvers registerResolvers = new LiteRegisterResolvers();
     private final Formatter placeholders = new Formatter();
@@ -93,8 +93,8 @@ public class LiteCommandsBuilder {
         return this;
     }
 
-    public <T> LiteCommandsBuilder argument(Class<T> on, SingleArgumentHandler<T> singleArgumentHandler) {
-        this.argumentHandlers.put(on, singleArgumentHandler);
+    public <T> LiteCommandsBuilder argument(Class<T> on, ArgumentHandler<T> argumentHandler) {
+        this.argumentHandlers.put(on, argumentHandler);
         return this;
     }
 
@@ -149,17 +149,16 @@ public class LiteCommandsBuilder {
 
             resources.annotatedWith(Arg.class).assignHandler((property, arg, objects) -> {
                 InjectContext context = InjectUtils.getContextFromObjects(objects);
-                LiteInvocation invocation = context.getInvocation();
 
-                for (Map.Entry<Class<?>, SingleArgumentHandler<?>> entry : argumentHandlers.entrySet()) {
+                for (Map.Entry<Class<?>, ArgumentHandler<?>> entry : argumentHandlers.entrySet()) {
                     Class<?> on = entry.getKey();
-                    SingleArgumentHandler<?> singleArgumentHandler = entry.getValue();
+                    ArgumentHandler<?> argumentHandler = entry.getValue();
 
                     if (!on.isAssignableFrom(property.getType())) {
                         continue;
                     }
 
-                    return singleArgumentHandler.parse(invocation.arguments()[context.getArgsMargin() + arg.value()]);
+                    return argumentHandler.parse(context, arg.value());
                 }
 
                 return null;

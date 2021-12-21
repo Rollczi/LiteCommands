@@ -10,12 +10,13 @@ import dev.rollczi.litecommands.annotations.PermissionsExclude;
 import dev.rollczi.litecommands.annotations.Required;
 import dev.rollczi.litecommands.annotations.Section;
 import dev.rollczi.litecommands.annotations.UsageMessage;
-import dev.rollczi.litecommands.component.ScopeMetaData;
-import dev.rollczi.litecommands.inject.SingleArgumentHandler;
-import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.annotations.Execute;
 import dev.rollczi.litecommands.annotations.IgnoreMethod;
 import dev.rollczi.litecommands.annotations.MinArgs;
+import dev.rollczi.litecommands.component.ScopeMetaData;
+import dev.rollczi.litecommands.inject.ArgumentHandler;
+import dev.rollczi.litecommands.valid.ValidationInfo;
+
 import panda.std.Option;
 import panda.utilities.text.Formatter;
 
@@ -29,15 +30,15 @@ import java.util.stream.Collectors;
 
 public class LiteAnnotationParser implements AnnotationParser {
 
-    private final Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers;
+    private final Map<Class<?>, ArgumentHandler<?>> argumentHandlers;
     private final Formatter placeholders;
 
-    public LiteAnnotationParser(Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers) {
+    public LiteAnnotationParser(Map<Class<?>, ArgumentHandler<?>> argumentHandlers) {
         this.argumentHandlers = argumentHandlers;
         this.placeholders = new Formatter();
     }
 
-    public LiteAnnotationParser(Map<Class<?>, SingleArgumentHandler<?>> argumentHandlers, Formatter placeholders) {
+    public LiteAnnotationParser(Map<Class<?>, ArgumentHandler<?>> argumentHandlers, Formatter placeholders) {
         this.argumentHandlers = argumentHandlers;
         this.placeholders = placeholders;
     }
@@ -153,7 +154,7 @@ public class LiteAnnotationParser implements AnnotationParser {
     }
 
     @Override
-    public Option<SingleArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass) {
+    public Option<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass) {
         return Option.of(argumentHandlers.get(argumentClass));
     }
 
