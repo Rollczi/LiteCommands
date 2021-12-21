@@ -8,9 +8,13 @@ public class ValidationCommandException extends RuntimeException {
         this.validationInfo = validationInfo;
     }
 
-    public ValidationCommandException(ValidationInfo validationInfo, String customValidInfo) {
-        super(customValidInfo);
+    public ValidationCommandException(ValidationInfo validationInfo, String message) {
+        super(message);
         this.validationInfo = validationInfo;
+    }
+
+    public ValidationCommandException(String customMessage) {
+        this(ValidationInfo.CUSTOM, customMessage);
     }
 
     public ValidationInfo getValidationInfo() {
