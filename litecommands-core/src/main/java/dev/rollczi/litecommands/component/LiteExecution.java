@@ -50,15 +50,20 @@ public final class LiteExecution extends AbstractComponent {
 
     @Override
     public List<String> resolveCompletion(ContextOfResolving context) {
-        return generateCompletionByMetaData(context, context.getCurrentArgsCount(this) - 1);
+        LiteInvocation invocation = context.getInvocation();
+
+        return generateCompletion(context.getCurrentArgsCount(this) - 1, invocation.alias(), invocation.arguments());
     }
 
-    public List<String> generateCompletionByMetaData(ContextOfResolving data, int argNumber) {
-        LiteInvocation invocation = data.getInvocation();
-
-        return executor.getParameter(argNumber)
+    public List<String> generateCompletion(int argNumber, String commandName, String[] commandArgs) {
+        return executor.getParameterClass(argNumber)
                 .flatMap(parser::getArgumentHandler)
-                .map(argumentHandler -> argumentHandler.tabulation(invocation.name(), invocation.arguments()))
+                .map(argumentHandler -> argumentHandler.tabulation(commandName, commandArgs))
                 .orElseGet(Collections.emptyList());
     }
+
+    public MethodExecutor getExecutor() {
+        return executor;
+    }
+
 }

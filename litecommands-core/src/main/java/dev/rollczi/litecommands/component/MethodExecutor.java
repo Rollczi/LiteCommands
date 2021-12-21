@@ -13,6 +13,7 @@ import panda.utilities.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
 import java.util.Map;
 
 public final class MethodExecutor {
@@ -20,7 +21,7 @@ public final class MethodExecutor {
     private final Method method;
     private final Object instance;
     private final Injector injector;
-    private final  Map<Integer, Class<?>> cachedParameters;
+    private final Map<Integer, Class<?>> cachedParameters;
 
     public MethodExecutor(Method method, Object instance, Injector injector) {
         this.method = method;
@@ -31,8 +32,12 @@ public final class MethodExecutor {
                 .toMap(parameter -> parameter.getAnnotation(Arg.class).value(), Parameter::getType);
     }
 
-    public Option<Class<?>> getParameter(int currentArgsCount) {
+    public Option<Class<?>> getParameterClass(int currentArgsCount) {
         return Option.of(cachedParameters.get(currentArgsCount));
+    }
+
+    public Map<Integer, Class<?>> getParameters() {
+        return Collections.unmodifiableMap(cachedParameters);
     }
 
     public Result<Option<Object>, Pair<String, Throwable>> execute(InjectContext context) {

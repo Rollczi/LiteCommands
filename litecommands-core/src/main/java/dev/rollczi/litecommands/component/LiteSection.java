@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.component;
 
+import dev.rollczi.litecommands.LiteInvocation;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
@@ -109,7 +110,8 @@ public final class LiteSection extends AbstractComponent {
 
         if (component != null && arguments.length != 0 && component instanceof LiteExecution) {
             LiteExecution liteExecution = (LiteExecution) component;
-            List<String> oldSuggestions = liteExecution.generateCompletionByMetaData(data, currentContextOfResolving.getCurrentArgsCount(this) - 1);
+            LiteInvocation invocation = data.getInvocation();
+            List<String> oldSuggestions = liteExecution.generateCompletion(currentContextOfResolving.getCurrentArgsCount(this) - 1, invocation.alias(), invocation.arguments());
 
             if (oldSuggestions.contains(arguments[arguments.length - 2])) {
                 return component.resolveCompletion(currentContextOfResolving);
