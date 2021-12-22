@@ -9,7 +9,7 @@ import java.util.List;
 public class EmptyTestSenderArgument implements SingleArgumentHandler<EmptyTestSender> {
 
     @Override
-    public EmptyTestSender parse(String argument) throws ValidationCommandException {
+    public EmptyTestSender parse(LiteInvocation invocation, String argument) throws ValidationCommandException {
         return new EmptyTestSender();
     }
 

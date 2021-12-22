@@ -29,10 +29,11 @@ public final class LiteExecution extends AbstractComponent {
 
     @Override
     public ExecutionResult resolveExecution(ContextOfResolving context) {
-        Result<Option<Object>, Pair<String, Throwable>> result = executor.execute(new InjectContext(context, this));
+        ContextOfResolving currentContext = context.resolverNestingTracing(this);
+        Result<Option<Object>, Pair<String, Throwable>> result = executor.execute(new InjectContext(currentContext));
 
         if (result.isOk()) {
-            return ExecutionResult.valid();
+            return ExecutionResult.valid(currentContext);
         }
 
         Throwable throwable = result.getError().getSecond();
@@ -41,24 +42,28 @@ public final class LiteExecution extends AbstractComponent {
         if (throwable instanceof ValidationCommandException) {
             ValidationCommandException validationEx = (ValidationCommandException) throwable;
 
-            return ExecutionResult.invalid(validationEx.getValidationInfo(), validationEx.getMessage());
+            return ExecutionResult.invalid(validationEx.getValidationInfo(), validationEx.getMessage(), currentContext);
         }
 
         logger.log(Level.SEVERE, errorMessage, throwable);
-        return ExecutionResult.invalid(ValidationInfo.INTERNAL_ERROR, errorMessage);
+        return ExecutionResult.invalid(ValidationInfo.INTERNAL_ERROR, errorMessage, context);
     }
 
     @Override
     public List<String> resolveCompletion(ContextOfResolving context) {
-        return generateCompletionByMetaData(context, context.getCurrentArgsCount(this) - 1);
+        LiteInvocation invocation = context.getInvocation();
+
+        return generateCompletion(context.getCurrentArgsCount(this) - 1, invocation.alias(), invocation.arguments());
     }
 
-    public List<String> generateCompletionByMetaData(ContextOfResolving data, int argNumber) {
-        LiteInvocation invocation = data.getInvocation();
-
-        return executor.getParameter(argNumber)
-                .flatMap(parser::getArgumentHandler)
-                .map(argumentHandler -> argumentHandler.tabulation(invocation.name(), invocation.arguments()))
+    public List<String> generateCompletion(int argNumber, String commandName, String[] commandArgs) {
+        return executor.getArgumentHandler(argNumber)
+                .map(argumentHandler -> argumentHandler.tabulation(commandName, commandArgs))
                 .orElseGet(Collections.emptyList());
     }
+
+    public MethodExecutor getExecutor() {
+        return executor;
+    }
+
 }

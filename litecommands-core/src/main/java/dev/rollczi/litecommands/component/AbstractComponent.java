@@ -23,7 +23,7 @@ public abstract class AbstractComponent implements LiteComponent {
     }
 
     @Override
-    public List<String> getMissedPermission(ContextOfResolving context) {
+    public List<String> getMissingPermission(ContextOfResolving context) {
         if (!(this instanceof LiteExecution)) {
             return Collections.emptyList();
         }

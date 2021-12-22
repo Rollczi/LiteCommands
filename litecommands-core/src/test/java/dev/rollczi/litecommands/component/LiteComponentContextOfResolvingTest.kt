@@ -50,7 +50,7 @@ class LiteComponentContextOfResolvingTest : LiteCommandsSpec() {
         : AbstractComponent(ScopeMetaData.builder().name(name).build()) {
 
         override fun resolveExecution(data: LiteComponent.ContextOfResolving) : ExecutionResult {
-            return ExecutionResult.valid()
+            return ExecutionResult.valid(data.resolverNestingTracing(this))
         }
 
         override fun resolveCompletion(data: LiteComponent.ContextOfResolving): MutableList<String> = Collections.emptyList()

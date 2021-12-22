@@ -14,7 +14,7 @@ public interface LiteComponent {
 
     ScopeMetaData getScope();
 
-    List<String> getMissedPermission(ContextOfResolving context);
+    List<String> getMissingPermission(ContextOfResolving context);
 
     boolean hasValidArgs(ContextOfResolving context);
 

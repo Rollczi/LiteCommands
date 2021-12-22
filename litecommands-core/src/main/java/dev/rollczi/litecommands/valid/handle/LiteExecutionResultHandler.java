@@ -3,23 +3,24 @@ package dev.rollczi.litecommands.valid.handle;
 import dev.rollczi.litecommands.component.ExecutionResult;
 import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.valid.ValidationInfo;
-import dev.rollczi.litecommands.valid.ValidationMessagesService;
+import dev.rollczi.litecommands.valid.messages.MessagesService;
 import dev.rollczi.litecommands.LiteInvocation;
 
 public class LiteExecutionResultHandler implements ExecutionResultHandler {
 
-    private final ValidationMessagesService messagesService;
+    private final MessagesService messagesService;
 
-    public LiteExecutionResultHandler(ValidationMessagesService messagesService) {
+    public LiteExecutionResultHandler(MessagesService messagesService) {
         this.messagesService = messagesService;
     }
 
     @Override
-    public void handle(ExecutionResult executionResult, LiteComponent.ContextOfResolving context) {
+    public void handle(ExecutionResult executionResult) {
         if (executionResult.isValid()) {
             return;
         }
 
+        LiteComponent.ContextOfResolving context = executionResult.getLastContext();
         LiteInvocation invocation = context.getInvocation();
         ValidationInfo info = executionResult.getValidInfo();
 
@@ -29,7 +30,7 @@ public class LiteExecutionResultHandler implements ExecutionResultHandler {
         }
 
         String message = executionResult.getValidMessage() == null
-                        ? messagesService.getMessage(info, context, executionResult)
+                        ? messagesService.getMessage(info, executionResult)
                         : executionResult.getValidMessage();
 
 

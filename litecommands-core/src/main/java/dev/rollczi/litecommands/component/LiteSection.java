@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.component;
 
+import dev.rollczi.litecommands.LiteInvocation;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
@@ -43,16 +44,19 @@ public final class LiteSection extends AbstractComponent {
 
         LiteComponent candidate = filteredComponents.get(0);
         ContextOfResolving candidateContext = currentContext.resolverNestingTracing(candidate);
-        filteredComponents.removeIf(component -> !component.getMissedPermission(currentContext).isEmpty());
+        filteredComponents.removeIf(component -> !component.getMissingPermission(currentContext).isEmpty());
 
         if (filteredComponents.isEmpty()) {
-            return ExecutionResult.invalidPermission(candidate.getMissedPermission(currentContext));
+            List<String> missingPermission = candidate.getMissingPermission(currentContext);
+
+            return ExecutionResult.invalidPermission(missingPermission, currentContext);
         }
 
         Option<ExecutionResult> lastInvalid = Option.none();
 
         for (LiteComponent component : filteredComponents) {
             if (!component.hasValidArgs(currentContext)) {
+                lastInvalid = Option.of(ExecutionResult.invalid(ValidationInfo.INVALID_USE, currentContext.resolverNestingTracing(component)));
                 continue;
             }
 
@@ -109,7 +113,8 @@ public final class LiteSection extends AbstractComponent {
 
         if (component != null && arguments.length != 0 && component instanceof LiteExecution) {
             LiteExecution liteExecution = (LiteExecution) component;
-            List<String> oldSuggestions = liteExecution.generateCompletionByMetaData(data, currentContextOfResolving.getCurrentArgsCount(this) - 1);
+            LiteInvocation invocation = data.getInvocation();
+            List<String> oldSuggestions = liteExecution.generateCompletion(currentContextOfResolving.getCurrentArgsCount(this) - 1, invocation.alias(), invocation.arguments());
 
             if (oldSuggestions.contains(arguments[arguments.length - 2])) {
                 return component.resolveCompletion(currentContextOfResolving);
