@@ -8,22 +8,25 @@ import java.util.List;
 
 public class ExecutionResult {
 
+    private final LiteComponent.ContextOfResolving lastContext;
     private final ValidationInfo validationInfo;
     private final String validationMessage;
     private final boolean canIgnore;
-    private final List<String> missedPermissions = new ArrayList<>();
+    private final List<String> missingPermissions = new ArrayList<>();
 
-    private ExecutionResult(ValidationInfo validationInfo, String validationMessage, boolean canIgnore) {
+    private ExecutionResult(LiteComponent.ContextOfResolving lastContext, ValidationInfo validationInfo, String validationMessage, boolean canIgnore) {
+        this.lastContext = lastContext;
         this.validationInfo = validationInfo;
         this.validationMessage = validationMessage;
         this.canIgnore = canIgnore;
     }
 
-    private ExecutionResult(List<String> missedPermissions) {
+    private ExecutionResult(List<String> missingPermissions, LiteComponent.ContextOfResolving lastContext) {
+        this.lastContext = lastContext;
         this.validationInfo = ValidationInfo.NO_PERMISSION;
         this.validationMessage = null;
         this.canIgnore = false;
-        this.missedPermissions.addAll(missedPermissions);
+        this.missingPermissions.addAll(missingPermissions);
     }
 
     public boolean isValid() {
@@ -42,36 +45,36 @@ public class ExecutionResult {
         return validationInfo;
     }
 
+    public LiteComponent.ContextOfResolving getLastContext() {
+        return lastContext;
+    }
+
     public boolean canIgnore() {
         return canIgnore;
     }
 
-    public List<String> getMissedPermissions() {
-        return Collections.unmodifiableList(missedPermissions);
+    public List<String> getMissingPermissions() {
+        return Collections.unmodifiableList(missingPermissions);
     }
 
-    public static ExecutionResult valid() {
-        return new ExecutionResult(ValidationInfo.NONE, null, false);
+    public static ExecutionResult valid(LiteComponent.ContextOfResolving lastContext) {
+        return new ExecutionResult(lastContext, ValidationInfo.NONE, null, false);
     }
 
-    public static ExecutionResult invalid(ValidationInfo info, String validationMessage) {
-        return new ExecutionResult(info, validationMessage, false);
+    public static ExecutionResult invalid(ValidationInfo info, String validationMessage, LiteComponent.ContextOfResolving lastContext) {
+        return new ExecutionResult(lastContext, info, validationMessage, false);
     }
 
-    public static ExecutionResult invalid(ValidationInfo info, LiteComponent.ContextOfResolving context) {
-        return new ExecutionResult(info, ScopeUtils.getLastMessage(info, context), false);
+    public static ExecutionResult invalid(ValidationInfo info, LiteComponent.ContextOfResolving lastContext) {
+        return new ExecutionResult(lastContext, info, ScopeUtils.getLastMessage(info, lastContext), false);
     }
 
-    public static ExecutionResult invalidPermission(List<String> missedPermissions) {
-        return new ExecutionResult(missedPermissions);
+    public static ExecutionResult invalidPermission(List<String> missingPermissions, LiteComponent.ContextOfResolving lastContext) {
+        return new ExecutionResult(missingPermissions, lastContext);
     }
 
-    public static ExecutionResult invalid(ValidationInfo info, String validationMessage, boolean canIgnore) {
-        return new ExecutionResult(info, validationMessage, canIgnore);
-    }
-
-    public static ExecutionResult invalid(ValidationInfo info, LiteComponent.ContextOfResolving context, boolean canIgnore) {
-        return new ExecutionResult(info, ScopeUtils.getLastMessage(info, context), canIgnore);
+    public static ExecutionResult invalid(ValidationInfo info, LiteComponent.ContextOfResolving lastContext, boolean canIgnore) {
+        return new ExecutionResult(lastContext, info, ScopeUtils.getLastMessage(info, lastContext), canIgnore);
     }
 
 }

@@ -2,9 +2,12 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.component.ExecutionResult;
 import dev.rollczi.litecommands.inject.ArgumentHandler;
+import dev.rollczi.litecommands.inject.ArgumentName;
 import dev.rollczi.litecommands.inject.LiteBind;
 import dev.rollczi.litecommands.valid.ValidationInfo;
-import dev.rollczi.litecommands.valid.ValidationMessagesService;
+import dev.rollczi.litecommands.valid.messages.ContextualMessage;
+import dev.rollczi.litecommands.valid.messages.LiteMessage;
+import dev.rollczi.litecommands.valid.messages.MessagesService;
 import dev.rollczi.litecommands.annotations.Arg;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.annotations.parser.LiteAnnotationParser;
@@ -34,7 +37,7 @@ public class LiteCommandsBuilder {
     private final Set<Object> commandInstances = new HashSet<>();
     private final Set<Bind> binds = new HashSet<>();
     private final Map<Class<?>, ArgumentHandler<?>> argumentHandlers = new HashMap<>();
-    private final ValidationMessagesService messagesService = new ValidationMessagesService();
+    private final MessagesService messagesService = new MessagesService();
     private final LiteRegisterResolvers registerResolvers = new LiteRegisterResolvers();
     private final Formatter placeholders = new Formatter();
     private ExecutionResultHandler executionResultHandler;
@@ -98,12 +101,13 @@ public class LiteCommandsBuilder {
         return this;
     }
 
-    public LiteCommandsBuilder message(ValidationInfo validationInfo, String message) {
+    @Deprecated
+    public LiteCommandsBuilder message(ValidationInfo validationInfo, ContextualMessage message) {
         this.messagesService.registerMessage(validationInfo, message);
         return this;
     }
 
-    public LiteCommandsBuilder message(ValidationInfo validationInfo, ValidationInfo.ContextMessage message) {
+    public LiteCommandsBuilder message(ValidationInfo validationInfo, LiteMessage message) {
         this.messagesService.registerMessage(validationInfo, message);
         return this;
     }
@@ -165,6 +169,15 @@ public class LiteCommandsBuilder {
             });
         });
 
+        // Checks for legacy implementations
+        for (ArgumentHandler<?> handler : argumentHandlers.values()) {
+            if (handler.getClass().isAnnotationPresent(ArgumentName.class)) {
+                continue;
+            }
+
+            logger.warning( "annotation @ArgumentName isn't present before class " + handler.getClass());
+        }
+
         AnnotationParser parser = new LiteAnnotationParser(argumentHandlers, placeholders);
         LiteComponentFactory factory = new LiteComponentFactory(logger, injector, parser);
 
@@ -183,7 +196,7 @@ public class LiteCommandsBuilder {
                 LiteComponent.ContextOfResolving context = LiteComponent.ContextOfResolving.create(invocation);
                 ExecutionResult executionResult = resolver.resolveExecution(context);
 
-                executionResultHandler.handle(executionResult, context.resolverNestingTracing(resolver));
+                executionResultHandler.handle(executionResult);
             }, invocation -> resolver.resolveCompletion(LiteComponent.ContextOfResolving.create(invocation)));
         }
 

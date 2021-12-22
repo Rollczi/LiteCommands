@@ -53,8 +53,10 @@ public class LiteComponentFactory {
     }
 
     public Option<LiteExecution> createExecution(Object instance, Method executionMethod) {
+        MethodExecutor methodExecutor = new MethodExecutor(executionMethod, instance, injector, parser);
+
         return parser.parse(executionMethod)
-                .map((scope) -> new LiteExecution(logger, parser, scope, new MethodExecutor(executionMethod, instance, injector)));
+                .map((scope) -> new LiteExecution(logger, parser, scope, methodExecutor));
     }
 
 }

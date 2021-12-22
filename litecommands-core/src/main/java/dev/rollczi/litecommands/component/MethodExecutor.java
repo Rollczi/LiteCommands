@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.annotations.Arg;
+import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
+import dev.rollczi.litecommands.inject.ArgumentHandler;
 import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.utils.ReflectUtils;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
@@ -12,7 +14,6 @@ import panda.std.stream.PandaStream;
 import panda.utilities.StringUtils;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.Map;
 
@@ -21,23 +22,24 @@ public final class MethodExecutor {
     private final Method method;
     private final Object instance;
     private final Injector injector;
-    private final Map<Integer, Class<?>> cachedParameters;
+    private final Map<Integer, ArgumentHandler<?>> cachedArguments;
 
-    public MethodExecutor(Method method, Object instance, Injector injector) {
+    public MethodExecutor(Method method, Object instance, Injector injector, AnnotationParser annotationParser) {
         this.method = method;
         this.instance = instance;
         this.injector = injector;
-        this.cachedParameters = PandaStream.of(method.getParameters())
+        this.cachedArguments = PandaStream.of(method.getParameters())
                 .filter(parameter -> parameter.isAnnotationPresent(Arg.class))
-                .toMap(parameter -> parameter.getAnnotation(Arg.class).value(), Parameter::getType);
+                .toMap(parameter -> parameter.getAnnotation(Arg.class).value(), parameter -> annotationParser.getArgumentHandler(parameter.getType())
+                        .orThrow(() -> new RuntimeException("Can't index parameters of " + ReflectUtils.formatMethodParams(method))));
     }
 
-    public Option<Class<?>> getParameterClass(int currentArgsCount) {
-        return Option.of(cachedParameters.get(currentArgsCount));
+    public Option<ArgumentHandler<?>> getArgumentHandler(int currentArgsCount) {
+        return Option.of(cachedArguments.get(currentArgsCount));
     }
 
-    public Map<Integer, Class<?>> getParameters() {
-        return Collections.unmodifiableMap(cachedParameters);
+    public Map<Integer, ArgumentHandler<?>> getArgumentHandlers() {
+        return Collections.unmodifiableMap(cachedArguments);
     }
 
     public Result<Option<Object>, Pair<String, Throwable>> execute(InjectContext context) {

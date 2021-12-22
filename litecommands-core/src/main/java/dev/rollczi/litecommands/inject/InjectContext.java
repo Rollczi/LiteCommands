@@ -11,10 +11,9 @@ public class InjectContext {
     private final LiteInvocation invocation;
     private final List<LiteComponent> traces = new ArrayList<>();
 
-    public InjectContext(LiteComponent.ContextOfResolving data, LiteComponent current) {
+    public InjectContext(LiteComponent.ContextOfResolving data) {
         this.invocation = data.getInvocation();
         this.traces.addAll(data.getTracesOfResolvers());
-        this.traces.add(current);
     }
 
     public List<LiteComponent> getTraces() {

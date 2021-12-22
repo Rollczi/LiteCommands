@@ -44,16 +44,19 @@ public final class LiteSection extends AbstractComponent {
 
         LiteComponent candidate = filteredComponents.get(0);
         ContextOfResolving candidateContext = currentContext.resolverNestingTracing(candidate);
-        filteredComponents.removeIf(component -> !component.getMissedPermission(currentContext).isEmpty());
+        filteredComponents.removeIf(component -> !component.getMissingPermission(currentContext).isEmpty());
 
         if (filteredComponents.isEmpty()) {
-            return ExecutionResult.invalidPermission(candidate.getMissedPermission(currentContext));
+            List<String> missingPermission = candidate.getMissingPermission(currentContext);
+
+            return ExecutionResult.invalidPermission(missingPermission, currentContext);
         }
 
         Option<ExecutionResult> lastInvalid = Option.none();
 
         for (LiteComponent component : filteredComponents) {
             if (!component.hasValidArgs(currentContext)) {
+                lastInvalid = Option.of(ExecutionResult.invalid(ValidationInfo.INVALID_USE, currentContext.resolverNestingTracing(component)));
                 continue;
             }
 
