@@ -18,6 +18,7 @@ import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.inject.InjectUtils;
 import dev.rollczi.litecommands.valid.handle.LiteExecutionResultHandler;
 import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
+import dev.rollczi.litecommands.valid.messages.UseSchemeFormatting;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 import panda.utilities.text.Formatter;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -109,6 +111,11 @@ public class LiteCommandsBuilder {
 
     public LiteCommandsBuilder message(ValidationInfo validationInfo, LiteMessage message) {
         this.messagesService.registerMessage(validationInfo, message);
+        return this;
+    }
+
+    public LiteCommandsBuilder formatting(UseSchemeFormatting formatting) {
+        this.messagesService.setUseSchemeFormatting(formatting);
         return this;
     }
 
