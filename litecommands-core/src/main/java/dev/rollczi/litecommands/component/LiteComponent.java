@@ -66,6 +66,12 @@ public interface LiteComponent {
             return tracesOfResolvers;
         }
 
+        public int getArgsMargin() {
+            return tracesOfResolvers.get(tracesOfResolvers.size() - 1).getScope().getName().isEmpty()
+                    ? tracesOfResolvers.size() - 2
+                    : tracesOfResolvers.size() - 1;
+        }
+
         public LiteInvocation getInvocation() {
             return invocation;
         }

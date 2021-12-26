@@ -1,8 +1,6 @@
 package dev.rollczi.litecommands.component;
 
-import dev.rollczi.litecommands.LiteInvocation;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
-import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import panda.std.Option;
@@ -30,7 +28,7 @@ public final class LiteExecution extends AbstractComponent {
     @Override
     public ExecutionResult resolveExecution(ContextOfResolving context) {
         ContextOfResolving currentContext = context.resolverNestingTracing(this);
-        Result<Option<Object>, Pair<String, Throwable>> result = executor.execute(new InjectContext(currentContext));
+        Result<Option<Object>, Pair<String, Throwable>> result = executor.execute(currentContext);
 
         if (result.isOk()) {
             return ExecutionResult.valid(currentContext);
@@ -51,14 +49,12 @@ public final class LiteExecution extends AbstractComponent {
 
     @Override
     public List<String> resolveCompletion(ContextOfResolving context) {
-        LiteInvocation invocation = context.getInvocation();
-
-        return generateCompletion(context.getCurrentArgsCount(this) - 1, invocation.alias(), invocation.arguments());
+        return generateCompletion(context.getCurrentArgsCount(this) - 1, context);
     }
 
-    public List<String> generateCompletion(int argNumber, String commandName, String[] commandArgs) {
+    public List<String> generateCompletion(int argNumber, LiteComponent.ContextOfResolving context) {
         return executor.getArgumentHandler(argNumber)
-                .map(argumentHandler -> argumentHandler.tabulation(commandName, commandArgs))
+                .map(argumentHandler -> argumentHandler.tabulation(context))
                 .orElseGet(Collections.emptyList());
     }
 

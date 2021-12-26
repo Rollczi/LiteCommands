@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.component;
 import dev.rollczi.litecommands.annotations.Arg;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.inject.ArgumentHandler;
-import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.utils.ReflectUtils;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import org.panda_lang.utilities.inject.Injector;
@@ -42,7 +41,7 @@ public final class MethodExecutor {
         return Collections.unmodifiableMap(cachedArguments);
     }
 
-    public Result<Option<Object>, Pair<String, Throwable>> execute(InjectContext context) {
+    public Result<Option<Object>, Pair<String, Throwable>> execute(LiteComponent.ContextOfResolving context) {
         try {
             Object returned = injector.invokeMethod(method, instance, context);
             return Result.ok(Option.of(returned));

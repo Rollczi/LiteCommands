@@ -14,7 +14,6 @@ import dev.rollczi.litecommands.annotations.parser.LiteAnnotationParser;
 import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.component.LiteComponentFactory;
 import dev.rollczi.litecommands.inject.Bind;
-import dev.rollczi.litecommands.inject.InjectContext;
 import dev.rollczi.litecommands.inject.InjectUtils;
 import dev.rollczi.litecommands.valid.handle.LiteExecutionResultHandler;
 import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -159,7 +157,7 @@ public class LiteCommandsBuilder {
             }
 
             resources.annotatedWith(Arg.class).assignHandler((property, arg, objects) -> {
-                InjectContext context = InjectUtils.getContextFromObjects(objects);
+                LiteComponent.ContextOfResolving context = InjectUtils.getContextFromObjects(objects);
 
                 for (Map.Entry<Class<?>, ArgumentHandler<?>> entry : argumentHandlers.entrySet()) {
                     Class<?> on = entry.getKey();

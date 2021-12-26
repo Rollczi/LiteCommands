@@ -114,7 +114,7 @@ public final class LiteSection extends AbstractComponent {
         if (component != null && arguments.length != 0 && component instanceof LiteExecution) {
             LiteExecution liteExecution = (LiteExecution) component;
             LiteInvocation invocation = data.getInvocation();
-            List<String> oldSuggestions = liteExecution.generateCompletion(currentContextOfResolving.getCurrentArgsCount(this) - 1, invocation.alias(), invocation.arguments());
+            List<String> oldSuggestions = liteExecution.generateCompletion(currentContextOfResolving.getCurrentArgsCount(this) - 1, currentContextOfResolving);
 
             if (oldSuggestions.contains(arguments[arguments.length - 2])) {
                 return component.resolveCompletion(currentContextOfResolving);
