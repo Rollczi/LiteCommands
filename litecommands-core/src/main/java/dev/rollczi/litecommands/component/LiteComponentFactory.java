@@ -56,7 +56,7 @@ public class LiteComponentFactory {
         MethodExecutor methodExecutor = new MethodExecutor(executionMethod, instance, injector, parser);
 
         return parser.parse(executionMethod)
-                .map((scope) -> new LiteExecution(logger, parser, scope, methodExecutor));
+                .map((scope) -> new LiteExecution(logger, scope, methodExecutor));
     }
 
 }

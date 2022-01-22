@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.component;
 
-import dev.rollczi.litecommands.LiteInvocation;
 import dev.rollczi.litecommands.scope.ScopeMetaData;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import panda.std.Option;
@@ -77,6 +76,7 @@ public final class LiteSection extends AbstractComponent {
     public List<String> resolveCompletion(ContextOfResolving data) {
         ContextOfResolving currentContextOfResolving = data.resolverNestingTracing(this);
 
+        // /command subcommand|
         if (data.isLastResolver()) {
             ArrayList<String> suggestions = new ArrayList<>(resolvers.keySet());
 
@@ -89,18 +89,20 @@ public final class LiteSection extends AbstractComponent {
 
         String partCommand = data.getNextPredictedPartOfSuggestion();
 
+        // /command subcommand |litecomponent
         if (partCommand.isEmpty()) {
-            List<String> suggestions = new ArrayList<>(resolvers.keySet());
+            List<String> suggestions = new ArrayList<>(resolvers.keySet()); // suggestions (subcommands)
             LiteComponent executor = resolvers.get(StringUtils.EMPTY);
-            suggestions.remove(StringUtils.EMPTY);
 
             if (executor != null) {
-                suggestions.addAll(executor.resolveCompletion(currentContextOfResolving));
+                suggestions.remove(StringUtils.EMPTY);
+                suggestions.addAll(executor.resolveCompletion(currentContextOfResolving)); // suggestions (arguments)
             }
 
             return suggestions;
         }
 
+        // /command subcommand| litecomponent
         for (Map.Entry<String, LiteComponent> entry : resolvers.entrySet()) {
             if (!partCommand.equalsIgnoreCase(entry.getKey())) {
                 continue;
@@ -112,11 +114,12 @@ public final class LiteSection extends AbstractComponent {
         String[] arguments = data.invocation.arguments();
         LiteComponent component = resolvers.get(StringUtils.EMPTY);
 
-        if (component != null && arguments.length != 0 && component instanceof LiteExecution) {
+        // /command subcommand argument |[...]
+        if (component instanceof LiteExecution && arguments.length != 0) {
             LiteExecution liteExecution = (LiteExecution) component;
-            LiteInvocation invocation = data.getInvocation();
             List<String> oldSuggestions = liteExecution.generateCompletion(currentContextOfResolving.getCurrentArgsCount(this) - 1, currentContextOfResolving);
 
+            // /command subcommand argument |argument
             if (oldSuggestions.contains(arguments[arguments.length - 2])) {
                 return component.resolveCompletion(currentContextOfResolving);
             }
