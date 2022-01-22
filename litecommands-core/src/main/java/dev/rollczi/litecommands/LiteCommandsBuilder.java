@@ -26,6 +26,7 @@ import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 import panda.utilities.text.Formatter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public class LiteCommandsBuilder {
     private final LiteRegisterResolvers registerResolvers = new LiteRegisterResolvers();
     private final Formatter placeholders = new Formatter();
     private ExecutionResultHandler executionResultHandler;
-    private LitePlatformManager platformManager;
+    private LitePlatformManager<?> platformManager;
     private Injector baseInjector = DependencyInjection.createInjector();
     private Logger logger = Logger.getLogger("LiteCommands");
 
@@ -137,7 +138,7 @@ public class LiteCommandsBuilder {
         return this;
     }
 
-    public LiteCommandsBuilder platform(LitePlatformManager platformManager) {
+    public LiteCommandsBuilder platform(LitePlatformManager<?> platformManager) {
         this.platformManager = platformManager;
         return this;
     }
@@ -245,7 +246,25 @@ public class LiteCommandsBuilder {
 
         @Override
         public List<String> suggest(LiteInvocation invocation) {
-            return resolver.resolveCompletion(LiteComponent.ContextOfResolving.create(invocation));
+            List<String> completions = resolver.resolveCompletion(LiteComponent.ContextOfResolving.create(invocation));
+            String[] arguments = invocation.arguments();
+
+            if (arguments.length == 0) {
+                return completions;
+            }
+
+            String argument = arguments[arguments.length - 1];
+            List<String> completionsStartsWith = new ArrayList<>();
+
+            for (String completion : completions) {
+                if (!completion.startsWith(argument)) {
+                    continue;
+                }
+
+                completionsStartsWith.add(completion);
+            }
+
+            return completionsStartsWith;
         }
 
     }

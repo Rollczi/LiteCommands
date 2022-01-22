@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.component;
 
-import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.scope.ScopeMetaData;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
@@ -16,13 +15,11 @@ import java.util.logging.Logger;
 public final class LiteExecution extends AbstractComponent {
 
     private final Logger logger;
-    private final AnnotationParser parser;
     private final MethodExecutor executor;
 
-    LiteExecution(Logger logger, AnnotationParser parser, ScopeMetaData scopeMetaData, MethodExecutor executor) {
+    LiteExecution(Logger logger, ScopeMetaData scopeMetaData, MethodExecutor executor) {
         super(scopeMetaData);
         this.logger = logger;
-        this.parser = parser;
         this.executor = executor;
     }
 
