@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.inject;
+package dev.rollczi.litecommands.bind;
 
 import org.panda_lang.utilities.inject.Resources;
 

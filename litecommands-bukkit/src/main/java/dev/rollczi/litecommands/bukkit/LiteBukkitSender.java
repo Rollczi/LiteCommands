@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.LiteSender;
+import dev.rollczi.litecommands.platform.LiteSender;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

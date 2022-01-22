@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.component
 import dev.rollczi.litecommands.EmptyTestSender
 import dev.rollczi.litecommands.LiteCommandsSpec
 import dev.rollczi.litecommands.LiteInvocation
+import dev.rollczi.litecommands.scope.ScopeMetaData
 import groovy.transform.CompileStatic
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

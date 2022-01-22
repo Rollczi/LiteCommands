@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.component;
 
-import dev.rollczi.litecommands.LiteSender;
+import dev.rollczi.litecommands.platform.LiteSender;
+import dev.rollczi.litecommands.scope.ScopeMetaData;
 import panda.std.stream.PandaStream;
 
 import java.util.Collections;

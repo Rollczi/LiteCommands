@@ -4,7 +4,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteFactory;
-import dev.rollczi.litecommands.inject.basic.OriginalSenderBind;
+import dev.rollczi.litecommands.bind.basic.OriginalSenderBind;
 
 public final class LiteVelocityFactory {
 

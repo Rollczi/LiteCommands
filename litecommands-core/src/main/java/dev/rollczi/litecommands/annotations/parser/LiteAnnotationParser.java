@@ -13,8 +13,8 @@ import dev.rollczi.litecommands.annotations.UsageMessage;
 import dev.rollczi.litecommands.annotations.Execute;
 import dev.rollczi.litecommands.annotations.IgnoreMethod;
 import dev.rollczi.litecommands.annotations.MinArgs;
-import dev.rollczi.litecommands.component.ScopeMetaData;
-import dev.rollczi.litecommands.inject.ArgumentHandler;
+import dev.rollczi.litecommands.scope.ScopeMetaData;
+import dev.rollczi.litecommands.argument.ArgumentHandler;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 
 import panda.std.Option;

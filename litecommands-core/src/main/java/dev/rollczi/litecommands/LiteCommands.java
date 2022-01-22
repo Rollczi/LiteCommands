@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.platform.LitePlatformManager;
 import dev.rollczi.litecommands.valid.messages.MessagesService;
 import org.panda_lang.utilities.inject.Injector;
 

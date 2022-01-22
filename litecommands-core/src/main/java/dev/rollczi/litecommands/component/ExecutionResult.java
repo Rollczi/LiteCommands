@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.component;
 
+import dev.rollczi.litecommands.scope.ScopeUtils;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 
 import java.util.ArrayList;

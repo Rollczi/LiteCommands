@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.valid;
 
 import dev.rollczi.litecommands.component.LiteComponent;
-import dev.rollczi.litecommands.component.ScopeUtils;
+import dev.rollczi.litecommands.scope.ScopeUtils;
 import org.jetbrains.annotations.Contract;
 
 public class Valid {

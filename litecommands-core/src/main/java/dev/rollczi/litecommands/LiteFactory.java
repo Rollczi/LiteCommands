@@ -1,8 +1,9 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.inject.basic.LiteInvocationBind;
-import dev.rollczi.litecommands.inject.basic.ArgumentsBind;
-import dev.rollczi.litecommands.inject.basic.LiteSenderBind;
+import dev.rollczi.litecommands.bind.basic.LiteInvocationBind;
+import dev.rollczi.litecommands.bind.basic.ArgumentsBind;
+import dev.rollczi.litecommands.bind.basic.LiteSenderBind;
+import dev.rollczi.litecommands.platform.LiteSender;
 
 public class LiteFactory {
 

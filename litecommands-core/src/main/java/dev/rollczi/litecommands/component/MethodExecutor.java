@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.annotations.Arg;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
-import dev.rollczi.litecommands.inject.ArgumentHandler;
+import dev.rollczi.litecommands.argument.ArgumentHandler;
 import dev.rollczi.litecommands.utils.ReflectUtils;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import org.panda_lang.utilities.inject.Injector;

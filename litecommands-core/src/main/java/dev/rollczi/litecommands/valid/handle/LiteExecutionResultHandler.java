@@ -25,14 +25,13 @@ public class LiteExecutionResultHandler implements ExecutionResultHandler {
         ValidationInfo info = executionResult.getValidInfo();
 
         if (info == ValidationInfo.INTERNAL_ERROR) {
-            invocation.sender().sendMessage("&cInternal error");
+            invocation.sender().sendMessage(messagesService.getMessage(info, executionResult));
             return;
         }
 
         String message = executionResult.getValidMessage() == null
                         ? messagesService.getMessage(info, executionResult)
                         : executionResult.getValidMessage();
-
 
         if (message == null || message.isEmpty()) {
             return;

@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.annotations.parser;
 
 import dev.rollczi.litecommands.annotations.IgnoreClass;
 import dev.rollczi.litecommands.annotations.IgnoreMethod;
-import dev.rollczi.litecommands.component.ScopeMetaData;
-import dev.rollczi.litecommands.inject.ArgumentHandler;
+import dev.rollczi.litecommands.scope.ScopeMetaData;
+import dev.rollczi.litecommands.argument.ArgumentHandler;
 import panda.std.Option;
 
 import java.lang.reflect.AnnotatedElement;

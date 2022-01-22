@@ -2,8 +2,8 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.component.LiteSection;
-import dev.rollczi.litecommands.component.ScopeMetaData;
-import dev.rollczi.litecommands.component.ScopeUtils;
+import dev.rollczi.litecommands.scope.ScopeMetaData;
+import dev.rollczi.litecommands.scope.ScopeUtils;
 
 import java.util.Collections;
 import java.util.HashMap;

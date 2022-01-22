@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.inject;
+package dev.rollczi.litecommands.argument;
 
 import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.valid.ValidationCommandException;

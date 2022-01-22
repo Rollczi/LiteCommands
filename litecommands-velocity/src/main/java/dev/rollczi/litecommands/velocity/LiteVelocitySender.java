@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
-import dev.rollczi.litecommands.LiteSender;
+import dev.rollczi.litecommands.platform.LiteSender;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class LiteVelocitySender implements LiteSender {

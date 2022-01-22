@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.inject.SingleArgumentHandler;
+import dev.rollczi.litecommands.argument.SingleArgumentHandler;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 
 import java.util.Arrays;

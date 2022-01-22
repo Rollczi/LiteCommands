@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.inject;
+package dev.rollczi.litecommands.argument;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

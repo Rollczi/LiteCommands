@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.LiteSender;
+import dev.rollczi.litecommands.platform.LiteSender;
 
 public class EmptyTestSender implements LiteSender {
 

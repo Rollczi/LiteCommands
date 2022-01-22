@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.LiteInvocation;
+import dev.rollczi.litecommands.scope.ScopeMetaData;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import panda.std.Option;
 import panda.std.stream.PandaStream;

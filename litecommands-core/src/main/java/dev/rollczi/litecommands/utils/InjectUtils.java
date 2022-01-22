@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.inject;
+package dev.rollczi.litecommands.utils;
 
 import dev.rollczi.litecommands.component.LiteComponent;
 

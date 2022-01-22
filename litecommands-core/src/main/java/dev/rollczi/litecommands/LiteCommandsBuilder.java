@@ -1,9 +1,13 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.component.ExecutionResult;
-import dev.rollczi.litecommands.inject.ArgumentHandler;
-import dev.rollczi.litecommands.inject.ArgumentName;
-import dev.rollczi.litecommands.inject.LiteBind;
+import dev.rollczi.litecommands.argument.ArgumentHandler;
+import dev.rollczi.litecommands.argument.ArgumentName;
+import dev.rollczi.litecommands.bind.LiteBind;
+import dev.rollczi.litecommands.platform.Executor;
+import dev.rollczi.litecommands.platform.LitePlatformManager;
+import dev.rollczi.litecommands.platform.Suggester;
+import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.valid.messages.ContextualMessage;
 import dev.rollczi.litecommands.valid.messages.LiteMessage;
@@ -13,8 +17,8 @@ import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.annotations.parser.LiteAnnotationParser;
 import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.component.LiteComponentFactory;
-import dev.rollczi.litecommands.inject.Bind;
-import dev.rollczi.litecommands.inject.InjectUtils;
+import dev.rollczi.litecommands.bind.Bind;
+import dev.rollczi.litecommands.utils.InjectUtils;
 import dev.rollczi.litecommands.valid.handle.LiteExecutionResultHandler;
 import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
 import dev.rollczi.litecommands.valid.messages.UseSchemeFormatting;
@@ -26,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -197,12 +202,10 @@ public class LiteCommandsBuilder {
         }
 
         for (LiteComponent resolver : registerResolvers.getResolvers().values()) {
-            platformManager.registerCommand(resolver.getScope(), invocation -> {
-                LiteComponent.ContextOfResolving context = LiteComponent.ContextOfResolving.create(invocation);
-                ExecutionResult executionResult = resolver.resolveExecution(context);
+            Executor executor = new DefaultExecutor(resolver, executionResultHandler);
+            Suggester suggester = new DefaultSuggester(resolver);
 
-                executionResultHandler.handle(executionResult);
-            }, invocation -> resolver.resolveCompletion(LiteComponent.ContextOfResolving.create(invocation)));
+            platformManager.registerCommand(resolver.getScope(), executor, suggester);
         }
 
         return new LiteCommands(registerResolvers, platformManager, messagesService, injector, logger);
@@ -210,6 +213,41 @@ public class LiteCommandsBuilder {
 
     public static LiteCommandsBuilder builder() {
         return new LiteCommandsBuilder();
+    }
+
+    private static class DefaultExecutor implements Executor {
+
+        private final LiteComponent resolver;
+        private final ExecutionResultHandler executionResultHandler;
+
+        private DefaultExecutor(LiteComponent resolver, ExecutionResultHandler executionResultHandler) {
+            this.resolver = resolver;
+            this.executionResultHandler = executionResultHandler;
+        }
+
+        @Override
+        public void execute(LiteInvocation invocation) throws ValidationCommandException {
+            LiteComponent.ContextOfResolving context = LiteComponent.ContextOfResolving.create(invocation);
+            ExecutionResult executionResult = resolver.resolveExecution(context);
+
+            executionResultHandler.handle(executionResult);
+        }
+
+    }
+
+    private static class DefaultSuggester implements Suggester {
+
+        private final LiteComponent resolver;
+
+        private DefaultSuggester(LiteComponent resolver) {
+            this.resolver = resolver;
+        }
+
+        @Override
+        public List<String> suggest(LiteInvocation invocation) {
+            return resolver.resolveCompletion(LiteComponent.ContextOfResolving.create(invocation));
+        }
+
     }
 
 }

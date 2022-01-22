@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.inject.ArgumentHandler;
+import dev.rollczi.litecommands.argument.ArgumentHandler;
 import org.panda_lang.utilities.inject.annotations.Injectable;
 
 import java.lang.annotation.ElementType;

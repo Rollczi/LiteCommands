@@ -1,6 +1,7 @@
-package dev.rollczi.litecommands.component;
+package dev.rollczi.litecommands.scope;
 
 import dev.rollczi.litecommands.annotations.Section;
+import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import org.jetbrains.annotations.Nullable;
 import panda.std.Option;

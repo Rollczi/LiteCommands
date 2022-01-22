@@ -9,8 +9,8 @@ public enum ValidationInfo {
     COMMAND_NO_EXIST(result -> "&cCommand or subcommand not found"),
     NO_PERMISSION(result -> "&cYou don't have permission to this command"),
     INVALID_USE(result -> "&cInvalid use of the command"),
+    INTERNAL_ERROR(messageContext -> "&cInternal error"),
     CUSTOM,
-    INTERNAL_ERROR,
     NONE;
 
     private final LiteMessage defaultMessage;

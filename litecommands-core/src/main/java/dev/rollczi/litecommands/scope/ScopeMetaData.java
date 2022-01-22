@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.component;
+package dev.rollczi.litecommands.scope;
 
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.valid.AmountValidator;

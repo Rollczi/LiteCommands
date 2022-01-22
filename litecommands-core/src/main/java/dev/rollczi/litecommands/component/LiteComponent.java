@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.LiteInvocation;
+import dev.rollczi.litecommands.scope.ScopeMetaData;
 import panda.utilities.StringUtils;
 
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteFactory;
-import dev.rollczi.litecommands.inject.basic.OriginalSenderBind;
+import dev.rollczi.litecommands.bind.basic.OriginalSenderBind;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 
