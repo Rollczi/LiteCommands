@@ -61,6 +61,20 @@ public final class ScopeMetaData {
         return Collections.unmodifiableSet(permissionsExclude);
     }
 
+    public boolean equalsNameOrAliasIgnoreCase(String text) {
+        if (name.equalsIgnoreCase(text)) {
+            return true;
+        }
+
+        for (String alias : aliases) {
+            if (alias.equalsIgnoreCase(text)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
