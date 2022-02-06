@@ -29,7 +29,7 @@ public final class LiteSection extends AbstractComponent {
         ContextOfResolving currentContext = context.resolverNestingTracing(this);
 
         List<LiteComponent> filteredComponents = PandaStream.of(this.resolvers.values())
-                .filter(component -> component.getScope().getName().equalsIgnoreCase(command))
+                .filter(component -> component.getScope().equalsNameOrAliasIgnoreCase(command))
                 .toList();
 
         if (filteredComponents.isEmpty()) {
@@ -80,6 +80,10 @@ public final class LiteSection extends AbstractComponent {
         if (data.isLastResolver()) {
             ArrayList<String> suggestions = new ArrayList<>(resolvers.keySet());
 
+            for (LiteComponent component : resolvers.values()) {
+                suggestions.addAll(component.getScope().getAliases());
+            }
+
             if (suggestions.remove(StringUtils.EMPTY)) {
                 suggestions.addAll(resolvers.get(StringUtils.EMPTY).resolveCompletion(currentContextOfResolving));
             }
@@ -94,6 +98,10 @@ public final class LiteSection extends AbstractComponent {
             List<String> suggestions = new ArrayList<>(resolvers.keySet()); // suggestions (subcommands)
             LiteComponent executor = resolvers.get(StringUtils.EMPTY);
 
+            for (LiteComponent component : resolvers.values()) {
+                suggestions.addAll(component.getScope().getAliases());
+            }
+
             if (executor != null) {
                 suggestions.remove(StringUtils.EMPTY);
                 suggestions.addAll(executor.resolveCompletion(currentContextOfResolving)); // suggestions (arguments)
@@ -103,12 +111,12 @@ public final class LiteSection extends AbstractComponent {
         }
 
         // /command subcommand| litecomponent
-        for (Map.Entry<String, LiteComponent> entry : resolvers.entrySet()) {
-            if (!partCommand.equalsIgnoreCase(entry.getKey())) {
+        for (LiteComponent component : resolvers.values()) {
+            if (!component.getScope().equalsNameOrAliasIgnoreCase(partCommand)) {
                 continue;
             }
 
-            return entry.getValue().resolveCompletion(currentContextOfResolving);
+            return component.resolveCompletion(currentContextOfResolving);
         }
 
         String[] arguments = data.invocation.arguments();
