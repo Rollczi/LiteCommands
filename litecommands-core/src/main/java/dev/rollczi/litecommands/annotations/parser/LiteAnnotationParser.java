@@ -80,7 +80,9 @@ public class LiteAnnotationParser implements AnnotationParser {
 
             if (annotation instanceof Execute) {
                 Execute execute = (Execute) annotation;
-                builder.name(placeholders.format(execute.route()));
+                builder
+                    .name(placeholders.format(execute.route()))
+                    .aliases(execute.aliases());
 
                 if (execute.required() > - 1) {
                     builder.amountValidator(validator -> validator.required(execute.required()));

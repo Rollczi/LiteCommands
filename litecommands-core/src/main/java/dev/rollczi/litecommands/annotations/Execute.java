@@ -11,6 +11,8 @@ public @interface Execute {
 
     String route() default "";
 
+    String[] aliases() default {};
+
     int required() default -1;
 
 }
