@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.component
 
-import dev.rollczi.litecommands.EmptyTestSender
+import dev.rollczi.litecommands.LiteTestSender
 import dev.rollczi.litecommands.LiteCommandsSpec
 import dev.rollczi.litecommands.LiteInvocation
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -12,21 +12,21 @@ class LiteComponentImplementationsTest : LiteCommandsSpec() {
     private var invocationAc : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
-            EmptyTestSender(), arrayOf()
+            LiteTestSender(), arrayOf()
         )
     )
     // on command invocation /ac test
     private var invocationAcWithArgs : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
-            EmptyTestSender(), arrayOf("test")
+            LiteTestSender(), arrayOf("test")
         )
     )
     // on command invocation /ac help
     private var invocationAcHelp : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
-            EmptyTestSender(), arrayOf("help")
+            LiteTestSender(), arrayOf("help")
         )
     )
 

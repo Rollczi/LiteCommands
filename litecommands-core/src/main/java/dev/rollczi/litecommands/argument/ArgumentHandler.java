@@ -17,4 +17,8 @@ public interface ArgumentHandler<T> {
                 .map(ArgumentName::value);
     }
 
+    default Class<? extends ArgumentHandler> getNativeClass() {
+        return this.getClass();
+    }
+
 }

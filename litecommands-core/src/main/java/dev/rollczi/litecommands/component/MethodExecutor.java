@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.component;
 
 import dev.rollczi.litecommands.annotations.Arg;
+import dev.rollczi.litecommands.annotations.Handler;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.argument.ArgumentHandler;
 import dev.rollczi.litecommands.utils.ReflectUtils;
@@ -29,8 +30,14 @@ public final class MethodExecutor {
         this.injector = injector;
         this.cachedArguments = PandaStream.of(method.getParameters())
                 .filter(parameter -> parameter.isAnnotationPresent(Arg.class))
-                .toMap(parameter -> parameter.getAnnotation(Arg.class).value(), parameter -> annotationParser.getArgumentHandler(parameter.getType())
-                        .orThrow(() -> new RuntimeException("Can't index parameters of " + ReflectUtils.formatMethodParams(method))));
+                .toMap(parameter -> parameter.getAnnotation(Arg.class).value(), parameter -> {
+                    Handler handler = parameter.getAnnotation(Handler.class);
+
+                    return PandaStream.of(annotationParser.getArgumentHandler(parameter.getType()))
+                            .filter(argumentHandler -> !parameter.isAnnotationPresent(Handler.class) || handler.value().equals(argumentHandler.getNativeClass()))
+                            .any()
+                            .orThrow(() -> new RuntimeException("Can't index parameters of " + ReflectUtils.formatMethodParams(method)));
+                });
     }
 
     public Option<ArgumentHandler<?>> getArgumentHandler(int currentArgsCount) {

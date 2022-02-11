@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.OptionArgumentHandler;
+import dev.rollczi.litecommands.bind.NativeBind;
 import dev.rollczi.litecommands.component.ExecutionResult;
 import dev.rollczi.litecommands.argument.ArgumentHandler;
 import dev.rollczi.litecommands.argument.ArgumentName;
@@ -12,7 +14,6 @@ import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.valid.messages.ContextualMessage;
 import dev.rollczi.litecommands.valid.messages.LiteMessage;
 import dev.rollczi.litecommands.valid.messages.MessagesService;
-import dev.rollczi.litecommands.annotations.Arg;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.annotations.parser.LiteAnnotationParser;
 import dev.rollczi.litecommands.component.LiteComponent;
@@ -24,6 +25,7 @@ import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
 import dev.rollczi.litecommands.valid.messages.UseSchemeFormatting;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
+import panda.std.Option;
 import panda.utilities.text.Formatter;
 
 import java.util.ArrayList;
@@ -37,113 +39,126 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-public class LiteCommandsBuilder {
+public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> {
 
     private final Set<Class<?>> commandClasses = new HashSet<>();
     private final Set<Object> commandInstances = new HashSet<>();
-    private final Set<Bind> binds = new HashSet<>();
-    private final Map<Class<?>, ArgumentHandler<?>> argumentHandlers = new HashMap<>();
+    private final Set<NativeBind> binds = new HashSet<>();
+    private final Map<Class<?>, Set<ArgumentHandler<?>>> argumentHandlers = new HashMap<>();
     private final MessagesService messagesService = new MessagesService();
     private final LiteRegisterResolvers registerResolvers = new LiteRegisterResolvers();
     private final Formatter placeholders = new Formatter();
     private ExecutionResultHandler executionResultHandler;
-    private LitePlatformManager<?> platformManager;
+    private P platformManager;
     private Injector baseInjector = DependencyInjection.createInjector();
     private Logger logger = Logger.getLogger("LiteCommands");
 
     public LiteCommandsBuilder() {
     }
 
-    public LiteCommandsBuilder command(Collection<Class<?>> commands) {
+    public LiteCommandsBuilder<SENDER, P> command(Collection<Class<?>> commands) {
         this.commandClasses.addAll(commands);
         return this;
     }
 
-    public LiteCommandsBuilder command(Class<?>... commands) {
+    public LiteCommandsBuilder<SENDER, P> command(Class<?>... commands) {
         return this.command(Arrays.asList(commands));
     }
 
-    public LiteCommandsBuilder commandInstance(Collection<Object> commands) {
+    public LiteCommandsBuilder<SENDER, P> commandInstance(Collection<Object> commands) {
         this.commandInstances.addAll(commands);
         return this;
     }
 
-    public LiteCommandsBuilder commandInstance(Object... commands) {
+    public LiteCommandsBuilder<SENDER, P> commandInstance(Object... commands) {
         return this.commandInstance(Arrays.asList(commands));
     }
 
-    public LiteCommandsBuilder bind(Collection<Bind> binds) {
-        this.binds.addAll(binds);
-        return this;
-    }
-
-    public LiteCommandsBuilder baseInjector(Injector baseInjector) {
+    public LiteCommandsBuilder<SENDER, P> baseInjector(Injector baseInjector) {
         this.baseInjector = baseInjector;
         return this;
     }
 
-    public LiteCommandsBuilder bind(Bind... bind) {
+    public LiteCommandsBuilder<SENDER, P> bind(Collection<NativeBind> binds) {
+        this.binds.addAll(binds);
+        return this;
+    }
+
+    public LiteCommandsBuilder<SENDER, P> bind(NativeBind... bind) {
         return this.bind(Arrays.asList(bind));
     }
 
-    public <T> LiteCommandsBuilder bind(Class<T> on, LiteBind liteBind) {
+    public LiteCommandsBuilder<SENDER, P> bind(Bind... bind) {
+        return this.bind(Arrays.asList(bind));
+    }
+
+    public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, LiteBind liteBind) {
         this.bind((resources) -> resources.on(on)
                 .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromObjects(objects).getInvocation())));
         return this;
     }
 
-    public <T> LiteCommandsBuilder bind(Class<T> on, Object instance) {
+    public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, Object instance) {
         this.bind((resources) -> resources.on(on).assignInstance(instance));
         return this;
     }
 
-    public <T> LiteCommandsBuilder bind(Class<T> on, Supplier<Object> supplier) {
+    public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, Supplier<Object> supplier) {
         this.bind((resources) -> resources.on(on).assignInstance(supplier));
         return this;
     }
 
-    public <T> LiteCommandsBuilder argument(Class<T> on, ArgumentHandler<T> argumentHandler) {
-        this.argumentHandlers.put(on, argumentHandler);
+    public <T> LiteCommandsBuilder<SENDER, P> argument(Class<T> on, ArgumentHandler<T> argumentHandler) {
+        Set<ArgumentHandler<?>> handlers = this.argumentHandlers.computeIfAbsent(on, key -> new HashSet<>());
+
+        handlers.add(argumentHandler);
+        return this;
+    }
+
+    public <T, O extends Option<?>> LiteCommandsBuilder<SENDER, P> argument(Class<O> optionalClass, OptionArgumentHandler<T> argumentHandler) {
+        Set<ArgumentHandler<?>> handlers = this.argumentHandlers.computeIfAbsent(optionalClass, key -> new HashSet<>());
+
+        handlers.add(argumentHandler);
         return this;
     }
 
     @Deprecated
-    public LiteCommandsBuilder message(ValidationInfo validationInfo, ContextualMessage message) {
+    public LiteCommandsBuilder<SENDER, P> message(ValidationInfo validationInfo, ContextualMessage message) {
         this.messagesService.registerMessage(validationInfo, message);
         return this;
     }
 
-    public LiteCommandsBuilder message(ValidationInfo validationInfo, LiteMessage message) {
+    public LiteCommandsBuilder<SENDER, P> message(ValidationInfo validationInfo, LiteMessage message) {
         this.messagesService.registerMessage(validationInfo, message);
         return this;
     }
 
-    public LiteCommandsBuilder formatting(UseSchemeFormatting formatting) {
+    public LiteCommandsBuilder<SENDER, P> formatting(UseSchemeFormatting formatting) {
         this.messagesService.setUseSchemeFormatting(formatting);
         return this;
     }
 
-    public LiteCommandsBuilder placeholder(String key, Supplier<String> supplier) {
+    public LiteCommandsBuilder<SENDER, P> placeholder(String key, Supplier<String> supplier) {
         this.placeholders.register(key, supplier);
         return this;
     }
 
-    public LiteCommandsBuilder placeholder(String key, String text) {
+    public LiteCommandsBuilder<SENDER, P> placeholder(String key, String text) {
         this.placeholders.register(key, text);
         return this;
     }
 
-    public LiteCommandsBuilder placeholders(Map<String, Supplier<String>> placeholders) {
+    public LiteCommandsBuilder<SENDER, P> placeholders(Map<String, Supplier<String>> placeholders) {
         placeholders.forEach(this.placeholders::register);
         return this;
     }
 
-    public LiteCommandsBuilder platform(LitePlatformManager<?> platformManager) {
+    public LiteCommandsBuilder<SENDER, P> platform(P platformManager) {
         this.platformManager = platformManager;
         return this;
     }
 
-    public LiteCommandsBuilder logger(Logger logger) {
+    public LiteCommandsBuilder<SENDER, P> logger(Logger logger) {
         this.logger = logger;
         return this;
     }
@@ -157,39 +172,25 @@ public class LiteCommandsBuilder {
             executionResultHandler = new LiteExecutionResultHandler(messagesService);
         }
 
+        AnnotationParser parser = new LiteAnnotationParser(argumentHandlers, placeholders);
+
         Injector injector = baseInjector.fork(resources -> {
-            for (Bind bind : binds) {
-                bind.bind(resources);
+            for (NativeBind bind : binds) {
+                bind.bind(parser, resources);
             }
-
-            resources.annotatedWith(Arg.class).assignHandler((property, arg, objects) -> {
-                LiteComponent.ContextOfResolving context = InjectUtils.getContextFromObjects(objects);
-
-                for (Map.Entry<Class<?>, ArgumentHandler<?>> entry : argumentHandlers.entrySet()) {
-                    Class<?> on = entry.getKey();
-                    ArgumentHandler<?> argumentHandler = entry.getValue();
-
-                    if (!on.isAssignableFrom(property.getType())) {
-                        continue;
-                    }
-
-                    return argumentHandler.parse(context, arg.value());
-                }
-
-                return null;
-            });
         });
 
         // Checks for legacy implementations
-        for (ArgumentHandler<?> handler : argumentHandlers.values()) {
-            if (handler.getClass().isAnnotationPresent(ArgumentName.class)) {
-                continue;
-            }
+        for (Set<ArgumentHandler<?>> handlers : argumentHandlers.values()) {
+            for (ArgumentHandler<?> handler : handlers) {
+                if (handler.getClass().isAnnotationPresent(ArgumentName.class)) {
+                    continue;
+                }
 
-            logger.warning( "annotation @ArgumentName isn't present before class " + handler.getClass());
+                logger.warning( "annotation @ArgumentName isn't present before class " + handler.getClass());
+            }
         }
 
-        AnnotationParser parser = new LiteAnnotationParser(argumentHandlers, placeholders);
         LiteComponentFactory factory = new LiteComponentFactory(logger, injector, parser);
 
         for (Object instance : commandInstances) {
@@ -212,8 +213,8 @@ public class LiteCommandsBuilder {
         return new LiteCommands(registerResolvers, platformManager, messagesService, injector, logger);
     }
 
-    public static LiteCommandsBuilder builder() {
-        return new LiteCommandsBuilder();
+    public static <SENDER, P extends LitePlatformManager<SENDER>> LiteCommandsBuilder<SENDER, P> builder() {
+        return new LiteCommandsBuilder<>();
     }
 
     private static class DefaultExecutor implements Executor {

@@ -8,6 +8,8 @@ import panda.std.Option;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 public interface AnnotationParser {
 
@@ -21,6 +23,8 @@ public interface AnnotationParser {
      */
     Option<ScopeMetaData> parse(AnnotatedElement annotatedElement);
 
-    Option<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass);
+    Set<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass);
+
+    Map<Class<?>, Set<ArgumentHandler<?>>> getArgumentHandlers();
 
 }

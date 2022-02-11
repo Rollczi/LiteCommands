@@ -9,12 +9,12 @@ import java.util.logging.Logger;
 public class LiteCommands {
 
     private final LiteRegisterResolvers registerResolvers;
-    private final LitePlatformManager platformManager;
+    private final LitePlatformManager<?> platformManager;
     private final MessagesService messagesService;
     private final Injector injector;
     private final Logger logger;
 
-    LiteCommands(LiteRegisterResolvers registerResolvers, LitePlatformManager platformManager, MessagesService messagesService, Injector injector, Logger logger) {
+    LiteCommands(LiteRegisterResolvers registerResolvers, LitePlatformManager<?> platformManager, MessagesService messagesService, Injector injector, Logger logger) {
         this.registerResolvers = registerResolvers;
         this.platformManager = platformManager;
         this.messagesService = messagesService;
@@ -26,8 +26,8 @@ public class LiteCommands {
         return registerResolvers;
     }
 
-    public LitePlatformManager getPlatformManager() {
-        return platformManager;
+    public <SENDER, P extends LitePlatformManager<SENDER>> P getPlatformManager() {
+        return (P) platformManager;
     }
 
     public MessagesService getMessagesService() {

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.complete;
 
-import dev.rollczi.litecommands.EmptyTestSender;
+import dev.rollczi.litecommands.LiteTestSender;
 import dev.rollczi.litecommands.annotations.Arg;
 import dev.rollczi.litecommands.annotations.Execute;
 import dev.rollczi.litecommands.annotations.Required;
@@ -23,7 +23,7 @@ public class TestSuggestionCommand {
 
         @Execute(route = "move")
         @Required(1)
-        public void executeMove(@Arg(0) EmptyTestSender sender) {
+        public void executeMove(@Arg(0) LiteTestSender sender) {
 
         }
 

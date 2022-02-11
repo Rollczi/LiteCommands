@@ -13,14 +13,18 @@ import java.util.logging.Logger
 open class LiteCommandsSpec {
 
     protected var contextCreator : BiFunction<String, Array<String>, LiteComponent.ContextOfResolving> = BiFunction {
-            command, args -> LiteComponent.ContextOfResolving.create(LiteInvocation(command, EmptyTestSender(), args))
+            command, args -> LiteComponent.ContextOfResolving.create(LiteInvocation(command,
+        LiteTestSender(), args))
     }
 
     protected var injector: Injector = DependencyInjection.createInjector()
     protected var factory = LiteComponentFactory(
         Logger.getLogger("LiteCommandsSpec"),
         injector,
-        LiteAnnotationParser(mapOf(Pair(EmptyTestSender::class.java, EmptyTestSenderArgument())))
+        LiteAnnotationParser(mapOf(Pair(
+            LiteTestSender::class.java,
+            setOf(LiteTestSenderArgument())
+        )))
     )
 
 }
