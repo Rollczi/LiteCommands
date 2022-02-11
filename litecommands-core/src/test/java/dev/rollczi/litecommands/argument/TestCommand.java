@@ -22,23 +22,25 @@ public class TestCommand {
         resultOption.update(first.isEmpty());
     }
 
-    @Execute(route = "value_option") @Between(min = 1, max = 2)
+    @Execute(route = "value_option")
+    @Between(min = 1, max = 2)
     public void execute(@Arg(0) String first, @Arg(1) @Handler(StringArg.class) Option<String> second) {
         resultValueOption.update(first == null, second.isEmpty());
     }
 
-    @Execute(route = "option_option") @Between(min = 0, max = 2)
+    @Execute(route = "option_option")
+    @Between(min = 0, max = 2)
     public void execute(@Arg(0) @Handler(DoubleArg.class) Option<Double> first, @Arg(1) @Handler(StringArg.class) Option<String> second) {
         resultOptionOption.update(first == null, second.isEmpty());
     }
 
-    @Execute(route = "customstring_string") @Between(min = 0, max = 2)
+    @Execute(route = "customstring_string", required = 2)
     public void executeCustom1(@Arg(0) @Handler(CustomStringArg.class) String custom, @Arg(1) @Handler(StringArg.class) String string) {
         resultCustom1.setString(string);
         resultCustom1.setCustomString(custom);
     }
 
-    @Execute(route = "string_customstring") @Between(min = 0, max = 2)
+    @Execute(route = "string_customstring", required = 2)
     public void executeCustom2(@Arg(0) @Handler(StringArg.class) String string, @Arg(1) @Handler(CustomStringArg.class) String custom) {
         resultCustom2.setString(string);
         resultCustom2.setCustomString(custom);
