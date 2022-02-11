@@ -24,21 +24,23 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LiteAnnotationParser implements AnnotationParser {
 
-    private final Map<Class<?>, ArgumentHandler<?>> argumentHandlers;
+    private final Map<Class<?>, Set<ArgumentHandler<?>>> argumentHandlers;
     private final Formatter placeholders;
 
-    public LiteAnnotationParser(Map<Class<?>, ArgumentHandler<?>> argumentHandlers) {
+    public LiteAnnotationParser(Map<Class<?>, Set<ArgumentHandler<?>>> argumentHandlers) {
         this.argumentHandlers = argumentHandlers;
         this.placeholders = new Formatter();
     }
 
-    public LiteAnnotationParser(Map<Class<?>, ArgumentHandler<?>> argumentHandlers, Formatter placeholders) {
+    public LiteAnnotationParser(Map<Class<?>, Set<ArgumentHandler<?>>> argumentHandlers, Formatter placeholders) {
         this.argumentHandlers = argumentHandlers;
         this.placeholders = placeholders;
     }
@@ -152,7 +154,7 @@ public class LiteAnnotationParser implements AnnotationParser {
 
             if (annotation instanceof Between) {
                 Between between = (Between) annotation;
-                builder.amountValidator(validator -> validator.min(between.min()).min(between.max()));
+                builder.amountValidator(validator -> validator.min(between.min()).max(between.max()));
             }
         }
 
@@ -160,8 +162,13 @@ public class LiteAnnotationParser implements AnnotationParser {
     }
 
     @Override
-    public Option<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass) {
-        return Option.of(argumentHandlers.get(argumentClass));
+    public Set<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass) {
+        return Collections.unmodifiableSet(argumentHandlers.get(argumentClass));
+    }
+
+    @Override
+    public Map<Class<?>, Set<ArgumentHandler<?>>> getArgumentHandlers() {
+        return Collections.unmodifiableMap(argumentHandlers);
     }
 
 }

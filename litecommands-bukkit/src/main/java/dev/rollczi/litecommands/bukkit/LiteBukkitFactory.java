@@ -12,8 +12,8 @@ public final class LiteBukkitFactory {
 
     }
 
-    public static LiteCommandsBuilder builder(Server server, String fallbackPrefix) {
-        return LiteFactory.builder()
+    public static LiteCommandsBuilder<CommandSender, LiteBukkitPlatformManager> builder(Server server, String fallbackPrefix) {
+        return LiteFactory.<CommandSender, LiteBukkitPlatformManager>builder()
                 .bind(Server.class, server)
                 .bind(CommandSender.class, new OriginalSenderBind())
                 .platform(new LiteBukkitPlatformManager(server, fallbackPrefix));

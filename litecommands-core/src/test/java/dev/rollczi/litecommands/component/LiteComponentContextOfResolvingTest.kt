@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.component
 
-import dev.rollczi.litecommands.EmptyTestSender
+import dev.rollczi.litecommands.LiteTestSender
 import dev.rollczi.litecommands.LiteCommandsSpec
 import dev.rollczi.litecommands.LiteInvocation
 import dev.rollczi.litecommands.scope.ScopeMetaData
@@ -16,19 +16,19 @@ class LiteComponentContextOfResolvingTest : LiteCommandsSpec() {
     private var dataAc : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
-            EmptyTestSender(), arrayOf()
+            LiteTestSender(), arrayOf()
         )
     )
     private var dataAcWithArgs : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
-            EmptyTestSender(), arrayOf("test")
+            LiteTestSender(), arrayOf("test")
         )
     )
     private var dataAcHelp : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(
         LiteInvocation(
             "ac",
-            EmptyTestSender(), arrayOf("help")
+            LiteTestSender(), arrayOf("help")
         )
     )
 

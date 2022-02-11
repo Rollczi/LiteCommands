@@ -6,11 +6,11 @@ import dev.rollczi.litecommands.valid.ValidationCommandException;
 import java.util.Arrays;
 import java.util.List;
 
-public class EmptyTestSenderArgument implements SingleArgumentHandler<EmptyTestSender> {
+public class LiteTestSenderArgument implements SingleArgumentHandler<LiteTestSender> {
 
     @Override
-    public EmptyTestSender parse(LiteInvocation invocation, String argument) throws ValidationCommandException {
-        return new EmptyTestSender();
+    public LiteTestSender parse(LiteInvocation invocation, String argument) throws ValidationCommandException {
+        return new LiteTestSender();
     }
 
     @Override

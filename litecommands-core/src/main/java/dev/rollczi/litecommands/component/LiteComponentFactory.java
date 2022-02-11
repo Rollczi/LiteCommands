@@ -35,8 +35,7 @@ public class LiteComponentFactory {
             Set<LiteSection> innerSections = PandaStream.of(sectionClass.getClasses())
                     .concat(sectionClass.getDeclaredClasses())
                     .distinct()
-                    .map(innerClass -> createSection(innerClass)
-                            .orElseThrow(error -> new RuntimeException("Can't create inner class " + innerClass, error)))
+                    .mapOpt(innerClass -> createSection(innerClass).toOption())
                     .toSet();
 
             return LiteSection.builder()

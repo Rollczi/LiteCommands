@@ -1,12 +1,12 @@
 package dev.rollczi.litecommands.permssion;
 
-import dev.rollczi.litecommands.EmptyTestSender;
+import dev.rollczi.litecommands.LiteTestSender;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TestPermissionSender extends EmptyTestSender {
+public class TestPermissionSender extends LiteTestSender {
 
     private final Set<String> permissions = new HashSet<>();
 
