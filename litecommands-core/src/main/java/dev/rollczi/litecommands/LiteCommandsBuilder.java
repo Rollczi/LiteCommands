@@ -183,7 +183,7 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         // Checks for legacy implementations
         for (Set<ArgumentHandler<?>> handlers : argumentHandlers.values()) {
             for (ArgumentHandler<?> handler : handlers) {
-                if (handler.getClass().isAnnotationPresent(ArgumentName.class)) {
+                if (handler.getName().isPresent()) {
                     continue;
                 }
 
