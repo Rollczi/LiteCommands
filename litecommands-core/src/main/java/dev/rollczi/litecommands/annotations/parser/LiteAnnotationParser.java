@@ -25,6 +25,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -163,7 +164,7 @@ public class LiteAnnotationParser implements AnnotationParser {
 
     @Override
     public Set<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass) {
-        return Collections.unmodifiableSet(argumentHandlers.get(argumentClass));
+        return Collections.unmodifiableSet(argumentHandlers.getOrDefault(argumentClass, new HashSet<>()));
     }
 
     @Override

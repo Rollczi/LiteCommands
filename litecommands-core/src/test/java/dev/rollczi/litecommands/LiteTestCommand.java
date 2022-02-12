@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.component.ExecutionResult;
 import dev.rollczi.litecommands.platform.Executor;
 import dev.rollczi.litecommands.platform.LiteSenderCreator;
 import dev.rollczi.litecommands.platform.Suggester;
@@ -21,12 +22,12 @@ public class LiteTestCommand {
         this.liteSenderCreator = creator;
     }
 
-    public void execute(String name, String alias, String[] arguments) {
-        executor.execute(new LiteInvocation(name, alias, liteSenderCreator.create(null), arguments));
+    public ExecutionResult execute(LiteTestSender sender, String name, String alias, String[] arguments) {
+        return executor.execute(new LiteInvocation(name, alias, sender, arguments));
     }
 
-    public List<String> suggest(String name, String alias, String[] arguments) {
-        return suggester.suggest(new LiteInvocation(name, alias, liteSenderCreator.create(null), arguments));
+    public List<String> suggest(LiteTestSender sender, String name, String alias, String[] arguments) {
+        return suggester.suggest(new LiteInvocation(name, alias, sender, arguments));
     }
 
     public ScopeMetaData getScope() {

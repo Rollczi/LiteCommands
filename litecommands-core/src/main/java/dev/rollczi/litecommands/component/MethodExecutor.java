@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.Arg;
 import dev.rollczi.litecommands.annotations.Handler;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
 import dev.rollczi.litecommands.argument.ArgumentHandler;
+import dev.rollczi.litecommands.utils.InjectUtils;
 import dev.rollczi.litecommands.utils.ReflectUtils;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import org.panda_lang.utilities.inject.Injector;
@@ -50,7 +51,7 @@ public final class MethodExecutor {
 
     public Result<Option<Object>, Pair<String, Throwable>> execute(LiteComponent.ContextOfResolving context) {
         try {
-            Object returned = injector.invokeMethod(method, instance, context);
+            Object returned = injector.invokeMethod(method, instance, InjectUtils.prepareInjectorArgs(context, this));
             return Result.ok(Option.of(returned));
         } catch (IllegalAccessException illegalAccessException) {
             return Result.error(Pair.of("Method " + ReflectUtils.formatMethodParams(method) + " is " + ReflectUtils.modifier(method), illegalAccessException));

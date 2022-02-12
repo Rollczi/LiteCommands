@@ -1,13 +1,14 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.OptionArgumentHandler;
 import dev.rollczi.litecommands.bind.NativeBind;
 import dev.rollczi.litecommands.component.ExecutionResult;
 import dev.rollczi.litecommands.argument.ArgumentHandler;
-import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.bind.LiteBind;
 import dev.rollczi.litecommands.platform.Executor;
 import dev.rollczi.litecommands.platform.LitePlatformManager;
+import dev.rollczi.litecommands.platform.LiteSenderCreator;
 import dev.rollczi.litecommands.platform.Suggester;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
@@ -94,7 +95,7 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
 
     public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, LiteBind liteBind) {
         this.bind((resources) -> resources.on(on)
-                .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromObjects(objects).getInvocation())));
+                .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
         return this;
     }
 
@@ -153,8 +154,18 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         return this;
     }
 
+    public LiteCommandsBuilder<SENDER, P> executionResultHandler(ExecutionResultHandler executionResultHandler) {
+        this.executionResultHandler = executionResultHandler;
+        return this;
+    }
+
     public LiteCommandsBuilder<SENDER, P> platform(P platformManager) {
         this.platformManager = platformManager;
+        return this;
+    }
+
+    public LiteCommandsBuilder<SENDER, P> sender(LiteSenderCreator<SENDER> creator) {
+        this.platformManager.setLiteSenderCreator(creator);
         return this;
     }
 
@@ -210,7 +221,7 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
             platformManager.registerCommand(resolver.getScope(), executor, suggester);
         }
 
-        return new LiteCommands(registerResolvers, platformManager, messagesService, injector, logger);
+        return new LiteCommands(registerResolvers, platformManager, messagesService, factory, parser, injector, logger);
     }
 
     public static <SENDER, P extends LitePlatformManager<SENDER>> LiteCommandsBuilder<SENDER, P> builder() {
@@ -228,11 +239,12 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         }
 
         @Override
-        public void execute(LiteInvocation invocation) throws ValidationCommandException {
+        public ExecutionResult execute(LiteInvocation invocation) throws ValidationCommandException {
             LiteComponent.ContextOfResolving context = LiteComponent.ContextOfResolving.create(invocation);
             ExecutionResult executionResult = resolver.resolveExecution(context);
 
             executionResultHandler.handle(executionResult);
+            return executionResult;
         }
 
     }

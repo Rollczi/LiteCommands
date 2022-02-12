@@ -4,13 +4,11 @@ import dev.rollczi.litecommands.LiteTestSender
 import dev.rollczi.litecommands.LiteCommandsSpec
 import dev.rollczi.litecommands.LiteInvocation
 import dev.rollczi.litecommands.scope.ScopeMetaData
-import groovy.transform.CompileStatic
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import panda.utilities.StringUtils
 import java.util.*
 
-@CompileStatic
 class LiteComponentContextOfResolvingTest : LiteCommandsSpec() {
 
     private var dataAc : LiteComponent.ContextOfResolving = LiteComponent.ContextOfResolving.create(

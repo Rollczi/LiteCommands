@@ -2,14 +2,12 @@ package dev.rollczi.litecommands.component
 
 import dev.rollczi.litecommands.annotations.parser.LiteAnnotationParser
 import dev.rollczi.litecommands.LiteCommandsSpec
-import groovy.transform.CompileStatic
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Collections
 import java.util.logging.Logger
 
-@CompileStatic
 class LiteComponentFactoryTest : LiteCommandsSpec() {
 
     @Test
