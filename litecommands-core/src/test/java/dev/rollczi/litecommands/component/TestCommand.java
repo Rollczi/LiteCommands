@@ -7,7 +7,6 @@ import dev.rollczi.litecommands.annotations.Section;
 import dev.rollczi.litecommands.annotations.Execute;
 
 @Section(route = "ac")
-@Permission("dev.rollczi.ac")
 public class TestCommand {
 
     public int executeAc = 0;
@@ -24,7 +23,6 @@ public class TestCommand {
     }
 
     @Section(route = "manage")
-    @Permission("dev.rollczi.ac.manage")
     public static class ManageCommand {
 
         public int executeHelp = 0;
@@ -32,7 +30,6 @@ public class TestCommand {
         public int executeKick = 0;
 
         @Execute
-        @PermissionExclude("dev.rollczi.ac.manage")
         public void executeHelp() {
             executeHelp++;
         }

@@ -1,83 +1,69 @@
 package dev.rollczi.litecommands.permssion
 
-import dev.rollczi.litecommands.InvocationCreator
-import dev.rollczi.litecommands.LiteCommandsSpec
-import dev.rollczi.litecommands.LiteInvocation
-import dev.rollczi.litecommands.component.LiteComponent
-import dev.rollczi.litecommands.component.LiteSection
-import dev.rollczi.litecommands.valid.ValidationInfo
-import groovy.transform.CompileStatic
+import dev.rollczi.litecommands.*
+import dev.rollczi.litecommands.valid.ValidationInfo.NO_PERMISSION
+import dev.rollczi.litecommands.valid.ValidationInfo.NONE
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-@CompileStatic
 class PermissionTest : LiteCommandsSpec() {
 
-    private val command: PermissionCommandTest = PermissionCommandTest()
-    private val section: LiteSection = factory.createSection(command).get()
+    private val liteCommand: LiteCommands = LiteTestFactory.builder()
+        .command(PermissionCommandTest::class.java)
+        .register()
 
-    private val invocationMainPermOnly = InvocationCreator { sender ->
-        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf()))
-    }
-    private val invocationAllPerm = InvocationCreator { sender ->
-        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "all")))
-    }
-    private val invocationWithoutPerm = InvocationCreator { sender ->
-        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "without")))
-    }
-    private val invocationInnerPerm = InvocationCreator { sender ->
-        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "inner")))
-    }
-    private val invocationMainPerm = InvocationCreator { sender ->
-        LiteComponent.ContextOfResolving.create(LiteInvocation("main", sender, arrayOf("inner", "main")))
-    }
+    private val platform = liteCommand.getPlatformManager<Void, LiteTestPlatform>()
 
     @Test
     fun `test sender with out permission`() {
-        val sender = TestPermissionSender()
+        val sender = LiteTestSender()
+            .ignoreMessages(true)
 
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf()).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf("inner", "all")).validInfo)
+        assertEquals(NONE,          platform.invocation(sender, "main", arrayOf("inner", "without")).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf("inner", "inner")).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf("inner", "main")).validInfo)
     }
 
     @Test
     fun `test sender with all permission`() {
-        val sender = TestPermissionSender()
+        val sender = LiteTestSender()
+            .ignoreMessages(true)
             .permission("dev.rollczi.main")
             .permission("dev.rollczi.main.inner")
 
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
+        assertEquals(NONE, platform.invocation(sender, "main", arrayOf()).validInfo)
+        assertEquals(NONE, platform.invocation(sender, "main", arrayOf("inner", "all")).validInfo)
+        assertEquals(NONE, platform.invocation(sender, "main", arrayOf("inner", "without")).validInfo)
+        assertEquals(NONE, platform.invocation(sender, "main", arrayOf("inner", "inner")).validInfo)
+        assertEquals(NONE, platform.invocation(sender, "main", arrayOf("inner", "main")).validInfo)
     }
 
     @Test
     fun `test sender with only main permission`() {
-        val sender = TestPermissionSender()
+        val sender = LiteTestSender()
+            .ignoreMessages(true)
             .permission("dev.rollczi.main")
 
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
+        assertEquals(NONE,          platform.invocation(sender, "main", arrayOf()).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf("inner", "all")).validInfo)
+        assertEquals(NONE,          platform.invocation(sender, "main", arrayOf("inner", "without")).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf("inner", "inner")).validInfo)
+        assertEquals(NONE,          platform.invocation(sender, "main", arrayOf("inner", "main")).validInfo)
     }
 
     @Test
     fun `test sender with only inner permission`() {
-        val sender = TestPermissionSender()
+        val sender = LiteTestSender()
+            .ignoreMessages(true)
             .permission("dev.rollczi.main.inner")
 
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPermOnly.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationAllPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationWithoutPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NONE, section.resolveExecution(invocationInnerPerm.get(sender)).validInfo)
-        assertEquals(ValidationInfo.NO_PERMISSION, section.resolveExecution(invocationMainPerm.get(sender)).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf()).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf("inner", "all")).validInfo)
+        assertEquals(NONE,          platform.invocation(sender, "main", arrayOf("inner", "without")).validInfo)
+        assertEquals(NONE,          platform.invocation(sender, "main", arrayOf("inner", "inner")).validInfo)
+        assertEquals(NO_PERMISSION, platform.invocation(sender, "main", arrayOf("inner", "main")).validInfo)
     }
 
 }

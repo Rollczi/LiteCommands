@@ -17,7 +17,7 @@ public class ArgAnnotationBind implements NativeBind {
     @Override
     public void bind(AnnotationParser annotationParser, Resources resources) {
         resources.annotatedWith(Arg.class).assignHandler((property, arg, objects) -> {
-            LiteComponent.ContextOfResolving context = InjectUtils.getContextFromObjects(objects);
+            LiteComponent.ContextOfResolving context = InjectUtils.getContextFromInjectorArgs(objects);
             int value = arg.value();
 
             for (Map.Entry<Class<?>, Set<ArgumentHandler<?>>> entry : annotationParser.getArgumentHandlers().entrySet()) {
