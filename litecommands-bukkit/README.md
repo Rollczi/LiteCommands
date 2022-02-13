@@ -4,12 +4,12 @@ Maven
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>bukkit</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
 </dependency>
 ```
 Gradle
 ```groovy
-implementation 'dev.rollczi.litecommands:bukkit:1.6.0'
+implementation 'dev.rollczi.litecommands:bukkit:1.7.0'
 ```
 
 #### Examples:
