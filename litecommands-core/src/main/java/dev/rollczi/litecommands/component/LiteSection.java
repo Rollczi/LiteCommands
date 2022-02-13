@@ -44,10 +44,10 @@ public final class LiteSection extends AbstractComponent {
 
         LiteComponent candidate = filteredComponents.get(0);
         ContextOfResolving candidateContext = currentContext.resolverNestingTracing(candidate);
-        filteredComponents.removeIf(component -> !component.getMissingPermission(currentContext).isEmpty());
+        filteredComponents.removeIf(component -> !component.getMissingPermission(currentContext, true).isEmpty());
 
         if (filteredComponents.isEmpty()) {
-            List<String> missingPermission = candidate.getMissingPermission(currentContext);
+            List<String> missingPermission = candidate.getMissingPermission(currentContext, true);
 
             return ExecutionResult.invalidPermission(missingPermission, currentContext);
         }
@@ -74,7 +74,13 @@ public final class LiteSection extends AbstractComponent {
 
     @Override
     public List<String> resolveCompletion(ContextOfResolving data) {
-        ContextOfResolving currentContextOfResolving = data.resolverNestingTracing(this);
+        ContextOfResolving currentContext = data.resolverNestingTracing(this);
+
+        List<String> missingPermission = this.getMissingPermission(currentContext, false);
+
+        if (!missingPermission.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         // /command subcommand|
         if (data.isLastResolver()) {
@@ -85,7 +91,7 @@ public final class LiteSection extends AbstractComponent {
             }
 
             if (suggestions.remove(StringUtils.EMPTY)) {
-                suggestions.addAll(resolvers.get(StringUtils.EMPTY).resolveCompletion(currentContextOfResolving));
+                suggestions.addAll(resolvers.get(StringUtils.EMPTY).resolveCompletion(currentContext));
             }
 
             return suggestions;
@@ -104,7 +110,7 @@ public final class LiteSection extends AbstractComponent {
 
             if (executor != null) {
                 suggestions.remove(StringUtils.EMPTY);
-                suggestions.addAll(executor.resolveCompletion(currentContextOfResolving)); // suggestions (arguments)
+                suggestions.addAll(executor.resolveCompletion(currentContext)); // suggestions (arguments)
             }
 
             return suggestions;
@@ -116,7 +122,7 @@ public final class LiteSection extends AbstractComponent {
                 continue;
             }
 
-            return component.resolveCompletion(currentContextOfResolving);
+            return component.resolveCompletion(currentContext);
         }
 
         String[] arguments = data.invocation.arguments();
@@ -125,11 +131,11 @@ public final class LiteSection extends AbstractComponent {
         // /command subcommand argument |[...]
         if (component instanceof LiteExecution && arguments.length != 0) {
             LiteExecution liteExecution = (LiteExecution) component;
-            List<String> oldSuggestions = liteExecution.generateCompletion(currentContextOfResolving.getCurrentArgsCount(this) - 1, currentContextOfResolving);
+            List<String> oldSuggestions = liteExecution.generateCompletion(currentContext.getCurrentArgsCount(this) - 1, currentContext);
 
             // /command subcommand argument |argument
             if (oldSuggestions.contains(arguments[arguments.length - 2])) {
-                return component.resolveCompletion(currentContextOfResolving);
+                return component.resolveCompletion(currentContext);
             }
         }
 
