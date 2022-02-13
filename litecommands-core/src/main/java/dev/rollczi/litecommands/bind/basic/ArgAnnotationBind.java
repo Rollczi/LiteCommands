@@ -12,7 +12,7 @@ import org.panda_lang.utilities.inject.Resources;
 import java.util.Map;
 import java.util.Set;
 
-public class ArgAnnotationBind implements NativeBind {
+public final class ArgAnnotationBind implements NativeBind {
 
     @Override
     public void bind(AnnotationParser annotationParser, Resources resources) {

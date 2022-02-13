@@ -11,7 +11,7 @@ import org.panda_lang.utilities.inject.Resources;
 import java.util.Arrays;
 import java.util.List;
 
-public class JoinerAnnotationBind implements NativeBind {
+public final class JoinerAnnotationBind implements NativeBind {
 
     @Override
     public void bind(AnnotationParser annotationParser, Resources resources) {
