@@ -57,8 +57,7 @@ subprojects {
 
 //            maven {
 //                name = "eternalcode-repository"
-//                url = uri("http://repo.eternalcode.pl/releases")
-//                allowInsecureProtocol = true
+//                url = uri("https://repo.eternalcode.pl/releases")
 //                credentials {
 //                    username = "$lucky_user_litecommands"
 //                    password = "$lucky_pass_litecommands"
