@@ -7,6 +7,7 @@ import panda.std.Option;
 import java.util.Collections;
 import java.util.List;
 
+@ArgumentName("amount")
 public class DoubleArg implements SingleArgumentHandler<Double> {
 
     @Override

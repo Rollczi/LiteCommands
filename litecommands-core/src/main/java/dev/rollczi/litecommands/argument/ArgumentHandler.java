@@ -21,4 +21,16 @@ public interface ArgumentHandler<T> {
         return this.getClass();
     }
 
+    default boolean isValid(LiteComponent.ContextOfResolving context, String argument) {
+        List<String> tabulations = tabulation(context);
+
+        for (String tab : tabulations) {
+            if (tab.equalsIgnoreCase(argument)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
