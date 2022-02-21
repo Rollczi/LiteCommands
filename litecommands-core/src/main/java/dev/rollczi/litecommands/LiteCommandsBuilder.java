@@ -198,7 +198,7 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
                     continue;
                 }
 
-                logger.warning( "annotation @ArgumentName isn't present before class " + handler.getClass());
+                logger.warning( "annotation @ArgumentName isn't present before class " + handler.getNativeClass());
             }
         }
 

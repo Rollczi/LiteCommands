@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.component;
 
+import dev.rollczi.litecommands.argument.ArgumentHandler;
 import dev.rollczi.litecommands.scope.ScopeMetaData;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import panda.std.Option;
@@ -131,11 +132,18 @@ public final class LiteSection extends AbstractComponent {
         // /command subcommand argument |[...]
         if (component instanceof LiteExecution && arguments.length != 0) {
             LiteExecution liteExecution = (LiteExecution) component;
-            List<String> oldSuggestions = liteExecution.generateCompletion(currentContext.getCurrentArgsCount(this) - 1, currentContext);
 
-            // /command subcommand argument |argument
-            if (oldSuggestions.contains(arguments[arguments.length - 2])) {
-                return component.resolveCompletion(currentContext);
+            String lastArgument = arguments[arguments.length - 2];
+            int lastArgumentIndex = currentContext.getCurrentArgsCount(this) - 1;
+
+            Option<ArgumentHandler<?>> option = liteExecution.getExecutor().getArgumentHandler(lastArgumentIndex);
+
+            if (option.isEmpty()) {
+                ArgumentHandler<?> argumentHandler = option.get();
+
+                if (argumentHandler.isValid(currentContext, lastArgument)) {
+                    return component.resolveCompletion(currentContext);
+                }
             }
         }
 
