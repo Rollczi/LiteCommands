@@ -46,6 +46,7 @@ subprojects {
     publishing {
         repositories {
             mavenLocal()
+
 //          maven {
 //                name = "panda-repository"
 //                url = uri("https://repo.panda-lang.org/releases")

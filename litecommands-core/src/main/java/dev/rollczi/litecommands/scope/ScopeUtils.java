@@ -26,7 +26,7 @@ public final class ScopeUtils {
             message = iterator.previous().getScope().getMessage(info);
         }
 
-        return message.getOrNull();
+        return message.orNull();
     }
 
 

@@ -1,12 +1,11 @@
 dependencies {
 
-    // panda
+    // Panda
     api 'org.panda-lang:expressible:1.1.16'
-    implementation 'org.panda-lang.utilities:di:1.4.1'
+    implementation 'org.panda-lang.utilities:di:1.5.0'
 
-    // [test] kotlin
+    // Test
     testImplementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10'
-    // [test] junit-jupiter
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly    'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
