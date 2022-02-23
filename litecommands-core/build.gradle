@@ -2,7 +2,7 @@ dependencies {
 
     // Panda
     api 'org.panda-lang:expressible:1.1.16'
-    implementation 'org.panda-lang.utilities:di:1.5.0'
+    api 'org.panda-lang.utilities:di:1.5.0'
 
     // Test
     testImplementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10'
