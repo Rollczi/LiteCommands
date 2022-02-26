@@ -138,7 +138,7 @@ public final class LiteSection extends AbstractComponent {
 
             Option<ArgumentHandler<?>> option = liteExecution.getExecutor().getArgumentHandler(lastArgumentIndex);
 
-            if (option.isEmpty()) {
+            if (option.isPresent()) {
                 ArgumentHandler<?> argumentHandler = option.get();
 
                 if (argumentHandler.isValid(currentContext, lastArgument)) {

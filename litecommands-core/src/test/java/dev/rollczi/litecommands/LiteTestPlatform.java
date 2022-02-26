@@ -64,5 +64,8 @@ public class LiteTestPlatform extends LiteAbstractPlatformManager<Void> {
 
         return liteTestCommand.suggest(liteSender, liteTestCommand.getScope().getName(), command, args);
     }
+    public List<String> suggestion(String command, String[] args) {
+        return suggestion(new LiteTestSender(), command, args);
+    }
 
 }
