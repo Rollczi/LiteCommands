@@ -21,11 +21,11 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>core</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.1</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:core:1.8.0'
+implementation 'dev.rollczi.litecommands:core:1.8.1'
 ```
 
 ### First Simple Command
@@ -55,11 +55,11 @@ Add this to your dependencies if you want use ready-made implementation for velo
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>velocity</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.1</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:1.8.0'
+implementation 'dev.rollczi.litecommands:velocity:1.8.1'
 ```
 
 #### All extensions: 

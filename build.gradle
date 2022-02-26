@@ -16,7 +16,7 @@ plugins {
 
 allprojects {
     group = 'dev.rollczi.litecommands'
-    version = '1.8.0'
+    version = '1.8.1'
 
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -47,23 +47,23 @@ subprojects {
         repositories {
             mavenLocal()
 
-          maven {
-                name = "panda-repository"
-                url = uri("https://repo.panda-lang.org/releases")
-                credentials {
-                    username = "$panda_user_litecommands"
-                    password = "$panda_pass_litecommands"
-                }
-          }
-
-            maven {
-                name = "eternalcode-repository"
-                url = uri("https://repo.eternalcode.pl/releases")
-                credentials {
-                    username = "$lucky_user_litecommands"
-                    password = "$lucky_pass_litecommands"
-                }
-            }
+//            maven {
+//                name = "panda-repository"
+//                url = uri("https://repo.panda-lang.org/releases")
+//                credentials {
+//                    username = "$panda_user_litecommands"
+//                        password = "$panda_pass_litecommands"
+//                }
+//            }
+//
+//            maven {
+//                name = "eternalcode-repository"
+//                url = uri("https://repo.eternalcode.pl/releases")
+//                credentials {
+//                    username = "$lucky_user_litecommands"
+//                    password = "$lucky_pass_litecommands"
+//                }
+//            }
         }
     }
 }
