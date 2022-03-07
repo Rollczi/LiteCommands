@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import panda.std.Option;
 
-public interface OptionArgumentHandler<T> extends SingleArgumentHandler<Option<T>> {
+public interface OptionArgumentHandler<T> extends NotRequiredArgumentHandler<Option<T>> {
 
     @Override
     default Option<T> parse(LiteComponent.ContextOfResolving context, int rawIndex) throws ValidationCommandException {
@@ -14,7 +14,7 @@ public interface OptionArgumentHandler<T> extends SingleArgumentHandler<Option<T
         String[] arguments = invocation.arguments();
 
         if (arguments.length <= index) {
-            return Option.none();
+            return orElse(invocation);
         }
 
         return parse(invocation, arguments[index]);
@@ -23,6 +23,11 @@ public interface OptionArgumentHandler<T> extends SingleArgumentHandler<Option<T
     @Override
     default Option<T> parse(LiteInvocation invocation, String argument) throws ValidationCommandException {
         return Option.of(parseIfPresent(invocation, argument));
+    }
+
+    @Override
+    default Option<T> orElse(LiteInvocation invocation) throws ValidationCommandException {
+        return Option.none();
     }
 
     T parseIfPresent(LiteInvocation invocation, String argument) throws ValidationCommandException;
