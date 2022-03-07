@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.OptionArgumentHandler;
 import dev.rollczi.litecommands.bind.NativeBind;
 import dev.rollczi.litecommands.component.ExecutionResult;
