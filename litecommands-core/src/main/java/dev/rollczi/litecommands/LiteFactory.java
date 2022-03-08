@@ -14,9 +14,9 @@ public class LiteFactory {
         return LiteCommandsBuilder.<SENDER, P>builder()
                 .bind(new ArgAnnotationBind())
                 .bind(new JoinerAnnotationBind())
-                .bind(String[].class, new ArgumentsBind())
-                .bind(LiteSender.class, new LiteSenderBind())
-                .bind(LiteInvocation.class, new LiteInvocationBind());
+                .typeBind(String[].class, new ArgumentsBind())
+                .typeBind(LiteSender.class, new LiteSenderBind())
+                .typeBind(LiteInvocation.class, new LiteInvocationBind());
     }
 
 }
