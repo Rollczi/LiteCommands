@@ -15,9 +15,9 @@ public final class LiteBungeeFactory {
 
     public static LiteCommandsBuilder<CommandSender, LiteBungeePlatformManager> builder(Plugin plugin) {
         return LiteFactory.<CommandSender, LiteBungeePlatformManager>builder()
-                .bind(Plugin.class, plugin)
-                .bind(ProxyServer.class, plugin.getProxy())
-                .bind(CommandSender.class, new OriginalSenderBind())
+                .typeBind(Plugin.class, plugin)
+                .typeBind(ProxyServer.class, plugin.getProxy())
+                .typeBind(CommandSender.class, new OriginalSenderBind())
                 .platform(new LiteBungeePlatformManager(plugin));
     }
 

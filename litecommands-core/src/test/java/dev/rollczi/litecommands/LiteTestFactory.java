@@ -6,7 +6,7 @@ public final class LiteTestFactory {
 
     public static LiteCommandsBuilder<Void, LiteTestPlatform> builder() {
         return LiteFactory.<Void, LiteTestPlatform>builder()
-                .bind(LiteTestSender.class, new LiteTestSenderBind())
+                .typeBind(LiteTestSender.class, new LiteTestSenderBind())
                 .argument(LiteTestSender.class, new LiteTestSenderArgument())
                 .platform(new LiteTestPlatform());
     }

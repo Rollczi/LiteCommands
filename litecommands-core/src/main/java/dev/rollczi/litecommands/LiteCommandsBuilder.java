@@ -28,6 +28,7 @@ import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
 import panda.utilities.text.Formatter;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,19 +93,84 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         return this.bind(Arrays.asList(bind));
     }
 
+    /**
+     * Binds a class to a command.
+     *
+     * @deprecated Use {@link #typeBind(Class, LiteBind)} instead.
+     * @param on class to bind
+     * @param liteBind bind method
+     * @param <T> type of class to bind
+     * @return this builder
+     * @see #typeBind(Class, LiteBind)
+     */
+    @Deprecated
     public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, LiteBind liteBind) {
         this.bind((resources) -> resources.on(on)
                 .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
         return this;
     }
 
+    /**
+     * Binds a class to a command.
+     *
+     * @deprecated Use {@link #typeBind(Class, Object)} instead.
+     * @param on class to bind
+     * @param instance instance to bind
+     * @param <T> type of class to bind
+     * @return this builder
+     * @see #typeBind(Class, Object)
+     */
+    @Deprecated
     public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, Object instance) {
         this.bind((resources) -> resources.on(on).assignInstance(instance));
         return this;
     }
 
+    /**
+     * Binds a class to a command.
+     *
+     * @deprecated Use {@link #typeBind(Class, Supplier)} instead.
+     * @param on class to bind
+     * @param supplier supplier to bind instance
+     * @param <T> type of class to bind
+     * @return this builder
+     * @see #typeBind(Class, Supplier)
+     */
+    @Deprecated
     public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, Supplier<Object> supplier) {
         this.bind((resources) -> resources.on(on).assignInstance(supplier));
+        return this;
+    }
+
+    public <T> LiteCommandsBuilder<SENDER, P> typeBind(Class<T> on, LiteBind liteBind) {
+        this.bind((resources) -> resources.on(on)
+                .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
+        return this;
+    }
+
+    public <T> LiteCommandsBuilder<SENDER, P> typeBind(Class<T> on, Object instance) {
+        this.bind((resources) -> resources.on(on).assignInstance(instance));
+        return this;
+    }
+
+    public <T> LiteCommandsBuilder<SENDER, P> typeBind(Class<T> on, Supplier<Object> supplier) {
+        this.bind((resources) -> resources.on(on).assignInstance(supplier));
+        return this;
+    }
+
+    public <A extends Annotation> LiteCommandsBuilder<SENDER, P> annotationBind(Class<A> on, LiteBind liteBind) {
+        this.bind((resources) -> resources.annotatedWith(on)
+                .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
+        return this;
+    }
+
+    public <A extends Annotation> LiteCommandsBuilder<SENDER, P> annotationBind(Class<A> on, Object instance) {
+        this.bind((resources) -> resources.annotatedWith(on).assignInstance(instance));
+        return this;
+    }
+
+    public <A extends Annotation> LiteCommandsBuilder<SENDER, P> annotationBind(Class<A> on, Supplier<Object> supplier) {
+        this.bind((resources) -> resources.annotatedWith(on).assignInstance(supplier));
         return this;
     }
 
