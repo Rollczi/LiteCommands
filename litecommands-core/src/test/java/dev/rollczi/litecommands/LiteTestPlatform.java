@@ -51,7 +51,7 @@ public class LiteTestPlatform extends LiteAbstractPlatformManager<Void> {
         return liteTestCommand.execute(liteSender, liteTestCommand.getScope().getName(), command, args);
     }
 
-    public ExecutionResult invocation(String command, String[] args) {
+    public ExecutionResult invocation(String command, String... args) {
         return invocation(new LiteTestSender(), command, args);
     }
 

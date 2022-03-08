@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.argument;
 import dev.rollczi.litecommands.LiteInvocation;
 import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
-import panda.std.Option;
 
 import java.util.List;
 
@@ -51,7 +50,7 @@ public interface SingleArgumentHandler<T> extends ArgumentHandler<T> {
             }
 
             @Override
-            public Option<String> getName() {
+            public String getName() {
                 return SingleArgumentHandler.this.getName();
             }
         };

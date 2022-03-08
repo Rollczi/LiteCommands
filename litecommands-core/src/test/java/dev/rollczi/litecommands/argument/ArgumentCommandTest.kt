@@ -23,11 +23,11 @@ class ArgumentCommandTest : LiteCommandsSpec() {
 
         val platform: LiteTestPlatform = liteCommands.getPlatformManager()
 
-        platform.invocation("test", arrayOf("option", "test"))
-        platform.invocation("test", arrayOf("value_option", "test"))
-        platform.invocation("test", arrayOf("option_option", "0.0", "test"))
-        platform.invocation("test", arrayOf("customstring_string", "test", "test"))
-        platform.invocation("test", arrayOf("string_customstring", "test", "test"))
+        platform.invocation("test", "option", "test")
+        platform.invocation("test", "value_option", "test")
+        platform.invocation("test", "option_option", "0.0", "test")
+        platform.invocation("test", "customstring_string", "test", "test")
+        platform.invocation("test", "string_customstring", "test", "test")
 
         assertEquals(1, testCommand.resultOption.executions)
         assertEquals(1, testCommand.resultValueOption.executions)

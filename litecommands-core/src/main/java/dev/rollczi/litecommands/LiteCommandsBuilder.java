@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.platform.Suggester;
 import dev.rollczi.litecommands.valid.ValidationCommandException;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import dev.rollczi.litecommands.valid.messages.ContextualMessage;
+import dev.rollczi.litecommands.valid.messages.InvalidUseMessage;
 import dev.rollczi.litecommands.valid.messages.LiteMessage;
 import dev.rollczi.litecommands.valid.messages.MessagesService;
 import dev.rollczi.litecommands.annotations.parser.AnnotationParser;
@@ -22,6 +23,7 @@ import dev.rollczi.litecommands.bind.Bind;
 import dev.rollczi.litecommands.utils.InjectUtils;
 import dev.rollczi.litecommands.valid.handle.LiteExecutionResultHandler;
 import dev.rollczi.litecommands.valid.handle.ExecutionResultHandler;
+import dev.rollczi.litecommands.valid.messages.PermissionMessage;
 import dev.rollczi.litecommands.valid.messages.UseSchemeFormatting;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
@@ -199,7 +201,17 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         return this;
     }
 
-    public LiteCommandsBuilder<SENDER, P> formatting(UseSchemeFormatting formatting) {
+    public LiteCommandsBuilder<SENDER, P> permissionMessage(PermissionMessage message) {
+        this.messagesService.registerMessage(ValidationInfo.NO_PERMISSION, message);
+        return this;
+    }
+
+    public LiteCommandsBuilder<SENDER, P> invalidUseMessage(InvalidUseMessage message) {
+        this.messagesService.registerMessage(ValidationInfo.INVALID_USE, message);
+        return this;
+    }
+
+    public LiteCommandsBuilder<SENDER, P> formattingUseScheme(UseSchemeFormatting formatting) {
         this.messagesService.setUseSchemeFormatting(formatting);
         return this;
     }
@@ -259,11 +271,7 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         // Checks for legacy implementations
         for (Set<ArgumentHandler<?>> handlers : argumentHandlers.values()) {
             for (ArgumentHandler<?> handler : handlers) {
-                if (handler.getName().isPresent()) {
-                    continue;
-                }
-
-                logger.warning( "annotation @ArgumentName isn't present before class " + handler.getNativeClass());
+                handler.getName();
             }
         }
 

@@ -12,9 +12,10 @@ public interface ArgumentHandler<T> {
 
     List<String> tabulation(LiteComponent.ContextOfResolving context);
 
-    default Option<String> getName() {
+    default String getName() {
         return Option.of(this.getClass().getAnnotation(ArgumentName.class))
-                .map(ArgumentName::value);
+                .map(ArgumentName::value)
+                .orThrow(() -> new IllegalStateException("annotation @ArgumentName is not found before class " + this.getNativeClass().getName()));
     }
 
     default Class<? extends ArgumentHandler> getNativeClass() {
