@@ -4,7 +4,7 @@
 Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
-- [Beta Docs](https://docs.rollczi.dev/)
+- [Docs (Beta)](https://docs.rollczi.dev/)
 
 ### Panda Repository (Maven or Gradle)  ❤️
 ```xml
