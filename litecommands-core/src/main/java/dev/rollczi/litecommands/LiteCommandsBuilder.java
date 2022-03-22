@@ -1,6 +1,9 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.annotations.Arg;
+import dev.rollczi.litecommands.annotations.Name;
 import dev.rollczi.litecommands.argument.OptionArgumentHandler;
+import dev.rollczi.litecommands.argument.SingleNoTabulationArgumentHandler;
 import dev.rollczi.litecommands.bind.AnnotatedParameter;
 import dev.rollczi.litecommands.bind.NativeBind;
 import dev.rollczi.litecommands.bind.Parameter;
@@ -41,6 +44,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -97,56 +102,6 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         return this.bind(Arrays.asList(bind));
     }
 
-    /**
-     * Binds a class to a command.
-     *
-     * @deprecated Use {@link #parameterBind(Class, Parameter)} instead.
-     * @see #parameterBind(Class, Parameter)
-     */
-    @Deprecated
-    public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, LiteBind liteBind) {
-        this.bind((resources) -> resources.on(on)
-                .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
-        return this;
-    }
-
-    /**
-     * Binds a class to a command.
-     *
-     * @deprecated Use {@link #typeBind(Class, Object)} instead.
-     * @see #typeBind(Class, Object)
-     */
-    @Deprecated
-    public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, Object instance) {
-        this.bind((resources) -> resources.on(on).assignInstance(instance));
-        return this;
-    }
-
-    /**
-     * Binds a class to a command.
-     *
-     * @deprecated Use {@link #typeBind(Class, Supplier)} instead.
-     * @see #typeBind(Class, Supplier)
-     */
-    @Deprecated
-    public <T> LiteCommandsBuilder<SENDER, P> bind(Class<T> on, Supplier<Object> supplier) {
-        this.bind((resources) -> resources.on(on).assignInstance(supplier));
-        return this;
-    }
-
-    /**
-     * Binds a class to a command.
-     *
-     * @deprecated Use {@link #parameterBind(Class, Parameter)} instead.
-     * @see #parameterBind(Class, Parameter)
-     */
-    @Deprecated
-    public <T> LiteCommandsBuilder<SENDER, P> typeBind(Class<T> on, LiteBind liteBind) {
-        this.bind((resources) -> resources.on(on)
-                .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
-        return this;
-    }
-
     public <T> LiteCommandsBuilder<SENDER, P> typeBind(Class<T> on, Object instance) {
         this.bind((resources) -> resources.on(on).assignInstance(instance));
         return this;
@@ -154,19 +109,6 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
 
     public <T> LiteCommandsBuilder<SENDER, P> typeBind(Class<T> on, Supplier<Object> supplier) {
         this.bind((resources) -> resources.on(on).assignInstance(supplier));
-        return this;
-    }
-
-    /**
-     * Binds a class to a command.
-     *
-     * @deprecated Use {@link #parameterBind(Class, Parameter)} instead.
-     * @see #parameterBind(Class, Parameter)
-     */
-    @Deprecated
-    public <A extends Annotation> LiteCommandsBuilder<SENDER, P> annotationBind(Class<A> on, LiteBind liteBind) {
-        this.bind((resources) -> resources.annotatedWith(on)
-                .assignHandler((property, annotation, objects) -> liteBind.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
         return this;
     }
 
@@ -194,7 +136,21 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         return this;
     }
 
-    public <T> LiteCommandsBuilder<SENDER, P> parameterBind(Class<T> on, Parameter<T> parameter) {
+    public <T> LiteCommandsBuilder<SENDER, P> argument(Class<T> on, String name, Function<String, T> argumentHandler) {
+        Set<ArgumentHandler<?>> handlers = this.argumentHandlers.computeIfAbsent(on, key -> new HashSet<>());
+
+        handlers.add(new SingleNoTabulationArgumentHandler<>(name, (invocation, arg) -> argumentHandler.apply(arg)));
+        return this;
+    }
+
+    public <T> LiteCommandsBuilder<SENDER, P> argument(Class<T> on, String name, BiFunction<LiteInvocation, String, T> argumentHandler) {
+        Set<ArgumentHandler<?>> handlers = this.argumentHandlers.computeIfAbsent(on, key -> new HashSet<>());
+
+        handlers.add(new SingleNoTabulationArgumentHandler<>(name, argumentHandler));
+        return this;
+    }
+
+    public <T> LiteCommandsBuilder<SENDER, P> parameterBind(Class<T> on, Parameter parameter) {
         this.bind((resources) -> resources.on(on)
                 .assignHandler((property, annotation, objects) -> parameter.apply(InjectUtils.getContextFromInjectorArgs(objects).getInvocation())));
         return this;
@@ -267,9 +223,9 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         return this;
     }
 
-    public LiteCommands register() {
+    public LiteCommands register(@Arg(0) @Name("test") String test) {
         if (platformManager == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("Platform manager is null");
         }
 
         if (executionResultHandler == null) {
@@ -283,13 +239,6 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
                 bind.bind(parser, resources);
             }
         });
-
-        // Checks for legacy implementations
-        for (Set<ArgumentHandler<?>> handlers : argumentHandlers.values()) {
-            for (ArgumentHandler<?> handler : handlers) {
-                handler.getName();
-            }
-        }
 
         LiteComponentFactory factory = new LiteComponentFactory(logger, injector, parser);
 

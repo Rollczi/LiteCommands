@@ -55,10 +55,10 @@ public interface LiteMessage extends ContextualMessage {
                 .is(LiteExecution.class)
                 .map(LiteExecution::getExecutor)
                 .toStream()
-                .flatMap(executor -> executor.getArgumentHandlers().entrySet())
+                .flatMap(executor -> executor.getParameterHandlers().entrySet())
                 .sorted(Comparator.comparingInt(Map.Entry::getKey))
                 .map(Map.Entry::getValue)
-                .map(handler -> handler instanceof NotRequiredArgumentHandler
+                .map(handler -> handler.getArgumentHandler() instanceof NotRequiredArgumentHandler
                         ? formatting.optionalParameterFormat().apply(handler.getName())
                         : formatting.parameterFormat().apply(handler.getName()))
                 .collect(Collectors.joining(" "));

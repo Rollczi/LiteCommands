@@ -22,7 +22,13 @@ public final class ReflectUtils {
     }
 
     public static String formatParams(Method method) {
-        return Joiner.on(", ").join(method.getParameters(), param -> param.getType().getSimpleName() + " " + param.getName()).toString();
+        return Joiner.on(", ").join(method.getParameters(), param -> {
+            String annotations = Joiner.on(" ").join(param.getAnnotations(), annotation -> "@" + annotation.annotationType().getSimpleName()).toString();
+            String type = param.getType().getSimpleName();
+            String name = param.getName();
+
+            return annotations.isEmpty() ? type + " " + name : annotations + " " + type + " " + name;
+        }).toString();
     }
 
     public static String modifier(Method method) {

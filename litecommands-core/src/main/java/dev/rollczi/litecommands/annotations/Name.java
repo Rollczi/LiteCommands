@@ -5,18 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Section {
+public @interface Name {
 
-    String route();
-
-    String[] aliases() default {};
-
-    int priority() default -1;
-
-    boolean autoPriority() default false;
-
-    int required() default -1;
+    String value();
 
 }

@@ -25,8 +25,12 @@ public class LiteRegisterResolvers {
         LiteSection removed = resolvers.remove(name);
         ScopeMetaData scopeRemoved = removed.getScope();
 
-        if (scopeRemoved.getPriority() == scope.getPriority()) {
-            throw new UnsupportedOperationException(ScopeUtils.annotationFormat(scopeRemoved) + " sections have the same priorities!");
+        if (scopeRemoved.getPriority() == scope.getPriority() && !scopeRemoved.isAutoPriority() && !scope.isAutoPriority()) {
+            String formatRemoved = ScopeUtils.annotationFormat(scopeRemoved);
+            String formatScope = ScopeUtils.annotationFormat(scope);
+            String message = String.format("'%s' and '%s' sections have the same priorities!", formatRemoved, formatScope);
+
+            throw new UnsupportedOperationException(message);
         }
 
         LiteSection build = LiteSection.builder()

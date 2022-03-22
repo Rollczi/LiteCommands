@@ -51,8 +51,8 @@ public final class LiteExecution extends AbstractComponent {
     }
 
     public List<String> generateCompletion(int argNumber, LiteComponent.ContextOfResolving context) {
-        return executor.getArgumentHandler(argNumber)
-                .map(argumentHandler -> argumentHandler.tabulation(context))
+        return executor.getParameterHandlers(argNumber)
+                .map(parameterHandler -> parameterHandler.getArgumentHandler().tabulation(context))
                 .orElseGet(Collections.emptyList());
     }
 

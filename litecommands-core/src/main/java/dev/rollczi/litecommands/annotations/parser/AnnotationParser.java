@@ -23,7 +23,7 @@ public interface AnnotationParser {
      */
     Option<ScopeMetaData> parse(AnnotatedElement annotatedElement);
 
-    Set<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass);
+    Set<ArgumentHandler<?>> getArgumentHandlers(Class<?> argumentClass);
 
     Map<Class<?>, Set<ArgumentHandler<?>>> getArgumentHandlers();
 

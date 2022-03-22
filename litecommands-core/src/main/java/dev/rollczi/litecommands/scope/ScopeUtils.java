@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.scope;
 
-import dev.rollczi.litecommands.annotations.Section;
 import dev.rollczi.litecommands.component.LiteComponent;
 import dev.rollczi.litecommands.valid.ValidationInfo;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-@Section(route = "test", priority = 1, aliases = {""})
 public final class ScopeUtils {
 
     private ScopeUtils() {}
@@ -37,6 +35,14 @@ public final class ScopeUtils {
 
         if (scope.getPriority() != - 1) {
             list.add("priority = " + scope.getPriority());
+        }
+
+        if (scope.isAutoPriority()) {
+            list.add("autoPriority = true");
+        }
+
+        if (!scope.getAliases().isEmpty()) {
+            list.add("aliases = { " + Joiner.on(", ").join(scope.getAliases(), alias -> '"' + alias + '"') + " }");
         }
 
         return "@Section(" + Joiner.on(", ").join(list) + ")";

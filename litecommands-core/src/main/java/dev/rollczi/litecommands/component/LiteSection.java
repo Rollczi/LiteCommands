@@ -136,10 +136,10 @@ public final class LiteSection extends AbstractComponent {
             String lastArgument = arguments[arguments.length - 2];
             int lastArgumentIndex = currentContext.getCurrentArgsCount(this) - 1;
 
-            Option<ArgumentHandler<?>> option = liteExecution.getExecutor().getArgumentHandler(lastArgumentIndex);
+            Option<ParameterHandler<?>> option = liteExecution.getExecutor().getParameterHandlers(lastArgumentIndex);
 
             if (option.isPresent()) {
-                ArgumentHandler<?> argumentHandler = option.get();
+                ArgumentHandler<?> argumentHandler = option.get().getArgumentHandler();
 
                 if (argumentHandler.isValid(currentContext, lastArgument)) {
                     return component.resolveCompletion(currentContext);

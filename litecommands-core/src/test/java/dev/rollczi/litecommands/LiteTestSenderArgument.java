@@ -16,7 +16,7 @@ public class LiteTestSenderArgument implements SingleArgumentHandler<LiteTestSen
     }
 
     @Override
-    public List<String> tabulation(String command, String[] args) {
+    public List<String> tabulation(LiteInvocation invocation, String command, String[] args) {
         return Arrays.asList("test1", "test2", "test3");
     }
 
