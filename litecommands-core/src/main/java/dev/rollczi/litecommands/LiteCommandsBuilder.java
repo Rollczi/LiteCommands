@@ -223,7 +223,7 @@ public class LiteCommandsBuilder<SENDER, P extends LitePlatformManager<SENDER>> 
         return this;
     }
 
-    public LiteCommands register(@Arg(0) @Name("test") String test) {
+    public LiteCommands register() {
         if (platformManager == null) {
             throw new NullPointerException("Platform manager is null");
         }
