@@ -32,8 +32,8 @@ class SchemeUseCommandTest : LiteCommandsSpec() {
         assertEquals("/command hello", tester.message(platform.invocation("command", "hello")))
         assertEquals("/command hey <text> <text>", tester.message(platform.invocation("command", "hey")))
         assertEquals("/command siema <text> [text]", tester.message(platform.invocation("command", "siema")))
-        assertEquals("/command custom <custom>", tester.message(platform.invocation("custom", "test")))
-        assertEquals("/command custominarg <siema>", tester.message(platform.invocation("custominarg", "test")))
+        assertEquals("/command custom <custom>", tester.message(platform.invocation("command", "custom", "test")))
+        assertEquals("/command custominarg <siema>", tester.message(platform.invocation("command", "custominarg", "test")))
     }
 
     @Test
@@ -45,6 +45,8 @@ class SchemeUseCommandTest : LiteCommandsSpec() {
         assertEquals("/command hello", tester.message(platform.invocation("command", "hello")))
         assertEquals("/command hey [text] [text]", tester.message(platform.invocation("command", "hey")))
         assertEquals("/command siema [text] <text>", tester.message(platform.invocation("command", "siema")))
+        assertEquals("/command custom [custom]", tester.message(platform.invocation("command", "custom", "test")))
+        assertEquals("/command custominarg [siema]", tester.message(platform.invocation("command", "custominarg", "test")))
     }
 
     @Test
@@ -56,6 +58,8 @@ class SchemeUseCommandTest : LiteCommandsSpec() {
         assertEquals("/command hello", tester.message(platform.invocation("command", "hello")))
         assertEquals("/command hey <text> <text>", tester.message(platform.invocation("command", "hey")))
         assertEquals("/command siema <text> [text]", tester.message(platform.invocation("command", "siema")))
+        assertEquals("/command custom <custom>", tester.message(platform.invocation("command", "custom", "test")))
+        assertEquals("/command custominarg <siema>", tester.message(platform.invocation("command", "custominarg", "test")))
     }
 
     @Test
@@ -67,6 +71,8 @@ class SchemeUseCommandTest : LiteCommandsSpec() {
         assertEquals("/command hello", tester.message(platform.invocation("command", "hello")))
         assertEquals("/command hey [text] [text]",  tester.message(platform.invocation("command", "hey")))
         assertEquals("/command siema [text] <text>", tester.message(platform.invocation("command", "siema")))
+        assertEquals("/command custom [custom]", tester.message(platform.invocation("command", "custom", "test")))
+        assertEquals("/command custominarg [siema]", tester.message(platform.invocation("command", "custominarg", "test")))
     }
 
 }
