@@ -10,12 +10,12 @@ public class MultiSectionTestCommand {
 
     @Execute
     public void execute() {
-        throw new ValidationCommandException(ValidationInfo.CUSTOM, "ac");
+        throw new ValidationCommandException("ac");
     }
 
     @Execute(route = "help")
     public void executeHelp() {
-        throw new ValidationCommandException(ValidationInfo.CUSTOM, "help");
+        throw new ValidationCommandException("help");
     }
 
 }

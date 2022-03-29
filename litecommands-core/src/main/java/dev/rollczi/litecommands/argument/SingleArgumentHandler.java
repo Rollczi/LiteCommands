@@ -27,10 +27,10 @@ public interface SingleArgumentHandler<T> extends ArgumentHandler<T> {
     default List<String> tabulation(LiteComponent.ContextOfResolving context) {
         LiteInvocation invocation = context.getInvocation();
 
-        return tabulation(invocation.alias(), invocation.arguments());
+        return tabulation(invocation, invocation.alias(), invocation.arguments());
     }
 
-    List<String> tabulation(String command, String[] args);
+    List<String> tabulation(LiteInvocation invocation, String command, String[] args);
 
     default OptionArgumentHandler<T> toOptionHandler() {
         return new OptionArgumentHandler<T>() {
@@ -40,8 +40,8 @@ public interface SingleArgumentHandler<T> extends ArgumentHandler<T> {
             }
 
             @Override
-            public List<String> tabulation(String command, String[] args) {
-                return SingleArgumentHandler.this.tabulation(command, args);
+            public List<String> tabulation(LiteInvocation invocation, String command, String[] args) {
+                return SingleArgumentHandler.this.tabulation(invocation, command, args);
             }
 
             @Override

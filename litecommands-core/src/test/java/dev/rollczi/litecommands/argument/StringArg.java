@@ -15,7 +15,7 @@ public class StringArg implements SingleArgumentHandler<String> {
     }
 
     @Override
-    public List<String> tabulation(String command, String[] args) {
+    public List<String> tabulation(LiteInvocation invocation, String command, String[] args) {
         return Collections.emptyList();
     }
 

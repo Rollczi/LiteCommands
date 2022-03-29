@@ -15,7 +15,7 @@ public final class LiteVelocityFactory {
     public static LiteCommandsBuilder<CommandSource, LiteVelocityPlatformManager> builder(ProxyServer proxy) {
         return LiteFactory.<CommandSource, LiteVelocityPlatformManager>builder()
                 .typeBind(ProxyServer.class, proxy)
-                .typeBind(CommandSource.class, new OriginalSenderBind())
+                .parameterBind(CommandSource.class, new OriginalSenderBind())
                 .platform(new LiteVelocityPlatformManager(proxy));
     }
 

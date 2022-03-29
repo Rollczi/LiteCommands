@@ -29,7 +29,7 @@ public final class JoinerAnnotationBind implements NativeBind {
 
             int fakeComponents = lastComponentName.isEmpty() ? 1 : 0;
             int subCommandCount = (components.size() - 1) - fakeComponents;
-            int argumentsCount = executor.getArgumentHandlers().size();
+            int argumentsCount = executor.getParameterHandlers().size();
             int otherUnknownArgsIndex = subCommandCount + argumentsCount;
 
             String[] args = context.getInvocation().arguments();

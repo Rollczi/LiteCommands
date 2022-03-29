@@ -72,7 +72,8 @@ public class LiteAnnotationParser implements AnnotationParser {
                 builder
                     .name(placeholders.format(section.route()))
                     .aliases(aliases)
-                    .priority(section.priority());
+                    .priority(section.priority())
+                    .autoPriority(section.autoPriority());
 
                 if (section.required() > - 1) {
                     builder.amountValidator(validator -> validator.required(section.required()));
@@ -163,7 +164,7 @@ public class LiteAnnotationParser implements AnnotationParser {
     }
 
     @Override
-    public Set<ArgumentHandler<?>> getArgumentHandler(Class<?> argumentClass) {
+    public Set<ArgumentHandler<?>> getArgumentHandlers(Class<?> argumentClass) {
         return Collections.unmodifiableSet(argumentHandlers.getOrDefault(argumentClass, new HashSet<>()));
     }
 

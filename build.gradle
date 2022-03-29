@@ -16,7 +16,7 @@ plugins {
 
 allprojects {
     group = 'dev.rollczi.litecommands'
-    version = '1.8.4'
+    version = '1.9.0-beta'
 
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -42,6 +42,10 @@ subprojects {
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+
+    compileJava {
+        options.compilerArgs << '-parameters'
+    }
 
     publishing {
         repositories {
