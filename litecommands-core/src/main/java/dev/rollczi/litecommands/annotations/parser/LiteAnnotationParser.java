@@ -132,7 +132,7 @@ public class LiteAnnotationParser implements AnnotationParser {
 
             if (annotation instanceof UsageMessage) {
                 UsageMessage usageMessage = (UsageMessage) annotation;
-                builder.message(ValidationInfo.INVALID_USE, placeholders.format(usageMessage.value()));
+                builder.message(ValidationInfo.INVALID_USE, () -> placeholders.format(usageMessage.value()));
                 continue;
             }
 
