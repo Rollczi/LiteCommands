@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class ScopeMetaData {
 
@@ -19,12 +20,12 @@ public final class ScopeMetaData {
     private final int priority;
     private final boolean autoPriority;
     private final Set<String> aliases = new HashSet<>();
-    private final Map<ValidationInfo, String> messages = new EnumMap<>(ValidationInfo.class);
+    private final Map<ValidationInfo, Supplier<String>> messages = new EnumMap<>(ValidationInfo.class);
     private final AmountValidator argCountValidator;
     private final Set<String> permissions = new HashSet<>();
     private final Set<String> permissionsExclude = new HashSet<>();
 
-    private ScopeMetaData(String name, int priority, boolean autoPriority, AmountValidator argCountValidator, Set<String> permissions, Set<String> permissionsExclude, Set<String> aliases, Map<ValidationInfo, String> messages) {
+    private ScopeMetaData(String name, int priority, boolean autoPriority, AmountValidator argCountValidator, Set<String> permissions, Set<String> permissionsExclude, Set<String> aliases, Map<ValidationInfo, Supplier<String>> messages) {
         this.name = name;
         this.priority = priority;
         this.autoPriority = autoPriority;
@@ -52,7 +53,7 @@ public final class ScopeMetaData {
     }
 
     public Option<String> getMessage(ValidationInfo info) {
-        return Option.of(messages.get(info));
+        return Option.of(messages.get(info)).map(Supplier::get);
     }
 
     public AmountValidator getArgsValidator() {
@@ -104,7 +105,7 @@ public final class ScopeMetaData {
         private int priority = 0;
         private boolean autoPriority = false;
         private final Set<String> aliases = new HashSet<>();
-        private final Map<ValidationInfo, String> messages = new EnumMap<>(ValidationInfo.class);
+        private final Map<ValidationInfo, Supplier<String>> messages = new EnumMap<>(ValidationInfo.class);
         private AmountValidator amountValidator = AmountValidator.NONE;
         private final Set<String> permissions = new HashSet<>();
         private final Set<String> permissionsExclude = new HashSet<>();
@@ -134,7 +135,7 @@ public final class ScopeMetaData {
             return this;
         }
 
-        public Builder message(ValidationInfo info, String message) {
+        public Builder message(ValidationInfo info, Supplier<String> message) {
             this.messages.put(info, message);
             return this;
         }
