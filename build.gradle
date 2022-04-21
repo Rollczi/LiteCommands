@@ -47,37 +47,37 @@ subprojects {
         options.compilerArgs << '-parameters'
     }
 
-    publishing {
-        repositories {
-            mavenLocal()
-
-            maven {
-                name = "panda-repository"
-                url = uri("https://repo.panda-lang.org/releases")
-                credentials {
-                    username = "$panda_user_litecommands"
-                        password = "$panda_pass_litecommands"
-                }
-            }
-
-            maven {
-                name = "eternalcode-repository"
-                url = uri("https://repo.eternalcode.pl/releases")
-                credentials {
-                    username = "$lucky_user_litecommands"
-                    password = "$lucky_pass_litecommands"
-                }
-            }
-            maven {
-                name = "mine-repository"
-                url = uri("https://repository.minecodes.pl/releases")
-                credentials {
-                    username = "$mine_user"
-                    password = "$mine_pass"
-                }
-            }
-        }
-    }
+//    publishing {
+//        repositories {
+//            mavenLocal()
+//
+//            maven {
+//                name = "panda-repository"
+//                url = uri("https://repo.panda-lang.org/releases")
+//                credentials {
+//                    username = "$panda_user_litecommands"
+//                        password = "$panda_pass_litecommands"
+//                }
+//            }
+//
+//            maven {
+//                name = "eternalcode-repository"
+//                url = uri("https://repo.eternalcode.pl/releases")
+//                credentials {
+//                    username = "$lucky_user_litecommands"
+//                    password = "$lucky_pass_litecommands"
+//                }
+//            }
+//            maven {
+//                name = "mine-repository"
+//                url = uri("https://repository.minecodes.pl/releases")
+//                credentials {
+//                    username = "$mine_user"
+//                    password = "$mine_pass"
+//                }
+//            }
+//        }
+//    }
 }
 
 idea {
