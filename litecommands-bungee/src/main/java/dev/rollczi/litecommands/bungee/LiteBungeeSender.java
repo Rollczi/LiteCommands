@@ -15,17 +15,17 @@ public class LiteBungeeSender implements LiteSender {
 
     @Override
     public boolean hasPermission(String permission) {
-        return sender.hasPermission(permission);
+        return this.sender.hasPermission(permission);
     }
 
     @Override
     public void sendMessage(String message) {
-        sender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message)));
+        this.sender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message)));
     }
 
     @Override
     public CommandSender getSender() {
-        return sender;
+        return this.sender;
     }
 
 }

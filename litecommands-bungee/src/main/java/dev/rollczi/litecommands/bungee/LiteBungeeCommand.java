@@ -13,10 +13,10 @@ import java.util.Collections;
 
 public class LiteBungeeCommand extends Command implements TabExecutor {
 
+    private final LiteSenderCreator<CommandSender> liteSenderCreator;
+    private final Suggester suggester;
     private final ScopeMetaData scope;
     private final Executor executor;
-    private final Suggester suggester;
-    private final LiteSenderCreator<CommandSender> liteSenderCreator;
 
     public LiteBungeeCommand(ScopeMetaData scope, Executor executor, Suggester suggester, LiteSenderCreator<CommandSender> creator) {
         super(scope.getName(), "", scope.getAliases().toArray(new String[0]));
@@ -28,16 +28,16 @@ public class LiteBungeeCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        executor.execute(new LiteInvocation(scope.getName(), scope.getName(), liteSenderCreator.create(sender), args));
+        this.executor.execute(new LiteInvocation(this.scope.getName(), this.scope.getName(), this.liteSenderCreator.create(sender), args));
     }
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        if (Suggester.NONE.equals(suggester)) {
+        if (Suggester.NONE.equals(this.suggester)) {
             return Collections.emptyList();
         }
 
-        return suggester.suggest(new LiteInvocation(scope.getName(), scope.getName(), liteSenderCreator.create(sender), args));
+        return this.suggester.suggest(new LiteInvocation(this.scope.getName(), this.scope.getName(), this.liteSenderCreator.create(sender), args));
     }
 
 }
