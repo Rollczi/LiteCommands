@@ -11,10 +11,10 @@ import java.util.List;
 
 public class LiteVelocityCommand implements SimpleCommand {
 
-    private final ScopeMetaData scope;
-    private final Executor executor;
-    private final Suggester suggester;
     private final LiteSenderCreator<CommandSource> liteSenderCreator;
+    private final ScopeMetaData scope;
+    private final Suggester suggester;
+    private final Executor executor;
 
     public LiteVelocityCommand(ScopeMetaData scope, Executor executor, Suggester suggester, LiteSenderCreator<CommandSource> creator) {
         this.scope = scope;
@@ -25,12 +25,12 @@ public class LiteVelocityCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
-        executor.execute(LiteVelocityUtils.adaptInvocation(scope.getName(), invocation, liteSenderCreator));
+        this.executor.execute(LiteVelocityUtils.adaptInvocation(this.scope.getName(), invocation, this.liteSenderCreator));
     }
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        return suggester.suggest(LiteVelocityUtils.adaptInvocation(scope.getName(), invocation, liteSenderCreator));
+        return this.suggester.suggest(LiteVelocityUtils.adaptSuggestInvocation(this.scope.getName(), invocation, this.liteSenderCreator));
     }
 
 }

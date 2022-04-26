@@ -24,18 +24,18 @@ public class LiteBungeePlatformManager extends LiteAbstractPlatformManager<Comma
     
     @Override
     public void registerCommand(ScopeMetaData scope, Executor execute, Suggester suggester) {
-        LiteBungeeCommand command = new LiteBungeeCommand(scope, execute, suggester, liteSenderCreator);
+        LiteBungeeCommand command = new LiteBungeeCommand(scope, execute, suggester, this.liteSenderCreator);
 
-        plugin.getProxy().getPluginManager().registerCommand(plugin, command);
-        commands.add(scope.getName());
-        commands.addAll(scope.getAliases());
+        this.plugin.getProxy().getPluginManager().registerCommand(this.plugin, command);
+        this.commands.add(scope.getName());
+        this.commands.addAll(scope.getAliases());
     }
 
     @Override
     public void unregisterCommands() {
-        PluginManager pluginManager = plugin.getProxy().getPluginManager();
+        PluginManager pluginManager = this.plugin.getProxy().getPluginManager();
         pluginManager.getCommands().stream()
-                .filter(entry -> commands.contains(entry.getKey()))
+                .filter(entry -> this.commands.contains(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .forEach(pluginManager::unregisterCommand);
     }

@@ -18,8 +18,8 @@ import java.util.Set;
 public class LiteBukkitPlatformManager extends LiteAbstractPlatformManager<CommandSender> {
 
     private final Set<String> commands = new HashSet<>();
-    private final CommandMap commandMap;
     private final Map<String, Command> knownCommands;
+    private final CommandMap commandMap;
     private final String fallbackPrefix;
 
     @SuppressWarnings("unchecked")
@@ -31,12 +31,12 @@ public class LiteBukkitPlatformManager extends LiteAbstractPlatformManager<Comma
             Field commandMapField = server.getClass().getDeclaredField("commandMap");
 
             commandMapField.setAccessible(true);
-            commandMap = (CommandMap) commandMapField.get(server);
+            this.commandMap = (CommandMap) commandMapField.get(server);
 
             Field knownCommandMapField = SimpleCommandMap.class.getDeclaredField("knownCommands");
             knownCommandMapField.setAccessible(true);
 
-            knownCommands = (Map<String, Command>) knownCommandMapField.get(commandMap);
+            this.knownCommands = (Map<String, Command>) knownCommandMapField.get(this.commandMap);
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException();
@@ -45,17 +45,17 @@ public class LiteBukkitPlatformManager extends LiteAbstractPlatformManager<Comma
 
     @Override
     public void registerCommand(ScopeMetaData scope, Executor executor, Suggester suggester) {
-        LiteBukkitCommand command = new LiteBukkitCommand(scope, executor, suggester, liteSenderCreator);
+        LiteBukkitCommand command = new LiteBukkitCommand(scope, executor, suggester, this.liteSenderCreator);
 
-        commandMap.register(scope.getName(), fallbackPrefix, command);
-        commands.add(scope.getName());
-        commands.addAll(scope.getAliases());
+        this.commandMap.register(scope.getName(), this.fallbackPrefix, command);
+        this.commands.add(scope.getName());
+        this.commands.addAll(scope.getAliases());
     }
 
     @Override
     public void unregisterCommands() {
         for (String command : commands) {
-            knownCommands.remove(command);
+            this.knownCommands.remove(command);
         }
     }
 

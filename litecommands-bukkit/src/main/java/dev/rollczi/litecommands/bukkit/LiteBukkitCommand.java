@@ -13,10 +13,10 @@ import java.util.List;
 
 public class LiteBukkitCommand extends Command {
 
+    private final LiteSenderCreator<CommandSender> creator;
+    private final Suggester suggester;
     private final ScopeMetaData scope;
     private final Executor executor;
-    private final Suggester suggester;
-    private final LiteSenderCreator<CommandSender> creator;
 
     public LiteBukkitCommand(ScopeMetaData scope, Executor executor, Suggester suggester, LiteSenderCreator<CommandSender> creator) {
         super(scope.getName(), "", "/" + scope.getName(), new ArrayList<>(scope.getAliases()));
@@ -28,17 +28,17 @@ public class LiteBukkitCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String alias, String[] args) {
-        executor.execute(new LiteInvocation(scope.getName(), alias, creator.create(sender), args));
+        this.executor.execute(new LiteInvocation(this.scope.getName(), alias, this.creator.create(sender), args));
         return true;
     }
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-        if (Suggester.NONE.equals(suggester)) {
+        if (Suggester.NONE.equals(this.suggester)) {
             return super.tabComplete(sender, alias, args);
         }
 
-        return suggester.suggest(new LiteInvocation(scope.getName(), alias, creator.create(sender), args));
+        return this.suggester.suggest(new LiteInvocation(this.scope.getName(), alias, this.creator.create(sender), args));
     }
 
 }

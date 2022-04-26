@@ -24,22 +24,22 @@ public class LiteVelocityPlatformManager extends LiteAbstractPlatformManager<Com
 
     @Override
     public void registerCommand(ScopeMetaData scope, Executor executor, Suggester suggester) {
-        LiteVelocityCommand command = new LiteVelocityCommand(scope, executor, suggester, liteSenderCreator);
+        LiteVelocityCommand command = new LiteVelocityCommand(scope, executor, suggester, this.liteSenderCreator);
 
-        CommandManager commandManager = proxyServer.getCommandManager();
+        CommandManager commandManager = this.proxyServer.getCommandManager();
         CommandMeta meta = commandManager.metaBuilder(scope.getName())
                 .aliases(scope.getAliases().toArray(new String[0]))
                 .build();
 
         commandManager.register(meta, command);
-        commands.add(scope.getName());
-        commands.addAll(scope.getAliases());
+        this.commands.add(scope.getName());
+        this.commands.addAll(scope.getAliases());
     }
 
     @Override
     public void unregisterCommands() {
-        for (String command : commands) {
-            proxyServer.getCommandManager().unregister(command);
+        for (String command : this.commands) {
+            this.proxyServer.getCommandManager().unregister(command);
         }
     }
 
