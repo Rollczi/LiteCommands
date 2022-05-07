@@ -40,6 +40,7 @@ public class LiteCommands {
         return componentFactory;
     }
 
+    @SuppressWarnings("unchecked")
     public <SENDER, P extends LitePlatformManager<SENDER>> P getPlatformManager() {
         return (P) platformManager;
     }
