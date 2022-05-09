@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentState;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.valid.Validation;
@@ -17,8 +18,9 @@ public final class FindResult {
 
     private final LiteInvocation invocation;
 
-    private final Map<Integer, CommandSection> sections;
+    private final List<CommandSection> sections;
     private final ArgumentExecutor executor;
+    private final List<ArgumentState> argumentStates;
     private final List<CompletedArgument> arguments;
 
     private final CompletedArgument lastMatchedArgument;
@@ -29,10 +31,11 @@ public final class FindResult {
     private final boolean invalid;
     private final Object invalidResult;
 
-    private FindResult(LiteInvocation invocation, Map<Integer, CommandSection> sections, ArgumentExecutor executor, List<CompletedArgument> arguments, CompletedArgument lastMatchedArgument, CompletedArgument failedArgument, boolean found, boolean failed, boolean invalid, Object invalidResult) {
+    private FindResult(LiteInvocation invocation, List<CommandSection> sections, ArgumentExecutor executor, List<ArgumentState> argumentStates, List<CompletedArgument> arguments, CompletedArgument lastMatchedArgument, CompletedArgument failedArgument, boolean found, boolean failed, boolean invalid, Object invalidResult) {
         this.invocation = invocation;
         this.sections = sections;
         this.executor = executor;
+        this.argumentStates = argumentStates;
         this.arguments = arguments;
         this.lastMatchedArgument = lastMatchedArgument;
         this.failedArgument = failedArgument;
@@ -45,16 +48,16 @@ public final class FindResult {
     public FindResult withSection(CommandSection section) {
         Validation.isNull(this.executor, "Executor is set");
 
-        Map<Integer, CommandSection> sections = new HashMap<>(this.sections);
+        List<CommandSection> sections = new ArrayList<>(this.sections);
 
-        sections.put(sections.size(), section);
-        return new FindResult(invocation, sections, null, arguments, lastMatchedArgument, failedArgument, found, failed, invalid, invalidResult);
+        sections.add(section);
+        return new FindResult(invocation, sections, null, argumentStates, arguments, lastMatchedArgument, failedArgument, found, failed, invalid, invalidResult);
     }
 
-    public FindResult withExecutor(ArgumentExecutor executor) {
+    public FindResult withExecutor(ArgumentExecutor executor, List<ArgumentState> argumentStates) {
         Validation.isNull(this.executor, "Executor already set");
         Validation.isFalse(this.found, "This is the end of the command");
-        Validation.isNotEmpty(this.sections.values(), "Executor must have a parent section");
+        Validation.isNotEmpty(this.sections, "Executor must have a parent section");
 
         if (sections.isEmpty()) {
             throw new IllegalStateException();
@@ -62,7 +65,7 @@ public final class FindResult {
 
         for (ArgumentExecutor exec : sections.get(sections.size() - 1).executors()) {
             if (exec.equals(executor)) {
-                return new FindResult(invocation, sections, executor, arguments, lastMatchedArgument, failedArgument, false, failed, invalid, invalidResult);
+                return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, false, failed, invalid, invalidResult);
             }
         }
 
@@ -79,7 +82,7 @@ public final class FindResult {
         CompletedArgument completedArgument = new CompletedArgument(argument, results, completions, arguments.size());
 
         arguments.add(completedArgument);
-        return new FindResult(invocation, sections, executor, arguments, matched ? completedArgument : this.lastMatchedArgument, failedArgument, false, failed, invalid, invalidResult);
+        return new FindResult(invocation, sections, executor, argumentStates, arguments, matched ? completedArgument : this.lastMatchedArgument, failedArgument, false, failed, invalid, invalidResult);
     }
 
     public FindResult failedArgument(Argument<?> argument, List<Completion> completions) {
@@ -90,7 +93,7 @@ public final class FindResult {
 
         CompletedArgument completedArgument = new CompletedArgument(argument, Collections.emptyList(), completions, arguments.size());
 
-        return new FindResult(invocation, sections, executor, arguments, lastMatchedArgument, completedArgument, false, true, false, invalidResult);
+        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, completedArgument, false, true, false, invalidResult);
     }
 
     public FindResult invalidArgument(Argument<?> argument, List<Completion> completions, Object result) {
@@ -102,7 +105,7 @@ public final class FindResult {
 
         CompletedArgument completedArgument = new CompletedArgument(argument, Collections.emptyList(), completions, arguments.size());
 
-        return new FindResult(invocation, sections, executor, arguments, lastMatchedArgument, completedArgument, false, false, true, result);
+        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, completedArgument, false, false, true, result);
     }
 
     public FindResult invalid() {
@@ -111,7 +114,7 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, arguments, lastMatchedArgument, failedArgument, false, false, true, invalidResult);
+        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, false, false, true, invalidResult);
     }
 
     public FindResult markAsFound() {
@@ -119,15 +122,31 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, arguments, lastMatchedArgument, failedArgument, true, false, false, invalidResult);
+        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, true, false, false, invalidResult);
     }
 
-    public Map<Integer, CommandSection> getSections() {
-        return Collections.unmodifiableMap(sections);
+    @Deprecated
+    public Map<Integer, CommandSection> getSectionsAsMap() {
+        Map<Integer, CommandSection> sectionMap = new HashMap<>();
+
+        int index = 0;
+        for (CommandSection section : sections) {
+            sectionMap.put(index++, section);
+        }
+
+        return Collections.unmodifiableMap(sectionMap);
+    }
+
+    public List<CommandSection> getSections() {
+        return Collections.unmodifiableList(sections);
     }
 
     public Optional<ArgumentExecutor> getExecutor() {
         return Optional.ofNullable(executor);
+    }
+
+    public List<ArgumentState> getArgumentStates() {
+        return Collections.unmodifiableList(argumentStates);
     }
 
     public List<Argument<?>> getArguments() {
@@ -250,9 +269,10 @@ public final class FindResult {
     }
 
     public static FindResult none(LiteInvocation invocation) {
-        return new FindResult(invocation, new HashMap<>(), null, new ArrayList<>(), null, null, false, false, false, null);
+        return new FindResult(invocation, new ArrayList<>(), null, new ArrayList<>(), new ArrayList<>(), null, null, false, false, false, null);
     }
 
+    @Deprecated
     private final static class CompletedArgument {
         private final Argument<?> argument;
         private final List<Object> results;

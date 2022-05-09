@@ -28,7 +28,7 @@ public class CommandService<SENDER> {
         platform.registerListener(
                 section,
                 (sender, invocation) -> {
-                    ExecuteResult result = section.execute(invocation, 0);
+                    ExecuteResult result = section.execute(invocation);
 
                     this.handler.handle(sender, invocation, result);
                     return result;
@@ -44,7 +44,7 @@ public class CommandService<SENDER> {
             throw new IllegalArgumentException("Command not found: " + invocation.label());
         }
 
-        commandSection.execute(invocation, 0);
+        commandSection.execute(invocation);
     }
 
 }

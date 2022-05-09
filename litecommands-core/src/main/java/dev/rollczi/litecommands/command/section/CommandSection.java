@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -21,7 +22,7 @@ public interface CommandSection {
 
     boolean isSimilar(String name);
 
-    ExecuteResult execute(LiteInvocation invocation, int route);
+    ExecuteResult execute(LiteInvocation invocation);
 
     CompletionResult completion(LiteInvocation invocation);
 
@@ -35,7 +36,7 @@ public interface CommandSection {
 
     void mergeSection(CommandSection section);
 
-    Set<CommandSection> childrenSection();
+    List<CommandSection> childrenSection();
 
     /**
      * Argument executor
@@ -43,7 +44,7 @@ public interface CommandSection {
 
     void executor(ArgumentExecutor argumentExecutor);
 
-    Set<ArgumentExecutor> executors();
+    List<ArgumentExecutor> executors();
 
     /**
      * Permissions

@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.command.MatchResult;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class BlockArgument implements Argument<Block> {
 
@@ -43,6 +44,11 @@ public class BlockArgument implements Argument<Block> {
     @Override
     public List<Completion> complete(LiteInvocation invocation, Block annotation) {
         return Collections.singletonList(Completion.multiCompletion(annotation.value().split(" ")));
+    }
+
+    @Override
+    public Optional<String> getScheme(Block annotation) {
+        return Optional.ofNullable(annotation.value());
     }
 
 }

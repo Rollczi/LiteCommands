@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.command.MatchResult;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public interface Argument<A extends Annotation> {
 
@@ -22,6 +23,15 @@ public interface Argument<A extends Annotation> {
 
     default List<Object> getDefaultValue() {
         return Collections.emptyList();
+    }
+
+    default Optional<String> getName(A annotation) {
+        return Optional.ofNullable(this.getClass().getAnnotation(ArgumentName.class))
+                .map(ArgumentName::value);
+    }
+
+    default Optional<String> getScheme(A annotation) {
+        return Optional.empty();
     }
 
 }

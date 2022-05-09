@@ -2,17 +2,22 @@ package dev.rollczi.litecommands.handle;
 
 import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.scheme.SchemeFormat;
+import dev.rollczi.litecommands.scheme.SchemeGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ExecuteResultHandler<SENDER> {
 
+    private final SchemeGenerator schemeGenerator = new SchemeGenerator();
     private final Map<Class<?>, Handler<SENDER, ?>> handlers = new HashMap<>();
 
     public void handle(SENDER sender, LiteInvocation invocation, ExecuteResult result) {
         if (result.isFailure()) {
-            //TODO: use message
+            Handler<SENDER, ?> handler = handlers.get(String.class);
+
+            handle(handler, sender, invocation, "Invalid usage: " + schemeGenerator.generate(result.getBased(), SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE));
 
             return;
         }

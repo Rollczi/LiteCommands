@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import panda.utilities.ValidationUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,8 +25,8 @@ class LiteCommandSection implements CommandSection {
     private final String name;
 
     private final Set<String> aliases = new HashSet<>();
-    private final Set<CommandSection> childSections = new HashSet<>();
-    private final Set<ArgumentExecutor> argumentExecutors = new HashSet<>();
+    private final List<CommandSection> childSections = new ArrayList<>();
+    private final List<ArgumentExecutor> argumentExecutors = new ArrayList<>();
 
     private final Set<String> permissions = new HashSet<>();
     private final Set<String> excludedPermissions = new HashSet<>();
@@ -74,7 +75,7 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public ExecuteResult execute(LiteInvocation invocation, int route) {
+    public ExecuteResult execute(LiteInvocation invocation) {
         FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
         Optional<ArgumentExecutor> executor = findResult.getExecutor();
 
@@ -138,7 +139,7 @@ class LiteCommandSection implements CommandSection {
 
     @Override
     public void childSection(CommandSection section) {
-        for (CommandSection commandSection : new HashSet<>(childSections)) {
+        for (CommandSection commandSection : new ArrayList<>(childSections)) {
             if (commandSection.isSimilar(section.getName())) {
                 commandSection.mergeSection(section);
                 return;
@@ -223,13 +224,13 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public Set<CommandSection> childrenSection() {
-        return Collections.unmodifiableSet(childSections);
+    public List<CommandSection> childrenSection() {
+        return Collections.unmodifiableList(childSections);
     }
 
     @Override
-    public Set<ArgumentExecutor> executors() {
-        return Collections.unmodifiableSet(argumentExecutors);
+    public List<ArgumentExecutor> executors() {
+        return Collections.unmodifiableList(argumentExecutors);
     }
 
 }

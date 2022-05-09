@@ -32,27 +32,29 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
         Optional<Object> result = findResult.getInvalidResult();
 
         if (findResult.isInvalid()) {
-            return result.map(ExecuteResult::invalid).orElseGet(ExecuteResult::failure);
+            return result
+                    .map(obj -> ExecuteResult.invalid(findResult, obj))
+                    .orElseGet(() -> ExecuteResult.failure(findResult));
         }
 
         if (findResult.isFailed()) {
-            return ExecuteResult.failure();
+            return ExecuteResult.failure(findResult);
         }
 
         if (!findResult.isFound()) {
-            return ExecuteResult.failure();
+            return ExecuteResult.failure(findResult);
         }
 
-        return ExecuteResult.success(executor.execute(invocation, findResult.extractResults()));
+        return ExecuteResult.success(findResult, executor.execute(invocation, findResult.extractResults()));
     }
 
     @Override
     public FindResult find(LiteInvocation invocation, int route, FindResult lastResult) {
         int currentRoute = route;
-        FindResult currentResult = lastResult.withExecutor(this);
+        FindResult currentResult = lastResult.withExecutor(this, new ArrayList<>(arguments));
 
         for (AnnotatedArgument<?> annotatedArgument : arguments) {
-            Argument<?> argument = annotatedArgument.getArgument();
+            Argument<?> argument = annotatedArgument.argument();
             List<Completion> completion = annotatedArgument.complete(invocation);
 
             try {
@@ -85,7 +87,7 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
     @Override
     public List<Argument<?>> arguments() {
         return this.arguments.stream()
-                .map(AnnotatedArgument::getArgument)
+                .map(AnnotatedArgument::argument)
                 .collect(Collectors.toList());
     }
 

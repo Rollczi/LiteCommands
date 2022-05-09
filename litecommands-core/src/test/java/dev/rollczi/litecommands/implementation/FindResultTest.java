@@ -23,7 +23,7 @@ class FindResultTest {
     @Test
     void checkNotFound() {
         FindResult findResult = testPlatform.find("lp", "user");
-        Map<Integer, CommandSection> sections = findResult.getSections();
+        Map<Integer, CommandSection> sections = findResult.getSectionsAsMap();
 
         Assertions.assertEquals(sections.get(0).getName(), "lp");
         Assertions.assertEquals(sections.get(1).getName(), "user");
@@ -33,7 +33,7 @@ class FindResultTest {
     @Test
     void checkFound() {
         FindResult findResult = testPlatform.find("lp", "user", "Rollczi", "parent", "set", "vip");
-        Map<Integer, CommandSection> sections = findResult.getSections();
+        Map<Integer, CommandSection> sections = findResult.getSectionsAsMap();
 
         Assertions.assertEquals(sections.get(0).getName(), "lp");
         Assertions.assertEquals(sections.get(1).getName(), "user");
