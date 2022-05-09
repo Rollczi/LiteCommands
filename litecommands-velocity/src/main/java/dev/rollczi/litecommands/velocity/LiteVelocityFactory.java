@@ -1,22 +1,30 @@
 package dev.rollczi.litecommands.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
-import dev.rollczi.litecommands.LiteFactory;
-import dev.rollczi.litecommands.bind.basic.OriginalSenderBind;
+import dev.rollczi.litecommands.implementation.LiteFactory;
+import net.kyori.adventure.text.Component;
+import panda.std.Option;
+import panda.std.Result;
+
+import javax.smartcardio.CommandAPDU;
 
 public final class LiteVelocityFactory {
 
     private LiteVelocityFactory() {
-
     }
 
-    public static LiteCommandsBuilder<CommandSource, LiteVelocityPlatformManager> builder(ProxyServer proxy) {
-        return LiteFactory.<CommandSource, LiteVelocityPlatformManager>builder()
-                .typeBind(ProxyServer.class, proxy)
-                .parameterBind(CommandSource.class, new OriginalSenderBind())
-                .platform(new LiteVelocityPlatformManager(proxy));
+    public static LiteCommandsBuilder<CommandSource> builder(ProxyServer proxy) {
+        return LiteFactory.builder(CommandSource.class)
+                .typeBind(ProxyServer.class, () -> proxy)
+                .contextualBind(CommandSource.class, (commandSource, invocation) -> Result.ok(commandSource))
+
+                .resultHandler(String.class, new StringHandler())
+                .resultHandler(Component.class, new KyoriComponentHandler())
+
+                .platform(new LiteVelocityRegistryPlatform(proxy));
     }
 
 }

@@ -1,24 +1,27 @@
 package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
-import dev.rollczi.litecommands.LiteFactory;
-import dev.rollczi.litecommands.bind.basic.OriginalSenderBind;
+import dev.rollczi.litecommands.implementation.LiteFactory;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.plugin.Plugin;
+
+import javax.smartcardio.CommandAPDU;
 
 public final class LiteBungeeFactory {
 
     private LiteBungeeFactory() {
-
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteBungeePlatformManager> builder(Plugin plugin) {
-        return LiteFactory.<CommandSender, LiteBungeePlatformManager>builder()
-                .typeBind(Plugin.class, plugin)
-                .typeBind(ProxyServer.class, plugin.getProxy())
-                .parameterBind(CommandSender.class, new OriginalSenderBind())
-                .platform(new LiteBungeePlatformManager(plugin));
+    public static LiteCommandsBuilder<CommandSender> builder(Plugin plugin) {
+        return LiteFactory.builder(CommandSender.class)
+                .typeBind(ProxyServer.class, plugin::getProxy)
+
+                .resultHandler(BaseComponent.class, new BaseComponentHandler())
+                .resultHandler(String.class, new StringHandler())
+
+                .platform(new LiteBungeeRegistryPlatform(plugin));
     }
 
 }

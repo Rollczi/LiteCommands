@@ -1,0 +1,101 @@
+package dev.rollczi.litecommands.implementation;
+
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.command.Completion;
+import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.FindResult;
+import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
+import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.MatchResult;
+import dev.rollczi.litecommands.handle.LiteException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+class LiteArgumentArgumentExecutor implements ArgumentExecutor {
+
+    private final MethodExecutor executor;
+    private final List<AnnotatedArgument<?>> arguments = new ArrayList<>();
+    private final AmountValidator amountValidator;
+
+    private LiteArgumentArgumentExecutor(List<AnnotatedArgument<?>> arguments, MethodExecutor executor, AmountValidator amountValidator) {
+        this.executor = executor;
+        this.amountValidator = amountValidator;
+        this.arguments.addAll(arguments);
+    }
+
+    @Override
+    public ExecuteResult execute(LiteInvocation invocation, FindResult findResult) {
+        Optional<Object> result = findResult.getInvalidResult();
+
+        if (findResult.isInvalid()) {
+            return result.map(ExecuteResult::invalid).orElseGet(ExecuteResult::failure);
+        }
+
+        if (findResult.isFailed()) {
+            return ExecuteResult.failure();
+        }
+
+        if (!findResult.isFound()) {
+            return ExecuteResult.failure();
+        }
+
+        return ExecuteResult.success(executor.execute(invocation, findResult.extractResults()));
+    }
+
+    @Override
+    public FindResult find(LiteInvocation invocation, int route, FindResult lastResult) {
+        int currentRoute = route;
+        FindResult currentResult = lastResult.withExecutor(this);
+
+        for (AnnotatedArgument<?> annotatedArgument : arguments) {
+            Argument<?> argument = annotatedArgument.getArgument();
+            List<Completion> completion = annotatedArgument.complete(invocation);
+
+            try {
+                MatchResult result = annotatedArgument.match(invocation, currentRoute);
+
+                if (result.isNotMatched()) {
+                    if (!argument.isRequired()) {
+                        currentResult = currentResult.withArgument(argument, argument.getDefaultValue(), completion, false);
+                        continue;
+                    }
+
+                    return currentResult.failedArgument(argument, completion);
+                }
+
+                currentResult = currentResult.withArgument(argument, result.getResults(), completion, true);
+                currentRoute += result.getConsumed();
+            }
+            catch (LiteException exception) {
+                return currentResult.invalidArgument(argument, completion, exception.getValue());
+            }
+        }
+
+        if (!amountValidator.valid(invocation.arguments().length - route + 1)) {
+            return currentResult.invalid();
+        }
+
+        return currentResult.markAsFound();
+    }
+
+    @Override
+    public List<Argument<?>> arguments() {
+        return this.arguments.stream()
+                .map(AnnotatedArgument::getArgument)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public AmountValidator amountValidator() {
+        return this.amountValidator;
+    }
+
+    static LiteArgumentArgumentExecutor of(List<AnnotatedArgument<?>> arguments, MethodExecutor executor, AmountValidator amountValidator) {
+        return new LiteArgumentArgumentExecutor(arguments, executor, amountValidator);
+    }
+
+}

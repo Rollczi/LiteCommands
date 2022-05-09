@@ -1,0 +1,235 @@
+package dev.rollczi.litecommands.implementation;
+
+import dev.rollczi.litecommands.command.Completion;
+import dev.rollczi.litecommands.command.FindResult;
+import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.command.section.CommandSection;
+import dev.rollczi.litecommands.command.CompletionResult;
+import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
+import dev.rollczi.litecommands.command.LiteInvocation;
+import panda.utilities.ValidationUtils;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+
+class LiteCommandSection implements CommandSection {
+
+    private final String name;
+
+    private final Set<String> aliases = new HashSet<>();
+    private final Set<CommandSection> childSections = new HashSet<>();
+    private final Set<ArgumentExecutor> argumentExecutors = new HashSet<>();
+
+    private final Set<String> permissions = new HashSet<>();
+    private final Set<String> excludedPermissions = new HashSet<>();
+
+    private AmountValidator amountValidator = AmountValidator.NONE;
+
+    LiteCommandSection(String name, Collection<String> aliases) {
+        ValidationUtils.notNull(name, "name");
+        ValidationUtils.notNull(aliases, "aliases");
+
+        this.name = name;
+        this.aliases.addAll(aliases);
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public Set<String> getAliases() {
+        return this.aliases;
+    }
+
+    @Override
+    public Set<String> getCompletable() {
+        Set<String> completable = new HashSet<>(this.aliases);
+        completable.add(this.name);
+
+        return completable;
+    }
+
+    @Override
+    public boolean isSimilar(String name) {
+        if (this.name.equalsIgnoreCase(name)) {
+            return true;
+        }
+
+        for (String alias : aliases) {
+            if (alias.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public ExecuteResult execute(LiteInvocation invocation, int route) {
+        FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
+        Optional<ArgumentExecutor> executor = findResult.getExecutor();
+
+        if (executor.isPresent()) {
+            ArgumentExecutor argumentExecutor = executor.get();
+
+            return argumentExecutor.execute(invocation, findResult);
+        }
+
+        return ExecuteResult.failure();
+    }
+
+    @Override
+    public CompletionResult completion(LiteInvocation invocation) {
+        FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
+        List<Completion> lastCompletion = findResult.extractCompletion();
+
+        return CompletionResult.of(lastCompletion);
+    }
+
+    @Override
+    public FindResult find(LiteInvocation invocation, int route, FindResult lastResult) {
+        Optional<String> optional = invocation.argument(route);
+
+        FindResult last = null;
+
+        if (optional.isPresent()) {
+            String argument = optional.get();
+
+            for (CommandSection commandSection : childSections) {
+                if (!commandSection.isSimilar(argument)) {
+                    continue;
+                }
+
+                FindResult findResult = commandSection.find(invocation, route + 1, lastResult.withSection(this));
+
+                if (findResult.isFound()) {
+                    return findResult;
+                }
+
+                if (last == null || findResult.isLongerThan(last)) {
+                    last = findResult;
+                }
+            }
+        }
+
+        for (ArgumentExecutor argumentExecutor : argumentExecutors) {
+            FindResult findResult = argumentExecutor.find(invocation, route + 1, lastResult.withSection(this));
+
+            if (findResult.isFound()) {
+                return findResult;
+            }
+
+            if (last == null || findResult.isLongerThan(last)) {
+                last = findResult;
+            }
+        }
+
+        return last != null ? last : lastResult.withSection(this);
+    }
+
+    @Override
+    public void childSection(CommandSection section) {
+        for (CommandSection commandSection : new HashSet<>(childSections)) {
+            if (commandSection.isSimilar(section.getName())) {
+                commandSection.mergeSection(section);
+                return;
+            }
+
+            for (String alias : section.getAliases()) {
+                if (commandSection.isSimilar(alias)) {
+                    throw new IllegalArgumentException("Command section with alias " + alias + " already exists.");
+                }
+            }
+        }
+
+        this.childSections.add(section);
+    }
+
+    @Override
+    public void mergeSection(CommandSection section) {
+        if (!section.getName().equalsIgnoreCase(this.name)) {
+            throw new IllegalArgumentException("Cannot merge sections with different names.");
+        }
+
+        for (CommandSection child : section.childrenSection()) {
+            this.childSection(child);
+        }
+
+        for (ArgumentExecutor argumentExecutor : section.executors()) {
+            this.executor(argumentExecutor);
+        }
+
+        this.applySettings(section);
+        this.aliases.addAll(section.getAliases());
+    }
+
+    @Override
+    public void executor(ArgumentExecutor argumentExecutor) {
+        argumentExecutors.add(argumentExecutor);
+    }
+
+    @Override
+    public void permission(String... permissions) {
+        this.permissions.addAll(Arrays.asList(permissions));
+    }
+
+    @Override
+    public void permission(Collection<String> permissions) {
+        this.permissions.addAll(permissions);
+    }
+
+    @Override
+    public Collection<String> permissions() {
+        return Collections.unmodifiableSet(permissions);
+    }
+
+    @Override
+    public void excludePermission(String... permissions) {
+        this.excludedPermissions.addAll(Arrays.asList(permissions));
+    }
+
+    @Override
+    public void excludePermission(Collection<String> permissions) {
+        this.excludedPermissions.addAll(permissions);
+    }
+
+    @Override
+    public Collection<String> excludePermissions() {
+        return Collections.unmodifiableSet(excludedPermissions);
+    }
+
+    @Override
+    public void amountValidator(AmountValidator validator) {
+        this.amountValidator = validator;
+    }
+
+    @Override
+    public void applyOnValidator(Function<AmountValidator, AmountValidator> edit) {
+        this.amountValidator = edit.apply(this.amountValidator);
+    }
+
+    @Override
+    public AmountValidator amountValidator() {
+        return this.amountValidator;
+    }
+
+    @Override
+    public Set<CommandSection> childrenSection() {
+        return Collections.unmodifiableSet(childSections);
+    }
+
+    @Override
+    public Set<ArgumentExecutor> executors() {
+        return Collections.unmodifiableSet(argumentExecutors);
+    }
+
+}
