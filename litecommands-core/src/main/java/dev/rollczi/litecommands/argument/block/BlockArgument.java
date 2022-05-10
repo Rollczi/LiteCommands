@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
+import panda.std.Option;
 
 import java.lang.reflect.Parameter;
 import java.util.Collections;
@@ -48,8 +49,8 @@ public class BlockArgument implements Argument<Block> {
     }
 
     @Override
-    public Optional<String> getSchematic(Block annotation) {
-        return Optional.ofNullable(annotation.value());
+    public Option<String> getSchematic(Block annotation) {
+        return Option.of(annotation.value());
     }
 
 }

@@ -3,6 +3,8 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentAnnotation;
+import dev.rollczi.litecommands.argument.By;
+import dev.rollczi.litecommands.argument.Name;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandStateFactoryProcessor;
 import dev.rollczi.litecommands.command.section.CommandSection;
@@ -28,14 +30,15 @@ import java.util.Set;
 class LiteCommandFactory implements CommandStateFactory {
 
     private final Injector injector;
-    private final Map<Class<? extends Annotation>, Map<Class<?>, Argument<?>>> arguments = new HashMap<>();
+    private final ArgumentsRegistry argumentsRegistry;
     private final Set<CommandStateFactoryProcessor> processors = new HashSet<>();
     private final Map<Class<?>, CommandEditor> editors = new HashMap<>();
 
     private final Set<FactoryAnnotationResolver<?>> annotationResolvers = new HashSet<>();
 
-    private LiteCommandFactory(Injector injector) {
+    LiteCommandFactory(Injector injector, ArgumentsRegistry argumentsRegistry) {
         this.injector = injector;
+        this.argumentsRegistry = argumentsRegistry;
     }
 
     @Override
@@ -49,13 +52,6 @@ class LiteCommandFactory implements CommandStateFactory {
         CommandSection section = this.stateToSection(state, instance, null);
 
         return Option.of(section);
-    }
-
-    @Override
-    public <A extends Annotation> void argument(Class<A> annotation, Class<?> on, Argument<A> argument) {
-        Map<Class<?>, Argument<?>> classArgument = this.arguments.computeIfAbsent(annotation, k -> new HashMap<>());
-
-        classArgument.put(on, argument);
     }
 
     @Override
@@ -182,42 +178,22 @@ class LiteCommandFactory implements CommandStateFactory {
 
         for (Parameter parameter : method.getParameters()) {
             for (Annotation annotation : parameter.getAnnotations()) {
-                Class<?> annotationType = annotation.annotationType();
+                Class<? extends Annotation> annotationType = annotation.annotationType();
 
                 if (!annotationType.isAnnotationPresent(ArgumentAnnotation.class)) {
                     continue;
                 }
 
-                Map<Class<?>, Argument<?>> classArgument = this.arguments.get(annotationType);
+                By by = parameter.getAnnotation(By.class);
+                Option<Argument<?>> argumentOption = by != null
+                        ? this.argumentsRegistry.getArgument(annotationType, parameter, by.value())
+                        : this.argumentsRegistry.getArgument(annotationType, parameter);
 
-                if (classArgument == null) {
-                    throw new IllegalArgumentException("No argument registered for annotation @" + annotationType.getSimpleName());
-                }
-
-                Argument<?> argument = null;
-                Argument<?> assignableArgument = null;
-
-                for (Map.Entry<Class<?>, Argument<?>> entry : classArgument.entrySet()) {
-                    Class<?> type = entry.getKey();
-                    Argument<?> argumentFromMap = entry.getValue();
-
-                    if (argumentFromMap.canHandle(type, parameter)) {
-                        argument = argumentFromMap;
-                        break;
-                    }
-
-                    if (argumentFromMap.canHandleAssignableFrom(type, parameter)) {
-                        assignableArgument = argumentFromMap;
-                    }
-                }
-
-                Argument<? extends Annotation> finalArgument = argument == null ? assignableArgument : argument;
-
-                if (finalArgument == null) {
+                if (argumentOption.isEmpty()) {
                     throw new IllegalArgumentException("No argument registered for annotation @" + annotationType.getSimpleName() + " and type " + parameter.getType().getSimpleName());
                 }
 
-                arguments.add(this.castAndCreateAnnotated(parameter, annotation, finalArgument));
+                arguments.add(this.castAndCreateAnnotated(parameter, annotation, argumentOption.get()));
             }
         }
 
@@ -226,10 +202,6 @@ class LiteCommandFactory implements CommandStateFactory {
 
     private <A extends Annotation> AnnotatedArgument<A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<A> argument) {
         return new AnnotatedArgument<>((A) annotation, parameter, argument);
-    }
-
-    static CommandStateFactory create(Injector injector) {
-        return new LiteCommandFactory(injector);
     }
 
 }

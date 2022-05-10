@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.contextual.Contextual;
@@ -33,9 +32,13 @@ public interface LiteCommandsBuilder<SENDER> {
 
     <T> LiteCommandsBuilder<SENDER> contextualBind(Class<T> on, Contextual<SENDER, T> contextual);
 
+    <T> LiteCommandsBuilder<SENDER> argument(Class<T> on, OneArgument<T> oneArgument);
+
+    <T> LiteCommandsBuilder<SENDER> argument(Class<T> on, String by, OneArgument<T> argument);
+
     <A extends Annotation> LiteCommandsBuilder<SENDER> argument(Class<A> annotation, Class<?> on, Argument<A> argument);
 
-    <T> LiteCommandsBuilder<SENDER> argument(Class<T> on, OneArgument<T> oneArgument);
+    <A extends Annotation> LiteCommandsBuilder<SENDER> argument(Class<A> annotation, Class<?> on, String by, Argument<A> argument);
 
     LiteCommandsBuilder<SENDER> executorFactory(CommandStateFactory commandStateFactory);
 

@@ -1,13 +1,15 @@
 package dev.rollczi.litecommands.argument;
 
+import panda.std.Option;
+
 import java.util.Optional;
 
 public interface ArgumentState {
 
     Argument<?> argument();
 
-    Optional<String> name();
+    Option<String> name();
 
-    Optional<String> scheme();
+    Option<String> scheme();
 
 }

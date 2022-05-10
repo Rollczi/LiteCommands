@@ -38,11 +38,10 @@ public final class LiteFactory {
                     factory.annotationResolver(Max.RESOLVER);
                     factory.annotationResolver(Required.RESOLVER);
                     factory.annotationResolver(Between.RESOLVER);
-
-                    factory.argument(Flag.class, boolean.class, new FlagArgument());
-                    factory.argument(Joiner.class, String.class, new JoinerArgument());
-                    factory.argument(Block.class, Object.class, new BlockArgument());
                 })
+                .argument(Flag.class, boolean.class, new FlagArgument())
+                .argument(Joiner.class, String.class, new JoinerArgument())
+                .argument(Block.class, Object.class, new BlockArgument())
                 .argument(String.class, (invocation, argument) -> Result.ok(argument))
                 .argument(Integer.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Integer.parseInt(argument)).toResult(Blank.BLANK))
                 .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation))

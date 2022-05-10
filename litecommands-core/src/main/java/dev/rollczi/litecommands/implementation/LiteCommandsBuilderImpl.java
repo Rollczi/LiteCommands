@@ -45,7 +45,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
     private final Set<Class<?>> commandsClasses = new HashSet<>();
     private final Set<Object> commandsInstances = new HashSet<>();
-    private final Set<ArgumentStack<?>> arguments = new HashSet<>();
+    private final ArgumentsRegistry argumentsRegistry = new ArgumentsRegistry();
 
     private LiteCommandsBuilderImpl() {
     }
@@ -118,18 +118,21 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
+    public <T> LiteCommandsBuilderImpl<SENDER> argument(Class<T> on, String by, OneArgument<T> argument) {
+        this.argument(Arg.class, on, by, new SimpleOneArgument<>(argument));
+        this.argument(Opt.class, on, by, new OptionArgument<>(on, argument));
+        return this;
+    }
+
+    @Override
     public <A extends Annotation> LiteCommandsBuilderImpl<SENDER> argument(Class<A> annotation, Class<?> on, Argument<A> argument) {
-        for (ArgumentStack<?> stack : arguments) {
-            if (stack.isKey(annotation)) {
-                stack.add(on, argument);
-                return this;
-            }
-        }
+        this.argumentsRegistry.register(annotation, on, argument);
+        return this;
+    }
 
-        ArgumentStack<A> stack = new ArgumentStack<>(annotation);
-
-        stack.add(on, argument);
-        this.arguments.add(stack);
+    @Override
+    public <A extends Annotation> LiteCommandsBuilderImpl<SENDER> argument(Class<A> annotation, Class<?> on, String by, Argument<A> argument) {
+        this.argumentsRegistry.register(annotation, on, by, argument);
         return this;
     }
 
@@ -159,15 +162,11 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         });
 
         if (this.commandStateFactory == null) {
-            this.commandStateFactory = LiteCommandFactory.create(this.injector);
+            this.commandStateFactory = new LiteCommandFactory(this.injector, this.argumentsRegistry);
         }
 
         for (Consumer<CommandStateFactory> editor : commandStateFactoryEditors) {
             editor.accept(this.commandStateFactory);
-        }
-
-        for (ArgumentStack<?> argument : this.arguments) {
-            this.registerArgumentStack(argument);
         }
 
         try {
@@ -195,31 +194,8 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         return commands;
     }
 
-    private <A extends Annotation> void registerArgumentStack(ArgumentStack<A> stack) {
-        stack.map.forEach((on, argument) -> this.commandStateFactory.argument(stack.key, on, argument));
-    }
-
     public static <T> LiteCommandsBuilder<T> builder() {
         return new LiteCommandsBuilderImpl<>();
-    }
-
-    private static final class ArgumentStack<A extends Annotation> {
-        private final Class<A> key;
-        private final Map<Class<?>, Argument<A>> map = new HashMap<>();
-
-        private ArgumentStack(Class<A> key) {
-            this.key = key;
-        }
-
-        @SuppressWarnings("unchecked")
-        private void add(Class<?> on, Argument<?> argument) {
-            map.put(on, (Argument<A>) argument);
-        }
-
-        private boolean isKey(Class<? extends Annotation> key) {
-            return this.key.equals(key);
-        }
-
     }
 
 }

@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.argument.ArgumentState;
 import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
+import panda.std.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
@@ -41,12 +42,12 @@ final class AnnotatedArgument<A extends Annotation> implements ArgumentState {
     }
 
     @Override
-    public Optional<String> name() {
-        return this.argument.getName(annotationInstance);
+    public Option<String> name() {
+        return this.argument.getName(parameter, annotationInstance);
     }
 
     @Override
-    public Optional<String> scheme() {
+    public Option<String> scheme() {
         return this.argument.getSchematic(annotationInstance);
     }
 
