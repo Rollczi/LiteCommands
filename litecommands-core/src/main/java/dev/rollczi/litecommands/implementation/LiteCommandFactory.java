@@ -32,13 +32,14 @@ class LiteCommandFactory implements CommandStateFactory {
     private final Injector injector;
     private final ArgumentsRegistry argumentsRegistry;
     private final Set<CommandStateFactoryProcessor> processors = new HashSet<>();
-    private final Map<Class<?>, CommandEditor> editors = new HashMap<>();
+    private final Map<Class<?>, CommandEditor> editors;
 
     private final Set<FactoryAnnotationResolver<?>> annotationResolvers = new HashSet<>();
 
-    LiteCommandFactory(Injector injector, ArgumentsRegistry argumentsRegistry) {
+    LiteCommandFactory(Injector injector, ArgumentsRegistry argumentsRegistry, Map<Class<?>, CommandEditor> editors) {
         this.injector = injector;
         this.argumentsRegistry = argumentsRegistry;
+        this.editors = editors;
     }
 
     @Override

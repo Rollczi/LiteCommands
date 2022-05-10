@@ -18,6 +18,10 @@ public class CommandService<SENDER> {
         this.handler = handler;
     }
 
+    public CommandSection getSection(String key) {
+        return this.commands.get(key);
+    }
+
     public void register(CommandSection section) {
         commands.put(section.getName(), section);
 

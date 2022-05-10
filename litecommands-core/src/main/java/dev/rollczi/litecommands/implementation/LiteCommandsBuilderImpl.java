@@ -162,7 +162,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         });
 
         if (this.commandStateFactory == null) {
-            this.commandStateFactory = new LiteCommandFactory(this.injector, this.argumentsRegistry);
+            this.commandStateFactory = new LiteCommandFactory(this.injector, this.argumentsRegistry, this.editors);
         }
 
         for (Consumer<CommandStateFactory> editor : commandStateFactoryEditors) {
