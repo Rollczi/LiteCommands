@@ -1,19 +1,21 @@
 package dev.rollczi.litecommands.command;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class MatchResult {
 
     private final boolean matched;
     private final List<Object> results;
+    private final Object noMatchedResult;
     private final int consumed;
 
-    private MatchResult(boolean matched, List<Object> results, int consumed) {
+    private MatchResult(boolean matched, List<Object> results, Object noMatchedResult, int consumed) {
         this.matched = matched;
         this.results = results;
+        this.noMatchedResult = noMatchedResult;
         this.consumed = consumed;
     }
 
@@ -29,24 +31,32 @@ public class MatchResult {
         return results;
     }
 
+    public Optional<Object> getNoMatchedResult() {
+        return Optional.ofNullable(noMatchedResult);
+    }
+
     public int getConsumed() {
         return consumed;
     }
 
     public static <T> MatchResult matched(List<T> results, int consumed) {
-        return new MatchResult(true, new ArrayList<>(results), consumed);
+        return new MatchResult(true, new ArrayList<>(results), null, consumed);
     }
 
     public static MatchResult matched(Object result, int consumed) {
-        return new MatchResult(true, Collections.singletonList(result), consumed);
+        return new MatchResult(true, Collections.singletonList(result), null, consumed);
     }
 
     public static MatchResult matchedSingle(Object result) {
-        return new MatchResult(true, Collections.singletonList(result), 1);
+        return new MatchResult(true, Collections.singletonList(result), null, 1);
     }
 
     public static MatchResult notMatched() {
-        return new MatchResult(false, Collections.emptyList(), 0);
+        return new MatchResult(false, Collections.emptyList(), null, 0);
+    }
+
+    public static MatchResult notMatched(Object noMatchedResult) {
+        return new MatchResult(false, Collections.emptyList(), noMatchedResult, 0);
     }
 
 }

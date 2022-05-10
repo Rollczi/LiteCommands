@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.implementation;
 
-import dev.rollczi.litecommands.command.Completion;
+import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.CompletionResult;
+import dev.rollczi.litecommands.command.SuggestResult;
 import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -85,15 +85,15 @@ class LiteCommandSection implements CommandSection {
             return argumentExecutor.execute(invocation, findResult);
         }
 
-        return ExecuteResult.failure();
+        return ExecuteResult.failure(findResult);
     }
 
     @Override
-    public CompletionResult completion(LiteInvocation invocation) {
+    public SuggestResult suggestion(LiteInvocation invocation) {
         FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
-        List<Completion> lastCompletion = findResult.extractCompletion();
+        List<Suggestion> lastSuggestion = findResult.extractSuggestion();
 
-        return CompletionResult.of(lastCompletion);
+        return SuggestResult.of(lastSuggestion);
     }
 
     @Override

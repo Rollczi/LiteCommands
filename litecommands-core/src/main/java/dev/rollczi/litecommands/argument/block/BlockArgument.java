@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.argument.block;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.command.Completion;
+import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
@@ -42,12 +42,12 @@ public class BlockArgument implements Argument<Block> {
     }
 
     @Override
-    public List<Completion> complete(LiteInvocation invocation, Block annotation) {
-        return Collections.singletonList(Completion.multiCompletion(annotation.value().split(" ")));
+    public List<Suggestion> complete(LiteInvocation invocation, Block annotation) {
+        return Collections.singletonList(Suggestion.multiSuggestion(annotation.value().split(" ")));
     }
 
     @Override
-    public Optional<String> getScheme(Block annotation) {
+    public Optional<String> getSchematic(Block annotation) {
         return Optional.ofNullable(annotation.value());
     }
 

@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.command.section;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
-import dev.rollczi.litecommands.command.CompletionResult;
+import dev.rollczi.litecommands.command.SuggestResult;
 import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
 
@@ -24,7 +24,7 @@ public interface CommandSection {
 
     ExecuteResult execute(LiteInvocation invocation);
 
-    CompletionResult completion(LiteInvocation invocation);
+    SuggestResult suggestion(LiteInvocation invocation);
 
     FindResult find(LiteInvocation invocation, int route, FindResult lastResult);
 

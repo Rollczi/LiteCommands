@@ -33,7 +33,7 @@ public class CommandService<SENDER> {
                     this.handler.handle(sender, invocation, result);
                     return result;
                 },
-                (sender, invocation) -> section.completion(invocation)
+                (sender, invocation) -> section.suggestion(invocation)
         );
     }
 

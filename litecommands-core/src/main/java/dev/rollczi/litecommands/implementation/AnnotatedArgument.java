@@ -2,12 +2,11 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentState;
-import dev.rollczi.litecommands.command.Completion;
+import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +26,7 @@ final class AnnotatedArgument<A extends Annotation> implements ArgumentState {
         return argument.match(invocation, annotationInstance, route, route - 1);
     }
 
-    List<Completion> complete(LiteInvocation invocation) {
+    List<Suggestion> complete(LiteInvocation invocation) {
         return argument.complete(invocation, annotationInstance);
     }
 
@@ -47,7 +46,7 @@ final class AnnotatedArgument<A extends Annotation> implements ArgumentState {
 
     @Override
     public Optional<String> scheme() {
-        return this.argument.getScheme(annotationInstance);
+        return this.argument.getSchematic(annotationInstance);
     }
 
 }

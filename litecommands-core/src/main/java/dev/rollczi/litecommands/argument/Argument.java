@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.command.Completion;
+import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
@@ -13,24 +13,28 @@ public interface Argument<A extends Annotation> {
 
     MatchResult match(LiteInvocation invocation, A annotation, int currentRoute, int currentArgument);
 
-    default boolean isRequired() {
-        return true;
-    }
-
-    default List<Completion> complete(LiteInvocation invocation, A annotation) {
+    default List<Suggestion> complete(LiteInvocation invocation, A annotation) {
         return Collections.emptyList();
     }
 
-    default List<Object> getDefaultValue() {
+    default boolean isOptional() {
+        return false;
+    }
+
+    default List<Object> getDefault() {
         return Collections.emptyList();
+    }
+
+    default Class<?> getNativeClass() {
+        return this.getClass();
     }
 
     default Optional<String> getName(A annotation) {
-        return Optional.ofNullable(this.getClass().getAnnotation(ArgumentName.class))
+        return Optional.ofNullable(this.getNativeClass().getAnnotation(ArgumentName.class))
                 .map(ArgumentName::value);
     }
 
-    default Optional<String> getScheme(A annotation) {
+    default Optional<String> getSchematic(A annotation) {
         return Optional.empty();
     }
 

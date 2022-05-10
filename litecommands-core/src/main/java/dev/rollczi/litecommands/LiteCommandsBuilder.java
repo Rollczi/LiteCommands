@@ -2,17 +2,14 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.option.OptionalArgumentSupplier;
-import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.contextual.Contextual;
 import dev.rollczi.litecommands.factory.CommandEditor;
-import dev.rollczi.litecommands.factory.CommandState;
 import dev.rollczi.litecommands.factory.CommandStateFactory;
 import dev.rollczi.litecommands.handle.Handler;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 
 import java.lang.annotation.Annotation;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -36,11 +33,9 @@ public interface LiteCommandsBuilder<SENDER> {
 
     <T> LiteCommandsBuilder<SENDER> contextualBind(Class<T> on, Contextual<SENDER, T> contextual);
 
-    LiteCommandsBuilder<SENDER> argument(Class<?> on, Argument<Arg> argument);
-
     <A extends Annotation> LiteCommandsBuilder<SENDER> argument(Class<A> annotation, Class<?> on, Argument<A> argument);
 
-    <T> LiteCommandsBuilder<SENDER> optionalArgument(Class<T> on, OptionalArgumentSupplier<T> supplier);
+    <T> LiteCommandsBuilder<SENDER> argument(Class<T> on, OneArgument<T> oneArgument);
 
     LiteCommandsBuilder<SENDER> executorFactory(CommandStateFactory commandStateFactory);
 

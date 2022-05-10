@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.valid;
+package dev.rollczi.litecommands.shared;
 
 import java.util.Collection;
 

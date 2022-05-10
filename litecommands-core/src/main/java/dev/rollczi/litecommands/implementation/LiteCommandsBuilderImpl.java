@@ -4,9 +4,10 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.SimpleArgument;
+import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.argument.option.OptionArgument;
-import dev.rollczi.litecommands.argument.option.OptionalArgumentSupplier;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.contextual.Contextual;
 import dev.rollczi.litecommands.factory.CommandEditor;
@@ -110,13 +111,10 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
-    public LiteCommandsBuilderImpl<SENDER> argument(Class<?> on, Argument<Arg> argument) {
-        return this.argument(Arg.class, on, argument);
-    }
-
-    @Override
-    public <T> LiteCommandsBuilderImpl<SENDER> optionalArgument(Class<T> on, OptionalArgumentSupplier<T> supplier) {
-        return this.argument(Opt.class, Option.class, new OptionArgument<>(on, supplier));
+    public <T> LiteCommandsBuilderImpl<SENDER> argument(Class<T> on, OneArgument<T> argument) {
+        this.argument(Arg.class, on, new SimpleArgument<>(argument));
+        this.argument(Opt.class, Option.class, new OptionArgument<>(on, argument));
+        return this;
     }
 
     @Override
@@ -153,7 +151,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
                     Contextual<SENDER, ?> contextual = entry.getValue();
                     InvokeContext invokeContext = InvokeContext.fromArgs(args);
                     LiteInvocation invocation = invokeContext.getInvocation();
-                    Result<?, Object> result = contextual.extractFromContext((SENDER) invocation.sender().getHandle(), invocation);
+                    Result<?, Object> result = contextual.extract((SENDER) invocation.sender().getHandle(), invocation);
 
                     return result.orNull();
                 });

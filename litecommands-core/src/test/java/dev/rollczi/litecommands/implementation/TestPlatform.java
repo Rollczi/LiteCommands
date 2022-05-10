@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.platform.Completer;
+import dev.rollczi.litecommands.platform.Suggester;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 
@@ -16,8 +16,8 @@ public class TestPlatform implements RegistryPlatform<Void> {
     private final Map<CommandSection, Command> commands = new HashMap<>();
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<Void> listener, Completer<Void> completer) {
-        this.commands.put(command, new Command(listener, completer));
+    public void registerListener(CommandSection command, ExecuteListener<Void> listener, Suggester<Void> suggester) {
+        this.commands.put(command, new Command(listener, suggester));
     }
 
     @Override
@@ -31,16 +31,18 @@ public class TestPlatform implements RegistryPlatform<Void> {
     }
 
     public ExecuteResult execute(String command, String... args) {
+        LiteInvocation invocation = new LiteInvocation(new TestSender(), command, command, args);
+
         for (Map.Entry<CommandSection, Command> entry : commands.entrySet()) {
             CommandSection section = entry.getKey();
             Command cmd = entry.getValue();
 
             if (section.isSimilar(command)) {
-                return cmd.getExecuteListener().execute(null, new LiteInvocation(new TestSender(), command, command, args));
+                return cmd.getExecuteListener().execute(null, invocation);
             }
         }
 
-        return ExecuteResult.failure();
+        return ExecuteResult.failure(FindResult.none(invocation));
     }
 
     public FindResult find(String command, String... args) {
@@ -60,20 +62,21 @@ public class TestPlatform implements RegistryPlatform<Void> {
     private static final class Command {
 
         private final ExecuteListener<Void> executeListener;
-        private final Completer<Void> completer;
+        private final Suggester<Void> suggester;
 
-        public Command(ExecuteListener<Void> executeListener, Completer<Void> completer) {
+        public Command(ExecuteListener<Void> executeListener, Suggester<Void> suggester) {
             this.executeListener = executeListener;
-            this.completer = completer;
+            this.suggester = suggester;
         }
 
         public ExecuteListener<Void> getExecuteListener() {
             return executeListener;
         }
 
-        public Completer<Void> getCompletionListener() {
-            return completer;
+        public Suggester<Void> getSuggester() {
+            return suggester;
         }
+
     }
 
 }

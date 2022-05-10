@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.Completer;
+import dev.rollczi.litecommands.platform.Suggester;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import org.bukkit.command.CommandSender;
 
@@ -13,13 +13,13 @@ class SimpleCommand extends org.bukkit.command.Command {
 
     private final CommandSection commandSection;
     private final ExecuteListener<CommandSender> executeListener;
-    private final Completer<CommandSender> completer;
+    private final Suggester<CommandSender> suggester;
 
-    public SimpleCommand(CommandSection commandSection, ExecuteListener<CommandSender> executeListener, Completer<CommandSender> completer) {
+    public SimpleCommand(CommandSection commandSection, ExecuteListener<CommandSender> executeListener, Suggester<CommandSender> suggester) {
         super(commandSection.getName(), "", "/" + commandSection.getName(), new ArrayList<>(commandSection.getAliases()));
         this.commandSection = commandSection;
         this.executeListener = executeListener;
-        this.completer = completer;
+        this.suggester = suggester;
     }
 
     @Override
@@ -30,7 +30,7 @@ class SimpleCommand extends org.bukkit.command.Command {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-        return this.completer.completion(sender, new LiteInvocation(new BukkitSender(sender), commandSection.getName(), alias, args)).completionsWithSpace();
+        return this.suggester.suggest(sender, new LiteInvocation(new BukkitSender(sender), commandSection.getName(), alias, args)).suggestionsWithSpace();
     }
 
 }

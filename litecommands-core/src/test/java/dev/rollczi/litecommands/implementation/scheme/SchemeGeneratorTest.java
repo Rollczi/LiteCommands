@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.scheme.SchemeFormat;
 import dev.rollczi.litecommands.scheme.SchemeGenerator;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
+import panda.std.Result;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +19,7 @@ public class SchemeGeneratorTest {
             .platform(testPlatform)
             .command(SchemeGeneratorCommand.class)
             .resultHandler(String.class, (v, invocation, value) -> {})
-            .optionalArgument(String.class, (invocation, argument) -> Option.of(argument))
+            .argument(String.class, (invocation, argument) -> Result.ok(argument))
             .register();
 
     @Test
@@ -28,7 +29,7 @@ public class SchemeGeneratorTest {
 
         String generate = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
-        assertEquals("/lp", generate);
+        assertEquals("/lp <none> parent set <none>", generate);
     }
 
 }

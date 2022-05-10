@@ -5,7 +5,7 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.Completer;
+import dev.rollczi.litecommands.platform.Suggester;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 
@@ -22,8 +22,8 @@ class LiteVelocityRegistryPlatform implements RegistryPlatform<CommandSource> {
     }
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<CommandSource> listener, Completer<CommandSource> completer) {
-        VelocityCommand velocityCommand = new VelocityCommand(command.getName(), listener, completer);
+    public void registerListener(CommandSection command, ExecuteListener<CommandSource> listener, Suggester<CommandSource> suggester) {
+        VelocityCommand velocityCommand = new VelocityCommand(command.getName(), listener, suggester);
 
         CommandManager commandManager = this.proxyServer.getCommandManager();
         CommandMeta meta = commandManager.metaBuilder(command.getName())

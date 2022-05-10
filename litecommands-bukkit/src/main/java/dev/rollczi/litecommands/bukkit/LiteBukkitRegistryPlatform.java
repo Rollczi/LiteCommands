@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.Completer;
+import dev.rollczi.litecommands.platform.Suggester;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 import org.bukkit.Server;
@@ -43,8 +43,8 @@ class LiteBukkitRegistryPlatform implements RegistryPlatform<CommandSender> {
     }
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<CommandSender> executeListener, Completer<CommandSender> completer) {
-        SimpleCommand bukkitSimpleCommand = new SimpleCommand(command, executeListener, completer);
+    public void registerListener(CommandSection command, ExecuteListener<CommandSender> executeListener, Suggester<CommandSender> suggester) {
+        SimpleCommand bukkitSimpleCommand = new SimpleCommand(command, executeListener, suggester);
 
         this.commandMap.register(command.getName(), this.fallbackPrefix, bukkitSimpleCommand);
         this.commands.add(command.getName());

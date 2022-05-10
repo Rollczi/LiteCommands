@@ -16,8 +16,8 @@ public class FlagArgument implements SingleArgument<Flag> {
     }
 
     @Override
-    public boolean isRequired() {
-        return false;
+    public boolean isOptional() {
+        return true;
     }
 
 }

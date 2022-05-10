@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "dev.rollczi"
-    version = "2.0.0"
+    version = "2.0.0-pre1"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -45,15 +45,15 @@ subprojects {
     publishing {
         repositories {
             mavenLocal()
-
-            maven {
-                name = "panda-repository"
-                url = uri("https://repo.panda-lang.org/releases")
-                credentials {
-                    username = properties["panda_user_litecommands"] as String
-                    password = properties["panda_pass_litecommands"] as String
-                }
-            }
+//
+//            maven {
+//                name = "panda-repository"
+//                url = uri("https://repo.panda-lang.org/releases")
+//                credentials {
+//                    username = properties["panda_user_litecommands"] as String
+//                    password = properties["panda_pass_litecommands"] as String
+//                }
+//            }
 
             maven {
                 name = "eternalcode-repository"
@@ -63,14 +63,14 @@ subprojects {
                     password = properties["lucky_pass_litecommands"] as String
                 }
             }
-            maven {
-                name = "mine-repository"
-                url = uri("https://repository.minecodes.pl/releases")
-                credentials {
-                    username = properties["mine_user"] as String
-                    password = properties["mine_pass"] as String
-                }
-            }
+//            maven {
+//                name = "mine-repository"
+//                url = uri("https://repository.minecodes.pl/releases")
+//                credentials {
+//                    username = properties["mine_user"] as String
+//                    password = properties["mine_pass"] as String
+//                }
+//            }
         }
     }
 }

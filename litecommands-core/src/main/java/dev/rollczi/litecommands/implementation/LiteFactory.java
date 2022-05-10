@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.argument.OneArgument;
+import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.argument.block.BlockArgument;
 import dev.rollczi.litecommands.argument.flag.Flag;
@@ -18,6 +18,8 @@ import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
 import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
+import panda.std.Blank;
+import panda.std.Option;
 import panda.std.Result;
 
 public final class LiteFactory {
@@ -37,11 +39,12 @@ public final class LiteFactory {
                     factory.annotationResolver(Required.RESOLVER);
                     factory.annotationResolver(Between.RESOLVER);
 
-                    factory.argument(Arg.class, String.class, (OneArgument<String>) (invocation, argument) -> argument);
                     factory.argument(Flag.class, boolean.class, new FlagArgument());
                     factory.argument(Joiner.class, String.class, new JoinerArgument());
                     factory.argument(Block.class, Object.class, new BlockArgument());
                 })
+                .argument(String.class, (invocation, argument) -> Result.ok(argument))
+                .argument(Integer.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Integer.parseInt(argument)).toResult(Blank.BLANK))
                 .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation))
                 .contextualBind(senderClass, (sender, invocation) -> Result.ok(sender));
     }

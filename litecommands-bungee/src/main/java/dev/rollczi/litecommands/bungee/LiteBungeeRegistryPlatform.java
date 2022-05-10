@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.Completer;
+import dev.rollczi.litecommands.platform.Suggester;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 import net.md_5.bungee.api.CommandSender;
@@ -22,8 +22,8 @@ class LiteBungeeRegistryPlatform implements RegistryPlatform<CommandSender> {
     }
 
     @Override
-    public void registerListener(CommandSection section, ExecuteListener<CommandSender> executeListener, Completer<CommandSender> completer) {
-        BungeeCommand command = new BungeeCommand(section, executeListener, completer);
+    public void registerListener(CommandSection section, ExecuteListener<CommandSender> executeListener, Suggester<CommandSender> suggester) {
+        BungeeCommand command = new BungeeCommand(section, executeListener, suggester);
 
         this.plugin.getProxy().getPluginManager().registerCommand(this.plugin, command);
         this.commands.add(section.getName());

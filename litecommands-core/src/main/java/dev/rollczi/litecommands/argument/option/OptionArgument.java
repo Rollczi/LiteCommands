@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.argument.option;
 
+import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.argument.SingleArgument;
+import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Option;
@@ -11,11 +13,11 @@ import java.util.List;
 public class OptionArgument<T> implements SingleArgument<Opt> {
 
     private final Class<T> type;
-    private final OptionalArgumentSupplier<T> supplier;
+    private final OneArgument<T> oneArgument;
 
-    public OptionArgument(Class<T> type, OptionalArgumentSupplier<T> supplier) {
+    public OptionArgument(Class<T> type, OneArgument<T> oneArgument) {
         this.type = type;
-        this.supplier = supplier;
+        this.oneArgument = oneArgument;
     }
 
     @Override
@@ -24,16 +26,26 @@ public class OptionArgument<T> implements SingleArgument<Opt> {
             return MatchResult.notMatched();
         }
 
-        return MatchResult.matched(supplier.get(invocation, argument), 1);
+        return MatchResult.matched(oneArgument.parse(invocation, argument).toOption(), 1);
     }
 
     @Override
-    public boolean isRequired() {
-        return false;
+    public List<Suggestion> complete(LiteInvocation invocation, Opt annotation) {
+        return this.oneArgument.suggest(invocation);
     }
 
     @Override
-    public List<Object> getDefaultValue() {
+    public Class<?> getNativeClass() {
+        return this.oneArgument.getClass();
+    }
+
+    @Override
+    public boolean isOptional() {
+        return true;
+    }
+
+    @Override
+    public List<Object> getDefault() {
         return Collections.singletonList(Option.none());
     }
 

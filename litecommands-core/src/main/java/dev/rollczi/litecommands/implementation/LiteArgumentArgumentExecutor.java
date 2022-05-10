@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.command.Completion;
+import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
@@ -55,25 +55,31 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
 
         for (AnnotatedArgument<?> annotatedArgument : arguments) {
             Argument<?> argument = annotatedArgument.argument();
-            List<Completion> completion = annotatedArgument.complete(invocation);
+            List<Suggestion> suggestion = annotatedArgument.complete(invocation);
 
             try {
                 MatchResult result = annotatedArgument.match(invocation, currentRoute);
 
                 if (result.isNotMatched()) {
-                    if (!argument.isRequired()) {
-                        currentResult = currentResult.withArgument(argument, argument.getDefaultValue(), completion, false);
+                    if (argument.isOptional()) {
+                        currentResult = currentResult.withArgument(argument, argument.getDefault(), suggestion, false);
                         continue;
                     }
 
-                    return currentResult.failedArgument(argument, completion);
+                    Optional<Object> noMatchedResult = result.getNoMatchedResult();
+
+                    if (noMatchedResult.isPresent()) {
+                        return currentResult.invalidArgument(argument, suggestion, noMatchedResult.get());
+                    }
+
+                    return currentResult.failedArgument(argument, suggestion);
                 }
 
-                currentResult = currentResult.withArgument(argument, result.getResults(), completion, true);
+                currentResult = currentResult.withArgument(argument, result.getResults(), suggestion, true);
                 currentRoute += result.getConsumed();
             }
             catch (LiteException exception) {
-                return currentResult.invalidArgument(argument, completion, exception.getValue());
+                return currentResult.invalidArgument(argument, suggestion, exception.getValue());
             }
         }
 

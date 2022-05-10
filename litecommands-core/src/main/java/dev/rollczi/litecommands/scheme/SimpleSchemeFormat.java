@@ -1,12 +1,9 @@
 package dev.rollczi.litecommands.scheme;
 
-import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentState;
 import dev.rollczi.litecommands.command.section.CommandSection;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 class SimpleSchemeFormat implements SchemeFormat {
@@ -56,7 +53,7 @@ class SimpleSchemeFormat implements SchemeFormat {
 
     @Override
     public String argument(ArgumentState state) {
-        return state.argument().isRequired() ? this.argument.apply(state) : this.optionalArgument.apply(state);
+        return state.argument().isOptional() ? this.optionalArgument.apply(state) : this.argument.apply(state);
     }
 
 }

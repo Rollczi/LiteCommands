@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.command.ExecuteResult;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
+import panda.std.Result;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,7 +17,7 @@ class LiteCommandTest {
             .command(TestCommandLuckPermsExample.class)
             .command(TestCommandChatExample.class)
             .resultHandler(String.class, (v, invocation, value) -> {})
-            .optionalArgument(String.class, (invocation, argument) -> Option.of(argument))
+            .argument(String.class, (invocation, argument) -> Result.ok(argument))
             .register();
 
     @Test
