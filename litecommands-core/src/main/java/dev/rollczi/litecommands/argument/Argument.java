@@ -5,15 +5,16 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public interface Argument<A extends Annotation> {
+public interface Argument<A extends Annotation> extends ParameterHandler {
 
-    MatchResult match(LiteInvocation invocation, A annotation, int currentRoute, int currentArgument);
+    MatchResult match(LiteInvocation invocation, Parameter parameter, A annotation, int currentRoute, int currentArgument);
 
-    default List<Suggestion> complete(LiteInvocation invocation, A annotation) {
+    default List<Suggestion> complete(LiteInvocation invocation, Parameter parameter, A annotation) {
         return Collections.emptyList();
     }
 

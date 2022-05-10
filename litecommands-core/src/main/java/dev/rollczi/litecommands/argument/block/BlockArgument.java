@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.command.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
+import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.Optional;
 public class BlockArgument implements Argument<Block> {
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Block annotation, int currentRoute, int currentArgument) {
+    public MatchResult match(LiteInvocation invocation, Parameter parameter, Block annotation, int currentRoute, int currentArgument) {
         if (currentArgument >= invocation.arguments().length) {
             return MatchResult.notMatched();
         }
@@ -42,7 +43,7 @@ public class BlockArgument implements Argument<Block> {
     }
 
     @Override
-    public List<Suggestion> complete(LiteInvocation invocation, Block annotation) {
+    public List<Suggestion> complete(LiteInvocation invocation, Parameter parameter, Block annotation) {
         return Collections.singletonList(Suggestion.multiSuggestion(annotation.value().split(" ")));
     }
 

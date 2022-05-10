@@ -5,7 +5,6 @@ import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import panda.std.Option;
 import panda.std.Result;
 
 import java.util.Map;
@@ -41,6 +40,5 @@ class FindResultTest {
         Assertions.assertEquals(3, findResult.getArguments().size());
         Assertions.assertTrue(findResult.isFound());
     }
-
 
 }

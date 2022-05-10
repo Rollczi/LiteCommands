@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.argument.option;
 
+import dev.rollczi.litecommands.argument.ParameterHandler;
 import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.argument.SingleArgument;
 import dev.rollczi.litecommands.command.Suggestion;
@@ -7,10 +8,11 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Option;
 
+import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 
-public class OptionArgument<T> implements SingleArgument<Opt> {
+public class OptionArgument<T> implements SingleArgument<Opt>, ParameterHandler {
 
     private final Class<T> type;
     private final OneArgument<T> oneArgument;
@@ -21,16 +23,18 @@ public class OptionArgument<T> implements SingleArgument<Opt> {
     }
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Opt annotation, int currentRoute, int currentArgument, String argument) {
-        if (!annotation.value().equals(type)) {
-            return MatchResult.notMatched();
+    public MatchResult match(LiteInvocation invocation, Parameter parameter, Opt annotation, int currentRoute, int currentArgument, String argument) {
+        Option<Class<?>> optionType = OptionUtils.extractOptionType(parameter);
+
+        if (optionType.isEmpty() || !optionType.get().equals(type)) {
+            throw new IllegalStateException();
         }
 
         return MatchResult.matched(oneArgument.parse(invocation, argument).toOption(), 1);
     }
 
     @Override
-    public List<Suggestion> complete(LiteInvocation invocation, Opt annotation) {
+    public List<Suggestion> complete(LiteInvocation invocation, Parameter parameter, Opt annotation) {
         return this.oneArgument.suggest(invocation);
     }
 
@@ -47,6 +51,20 @@ public class OptionArgument<T> implements SingleArgument<Opt> {
     @Override
     public List<Object> getDefault() {
         return Collections.singletonList(Option.none());
+    }
+
+    @Override
+    public boolean canHandle(Class<?> type, Parameter parameter) {
+        return OptionUtils.extractOptionType(parameter)
+                .map(type::equals)
+                .orElseGet(false);
+    }
+
+    @Override
+    public boolean canHandleAssignableFrom(Class<?> type, Parameter parameter) {
+        return OptionUtils.extractOptionType(parameter)
+                .map(type::isAssignableFrom)
+                .orElseGet(false);
     }
 
 }

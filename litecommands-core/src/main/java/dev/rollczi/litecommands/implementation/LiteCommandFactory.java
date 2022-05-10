@@ -194,30 +194,38 @@ class LiteCommandFactory implements CommandStateFactory {
                     throw new IllegalArgumentException("No argument registered for annotation @" + annotationType.getSimpleName());
                 }
 
-                Argument<?> argument = classArgument.get(parameter.getType());
+                Argument<?> argument = null;
+                Argument<?> assignableArgument = null;
 
-                if (argument == null) {
-                    for (Map.Entry<Class<?>, Argument<?>> entry : classArgument.entrySet()) {
-                        if (entry.getKey().isAssignableFrom(parameter.getType())) {
-                            argument = entry.getValue();
-                            break;
-                        }
+                for (Map.Entry<Class<?>, Argument<?>> entry : classArgument.entrySet()) {
+                    Class<?> type = entry.getKey();
+                    Argument<?> argumentFromMap = entry.getValue();
+
+                    if (argumentFromMap.canHandle(type, parameter)) {
+                        argument = argumentFromMap;
+                        break;
                     }
 
-                    if (argument == null) {
-                        throw new IllegalArgumentException("No argument registered for annotation @" + annotationType.getSimpleName() + " and type " + parameter.getType().getSimpleName());
+                    if (argumentFromMap.canHandleAssignableFrom(type, parameter)) {
+                        assignableArgument = argumentFromMap;
                     }
                 }
 
-                arguments.add(this.castAndCreateAnnotated(parameter.getType(), annotation, argument));
+                Argument<? extends Annotation> finalArgument = argument == null ? assignableArgument : argument;
+
+                if (finalArgument == null) {
+                    throw new IllegalArgumentException("No argument registered for annotation @" + annotationType.getSimpleName() + " and type " + parameter.getType().getSimpleName());
+                }
+
+                arguments.add(this.castAndCreateAnnotated(parameter, annotation, finalArgument));
             }
         }
 
         return LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
     }
 
-    private <A extends Annotation> AnnotatedArgument<A> castAndCreateAnnotated(Class<?> type, Annotation annotation, Argument<A> argument) {
-        return new AnnotatedArgument<>((A) annotation, type, argument);
+    private <A extends Annotation> AnnotatedArgument<A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<A> argument) {
+        return new AnnotatedArgument<>((A) annotation, parameter, argument);
     }
 
     static CommandStateFactory create(Injector injector) {

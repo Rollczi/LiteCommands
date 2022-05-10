@@ -37,14 +37,4 @@ public class CommandService<SENDER> {
         );
     }
 
-    public void execute(LiteInvocation invocation) {
-        CommandSection commandSection = commands.get(invocation.label());
-
-        if (commandSection == null) {
-            throw new IllegalArgumentException("Command not found: " + invocation.label());
-        }
-
-        commandSection.execute(invocation);
-    }
-
 }

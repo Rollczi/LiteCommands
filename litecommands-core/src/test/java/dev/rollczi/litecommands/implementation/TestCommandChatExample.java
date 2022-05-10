@@ -16,7 +16,7 @@ class TestCommandChatExample {
     }
 
     @Execute(route = "key")
-    public String unset(@Opt(String.class) Option<String> first) {
+    public String unset(@Opt Option<String> first) {
         return first.isPresent() ? first.get() : "null";
     }
 

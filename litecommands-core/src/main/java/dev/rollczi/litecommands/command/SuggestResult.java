@@ -23,7 +23,7 @@ public class SuggestResult {
 
     public List<String> suggestionsWithSpace() {
         return suggestions.stream()
-                .map(suggestion -> Joiner.on(" ").join(suggestion).toString())
+                .map(Suggestion::asStringWithSpaces)
                 .collect(Collectors.toList());
     }
 

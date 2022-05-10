@@ -7,31 +7,32 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Optional;
 
 final class AnnotatedArgument<A extends Annotation> implements ArgumentState {
 
     private final A annotationInstance;
-    private final Class<?> type;
+    private final Parameter parameter;
     private final Argument<A> argument;
 
-    AnnotatedArgument(A annotationInstance, Class<?> type, Argument<A> argument) {
+    AnnotatedArgument(A annotationInstance, Parameter parameter, Argument<A> argument) {
         this.annotationInstance = annotationInstance;
-        this.type = type;
+        this.parameter = parameter;
         this.argument = argument;
     }
 
     MatchResult match(LiteInvocation invocation, int route) {
-        return argument.match(invocation, annotationInstance, route, route - 1);
+        return argument.match(invocation, parameter, annotationInstance, route, route - 1);
     }
 
     List<Suggestion> complete(LiteInvocation invocation) {
-        return argument.complete(invocation, annotationInstance);
+        return argument.complete(invocation, parameter, annotationInstance);
     }
 
-    Class<?> getType() {
-        return type;
+    Parameter getParameter() {
+        return parameter;
     }
 
     @Override

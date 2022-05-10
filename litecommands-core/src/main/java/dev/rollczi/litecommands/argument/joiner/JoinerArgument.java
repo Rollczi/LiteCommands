@@ -4,13 +4,14 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 
 public class JoinerArgument implements Argument<Joiner> {
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Joiner annotation, int currentRoute, int currentArgument) {
+    public MatchResult match(LiteInvocation invocation, Parameter parameter, Joiner annotation, int currentRoute, int currentArgument) {
         if (invocation.arguments().length < currentArgument) {
             return MatchResult.notMatched();
         }

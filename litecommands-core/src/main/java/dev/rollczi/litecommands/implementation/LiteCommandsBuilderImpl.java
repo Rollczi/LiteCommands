@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.SimpleArgument;
+import dev.rollczi.litecommands.argument.one.SimpleOneArgument;
 import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.argument.option.OptionArgument;
@@ -112,8 +112,8 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
     @Override
     public <T> LiteCommandsBuilderImpl<SENDER> argument(Class<T> on, OneArgument<T> argument) {
-        this.argument(Arg.class, on, new SimpleArgument<>(argument));
-        this.argument(Opt.class, Option.class, new OptionArgument<>(on, argument));
+        this.argument(Arg.class, on, new SimpleOneArgument<>(argument));
+        this.argument(Opt.class, on, new OptionArgument<>(on, argument));
         return this;
     }
 

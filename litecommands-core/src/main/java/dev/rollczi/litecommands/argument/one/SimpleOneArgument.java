@@ -1,5 +1,7 @@
-package dev.rollczi.litecommands.argument;
+package dev.rollczi.litecommands.argument.one;
 
+import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.argument.SingleArgument;
 import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
@@ -7,18 +9,19 @@ import dev.rollczi.litecommands.command.Suggestion;
 import panda.std.Blank;
 import panda.std.Result;
 
+import java.lang.reflect.Parameter;
 import java.util.List;
 
-public class SimpleArgument<T> implements SingleArgument<Arg> {
+public class SimpleOneArgument<T> implements SingleArgument<Arg> {
 
     private final OneArgument<T> oneArgument;
 
-    public SimpleArgument(OneArgument<T> oneArgument) {
+    public SimpleOneArgument(OneArgument<T> oneArgument) {
         this.oneArgument = oneArgument;
     }
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Arg annotation, int currentRoute, int currentArgument, String argument) {
+    public MatchResult match(LiteInvocation invocation, Parameter parameter, Arg annotation, int currentRoute, int currentArgument, String argument) {
         if (currentArgument >= invocation.arguments().length) {
             return MatchResult.notMatched();
         }
@@ -39,7 +42,7 @@ public class SimpleArgument<T> implements SingleArgument<Arg> {
     }
 
     @Override
-    public List<Suggestion> complete(LiteInvocation invocation, Arg annotation) {
+    public List<Suggestion> complete(LiteInvocation invocation, Parameter parameter, Arg annotation) {
         return this.oneArgument.suggest(invocation);
     }
 
