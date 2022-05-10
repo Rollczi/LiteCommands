@@ -1,8 +1,8 @@
 
-val coreArtifact by extra("litecommands-core")
-val velocityArtifact by extra("litecommands-velocity")
-val bukkitArtifact by extra("litecommands-bukkit")
-val bungeeArtifact by extra("litecommands-bungee")
+val coreArtifact by extra("core")
+val velocityArtifact by extra("velocity")
+val bukkitArtifact by extra("bukkit")
+val bungeeArtifact by extra("bungee")
 
 plugins {
     id("idea")
@@ -12,8 +12,8 @@ plugins {
 }
 
 allprojects {
-    group = "dev.rollczi"
-    version = "2.0.0-pre2"
+    group = "dev.rollczi.litecommands"
+    version = "2.0.0-pre3"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
