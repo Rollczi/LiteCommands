@@ -37,6 +37,11 @@ class ArgumentsRegistry {
         for (Map.Entry<Class<?>, Map<String, Argument<?>>> entry : byClasses.entrySet()) {
             Map<String, Argument<?>> byNames = entry.getValue();
             Argument<?> argumentFromMap = byNames.get(name);
+
+            if (argumentFromMap == null) {
+                continue;
+            }
+
             Class<?> type = entry.getKey();
 
             if (argumentFromMap.canHandle(type, on)) {

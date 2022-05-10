@@ -44,6 +44,8 @@ public final class LiteFactory {
                 .argument(Block.class, Object.class, new BlockArgument())
                 .argument(String.class, (invocation, argument) -> Result.ok(argument))
                 .argument(Integer.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Integer.parseInt(argument)).toResult(Blank.BLANK))
+                .argument(Double.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Double.parseDouble(argument)).toResult(Blank.BLANK))
+                .argument(Float.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Float.parseFloat(argument)).toResult(Blank.BLANK))
                 .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation))
                 .contextualBind(senderClass, (sender, invocation) -> Result.ok(sender));
     }
