@@ -28,7 +28,7 @@ class SuggestionTest {
             .command(SuggestionsTest.class)
             .command(TestCommandLuckPermsExample.class)
             .command(TestCommandChatExample.class)
-            .argument(String.class, (invocation, argument) -> Result.ok(argument))
+            .argument(String.class, new SuggestionArg("text"))
             .argument(String.class, "1", new SuggestionArg("arg-1.1", "arg-1.2", "arg-1.3"))
             .argument(String.class, "2", new SuggestionArg("arg-2.1", "arg-2.2", "arg-2.3"))
             .argument(String.class, "3", new SuggestionArg("arg-3.1", "arg-3.2", "arg-3.3"))
@@ -67,6 +67,13 @@ class SuggestionTest {
         assertEquals("set", suggestion.get(0));
     }
 
+    @Test
+    void afterBlockSuggestion() {
+        List<String> suggestion = testPlatform.suggestion("lp", "user", "Rollczi", "parent", "set", "");
+
+        assertEquals(1, suggestion.size());
+        assertEquals("text", suggestion.get(0));
+    }
 
     @Test
     void aliasesSuggestion() {

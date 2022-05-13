@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
 
 @Section(route = "lp")
-public class SchemeGeneratorCommand {
+class SchemeGeneratorCommand {
 
     @Execute
     public String set(@Arg String user, @Block("parent set") @Arg String rank) {

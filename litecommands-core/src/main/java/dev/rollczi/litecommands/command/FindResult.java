@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.shared.Validation;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,11 +29,17 @@ public final class FindResult {
     private final List<AnnotatedParameter<?>> allArguments;
     private final List<AnnotatedParameterState<?>> arguments;
 
-    private final AnnotatedParameterState<?> lastMatchedArgument;
-    private final AnnotatedParameterState<?> failedArgument;
+    private final @Nullable AnnotatedParameterState<?> lastMatchedArgument;
+    private final @Nullable MatchResult failedResult;
 
     private final boolean found;
+
+    // See failedResult (MatchResult)
+    @Deprecated
+    private final @Nullable AnnotatedParameterState<?> failedArgument;
+    @Deprecated
     private final boolean failed;
+    @Deprecated
     private final boolean invalid;
 
     private FindResult(
@@ -43,7 +50,7 @@ public final class FindResult {
             List<AnnotatedParameterState<?>> arguments,
             AnnotatedParameterState<?> lastMatchedArgument,
             AnnotatedParameterState<?> failedArgument,
-            boolean found, boolean failed, boolean invalid
+            MatchResult failedResult, boolean found, boolean failed, boolean invalid
     ) {
         this.invocation = invocation;
         this.sections = sections;
@@ -52,6 +59,7 @@ public final class FindResult {
         this.arguments = arguments;
         this.lastMatchedArgument = lastMatchedArgument;
         this.failedArgument = failedArgument;
+        this.failedResult = failedResult;
         this.found = found;
         this.failed = failed;
         this.invalid = invalid;
@@ -63,7 +71,7 @@ public final class FindResult {
         List<CommandSection> sections = new ArrayList<>(this.sections);
 
         sections.add(section);
-        return new FindResult(invocation, sections, null, allArguments, arguments, lastMatchedArgument, failedArgument, found, failed, invalid);
+        return new FindResult(invocation, sections, null, allArguments, arguments, lastMatchedArgument, failedArgument, failedResult, found, failed, invalid);
     }
 
     public FindResult withExecutor(ArgumentExecutor executor, List<AnnotatedParameter<?>> argumentStates) {
@@ -77,7 +85,7 @@ public final class FindResult {
 
         for (ArgumentExecutor exec : sections.get(sections.size() - 1).executors()) {
             if (exec.equals(executor)) {
-                return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, false, failed, invalid);
+                return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, failedResult, false, failed, invalid);
             }
         }
 
@@ -93,7 +101,7 @@ public final class FindResult {
         List<AnnotatedParameterState<?>> arguments = new ArrayList<>(this.arguments);
 
         arguments.add(state);
-        return new FindResult(invocation, sections, executor, allArguments, arguments, matched ? state : this.lastMatchedArgument, failedArgument, false, false, false);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, matched ? state : this.lastMatchedArgument, failedArgument, failedResult, false, false, false);
     }
 
     public FindResult failedArgument(AnnotatedParameterState<?> state) {
@@ -102,7 +110,7 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, false, true, false);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, state.matchResult(), false, true, false);
     }
 
     public FindResult invalidArgument(AnnotatedParameterState<?> state) {
@@ -111,7 +119,7 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, false, false, true);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, state.matchResult(), false, false, true);
     }
 
     public FindResult invalid() {
@@ -120,7 +128,7 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, false, false, true);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, MatchResult.notMatched(), false, false, true);
     }
 
     public FindResult markAsFound() {
@@ -128,7 +136,7 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, true, false, false);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, failedResult, true, false, false);
     }
 
     @Deprecated
@@ -161,6 +169,7 @@ public final class FindResult {
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     public Optional<Object> getInvalidResult() {
         return Optional.ofNullable(this.failedArgument).flatMap(state -> state.matchResult().getNoMatchedResult());
     }
@@ -194,7 +203,7 @@ public final class FindResult {
 
         List<Suggester> suggesters = new ArrayList<>(this.sections);
 
-        if (executor == null && this.arguments.isEmpty()) {
+        if (this.arguments.isEmpty()) {
             CommandSection last = this.sections.get(this.sections.size() - 1);
 
             suggesters.add(() -> {
@@ -262,52 +271,30 @@ public final class FindResult {
 
     private List<Suggestion> known(Iterator<String> arguments, Iterator<Suggester> suggesters, Suggester lastIterated, List<Suggestion> multilevelSuggestions) {
         if (!arguments.hasNext()) {
-            if (!multilevelSuggestions.isEmpty()) {
-                return Collections.unmodifiableList(multilevelSuggestions);
-            }
-
-            return lastIterated.suggestions();
+            return multilevelSuggestions.isEmpty()
+                    ? lastIterated.suggestions()
+                    : Collections.unmodifiableList(multilevelSuggestions);
         }
 
         if (!suggesters.hasNext()) {
-            if (multilevelSuggestions.isEmpty()) {
-                return Collections.emptyList();
-            }
-
-            List<Suggestion> multi = new ArrayList<>();
-
-            for (Suggestion suggestion : multilevelSuggestions) {
-                if (!suggestion.isMultilevel()) {
-                    continue;
-                }
-
-                multi.add(suggestion.slashLevel(1));
-            }
-
-            return multi;
+            return multilevelSuggestions.stream()
+                    .filter(Suggestion::isMultilevel)
+                    .map(suggestion -> suggestion.slashLevel(1))
+                    .collect(Collectors.toList());
         }
 
         arguments.next();
 
-        List<Suggestion> additional = new ArrayList<>();
-        List<Suggestion> toCheck = new ArrayList<>();
+        List<Suggestion> additional = multilevelSuggestions.stream()
+                .filter(Suggestion::isMultilevel)
+                .map(suggestion -> suggestion.slashLevel(1))
+                .collect(Collectors.toList());
 
-        boolean handleMulti = !multilevelSuggestions.isEmpty();
-
-        if (handleMulti) {
-            toCheck.addAll(multilevelSuggestions);
-        }
-        else {
+        if (additional.isEmpty()) {
             lastIterated = suggesters.next();
-            toCheck.addAll(lastIterated.suggestions());
-        }
-
-        for (Suggestion suggestion : toCheck) {
-            if (!suggestion.isMultilevel()) {
-                continue;
-            }
-
-            additional.add(suggestion.slashLevel(handleMulti ? 1 : 0));
+            additional = lastIterated.suggestions().stream()
+                    .filter(Suggestion::isMultilevel)
+                    .collect(Collectors.toList());
         }
 
         return known(arguments, suggesters, lastIterated, additional);
@@ -337,16 +324,22 @@ public final class FindResult {
         return found;
     }
 
+    public boolean isNotFound() {
+        return !found;
+    }
+
+    @Deprecated
     public boolean isFailed() {
         return failed;
     }
 
+    @Deprecated
     public boolean isInvalid() {
         return invalid;
     }
 
     public static FindResult none(LiteInvocation invocation) {
-        return new FindResult(invocation, new ArrayList<>(), null, new ArrayList<>(), new ArrayList<>(), null, null, false, false, false);
+        return new FindResult(invocation, new ArrayList<>(), null, new ArrayList<>(), new ArrayList<>(), null, null, null, false, false, false);
     }
 
 }

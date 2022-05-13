@@ -39,7 +39,7 @@ public class MatchResult {
         return consumed;
     }
 
-    public static <T> MatchResult matched(List<T> results, int consumed) {
+    public static MatchResult matched(List<Object> results, int consumed) {
         return new MatchResult(true, new ArrayList<>(results), null, consumed);
     }
 

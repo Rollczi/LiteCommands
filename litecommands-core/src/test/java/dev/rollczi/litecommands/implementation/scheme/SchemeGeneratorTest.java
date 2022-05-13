@@ -11,7 +11,7 @@ import panda.std.Result;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SchemeGeneratorTest {
+class SchemeGeneratorTest {
 
     private final TestPlatform testPlatform = new TestPlatform();
     private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
