@@ -1,7 +1,6 @@
-package dev.rollczi.litecommands.command;
+package dev.rollczi.litecommands.command.sugesstion;
 
 import panda.std.stream.PandaStream;
-import panda.utilities.text.Joiner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,19 +16,19 @@ public class SuggestResult {
         this.suggestions = suggestions;
     }
 
-    public List<Suggestion> getSuggestions() {
-        return suggestions;
+    public List<Suggestion> suggestions() {
+        return Collections.unmodifiableList(suggestions);
     }
 
-    public List<String> suggestionsWithSpace() {
+    public List<String> multilevelSuggestions() {
         return suggestions.stream()
-                .map(Suggestion::asStringWithSpaces)
+                .map(Suggestion::multilevel)
                 .collect(Collectors.toList());
     }
 
-    public List<String> suggestionWithFirst() {
+    public List<String> singleSuggestion() {
         return PandaStream.of(suggestions)
-                .map(Suggestion::asStringFirstPart)
+                .map(Suggestion::single)
                 .collect(Collectors.toList());
     }
 

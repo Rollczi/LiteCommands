@@ -1,16 +1,18 @@
 package dev.rollczi.litecommands.implementation;
 
+import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.command.Suggestion;
-import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.handle.LiteException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,10 +20,10 @@ import java.util.stream.Collectors;
 class LiteArgumentArgumentExecutor implements ArgumentExecutor {
 
     private final MethodExecutor executor;
-    private final List<AnnotatedArgument<?>> arguments = new ArrayList<>();
+    private final List<AnnotatedParameterImpl<?>> arguments = new ArrayList<>();
     private final AmountValidator amountValidator;
 
-    private LiteArgumentArgumentExecutor(List<AnnotatedArgument<?>> arguments, MethodExecutor executor, AmountValidator amountValidator) {
+    private LiteArgumentArgumentExecutor(List<AnnotatedParameterImpl<?>> arguments, MethodExecutor executor, AmountValidator amountValidator) {
         this.executor = executor;
         this.amountValidator = amountValidator;
         this.arguments.addAll(arguments);
@@ -29,9 +31,9 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
 
     @Override
     public ExecuteResult execute(LiteInvocation invocation, FindResult findResult) {
-        Optional<Object> result = findResult.getInvalidResult();
-
         if (findResult.isInvalid()) {
+            Optional<Object> result = findResult.getInvalidResult();
+
             return result
                     .map(obj -> ExecuteResult.invalid(findResult, obj))
                     .orElseGet(() -> ExecuteResult.failure(findResult));
@@ -53,33 +55,27 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
         int currentRoute = route;
         FindResult currentResult = lastResult.withExecutor(this, new ArrayList<>(arguments));
 
-        for (AnnotatedArgument<?> annotatedArgument : arguments) {
-            Argument<?> argument = annotatedArgument.argument();
-            List<Suggestion> suggestion = annotatedArgument.complete(invocation);
+        for (AnnotatedParameterImpl<?> annotatedParameter : arguments) {
+            Argument<?> argument = annotatedParameter.argument();
+            AnnotatedParameterState<?> state = annotatedParameter.createState(invocation, currentRoute);
 
             try {
-                MatchResult result = annotatedArgument.match(invocation, currentRoute);
+                MatchResult result = state.matchResult();
 
                 if (result.isNotMatched()) {
                     if (argument.isOptional()) {
-                        currentResult = currentResult.withArgument(argument, argument.getDefault(), suggestion, false);
+                        currentResult = currentResult.withArgument(state, false);
                         continue;
                     }
 
-                    Optional<Object> noMatchedResult = result.getNoMatchedResult();
-
-                    if (noMatchedResult.isPresent()) {
-                        return currentResult.invalidArgument(argument, suggestion, noMatchedResult.get());
-                    }
-
-                    return currentResult.failedArgument(argument, suggestion);
+                    return currentResult.failedArgument(state);
                 }
 
-                currentResult = currentResult.withArgument(argument, result.getResults(), suggestion, true);
+                currentResult = currentResult.withArgument(state, true);
                 currentRoute += result.getConsumed();
             }
             catch (LiteException exception) {
-                return currentResult.invalidArgument(argument, suggestion, exception.getValue());
+                return currentResult.invalidArgument(state);
             }
         }
 
@@ -93,7 +89,7 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
     @Override
     public List<Argument<?>> arguments() {
         return this.arguments.stream()
-                .map(AnnotatedArgument::argument)
+                .map(AnnotatedParameterImpl::argument)
                 .collect(Collectors.toList());
     }
 
@@ -102,8 +98,19 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
         return this.amountValidator;
     }
 
-    static LiteArgumentArgumentExecutor of(List<AnnotatedArgument<?>> arguments, MethodExecutor executor, AmountValidator amountValidator) {
+    static LiteArgumentArgumentExecutor of(List<AnnotatedParameterImpl<?>> arguments, MethodExecutor executor, AmountValidator amountValidator) {
         return new LiteArgumentArgumentExecutor(arguments, executor, amountValidator);
+    }
+
+    @Override
+    public List<Suggestion> firstSuggestions(LiteInvocation invocation) {
+        if (arguments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        AnnotatedParameterImpl<?> parameter = arguments.get(0);
+
+        return parameter.extractSuggestion(invocation);
     }
 
 }

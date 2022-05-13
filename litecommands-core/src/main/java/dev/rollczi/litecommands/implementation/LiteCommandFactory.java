@@ -4,7 +4,6 @@ package dev.rollczi.litecommands.implementation;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentAnnotation;
 import dev.rollczi.litecommands.argument.By;
-import dev.rollczi.litecommands.argument.Name;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandStateFactoryProcessor;
 import dev.rollczi.litecommands.command.section.CommandSection;
@@ -21,7 +20,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +70,8 @@ class LiteCommandFactory implements CommandStateFactory {
 
     private CommandState createState(Object instance) {
         Class<?> sectionClass = instance.getClass();
-        CommandState root = new CommandState();
+        CommandState root = new CommandState()
+                .cancel(true);
 
         for (Annotation annotation : sectionClass.getAnnotations()) {
             for (FactoryAnnotationResolver<? extends Annotation> resolver : annotationResolvers) {
@@ -83,13 +82,15 @@ class LiteCommandFactory implements CommandStateFactory {
                 Option<CommandState> resolve = resolver.tryResolve(annotation, root);
 
                 if (resolve.isPresent()) {
-                    root = resolve.get();
+                    root = resolve.get()
+                            .cancel(false);
                 }
             }
         }
 
         for (Method method : sectionClass.getDeclaredMethods()) {
-            CommandState stateMethod = new CommandState();
+            CommandState stateMethod = new CommandState()
+                    .cancel(true);
 
             for (Annotation annotation : method.getAnnotations()) {
                 for (FactoryAnnotationResolver<? extends Annotation> resolver : annotationResolvers) {
@@ -100,7 +101,8 @@ class LiteCommandFactory implements CommandStateFactory {
                     Option<CommandState> resolve = resolver.tryResolve(annotation, stateMethod);
 
                     if (resolve.isPresent()) {
-                        stateMethod = resolve.get();
+                        stateMethod = resolve.get()
+                                .cancel(false);
                     }
                 }
             }
@@ -175,7 +177,7 @@ class LiteCommandFactory implements CommandStateFactory {
 
     private ArgumentExecutor createExecutor(Object object, Method method, CommandState state) {
         MethodExecutor methodExecutor = new MethodExecutor(object, method, injector);
-        List<AnnotatedArgument<?>> arguments = new ArrayList<>();
+        List<AnnotatedParameterImpl<?>> arguments = new ArrayList<>();
 
         for (Parameter parameter : method.getParameters()) {
             for (Annotation annotation : parameter.getAnnotations()) {
@@ -201,8 +203,8 @@ class LiteCommandFactory implements CommandStateFactory {
         return LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
     }
 
-    private <A extends Annotation> AnnotatedArgument<A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<A> argument) {
-        return new AnnotatedArgument<>((A) annotation, parameter, argument);
+    private <A extends Annotation> AnnotatedParameterImpl<A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<A> argument) {
+        return new AnnotatedParameterImpl<>((A) annotation, parameter, argument);
     }
 
 }

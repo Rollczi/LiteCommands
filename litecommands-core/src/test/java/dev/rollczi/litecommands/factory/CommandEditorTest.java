@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import dev.rollczi.litecommands.implementation.TestPlatform;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -25,6 +26,7 @@ class CommandEditorTest {
             .register();
 
     @Test
+    @DisplayName("test command editor for name and aliases")
     void test() {
         CommandService<Void> commandService = liteCommands.getCommandService();
         CommandSection section = commandService.getSection("edited");

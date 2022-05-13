@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.argument.one;
 
-import dev.rollczi.litecommands.command.Suggestion;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import panda.std.Result;
 

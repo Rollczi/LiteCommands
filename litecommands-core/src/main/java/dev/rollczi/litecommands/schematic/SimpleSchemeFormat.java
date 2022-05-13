@@ -1,6 +1,6 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
-import dev.rollczi.litecommands.argument.ArgumentState;
+import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.section.CommandSection;
 
 import java.util.List;
@@ -12,16 +12,16 @@ class SimpleSchemeFormat implements SchemeFormat {
     private final Function<CommandSection, String> command;
     private final Function<CommandSection, String> subcommand;
     private final Function<List<CommandSection>, String> subcommands;
-    private final Function<ArgumentState, String> argument;
-    private final Function<ArgumentState, String> optionalArgument;
+    private final Function<AnnotatedParameter<?>, String> argument;
+    private final Function<AnnotatedParameter<?>, String> optionalArgument;
 
     SimpleSchemeFormat(
             String slash,
             Function<CommandSection, String> command,
             Function<CommandSection, String> subcommand,
             Function<List<CommandSection>, String> subcommands,
-            Function<ArgumentState, String> argument,
-            Function<ArgumentState, String> optionalArgument
+            Function<AnnotatedParameter<?>, String> argument,
+            Function<AnnotatedParameter<?>, String> optionalArgument
     ) {
         this.slash = slash;
         this.command = command;
@@ -52,7 +52,7 @@ class SimpleSchemeFormat implements SchemeFormat {
     }
 
     @Override
-    public String argument(ArgumentState state) {
+    public String argument(AnnotatedParameter<?> state) {
         return state.argument().isOptional() ? this.optionalArgument.apply(state) : this.argument.apply(state);
     }
 

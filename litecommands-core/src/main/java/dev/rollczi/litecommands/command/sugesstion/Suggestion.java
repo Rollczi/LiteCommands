@@ -1,6 +1,4 @@
-package dev.rollczi.litecommands.command;
-
-import org.jetbrains.annotations.Nullable;
+package dev.rollczi.litecommands.command.sugesstion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,24 +13,27 @@ public class Suggestion {
         this.suggestion = suggestion;
     }
 
-    public String asStringWithSpaces() {
+    public String multilevel() {
         return String.join(" ", this.suggestion);
     }
 
-    public String asStringFirstPart() {
+    public String single() {
         return this.suggestion.get(0);
     }
 
-    @Nullable
-    public String asStringPart(int index) {
-        return this.suggestion.get(index);
+    public boolean isMultilevel() {
+        return suggestion.size() > 1;
     }
 
-    public List<String> asList() {
-        return new ArrayList<>(this.suggestion);
+    public Suggestion slashLevel(int level) {
+        if (this.suggestion.isEmpty()) {
+            throw new UnsupportedOperationException();
+        }
+
+        return Suggestion.multilevelSuggestion(this.suggestion.subList(level, this.suggestion.size()));
     }
 
-    public static Suggestion multiSuggestion(List<String> suggestion) {
+    public static Suggestion multilevelSuggestion(List<String> suggestion) {
         if (suggestion.isEmpty()) {
             throw new IllegalArgumentException("Suggestion cannot be empty");
         }
@@ -40,8 +41,8 @@ public class Suggestion {
         return new Suggestion(new ArrayList<>(suggestion));
     }
 
-    public static Suggestion multiSuggestion(String... suggestion) {
-        return Suggestion.multiSuggestion(Arrays.asList(suggestion));
+    public static Suggestion multilevelSuggestion(String... suggestion) {
+        return Suggestion.multilevelSuggestion(Arrays.asList(suggestion));
     }
 
     public static Suggestion of(String suggestion) {

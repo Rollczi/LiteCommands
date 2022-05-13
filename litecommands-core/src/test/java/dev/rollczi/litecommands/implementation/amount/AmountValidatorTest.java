@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.implementation.amount;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import dev.rollczi.litecommands.implementation.TestPlatform;
 import org.junit.jupiter.api.Assertions;

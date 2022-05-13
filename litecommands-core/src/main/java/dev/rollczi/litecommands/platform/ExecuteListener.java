@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.platform;
 
-import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 
 @FunctionalInterface
 public interface ExecuteListener<SENDER> {

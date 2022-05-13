@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.argument.option;
 import dev.rollczi.litecommands.argument.ParameterHandler;
 import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.argument.SingleArgument;
-import dev.rollczi.litecommands.command.Suggestion;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Option;
@@ -34,7 +34,7 @@ public class OptionArgument<T> implements SingleArgument<Opt>, ParameterHandler 
     }
 
     @Override
-    public List<Suggestion> complete(LiteInvocation invocation, Parameter parameter, Opt annotation) {
+    public List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, Opt annotation) {
         return this.oneArgument.suggest(invocation);
     }
 

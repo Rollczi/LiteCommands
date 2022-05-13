@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.handle;
 
-import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.scheme.SchemeFormat;
-import dev.rollczi.litecommands.scheme.SchemeGenerator;
+import dev.rollczi.litecommands.schematic.SchemeFormat;
+import dev.rollczi.litecommands.schematic.SchemeGenerator;
 
 import java.util.HashMap;
 import java.util.Map;

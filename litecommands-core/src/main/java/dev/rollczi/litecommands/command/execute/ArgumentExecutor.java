@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.command.execute;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.command.ExecuteResult;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 
 import java.util.List;
 
@@ -18,4 +18,5 @@ public interface ArgumentExecutor {
 
     AmountValidator amountValidator();
 
+    List<Suggestion> firstSuggestions(LiteInvocation invocation);
 }

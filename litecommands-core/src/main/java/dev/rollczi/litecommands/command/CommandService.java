@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command;
 
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.handle.ExecuteResultHandler;
 import dev.rollczi.litecommands.platform.RegistryPlatform;

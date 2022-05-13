@@ -1,9 +1,8 @@
 package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import org.junit.jupiter.api.Test;
-import panda.std.Option;
 import panda.std.Result;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

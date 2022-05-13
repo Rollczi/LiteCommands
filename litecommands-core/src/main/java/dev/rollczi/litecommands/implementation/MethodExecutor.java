@@ -24,7 +24,7 @@ class MethodExecutor {
             return injector.invokeMethod(method, instance, new InvokeContext(invocation, args));
         }
         catch (LiteException exception) {
-            return exception.getValue();
+            return exception.getResult();
         }
         catch (Throwable throwable) {
             throw new RuntimeException(throwable);

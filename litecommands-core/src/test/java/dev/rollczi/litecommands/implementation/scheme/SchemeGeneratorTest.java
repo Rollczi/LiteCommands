@@ -4,10 +4,9 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import dev.rollczi.litecommands.implementation.TestPlatform;
-import dev.rollczi.litecommands.scheme.SchemeFormat;
-import dev.rollczi.litecommands.scheme.SchemeGenerator;
+import dev.rollczi.litecommands.schematic.SchemeFormat;
+import dev.rollczi.litecommands.schematic.SchemeGenerator;
 import org.junit.jupiter.api.Test;
-import panda.std.Option;
 import panda.std.Result;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

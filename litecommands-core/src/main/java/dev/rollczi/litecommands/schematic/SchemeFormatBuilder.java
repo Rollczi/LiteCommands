@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.command.section.CommandSection;
 import panda.utilities.text.Joiner;
@@ -54,8 +54,8 @@ public class SchemeFormatBuilder {
                 section -> this.command.close(section.getName()),
                 section -> this.subcommand.close(section.getName()),
                 commandSections -> this.subcommandsBrackets.close(Joiner.on(this.subcommands).join(commandSections, CommandSection::getName).toString()),
-                argument -> argument.scheme().orElseGet(() -> this.argument.close(argument.name().orElseGet("none"))),
-                argument -> argument.scheme().orElseGet(() -> this.optionalArgument.close(argument.name().orElseGet("none")))
+                argument -> argument.schematic().orElseGet(() -> this.argument.close(argument.name().orElseGet("none"))),
+                argument -> argument.schematic().orElseGet(() -> this.optionalArgument.close(argument.name().orElseGet("none")))
         );
     }
 

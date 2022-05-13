@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.argument.block;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.command.Suggestion;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Option;
@@ -9,7 +9,6 @@ import panda.std.Option;
 import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class BlockArgument implements Argument<Block> {
 
@@ -44,8 +43,8 @@ public class BlockArgument implements Argument<Block> {
     }
 
     @Override
-    public List<Suggestion> complete(LiteInvocation invocation, Parameter parameter, Block annotation) {
-        return Collections.singletonList(Suggestion.multiSuggestion(annotation.value().split(" ")));
+    public List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, Block annotation) {
+        return Collections.singletonList(Suggestion.multilevelSuggestion(annotation.value().split(" ")));
     }
 
     @Override

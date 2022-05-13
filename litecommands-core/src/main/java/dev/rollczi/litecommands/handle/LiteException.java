@@ -2,14 +2,14 @@ package dev.rollczi.litecommands.handle;
 
 public class LiteException extends RuntimeException {
 
-    private final Object value;
+    private final Object result;
 
-    public LiteException(Object value) {
-        this.value = value;
+    public LiteException(Object result) {
+        this.result = result;
     }
 
-    public Object getValue() {
-        return value;
+    public Object getResult() {
+        return result;
     }
 
 }

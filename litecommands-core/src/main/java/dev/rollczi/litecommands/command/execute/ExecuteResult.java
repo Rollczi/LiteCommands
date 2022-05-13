@@ -1,4 +1,6 @@
-package dev.rollczi.litecommands.command;
+package dev.rollczi.litecommands.command.execute;
+
+import dev.rollczi.litecommands.command.FindResult;
 
 public class ExecuteResult {
 

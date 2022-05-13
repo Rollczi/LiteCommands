@@ -1,14 +1,19 @@
 package dev.rollczi.litecommands.command;
 
+import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentState;
+import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.shared.Validation;
+import dev.rollczi.litecommands.command.sugesstion.Suggester;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,29 +25,36 @@ public final class FindResult {
 
     private final List<CommandSection> sections;
     private final ArgumentExecutor executor;
-    private final List<ArgumentState> argumentStates;
-    private final List<CompletedArgument> arguments;
+    private final List<AnnotatedParameter<?>> allArguments;
+    private final List<AnnotatedParameterState<?>> arguments;
 
-    private final CompletedArgument lastMatchedArgument;
-    private final CompletedArgument failedArgument;
+    private final AnnotatedParameterState<?> lastMatchedArgument;
+    private final AnnotatedParameterState<?> failedArgument;
 
     private final boolean found;
     private final boolean failed;
     private final boolean invalid;
-    private final Object invalidResult;
 
-    private FindResult(LiteInvocation invocation, List<CommandSection> sections, ArgumentExecutor executor, List<ArgumentState> argumentStates, List<CompletedArgument> arguments, CompletedArgument lastMatchedArgument, CompletedArgument failedArgument, boolean found, boolean failed, boolean invalid, Object invalidResult) {
+    private FindResult(
+            LiteInvocation invocation,
+            List<CommandSection> sections,
+            ArgumentExecutor executor,
+            List<AnnotatedParameter<?>> allArguments,
+            List<AnnotatedParameterState<?>> arguments,
+            AnnotatedParameterState<?> lastMatchedArgument,
+            AnnotatedParameterState<?> failedArgument,
+            boolean found, boolean failed, boolean invalid
+    ) {
         this.invocation = invocation;
         this.sections = sections;
         this.executor = executor;
-        this.argumentStates = argumentStates;
+        this.allArguments = allArguments;
         this.arguments = arguments;
         this.lastMatchedArgument = lastMatchedArgument;
         this.failedArgument = failedArgument;
         this.found = found;
         this.failed = failed;
         this.invalid = invalid;
-        this.invalidResult = invalidResult;
     }
 
     public FindResult withSection(CommandSection section) {
@@ -51,10 +63,10 @@ public final class FindResult {
         List<CommandSection> sections = new ArrayList<>(this.sections);
 
         sections.add(section);
-        return new FindResult(invocation, sections, null, argumentStates, arguments, lastMatchedArgument, failedArgument, found, failed, invalid, invalidResult);
+        return new FindResult(invocation, sections, null, allArguments, arguments, lastMatchedArgument, failedArgument, found, failed, invalid);
     }
 
-    public FindResult withExecutor(ArgumentExecutor executor, List<ArgumentState> argumentStates) {
+    public FindResult withExecutor(ArgumentExecutor executor, List<AnnotatedParameter<?>> argumentStates) {
         Validation.isNull(this.executor, "Executor already set");
         Validation.isFalse(this.found, "This is the end of the command");
         Validation.isNotEmpty(this.sections, "Executor must have a parent section");
@@ -65,47 +77,41 @@ public final class FindResult {
 
         for (ArgumentExecutor exec : sections.get(sections.size() - 1).executors()) {
             if (exec.equals(executor)) {
-                return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, false, failed, invalid, invalidResult);
+                return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, false, failed, invalid);
             }
         }
 
         throw new IllegalArgumentException("Executor not found in last section.");
     }
 
-    public FindResult withArgument(Argument<?> argument, List<Object> results, List<Suggestion> suggestions, boolean matched) {
+    public FindResult withArgument(AnnotatedParameterState<?> state, boolean matched) {
         Validation.isNotNull(this.executor, "Executor not set");
         Validation.isFalse(this.found, "FindResult is found");
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        List<CompletedArgument> arguments = new ArrayList<>(this.arguments);
-        CompletedArgument completedArgument = new CompletedArgument(argument, results, suggestions, arguments.size());
+        List<AnnotatedParameterState<?>> arguments = new ArrayList<>(this.arguments);
 
-        arguments.add(completedArgument);
-        return new FindResult(invocation, sections, executor, argumentStates, arguments, matched ? completedArgument : this.lastMatchedArgument, failedArgument, false, failed, invalid, invalidResult);
+        arguments.add(state);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, matched ? state : this.lastMatchedArgument, failedArgument, false, false, false);
     }
 
-    public FindResult failedArgument(Argument<?> argument, List<Suggestion> suggestions) {
+    public FindResult failedArgument(AnnotatedParameterState<?> state) {
         Validation.isNotNull(this.executor, "Executor not set");
         Validation.isFalse(this.found, "FindResult is found");
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        CompletedArgument completedArgument = new CompletedArgument(argument, Collections.emptyList(), suggestions, arguments.size());
-
-        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, completedArgument, false, true, false, invalidResult);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, false, true, false);
     }
 
-    public FindResult invalidArgument(Argument<?> argument, List<Suggestion> suggestions, Object result) {
-        Validation.isNotNull(result, "result is null");
+    public FindResult invalidArgument(AnnotatedParameterState<?> state) {
         Validation.isNotNull(this.executor, "Executor not set");
         Validation.isFalse(this.found, "FindResult is found");
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        CompletedArgument completedArgument = new CompletedArgument(argument, Collections.emptyList(), suggestions, arguments.size());
-
-        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, completedArgument, false, false, true, result);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, false, false, true);
     }
 
     public FindResult invalid() {
@@ -114,7 +120,7 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, false, false, true, invalidResult);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, false, false, true);
     }
 
     public FindResult markAsFound() {
@@ -122,7 +128,7 @@ public final class FindResult {
         Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, true, false, false, invalidResult);
+        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, true, false, false);
     }
 
     @Deprecated
@@ -145,18 +151,18 @@ public final class FindResult {
         return Optional.ofNullable(executor);
     }
 
-    public List<ArgumentState> getArgumentStates() {
-        return Collections.unmodifiableList(argumentStates);
+    public List<AnnotatedParameter<?>> getAllArguments() {
+        return Collections.unmodifiableList(allArguments);
     }
 
     public List<Argument<?>> getArguments() {
         return this.arguments.stream()
-                .map(completedArgument -> completedArgument.argument)
+                .map(AnnotatedParameter::argument)
                 .collect(Collectors.toList());
     }
 
     public Optional<Object> getInvalidResult() {
-        return Optional.ofNullable(this.invalidResult);
+        return Optional.ofNullable(this.failedArgument).flatMap(state -> state.matchResult().getNoMatchedResult());
     }
 
     public List<Object> extractResults() {
@@ -164,76 +170,147 @@ public final class FindResult {
 
         List<Object> results = new ArrayList<>();
 
-        for (CompletedArgument argument : arguments) {
-            results.addAll(argument.results);
+        for (AnnotatedParameterState<?> state : arguments) {
+            MatchResult matchResult = state.matchResult();
+
+            if (matchResult.isNotMatched()) {
+                if (!state.argument().isOptional()) {
+                    throw new IllegalStateException("Can't extract result from not matched FindResult");
+                }
+
+                results.addAll(state.argument().getDefault());
+            }
+
+            results.addAll(state.result());
         }
 
         return Collections.unmodifiableList(results);
     }
 
-    public List<Suggestion> extractSuggestion() {
-        List<Suggestion> suggestions = extractSuggestion0();
-        List<Suggestion> finalSuggestions = new ArrayList<>();
-        String last = invocation.lastArgument().orElse(invocation.label()).toLowerCase();
+    public List<Suggestion> knownSuggestion() {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(this.invocation.label());
+        arguments.addAll(Arrays.asList(this.invocation.arguments()));
 
-        for (Suggestion suggestion : suggestions) {
-            if (!suggestion.asStringFirstPart().startsWith(last)) {
-                continue;
-            }
+        List<Suggester> suggesters = new ArrayList<>(this.sections);
 
-            finalSuggestions.add(suggestion);
-        }
+        if (executor == null && this.arguments.isEmpty()) {
+            CommandSection last = this.sections.get(this.sections.size() - 1);
 
-        return finalSuggestions;
-    }
+            suggesters.add(() -> {
+                List<Suggestion> suggestions = new ArrayList<>();
 
-    private List<Suggestion> extractSuggestion0() {
-        if (sections.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<Suggestion> suggestions = new ArrayList<>();
-
-        if (!this.getArguments().isEmpty()) {
-            if (lastMatchedArgument == null) {
-                CommandSection commandSection = sections.get(sections.size() - 1);
-
-                suggestions.add(Suggestion.of(commandSection.getName()));
-                suggestions.addAll(Suggestion.of(commandSection.getAliases()));
-            }
-
-            int lastStableIndex = lastMatchedArgument == null ? 0 : lastMatchedArgument.index;
-
-            for (int index = 0; index < this.arguments.size(); index++) {
-                if (index < lastStableIndex) {
-                    continue;
+                for (CommandSection section : last.childrenSection()) {
+                    suggestions.addAll(section.suggestions());
                 }
 
-                CompletedArgument completedArgument = this.arguments.get(index);
-                suggestions.addAll(completedArgument.suggestions);
+                for (ArgumentExecutor argumentExecutor : last.executors()) {
+                    suggestions.addAll(argumentExecutor.firstSuggestions(invocation));
+                }
+
+                return suggestions;
+            });
+        }
+        else {
+            int argumentIndex = 0;
+            for (AnnotatedParameterState<?> argument : this.arguments) {
+                List<AnnotatedParameter<?>> suggestersIn = new ArrayList<>();
+                suggestersIn.add(argument);
+
+                for (int optionalIndex = argumentIndex + 1; optionalIndex < allArguments.size(); optionalIndex++) {
+                    AnnotatedParameter<?> parameter = allArguments.get(optionalIndex);
+
+                    if (!suggestersIn.get(suggestersIn.size() - 1).argument().isOptional()) {
+                        break;
+                    }
+
+                    suggestersIn.add(parameter);
+                }
+
+                suggesters.add(() -> {
+                    List<Suggestion> suggestions = new ArrayList<>();
+
+                    for (AnnotatedParameter<?> suggester : suggestersIn) {
+                        suggestions.addAll(suggester.toSuggester(invocation).suggestions());
+                    }
+
+                    return suggestions;
+                });
+
+                argumentIndex++;
+            }
+
+            if (allArguments.size() > arguments.size()) {
+                for (int index = arguments.size(); index < allArguments.size(); index++) {
+                    AnnotatedParameter<?> last = allArguments.get(arguments.size());
+
+                    if (!last.argument().isOptional()) {
+                        break;
+                    }
+
+                    suggesters.add(last.toSuggester(invocation));
+                }
             }
 
             if (this.failedArgument != null) {
-                suggestions.addAll(failedArgument.suggestions);
+                suggesters.add(this.failedArgument);
             }
-
-            return suggestions;
         }
 
-        int preSectionIndex = Math.min(sections.size() - 1, invocation.arguments().length - 1);
+        return known(arguments.iterator(), suggesters.iterator(), Suggester.NONE, Collections.emptyList());
+    }
 
-        if (preSectionIndex == - 1) {
-            suggestions.addAll(Suggestion.of(sections.get(0).getCompletable()));
+    private List<Suggestion> known(Iterator<String> arguments, Iterator<Suggester> suggesters, Suggester lastIterated, List<Suggestion> multilevelSuggestions) {
+        if (!arguments.hasNext()) {
+            if (!multilevelSuggestions.isEmpty()) {
+                return Collections.unmodifiableList(multilevelSuggestions);
+            }
+
+            return lastIterated.suggestions();
+        }
+
+        if (!suggesters.hasNext()) {
+            if (multilevelSuggestions.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            List<Suggestion> multi = new ArrayList<>();
+
+            for (Suggestion suggestion : multilevelSuggestions) {
+                if (!suggestion.isMultilevel()) {
+                    continue;
+                }
+
+                multi.add(suggestion.slashLevel(1));
+            }
+
+            return multi;
+        }
+
+        arguments.next();
+
+        List<Suggestion> additional = new ArrayList<>();
+        List<Suggestion> toCheck = new ArrayList<>();
+
+        boolean handleMulti = !multilevelSuggestions.isEmpty();
+
+        if (handleMulti) {
+            toCheck.addAll(multilevelSuggestions);
         }
         else {
-            CommandSection commandSection = sections.get(preSectionIndex);
-
-            for (CommandSection child : commandSection.childrenSection()) {
-                suggestions.addAll(Suggestion.of(child.getCompletable()));
-            }
+            lastIterated = suggesters.next();
+            toCheck.addAll(lastIterated.suggestions());
         }
 
-        return suggestions;
+        for (Suggestion suggestion : toCheck) {
+            if (!suggestion.isMultilevel()) {
+                continue;
+            }
+
+            additional.add(suggestion.slashLevel(handleMulti ? 1 : 0));
+        }
+
+        return known(arguments, suggesters, lastIterated, additional);
     }
 
     public boolean isLongerThan(FindResult findResult) {
@@ -269,22 +346,7 @@ public final class FindResult {
     }
 
     public static FindResult none(LiteInvocation invocation) {
-        return new FindResult(invocation, new ArrayList<>(), null, new ArrayList<>(), new ArrayList<>(), null, null, false, false, false, null);
-    }
-
-    @Deprecated
-    private final static class CompletedArgument {
-        private final Argument<?> argument;
-        private final List<Object> results;
-        private final List<Suggestion> suggestions;
-        private final int index;
-
-        private CompletedArgument(Argument<?> argument, List<Object> results, List<Suggestion> suggestions, int index) {
-            this.argument = argument;
-            this.results = results;
-            this.suggestions = Collections.unmodifiableList(new ArrayList<>(suggestions));
-            this.index = index;
-        }
+        return new FindResult(invocation, new ArrayList<>(), null, new ArrayList<>(), new ArrayList<>(), null, null, false, false, false);
     }
 
 }

@@ -1,7 +1,6 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
-import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentState;
+import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
@@ -23,7 +22,9 @@ public class SchemeGenerator {
         CommandSection command = sections.get(0);
         Optional<ArgumentExecutor> executor = result.getExecutor();
         CommandSection lastSection = sections.get(sections.size() - 1);
-        List<CommandSection> subcommand = sections.stream().skip(1).collect(Collectors.toList());
+        List<CommandSection> subcommand = sections.stream()
+                .skip(1)
+                .collect(Collectors.toList());
 
         StringBuilder content = new StringBuilder();
 
@@ -36,7 +37,7 @@ public class SchemeGenerator {
                 content.append(schemeFormat.subcommand(commandSection));
             }
 
-            for (ArgumentState argument : result.getArgumentStates()) {
+            for (AnnotatedParameter<?> argument : result.getAllArguments()) {
                 content.append(" ");
                 content.append(schemeFormat.argument(argument));
             }

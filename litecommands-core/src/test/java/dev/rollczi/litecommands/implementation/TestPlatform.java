@@ -1,14 +1,16 @@
 package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.command.FindResult;
+import dev.rollczi.litecommands.command.sugesstion.SuggestResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.platform.Suggester;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TestPlatform implements RegistryPlatform<Void> {
@@ -16,8 +18,8 @@ public class TestPlatform implements RegistryPlatform<Void> {
     private final Map<CommandSection, Command> commands = new HashMap<>();
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<Void> listener, Suggester<Void> suggester) {
-        this.commands.put(command, new Command(listener, suggester));
+    public void registerListener(CommandSection command, ExecuteListener<Void> listener, SuggestionListener<Void> suggestionListener) {
+        this.commands.put(command, new Command(listener, suggestionListener));
     }
 
     @Override
@@ -59,22 +61,29 @@ public class TestPlatform implements RegistryPlatform<Void> {
         throw new IllegalArgumentException();
     }
 
+    public List<String> suggestion(String command, String... args) {
+        FindResult findResult = this.find(command, args);
+        SuggestResult result = SuggestResult.of(findResult.knownSuggestion());
+
+        return result.singleSuggestion();
+    }
+
     private static final class Command {
 
         private final ExecuteListener<Void> executeListener;
-        private final Suggester<Void> suggester;
+        private final SuggestionListener<Void> suggestionListener;
 
-        public Command(ExecuteListener<Void> executeListener, Suggester<Void> suggester) {
+        public Command(ExecuteListener<Void> executeListener, SuggestionListener<Void> suggestionListener) {
             this.executeListener = executeListener;
-            this.suggester = suggester;
+            this.suggestionListener = suggestionListener;
         }
 
         public ExecuteListener<Void> getExecuteListener() {
             return executeListener;
         }
 
-        public Suggester<Void> getSuggester() {
-            return suggester;
+        public SuggestionListener<Void> getSuggester() {
+            return suggestionListener;
         }
 
     }

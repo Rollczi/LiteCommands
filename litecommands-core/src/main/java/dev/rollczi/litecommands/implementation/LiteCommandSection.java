@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.implementation;
 
-import dev.rollczi.litecommands.command.Suggestion;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.SuggestResult;
-import dev.rollczi.litecommands.command.ExecuteResult;
+import dev.rollczi.litecommands.command.sugesstion.SuggestResult;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import panda.utilities.ValidationUtils;
@@ -52,11 +52,11 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public Set<String> getCompletable() {
-        Set<String> completable = new HashSet<>(this.aliases);
-        completable.add(this.name);
+    public List<Suggestion> suggestions() {
+        Set<String> suggestions = new HashSet<>(this.aliases);
+        suggestions.add(this.name);
 
-        return completable;
+        return Suggestion.of(suggestions);
     }
 
     @Override
@@ -91,7 +91,7 @@ class LiteCommandSection implements CommandSection {
     @Override
     public SuggestResult suggestion(LiteInvocation invocation) {
         FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
-        List<Suggestion> lastSuggestion = findResult.extractSuggestion();
+        List<Suggestion> lastSuggestion = findResult.knownSuggestion();
 
         return SuggestResult.of(lastSuggestion);
     }

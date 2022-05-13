@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.velocity;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.platform.Suggester;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import panda.utilities.StringUtils;
 
@@ -15,12 +15,12 @@ class VelocityCommand implements SimpleCommand {
 
     private final String name;
     private final ExecuteListener<CommandSource> executeListener;
-    private final Suggester<CommandSource> suggester;
+    private final SuggestionListener<CommandSource> suggestionListener;
 
-    public VelocityCommand(String name, ExecuteListener<CommandSource> executeListener, Suggester<CommandSource> suggester) {
+    public VelocityCommand(String name, ExecuteListener<CommandSource> executeListener, SuggestionListener<CommandSource> suggestionListener) {
         this.name = name;
         this.executeListener = executeListener;
-        this.suggester = suggester;
+        this.suggestionListener = suggestionListener;
     }
 
     @Override
@@ -30,7 +30,7 @@ class VelocityCommand implements SimpleCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        return this.suggester.suggest(invocation.source(), this.convert(invocation, true)).suggestionsWithSpace();
+        return this.suggestionListener.suggest(invocation.source(), this.convert(invocation, true)).multilevelSuggestions();
     }
 
     private LiteInvocation convert(Invocation invocation, boolean suggest) {

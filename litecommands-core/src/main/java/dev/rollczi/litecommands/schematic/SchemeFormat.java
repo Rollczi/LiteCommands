@@ -1,9 +1,7 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
-import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentState;
+import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import panda.utilities.text.Joiner;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ public interface SchemeFormat {
 
     String subcommands(List<CommandSection> subcommands);
 
-    String argument(ArgumentState argument);
+    String argument(AnnotatedParameter<?> argument);
 
     SchemeFormat ARGUMENT_ANGLED_OPTIONAL_SQUARE = new SchemeFormatBuilder()
             .slash("/")

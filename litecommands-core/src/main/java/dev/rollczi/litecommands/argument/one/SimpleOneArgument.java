@@ -2,10 +2,9 @@ package dev.rollczi.litecommands.argument.one;
 
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.SingleArgument;
-import dev.rollczi.litecommands.argument.one.OneArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
-import dev.rollczi.litecommands.command.Suggestion;
+import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import panda.std.Blank;
 import panda.std.Result;
 
@@ -42,7 +41,7 @@ public class SimpleOneArgument<T> implements SingleArgument<Arg> {
     }
 
     @Override
-    public List<Suggestion> complete(LiteInvocation invocation, Parameter parameter, Arg annotation) {
+    public List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, Arg annotation) {
         return this.oneArgument.suggest(invocation);
     }
 
