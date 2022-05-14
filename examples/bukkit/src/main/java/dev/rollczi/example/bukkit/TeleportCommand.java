@@ -15,14 +15,14 @@ import panda.std.Option;
 public class TeleportCommand {
 
     @Execute(min = 3, max = 4)
-    public void to(Player player, @Arg Location location, @Opt Option<World> world) {
-        location.setWorld(world.orElseGet(player.getWorld()));
-        player.teleport(location);
+    public void to(Player sender, @Arg Location location, @Opt Option<World> world) {
+        location.setWorld(world.orElseGet(sender.getWorld()));
+        sender.teleport(location);
     }
 
     @Execute(required = 1)
-    public void toPlayer(Player player, @Arg Player to) {
-        player.teleport(to.getLocation());
+    public void toPlayer(Player sender, @Arg Player to) {
+        sender.teleport(to.getLocation());
     }
 
     @Execute(required = 2)
