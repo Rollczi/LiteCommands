@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "dev.rollczi.litecommands"
-    version = "2.0.0-pre6"
+    version = "2.0.0-pre7"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -34,8 +34,6 @@ subprojects {
         maven { url = uri("https://repo.panda-lang.org/releases/") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     }
-
-    apply(plugin = "org.jetbrains.kotlin.jvm")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -63,14 +61,14 @@ subprojects {
                     password = properties["lucky_pass_litecommands"] as String
                 }
             }
-//            maven {
-//                name = "mine-repository"
-//                url = uri("https://repository.minecodes.pl/releases")
-//                credentials {
-//                    username = properties["mine_user"] as String
-//                    password = properties["mine_pass"] as String
-//                }
-//            }
+            maven {
+                name = "mine-repository"
+                url = uri("https://repository.minecodes.pl/releases")
+                credentials {
+                    username = properties["mine_user"] as String
+                    password = properties["mine_pass"] as String
+                }
+            }
         }
     }
 }

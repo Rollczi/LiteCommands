@@ -1,46 +1,69 @@
 package dev.rollczi.litecommands.argument.option;
 
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ParameterHandler;
-import dev.rollczi.litecommands.argument.one.OneArgument;
+import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.argument.SingleArgument;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
+import panda.std.Blank;
 import panda.std.Option;
+import panda.std.Result;
 
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class OptionArgument<T> implements SingleArgument<Opt>, ParameterHandler {
+public class OptionArgument<T> implements Argument<Opt>, ParameterHandler {
 
     private final Class<T> type;
-    private final OneArgument<T> oneArgument;
+    private final MultilevelArgument<T> multilevel;
 
-    public OptionArgument(Class<T> type, OneArgument<T> oneArgument) {
+    public OptionArgument(Class<T> type, MultilevelArgument<T> multilevel) {
         this.type = type;
-        this.oneArgument = oneArgument;
+        this.multilevel = multilevel;
     }
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Parameter parameter, Opt annotation, int currentRoute, int currentArgument, String argument) {
+    public MatchResult match(LiteInvocation invocation, Parameter parameter, Opt annotation, int currentRoute, int currentArgument) {
         Option<Class<?>> optionType = OptionUtils.extractOptionType(parameter);
 
         if (optionType.isEmpty() || !optionType.get().equals(type)) {
             throw new IllegalStateException();
         }
 
-        return MatchResult.matched(oneArgument.parse(invocation, argument).toOption(), 1);
+        List<String> arguments = Arrays.asList(invocation.arguments());
+
+        if (currentArgument + multilevel.countMultilevel() > arguments.size()) {
+            return MatchResult.notMatched();
+        }
+
+        List<String> argumentsToParse = arguments.subList(currentArgument, currentArgument + multilevel.countMultilevel());
+        Result<T, ?> parsed = this.multilevel.parseMultilevel(invocation, argumentsToParse.toArray(new String[0]));
+
+        if (parsed.isErr()) {
+            Object error = parsed.getError();
+
+            if (error instanceof Blank) {
+                return MatchResult.notMatched();
+            }
+
+            return MatchResult.notMatched(error);
+        }
+
+        return MatchResult.matched(parsed.toOption(), multilevel.countMultilevel());
     }
 
     @Override
     public List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, Opt annotation) {
-        return this.oneArgument.suggest(invocation);
+        return this.multilevel.suggest(invocation);
     }
 
     @Override
     public Class<?> getNativeClass() {
-        return this.oneArgument.getClass();
+        return this.multilevel.getClass();
     }
 
     @Override

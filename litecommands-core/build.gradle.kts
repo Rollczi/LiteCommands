@@ -1,5 +1,5 @@
 dependencies {
-    api("org.panda-lang:expressible:1.1.19")
+    api("org.panda-lang:expressible:1.1.20")
     api("org.panda-lang.utilities:di:1.5.1")
 
     testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21")

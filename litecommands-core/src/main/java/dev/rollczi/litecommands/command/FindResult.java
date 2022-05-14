@@ -48,9 +48,9 @@ public final class FindResult {
             ArgumentExecutor executor,
             List<AnnotatedParameter<?>> allArguments,
             List<AnnotatedParameterState<?>> arguments,
-            AnnotatedParameterState<?> lastMatchedArgument,
-            AnnotatedParameterState<?> failedArgument,
-            MatchResult failedResult, boolean found, boolean failed, boolean invalid
+            @Nullable AnnotatedParameterState<?> lastMatchedArgument,
+            @Nullable AnnotatedParameterState<?> failedArgument,
+            @Nullable MatchResult failedResult, boolean found, boolean failed, boolean invalid
     ) {
         this.invocation = invocation;
         this.sections = sections;
@@ -201,69 +201,57 @@ public final class FindResult {
         arguments.add(this.invocation.label());
         arguments.addAll(Arrays.asList(this.invocation.arguments()));
 
-        List<Suggester> suggesters = new ArrayList<>(this.sections);
+        List<Suggester> suggesters = new ArrayList<>();
 
-        if (this.arguments.isEmpty()) {
-            CommandSection last = this.sections.get(this.sections.size() - 1);
+        suggesters.add(() -> this.sections.get(0).suggestions());
 
-            suggesters.add(() -> {
-                List<Suggestion> suggestions = new ArrayList<>();
+        for (CommandSection section : this.sections) {
+            List<Suggestion> suggestions = new ArrayList<>();
 
-                for (CommandSection section : last.childrenSection()) {
-                    suggestions.addAll(section.suggestions());
+            for (CommandSection childSection : section.childrenSection()) {
+                suggestions.addAll(childSection.suggestions());
+            }
+
+            for (ArgumentExecutor argumentExecutor : section.executors()) {
+//                if (executor != null && !executor.equals(argumentExecutor) && !arguments.isEmpty() && !arguments.get(arguments.size() - 1).isEmpty()) {
+//                    continue;
+//                }
+
+                for (AnnotatedParameter<?> parameter : argumentExecutor.annotatedParameters()) {
+                    suggestions.addAll(parameter.toSuggester(invocation).suggestions());
+
+                    if (!parameter.argument().isOptional()) {
+                        break;
+                    }
                 }
+            }
 
-                for (ArgumentExecutor argumentExecutor : last.executors()) {
-                    suggestions.addAll(argumentExecutor.firstSuggestions(invocation));
-                }
-
-                return suggestions;
-            });
+            suggesters.add(Suggester.of(suggestions));
         }
-        else {
-            int argumentIndex = 0;
-            for (AnnotatedParameterState<?> argument : this.arguments) {
-                List<AnnotatedParameter<?>> suggestersIn = new ArrayList<>();
-                suggestersIn.add(argument);
 
-                for (int optionalIndex = argumentIndex + 1; optionalIndex < allArguments.size(); optionalIndex++) {
-                    AnnotatedParameter<?> parameter = allArguments.get(optionalIndex);
+        for (int index = 1; index < allArguments.size(); index++) {
+            AnnotatedParameter<?> parameter = allArguments.get(index);
+            Suggester suggester = parameter.toSuggester(invocation);
 
-                    if (!suggestersIn.get(suggestersIn.size() - 1).argument().isOptional()) {
-                        break;
-                    }
-
-                    suggestersIn.add(parameter);
-                }
-
-                suggesters.add(() -> {
-                    List<Suggestion> suggestions = new ArrayList<>();
-
-                    for (AnnotatedParameter<?> suggester : suggestersIn) {
-                        suggestions.addAll(suggester.toSuggester(invocation).suggestions());
-                    }
-
-                    return suggestions;
-                });
-
-                argumentIndex++;
+            if (!parameter.argument().isOptional()) {
+                suggesters.add(Suggester.of(suggester.suggestions()));
+                continue;
             }
 
-            if (allArguments.size() > arguments.size()) {
-                for (int index = arguments.size(); index < allArguments.size(); index++) {
-                    AnnotatedParameter<?> last = allArguments.get(arguments.size());
+            List<Suggestion> suggestions = new ArrayList<>(suggester.suggestions());
 
-                    if (!last.argument().isOptional()) {
-                        break;
-                    }
+            for (int optional = index + 1; optional < allArguments.size(); optional++) {
+                AnnotatedParameter<?> annotatedParameter = allArguments.get(optional);
+                Suggester optionalSuggester = annotatedParameter.toSuggester(invocation);
 
-                    suggesters.add(last.toSuggester(invocation));
+                suggestions.addAll(optionalSuggester.suggestions());
+
+                if (!annotatedParameter.argument().isOptional()) {
+                    break;
                 }
             }
 
-            if (this.failedArgument != null) {
-                suggesters.add(this.failedArgument);
-            }
+            suggesters.add(Suggester.of(suggestions));
         }
 
         return known(arguments.iterator(), suggesters.iterator(), Suggester.NONE, Collections.emptyList());
@@ -277,13 +265,18 @@ public final class FindResult {
         }
 
         if (!suggesters.hasNext()) {
-            return multilevelSuggestions.stream()
-                    .filter(Suggestion::isMultilevel)
-                    .map(suggestion -> suggestion.slashLevel(1))
-                    .collect(Collectors.toList());
+            while (arguments.hasNext()) {
+                arguments.next();
+                multilevelSuggestions = multilevelSuggestions.stream()
+                        .filter(Suggestion::isMultilevel)
+                        .map(suggestion -> suggestion.slashLevel(1))
+                        .collect(Collectors.toList());
+            }
+
+            return multilevelSuggestions;
         }
 
-        arguments.next();
+        String next = arguments.next();
 
         List<Suggestion> additional = multilevelSuggestions.stream()
                 .filter(Suggestion::isMultilevel)
@@ -293,7 +286,7 @@ public final class FindResult {
         if (additional.isEmpty()) {
             lastIterated = suggesters.next();
             additional = lastIterated.suggestions().stream()
-                    .filter(Suggestion::isMultilevel)
+                    .filter(suggestion -> suggestion.multilevel().toLowerCase().startsWith(next.toLowerCase())) //TODO: Dynamic validation
                     .collect(Collectors.toList());
         }
 

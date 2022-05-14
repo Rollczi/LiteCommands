@@ -4,8 +4,9 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.one.SimpleOneArgument;
-import dev.rollczi.litecommands.argument.one.OneArgument;
+import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
+import dev.rollczi.litecommands.argument.simple.OneArgument;
+import dev.rollczi.litecommands.argument.simple.SimpleMultilevelArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.argument.option.OptionArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -111,15 +112,25 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
-    public <T> LiteCommandsBuilderImpl<SENDER> argument(Class<T> on, OneArgument<T> argument) {
-        this.argument(Arg.class, on, new SimpleOneArgument<>(argument));
+    public <T> LiteCommandsBuilder<SENDER> argument(Class<T> on, OneArgument<T> argument) {
+        return this.argumentMultilevel(on, argument);
+    }
+
+    @Override
+    public <T> LiteCommandsBuilder<SENDER> argument(Class<T> on, String by, OneArgument<T> argument) {
+        return this.argumentMultilevel(on, by, argument);
+    }
+
+    @Override
+    public <T> LiteCommandsBuilderImpl<SENDER> argumentMultilevel(Class<T> on, MultilevelArgument<T> argument) {
+        this.argument(Arg.class, on, new SimpleMultilevelArgument<>(argument));
         this.argument(Opt.class, on, new OptionArgument<>(on, argument));
         return this;
     }
 
     @Override
-    public <T> LiteCommandsBuilderImpl<SENDER> argument(Class<T> on, String by, OneArgument<T> argument) {
-        this.argument(Arg.class, on, by, new SimpleOneArgument<>(argument));
+    public <T> LiteCommandsBuilder<SENDER> argumentMultilevel(Class<T> on, String by, MultilevelArgument<T> argument) {
+        this.argument(Arg.class, on, by, new SimpleMultilevelArgument<>(argument));
         this.argument(Opt.class, on, by, new OptionArgument<>(on, argument));
         return this;
     }

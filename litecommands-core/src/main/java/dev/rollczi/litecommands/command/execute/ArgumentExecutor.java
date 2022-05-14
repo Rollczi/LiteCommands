@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command.execute;
 
+import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -15,6 +16,8 @@ public interface ArgumentExecutor {
     FindResult find(LiteInvocation invocation, int route, FindResult lastResult);
 
     List<Argument<?>> arguments();
+
+    List<AnnotatedParameter<?>> annotatedParameters();
 
     AmountValidator amountValidator();
 

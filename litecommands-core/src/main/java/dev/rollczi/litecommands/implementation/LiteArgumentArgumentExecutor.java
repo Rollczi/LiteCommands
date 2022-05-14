@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.implementation;
 
+import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
@@ -91,6 +92,11 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
         return this.arguments.stream()
                 .map(AnnotatedParameterImpl::argument)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AnnotatedParameter<?>> annotatedParameters() {
+        return Collections.unmodifiableList(arguments);
     }
 
     @Override
