@@ -45,7 +45,7 @@ public interface Argument<A extends Annotation> extends ParameterHandler {
         return Option.none();
     }
 
-    default Option<String> getSchematic(A annotation) {
+    default Option<String> getScheme(A annotation) {
         return Option.none();
     }
 

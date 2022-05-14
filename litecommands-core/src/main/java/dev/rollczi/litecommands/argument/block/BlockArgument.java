@@ -48,7 +48,7 @@ public class BlockArgument implements Argument<Block> {
     }
 
     @Override
-    public Option<String> getSchematic(Block annotation) {
+    public Option<String> getScheme(Block annotation) {
         return Option.of(annotation.value());
     }
 

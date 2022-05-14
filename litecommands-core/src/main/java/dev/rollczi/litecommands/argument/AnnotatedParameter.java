@@ -14,7 +14,7 @@ public interface AnnotatedParameter<A extends Annotation> {
 
     Option<String> name();
 
-    Option<String> schematic();
+    Option<String> schem();
 
     Suggester toSuggester(LiteInvocation invocation);
 

@@ -57,8 +57,8 @@ class AnnotatedParameterImpl<A extends Annotation> implements AnnotatedParameter
     }
 
     @Override
-    public Option<String> schematic() {
-        return this.argument.getSchematic(annotationInstance);
+    public Option<String> schem() {
+        return this.argument.getScheme(annotationInstance);
     }
 
     @Override

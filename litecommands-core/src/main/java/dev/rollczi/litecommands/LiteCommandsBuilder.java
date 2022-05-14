@@ -7,7 +7,10 @@ import dev.rollczi.litecommands.contextual.Contextual;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandStateFactory;
 import dev.rollczi.litecommands.handle.Handler;
+import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
+import dev.rollczi.litecommands.scheme.Scheme;
+import dev.rollczi.litecommands.scheme.SchemeFormat;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Consumer;
@@ -23,7 +26,11 @@ public interface LiteCommandsBuilder<SENDER> {
 
     LiteCommandsBuilder<SENDER> commandEditor(Class<?> commandClass, CommandEditor commandEditor);
 
+    LiteCommandsBuilder<SENDER> schemeFormat(SchemeFormat schemeFormat);
+
     <T> LiteCommandsBuilder<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler);
+
+    LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler);
 
     LiteCommandsBuilder<SENDER> command(Class<?>... commandClass);
 

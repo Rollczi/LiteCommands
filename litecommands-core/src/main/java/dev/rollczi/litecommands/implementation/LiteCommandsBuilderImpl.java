@@ -17,7 +17,10 @@ import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.CommandService;
 import dev.rollczi.litecommands.handle.ExecuteResultHandler;
 import dev.rollczi.litecommands.handle.Handler;
+import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
+import dev.rollczi.litecommands.scheme.Scheme;
+import dev.rollczi.litecommands.scheme.SchemeFormat;
 import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
 import panda.std.Result;
@@ -76,9 +79,19 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
+    public LiteCommandsBuilder<SENDER> schemeFormat(SchemeFormat schemeFormat) {
+        this.executeResultHandler.schemeFormat(schemeFormat);
+        return this;
+    }
+
+    @Override
     public <T> LiteCommandsBuilderImpl<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler) {
         this.executeResultHandler.register(on, handler);
         return this;
+    }
+
+    public LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler) {
+        return this.resultHandler(Scheme.class, handler);
     }
 
     @Override

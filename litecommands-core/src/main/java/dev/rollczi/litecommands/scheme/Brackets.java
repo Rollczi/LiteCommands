@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.schematic;
+package dev.rollczi.litecommands.scheme;
 
 public class Brackets {
 
