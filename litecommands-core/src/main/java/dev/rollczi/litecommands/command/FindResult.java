@@ -144,11 +144,15 @@ public final class FindResult {
         Map<Integer, CommandSection> sectionMap = new HashMap<>();
 
         int index = 0;
-        for (CommandSection section : sections) {
+        for (CommandSection section : this.sections) {
             sectionMap.put(index++, section);
         }
 
         return Collections.unmodifiableMap(sectionMap);
+    }
+
+    public LiteInvocation getInvocation() {
+        return this.invocation;
     }
 
     public List<CommandSection> getSections() {
@@ -213,10 +217,6 @@ public final class FindResult {
             }
 
             for (ArgumentExecutor argumentExecutor : section.executors()) {
-//                if (executor != null && !executor.equals(argumentExecutor) && !arguments.isEmpty() && !arguments.get(arguments.size() - 1).isEmpty()) {
-//                    continue;
-//                }
-
                 for (AnnotatedParameter<?> parameter : argumentExecutor.annotatedParameters()) {
                     suggestions.addAll(parameter.toSuggester(invocation).suggestions());
 
