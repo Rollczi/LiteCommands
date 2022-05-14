@@ -22,11 +22,11 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>core</artifactId>
-    <version>1.9.2</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:core:1.9.2'
+implementation 'dev.rollczi.litecommands:core:2.0.0'
 ```
 
 ### First Simple Command
@@ -37,7 +37,7 @@ implementation 'dev.rollczi.litecommands:core:1.9.2'
 public class HelloWorldCommand {
 
     @Execute
-    @MinArgs(1)
+    @Min(1)
     public void execute(LiteSender sender, String[] args) {
         sender.sendMessage(String.join(" ", args));
     }
@@ -56,11 +56,11 @@ Add this to your dependencies if you want use ready-made implementation for velo
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>velocity</artifactId>
-    <version>1.9.2</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:1.9.2'
+implementation 'dev.rollczi.litecommands:velocity:2.0.0'
 ```
 
 #### All extensions: 
@@ -70,8 +70,7 @@ implementation 'dev.rollczi.litecommands:velocity:1.9.2'
 #### Other examples: 
  - [Wiki Velocity Example](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(simple))
  - [Wiki Velocity Example (advanced)](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(advanced))
- - [(Rollczi) Bukkit Example](https://github.com/Rollczi/LiteCommands-BukkitExample)
- - [(shitzuu) BungeeCord Example](https://github.com/shitzuu/LiteCommands-BungeeExample)
+ - [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
 
 See (Important dependencies used)
  - [panda-lang/expressible](https://github.com/panda-lang/expressible)

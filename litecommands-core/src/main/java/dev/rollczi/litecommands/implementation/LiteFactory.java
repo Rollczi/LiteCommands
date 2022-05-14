@@ -16,6 +16,7 @@ import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
 import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.platform.LiteSender;
 import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
@@ -25,7 +26,7 @@ public final class LiteFactory {
     private LiteFactory() {
     }
 
-    public static <SENDER> LiteCommandsBuilder<SENDER> builder(Class<SENDER> senderClass) {
+    public static <SENDER> LiteCommandsBuilder<SENDER> builder(Class<SENDER> senderType) {
         return LiteCommandsBuilderImpl.<SENDER>builder()
                 .configureFactory(factory -> {
                     factory.annotationResolver(Section.RESOLVER);
@@ -40,12 +41,16 @@ public final class LiteFactory {
                 .argument(Flag.class, boolean.class, new FlagArgument())
                 .argument(Joiner.class, String.class, new JoinerArgument())
                 .argument(Block.class, Object.class, new BlockArgument())
+
                 .argument(String.class, (invocation, argument) -> Result.ok(argument))
                 .argument(Integer.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Integer.parseInt(argument)).toResult(Blank.BLANK))
                 .argument(Double.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Double.parseDouble(argument)).toResult(Blank.BLANK))
                 .argument(Float.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Float.parseFloat(argument)).toResult(Blank.BLANK))
+
                 .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation))
-                .contextualBind(senderClass, (sender, invocation) -> Result.ok(sender));
+                .contextualBind(LiteSender.class, (sender, invocation) -> Result.ok(invocation.sender()))
+                .contextualBind(String[].class, (sender, invocation) -> Result.ok(invocation.arguments()))
+                .contextualBind(senderType, (sender, invocation) -> Result.ok(sender));
     }
 
 }
