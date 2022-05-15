@@ -3,21 +3,23 @@ package dev.rollczi.litecommands.command.permission;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.platform.LiteSender;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class LitePermissions {
 
-    private final Collection<String> permissions;
+    private final List<String> permissions;
 
     public LitePermissions(Collection<String> permissions) {
-        this.permissions = permissions;
+        this.permissions = new ArrayList<>(permissions);
     }
 
-    public Collection<String> getPermissions() {
-        return Collections.unmodifiableCollection(permissions);
+    public List<String> getPermissions() {
+        return Collections.unmodifiableList(permissions);
     }
 
     public boolean isEmpty() {

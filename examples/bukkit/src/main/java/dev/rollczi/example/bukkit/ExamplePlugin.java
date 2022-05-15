@@ -2,6 +2,7 @@ package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.WorldArgument;
 import dev.rollczi.example.bukkit.handler.InvalidUsage;
+import dev.rollczi.example.bukkit.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
@@ -32,6 +33,7 @@ public class ExamplePlugin extends JavaPlugin {
 
                 // Handlers
                 .invalidUsageHandler(new InvalidUsage())
+                .permissionHandler(new PermissionMessage())
 
                 .register();
     }
