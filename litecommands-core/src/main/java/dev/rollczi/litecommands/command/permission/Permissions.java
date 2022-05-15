@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permissions {
 
-    Permission[] value();
+    Permission[] value() default {};
 
     FactoryAnnotationResolver<Permissions> RESOLVER = new PermissionAnnotationResolver();
 
