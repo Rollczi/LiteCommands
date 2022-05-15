@@ -25,7 +25,7 @@ public class ExecuteResult {
     }
 
     public boolean isFailure() {
-        return !success;
+        return !success && !invalid;
     }
 
     public Object getResult() {

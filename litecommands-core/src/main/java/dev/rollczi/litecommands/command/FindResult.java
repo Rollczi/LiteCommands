@@ -8,15 +8,12 @@ import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.shared.Validation;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,43 +23,28 @@ public final class FindResult {
 
     private final List<CommandSection> sections;
     private final ArgumentExecutor executor;
-    private final List<AnnotatedParameter<?>> allArguments;
     private final List<AnnotatedParameterState<?>> arguments;
 
-    private final @Nullable AnnotatedParameterState<?> lastMatchedArgument;
-    private final @Nullable MatchResult failedResult;
-
     private final boolean found;
-
-    // See failedResult (MatchResult)
-    @Deprecated
-    private final @Nullable AnnotatedParameterState<?> failedArgument;
-    @Deprecated
-    private final boolean failed;
-    @Deprecated
     private final boolean invalid;
+    private final Object result;
 
     private FindResult(
             LiteInvocation invocation,
             List<CommandSection> sections,
             ArgumentExecutor executor,
-            List<AnnotatedParameter<?>> allArguments,
             List<AnnotatedParameterState<?>> arguments,
-            @Nullable AnnotatedParameterState<?> lastMatchedArgument,
-            @Nullable AnnotatedParameterState<?> failedArgument,
-            @Nullable MatchResult failedResult, boolean found, boolean failed, boolean invalid
+            boolean found,
+            boolean invalid,
+            Object result
     ) {
         this.invocation = invocation;
         this.sections = sections;
         this.executor = executor;
-        this.allArguments = allArguments;
         this.arguments = arguments;
-        this.lastMatchedArgument = lastMatchedArgument;
-        this.failedArgument = failedArgument;
-        this.failedResult = failedResult;
         this.found = found;
-        this.failed = failed;
         this.invalid = invalid;
+        this.result = result;
     }
 
     public FindResult withSection(CommandSection section) {
@@ -71,10 +53,10 @@ public final class FindResult {
         List<CommandSection> sections = new ArrayList<>(this.sections);
 
         sections.add(section);
-        return new FindResult(invocation, sections, null, allArguments, arguments, lastMatchedArgument, failedArgument, failedResult, found, failed, invalid);
+        return new FindResult(invocation, sections, null, arguments, found, invalid, result);
     }
 
-    public FindResult withExecutor(ArgumentExecutor executor, List<AnnotatedParameter<?>> argumentStates) {
+    public FindResult withExecutor(ArgumentExecutor executor) {
         Validation.isNull(this.executor, "Executor already set");
         Validation.isFalse(this.found, "This is the end of the command");
         Validation.isNotEmpty(this.sections, "Executor must have a parent section");
@@ -85,70 +67,57 @@ public final class FindResult {
 
         for (ArgumentExecutor exec : sections.get(sections.size() - 1).executors()) {
             if (exec.equals(executor)) {
-                return new FindResult(invocation, sections, executor, argumentStates, arguments, lastMatchedArgument, failedArgument, failedResult, false, failed, invalid);
+                return new FindResult(invocation, sections, executor, arguments, false, invalid, result);
             }
         }
 
         throw new IllegalArgumentException("Executor not found in last section.");
     }
 
-    public FindResult withArgument(AnnotatedParameterState<?> state, boolean matched) {
+    public FindResult withArgument(AnnotatedParameterState<?> state) {
         Validation.isNotNull(this.executor, "Executor not set");
         Validation.isFalse(this.found, "FindResult is found");
-        Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
         List<AnnotatedParameterState<?>> arguments = new ArrayList<>(this.arguments);
 
         arguments.add(state);
-        return new FindResult(invocation, sections, executor, allArguments, arguments, matched ? state : this.lastMatchedArgument, failedArgument, failedResult, false, false, false);
+        return new FindResult(invocation, sections, executor, arguments, false, false, result);
     }
 
-    public FindResult failedArgument(AnnotatedParameterState<?> state) {
-        Validation.isNotNull(this.executor, "Executor not set");
+    public FindResult found() {
         Validation.isFalse(this.found, "FindResult is found");
-        Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, state.matchResult(), false, true, false);
+        return new FindResult(invocation, sections, executor, arguments, true, false, result);
     }
 
-    public FindResult invalidArgument(AnnotatedParameterState<?> state) {
-        Validation.isNotNull(this.executor, "Executor not set");
+    public FindResult found(Object result) {
         Validation.isFalse(this.found, "FindResult is found");
-        Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, state, state.matchResult(), false, false, true);
+        return new FindResult(invocation, sections, executor, arguments, true, false, result);
     }
 
     public FindResult invalid() {
-        Validation.isNotNull(this.executor, "Executor not set");
         Validation.isFalse(this.found, "FindResult is found");
-        Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, MatchResult.notMatched(), false, false, true);
+        return new FindResult(invocation, sections, executor, arguments, false, true, result);
     }
 
-    public FindResult markAsFound() {
+    public FindResult invalid(Object result) {
         Validation.isFalse(this.found, "FindResult is found");
-        Validation.isFalse(this.failed, "FindResult is failed");
         Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        return new FindResult(invocation, sections, executor, allArguments, arguments, lastMatchedArgument, failedArgument, failedResult, true, false, false);
+        return new FindResult(invocation, sections, executor, arguments, false, true, result);
     }
 
-    @Deprecated
-    public Map<Integer, CommandSection> getSectionsAsMap() {
-        Map<Integer, CommandSection> sectionMap = new HashMap<>();
+    public FindResult failed() {
+        Validation.isFalse(this.found, "FindResult is found");
+        Validation.isFalse(this.invalid, "FindResult is invalid");
 
-        int index = 0;
-        for (CommandSection section : this.sections) {
-            sectionMap.put(index++, section);
-        }
-
-        return Collections.unmodifiableMap(sectionMap);
+        return new FindResult(invocation, sections, executor, arguments, false, false, result);
     }
 
     public LiteInvocation getInvocation() {
@@ -164,7 +133,7 @@ public final class FindResult {
     }
 
     public List<AnnotatedParameter<?>> getAllArguments() {
-        return Collections.unmodifiableList(allArguments);
+        return Collections.unmodifiableList(executor.annotatedParameters());
     }
 
     public List<Argument<?>> getArguments() {
@@ -173,9 +142,8 @@ public final class FindResult {
                 .collect(Collectors.toList());
     }
 
-    @Deprecated
-    public Optional<Object> getInvalidResult() {
-        return Optional.ofNullable(this.failedArgument).flatMap(state -> state.matchResult().getNoMatchedResult());
+    public Optional<Object> getResult() {
+        return Optional.ofNullable(result);
     }
 
     public List<Object> extractResults() {
@@ -229,8 +197,12 @@ public final class FindResult {
             suggesters.add(Suggester.of(suggestions));
         }
 
-        for (int index = 1; index < allArguments.size(); index++) {
-            AnnotatedParameter<?> parameter = allArguments.get(index);
+        if (executor == null) {
+            return known(arguments.iterator(), suggesters.iterator(), Suggester.NONE, Collections.emptyList());
+        }
+
+        for (int index = 1; index < executor.annotatedParameters().size(); index++) {
+            AnnotatedParameter<?> parameter = executor.annotatedParameters().get(index);
             Suggester suggester = parameter.toSuggester(invocation);
 
             if (!parameter.argument().isOptional()) {
@@ -240,8 +212,8 @@ public final class FindResult {
 
             List<Suggestion> suggestions = new ArrayList<>(suggester.suggestions());
 
-            for (int optional = index + 1; optional < allArguments.size(); optional++) {
-                AnnotatedParameter<?> annotatedParameter = allArguments.get(optional);
+            for (int optional = index + 1; optional < executor.annotatedParameters().size(); optional++) {
+                AnnotatedParameter<?> annotatedParameter = executor.annotatedParameters().get(optional);
                 Suggester optionalSuggester = annotatedParameter.toSuggester(invocation);
 
                 suggestions.addAll(optionalSuggester.suggestions());
@@ -317,22 +289,16 @@ public final class FindResult {
         return found;
     }
 
-    public boolean isNotFound() {
-        return !found;
-    }
-
-    @Deprecated
     public boolean isFailed() {
-        return failed;
+        return !found && !invalid;
     }
 
-    @Deprecated
     public boolean isInvalid() {
         return invalid;
     }
 
     public static FindResult none(LiteInvocation invocation) {
-        return new FindResult(invocation, new ArrayList<>(), null, new ArrayList<>(), new ArrayList<>(), null, null, null, false, false, false);
+        return new FindResult(invocation, new ArrayList<>(), null,  new ArrayList<>(), false, false, null);
     }
 
 }

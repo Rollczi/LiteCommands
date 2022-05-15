@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.command.permission;
 import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -14,6 +13,6 @@ public @interface ExecutedPermissions {
 
     ExecutedPermission[] value();
 
-    FactoryAnnotationResolver<ExecutedPermissions> RESOLVER = new ExecutedPermissionAnnotationResolver();
+    FactoryAnnotationResolver<ExecutedPermissions> RESOLVER = new ExecutedPermissionsAnnotationResolver();
 
 }

@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.argument.simple.SimpleMultilevelArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.argument.option.OptionArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.contextual.Contextual;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandStateFactory;
@@ -18,6 +19,7 @@ import dev.rollczi.litecommands.command.CommandService;
 import dev.rollczi.litecommands.handle.ExecuteResultHandler;
 import dev.rollczi.litecommands.handle.Handler;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
+import dev.rollczi.litecommands.handle.PermissionHandler;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.scheme.SchemeFormat;
@@ -92,6 +94,11 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
     public LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler) {
         return this.resultHandler(Scheme.class, handler);
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER> permissionHandler(PermissionHandler<SENDER> handler) {
+        return this.resultHandler(LitePermissions.class, handler);
     }
 
     @Override

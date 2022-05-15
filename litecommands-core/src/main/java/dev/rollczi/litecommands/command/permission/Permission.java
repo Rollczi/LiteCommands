@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.command.permission;
 
+import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
@@ -11,6 +13,8 @@ import java.lang.annotation.Target;
 @Repeatable(Permissions.class)
 public @interface Permission {
 
-    String value();
+    String[] value();
+
+    FactoryAnnotationResolver<Permission> RESOLVER = new PermissionsAnnotationResolver();
 
 }

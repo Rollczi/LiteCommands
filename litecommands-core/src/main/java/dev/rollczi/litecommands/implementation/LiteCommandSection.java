@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.implementation;
 
+import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
@@ -8,6 +9,7 @@ import dev.rollczi.litecommands.command.sugesstion.SuggestResult;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.platform.LiteSender;
 import panda.utilities.ValidationUtils;
 
 import java.util.ArrayList;
@@ -85,6 +87,14 @@ class LiteCommandSection implements CommandSection {
             return argumentExecutor.execute(invocation, findResult);
         }
 
+        if (findResult.isInvalid()) {
+            Optional<Object> result = findResult.getResult();
+
+            return result
+                    .map(o -> ExecuteResult.invalid(findResult, o))
+                    .orElseGet(() -> ExecuteResult.failure(findResult));
+        }
+
         return ExecuteResult.failure(findResult);
     }
 
@@ -120,6 +130,13 @@ class LiteCommandSection implements CommandSection {
                     last = findResult;
                 }
             }
+        }
+
+        LitePermissions litePermissions = LitePermissions.of(this, invocation.sender());
+
+        if (!litePermissions.isEmpty()) {
+            return lastResult.withSection(this)
+                    .invalid(litePermissions);
         }
 
         for (ArgumentExecutor argumentExecutor : argumentExecutors) {

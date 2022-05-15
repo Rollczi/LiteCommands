@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandStateFactory;
 import dev.rollczi.litecommands.handle.Handler;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
+import dev.rollczi.litecommands.handle.PermissionHandler;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.scheme.SchemeFormat;
@@ -31,6 +32,8 @@ public interface LiteCommandsBuilder<SENDER> {
     <T> LiteCommandsBuilder<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler);
 
     LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler);
+
+    LiteCommandsBuilder<SENDER> permissionHandler(PermissionHandler<SENDER> handler);
 
     LiteCommandsBuilder<SENDER> command(Class<?>... commandClass);
 

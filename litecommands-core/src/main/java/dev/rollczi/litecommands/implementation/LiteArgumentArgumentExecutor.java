@@ -33,7 +33,7 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
     @Override
     public ExecuteResult execute(LiteInvocation invocation, FindResult findResult) {
         if (findResult.isInvalid()) {
-            Optional<Object> result = findResult.getInvalidResult();
+            Optional<Object> result = findResult.getResult();
 
             return result
                     .map(obj -> ExecuteResult.invalid(findResult, obj))
@@ -54,7 +54,7 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
     @Override
     public FindResult find(LiteInvocation invocation, int route, FindResult lastResult) {
         int currentRoute = route;
-        FindResult currentResult = lastResult.withExecutor(this, new ArrayList<>(arguments));
+        FindResult currentResult = lastResult.withExecutor(this);
 
         for (AnnotatedParameterImpl<?> annotatedParameter : arguments) {
             Argument<?> argument = annotatedParameter.argument();
@@ -65,18 +65,22 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
 
                 if (result.isNotMatched()) {
                     if (argument.isOptional()) {
-                        currentResult = currentResult.withArgument(state, false);
+                        currentResult = currentResult.withArgument(state);
                         continue;
                     }
 
-                    return currentResult.failedArgument(state);
+                    return currentResult
+                            .withArgument(state)
+                            .failed();
                 }
 
-                currentResult = currentResult.withArgument(state, true);
+                currentResult = currentResult.withArgument(state);
                 currentRoute += result.getConsumed();
             }
             catch (LiteException exception) {
-                return currentResult.invalidArgument(state);
+                return currentResult
+                        .withArgument(state)
+                        .invalid(exception.getResult());
             }
         }
 
@@ -84,7 +88,7 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
             return currentResult.invalid();
         }
 
-        return currentResult.markAsFound();
+        return currentResult.found();
     }
 
     @Override
