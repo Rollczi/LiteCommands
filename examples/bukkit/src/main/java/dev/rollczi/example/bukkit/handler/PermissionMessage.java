@@ -1,5 +1,6 @@
 package dev.rollczi.example.bukkit.handler;
 
+import dev.rollczi.example.bukkit.util.ChatUtil;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.handle.PermissionHandler;
@@ -10,7 +11,7 @@ public class PermissionMessage implements PermissionHandler<CommandSender> {
 
     @Override
     public void handle(CommandSender sender, LiteInvocation invocation, LitePermissions litePermissions) {
-        sender.sendMessage("&cNie masz permisji do tej komendy! &7(" + Joiner.on(", ").join(litePermissions.getPermissions()) + ")");
+        sender.sendMessage(ChatUtil.color("&cNie masz permisji do tej komendy! &7(" + Joiner.on(", ").join(litePermissions.getPermissions()) + ")"));
     }
 
 }

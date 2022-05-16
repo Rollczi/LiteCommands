@@ -9,7 +9,6 @@ import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.argument.simple.SimpleMultilevelArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.argument.option.OptionArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.contextual.Contextual;
 import dev.rollczi.litecommands.factory.CommandEditor;
@@ -25,7 +24,6 @@ import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.scheme.SchemeFormat;
 import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
-import panda.std.Result;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -181,14 +179,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
             }
 
             for (Map.Entry<Class<?>, Contextual<SENDER, ?>> entry : contextualBinds.entrySet()) {
-                resources.on(entry.getKey()).assignHandler((property, annotation, args) -> { //TODO: add safe injection and cast ;-;
-                    Contextual<SENDER, ?> contextual = entry.getValue();
-                    InvokeContext invokeContext = InvokeContext.fromArgs(args);
-                    LiteInvocation invocation = invokeContext.getInvocation();
-                    Result<?, Object> result = contextual.extract((SENDER) invocation.sender().getHandle(), invocation);
-
-                    return result.orNull();
-                });
+                resources.on(entry.getKey()).assignHandler(new ContextualHandler<>(entry.getValue()));
             }
         });
 
@@ -196,7 +187,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
             this.commandStateFactory = new LiteCommandFactory(this.injector, this.argumentsRegistry, this.editors);
         }
 
-        for (Consumer<CommandStateFactory> editor : commandStateFactoryEditors) {
+        for (Consumer<CommandStateFactory> editor : this.commandStateFactoryEditors) {
             editor.accept(this.commandStateFactory);
         }
 

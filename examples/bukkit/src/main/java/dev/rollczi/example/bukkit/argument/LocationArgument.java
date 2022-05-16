@@ -1,5 +1,6 @@
 package dev.rollczi.example.bukkit.argument;
 
+import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
@@ -9,6 +10,7 @@ import panda.std.Result;
 import java.util.Arrays;
 import java.util.List;
 
+@ArgumentName("x y z")
 public class LocationArgument implements MultilevelArgument<Location> {
 
     @Override

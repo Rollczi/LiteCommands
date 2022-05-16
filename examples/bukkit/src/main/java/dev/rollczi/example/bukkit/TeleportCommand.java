@@ -1,6 +1,7 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.argument.Name;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.Permission;
@@ -27,7 +28,7 @@ public class TeleportCommand {
 
     @Execute(required = 2)
     @Permission("dev.rollczi.teleport.other")
-    public void targetToPlayer(@Arg Player target, @Arg Player to) {
+    public void targetToPlayer(@Arg @Name("target") Player target, @Arg @Name("to") Player to) {
         target.teleport(to.getLocation());
     }
 

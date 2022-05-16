@@ -1,5 +1,6 @@
 package dev.rollczi.example.bukkit.argument;
 
+import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
@@ -12,6 +13,7 @@ import panda.std.Result;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@ArgumentName("world")
 public class WorldArgument implements OneArgument<World> {
 
     private final Server server;

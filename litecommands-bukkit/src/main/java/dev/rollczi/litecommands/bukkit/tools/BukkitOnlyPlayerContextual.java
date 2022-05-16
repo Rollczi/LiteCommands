@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.bukkit.tools;
 
+import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.contextual.Contextual;
 import org.bukkit.command.CommandSender;
