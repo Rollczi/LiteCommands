@@ -34,7 +34,7 @@ class SchematicTest {
             .register();
 
     @Test
-    void test() {
+    void schemeBeforeExecutorsTest() {
         FindResult result = testPlatform.find("teleport");
         SchemeGenerator schemeGenerator = new SchemeGenerator();
 

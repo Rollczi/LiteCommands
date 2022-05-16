@@ -18,8 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SuggestionTest {
 
@@ -136,7 +135,7 @@ class SuggestionTest {
     }
 
     @Test
-    void multilevelTest1() {
+    void multilevelEmptyArgumentTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "");
 
         assertEquals(2, suggestion.size());
@@ -145,7 +144,7 @@ class SuggestionTest {
     }
 
     @Test
-    void multilevelTest2() {
+    void multilevelOneArgumentTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "1");
 
         assertEquals(1, suggestion.size());
@@ -153,14 +152,15 @@ class SuggestionTest {
     }
 
     @Test
-    void multilevelTest3() {
+    void
+    nextToMultilevelExecuteTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "Rollczi", "");
 
         assertEquals(0, suggestion.size());
     }
 
     @Test
-    void multilevelTest4() {
+    void allArgumentsMultilevelTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "100", "100", "100", "");
 
         assertEquals(1, suggestion.size());
