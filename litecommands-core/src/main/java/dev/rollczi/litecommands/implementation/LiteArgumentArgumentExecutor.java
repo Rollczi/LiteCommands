@@ -69,6 +69,12 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
                         continue;
                     }
 
+                    if (result.getNoMatchedResult().isPresent()) {
+                        return currentResult
+                                .withArgument(state)
+                                .invalid(result.getNoMatchedResult().get());
+                    }
+
                     return currentResult
                             .withArgument(state)
                             .failed();
