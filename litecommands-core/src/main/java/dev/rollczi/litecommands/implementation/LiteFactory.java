@@ -18,6 +18,7 @@ import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.handle.LiteException;
 import dev.rollczi.litecommands.platform.LiteSender;
 import panda.std.Blank;
 import panda.std.Option;

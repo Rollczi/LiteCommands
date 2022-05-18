@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
+import panda.std.Blank;
 import panda.std.Option;
 
 import java.lang.reflect.Parameter;
@@ -14,32 +15,26 @@ public class BlockArgument implements Argument<Block> {
 
     @Override
     public MatchResult match(LiteInvocation invocation, Parameter parameter, Block annotation, int currentRoute, int currentArgument) {
-        if (currentArgument >= invocation.arguments().length) {
+        String[] blocks = annotation.value().split(" ");
+
+        if (currentArgument + blocks.length > invocation.arguments().length) {
             return MatchResult.notMatched();
         }
 
-        if (annotation.value().contains(" ")) {
-            String[] blocks = annotation.value().split(" ");
-
-            int i = 0;
-            for (String block : blocks) {
-                if (!invocation.arguments()[currentArgument + i].equalsIgnoreCase(block)) {
-                    return MatchResult.notMatched();
-                }
-
-                i++;
+        int i = 0;
+        for (String block : blocks) {
+            if (!invocation.arguments()[currentArgument + i].equalsIgnoreCase(block)) {
+                return MatchResult.notMatched();
             }
 
-            return MatchResult.matched(Collections.emptyList(), blocks.length);
+            i++;
         }
 
-        String arg = invocation.arguments()[currentArgument];
-
-        if (!arg.equalsIgnoreCase(annotation.value())) {
-            return MatchResult.notMatched();
+        if (parameter.getType().equals(Blank.class)) {
+            return MatchResult.matched(Collections.singletonList(Blank.BLANK), blocks.length);
         }
 
-        return MatchResult.matched(Collections.emptyList(), 1);
+        return MatchResult.matched(Collections.emptyList(), blocks.length);
     }
 
     @Override

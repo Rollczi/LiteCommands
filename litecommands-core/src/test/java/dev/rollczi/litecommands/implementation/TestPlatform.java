@@ -13,12 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TestPlatform implements RegistryPlatform<Void> {
+public class TestPlatform implements RegistryPlatform<TestHandle> {
 
     private final Map<CommandSection, Command> commands = new HashMap<>();
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<Void> listener, SuggestionListener<Void> suggestionListener) {
+    public void registerListener(CommandSection command, ExecuteListener<TestHandle> listener, SuggestionListener<TestHandle> suggestionListener) {
         this.commands.put(command, new Command(listener, suggestionListener));
     }
 
@@ -70,19 +70,19 @@ public class TestPlatform implements RegistryPlatform<Void> {
 
     private static final class Command {
 
-        private final ExecuteListener<Void> executeListener;
-        private final SuggestionListener<Void> suggestionListener;
+        private final ExecuteListener<TestHandle> executeListener;
+        private final SuggestionListener<TestHandle> suggestionListener;
 
-        public Command(ExecuteListener<Void> executeListener, SuggestionListener<Void> suggestionListener) {
+        public Command(ExecuteListener<TestHandle> executeListener, SuggestionListener<TestHandle> suggestionListener) {
             this.executeListener = executeListener;
             this.suggestionListener = suggestionListener;
         }
 
-        public ExecuteListener<Void> getExecuteListener() {
+        public ExecuteListener<TestHandle> getExecuteListener() {
             return executeListener;
         }
 
-        public SuggestionListener<Void> getSuggester() {
+        public SuggestionListener<TestHandle> getSuggester() {
             return suggestionListener;
         }
 

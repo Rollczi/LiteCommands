@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
+import dev.rollczi.litecommands.implementation.TestHandle;
 import dev.rollczi.litecommands.implementation.TestPlatform;
 import dev.rollczi.litecommands.platform.LiteSender;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LitePermissionsTest {
 
     private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
+    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
             .resultHandler(LitePermissions.class, (permissions, sender, liteInvocation) -> {})
             .argument(String.class, (invocation, argument) -> Result.ok(argument))

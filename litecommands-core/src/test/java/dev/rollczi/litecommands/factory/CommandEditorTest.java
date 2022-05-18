@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.command.CommandService;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
+import dev.rollczi.litecommands.implementation.TestHandle;
 import dev.rollczi.litecommands.implementation.TestPlatform;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CommandEditorTest {
 
     private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
+    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
             .command(ToEdit.class)
             .commandEditor(ToEdit.class, state -> state
@@ -28,7 +29,7 @@ class CommandEditorTest {
     @Test
     @DisplayName("test command editor for name and aliases")
     void test() {
-        CommandService<Void> commandService = liteCommands.getCommandService();
+        CommandService<TestHandle> commandService = liteCommands.getCommandService();
         CommandSection section = commandService.getSection("edited");
 
         assertEquals("edited", section.getName());

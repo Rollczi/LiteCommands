@@ -11,7 +11,6 @@ class TestSender implements LiteSender {
 
     @Override
     public Object getHandle() {
-        return null;
+        return new TestHandle();
     }
-
 }

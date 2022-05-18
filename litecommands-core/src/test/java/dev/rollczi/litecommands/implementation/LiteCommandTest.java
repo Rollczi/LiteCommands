@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LiteCommandTest {
 
     private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
+    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
             .command(TestCommandLuckPermsExample.class)
             .command(TestCommandChatExample.class)
@@ -49,6 +49,14 @@ class LiteCommandTest {
 
         assertTrue(result.isSuccess());
         assertEquals("Rollczi -x vip", result.getResult());
+    }
+
+    @Test
+    void testReload() {
+        ExecuteResult result = testPlatform.execute("luckperms", "user", "Rollczi", "reload");
+
+        assertTrue(result.isSuccess());
+        assertEquals("Rollczi -reload", result.getResult());
     }
 
     @Test

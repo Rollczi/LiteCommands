@@ -13,7 +13,7 @@ import java.util.Map;
 class FindResultTest {
 
     private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
+    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
             .command(TestCommandLuckPermsExample.class)
             .command(TestCommandChatExample.class)

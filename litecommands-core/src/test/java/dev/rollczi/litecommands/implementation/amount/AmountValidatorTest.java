@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.implementation.amount;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.implementation.LiteFactory;
+import dev.rollczi.litecommands.implementation.TestHandle;
 import dev.rollczi.litecommands.implementation.TestPlatform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test;
 class AmountValidatorTest {
 
     private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
+    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
             .command(TestCommand.class)
             .resultHandler(String.class, (unused, invocation, value) -> {})

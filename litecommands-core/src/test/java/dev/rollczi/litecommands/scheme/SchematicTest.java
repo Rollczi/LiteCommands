@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
+import dev.rollczi.litecommands.implementation.TestHandle;
 import dev.rollczi.litecommands.implementation.TestPlatform;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SchematicTest {
 
     private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
+    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
             .argument(String.class, new StringArg())
             .argumentMultilevel(String.class, "loc", new LocationArg())

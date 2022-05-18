@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestExampleInfoCommand {
 
     private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<Void> liteCommands = LiteFactory.builder(Void.class)
+    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
             .command(InfoCommand.class)
             .resultHandler(String.class, (v, invocation, value) -> {})

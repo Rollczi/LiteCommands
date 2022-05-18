@@ -174,13 +174,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         LiteCommands<SENDER> commands = new LiteCommandsImpl<>(registryPlatform, executeResultHandler);
 
         this.injector = this.injector.fork(resources -> {
-            for (Map.Entry<Class<?>, Supplier<?>> entry : typeBinds.entrySet()) {
-                resources.on(entry.getKey()).assignInstance(entry.getValue());
-            }
-
-            for (Map.Entry<Class<?>, Contextual<SENDER, ?>> entry : contextualBinds.entrySet()) {
-                resources.on(entry.getKey()).assignHandler(new ContextualHandler<>(entry.getValue()));
-            }
+            resources.on(Object.class).assignHandler(new InjectorHandler<>(typeBinds, contextualBinds));
         });
 
         if (this.commandStateFactory == null) {
