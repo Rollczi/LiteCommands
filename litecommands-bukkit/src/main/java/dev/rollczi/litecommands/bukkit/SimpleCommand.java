@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,13 +26,13 @@ class SimpleCommand extends org.bukkit.command.Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String alias, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         this.executeListener.execute(sender, new LiteInvocation(new BukkitSender(sender), commandSection.getName(), alias, args));
         return true;
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         return this.suggestionListener.suggest(sender, new LiteInvocation(new BukkitSender(sender), commandSection.getName(), alias, args)).multilevelSuggestions();
     }
 

@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
-import dev.rollczi.litecommands.command.sugesstion.SuggestResult;
+import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
 
@@ -23,7 +23,7 @@ public interface CommandSection extends Suggester {
 
     ExecuteResult execute(LiteInvocation invocation);
 
-    SuggestResult suggestion(LiteInvocation invocation);
+    SuggestionStack suggestion(LiteInvocation invocation);
 
     FindResult find(LiteInvocation invocation, int route, FindResult lastResult);
 

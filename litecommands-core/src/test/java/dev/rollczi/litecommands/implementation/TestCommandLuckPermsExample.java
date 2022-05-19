@@ -20,7 +20,7 @@ class TestCommandLuckPermsExample {
     }
 
     @Execute(required = 2)
-    public String reload(@Arg String user, @Block("reload") Blank unused) {
+    public String reload(@Arg String user, @Block("reload") Blank none) {
         return user + " -reload";
     }
 

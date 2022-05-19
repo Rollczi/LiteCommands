@@ -5,11 +5,11 @@ import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.sugesstion.SuggestResult;
+import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
+import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.platform.LiteSender;
 import panda.utilities.ValidationUtils;
 
 import java.util.ArrayList;
@@ -54,11 +54,11 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public List<Suggestion> suggestions() {
+    public TwinSuggestionStack suggest() {
         Set<String> suggestions = new HashSet<>(this.aliases);
         suggestions.add(this.name);
 
-        return Suggestion.of(suggestions);
+        return TwinSuggestionStack.of(Suggestion.of(suggestions));
     }
 
     @Override
@@ -99,11 +99,10 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public SuggestResult suggestion(LiteInvocation invocation) {
+    public SuggestionStack suggestion(LiteInvocation invocation) {
         FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
-        List<Suggestion> lastSuggestion = findResult.knownSuggestion();
 
-        return SuggestResult.of(lastSuggestion);
+        return findResult.knownSuggestion();
     }
 
     @Override

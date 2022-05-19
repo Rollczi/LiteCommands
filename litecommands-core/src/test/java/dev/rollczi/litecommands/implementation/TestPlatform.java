@@ -1,7 +1,8 @@
 package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.command.FindResult;
-import dev.rollczi.litecommands.command.sugesstion.SuggestResult;
+import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
+import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -63,9 +64,9 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
 
     public List<String> suggestion(String command, String... args) {
         FindResult findResult = this.find(command, args);
-        SuggestResult result = SuggestResult.of(findResult.knownSuggestion());
+        SuggestionStack result = findResult.knownSuggestion();
 
-        return result.singleSuggestion();
+        return result.multilevelSuggestions();
     }
 
     private static final class Command {

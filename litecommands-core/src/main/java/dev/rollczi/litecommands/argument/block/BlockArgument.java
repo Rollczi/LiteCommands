@@ -39,7 +39,7 @@ public class BlockArgument implements Argument<Block> {
 
     @Override
     public List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, Block annotation) {
-        return Collections.singletonList(Suggestion.multilevelSuggestion(annotation.value().split(" ")));
+        return Collections.singletonList(Suggestion.multilevel(annotation.value().split(" ")));
     }
 
     @Override

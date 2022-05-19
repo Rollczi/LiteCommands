@@ -27,9 +27,9 @@ public class LocationArgument implements MultilevelArgument<Location> {
     @Override
     public List<Suggestion> suggest(LiteInvocation invocation) {
         return Arrays.asList(
-                Suggestion.multilevelSuggestion("100", "100", "100"),
-                Suggestion.multilevelSuggestion("5", "5", "5"),
-                Suggestion.multilevelSuggestion("10", "35", "-10")
+                Suggestion.multilevel("100", "100", "100"),
+                Suggestion.multilevel("5", "5", "5"),
+                Suggestion.multilevel("10", "35", "-10")
         );
     }
 

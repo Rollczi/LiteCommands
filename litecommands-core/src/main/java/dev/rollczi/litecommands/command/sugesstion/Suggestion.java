@@ -25,15 +25,19 @@ public class Suggestion {
         return suggestion.size() > 1;
     }
 
+    public int lengthMultilevel() {
+        return this.suggestion.size();
+    }
+
     public Suggestion slashLevel(int level) {
         if (this.suggestion.isEmpty()) {
             throw new UnsupportedOperationException();
         }
 
-        return Suggestion.multilevelSuggestion(this.suggestion.subList(level, this.suggestion.size()));
+        return Suggestion.multilevel(this.suggestion.subList(level, this.suggestion.size()));
     }
 
-    public static Suggestion multilevelSuggestion(List<String> suggestion) {
+    public static Suggestion multilevel(List<String> suggestion) {
         if (suggestion.isEmpty()) {
             throw new IllegalArgumentException("Suggestion cannot be empty");
         }
@@ -41,12 +45,16 @@ public class Suggestion {
         return new Suggestion(new ArrayList<>(suggestion));
     }
 
-    public static Suggestion multilevelSuggestion(String... suggestion) {
-        return Suggestion.multilevelSuggestion(Arrays.asList(suggestion));
+    public static Suggestion multilevel(String... suggestion) {
+        return Suggestion.multilevel(Arrays.asList(suggestion));
     }
 
     public static Suggestion of(String suggestion) {
         return new Suggestion(Collections.singletonList(suggestion));
+    }
+
+    public static List<Suggestion> of(String... suggestions) {
+        return of(Arrays.asList(suggestions));
     }
 
     public static List<Suggestion> of(Iterable<String> suggestions) {

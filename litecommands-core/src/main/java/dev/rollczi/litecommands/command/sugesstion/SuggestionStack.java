@@ -4,15 +4,16 @@ import panda.std.stream.PandaStream;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SuggestResult {
+public class SuggestionStack {
 
-    private final List<Suggestion> suggestions;
+    protected final List<Suggestion> suggestions;
 
-    private SuggestResult(List<Suggestion> suggestions) {
+    protected SuggestionStack(List<Suggestion> suggestions) {
         this.suggestions = suggestions;
     }
 
@@ -32,26 +33,26 @@ public class SuggestResult {
                 .collect(Collectors.toList());
     }
 
-    public SuggestResult with(Suggestion... suggestions) {
+    public SuggestionStack with(Suggestion... suggestions) {
         return this.with(Arrays.asList(suggestions));
     }
 
-    public SuggestResult with(Iterable<Suggestion> suggestions) {
+    public SuggestionStack with(Iterable<Suggestion> suggestions) {
         ArrayList<Suggestion> list = new ArrayList<>(this.suggestions);
 
         for (Suggestion suggestion : suggestions) {
             list.add(suggestion);
         }
 
-        return new SuggestResult(list);
+        return of(list);
     }
 
-    public static SuggestResult empty() {
-        return new SuggestResult(Collections.emptyList());
+    public static SuggestionStack empty() {
+        return new SuggestionStack(Collections.emptyList());
     }
 
-    public static SuggestResult of(Iterable<Suggestion> suggestions) {
-        return SuggestResult.empty().with(suggestions);
+    public static SuggestionStack of(Collection<Suggestion> suggestions) {
+        return new SuggestionStack(new ArrayList<>(suggestions));
     }
 
 }

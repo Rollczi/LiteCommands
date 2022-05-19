@@ -12,13 +12,14 @@ class IteratorSuggester implements Suggester {
     }
 
     @Override
-    public List<Suggestion> suggestions() {
+    public TwinSuggestionStack suggest() {
         List<Suggestion> suggestions = new ArrayList<>();
 
         for (Suggestion suggestion : iterable) {
             suggestions.add(suggestion);
         }
 
-        return suggestions;
+        return TwinSuggestionStack.of(suggestions);
     }
+
 }
