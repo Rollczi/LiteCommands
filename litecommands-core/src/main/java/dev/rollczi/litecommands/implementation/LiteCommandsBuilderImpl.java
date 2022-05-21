@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.argument.option.OptionArgument;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.contextual.Contextual;
 import dev.rollczi.litecommands.factory.CommandEditor;
+import dev.rollczi.litecommands.factory.CommandEditorRegistry;
 import dev.rollczi.litecommands.factory.CommandStateFactory;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.CommandService;
@@ -42,7 +43,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     private Injector injector = InjectorProvider.createInjector();
     private CommandStateFactory commandStateFactory;
     private final Set<Consumer<CommandStateFactory>> commandStateFactoryEditors = new HashSet<>();
-    private final Map<Class<?>, CommandEditor> editors = new HashMap<>();
+    private final CommandEditorRegistry editorRegistry = new CommandEditorRegistry();
 
     private final Map<Class<?>, Supplier<?>> typeBinds = new HashMap<>();
     private final Map<Class<?>, Contextual<SENDER, ?>> contextualBinds = new HashMap<>();
@@ -74,7 +75,13 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
     @Override
     public LiteCommandsBuilder<SENDER> commandEditor(Class<?> commandClass, CommandEditor commandEditor) {
-        this.editors.put(commandClass, commandEditor);
+        this.editorRegistry.registerEditor(commandClass, commandEditor);
+        return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER> commandEditor(String name, CommandEditor commandEditor) {
+        this.editorRegistry.registerEditor(name, commandEditor);
         return this;
     }
 
@@ -178,7 +185,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         });
 
         if (this.commandStateFactory == null) {
-            this.commandStateFactory = new LiteCommandFactory(this.injector, this.argumentsRegistry, this.editors);
+            this.commandStateFactory = new LiteCommandFactory(this.injector, this.argumentsRegistry, this.editorRegistry);
         }
 
         for (Consumer<CommandStateFactory> editor : this.commandStateFactoryEditors) {

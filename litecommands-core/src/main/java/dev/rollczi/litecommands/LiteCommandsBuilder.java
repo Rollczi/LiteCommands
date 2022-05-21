@@ -27,6 +27,8 @@ public interface LiteCommandsBuilder<SENDER> {
 
     LiteCommandsBuilder<SENDER> commandEditor(Class<?> commandClass, CommandEditor commandEditor);
 
+    LiteCommandsBuilder<SENDER> commandEditor(String name, CommandEditor commandEditor);
+
     LiteCommandsBuilder<SENDER> schemeFormat(SchemeFormat schemeFormat);
 
     <T> LiteCommandsBuilder<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler);

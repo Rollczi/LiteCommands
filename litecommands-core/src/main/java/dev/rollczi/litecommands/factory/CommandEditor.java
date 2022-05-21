@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.factory;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public interface CommandEditor {
@@ -11,15 +13,19 @@ public interface CommandEditor {
 
     interface State {
 
-        State command(String name);
+        State name(String name);
+
+        String getName();
+
+        State editChild(String child, CommandEditor editor);
 
         default State aliases(Collection<String> aliases) {
             return this.aliases(aliases, false);
         }
 
-        State editChild(String child, CommandEditor editor);
-
         State aliases(Collection<String> aliases, boolean removeOld);
+
+        Set<String> getAliases();
 
         default State permission(Collection<String> permissions) {
             return this.permission(permissions, false);

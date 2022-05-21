@@ -13,6 +13,8 @@ public interface CommandStateFactory {
 
     <T> void editor(Class<T> on, CommandEditor editor);
 
+    void editor(String name, CommandEditor editor);
+
     void stateProcessor(CommandStateFactoryProcessor processor);
 
 }

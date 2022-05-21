@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentAnnotation;
 import dev.rollczi.litecommands.argument.By;
 import dev.rollczi.litecommands.factory.CommandEditor;
+import dev.rollczi.litecommands.factory.CommandEditorRegistry;
 import dev.rollczi.litecommands.factory.CommandStateFactoryProcessor;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
@@ -30,14 +31,14 @@ class LiteCommandFactory implements CommandStateFactory {
     private final Injector injector;
     private final ArgumentsRegistry argumentsRegistry;
     private final Set<CommandStateFactoryProcessor> processors = new HashSet<>();
-    private final Map<Class<?>, CommandEditor> editors;
+    private final CommandEditorRegistry editorRegistry;
 
     private final Set<FactoryAnnotationResolver<?>> annotationResolvers = new HashSet<>();
 
-    LiteCommandFactory(Injector injector, ArgumentsRegistry argumentsRegistry, Map<Class<?>, CommandEditor> editors) {
+    LiteCommandFactory(Injector injector, ArgumentsRegistry argumentsRegistry, CommandEditorRegistry editorRegistry) {
         this.injector = injector;
         this.argumentsRegistry = argumentsRegistry;
-        this.editors = editors;
+        this.editorRegistry = editorRegistry;
     }
 
     @Override
@@ -60,7 +61,12 @@ class LiteCommandFactory implements CommandStateFactory {
 
     @Override
     public <T> void editor(Class<T> on, CommandEditor editor) {
-        this.editors.put(on, editor);
+        this.editorRegistry.registerEditor(on, editor);
+    }
+
+    @Override
+    public void editor(String name, CommandEditor editor) {
+        this.editorRegistry.registerEditor(name, editor);
     }
 
     @Override
@@ -114,19 +120,7 @@ class LiteCommandFactory implements CommandStateFactory {
             root = processor.process(root);
         }
 
-        CommandEditor editor = editors.get(sectionClass);
-
-        if (editor != null) {
-            CommandEditor.State state = editor.edit(root);
-
-            if (!(state instanceof CommandState)) {
-                throw new IllegalStateException("edited state must be instance of CommandState.class");
-            }
-
-            root = (CommandState) state;
-        }
-
-        return root;
+        return (CommandState) editorRegistry.apply(sectionClass, root);
     }
 
     private CommandSection stateToSection(CommandState state, Object instance, @Nullable CommandSection beforeChild) {

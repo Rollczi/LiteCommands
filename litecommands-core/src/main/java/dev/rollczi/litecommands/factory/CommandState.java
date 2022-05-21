@@ -44,6 +44,7 @@ public class CommandState implements CommandEditor.State {
         this.validator = validator;
     }
 
+    @Override
     public CommandState name(String name) {
         return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
     }
@@ -159,11 +160,6 @@ public class CommandState implements CommandEditor.State {
 
     public boolean isCanceled() {
         return canceled;
-    }
-
-    @Override
-    public CommandState command(String name) {
-        return this.name(name);
     }
 
     @Override

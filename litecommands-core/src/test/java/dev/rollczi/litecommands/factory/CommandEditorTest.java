@@ -16,19 +16,39 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CommandEditorTest {
 
-    private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
-            .platform(testPlatform)
-            .command(ToEdit.class)
-            .commandEditor(ToEdit.class, state -> state
-                    .command("edited")
-                    .aliases(Arrays.asList("alis1", "alias2"))
-            )
-            .register();
+    @Test
+    @DisplayName("test command editor for name and aliases (by class)")
+    void testByClass() {
+        TestPlatform testPlatform = new TestPlatform();
+        LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
+                .platform(testPlatform)
+                .command(ToEdit.class)
+                .commandEditor(ToEdit.class, state -> state
+                        .name("edited")
+                        .aliases(Arrays.asList("alis1", "alias2"))
+                )
+                .register();
+
+        CommandService<TestHandle> commandService = liteCommands.getCommandService();
+        CommandSection section = commandService.getSection("edited");
+
+        assertEquals("edited", section.getName());
+        assertEquals(2, section.getAliases().size());
+    }
 
     @Test
-    @DisplayName("test command editor for name and aliases")
-    void test() {
+    @DisplayName("test command editor for name and aliases (by name)")
+    void testByName() {
+        TestPlatform testPlatform = new TestPlatform();
+        LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
+                .platform(testPlatform)
+                .command(ToEdit.class)
+                .commandEditor("test", state -> state
+                        .name("edited")
+                        .aliases(Arrays.asList("alis1", "alias2"))
+                )
+                .register();
+
         CommandService<TestHandle> commandService = liteCommands.getCommandService();
         CommandSection section = commandService.getSection("edited");
 
