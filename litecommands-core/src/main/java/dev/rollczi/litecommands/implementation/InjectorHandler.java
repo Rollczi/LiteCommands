@@ -40,7 +40,7 @@ class InjectorHandler<SENDER, A> implements TriFunction<Property, A, Object[], O
         Executable executable = parameter.getDeclaringExecutable();
 
         if (!(executable instanceof Method)) {
-            return null;
+            return this.handleTypeBind(property.getType());
         }
 
         Option<?> optionParm = PandaStream.of(parameter.getAnnotations())
@@ -95,6 +95,10 @@ class InjectorHandler<SENDER, A> implements TriFunction<Property, A, Object[], O
             return this.hande(entry.getValue(), args);
         }
 
+        return this.handleTypeBind(type);
+    }
+
+    private Object handleTypeBind(Class<?> type) {
         Supplier<?> supplier = typeBind.get(type);
 
         if (supplier != null) {
