@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "dev.rollczi.litecommands"
-    version = "2.0.0-pre15"
+    version = "2.0.0-pre16"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -52,23 +52,23 @@ subprojects {
 //                    password = properties["panda_pass_litecommands"] as String
 //                }
 //            }
-//
-//            maven {
-//                name = "eternalcode-repository"
-//                url = uri("https://repo.eternalcode.pl/releases")
-//                credentials {
-//                    username = properties["lucky_user_litecommands"] as String
-//                    password = properties["lucky_pass_litecommands"] as String
-//                }
-//            }
-//            maven {
-//                name = "mine-repository"
-//                url = uri("https://repository.minecodes.pl/releases")
-//                credentials {
-//                    username = properties["mine_user"] as String
-//                    password = properties["mine_pass"] as String
-//                }
-//            }
+
+            maven {
+                name = "eternalcode-repository"
+                url = uri("https://repo.eternalcode.pl/releases")
+                credentials {
+                    username = properties["lucky_user_litecommands"] as String
+                    password = properties["lucky_pass_litecommands"] as String
+                }
+            }
+            maven {
+                name = "mine-repository"
+                url = uri("https://repository.minecodes.pl/releases")
+                credentials {
+                    username = properties["mine_user"] as String
+                    password = properties["mine_pass"] as String
+                }
+            }
         }
     }
 }

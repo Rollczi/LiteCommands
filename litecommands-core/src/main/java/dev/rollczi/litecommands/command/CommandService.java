@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.handle.ExecuteResultHandler;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +23,10 @@ public class CommandService<SENDER> {
 
     public CommandSection getSection(String key) {
         return this.commands.get(key);
+    }
+
+    public Collection<CommandSection> getSections() {
+        return Collections.unmodifiableCollection(this.commands.values());
     }
 
     public void register(CommandSection section) {
