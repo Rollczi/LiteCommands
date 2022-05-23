@@ -4,6 +4,7 @@ package dev.rollczi.litecommands.implementation;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentAnnotation;
 import dev.rollczi.litecommands.argument.By;
+import dev.rollczi.litecommands.command.meta.Meta;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandEditorRegistry;
 import dev.rollczi.litecommands.factory.CommandStateFactoryProcessor;
@@ -126,12 +127,10 @@ class LiteCommandFactory implements CommandStateFactory {
     private CommandSection stateToSection(CommandState state, Object instance, @Nullable CommandSection beforeChild) {
         CommandSection section = new LiteCommandSection(state.getName(), state.getAliases());
 
-        section.permission(state.getPermissions());
-        section.excludePermission(state.getExecutedPermissions());
-        section.amountValidator(state.getValidator());
+        this.applyToMeta(section.meta(), state);
 
         if (beforeChild != null) {
-            section.applySettings(beforeChild);
+            section.meta().apply(beforeChild.meta());
         }
 
         for (CommandState child : state.getChildren()) {
@@ -194,7 +193,17 @@ class LiteCommandFactory implements CommandStateFactory {
             }
         }
 
-        return LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
+        LiteArgumentArgumentExecutor executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
+
+        this.applyToMeta(executor.meta(), state);
+
+        return executor;
+    }
+
+    private void applyToMeta(Meta meta, CommandState state) {
+        meta.permission(state.getPermissions());
+        meta.excludePermission(state.getExecutedPermissions());
+        meta.amountValidator(state.getValidator());
     }
 
     private <A extends Annotation> AnnotatedParameterImpl<A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<A> argument) {

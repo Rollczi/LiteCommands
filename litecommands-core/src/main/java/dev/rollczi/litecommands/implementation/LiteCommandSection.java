@@ -1,26 +1,25 @@
 package dev.rollczi.litecommands.implementation;
 
+import dev.rollczi.litecommands.command.meta.Meta;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
-import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
 import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import panda.std.Option;
 import panda.utilities.ValidationUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 class LiteCommandSection implements CommandSection {
 
@@ -30,10 +29,7 @@ class LiteCommandSection implements CommandSection {
     private final List<CommandSection> childSections = new ArrayList<>();
     private final List<ArgumentExecutor> argumentExecutors = new ArrayList<>();
 
-    private final Set<String> permissions = new HashSet<>();
-    private final Set<String> excludedPermissions = new HashSet<>();
-
-    private AmountValidator amountValidator = AmountValidator.NONE;
+    private final Meta meta = new LiteMeta();
 
     LiteCommandSection(String name, Collection<String> aliases) {
         ValidationUtils.notNull(name, "name");
@@ -88,7 +84,7 @@ class LiteCommandSection implements CommandSection {
         }
 
         if (findResult.isInvalid()) {
-            Optional<Object> result = findResult.getResult();
+            Option<Object> result = findResult.getResult();
 
             return result
                     .map(o -> ExecuteResult.invalid(findResult, o))
@@ -131,23 +127,36 @@ class LiteCommandSection implements CommandSection {
             }
         }
 
-        LitePermissions litePermissions = LitePermissions.of(this, invocation.sender());
-
-        if (!litePermissions.isEmpty()) {
-            return lastResult.withSection(this)
-                    .invalid(litePermissions);
-        }
+        LitePermissions missingSection = LitePermissions.of(this.meta, invocation.sender());
 
         for (ArgumentExecutor argumentExecutor : argumentExecutors) {
             FindResult findResult = argumentExecutor.find(invocation, route + 1, lastResult.withSection(this));
 
             if (findResult.isFound()) {
+                LitePermissions missingExecutor = LitePermissions.of(argumentExecutor.meta(), invocation.sender());
+
+                if (!missingSection.isEmpty() || !missingExecutor.isEmpty()) {
+                    if (last != null && last.getResult().is(LitePermissions.class).isPresent()) {
+                        return last;
+                    }
+
+                    LitePermissions all = missingSection.with(missingExecutor);
+
+                    return lastResult.withSection(this)
+                            .invalid(all);
+                }
+
                 return findResult;
             }
 
             if (last == null || findResult.isLongerThan(last)) {
                 last = findResult;
             }
+        }
+
+        if (!missingSection.isEmpty()) {
+            return lastResult.withSection(this)
+                    .invalid(missingSection);
         }
 
         return last != null ? last : lastResult.withSection(this);
@@ -185,58 +194,13 @@ class LiteCommandSection implements CommandSection {
             this.executor(argumentExecutor);
         }
 
-        this.applySettings(section);
+        this.meta().apply(section.meta());
         this.aliases.addAll(section.getAliases());
     }
 
     @Override
     public void executor(ArgumentExecutor argumentExecutor) {
         argumentExecutors.add(argumentExecutor);
-    }
-
-    @Override
-    public void permission(String... permissions) {
-        this.permissions.addAll(Arrays.asList(permissions));
-    }
-
-    @Override
-    public void permission(Collection<String> permissions) {
-        this.permissions.addAll(permissions);
-    }
-
-    @Override
-    public Collection<String> permissions() {
-        return Collections.unmodifiableSet(permissions);
-    }
-
-    @Override
-    public void excludePermission(String... permissions) {
-        this.excludedPermissions.addAll(Arrays.asList(permissions));
-    }
-
-    @Override
-    public void excludePermission(Collection<String> permissions) {
-        this.excludedPermissions.addAll(permissions);
-    }
-
-    @Override
-    public Collection<String> excludePermissions() {
-        return Collections.unmodifiableSet(excludedPermissions);
-    }
-
-    @Override
-    public void amountValidator(AmountValidator validator) {
-        this.amountValidator = validator;
-    }
-
-    @Override
-    public void applyOnValidator(Function<AmountValidator, AmountValidator> edit) {
-        this.amountValidator = edit.apply(this.amountValidator);
-    }
-
-    @Override
-    public AmountValidator amountValidator() {
-        return this.amountValidator;
     }
 
     @Override
@@ -247,6 +211,11 @@ class LiteCommandSection implements CommandSection {
     @Override
     public List<ArgumentExecutor> executors() {
         return Collections.unmodifiableList(argumentExecutors);
+    }
+
+    @Override
+    public Meta meta() {
+        return this.meta;
     }
 
 }

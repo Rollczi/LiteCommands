@@ -9,8 +9,10 @@ import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
+import dev.rollczi.litecommands.command.meta.Meta;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.handle.LiteException;
+import panda.std.Option;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +26,8 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
     private final List<AnnotatedParameterImpl<?>> arguments = new ArrayList<>();
     private final AmountValidator amountValidator;
 
+    private final Meta meta = new LiteMeta();
+
     private LiteArgumentArgumentExecutor(List<AnnotatedParameterImpl<?>> arguments, MethodExecutor executor, AmountValidator amountValidator) {
         this.executor = executor;
         this.amountValidator = amountValidator;
@@ -33,7 +37,7 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
     @Override
     public ExecuteResult execute(LiteInvocation invocation, FindResult findResult) {
         if (findResult.isInvalid()) {
-            Optional<Object> result = findResult.getResult();
+            Option<Object> result = findResult.getResult();
 
             return result
                     .map(obj -> ExecuteResult.invalid(findResult, obj))
@@ -107,6 +111,11 @@ class LiteArgumentArgumentExecutor implements ArgumentExecutor {
     @Override
     public List<AnnotatedParameter<?>> annotatedParameters() {
         return Collections.unmodifiableList(arguments);
+    }
+
+    @Override
+    public Meta meta() {
+        return this.meta;
     }
 
     @Override

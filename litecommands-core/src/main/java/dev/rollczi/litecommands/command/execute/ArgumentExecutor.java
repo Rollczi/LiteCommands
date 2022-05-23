@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.command.meta.Meta;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 
 import java.util.List;
@@ -19,7 +20,10 @@ public interface ArgumentExecutor {
 
     List<AnnotatedParameter<?>> annotatedParameters();
 
+    Meta meta();
+
     AmountValidator amountValidator();
 
     List<Suggestion> firstSuggestions(LiteInvocation invocation);
+
 }

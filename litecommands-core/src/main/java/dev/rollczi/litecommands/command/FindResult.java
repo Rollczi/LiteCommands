@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
 import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import dev.rollczi.litecommands.shared.Validation;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
+import panda.std.Option;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,8 +146,8 @@ public final class FindResult {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Object> getResult() {
-        return Optional.ofNullable(result);
+    public Option<Object> getResult() {
+        return Option.of(result);
     }
 
     public List<Object> extractResults() {
