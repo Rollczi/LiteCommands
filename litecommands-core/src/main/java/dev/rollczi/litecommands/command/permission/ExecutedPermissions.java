@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExecutedPermissions {
 
-    ExecutedPermission[] value() default {};
+    ExecutedPermission[] value();
 
     FactoryAnnotationResolver<ExecutedPermissions> RESOLVER = new ExecutedPermissionsAnnotationResolver();
 
