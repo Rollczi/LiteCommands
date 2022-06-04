@@ -10,14 +10,19 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
 import panda.std.Result;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dev.rollczi.litecommands.Assert.assertCollection;
+import static dev.rollczi.litecommands.Assert.assertSize;
+import static dev.rollczi.litecommands.TestUtils.list;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SuggestionTest {
@@ -57,19 +62,14 @@ class SuggestionTest {
     void firstBlockSuggestion() {
         List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "p");
 
-        assertEquals(2, suggestion.size());
-        assertEquals("parent unset", suggestion.get(0));
-        assertEquals("parent set", suggestion.get(1));
+        assertCollection(2, list("parent set", "parent unset"), suggestion);
     }
 
     @Test
     void firsEmptyBlockSuggestion() {
         List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "");
 
-        assertEquals(3, suggestion.size());
-        assertEquals("parent unset", suggestion.get(0));
-        assertEquals("parent set", suggestion.get(1));
-        assertEquals("reload", suggestion.get(2));
+        assertCollection(3, list("parent set", "parent unset", "reload"), suggestion);
     }
 
 
@@ -77,9 +77,7 @@ class SuggestionTest {
     void secondBlockSuggestion() {
         List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "parent", "");
 
-        assertEquals(2, suggestion.size());
-        assertEquals("unset", suggestion.get(0));
-        assertEquals("set", suggestion.get(1));
+        assertCollection(2, list("set", "unset"), suggestion);
     }
 
     @Test
@@ -122,38 +120,25 @@ class SuggestionTest {
     void suggestionsWithOptionalArgumentsTest() {
         List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "arg");
 
-        assertEquals(9, suggestion.size());
-        assertEquals("arg-1.1", suggestion.get(0));
-        assertEquals("arg-1.2", suggestion.get(1));
-        assertEquals("arg-1.3", suggestion.get(2));
-        assertEquals("arg-2.1", suggestion.get(3));
-        assertEquals("arg-2.2", suggestion.get(4));
-        assertEquals("arg-2.3", suggestion.get(5));
-        assertEquals("arg-3.1", suggestion.get(6));
-        assertEquals("arg-3.2", suggestion.get(7));
-        assertEquals("arg-3.3", suggestion.get(8));
+        assertSize(9, suggestion);
+        assertCollection(list("arg-1.1", "arg-1.2", "arg-1.3"), suggestion);
+        assertCollection(list("arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
     }
 
     @Test
     void suggestionsWithTwoOptionalArgumentsTest() {
         List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "arg-1.1", "arg-");
 
-        assertEquals(6, suggestion.size());
-        assertEquals("arg-2.1", suggestion.get(0));
-        assertEquals("arg-2.2", suggestion.get(1));
-        assertEquals("arg-2.3", suggestion.get(2));
-        assertEquals("arg-3.1", suggestion.get(3));
-        assertEquals("arg-3.2", suggestion.get(4));
-        assertEquals("arg-3.3", suggestion.get(5));
+        assertSize(6, suggestion);
+        assertCollection(list("arg-2.1", "arg-2.2", "arg-2.3"), suggestion);
+        assertCollection(list("arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
     }
 
     @Test
     void multilevelEmptyArgumentTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "");
 
-        assertEquals(2, suggestion.size());
-        assertEquals("text", suggestion.get(0));
-        assertEquals("100 100 100", suggestion.get(1));
+        assertCollection(2, list("text", "100 100 100"), suggestion);
     }
 
     @Test
@@ -247,7 +232,7 @@ class SuggestionTest {
 
         @Override
         public List<Suggestion> suggest(LiteInvocation invocation) {
-            return Arrays.asList(
+            return Collections.singletonList(
                     Suggestion.multilevel("100", "100", "100")
             );
         }
