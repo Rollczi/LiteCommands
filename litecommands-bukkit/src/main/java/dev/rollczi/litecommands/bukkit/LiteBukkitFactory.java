@@ -1,22 +1,22 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
-import dev.rollczi.litecommands.LiteFactory;
-import dev.rollczi.litecommands.bind.basic.OriginalSenderBind;
+import dev.rollczi.litecommands.implementation.LiteFactory;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 
 public final class LiteBukkitFactory {
 
     private LiteBukkitFactory() {
-
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteBukkitPlatformManager> builder(Server server, String fallbackPrefix) {
-        return LiteFactory.<CommandSender, LiteBukkitPlatformManager>builder()
-                .typeBind(Server.class, server)
-                .parameterBind(CommandSender.class, new OriginalSenderBind())
-                .platform(new LiteBukkitPlatformManager(server, fallbackPrefix));
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix) {
+        return LiteFactory.builder(CommandSender.class)
+                .typeBind(Server.class, () -> server)
+
+                .resultHandler(String.class, new StringHandler())
+
+                .platform(new LiteBukkitRegistryPlatform(server, fallbackPrefix));
     }
 
 }
