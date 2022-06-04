@@ -75,6 +75,6 @@ subprojects {
 
 idea {
     project {
-        jdkName = "16"
+        jdkName = "8"
     }
 }

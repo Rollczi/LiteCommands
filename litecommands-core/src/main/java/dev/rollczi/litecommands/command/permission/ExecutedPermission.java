@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Repeatable(ExecutedPermissions.class)
 public @interface ExecutedPermission {
 
-    String[] value();
+    String[] value() default {};
 
     FactoryAnnotationResolver<ExecutedPermission> RESOLVER = new ExecutedPermissionAnnotationResolver();
 
