@@ -15,6 +15,4 @@ public @interface ExecutedPermission {
 
     String[] value() default {};
 
-    FactoryAnnotationResolver<ExecutedPermission> RESOLVER = new ExecutedPermissionAnnotationResolver();
-
 }

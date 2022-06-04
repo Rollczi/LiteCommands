@@ -16,6 +16,7 @@ import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
 import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
+import dev.rollczi.litecommands.command.permission.PermissionUtils;
 import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.handle.LiteException;
@@ -36,8 +37,8 @@ public final class LiteFactory {
                     factory.annotationResolver(Execute.RESOLVER);
                     factory.annotationResolver(Permission.RESOLVER);
                     factory.annotationResolver(Permissions.RESOLVER);
-                    factory.annotationResolver(ExecutedPermission.RESOLVER);
-                    factory.annotationResolver(ExecutedPermissions.RESOLVER);
+                    factory.annotationResolver(PermissionUtils.EXECUTED_PERMISSION_RESOLVER);
+                    factory.annotationResolver(PermissionUtils.EXECUTED_PERMISSIONS_RESOLVER);
                     factory.annotationResolver(Min.RESOLVER);
                     factory.annotationResolver(Max.RESOLVER);
                     factory.annotationResolver(Required.RESOLVER);
