@@ -22,7 +22,7 @@ class LiteBungeeRegistryPlatform implements RegistryPlatform<CommandSender> {
     }
 
     @Override
-    public void registerListener(CommandSection section, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
+    public void registerListener(CommandSection<CommandSender> section, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
         BungeeCommand command = new BungeeCommand(section, executeListener, suggestionListener);
 
         this.plugin.getProxy().getPluginManager().registerCommand(this.plugin, command);
@@ -31,7 +31,7 @@ class LiteBungeeRegistryPlatform implements RegistryPlatform<CommandSender> {
     }
 
     @Override
-    public void unregisterListener(CommandSection command) {
+    public void unregisterListener(CommandSection<CommandSender> command) {
         PluginManager pluginManager = this.plugin.getProxy().getPluginManager();
 
         pluginManager.getCommands().stream()

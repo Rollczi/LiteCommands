@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.implementation;
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
+import dev.rollczi.litecommands.argument.ArgumentContext;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -14,20 +15,20 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 import java.util.List;
 
-class AnnotatedParameterImpl<A extends Annotation> implements AnnotatedParameter<A> {
+class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedParameter<SENDER, A> {
 
     private final A annotationInstance;
     private final Parameter parameter;
-    private final Argument<A> argument;
+    private final Argument<SENDER, A> argument;
 
-    AnnotatedParameterImpl(A annotationInstance, Parameter parameter, Argument<A> argument) {
+    AnnotatedParameterImpl(A annotationInstance, Parameter parameter, Argument<SENDER, A> argument) {
         this.annotationInstance = annotationInstance;
         this.parameter = parameter;
         this.argument = argument;
     }
 
     MatchResult match(LiteInvocation invocation, int route) {
-        return argument.match(invocation, parameter, annotationInstance, route, route - 1);
+        return argument.match(invocation, new ArgumentContext<>(parameter, annotationInstance, route, route - 1));
     }
 
     List<Suggestion> extractSuggestion(LiteInvocation invocation) {
@@ -38,8 +39,8 @@ class AnnotatedParameterImpl<A extends Annotation> implements AnnotatedParameter
         return parameter;
     }
 
-    AnnotatedParameterState<A> createState(LiteInvocation invocation, int route) {
-        return new AnnotatedParameterStateImpl<A>(annotationInstance, parameter, argument, invocation, route);
+    AnnotatedParameterState<SENDER, A> createState(LiteInvocation invocation, int route) {
+        return new AnnotatedParameterStateImpl<SENDER, A>(annotationInstance, parameter, argument, invocation, route);
     }
 
     @Override
@@ -48,7 +49,7 @@ class AnnotatedParameterImpl<A extends Annotation> implements AnnotatedParameter
     }
 
     @Override
-    public Argument<A> argument() {
+    public Argument<SENDER, A> argument() {
         return this.argument;
     }
 
@@ -58,21 +59,21 @@ class AnnotatedParameterImpl<A extends Annotation> implements AnnotatedParameter
     }
 
     @Override
-    public Option<String> schem() {
-        return this.argument.getScheme(annotationInstance);
+    public Option<String> schematic() {
+        return this.argument.getSchematic(annotationInstance);
     }
 
     @Override
     public Suggester toSuggester(LiteInvocation invocation) {
-        return new SimpleSuggester(this, invocation);
+        return new SimpleSuggester<>(this, invocation);
     }
 
-    private static final class SimpleSuggester implements Suggester {
+    private static final class SimpleSuggester<SENDER> implements Suggester {
 
-        private final AnnotatedParameterImpl<?> annotatedParameter;
+        private final AnnotatedParameterImpl<SENDER, ?> annotatedParameter;
         private final LiteInvocation invocation;
 
-        private SimpleSuggester(AnnotatedParameterImpl<?> annotatedParameter, LiteInvocation invocation) {
+        private SimpleSuggester(AnnotatedParameterImpl<SENDER, ?> annotatedParameter, LiteInvocation invocation) {
             this.annotatedParameter = annotatedParameter;
             this.invocation = invocation;
         }

@@ -5,7 +5,7 @@ import com.velocitypowered.api.command.SimpleCommand;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
-import panda.utilities.StringUtils;
+import dev.rollczi.litecommands.shared.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.meta;
+package dev.rollczi.litecommands.meta;
 
 public class MetaKey<T> {
 
@@ -18,7 +18,7 @@ public class MetaKey<T> {
         return type;
     }
 
-    static <T> MetaKey<T> of(String key, Class<T> type) {
+    public static <T> MetaKey<T> of(String key, Class<T> type) {
         return new MetaKey<>(key, type);
     }
 

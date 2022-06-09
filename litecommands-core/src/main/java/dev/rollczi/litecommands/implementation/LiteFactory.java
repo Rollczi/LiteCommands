@@ -13,13 +13,10 @@ import dev.rollczi.litecommands.command.amount.Max;
 import dev.rollczi.litecommands.command.amount.Min;
 import dev.rollczi.litecommands.command.amount.Required;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.permission.ExecutedPermission;
-import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.permission.PermissionUtils;
 import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
-import dev.rollczi.litecommands.handle.LiteException;
 import dev.rollczi.litecommands.platform.LiteSender;
 import panda.std.Blank;
 import panda.std.Option;
@@ -31,7 +28,7 @@ public final class LiteFactory {
     }
 
     public static <SENDER> LiteCommandsBuilder<SENDER> builder(Class<SENDER> senderType) {
-        return LiteCommandsBuilderImpl.<SENDER>builder()
+        return LiteCommandsBuilderImpl.<SENDER>builder(senderType)
                 .configureFactory(factory -> {
                     factory.annotationResolver(Section.RESOLVER);
                     factory.annotationResolver(Execute.RESOLVER);

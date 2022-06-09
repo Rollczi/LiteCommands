@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.command.permission;
 
-import dev.rollczi.litecommands.command.meta.Meta;
-import dev.rollczi.litecommands.command.section.CommandSection;
+import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.platform.LiteSender;
 
 import java.util.ArrayList;
@@ -35,11 +34,11 @@ public class LitePermissions {
         return new LitePermissions(perm);
     }
 
-    public static LitePermissions of(Meta meta, LiteSender liteSender) {
-        Set<String> perms = new HashSet<>(meta.permissions());
+    public static LitePermissions of(CommandMeta meta, LiteSender liteSender) {
+        Set<String> perms = new HashSet<>(meta.getPermissions());
         Set<String> noPermissions = new HashSet<>();
 
-        perms.removeAll(meta.excludePermissions());
+        perms.removeAll(meta.getExcludedPermissions());
 
         for (String perm : perms) {
             if (liteSender.hasPermission(perm)) {

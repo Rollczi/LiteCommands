@@ -14,11 +14,11 @@ import java.util.List;
 
 class SimpleCommand extends org.bukkit.command.Command {
 
-    private final CommandSection commandSection;
+    private final CommandSection<CommandSender> commandSection;
     private final ExecuteListener<CommandSender> executeListener;
     private final SuggestionListener<CommandSender> suggestionListener;
 
-    public SimpleCommand(CommandSection commandSection, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
+    public SimpleCommand(CommandSection<CommandSender> commandSection, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
         super(commandSection.getName(), "", "/" + commandSection.getName(), new ArrayList<>(commandSection.getAliases()));
         this.commandSection = commandSection;
         this.executeListener = executeListener;

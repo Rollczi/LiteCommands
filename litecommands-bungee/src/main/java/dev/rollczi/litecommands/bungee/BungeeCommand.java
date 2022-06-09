@@ -10,11 +10,11 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 class BungeeCommand extends Command implements TabExecutor {
 
-    private final CommandSection commandSection;
+    private final CommandSection<CommandSender> commandSection;
     private final ExecuteListener<CommandSender> executeListener;
     private final SuggestionListener<CommandSender> suggestionListener;
 
-    public BungeeCommand(CommandSection command, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
+    public BungeeCommand(CommandSection<CommandSender> command, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
         super(command.getName(), "", command.getAliases().toArray(new String[0]));
         this.commandSection = command;
         this.executeListener = executeListener;

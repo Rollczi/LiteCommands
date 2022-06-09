@@ -30,7 +30,7 @@ class CommandEditorTest {
                 .register();
 
         CommandService<TestHandle> commandService = liteCommands.getCommandService();
-        CommandSection section = commandService.getSection("edited");
+        CommandSection<TestHandle> section = commandService.getSection("edited");
 
         assertEquals("edited", section.getName());
         assertEquals(2, section.getAliases().size());
@@ -50,7 +50,7 @@ class CommandEditorTest {
                 .register();
 
         CommandService<TestHandle> commandService = liteCommands.getCommandService();
-        CommandSection section = commandService.getSection("edited");
+        CommandSection<TestHandle> section = commandService.getSection("edited");
 
         assertEquals("edited", section.getName());
         assertEquals(2, section.getAliases().size());

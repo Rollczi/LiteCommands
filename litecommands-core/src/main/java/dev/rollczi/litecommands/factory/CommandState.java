@@ -200,7 +200,7 @@ public class CommandState implements CommandEditor.State {
     }
 
     @Override
-    public CommandState permissionExclude(Collection<String> executedPermissions, boolean removeOld) {
+    public CommandState permissionExcluded(Collection<String> executedPermissions, boolean removeOld) {
         Set<String> executedPerm = removeOld ? new HashSet<>() : new HashSet<>(this.executedPermissions);
         executedPerm.addAll(executedPermissions);
 

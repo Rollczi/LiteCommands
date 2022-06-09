@@ -2,9 +2,10 @@ package dev.rollczi.litecommands.implementation;
 
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentAnnotation;
+import dev.rollczi.litecommands.injector.Injectable;
 import dev.rollczi.litecommands.argument.By;
-import dev.rollczi.litecommands.command.meta.Meta;
+import dev.rollczi.litecommands.injector.Injector;
+import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandEditorRegistry;
 import dev.rollczi.litecommands.factory.CommandStateFactoryProcessor;
@@ -14,7 +15,6 @@ import dev.rollczi.litecommands.factory.CommandStateFactory;
 import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import dev.rollczi.litecommands.factory.CommandState;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
 
@@ -27,30 +27,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class LiteCommandFactory implements CommandStateFactory {
+class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
 
-    private final Injector injector;
-    private final ArgumentsRegistry argumentsRegistry;
+    private final Injector<SENDER> injector;
+    private final ArgumentsRegistry<SENDER> argumentsRegistry;
     private final Set<CommandStateFactoryProcessor> processors = new HashSet<>();
     private final CommandEditorRegistry editorRegistry;
 
     private final Set<FactoryAnnotationResolver<?>> annotationResolvers = new HashSet<>();
 
-    LiteCommandFactory(Injector injector, ArgumentsRegistry argumentsRegistry, CommandEditorRegistry editorRegistry) {
+    LiteCommandFactory(Injector<SENDER> injector, ArgumentsRegistry<SENDER> argumentsRegistry, CommandEditorRegistry editorRegistry) {
         this.injector = injector;
         this.argumentsRegistry = argumentsRegistry;
         this.editorRegistry = editorRegistry;
     }
 
     @Override
-    public Option<CommandSection> create(Object instance) {
+    public Option<CommandSection<SENDER>> create(Object instance) {
         CommandState state = this.createState(instance);
 
         if (state.getName() == null || state.getName().isEmpty() || state.isCanceled()) {
             return Option.none();
         }
 
-        CommandSection section = this.stateToSection(state, instance, null);
+        CommandSection<SENDER> section = this.stateToSection(state, instance, null);
 
         return Option.of(section);
     }
@@ -124,13 +124,13 @@ class LiteCommandFactory implements CommandStateFactory {
         return (CommandState) editorRegistry.apply(sectionClass, root);
     }
 
-    private CommandSection stateToSection(CommandState state, Object instance, @Nullable CommandSection beforeChild) {
-        CommandSection section = new LiteCommandSection(state.getName(), state.getAliases());
+    private CommandSection<SENDER> stateToSection(CommandState state, Object instance, @Nullable CommandSection<SENDER> beforeChild) {
+        CommandSection<SENDER> section = new LiteCommandSection<>(state.getName(), state.getAliases());
 
         this.applyToMeta(section.meta(), state);
 
         if (beforeChild != null) {
-            section.meta().apply(beforeChild.meta());
+            section.meta().applyCommandMeta(beforeChild.meta());
         }
 
         for (CommandState child : state.getChildren()) {
@@ -138,7 +138,7 @@ class LiteCommandFactory implements CommandStateFactory {
                 continue;
             }
 
-            CommandSection subSection = this.stateToSection(child, instance, section);
+            CommandSection<SENDER> subSection = this.stateToSection(child, instance, section);
 
             section.childSection(subSection);
         }
@@ -148,40 +148,40 @@ class LiteCommandFactory implements CommandStateFactory {
                 continue;
             }
 
-            ArgumentExecutor argumentExecutor = this.createExecutor(instance, entry.getKey(), entry.getValue());
+            ArgumentExecutor<SENDER> argumentExecutor = this.createExecutor(instance, entry.getKey(), entry.getValue());
 
             section.executor(argumentExecutor);
         }
 
         for (CommandState.Route route : state.getRoutesBefore()) {
-            LiteCommandSection before = new LiteCommandSection(route.getName(), route.getAliases());
+            LiteCommandSection<SENDER> before = new LiteCommandSection<>(route.getName(), route.getAliases());
 
             before.childSection(section);
             section = before;
         }
 
         PandaStream.of(instance.getClass().getDeclaredClasses())
-                .mapOpt(type -> Option.attempt(Throwable.class, () -> injector.newInstance(type)))
+                .mapOpt(type -> Option.attempt(Throwable.class, () -> injector.createInstance(type)))
                 .mapOpt(this::create)
                 .forEach(section::childSection);
 
         return section;
     }
 
-    private ArgumentExecutor createExecutor(Object object, Method method, CommandState state) {
-        MethodExecutor methodExecutor = new MethodExecutor(object, method, injector);
-        List<AnnotatedParameterImpl<?>> arguments = new ArrayList<>();
+    private ArgumentExecutor<SENDER> createExecutor(Object object, Method method, CommandState state) {
+        MethodExecutor<SENDER> methodExecutor = new MethodExecutor<>(object, method, injector);
+        List<AnnotatedParameterImpl<SENDER, ?>> arguments = new ArrayList<>();
 
         for (Parameter parameter : method.getParameters()) {
             for (Annotation annotation : parameter.getAnnotations()) {
                 Class<? extends Annotation> annotationType = annotation.annotationType();
 
-                if (!annotationType.isAnnotationPresent(ArgumentAnnotation.class)) {
+                if (!annotationType.isAnnotationPresent(Injectable.class)) {
                     continue;
                 }
 
                 By by = parameter.getAnnotation(By.class);
-                Option<Argument<?>> argumentOption = by != null
+                Option<Argument<SENDER, ?>> argumentOption = by != null
                         ? this.argumentsRegistry.getArgument(annotationType, parameter, by.value())
                         : this.argumentsRegistry.getArgument(annotationType, parameter);
 
@@ -193,20 +193,20 @@ class LiteCommandFactory implements CommandStateFactory {
             }
         }
 
-        LiteArgumentArgumentExecutor executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
+        LiteArgumentArgumentExecutor<SENDER> executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
 
         this.applyToMeta(executor.meta(), state);
 
         return executor;
     }
 
-    private void applyToMeta(Meta meta, CommandState state) {
-        meta.permission(state.getPermissions());
-        meta.excludePermission(state.getExecutedPermissions());
-        meta.amountValidator(state.getValidator());
+    private void applyToMeta(CommandMeta meta, CommandState state) {
+        meta.addPermission(state.getPermissions());
+        meta.addExcludedPermission(state.getExecutedPermissions());
+        meta.setAmountValidator(state.getValidator());
     }
 
-    private <A extends Annotation> AnnotatedParameterImpl<A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<A> argument) {
+    private <T, A extends Annotation> AnnotatedParameterImpl<T, A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<T, A> argument) {
         return new AnnotatedParameterImpl<>((A) annotation, parameter, argument);
     }
 

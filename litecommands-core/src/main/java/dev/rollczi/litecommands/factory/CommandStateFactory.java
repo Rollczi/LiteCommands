@@ -5,9 +5,9 @@ import panda.std.Option;
 
 import java.lang.annotation.Annotation;
 
-public interface CommandStateFactory {
+public interface CommandStateFactory<SENDER> {
 
-    Option<CommandSection> create(Object instance);
+    Option<CommandSection<SENDER>> create(Object instance);
 
     <A extends Annotation> void annotationResolver(FactoryAnnotationResolver<A> resolver);
 

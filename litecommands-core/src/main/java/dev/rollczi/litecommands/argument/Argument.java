@@ -10,9 +10,9 @@ import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 
-public interface Argument<A extends Annotation> extends ParameterHandler {
+public interface Argument<SENDER, A extends Annotation> extends ParameterHandler {
 
-    MatchResult match(LiteInvocation invocation, Parameter parameter, A annotation, int currentRoute, int currentArgument);
+    MatchResult match(LiteInvocation invocation, ArgumentContext<A> context);
 
     default List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, A annotation) {
         return Collections.emptyList();
@@ -22,7 +22,7 @@ public interface Argument<A extends Annotation> extends ParameterHandler {
         return false;
     }
 
-    default List<Object> getDefault() {
+    default List<Object> defaultValue() {
         return Collections.emptyList();
     }
 
@@ -45,7 +45,7 @@ public interface Argument<A extends Annotation> extends ParameterHandler {
         return Option.none();
     }
 
-    default Option<String> getScheme(A annotation) {
+    default Option<String> getSchematic(A annotation) {
         return Option.none();
     }
 

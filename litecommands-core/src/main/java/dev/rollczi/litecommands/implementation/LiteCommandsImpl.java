@@ -7,12 +7,19 @@ import dev.rollczi.litecommands.platform.RegistryPlatform;
 
 class LiteCommandsImpl<SENDER> implements LiteCommands<SENDER> {
 
+    private final Class<SENDER> senderType;
     private final CommandService<SENDER> commandService;
     private final RegistryPlatform<SENDER> platform;
 
-    LiteCommandsImpl(RegistryPlatform<SENDER> platform, ExecuteResultHandler<SENDER> handler) {
+    LiteCommandsImpl(Class<SENDER> senderType, RegistryPlatform<SENDER> platform, ExecuteResultHandler<SENDER> handler) {
+        this.senderType = senderType;
         this.commandService = new CommandService<>(platform, handler);
         this.platform = platform;
+    }
+
+    @Override
+    public Class<SENDER> getSenderType() {
+        return this.senderType;
     }
 
     @Override

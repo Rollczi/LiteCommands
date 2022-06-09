@@ -6,15 +6,15 @@ import panda.std.Option;
 
 import java.lang.annotation.Annotation;
 
-public interface AnnotatedParameter<A extends Annotation> {
+public interface AnnotatedParameter<SENDER, A extends Annotation> {
 
     A annotation();
 
-    Argument<A> argument();
+    Argument<SENDER, A> argument();
 
     Option<String> name();
 
-    Option<String> schem();
+    Option<String> schematic();
 
     Suggester toSuggester(LiteInvocation invocation);
 

@@ -1,27 +1,28 @@
 package dev.rollczi.litecommands.implementation;
 
-import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.handle.LiteException;
-import org.panda_lang.utilities.inject.Injector;
+import dev.rollczi.litecommands.injector.Injector;
+import dev.rollczi.litecommands.injector.InvokeContext;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-class MethodExecutor {
+class MethodExecutor<SENDER> {
 
     private final Object instance;
     private final Method method;
-    private final Injector injector;
+    private final Injector<SENDER> injector;
 
-    MethodExecutor(Object instance, Method method, Injector injector) {
+    MethodExecutor(Object instance, Method method, Injector<SENDER> injector) {
         this.instance = instance;
         this.method = method;
         this.injector = injector;
     }
 
-    Object execute(LiteInvocation invocation, List<Object> args) {
+    Object execute(Invocation<SENDER> invocation, List<Object> args) {
         try {
-            return injector.invokeMethod(method, instance, new InvokeContext(invocation, args));
+            return injector.invokeMethod(method, instance, new InvokeContext<>(invocation, args));
         }
         catch (LiteException exception) {
             return exception.getResult();

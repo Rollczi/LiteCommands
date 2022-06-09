@@ -1,17 +1,19 @@
 package dev.rollczi.litecommands.command.section;
 
 import dev.rollczi.litecommands.command.FindResult;
-import dev.rollczi.litecommands.command.meta.Meta;
+import dev.rollczi.litecommands.command.Invocation;
+import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.util.List;
 import java.util.Set;
 
-public interface CommandSection extends Suggester {
+public interface CommandSection<SENDER> extends Suggester, MetaHolder {
 
     String getName();
 
@@ -19,30 +21,31 @@ public interface CommandSection extends Suggester {
 
     boolean isSimilar(String name);
 
-    ExecuteResult execute(LiteInvocation invocation);
+    ExecuteResult execute(Invocation<SENDER> invocation);
 
-    SuggestionStack suggestion(LiteInvocation invocation);
+    SuggestionStack suggestion(Invocation<SENDER> invocation);
 
-    FindResult find(LiteInvocation invocation, int route, FindResult lastResult);
+    FindResult<SENDER> find(LiteInvocation invocation, int route, FindResult<SENDER> lastResult);
 
     /**
      * Command section
      */
 
-    void childSection(CommandSection commandSection);
+    void childSection(CommandSection<SENDER> commandSection);
 
-    void mergeSection(CommandSection section);
+    void mergeSection(CommandSection<SENDER> section);
 
-    List<CommandSection> childrenSection();
+    List<CommandSection<SENDER>> childrenSection();
 
     /**
      * Argument executor
      */
 
-    void executor(ArgumentExecutor argumentExecutor);
+    void executor(ArgumentExecutor<SENDER> argumentExecutor);
 
-    List<ArgumentExecutor> executors();
+    List<ArgumentExecutor<SENDER>> executors();
 
-    Meta meta();
+    @Override
+    CommandMeta meta();
 
 }

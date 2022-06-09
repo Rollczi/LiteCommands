@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.argument.block;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentContext;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
@@ -11,11 +12,12 @@ import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 
-public class BlockArgument implements Argument<Block> {
+public class BlockArgument<SENDER> implements Argument<SENDER, Block> {
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Parameter parameter, Block annotation, int currentRoute, int currentArgument) {
-        String[] blocks = annotation.value().split(" ");
+    public MatchResult match(LiteInvocation invocation, ArgumentContext<Block> context) {
+        String[] blocks = context.annotation().value().split(" ");
+        int currentArgument = context.currentArgument();
 
         if (currentArgument + blocks.length > invocation.arguments().length) {
             return MatchResult.notMatched();
@@ -30,7 +32,7 @@ public class BlockArgument implements Argument<Block> {
             i++;
         }
 
-        if (parameter.getType().equals(Blank.class)) {
+        if (context.parameter().getType().equals(Blank.class)) {
             return MatchResult.matched(Collections.singletonList(Blank.BLANK), blocks.length);
         }
 
@@ -43,7 +45,7 @@ public class BlockArgument implements Argument<Block> {
     }
 
     @Override
-    public Option<String> getScheme(Block annotation) {
+    public Option<String> getSchematic(Block annotation) {
         return Option.of(annotation.value());
     }
 

@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.command.FindResult;
+import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
-import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -16,15 +16,15 @@ import java.util.Map;
 
 public class TestPlatform implements RegistryPlatform<TestHandle> {
 
-    private final Map<CommandSection, Command> commands = new HashMap<>();
+    private final Map<CommandSection<TestHandle>, Command> commands = new HashMap<>();
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<TestHandle> listener, SuggestionListener<TestHandle> suggestionListener) {
+    public void registerListener(CommandSection<TestHandle> command, ExecuteListener<TestHandle> listener, SuggestionListener<TestHandle> suggestionListener) {
         this.commands.put(command, new Command(listener, suggestionListener));
     }
 
     @Override
-    public void unregisterListener(CommandSection command) {
+    public void unregisterListener(CommandSection<TestHandle> command) {
         this.commands.remove(command);
     }
 
@@ -34,28 +34,30 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
     }
 
     public ExecuteResult execute(String command, String... args) {
-        LiteInvocation invocation = new LiteInvocation(new TestSender(), command, command, args);
+        TestHandle handle = new TestHandle();
+        LiteInvocation invocation = new LiteInvocation(new TestSender(handle), command, command, args);
 
-        for (Map.Entry<CommandSection, Command> entry : commands.entrySet()) {
-            CommandSection section = entry.getKey();
+        for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
+            CommandSection<TestHandle> section = entry.getKey();
             Command cmd = entry.getValue();
 
             if (section.isSimilar(command)) {
-                return cmd.getExecuteListener().execute(null, invocation);
+                return cmd.getExecuteListener().execute(handle, invocation);
             }
         }
 
-        return ExecuteResult.failure(FindResult.none(invocation));
+        return ExecuteResult.failure(FindResult.none(invocation.withHandle(handle)));
     }
 
-    public FindResult find(String command, String... args) {
-        for (Map.Entry<CommandSection, Command> entry : commands.entrySet()) {
-            CommandSection section = entry.getKey();
+    public FindResult<TestHandle> find(String command, String... args) {
+        TestHandle handle = new TestHandle();
+        for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
+            CommandSection<TestHandle> section = entry.getKey();
 
-            LiteInvocation liteInvocation = new LiteInvocation(new TestSender(), command, command, args);
+            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle), command, command, args);
 
             if (section.isSimilar(command)) {
-                return section.find(liteInvocation, 0, FindResult.none(liteInvocation));
+                return section.find(liteInvocation.toLite(), 0, FindResult.none(liteInvocation));
             }
         }
 
@@ -63,7 +65,7 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
     }
 
     public List<String> suggestion(String command, String... args) {
-        FindResult findResult = this.find(command, args);
+        FindResult<TestHandle> findResult = this.find(command, args);
         SuggestionStack result = findResult.knownSuggestion();
 
         return result.multilevelSuggestions();

@@ -42,4 +42,12 @@ public class LiteInvocation {
         return this.argument(this.arguments().length - 1);
     }
 
+    public <SENDER> Invocation<SENDER> withHandle(SENDER handle) {
+        if (!this.sender.getHandle().equals(handle)) {
+            throw new IllegalArgumentException();
+        }
+
+        return new Invocation<>(handle, sender, command, label, args);
+    }
+
 }

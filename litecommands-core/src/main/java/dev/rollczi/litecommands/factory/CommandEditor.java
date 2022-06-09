@@ -1,9 +1,7 @@
 package dev.rollczi.litecommands.factory;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 public interface CommandEditor {
 
@@ -33,11 +31,11 @@ public interface CommandEditor {
 
         State permission(Collection<String> permissions, boolean removeOld);
 
-        default State permissionExclude(Collection<String> permissions) {
-            return this.permissionExclude(permissions, false);
+        default State permissionExcluded(Collection<String> permissions) {
+            return this.permissionExcluded(permissions, false);
         }
 
-        State permissionExclude(Collection<String> permissions, boolean removeOld);
+        State permissionExcluded(Collection<String> permissions, boolean removeOld);
 
         State cancel(boolean canceled);
 

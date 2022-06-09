@@ -1,7 +1,5 @@
 package dev.rollczi.litecommands.command.sugesstion;
 
-import panda.utilities.text.Joiner;
-
 import java.util.List;
 
 public interface Suggester {
@@ -16,9 +14,7 @@ public interface Suggester {
 
     default boolean verify(List<String> arguments) {
         TwinSuggestionStack stack = this.suggest();
-        String multilevel = Joiner.on(" ")
-                .join(arguments.subList(0, Math.min(stack.multilevelLength(), arguments.size())))
-                .toString()
+        String multilevel = String.join(" ", arguments.subList(0, Math.min(stack.multilevelLength(), arguments.size())))
                 .toLowerCase();
 
         if (multilevel.isEmpty()) {

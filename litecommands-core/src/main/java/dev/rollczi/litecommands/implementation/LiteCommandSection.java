@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.implementation;
 
-import dev.rollczi.litecommands.command.meta.Meta;
+import dev.rollczi.litecommands.command.Invocation;
+import dev.rollczi.litecommands.injector.Injector;
+import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
@@ -10,8 +12,8 @@ import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.shared.Validation;
 import panda.std.Option;
-import panda.utilities.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,19 +23,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-class LiteCommandSection implements CommandSection {
+class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
 
     private final String name;
 
     private final Set<String> aliases = new HashSet<>();
-    private final List<CommandSection> childSections = new ArrayList<>();
-    private final List<ArgumentExecutor> argumentExecutors = new ArrayList<>();
+    private final List<CommandSection<SENDER>> childSections = new ArrayList<>();
+    private final List<ArgumentExecutor<SENDER>> argumentExecutors = new ArrayList<>();
 
-    private final Meta meta = new LiteMeta();
+    private final CommandMeta meta = new LiteCommandMeta();
 
     LiteCommandSection(String name, Collection<String> aliases) {
-        ValidationUtils.notNull(name, "name");
-        ValidationUtils.notNull(aliases, "aliases");
+        Validation.isNotNull(name, "name");
+        Validation.isNotNull(aliases, "aliases");
 
         this.name = name;
         this.aliases.addAll(aliases);
@@ -73,12 +75,12 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public ExecuteResult execute(LiteInvocation invocation) {
-        FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
-        Optional<ArgumentExecutor> executor = findResult.getExecutor();
+    public ExecuteResult execute(Invocation<SENDER> invocation) {
+        FindResult<SENDER> findResult = this.find(invocation.toLite(), 0, FindResult.none(invocation));
+        Optional<ArgumentExecutor<SENDER>> executor = findResult.getExecutor();
 
         if (executor.isPresent()) {
-            ArgumentExecutor argumentExecutor = executor.get();
+            ArgumentExecutor<SENDER> argumentExecutor = executor.get();
 
             return argumentExecutor.execute(invocation, findResult);
         }
@@ -95,27 +97,27 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public SuggestionStack suggestion(LiteInvocation invocation) {
-        FindResult findResult = this.find(invocation, 0, FindResult.none(invocation));
+    public SuggestionStack suggestion(Invocation<SENDER> invocation) {
+        FindResult<SENDER> findResult = this.find(invocation.toLite(), 0, FindResult.none(invocation));
 
         return findResult.knownSuggestion();
     }
 
     @Override
-    public FindResult find(LiteInvocation invocation, int route, FindResult lastResult) {
+    public FindResult<SENDER> find(LiteInvocation invocation, int route, FindResult<SENDER> lastResult) {
         Optional<String> optional = invocation.argument(route);
 
-        FindResult last = null;
+        FindResult<SENDER> last = null;
 
         if (optional.isPresent()) {
             String argument = optional.get();
 
-            for (CommandSection commandSection : childSections) {
+            for (CommandSection<SENDER> commandSection : childSections) {
                 if (!commandSection.isSimilar(argument)) {
                     continue;
                 }
 
-                FindResult findResult = commandSection.find(invocation, route + 1, lastResult.withSection(this));
+                FindResult<SENDER> findResult = commandSection.find(invocation, route + 1, lastResult.withSection(this));
 
                 if (findResult.isFound()) {
                     return findResult;
@@ -129,8 +131,8 @@ class LiteCommandSection implements CommandSection {
 
         LitePermissions missingSection = LitePermissions.of(this.meta, invocation.sender());
 
-        for (ArgumentExecutor argumentExecutor : argumentExecutors) {
-            FindResult findResult = argumentExecutor.find(invocation, route + 1, lastResult.withSection(this));
+        for (ArgumentExecutor<SENDER> argumentExecutor : argumentExecutors) {
+            FindResult<SENDER> findResult = argumentExecutor.find(invocation, route + 1, lastResult.withSection(this));
 
             if (findResult.isFound()) {
                 LitePermissions missingExecutor = LitePermissions.of(argumentExecutor.meta(), invocation.sender());
@@ -163,8 +165,8 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public void childSection(CommandSection section) {
-        for (CommandSection commandSection : new ArrayList<>(childSections)) {
+    public void childSection(CommandSection<SENDER> section) {
+        for (CommandSection<SENDER> commandSection : new ArrayList<>(childSections)) {
             if (commandSection.isSimilar(section.getName())) {
                 commandSection.mergeSection(section);
                 return;
@@ -181,40 +183,40 @@ class LiteCommandSection implements CommandSection {
     }
 
     @Override
-    public void mergeSection(CommandSection section) {
+    public void mergeSection(CommandSection<SENDER> section) {
         if (!section.getName().equalsIgnoreCase(this.name)) {
             throw new IllegalArgumentException("Cannot merge sections with different names.");
         }
 
-        for (CommandSection child : section.childrenSection()) {
+        for (CommandSection<SENDER> child : section.childrenSection()) {
             this.childSection(child);
         }
 
-        for (ArgumentExecutor argumentExecutor : section.executors()) {
+        for (ArgumentExecutor<SENDER> argumentExecutor : section.executors()) {
             this.executor(argumentExecutor);
         }
 
-        this.meta().apply(section.meta());
+        this.meta().applyCommandMeta(section.meta());
         this.aliases.addAll(section.getAliases());
     }
 
     @Override
-    public void executor(ArgumentExecutor argumentExecutor) {
-        argumentExecutors.add(argumentExecutor);
+    public void executor(ArgumentExecutor<SENDER> argumentExecutor) {
+        this.argumentExecutors.add(argumentExecutor);
     }
 
     @Override
-    public List<CommandSection> childrenSection() {
+    public List<CommandSection<SENDER>> childrenSection() {
         return Collections.unmodifiableList(childSections);
     }
 
     @Override
-    public List<ArgumentExecutor> executors() {
+    public List<ArgumentExecutor<SENDER>> executors() {
         return Collections.unmodifiableList(argumentExecutors);
     }
 
     @Override
-    public Meta meta() {
+    public CommandMeta meta() {
         return this.meta;
     }
 
