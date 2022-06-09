@@ -13,7 +13,7 @@ import java.util.Map;
 public class CommandService<SENDER> {
 
     private final RegistryPlatform<SENDER> platform;
-    private final Map<String, CommandSection> commands = new HashMap<>();
+    private final Map<String, CommandSection<SENDER>> commands = new HashMap<>();
     private final ExecuteResultHandler<SENDER> handler;
 
     public CommandService(RegistryPlatform<SENDER> platform, ExecuteResultHandler<SENDER> handler) {
@@ -21,15 +21,15 @@ public class CommandService<SENDER> {
         this.handler = handler;
     }
 
-    public CommandSection getSection(String key) {
+    public CommandSection<SENDER> getSection(String key) {
         return this.commands.get(key);
     }
 
-    public Collection<CommandSection> getSections() {
+    public Collection<CommandSection<SENDER>> getSections() {
         return Collections.unmodifiableCollection(this.commands.values());
     }
 
-    public void register(CommandSection section) {
+    public void register(CommandSection<SENDER> section) {
         commands.put(section.getName(), section);
 
         for (String label : section.getAliases()) {
@@ -39,12 +39,12 @@ public class CommandService<SENDER> {
         platform.registerListener(
                 section,
                 (sender, invocation) -> {
-                    ExecuteResult result = section.execute(invocation);
+                    ExecuteResult result = section.execute(invocation.withHandle(sender));
 
                     this.handler.handle(sender, invocation, result);
                     return result;
                 },
-                (sender, invocation) -> section.suggestion(invocation)
+                (sender, invocation) -> section.suggestion(invocation.withHandle(sender))
         );
     }
 

@@ -10,7 +10,6 @@ import dev.rollczi.litecommands.implementation.TestHandle;
 import dev.rollczi.litecommands.implementation.TestPlatform;
 import dev.rollczi.litecommands.platform.LiteSender;
 import org.junit.jupiter.api.Test;
-import panda.std.Quad;
 import panda.std.Result;
 
 import java.util.List;
@@ -33,10 +32,10 @@ class LitePermissionsTest {
 
     @Test
     void testLitePermissionsOfMethod() {
-        CommandSection section = liteCommands.getCommandService().getSection("test");
+        CommandSection<TestHandle> section = liteCommands.getCommandService().getSection("test");
 
         assertNotNull(section);
-        assertTrue(section.meta().permissions().contains("dev.rollczi.litecommands"));
+        assertTrue(section.meta().getPermissions().contains("dev.rollczi.litecommands"));
 
         LitePermissions permissions = LitePermissions.of(section.meta(), new PermissionSenderTest());
 

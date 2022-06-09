@@ -21,9 +21,9 @@ public interface LiteCommandsBuilder<SENDER> {
 
     LiteCommandsBuilder<SENDER> platform(RegistryPlatform<SENDER> registryPlatform);
 
-    LiteCommandsBuilder<SENDER> commandFactory(CommandStateFactory factory);
+    LiteCommandsBuilder<SENDER> commandFactory(CommandStateFactory<SENDER> factory);
 
-    LiteCommandsBuilder<SENDER> configureFactory(Consumer<CommandStateFactory> consumer);
+    LiteCommandsBuilder<SENDER> configureFactory(Consumer<CommandStateFactory<SENDER>> consumer);
 
     LiteCommandsBuilder<SENDER> commandEditor(Class<?> commandClass, CommandEditor commandEditor);
 
@@ -41,7 +41,7 @@ public interface LiteCommandsBuilder<SENDER> {
 
     LiteCommandsBuilder<SENDER> commandInstance(Object... commandInstance);
 
-    LiteCommandsBuilder<SENDER> typeBind(Class<?> type, Supplier<?> supplier);
+    <T> LiteCommandsBuilder<SENDER> typeBind(Class<T> type, Supplier<T> supplier);
 
     <T> LiteCommandsBuilder<SENDER> contextualBind(Class<T> on, Contextual<SENDER, T> contextual);
 
@@ -53,11 +53,13 @@ public interface LiteCommandsBuilder<SENDER> {
 
     <T> LiteCommandsBuilder<SENDER> argumentMultilevel(Class<T> on, String by, MultilevelArgument<T> argument);
 
-    <A extends Annotation> LiteCommandsBuilder<SENDER> argument(Class<A> annotation, Class<?> on, Argument<A> argument);
+    <A extends Annotation> LiteCommandsBuilder<SENDER> argument(Class<A> annotation, Class<?> on, Argument<SENDER, A> argument);
 
-    <A extends Annotation> LiteCommandsBuilder<SENDER> argument(Class<A> annotation, Class<?> on, String by, Argument<A> argument);
+    <A extends Annotation> LiteCommandsBuilder<SENDER> argument(Class<A> annotation, Class<?> on, String by, Argument<SENDER, A> argument);
 
-    LiteCommandsBuilder<SENDER> executorFactory(CommandStateFactory commandStateFactory);
+    LiteCommandsBuilder<SENDER> executorFactory(CommandStateFactory<SENDER> commandStateFactory);
+
+    Class<SENDER> getSenderType();
 
     LiteCommands<SENDER> register();
 

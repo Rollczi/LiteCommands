@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public interface AnnotatedParameterState<A extends Annotation> extends AnnotatedParameter<A>, Suggester {
+public interface AnnotatedParameterState<SENDER, A extends Annotation> extends AnnotatedParameter<SENDER, A>, Suggester {
 
     LiteInvocation invocation();
 

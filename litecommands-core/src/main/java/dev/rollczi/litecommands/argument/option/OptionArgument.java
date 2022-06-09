@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.argument.option;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentContext;
 import dev.rollczi.litecommands.argument.ParameterHandler;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
-import dev.rollczi.litecommands.argument.SingleArgument;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class OptionArgument<T> implements Argument<Opt>, ParameterHandler {
+public class OptionArgument<SENDER, T> implements Argument<SENDER, Opt>, ParameterHandler {
 
     private final Class<T> type;
     private final MultilevelArgument<T> multilevel;
@@ -27,8 +27,9 @@ public class OptionArgument<T> implements Argument<Opt>, ParameterHandler {
     }
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Parameter parameter, Opt annotation, int currentRoute, int currentArgument) {
-        Option<Class<?>> optionType = OptionUtils.extractOptionType(parameter);
+    public MatchResult match(LiteInvocation invocation, ArgumentContext<Opt> context) {
+        int currentArgument = context.currentArgument();
+        Option<Class<?>> optionType = OptionUtils.extractOptionType(context.parameter());
 
         if (optionType.isEmpty() || !optionType.get().equals(type)) {
             throw new IllegalStateException();
@@ -72,7 +73,7 @@ public class OptionArgument<T> implements Argument<Opt>, ParameterHandler {
     }
 
     @Override
-    public List<Object> getDefault() {
+    public List<Object> defaultValue() {
         return Collections.singletonList(Option.none());
     }
 

@@ -4,6 +4,12 @@ import dev.rollczi.litecommands.platform.LiteSender;
 
 class TestSender implements LiteSender {
 
+    private final TestHandle testHandle;
+
+    TestSender(TestHandle testHandle) {
+        this.testHandle = testHandle;
+    }
+
     @Override
     public boolean hasPermission(String permission) {
         return false;
@@ -11,6 +17,6 @@ class TestSender implements LiteSender {
 
     @Override
     public Object getHandle() {
-        return new TestHandle();
+        return testHandle;
     }
 }

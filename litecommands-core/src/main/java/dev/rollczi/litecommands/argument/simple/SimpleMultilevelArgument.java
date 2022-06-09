@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.argument.simple;
 
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentContext;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
@@ -12,7 +13,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 
-public class SimpleMultilevelArgument<T> implements Argument<Arg> {
+public class SimpleMultilevelArgument<SENDER, T> implements Argument<SENDER, Arg> {
 
     private final MultilevelArgument<T> multilevel;
 
@@ -21,7 +22,8 @@ public class SimpleMultilevelArgument<T> implements Argument<Arg> {
     }
 
     @Override
-    public MatchResult match(LiteInvocation invocation, Parameter parameter, Arg annotation, int currentRoute, int currentArgument) {
+    public MatchResult match(LiteInvocation invocation, ArgumentContext<Arg> context) {
+        int currentArgument = context.currentArgument();
         List<String> arguments = Arrays.asList(invocation.arguments());
 
         if (currentArgument + multilevel.countMultilevel() > arguments.size()) {

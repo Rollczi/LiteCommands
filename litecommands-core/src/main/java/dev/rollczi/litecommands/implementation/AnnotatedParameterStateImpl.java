@@ -13,14 +13,14 @@ import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 
-final class AnnotatedParameterStateImpl<A extends Annotation> extends AnnotatedParameterImpl<A> implements AnnotatedParameterState<A> {
+final class AnnotatedParameterStateImpl<SENDER, A extends Annotation> extends AnnotatedParameterImpl<SENDER, A> implements AnnotatedParameterState<SENDER, A> {
 
     private final LiteInvocation invocation;
     private final Lazy<MatchResult> matchResult;
     private final Lazy<List<Suggestion>> suggestions;
     private final int route;
 
-    AnnotatedParameterStateImpl(A annotationInstance, Parameter parameter, Argument<A> argument, LiteInvocation invocation, int route) {
+    AnnotatedParameterStateImpl(A annotationInstance, Parameter parameter, Argument<SENDER, A> argument, LiteInvocation invocation, int route) {
         super(annotationInstance, parameter, argument);
         this.invocation = invocation;
         this.route = route;

@@ -9,13 +9,13 @@ public interface SchemeFormat {
 
     String slash();
 
-    String command(CommandSection command);
+    String command(CommandSection<?> command);
 
-    String subcommand(CommandSection subcommand);
+    String subcommand(CommandSection<?> subcommand);
 
-    String subcommands(List<CommandSection> subcommands);
+    String subcommands(List<? extends CommandSection<?>> subcommands);
 
-    String argument(AnnotatedParameter<?> argument);
+    String argument(AnnotatedParameter<?, ?> argument);
 
     SchemeFormat ARGUMENT_ANGLED_OPTIONAL_SQUARE = new SchemeFormatBuilder()
             .slash("/")

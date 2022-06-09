@@ -1,7 +1,11 @@
 package dev.rollczi.litecommands.bukkit;
 
+import dev.rollczi.litecommands.meta.MetaData;
 import dev.rollczi.litecommands.platform.LiteSender;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockDataMeta;
 
 class BukkitSender implements LiteSender {
 

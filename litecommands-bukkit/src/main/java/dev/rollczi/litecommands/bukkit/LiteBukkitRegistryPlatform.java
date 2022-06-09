@@ -43,7 +43,7 @@ class LiteBukkitRegistryPlatform implements RegistryPlatform<CommandSender> {
     }
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
+    public void registerListener(CommandSection<CommandSender> command, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
         SimpleCommand bukkitSimpleCommand = new SimpleCommand(command, executeListener, suggestionListener);
 
         this.commandMap.register(command.getName(), this.fallbackPrefix, bukkitSimpleCommand);
@@ -52,7 +52,7 @@ class LiteBukkitRegistryPlatform implements RegistryPlatform<CommandSender> {
     }
 
     @Override
-    public void unregisterListener(CommandSection command) {
+    public void unregisterListener(CommandSection<CommandSender> command) {
         this.knownCommands.remove(command.getName());
         this.commands.remove(command.getName());
 

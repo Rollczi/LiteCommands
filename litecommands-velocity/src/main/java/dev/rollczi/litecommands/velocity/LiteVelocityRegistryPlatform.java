@@ -22,7 +22,7 @@ class LiteVelocityRegistryPlatform implements RegistryPlatform<CommandSource> {
     }
 
     @Override
-    public void registerListener(CommandSection command, ExecuteListener<CommandSource> listener, SuggestionListener<CommandSource> suggestionListener) {
+    public void registerListener(CommandSection<CommandSource> command, ExecuteListener<CommandSource> listener, SuggestionListener<CommandSource> suggestionListener) {
         VelocityCommand velocityCommand = new VelocityCommand(command.getName(), listener, suggestionListener);
 
         CommandManager commandManager = this.proxyServer.getCommandManager();
@@ -37,7 +37,7 @@ class LiteVelocityRegistryPlatform implements RegistryPlatform<CommandSource> {
     }
 
     @Override
-    public void unregisterListener(CommandSection command) {
+    public void unregisterListener(CommandSection<CommandSource> command) {
         this.proxyServer.getCommandManager().unregister(command.getName());
 
         for (String alias : command.getAliases()) {

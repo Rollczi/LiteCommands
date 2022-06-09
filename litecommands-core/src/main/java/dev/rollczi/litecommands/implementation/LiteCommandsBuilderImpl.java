@@ -20,10 +20,12 @@ import dev.rollczi.litecommands.handle.ExecuteResultHandler;
 import dev.rollczi.litecommands.handle.Handler;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.handle.PermissionHandler;
+import dev.rollczi.litecommands.implementation.injector.InjectorProvider;
+import dev.rollczi.litecommands.injector.Injector;
+import dev.rollczi.litecommands.injector.InjectorSettings;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.scheme.SchemeFormat;
-import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;
@@ -37,22 +39,23 @@ import java.util.function.Supplier;
 
 final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
 
-    private RegistryPlatform<SENDER> registryPlatform;
+    private final Class<SENDER> senderType;
+
+    private final InjectorSettings<SENDER> injectorSettings = InjectorProvider.settings();
     private final ExecuteResultHandler<SENDER> executeResultHandler = new ExecuteResultHandler<>();
 
-    private Injector injector = InjectorProvider.createInjector();
-    private CommandStateFactory commandStateFactory;
-    private final Set<Consumer<CommandStateFactory>> commandStateFactoryEditors = new HashSet<>();
-    private final CommandEditorRegistry editorRegistry = new CommandEditorRegistry();
+    private RegistryPlatform<SENDER> registryPlatform;
+    private CommandStateFactory<SENDER> commandStateFactory;
 
-    private final Map<Class<?>, Supplier<?>> typeBinds = new HashMap<>();
-    private final Map<Class<?>, Contextual<SENDER, ?>> contextualBinds = new HashMap<>();
+    private final Set<Consumer<CommandStateFactory<SENDER>>> commandStateFactoryEditors = new HashSet<>();
+    private final CommandEditorRegistry editorRegistry = new CommandEditorRegistry();
 
     private final Set<Class<?>> commandsClasses = new HashSet<>();
     private final Set<Object> commandsInstances = new HashSet<>();
-    private final ArgumentsRegistry argumentsRegistry = new ArgumentsRegistry();
+    private final ArgumentsRegistry<SENDER> argumentsRegistry = new ArgumentsRegistry<>();
 
-    private LiteCommandsBuilderImpl() {
+    private LiteCommandsBuilderImpl(Class<SENDER> senderType) {
+        this.senderType = senderType;
     }
 
     @Override
@@ -62,13 +65,13 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER> commandFactory(CommandStateFactory factory) {
+    public LiteCommandsBuilder<SENDER> commandFactory(CommandStateFactory<SENDER> factory) {
         this.commandStateFactory = factory;
         return this;
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER> configureFactory(Consumer<CommandStateFactory> consumer) {
+    public LiteCommandsBuilder<SENDER> configureFactory(Consumer<CommandStateFactory<SENDER>> consumer) {
         commandStateFactoryEditors.add(consumer);
         return this;
     }
@@ -107,7 +110,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
-    public LiteCommandsBuilderImpl<SENDER> executorFactory(CommandStateFactory commandStateFactory) {
+    public LiteCommandsBuilderImpl<SENDER> executorFactory(CommandStateFactory<SENDER> commandStateFactory) {
         this.commandStateFactory = commandStateFactory;
         return this;
     }
@@ -125,14 +128,14 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
-    public LiteCommandsBuilderImpl<SENDER> typeBind(Class<?> type, Supplier<?> supplier) {
-        typeBinds.put(type, supplier);
+    public <T> LiteCommandsBuilderImpl<SENDER> typeBind(Class<T> type, Supplier<T> supplier) {
+        this.injectorSettings.typeBind(type, supplier);
         return this;
     }
 
     @Override
     public <T> LiteCommandsBuilderImpl<SENDER> contextualBind(Class<T> on, Contextual<SENDER, T> contextual) {
-        this.contextualBinds.put(on, contextual);
+        this.injectorSettings.contextualBind(on, contextual);
         return this;
     }
 
@@ -161,15 +164,20 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     }
 
     @Override
-    public <A extends Annotation> LiteCommandsBuilderImpl<SENDER> argument(Class<A> annotation, Class<?> on, Argument<A> argument) {
+    public <A extends Annotation> LiteCommandsBuilderImpl<SENDER> argument(Class<A> annotation, Class<?> on, Argument<SENDER, A> argument) {
         this.argumentsRegistry.register(annotation, on, argument);
         return this;
     }
 
     @Override
-    public <A extends Annotation> LiteCommandsBuilderImpl<SENDER> argument(Class<A> annotation, Class<?> on, String by, Argument<A> argument) {
+    public <A extends Annotation> LiteCommandsBuilderImpl<SENDER> argument(Class<A> annotation, Class<?> on, String by, Argument<SENDER, A> argument) {
         this.argumentsRegistry.register(annotation, on, by, argument);
         return this;
+    }
+
+    @Override
+    public Class<SENDER> getSenderType() {
+        return this.senderType;
     }
 
     @Override
@@ -178,23 +186,20 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
             throw new IllegalStateException("Registry platform is not set");
         }
 
-        LiteCommands<SENDER> commands = new LiteCommandsImpl<>(registryPlatform, executeResultHandler);
-
-        this.injector = this.injector.fork(resources -> {
-            resources.on(Object.class).assignHandler(new InjectorHandler<>(typeBinds, contextualBinds));
-        });
+        LiteCommands<SENDER> commands = new LiteCommandsImpl<>(senderType, registryPlatform, executeResultHandler);
+        Injector<SENDER> injector = this.injectorSettings.create();
 
         if (this.commandStateFactory == null) {
-            this.commandStateFactory = new LiteCommandFactory(this.injector, this.argumentsRegistry, this.editorRegistry);
+            this.commandStateFactory = new LiteCommandFactory<>(injector, this.argumentsRegistry, this.editorRegistry);
         }
 
-        for (Consumer<CommandStateFactory> editor : this.commandStateFactoryEditors) {
+        for (Consumer<CommandStateFactory<SENDER>> editor : this.commandStateFactoryEditors) {
             editor.accept(this.commandStateFactory);
         }
 
         try {
             for (Class<?> commandsClass : this.commandsClasses) {
-                Object command = this.injector.newInstance(commandsClass);
+                Object command = injector.createInstance(commandsClass);
 
                 this.commandsInstances.add(command);
             }
@@ -205,7 +210,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         CommandService<SENDER> service = commands.getCommandService();
 
         for (Object instance : commandsInstances) {
-            Option<CommandSection> option = this.commandStateFactory.create(instance);
+            Option<CommandSection<SENDER>> option = this.commandStateFactory.create(instance);
 
             if (option.isEmpty()) {
                 continue;
@@ -217,8 +222,8 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         return commands;
     }
 
-    public static <T> LiteCommandsBuilder<T> builder() {
-        return new LiteCommandsBuilderImpl<>();
+    public static <T> LiteCommandsBuilder<T> builder(Class<T> senderType) {
+        return new LiteCommandsBuilderImpl<>(senderType);
     }
 
 }

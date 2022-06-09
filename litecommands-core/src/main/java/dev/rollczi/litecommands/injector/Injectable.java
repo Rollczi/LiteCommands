@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument;
+package dev.rollczi.litecommands.injector;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ArgumentAnnotation {
+public @interface Injectable {
 }

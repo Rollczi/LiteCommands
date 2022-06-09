@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.platform.RegistryPlatform;
 
 public interface LiteCommands<SENDER> {
 
+    Class<SENDER> getSenderType();
+
     CommandService<SENDER> getCommandService();
 
     RegistryPlatform<SENDER> getPlatform();

@@ -74,4 +74,4 @@ implementation 'dev.rollczi.litecommands:velocity:2.0.0'
 
 See (Important dependencies used)
  - [panda-lang/expressible](https://github.com/panda-lang/expressible)
- - [panda-lang/panda (panda-utilities)](https://github.com/panda-lang/panda)
+ - [panda-lang/panda (panda-utilities)](https://github.com/panda-lang/panda) (v1.0.0 - v1.9.2) (in v2.0.0 and above a built-in DI modeled on it is used)

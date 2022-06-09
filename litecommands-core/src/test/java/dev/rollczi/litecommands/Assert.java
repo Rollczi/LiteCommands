@@ -1,8 +1,7 @@
 package dev.rollczi.litecommands;
 
-import panda.utilities.text.Joiner;
-
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public final class Assert {
 
@@ -10,14 +9,17 @@ public final class Assert {
 
     public static <T> void assertSize(int expectedSize, Collection<T> actual) {
         if (actual.size() != expectedSize) {
-            throw new AssertException(actual.size(), expectedSize);
+            throw new AssertException(expectedSize, actual.size());
         }
     }
 
     public static <T> void assertCollection(Collection<T> expected, Collection<T> actual) {
         for (T t : expected) {
             if (!actual.contains(t)) {
-                throw new AssertException(Joiner.on(", ").join(actual), Joiner.on(", ").join(actual));
+                throw new AssertException(
+                        expected.stream().map(Object::toString).collect(Collectors.joining(", ")),
+                        actual.stream().map(Object::toString).collect(Collectors.joining(", "))
+                );
             }
         }
     }

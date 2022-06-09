@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit.tools;
 
 import dev.rollczi.litecommands.argument.ArgumentName;
+import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.contextual.Contextual;
 import org.bukkit.command.CommandSender;
@@ -17,7 +18,7 @@ public class BukkitOnlyPlayerContextual implements Contextual<CommandSender, Pla
     }
 
     @Override
-    public Result<Player, Object> extract(CommandSender sender, LiteInvocation invocation) {
+    public Result<Player, Object> extract(CommandSender sender, Invocation<CommandSender> invocation) {
         return Option.of(sender).is(Player.class).toResult(onlyPlayer);
     }
 

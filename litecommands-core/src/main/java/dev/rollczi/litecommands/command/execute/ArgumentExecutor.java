@@ -3,27 +3,31 @@ package dev.rollczi.litecommands.command.execute;
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.FindResult;
+import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
-import dev.rollczi.litecommands.command.meta.Meta;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.util.List;
 
-public interface ArgumentExecutor {
+public interface ArgumentExecutor<SENDER> extends MetaHolder {
 
-    ExecuteResult execute(LiteInvocation invocation, FindResult findResult);
+    ExecuteResult execute(Invocation<SENDER> invocation, FindResult<SENDER> findResult);
 
-    FindResult find(LiteInvocation invocation, int route, FindResult lastResult);
+    FindResult<SENDER> find(LiteInvocation invocation, int route, FindResult<SENDER> lastResult);
 
-    List<Argument<?>> arguments();
+    List<Argument<SENDER, ?>> arguments();
 
-    List<AnnotatedParameter<?>> annotatedParameters();
-
-    Meta meta();
+    List<AnnotatedParameter<SENDER, ?>> annotatedParameters();
 
     AmountValidator amountValidator();
 
     List<Suggestion> firstSuggestions(LiteInvocation invocation);
+
+    @Override
+    CommandMeta meta();
 
 }
