@@ -7,16 +7,21 @@ import java.util.stream.Collectors;
 
 final class MissingBindException extends ReflectiveOperationException {
     private final List<Class<?>> missing;
+    private final String message;
 
     MissingBindException(List<Class<?>> missing) {
         this.missing = missing;
+        this.message = null;
+    }
+
+    MissingBindException(List<Class<?>> missing, String message) {
+        this.missing = missing;
+        this.message = message;
     }
 
     @Override
     public String getMessage() {
-        return "Cannot find binds for " + missing.stream().map(ReflectFormat::singleClass)
-                .map(text -> "[" + text + "]")
-                .collect(Collectors.joining(", "));
+        return (message != null ? message + " " : "") + "Cannot find binds for " + missing.stream().map(ReflectFormat::singleClass).collect(Collectors.joining(", "));
     }
 
     public List<Class<?>> getMissing() {
