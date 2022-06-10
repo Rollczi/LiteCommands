@@ -41,16 +41,16 @@ public final class LiteFactory {
                     factory.annotationResolver(Required.RESOLVER);
                     factory.annotationResolver(Between.RESOLVER);
                 })
-                .argument(Flag.class, boolean.class, new FlagArgument())
-                .argument(Joiner.class, String.class, new JoinerArgument())
-                .argument(Block.class, Object.class, new BlockArgument())
+                .argument(Flag.class, boolean.class, new FlagArgument<>())
+                .argument(Joiner.class, String.class, new JoinerArgument<>())
+                .argument(Block.class, Object.class, new BlockArgument<>())
 
                 .argument(String.class, (invocation, argument) -> Result.ok(argument))
                 .argument(Integer.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Integer.parseInt(argument)).toResult(Blank.BLANK))
                 .argument(Double.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Double.parseDouble(argument)).toResult(Blank.BLANK))
                 .argument(Float.class, (invocation, argument) -> Option.attempt(NumberFormatException.class, () -> Float.parseFloat(argument)).toResult(Blank.BLANK))
 
-                .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation))
+                .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation.toLite()))
                 .contextualBind(LiteSender.class, (sender, invocation) -> Result.ok(invocation.sender()))
                 .contextualBind(String[].class, (sender, invocation) -> Result.ok(invocation.arguments()))
                 .contextualBind(senderType, (sender, invocation) -> Result.ok(sender));
