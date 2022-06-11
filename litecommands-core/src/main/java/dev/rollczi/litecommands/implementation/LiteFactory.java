@@ -64,7 +64,7 @@ public final class LiteFactory {
                     factory.annotationResolver(Permission.RESOLVER);
                     factory.annotationResolver(Permissions.RESOLVER);
                     factory.annotationResolver(ExecutedPermission.EXECUTED_PERMISSION_RESOLVER);
-                    factory.annotationResolver(ExecutedPermissions.EXECUTED_PERMISSIONS_RESOLVER);
+                    //factory.annotationResolver(ExecutedPermissions.EXECUTED_PERMISSIONS_RESOLVER);
                     factory.annotationResolver(Min.RESOLVER);
                     factory.annotationResolver(Max.RESOLVER);
                     factory.annotationResolver(Required.RESOLVER);
