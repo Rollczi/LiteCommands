@@ -57,7 +57,7 @@ public final class LiteFactory {
     }
 
     public static <SENDER> LiteCommandsBuilder<SENDER> builder(Class<SENDER> senderType) {
-        return LiteCommandsBuilderImpl.<SENDER>builder(senderType)
+        return LiteCommandsBuilderImpl.builder(senderType)
                 .configureFactory(factory -> {
                     factory.annotationResolver(Section.RESOLVER);
                     factory.annotationResolver(Execute.RESOLVER);
