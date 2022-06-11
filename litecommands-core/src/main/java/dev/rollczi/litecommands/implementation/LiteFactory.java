@@ -62,9 +62,9 @@ public final class LiteFactory {
                     factory.annotationResolver(Section.RESOLVER);
                     factory.annotationResolver(Execute.RESOLVER);
                     factory.annotationResolver(Permission.RESOLVER);
-                    factory.annotationResolver(Permissions.RESOLVER);
-                    factory.annotationResolver(ExecutedPermission.EXECUTED_PERMISSION_RESOLVER);
-                    factory.annotationResolver(ExecutedPermissions.EXECUTED_PERMISSIONS_RESOLVER);
+                    factory.annotationResolver(Permission.REPEATABLE_RESOLVER);
+                    factory.annotationResolver(ExecutedPermission.RESOLVER);
+                    factory.annotationResolver(ExecutedPermission.REPEATABLE_RESOLVER);
                     factory.annotationResolver(Min.RESOLVER);
                     factory.annotationResolver(Max.RESOLVER);
                     factory.annotationResolver(Required.RESOLVER);

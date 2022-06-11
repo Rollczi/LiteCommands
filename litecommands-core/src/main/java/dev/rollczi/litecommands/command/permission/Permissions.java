@@ -14,6 +14,4 @@ public @interface Permissions {
 
     Permission[] value() default {};
 
-    FactoryAnnotationResolver<Permissions> RESOLVER = new PermissionAnnotationResolver();
-
 }

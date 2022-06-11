@@ -16,5 +16,6 @@ public @interface Permission {
     String[] value() default {};
 
     FactoryAnnotationResolver<Permission> RESOLVER = new PermissionsAnnotationResolver();
+    FactoryAnnotationResolver<Permissions> REPEATABLE_RESOLVER = new PermissionAnnotationResolver();
 
 }

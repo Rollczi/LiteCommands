@@ -15,6 +15,7 @@ public @interface ExecutedPermission {
 
     String[] value() default {};
 
-    FactoryAnnotationResolver<ExecutedPermission> EXECUTED_PERMISSION_RESOLVER = new ExecutedPermissionAnnotationResolver();
+    FactoryAnnotationResolver<ExecutedPermission> RESOLVER = new ExecutedPermissionAnnotationResolver();
+    FactoryAnnotationResolver<ExecutedPermissions> REPEATABLE_RESOLVER = new ExecutedPermissionsAnnotationResolver();
 
 }
