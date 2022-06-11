@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.implementation.injector;
 
-import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.injector.Injectable;
 import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;
@@ -95,10 +94,11 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
             if (useContext && this.isInjectAnnotation(parameter)) {
                 if (!iterator.hasNext()) {
                     if (executable instanceof Method) {
-                        return Result.error(new MissingBindException(Collections.singletonList(parameter.getType()), "Method: " + ReflectFormat.docsMethod((Method) executable)));
+                        return Result.error(new MissingBindException(Collections.singletonList(parameter.getType()),
+                                "Missing " + ReflectFormat.singleClass(parameter.getType()) + " argument for method: " + ReflectFormat.docsMethod((Method) executable) + " Have you added argument()?"));
                     }
 
-                    throw new IllegalStateException("Missing arguments for command");
+                    return Result.error(new MissingBindException(Collections.singletonList(parameter.getType()), "Argument in constructor? Missing bind's"));
                 }
 
                 parameters.add(iterator.next());
@@ -119,7 +119,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         }
 
         if (!missing.isEmpty()) {
-            return Result.error(new MissingBindException(missing));
+            return Result.error(new MissingBindException(missing, useContext ? "Have you added typeBind() or contextualBind()?" : "Have you added typeBind()?"));
         }
 
         try {

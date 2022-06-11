@@ -6,6 +6,8 @@ import panda.std.Result;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @FunctionalInterface
 public interface OneArgument<T> extends MultilevelArgument<T> {
@@ -28,6 +30,10 @@ public interface OneArgument<T> extends MultilevelArgument<T> {
     @Override
     default int countMultilevel() {
         return 1;
+    }
+
+    static <T> OneArgument<T> create(BiFunction<LiteInvocation, String, Result<T, ?>> parse, Function<LiteInvocation, List<Suggestion>> suggest) {
+        return new SuggestedOneArgument<>(parse, suggest);
     }
 
 }

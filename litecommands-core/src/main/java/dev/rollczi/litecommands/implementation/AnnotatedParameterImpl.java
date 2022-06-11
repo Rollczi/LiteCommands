@@ -40,7 +40,7 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
     }
 
     AnnotatedParameterState<SENDER, A> createState(LiteInvocation invocation, int route) {
-        return new AnnotatedParameterStateImpl<SENDER, A>(annotationInstance, parameter, argument, invocation, route);
+        return new AnnotatedParameterStateImpl<>(annotationInstance, parameter, argument, invocation, route);
     }
 
     @Override

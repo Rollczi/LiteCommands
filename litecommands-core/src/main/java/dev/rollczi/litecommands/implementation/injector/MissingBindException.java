@@ -21,10 +21,7 @@ final class MissingBindException extends ReflectiveOperationException {
 
     @Override
     public String getMessage() {
-        return (message != null ? message + " " : "") + "Cannot find binds for " + missing.stream().map(ReflectFormat::singleClass).collect(Collectors.joining(", "));
+        return (message != null ? message + " " : "Cannot find binds for ") + missing.stream().map(ReflectFormat::singleClass).collect(Collectors.joining(", "));
     }
 
-    public List<Class<?>> getMissing() {
-        return missing;
-    }
 }
