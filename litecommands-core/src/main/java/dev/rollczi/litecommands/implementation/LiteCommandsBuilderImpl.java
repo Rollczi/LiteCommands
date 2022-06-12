@@ -130,7 +130,7 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
 
     @Override
     public LiteCommandsBuilderImpl<SENDER> commandInstance(Object... commandInstance) {
-        commandsInstances.add(Arrays.asList(commandInstance));
+        commandsInstances.addAll(Arrays.asList(commandInstance));
         return this;
     }
 
