@@ -105,17 +105,16 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
                 continue;
             }
 
-            Class<?> type = parameter.getType();
             Option<?> option = useContext
-                    ? this.processor.extract(type, context.getInvocation())
-                    : this.processor.extract(type);
+                    ? this.processor.extract(parameter, context.getInvocation())
+                    : this.processor.extract(parameter);
 
             if (option.isPresent()) {
                 parameters.add(option.get());
                 continue;
             }
 
-            missing.add(type);
+            missing.add(parameter.getType());
         }
 
         if (!missing.isEmpty()) {

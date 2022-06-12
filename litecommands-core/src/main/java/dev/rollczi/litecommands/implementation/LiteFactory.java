@@ -16,10 +16,13 @@ import dev.rollczi.litecommands.command.amount.Required;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
 import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
+import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
+import dev.rollczi.litecommands.scheme.Scheme;
 import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
@@ -92,6 +95,9 @@ public final class LiteFactory {
                 .argument(Float.class, FLOAT_ARG)
                 .argument(char.class, CHARACTER_ARG)
                 .argument(Character.class, CHARACTER_ARG)
+
+                .redirectResult(Scheme.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getSchemes()))
+                .redirectResult(LitePermissions.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getPermissions()))
 
                 .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation.toLite()))
                 .contextualBind(LiteSender.class, (sender, invocation) -> Result.ok(invocation.sender()))

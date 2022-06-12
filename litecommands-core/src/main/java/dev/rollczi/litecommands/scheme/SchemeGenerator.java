@@ -74,7 +74,7 @@ public class SchemeGenerator {
         List<String> schemes = new ArrayList<>();
 
         for (CommandSection<?> child : section.childrenSection()) {
-            schemes.addAll(this.unknown(text, child, schemeFormat));
+            schemes.addAll(this.unknown(text + " " + child.getName(), child, schemeFormat));
         }
 
         for (ArgumentExecutor<?> executor : section.executors()) {

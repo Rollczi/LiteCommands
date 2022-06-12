@@ -1,43 +1,37 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
-import dev.rollczi.litecommands.implementation.LiteFactory;
-import dev.rollczi.litecommands.implementation.TestHandle;
-import dev.rollczi.litecommands.implementation.TestPlatform;
+import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.Test;
 
 class PrimitiveTypeTest {
 
-    private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
-            .command(Command.class)
-            .platform(testPlatform)
-            .register();
+    TestPlatform platform = TestFactory.withCommands(Command.class);
 
     @Test
     void testInt() {
-        testPlatform.execute("test", "int", "1");
-        testPlatform.execute("test", "int-object", "1");
+        platform.assertSuccess("test", "int", "1");
+        platform.assertSuccess("test", "int-object", "1");
     }
 
     @Test
     void testFloat() {
-        testPlatform.execute("test", "float", "0.5F");
-        testPlatform.execute("test", "float-object", "0.5F");
+        platform.assertSuccess("test", "float", "0.5F");
+        platform.assertSuccess("test", "float-object", "0.5F");
     }
 
     @Test
     void testDouble() {
-        testPlatform.execute("test", "double", "0.5D");
-        testPlatform.execute("test", "double-object", "0.5D");
+        platform.assertSuccess("test", "double", "0.5D");
+        platform.assertSuccess("test", "double-object", "0.5D");
     }
 
     @Test
     void testBoolean() {
-        testPlatform.execute("test", "boolean", "true");
-        testPlatform.execute("test", "boolean-object", "false");
+        platform.assertSuccess("test", "boolean", "true");
+        platform.assertSuccess("test", "boolean-object", "false");
     }
 
     @Section(route = "test")

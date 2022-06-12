@@ -1,27 +1,20 @@
 package dev.rollczi.litecommands.implementation;
 
-import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.TestFactory;
+import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import org.junit.jupiter.api.Test;
-import panda.std.Result;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LiteCommandTest {
 
-    private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
-            .platform(testPlatform)
-            .command(TestCommandLuckPermsExample.class)
-            .command(TestCommandChatExample.class)
-            .resultHandler(String.class, (v, invocation, value) -> {})
-            .argument(String.class, (invocation, argument) -> Result.ok(argument))
-            .register();
+    TestPlatform platform = TestFactory.withCommands(TestCommandLuckPermsExample.class, TestCommandChatExample.class);
 
     @Test
     void testSet() {
-        ExecuteResult result = testPlatform.execute("lp", "user", "Rollczi", "parent", "set", "vip");
+        ExecuteResult result = platform.executeLegacy("lp", "user", "Rollczi", "parent", "set", "vip");
 
         assertTrue(result.isSuccess());
         assertEquals("Rollczi -> vip", result.getResult());
@@ -29,7 +22,7 @@ class LiteCommandTest {
 
     @Test
     void testUnSet() {
-        ExecuteResult result = testPlatform.execute("lp", "user", "Rollczi", "parent", "unset", "vip");
+        ExecuteResult result = platform.executeLegacy("lp", "user", "Rollczi", "parent", "unset", "vip");
 
         assertTrue(result.isSuccess());
         assertEquals("Rollczi -x vip", result.getResult());
@@ -37,7 +30,7 @@ class LiteCommandTest {
 
     @Test
     void testSetWithAlias() {
-        ExecuteResult result = testPlatform.execute("luckperms", "user", "Rollczi", "parent", "set", "vip");
+        ExecuteResult result = platform.executeLegacy("luckperms", "user", "Rollczi", "parent", "set", "vip");
 
         assertTrue(result.isSuccess());
         assertEquals("Rollczi -> vip", result.getResult());
@@ -45,7 +38,7 @@ class LiteCommandTest {
 
     @Test
     void testUnSetWithAlias() {
-        ExecuteResult result = testPlatform.execute("luckperms", "user", "Rollczi", "parent", "unset", "vip");
+        ExecuteResult result = platform.executeLegacy("luckperms", "user", "Rollczi", "parent", "unset", "vip");
 
         assertTrue(result.isSuccess());
         assertEquals("Rollczi -x vip", result.getResult());
@@ -53,7 +46,7 @@ class LiteCommandTest {
 
     @Test
     void testReload() {
-        ExecuteResult result = testPlatform.execute("luckperms", "user", "Rollczi", "reload");
+        ExecuteResult result = platform.executeLegacy("luckperms", "user", "Rollczi", "reload");
 
         assertTrue(result.isSuccess());
         assertEquals("Rollczi -reload", result.getResult());
@@ -61,7 +54,7 @@ class LiteCommandTest {
 
     @Test
     void testAdminChatFalse() {
-        ExecuteResult result = testPlatform.execute("ac", "siema");
+        ExecuteResult result = platform.executeLegacy("ac", "siema");
 
         assertTrue(result.isSuccess());
         assertEquals("false -> siema", result.getResult());
@@ -69,7 +62,7 @@ class LiteCommandTest {
 
     @Test
     void testAdminChatTrue() {
-        ExecuteResult result = testPlatform.execute("ac", "-s", "siema");
+        ExecuteResult result = platform.executeLegacy("ac", "-s", "siema");
 
         assertTrue(result.isSuccess());
         assertEquals("true -> siema", result.getResult());
@@ -77,12 +70,12 @@ class LiteCommandTest {
 
     @Test
     void testAdminChatKeyAndOption() {
-        ExecuteResult result = testPlatform.execute("ac", "key", "siema");
+        ExecuteResult result = platform.executeLegacy("ac", "key", "siema");
 
         assertTrue(result.isSuccess());
         assertEquals("siema", result.getResult());
 
-        ExecuteResult resultNull = testPlatform.execute("ac", "key");
+        ExecuteResult resultNull = platform.executeLegacy("ac", "key");
 
         assertTrue(resultNull.isSuccess());
         assertEquals("null", resultNull.getResult());
@@ -90,7 +83,7 @@ class LiteCommandTest {
 
     @Test
     void testAdminChatTrueMore() {
-        ExecuteResult result = testPlatform.execute("ac", "-s", "siema", "test", "hejo");
+        ExecuteResult result = platform.executeLegacy("ac", "-s", "siema", "test", "hejo");
 
         assertTrue(result.isSuccess());
         assertEquals("true -> siema test hejo", result.getResult());

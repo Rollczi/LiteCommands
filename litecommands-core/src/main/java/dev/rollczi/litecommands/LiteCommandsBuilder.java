@@ -9,8 +9,10 @@ import dev.rollczi.litecommands.factory.CommandStateFactory;
 import dev.rollczi.litecommands.handle.Handler;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.handle.PermissionHandler;
+import dev.rollczi.litecommands.handle.Redirector;
+import dev.rollczi.litecommands.injector.bind.AnnotationBind;
+import dev.rollczi.litecommands.injector.bind.TypeBind;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
-import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.scheme.SchemeFormat;
 
 import java.lang.annotation.Annotation;
@@ -33,6 +35,8 @@ public interface LiteCommandsBuilder<SENDER> {
 
     <T> LiteCommandsBuilder<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler);
 
+    <FROM, TO> LiteCommandsBuilder<SENDER> redirectResult(Class<FROM> from, Class<TO> to, Redirector<FROM, TO> redirector);
+
     LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler);
 
     LiteCommandsBuilder<SENDER> permissionHandler(PermissionHandler<SENDER> handler);
@@ -42,6 +46,10 @@ public interface LiteCommandsBuilder<SENDER> {
     LiteCommandsBuilder<SENDER> commandInstance(Object... commandInstance);
 
     <T> LiteCommandsBuilder<SENDER> typeBind(Class<T> type, Supplier<T> supplier);
+
+    <T> LiteCommandsBuilder<SENDER> typeBind(Class<T> type, TypeBind<T> typeBind);
+
+    <T, A extends Annotation> LiteCommandsBuilder<SENDER> annotatedBind(Class<T> type, Class<A> annotationType, AnnotationBind<T, A> annotationBind);
 
     <T> LiteCommandsBuilder<SENDER> contextualBind(Class<T> on, Contextual<SENDER, T> contextual);
 

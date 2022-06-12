@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.implementation;
+package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.Invocation;
@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
@@ -13,6 +14,7 @@ import dev.rollczi.litecommands.platform.RegistryPlatform;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class TestPlatform implements RegistryPlatform<TestHandle> {
 
@@ -33,7 +35,12 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
         this.commands.clear();
     }
 
-    public ExecuteResult execute(String command, String... args) {
+    public LiteSender createSender() {
+        return new TestSender(new TestHandle());
+    }
+
+    @Deprecated
+    public ExecuteResult executeLegacy(String command, String... args) {
         TestHandle handle = new TestHandle();
         LiteInvocation invocation = new LiteInvocation(new TestSender(handle), command, command, args);
 
@@ -47,6 +54,22 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
         }
 
         return ExecuteResult.failure(FindResult.none(invocation.withHandle(handle)));
+    }
+
+    public void assertSuccess(String command, String... args) {
+        this.execute(command, args).assertSuccess();
+    }
+
+    public void assertFail(String command, String... args) {
+        this.execute(command, args).assertSuccess();
+    }
+
+    public void assertInvalid(String command, String... args) {
+        this.execute(command, args).assertSuccess();
+    }
+
+    public AssertResult execute(String command, String... args) {
+        return new AssertResult(this.executeLegacy(command, args));
     }
 
     public FindResult<TestHandle> find(String command, String... args) {
@@ -89,6 +112,16 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
             return suggestionListener;
         }
 
+    }
+
+    public CommandSection<TestHandle> getSection(String key) {
+        for (CommandSection<TestHandle> section : commands.keySet()) {
+            if (section.isSimilar(key)) {
+                return section;
+            }
+        }
+
+        throw new NoSuchElementException();
     }
 
 }

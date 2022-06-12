@@ -13,8 +13,8 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
-import dev.rollczi.litecommands.implementation.TestHandle;
-import dev.rollczi.litecommands.implementation.TestPlatform;
+import dev.rollczi.litecommands.TestHandle;
+import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
 import panda.std.Result;
@@ -22,6 +22,7 @@ import panda.std.Result;
 import java.util.Arrays;
 import java.util.List;
 
+import static dev.rollczi.litecommands.Assert.assertCollection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SchematicTest {
@@ -41,9 +42,12 @@ class SchematicTest {
 
         List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
-        assertEquals(2, schemes.size());
-        assertEquals("/teleport <target> [to]", schemes.get(0));
-        assertEquals("/teleport <x y z> [world]", schemes.get(1));
+        assertCollection(4, Arrays.asList(
+                "/teleport test <target> [to]",
+                "/teleport <target> [to]",
+                "/teleport <x y z> [world]",
+                "/teleport class test <target>"
+        ), schemes);
     }
 
     @Test
@@ -74,6 +78,13 @@ class SchematicTest {
         void toLocation(@Arg @By("loc") String text, @Opt @Name("world") Option<String> world) {}
         @Execute(min = 1, max = 2)
         void targetToPlayer(@Arg @Name("target") String target, @Opt @Name("to") Option<String> to) {}
+        @Execute(route = "test")
+        void test(@Arg @Name("target") String target, @Opt @Name("to") Option<String> to) {}
+        @Section(route = "class")
+        static class In {
+            @Execute(route = "test")
+            void test(@Arg @Name("target") String target) {}
+        }
     }
 
     @ArgumentName("player")

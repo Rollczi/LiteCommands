@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.contextual;
 
 import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.command.LiteInvocation;
 import panda.std.Result;
 
 @FunctionalInterface

@@ -1,14 +1,12 @@
 package dev.rollczi.litecommands.command.permission;
 
-import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.section.Section;
-import dev.rollczi.litecommands.implementation.LiteFactory;
-import dev.rollczi.litecommands.implementation.TestHandle;
-import dev.rollczi.litecommands.implementation.TestPlatform;
-import dev.rollczi.litecommands.platform.LiteSender;
+import dev.rollczi.litecommands.TestHandle;
+import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.Test;
 import panda.std.Result;
 
@@ -22,22 +20,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LitePermissionsTest {
 
-    private final TestPlatform testPlatform = new TestPlatform();
-    private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
-            .platform(testPlatform)
-            .resultHandler(LitePermissions.class, (permissions, sender, liteInvocation) -> {})
-            .argument(String.class, (invocation, argument) -> Result.ok(argument))
-            .command(PermissionsCommand.class)
-            .register();
+    TestPlatform platform = TestFactory.withCommands(PermissionsCommand.class);
 
     @Test
     void testLitePermissionsOfMethod() {
-        CommandSection<TestHandle> section = liteCommands.getCommandService().getSection("test");
+        CommandSection<TestHandle> section = platform.getSection("test");
 
         assertNotNull(section);
         assertTrue(section.meta().getPermissions().contains("dev.rollczi.litecommands"));
 
-        LitePermissions permissions = LitePermissions.of(section.meta(), new PermissionSenderTest());
+        LitePermissions permissions = LitePermissions.of(section.meta(), platform.createSender());
 
         assertFalse(permissions.isEmpty());
         assertEquals(1, permissions.getPermissions().size());
@@ -46,7 +38,7 @@ class LitePermissionsTest {
 
     @Test
     void executeCommandTest() {
-        ExecuteResult result = testPlatform.execute("test");
+        ExecuteResult result = platform.executeLegacy("test");
 
         assertTrue(result.isInvalid());
         assertInstanceOf(LitePermissions.class, result.getResult());
@@ -61,7 +53,7 @@ class LitePermissionsTest {
 
     @Test
     void executeCommandSiema() {
-        ExecuteResult result = testPlatform.execute("test", "siema");
+        ExecuteResult result = platform.executeLegacy("test", "siema");
 
         assertTrue(result.isInvalid());
         assertInstanceOf(LitePermissions.class, result.getResult());
@@ -85,20 +77,6 @@ class LitePermissionsTest {
         @Execute(route = "siema")
         @Permission("dev.rollczi.litecommands.execute.siema")
         void executeSub() {}
-    }
-
-    static class PermissionSenderTest implements LiteSender {
-
-        @Override
-        public boolean hasPermission(String permission) {
-            return false;
-        }
-
-        @Override
-        public Object getHandle() {
-            return null;
-        }
-
     }
 
 }
