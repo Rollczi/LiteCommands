@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
 public class ExamplePlugin extends JavaPlugin {
 
     private LiteCommands<CommandSender> liteCommands;
@@ -38,4 +39,8 @@ public class ExamplePlugin extends JavaPlugin {
                 .register();
     }
 
+    @Override
+    public void onDisable() {
+        this.liteCommands.getPlatform().unregisterAll();
+    }
 }

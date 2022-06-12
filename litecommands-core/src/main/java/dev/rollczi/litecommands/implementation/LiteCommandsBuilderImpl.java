@@ -20,9 +20,12 @@ import dev.rollczi.litecommands.handle.ExecuteResultHandler;
 import dev.rollczi.litecommands.handle.Handler;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.handle.PermissionHandler;
+import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.implementation.injector.InjectorProvider;
+import dev.rollczi.litecommands.injector.bind.AnnotationBind;
 import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;
+import dev.rollczi.litecommands.injector.bind.TypeBind;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
 import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.scheme.SchemeFormat;
@@ -30,14 +33,12 @@ import panda.std.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
+class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
 
     private final Class<SENDER> senderType;
 
@@ -100,6 +101,12 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         return this;
     }
 
+    @Override
+    public <FROM, TO> LiteCommandsBuilder<SENDER> redirectResult(Class<FROM> from, Class<TO> to, Redirector<FROM, TO> redirector) {
+        this.executeResultHandler.redirector(from, to, redirector);
+        return this;
+    }
+
     public LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler) {
         return this.resultHandler(Scheme.class, handler);
     }
@@ -130,6 +137,18 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     @Override
     public <T> LiteCommandsBuilderImpl<SENDER> typeBind(Class<T> type, Supplier<T> supplier) {
         this.injectorSettings.typeBind(type, supplier);
+        return this;
+    }
+
+    @Override
+    public <T> LiteCommandsBuilder<SENDER> typeBind(Class<T> type, TypeBind<T> typeBind) {
+        this.injectorSettings.typeBind(type, typeBind);
+        return this;
+    }
+
+    @Override
+    public <T, A extends Annotation> LiteCommandsBuilder<SENDER> annotatedBind(Class<T> type, Class<A> annotationType, AnnotationBind<T, A> annotationBind) {
+        this.injectorSettings.annotationBind(type, annotationType, annotationBind);
         return this;
     }
 

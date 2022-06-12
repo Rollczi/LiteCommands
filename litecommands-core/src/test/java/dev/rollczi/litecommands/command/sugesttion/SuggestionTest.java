@@ -1,8 +1,13 @@
-package dev.rollczi.litecommands.implementation;
+package dev.rollczi.litecommands.command.sugesttion;
 
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.TestHandle;
+import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.By;
+import dev.rollczi.litecommands.argument.block.Block;
+import dev.rollczi.litecommands.argument.flag.Flag;
+import dev.rollczi.litecommands.argument.joiner.Joiner;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
@@ -10,8 +15,9 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
-import org.junit.jupiter.api.Assertions;
+import dev.rollczi.litecommands.implementation.LiteFactory;
 import org.junit.jupiter.api.Test;
+import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
 
@@ -30,15 +36,18 @@ class SuggestionTest {
     private final TestPlatform testPlatform = new TestPlatform();
     private final LiteCommands<TestHandle> liteCommands = LiteFactory.builder(TestHandle.class)
             .platform(testPlatform)
-            .command(SuggestionsTest.class)
-            .command(SuggestionsMultilevelTest.class)
-            .command(TestCommandLuckPermsExample.class)
-            .command(TestCommandChatExample.class)
+
+            .command(SuggestionsCommand.class)
+            .command(TeleportCommand.class)
+            .command(LuckPermsCommand.class)
+            .command(AdminChatCommand.class)
+
             .argument(String.class, new SuggestionArg("text"))
             .argument(String.class, "1", new SuggestionArg("arg-1.1", "arg-1.2", "arg-1.3"))
             .argument(String.class, "2", new SuggestionArg("arg-2.1", "arg-2.2", "arg-2.3"))
             .argument(String.class, "3", new SuggestionArg("arg-3.1", "arg-3.2", "arg-3.3"))
             .argumentMultilevel(Location.class, new SuggestionLocationArg())
+
             .register();
 
 
@@ -166,82 +175,66 @@ class SuggestionTest {
     }
 
     @Section(route = "suggestions-test")
-    static class SuggestionsTest {
-        @Execute(route = "execute-1")
-        void execute1(@Arg @By("1") String a1, @Arg @By("2") String a2, @Arg @By("3") String a3) {}
-        @Execute(route = "execute-2")
-        void execute2(@Arg @By("1") String a1, @Arg @By("2") String a2, @Opt @By("3") Option<String> a3) {}
-        @Execute(route = "execute-3")
-        void execute3(@Opt @By("1") Option<String> a1, @Opt @By("2") Option<String> a2, @Arg @By("3") String a3) {}
+    static class SuggestionsCommand {
+        @Execute(route = "execute-1") void execute1(@Arg @By("1") String a1, @Arg @By("2") String a2, @Arg @By("3") String a3) {}
+        @Execute(route = "execute-2") void execute2(@Arg @By("1") String a1, @Arg @By("2") String a2, @Opt @By("3") Option<String> a3) {}
+        @Execute(route = "execute-3") void execute3(@Opt @By("1") Option<String> a1, @Opt @By("2") Option<String> a2, @Arg @By("3") String a3) {}
     }
 
     @Section(route = "teleport")
-    static class SuggestionsMultilevelTest {
-        @Execute(min = 3, max = 4)
-        void execute1(@Arg Location location, @Opt Option<String> world) {}
-        @Execute(required = 1)
-        void execute2(@Arg String player) {}
+    static class TeleportCommand {
+        @Execute(min = 3, max = 4) void execute1(@Arg Location location, @Opt Option<String> world) {}
+        @Execute(required = 1) void execute2(@Arg String player) {}
+    }
+
+    @Section(route = "lp user", aliases = "luckperms user")
+    static class LuckPermsCommand {
+        @Execute String set(@Arg String user, @Block("parent set") @Arg String rank) { return user + " -> " + rank; }
+        @Execute String unset(@Arg String user, @Block("parent unset") @Arg String rank) { return user + " -x " + rank;}
+        @Execute String reload(@Arg String user, @Block("reload") Blank none) { return user + " -x ";}
+    }
+
+    @Section(route = "ac", aliases = "adminchat")
+    static class AdminChatCommand {
+        @Execute String unset(@Flag("-s") boolean silent, @Joiner String text) { return silent + " -> " + text; }
+        @Execute(route = "key") String unset(@Opt Option<String> first) { return first.isPresent() ? first.get() : "null"; }
     }
 
     static class SuggestionArg implements OneArgument<String> {
-
         private final List<String> suggestions;
 
-        SuggestionArg(String... suggest) {
-            this.suggestions = Arrays.asList(suggest);
-        }
+        SuggestionArg(String... suggest) { this.suggestions = Arrays.asList(suggest); }
 
         @Override
-        public Result<String, Object> parse(LiteInvocation invocation, String argument) {
-            return Result.ok(argument);
-        }
+        public Result<String, Object> parse(LiteInvocation invocation, String argument) { return Result.ok(argument); }
 
         @Override
         public List<Suggestion> suggest(LiteInvocation invocation) {
-            return this.suggestions.stream()
-                    .map(Suggestion::of)
-                    .collect(Collectors.toList());
+            return this.suggestions.stream().map(Suggestion::of).collect(Collectors.toList());
         }
-
     }
 
     static class Location {
-        private final double x;
-        private final double y;
-        private final double z;
+        final double x, y, z;
 
         Location(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.x = x; this.y = y; this.z = z;
         }
     }
 
     static class SuggestionLocationArg implements MultilevelArgument<Location> {
-
         @Override
         public Result<Location, ?> parseMultilevel(LiteInvocation invocation, String... arguments) {
-            return Result.attempt(NumberFormatException.class, () -> {
-                double x = Double.parseDouble(arguments[0]);
-                double y = Double.parseDouble(arguments[1]);
-                double z = Double.parseDouble(arguments[2]);
-
-                return new Location(x, y, z);
-            });
+            return Result.attempt(NumberFormatException.class, () -> new Location(Double.parseDouble(arguments[0]), Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2])));
         }
 
         @Override
         public List<Suggestion> suggest(LiteInvocation invocation) {
-            return Collections.singletonList(
-                    Suggestion.multilevel("100", "100", "100")
-            );
+            return Collections.singletonList(Suggestion.multilevel("100", "100", "100"));
         }
 
         @Override
-        public int countMultilevel() {
-            return 3;
-        }
-
+        public int countMultilevel() { return 3; }
     }
 
 }

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.implementation;
+package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.platform.LiteSender;
 

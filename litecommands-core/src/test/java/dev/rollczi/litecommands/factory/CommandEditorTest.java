@@ -5,8 +5,8 @@ import dev.rollczi.litecommands.command.CommandService;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
-import dev.rollczi.litecommands.implementation.TestHandle;
-import dev.rollczi.litecommands.implementation.TestPlatform;
+import dev.rollczi.litecommands.TestHandle;
+import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

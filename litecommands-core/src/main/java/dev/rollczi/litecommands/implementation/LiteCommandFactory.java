@@ -14,7 +14,6 @@ import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.factory.CommandStateFactory;
 import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import dev.rollczi.litecommands.factory.CommandState;
-import org.jetbrains.annotations.Nullable;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
 
@@ -50,7 +49,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
             return Option.none();
         }
 
-        CommandSection<SENDER> section = this.stateToSection(state, instance, null);
+        CommandSection<SENDER> section = this.stateToSection(state, instance);
 
         return Option.of(section);
     }
@@ -124,21 +123,37 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
         return (CommandState) editorRegistry.apply(sectionClass, root);
     }
 
-    private CommandSection<SENDER> stateToSection(CommandState state, Object instance, @Nullable CommandSection<SENDER> beforeChild) {
+    private CommandSection<SENDER> stateToSection(CommandState state, Object instance) {
         CommandSection<SENDER> section = new LiteCommandSection<>(state.getName(), state.getAliases());
 
-        this.applyToMeta(section.meta(), state);
+        this.applyStateToMeta(section.meta(), state);
+        section = this.resolveStateOnSection(section, instance, state);
 
-        if (beforeChild != null) {
-            section.meta().applyCommandMeta(beforeChild.meta());
-        }
+        PandaStream.of(instance.getClass().getDeclaredClasses())
+                .mapOpt(type -> Option.attempt(Throwable.class, () -> injector.createInstance(type)))
+                .mapOpt(this::create)
+                .forEach(section::childSection);
 
+        return section;
+    }
+
+    private CommandSection<SENDER> stateToSection(CommandState state, Object instance, CommandMeta before) {
+        CommandSection<SENDER> section = new LiteCommandSection<>(state.getName(), state.getAliases());
+
+        this.applyStateToMeta(section.meta(), state);
+        section.meta().applyCommandMeta(before);
+        section = this.resolveStateOnSection(section, instance, state);
+
+        return section;
+    }
+
+    private CommandSection<SENDER> resolveStateOnSection(CommandSection<SENDER> section, Object instance, CommandState state) {
         for (CommandState child : state.getChildren()) {
             if (child.isCanceled()) {
                 continue;
             }
 
-            CommandSection<SENDER> subSection = this.stateToSection(child, instance, section);
+            CommandSection<SENDER> subSection = this.stateToSection(child, instance, section.meta());
 
             section.childSection(subSection);
         }
@@ -159,11 +174,6 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
             before.childSection(section);
             section = before;
         }
-
-        PandaStream.of(instance.getClass().getDeclaredClasses())
-                .mapOpt(type -> Option.attempt(Throwable.class, () -> injector.createInstance(type)))
-                .mapOpt(this::create)
-                .forEach(section::childSection);
 
         return section;
     }
@@ -195,17 +205,18 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
 
         LiteArgumentArgumentExecutor<SENDER> executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
 
-        this.applyToMeta(executor.meta(), state);
+        this.applyStateToMeta(executor.meta(), state);
 
         return executor;
     }
 
-    private void applyToMeta(CommandMeta meta, CommandState state) {
+    private void applyStateToMeta(CommandMeta meta, CommandState state) {
         meta.addPermission(state.getPermissions());
         meta.addExcludedPermission(state.getExecutedPermissions());
         meta.setAmountValidator(state.getValidator());
     }
 
+    @SuppressWarnings("unchecked")
     private <T, A extends Annotation> AnnotatedParameterImpl<T, A> castAndCreateAnnotated(Parameter parameter, Annotation annotation, Argument<T, A> argument) {
         return new AnnotatedParameterImpl<>((A) annotation, parameter, argument);
     }
