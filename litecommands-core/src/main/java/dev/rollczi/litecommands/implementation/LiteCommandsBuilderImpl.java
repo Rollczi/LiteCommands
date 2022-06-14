@@ -205,8 +205,8 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
             throw new IllegalStateException("Registry platform is not set");
         }
 
-        LiteCommands<SENDER> commands = new LiteCommandsImpl<>(senderType, registryPlatform, executeResultHandler);
         Injector<SENDER> injector = this.injectorSettings.create();
+        LiteCommands<SENDER> commands = new LiteCommandsImpl<>(senderType, registryPlatform, executeResultHandler, injector);
 
         if (this.commandStateFactory == null) {
             this.commandStateFactory = new LiteCommandFactory<>(injector, this.argumentsRegistry, this.editorRegistry);
