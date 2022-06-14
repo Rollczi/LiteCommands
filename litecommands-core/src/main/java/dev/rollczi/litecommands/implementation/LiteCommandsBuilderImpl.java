@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsProcess;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
@@ -48,6 +49,9 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     private RegistryPlatform<SENDER> registryPlatform;
     private CommandStateFactory<SENDER> commandStateFactory;
 
+    private LiteCommandsProcess<SENDER> preProcess = (builder, platform, injector) -> {};
+    private LiteCommandsProcess<SENDER> postProcess = (builder, platform, injector) -> {};
+
     private final Set<Consumer<CommandStateFactory<SENDER>>> commandStateFactoryEditors = new HashSet<>();
     private final CommandEditorRegistry editorRegistry = new CommandEditorRegistry();
 
@@ -86,6 +90,12 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     @Override
     public LiteCommandsBuilder<SENDER> commandEditor(String name, CommandEditor commandEditor) {
         this.editorRegistry.registerEditor(name, commandEditor);
+        return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER> commandGlobalEditor(CommandEditor commandsEditor) {
+        this.editorRegistry.registerGlobalEditor(commandsEditor);
         return this;
     }
 
@@ -200,10 +210,24 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     }
 
     @Override
+    public LiteCommandsBuilder<SENDER> beforeRegister(LiteCommandsProcess<SENDER> preProcess) {
+        this.preProcess = preProcess;
+        return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER> afterRegister(LiteCommandsProcess<SENDER> postProcess) {
+        this.postProcess = postProcess;
+        return this;
+    }
+
+    @Override
     public LiteCommands<SENDER> register() {
         if (registryPlatform == null) {
             throw new IllegalStateException("Registry platform is not set");
         }
+
+        this.preProcess.process(this, this.registryPlatform, this.injectorSettings.create());
 
         Injector<SENDER> injector = this.injectorSettings.create();
         LiteCommands<SENDER> commands = new LiteCommandsImpl<>(senderType, registryPlatform, executeResultHandler, injector);
@@ -237,6 +261,8 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
 
             service.register(option.get());
         }
+
+        this.postProcess.process(this, this.registryPlatform, injector);
 
         return commands;
     }

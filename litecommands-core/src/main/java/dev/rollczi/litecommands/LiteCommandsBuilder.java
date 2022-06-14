@@ -31,6 +31,8 @@ public interface LiteCommandsBuilder<SENDER> {
 
     LiteCommandsBuilder<SENDER> commandEditor(String name, CommandEditor commandEditor);
 
+    LiteCommandsBuilder<SENDER> commandGlobalEditor(CommandEditor allCommandsEditor);
+
     LiteCommandsBuilder<SENDER> schemeFormat(SchemeFormat schemeFormat);
 
     <T> LiteCommandsBuilder<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler);
@@ -68,6 +70,10 @@ public interface LiteCommandsBuilder<SENDER> {
     LiteCommandsBuilder<SENDER> executorFactory(CommandStateFactory<SENDER> commandStateFactory);
 
     Class<SENDER> getSenderType();
+
+    LiteCommandsBuilder<SENDER> beforeRegister(LiteCommandsProcess<SENDER> preProcess);
+
+    LiteCommandsBuilder<SENDER> afterRegister(LiteCommandsProcess<SENDER> postProcess);
 
     LiteCommands<SENDER> register();
 

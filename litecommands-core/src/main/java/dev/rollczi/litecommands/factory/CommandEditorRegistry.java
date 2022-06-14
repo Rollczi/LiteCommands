@@ -1,12 +1,15 @@
 package dev.rollczi.litecommands.factory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class CommandEditorRegistry {
 
     private final Map<Class<?>, CommandEditor> editors = new HashMap<>();
     private final Map<String, CommandEditor> editorsByName = new HashMap<>();
+    private final Set<CommandEditor> globalEditors = new HashSet<>();
 
     public void registerEditor(Class<?> on, CommandEditor editor) {
         editors.put(on, editor);
@@ -16,7 +19,15 @@ public class CommandEditorRegistry {
         editorsByName.put(on, editor);
     }
 
+    public void registerGlobalEditor(CommandEditor editor) {
+        globalEditors.add(editor);
+    }
+
     public CommandEditor.State apply(Class<?> sectionClass, CommandEditor.State root) {
+        for (CommandEditor editor : globalEditors) {
+            root = editor.edit(root);
+        }
+
         CommandEditor editorByName = editorsByName.get(root.getName());
 
         if (editorByName != null) {
@@ -31,4 +42,5 @@ public class CommandEditorRegistry {
 
         return root;
     }
+
 }
