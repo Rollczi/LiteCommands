@@ -1,20 +1,26 @@
-package dev.rollczi.litecommands.implementation.injector;
+package dev.rollczi.litecommands.injector;
 
 import dev.rollczi.litecommands.shared.ReflectFormat;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class MissingBindException extends ReflectiveOperationException {
+public class MissingBindException extends InjectException {
     private final List<Class<?>> missing;
     private final String message;
 
-    MissingBindException(List<Class<?>> missing) {
+    public MissingBindException(List<Class<?>> missing) {
         this.missing = missing;
         this.message = null;
     }
 
-    MissingBindException(List<Class<?>> missing, String message) {
+    public MissingBindException(List<Class<?>> missing, String message) {
+        this.missing = missing;
+        this.message = message;
+    }
+
+    public MissingBindException(List<Class<?>> missing, String message, Throwable cause) {
+        super(cause);
         this.missing = missing;
         this.message = message;
     }
