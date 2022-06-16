@@ -27,7 +27,7 @@ public class MissingBindException extends InjectException {
 
     @Override
     public String getMessage() {
-        return (message != null ? message + " " : "Cannot find binds for ") + missing.stream().map(ReflectFormat::singleClass).collect(Collectors.joining(", "));
+        return (message != null ? message + " " : "Cannot find binds for ") + "[" + missing.stream().map(Class::getName).collect(Collectors.joining(", ")) + "]";
     }
 
 }

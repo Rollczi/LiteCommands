@@ -13,7 +13,7 @@ public class ReflectFormatTest {
     void docsMethod() throws NoSuchMethodException {
         assertEquals(
                 "ReflectFormatTest#testMethod(@Arg String arg0, @Arg int arg1)",
-                ReflectFormat.docsMethod(ReflectFormatTest.class.getMethod("testMethod", String.class, int.class))
+                ReflectFormat.docsExecutable(ReflectFormatTest.class.getMethod("testMethod", String.class, int.class))
         );
     }
 

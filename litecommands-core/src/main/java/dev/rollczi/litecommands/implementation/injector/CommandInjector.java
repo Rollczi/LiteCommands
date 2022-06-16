@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class CommandInjector<SENDER> implements Injector<SENDER> {
 
@@ -49,6 +48,10 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
     }
 
     private <T> Result<Option<T>, Exception> createInstance0(Class<T> type, InvokeContext<SENDER> context, boolean onlyWitInjectAnnotation) {
+        if (type.isInterface()) {
+            return Result.ok(Option.none());
+        }
+
         LinkedHashSet<Constructor<?>> sortedConstructors = Arrays.stream(type.getDeclaredConstructors())
                 .filter(constructor -> constructor.isAnnotationPresent(Inject.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -63,13 +66,22 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
 
         Constructor<?>[] constructorsArray = sortedConstructors.toArray(new Constructor<?>[0]);
 
+        if (constructorsArray.length == 0) {
+            try {
+                constructorsArray = new Constructor[] { type.getDeclaredConstructor() };
+            }
+            catch (NoSuchMethodException ignore) {
+                return Result.error(new InjectException("Did you forget the @Inject annotation in front of the constructor of class " + type + "?"));
+            }
+        }
+
         return this.invokeExecutables(type, constructorsArray, context, (constructor, arg) -> type.cast(constructor.newInstance(arg)));
     }
 
     @Override
     public Object invokeMethod(Method method, Object instance, InvokeContext<SENDER> context) {
         return this.invokeExecutables(Object.class, new Method[]{ method }, context, (m, arg) -> m.invoke(instance, arg))
-                .orThrow((blank) -> new IllegalStateException("The method " + ReflectFormat.docsMethod(method) + " cannot be invoked!"))
+                .orThrow((blank) -> new IllegalStateException("The method " + ReflectFormat.docsExecutable(method) + " cannot be invoked!"))
                 .orNull();
     }
 
@@ -96,7 +108,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
             errors.add(result.getError());
         }
 
-        InjectException exception = new InjectException("Can not execute executable");
+        InjectException exception = new InjectException("Can not execute: " + Arrays.stream(executables).map(ReflectFormat::docsExecutable).collect(Collectors.joining(", ")));
 
         for (Exception error : errors) {
             exception.addSuppressed(error);
@@ -110,7 +122,8 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         Iterator<Object> iterator = useContext ? context.getInjectable().iterator() : Collections.emptyIterator();
 
         List<Object> parameters = new ArrayList<>();
-        List<MissingBindException> missingBindExceptions = new ArrayList<>();
+        List<Class<?>> missingBinds = new ArrayList<>();
+        List<Exception> missingBindsExceptions = new ArrayList<>();
 
         for (Parameter parameter : executable.getParameters()) {
             Class<?> parameterType = parameter.getType();
@@ -119,7 +132,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
                 if (!iterator.hasNext()) {
                     if (executable instanceof Method) {
                         return Result.error(new MissingBindException(Collections.singletonList(parameterType),
-                                "Missing " + ReflectFormat.singleClass(parameterType) + " argument for method: " + ReflectFormat.docsMethod((Method) executable) + " Have you added argument()?"));
+                                "Missing " + ReflectFormat.singleClass(parameterType) + " argument for method: " + ReflectFormat.docsExecutable((Method) executable) + " Have you added argument()?"));
                     }
 
                     return Result.error(new MissingBindException(Collections.singletonList(parameterType), "Argument in constructor? Missing bind's"));
@@ -140,31 +153,33 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
 
             Result<? extends Option<?>, Exception> result = this.createInstance0(parameterType, context, true);
 
-            if (result.isOk() && result.get().isPresent()) {
-                Object createdInstance = result.get().get();
+            if (result.isOk()) {
+                Option<?> optionReturnValue = result.get();
+
+                if (optionReturnValue.isEmpty()) {
+                    missingBinds.add(parameterType);
+                    continue;
+                }
+
+                Object createdInstance = optionReturnValue.get();
 
                 parameters.add(createdInstance);
                 processor.settings().unSafeTypeBind(parameterType, () -> createdInstance);
                 continue;
             }
 
-            MissingBindException subBindException = new MissingBindException(
-                    Collections.singletonList(parameterType),
-                    useContext ? "Have you added typeBind() or contextualBind()?" : "Have you added typeBind()?",
-                    result.getError()
-            );
-
-            missingBindExceptions.add(subBindException);
+            missingBinds.add(parameterType);
+            missingBindsExceptions.add(result.getError());
         }
 
-        if (!missingBindExceptions.isEmpty()) {
-            InjectException bindException = new InjectException("Can not find binds for " + executable.toGenericString());
+        if (!missingBinds.isEmpty()) {
+            MissingBindException exception = new MissingBindException(missingBinds, "Have you added type bind or contextual bind? " + ReflectFormat.docsExecutable(executable));
 
-            for (MissingBindException error : missingBindExceptions) {
-                bindException.addSuppressed(error);
+            for (Exception missingBindsException : missingBindsExceptions) {
+                exception.addSuppressed(missingBindsException);
             }
 
-            return Result.error(bindException);
+            return Result.error(exception);
         }
 
         try {

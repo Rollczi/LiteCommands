@@ -2,6 +2,8 @@ package dev.rollczi.litecommands.shared;
 
 import panda.std.function.ThrowingSupplier;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -19,12 +21,16 @@ public final class ReflectFormat {
         return clazz.getSimpleName();
     }
 
-    public static String docksShortMethod(Method method) {
-        return String.format(METHOD, singleClass(method.getDeclaringClass()), method.getName());
+    public static String docksShortExecutable(Executable executable) {
+        return String.format(METHOD, singleClass(executable.getDeclaringClass()), executable.getName());
     }
 
-    public static String docsMethod(Method method) {
-        return String.format(METHOD_WITH_PARAM, singleClass(method.getDeclaringClass()), method.getName(), parameters(method));
+    public static String docsExecutable(Executable executable) {
+        return String.format(METHOD_WITH_PARAM, singleClass(
+                executable.getDeclaringClass()),
+                executable instanceof Constructor ? executable.getDeclaringClass().getSimpleName() : executable.getName(),
+                parameters(executable)
+        );
     }
 
     public static String method(Method method) {
@@ -39,8 +45,8 @@ public final class ReflectFormat {
         }
     }
 
-    public static String parameters(Method method) {
-        return Arrays.stream(method.getParameters()).map(param -> {
+    public static String parameters(Executable executable) {
+        return Arrays.stream(executable.getParameters()).map(param -> {
             String annotations = Arrays.stream(param.getAnnotations()).map(annotation -> "@" + annotation.annotationType().getSimpleName()).collect(Collectors.joining(" "));
             String type = param.getType().getSimpleName();
             String name = param.getName();
