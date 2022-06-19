@@ -81,7 +81,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
     @Override
     public Object invokeMethod(Method method, Object instance, InvokeContext<SENDER> context) {
         return this.invokeExecutables(Object.class, new Method[]{ method }, context, (m, arg) -> m.invoke(instance, arg))
-                .orThrow((blank) -> new IllegalStateException("The method " + ReflectFormat.docsExecutable(method) + " cannot be invoked!"))
+                .orThrow((exception) -> new IllegalStateException("The method " + ReflectFormat.docsExecutable(method) + " cannot be invoked!", exception))
                 .orNull();
     }
 
@@ -186,8 +186,11 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
             executable.setAccessible(true);
             return Result.ok(Option.of(invoker.apply(executable, parameters.toArray(new Object[0]))));
         }
-        catch (ReflectiveOperationException exception) {
-            return Result.error(exception);
+        catch (Exception exception) {
+            return Result.error(new InjectException(
+                    "Injected parameters: " +
+                    parameters.stream().map(o -> o.getClass().getName()).collect(Collectors.joining(", ")), exception
+            ));
         }
     }
 
