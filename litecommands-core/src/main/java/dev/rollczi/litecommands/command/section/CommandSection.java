@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.command.section;
 
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.Invocation;
+import dev.rollczi.litecommands.command.sugesstion.SuggestionMerger;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
@@ -23,7 +24,7 @@ public interface CommandSection<SENDER> extends Suggester, MetaHolder {
 
     ExecuteResult execute(Invocation<SENDER> invocation);
 
-    SuggestionStack suggestion(Invocation<SENDER> invocation);
+    SuggestionMerger findSuggestion(Invocation<SENDER> invocation, int route);
 
     FindResult<SENDER> find(LiteInvocation invocation, int route, FindResult<SENDER> lastResult);
 

@@ -88,10 +88,18 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
     }
 
     public List<String> suggestion(String command, String... args) {
-        FindResult<TestHandle> findResult = this.find(command, args);
-        SuggestionStack result = findResult.knownSuggestion();
+        TestHandle handle = new TestHandle();
+        for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
+            CommandSection<TestHandle> section = entry.getKey();
 
-        return result.multilevelSuggestions();
+            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle), command, command, args);
+
+            if (section.isSimilar(command)) {
+                return section.findSuggestion(liteInvocation, 0).merge().multilevelSuggestions();
+            }
+        }
+
+        throw new IllegalArgumentException();
     }
 
     private static final class Command {

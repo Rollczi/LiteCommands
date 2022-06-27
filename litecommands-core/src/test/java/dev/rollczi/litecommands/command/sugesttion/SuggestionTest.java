@@ -101,8 +101,9 @@ class SuggestionTest {
     void aliasesSuggestion() {
         List<String> suggestion = testPlatform.suggestion("lp");
 
-        assertEquals(1, suggestion.size());
-        assertEquals("lp", suggestion.get(0));
+        assertEquals(2, suggestion.size());
+        assertEquals("luckperms", suggestion.get(0));
+        assertEquals("lp", suggestion.get(1));
     }
 
     @Test

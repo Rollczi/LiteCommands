@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
-import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
+import dev.rollczi.litecommands.command.sugesstion.UniformSuggestionStack;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;
@@ -79,8 +79,8 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
         }
 
         @Override
-        public TwinSuggestionStack suggest() {
-            return TwinSuggestionStack.of(annotatedParameter.extractSuggestion(invocation));
+        public UniformSuggestionStack suggest() {
+            return UniformSuggestionStack.of(annotatedParameter.extractSuggestion(invocation));
         }
     }
 

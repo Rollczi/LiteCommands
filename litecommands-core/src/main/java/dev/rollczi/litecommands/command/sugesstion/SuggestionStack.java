@@ -6,19 +6,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SuggestionStack {
 
-    protected final List<Suggestion> suggestions;
+    protected final LinkedHashSet<Suggestion> suggestions;
 
     protected SuggestionStack(List<Suggestion> suggestions) {
-        this.suggestions = suggestions;
+        this.suggestions = new LinkedHashSet<>(suggestions);
     }
 
-    public List<Suggestion> suggestions() {
-        return Collections.unmodifiableList(suggestions);
+    public Set<Suggestion> suggestions() {
+        return Collections.unmodifiableSet(suggestions);
     }
 
     public List<String> multilevelSuggestions() {

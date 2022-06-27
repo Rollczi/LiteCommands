@@ -5,22 +5,16 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
-import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
-import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
 import dev.rollczi.litecommands.shared.Validation;
-import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import panda.std.Option;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Deprecated
 public final class FindResult<SENDER> {
 
     private final Invocation<SENDER> invocation;
@@ -172,120 +166,7 @@ public final class FindResult<SENDER> {
         return Collections.unmodifiableList(results);
     }
 
-    public SuggestionStack knownSuggestion() {
-        if (sections.isEmpty()) {
-            return TwinSuggestionStack.empty();
-        }
 
-        if (invocation.arguments().length == 0) {
-            return SuggestionStack.empty().with(Suggestion.of(invocation.label()));
-        }
-
-        int index = invocation.arguments().length - 1;
-
-        return this.sectionSuggestions(sections.get(0), 0).getOrDefault(index, SuggestionStack.empty());
-    }
-
-    private Map<Integer, SuggestionStack> sectionSuggestions(CommandSection<SENDER> section, int skipSections) {
-        Map<Integer, SuggestionStack> suggestions = new HashMap<>();
-        String[] args = invocation.arguments();
-
-        for (CommandSection<SENDER> child : section.childrenSection()) {
-            List<String> argumentsToLast = Arrays.asList(args).subList(skipSections, args.length);
-
-            if (!child.verify(argumentsToLast)) {
-                continue;
-            }
-
-            SuggestionStack stack = suggestions.getOrDefault(0, SuggestionStack.empty())
-                    .with(child.suggest().suggestions());
-
-            suggestions.put(skipSections, stack);
-
-            for (Map.Entry<Integer, SuggestionStack> entry : sectionSuggestions(child, skipSections + 1).entrySet()) {
-                Integer index = entry.getKey();
-                SuggestionStack childStack = suggestions.getOrDefault(index, SuggestionStack.empty())
-                        .with(entry.getValue().suggestions());
-
-                suggestions.put(index, childStack);
-            }
-        }
-
-        for (ArgumentExecutor<SENDER> argumentExecutor : section.executors()) {
-            for (Map.Entry<Integer, SuggestionStack> entry : executorSuggestions(argumentExecutor, skipSections).entrySet()) {
-                Integer index = entry.getKey();
-                SuggestionStack stack = suggestions.getOrDefault(index, SuggestionStack.empty())
-                        .with(entry.getValue().suggestions());
-
-                suggestions.put(index, stack);
-            }
-        }
-
-        return suggestions;
-    }
-
-    private Map<Integer, SuggestionStack> executorSuggestions(ArgumentExecutor<SENDER> executor, int skipArguments) {
-        Map<Integer, SuggestionStack> suggestions = new HashMap<>();
-        List<AnnotatedParameter<SENDER, ?>> parameters = executor.annotatedParameters();
-
-        int consumed = 0;
-        for (int index = 0; index < parameters.size() && skipArguments + consumed <= invocation.arguments().length; index++) {
-            List<String> argumentsToLast = Arrays.asList(invocation.arguments()).subList(skipArguments + consumed, invocation.arguments().length);
-            boolean correct = false;
-
-            int currentConsumed = consumed;
-            for (int optionalIndex = index; optionalIndex < parameters.size(); optionalIndex++) {
-                AnnotatedParameter<SENDER, ?> parameter = parameters.get(optionalIndex);
-                Suggester suggester = parameter.toSuggester(invocation.toLite());
-
-                if (suggester.verify(argumentsToLast)) {
-                    int currentRealArgument = skipArguments + currentConsumed;
-                    TwinSuggestionStack suggest = suggester.suggest();
-
-                    for (Map.Entry<Integer, TwinSuggestionStack> entry : disassemble(suggest, currentRealArgument).entrySet()) {
-                        SuggestionStack stack = suggestions.getOrDefault(entry.getKey(), SuggestionStack.empty())
-                                .with(entry.getValue().suggestions());
-
-                        suggestions.put(entry.getKey(), stack);
-                    }
-
-                    if (optionalIndex == index) {
-                        consumed += suggest.multilevelLength();
-                        correct = true;
-                    }
-                }
-
-                if (!parameter.argument().isOptional()) {
-                    break;
-                }
-            }
-
-            if (!correct && !parameters.get(index).argument().isOptional()) {
-                break;
-            }
-        }
-
-        return suggestions;
-
-    }
-
-    private Map<Integer, TwinSuggestionStack> disassemble(TwinSuggestionStack stack, int base) {
-        Map<Integer, TwinSuggestionStack> suggestions = new HashMap<>();
-
-        TwinSuggestionStack suggestionStack = TwinSuggestionStack.empty();
-
-        for (Suggestion suggestion : stack.suggestions()) {
-            suggestionStack = suggestionStack.with(suggestion);
-
-            if (suggestion.isMultilevel()) {
-                suggestions.putAll(disassemble(TwinSuggestionStack.empty().with(suggestion.slashLevel(1)), base + 1));
-            }
-        }
-
-        suggestions.put(base, suggestionStack);
-
-        return suggestions;
-    }
 
 
     public boolean isLongerThan(FindResult<SENDER> findResult) {

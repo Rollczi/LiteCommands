@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
-import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
+import dev.rollczi.litecommands.command.sugesstion.UniformSuggestionStack;
 import panda.std.Lazy;
 
 import java.lang.annotation.Annotation;
@@ -49,13 +49,13 @@ final class AnnotatedParameterStateImpl<SENDER, A extends Annotation> extends An
     }
 
     @Override
-    public TwinSuggestionStack suggest() {
-        TwinSuggestionStack.empty()
+    public UniformSuggestionStack suggest() {
+        UniformSuggestionStack.empty()
                 .with(Suggestion.multilevel("", ""))
                 .with(Suggestion.multilevel("", ""))
                 .with(Suggestion.multilevel("", ""));
 
-        return TwinSuggestionStack.of(this.suggestions.get());
+        return UniformSuggestionStack.of(this.suggestions.get());
     }
 
 }
