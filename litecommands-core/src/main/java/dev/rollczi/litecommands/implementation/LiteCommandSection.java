@@ -1,14 +1,16 @@
 package dev.rollczi.litecommands.implementation;
 
+import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.injector.Injector;
+import dev.rollczi.litecommands.command.sugesstion.Suggester;
+import dev.rollczi.litecommands.command.sugesstion.SuggestionMerger;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
-import dev.rollczi.litecommands.command.sugesstion.TwinSuggestionStack;
+import dev.rollczi.litecommands.command.sugesstion.UniformSuggestionStack;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -52,11 +54,11 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
     }
 
     @Override
-    public TwinSuggestionStack suggest() {
+    public UniformSuggestionStack suggest() {
         Set<String> suggestions = new HashSet<>(this.aliases);
         suggestions.add(this.name);
 
-        return TwinSuggestionStack.of(Suggestion.of(suggestions));
+        return UniformSuggestionStack.of(Suggestion.of(suggestions));
     }
 
     @Override
@@ -97,10 +99,68 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
     }
 
     @Override
-    public SuggestionStack suggestion(Invocation<SENDER> invocation) {
-        FindResult<SENDER> findResult = this.find(invocation.toLite(), 0, FindResult.none(invocation));
+    public SuggestionMerger findSuggestion(Invocation<SENDER> invocation, int route) {
+        SuggestionMerger suggestionMerger = SuggestionMerger.empty(invocation);
 
-        return findResult.knownSuggestion();
+        if (invocation.arguments().length == route) {
+            return suggestionMerger.appendRoot(this.suggest());
+        }
+
+        int routeAbove = route + 1;
+
+        for (CommandSection<SENDER> section : this.childSections) {
+            UniformSuggestionStack suggestionStack = section.filterSuggestions(route, invocation.toLite());
+
+            if (suggestionStack.multilevelSuggestions().isEmpty()) {
+                continue;
+            }
+
+            suggestionMerger.appendRoot(section.findSuggestion(invocation, routeAbove).merge());
+        }
+
+        LiteInvocation lite = invocation.toLite();
+
+        for (ArgumentExecutor<SENDER> argumentExecutor : this.argumentExecutors) {
+            List<AnnotatedParameter<SENDER, ?>> parameters = argumentExecutor.annotatedParameters();
+
+            suggestionMerger.appendRoot(this.suggestionParameters(lite, 0, routeAbove, 0, parameters));
+        }
+
+        return suggestionMerger;
+    }
+
+    private SuggestionStack suggestionParameters(LiteInvocation lite, int margin, int routeAbove, int parameterIndex, List<AnnotatedParameter<SENDER, ?>> parameters) {
+        List<AnnotatedParameter<SENDER, ?>> list = parameters.subList(parameterIndex, parameters.size());
+        int routeReal = routeAbove + parameterIndex;
+
+        if (list.isEmpty() || routeReal > lite.arguments().length) {
+            return SuggestionStack.empty();
+        }
+
+        AnnotatedParameter<SENDER, ?> parameter = list.get(0);
+        Suggester suggester = parameter.toSuggester(lite, routeAbove);
+        UniformSuggestionStack suggest = suggester.filterSuggestions(routeReal - 1 + margin, lite);
+
+        if (suggest.suggestions().isEmpty()) {
+            return SuggestionStack.empty();
+        }
+
+        SuggestionMerger merger = SuggestionMerger.empty(lite);
+        int nextMargin = margin + suggest.lengthMultilevel() - 1;
+
+        merger.append(routeReal + margin, suggest);
+
+        SuggestionStack stack = suggestionParameters(lite, nextMargin, routeAbove, parameterIndex + 1, parameters);
+
+        merger.appendRoot(stack);
+
+        if (parameter.argument().isOptional()) {
+            SuggestionStack optionalSuggestions = this.suggestionParameters(lite, nextMargin, routeAbove - 1, parameterIndex + 1, parameters);
+
+            merger.append(routeReal, optionalSuggestions);
+        }
+
+        return merger.merge();
     }
 
     @Override

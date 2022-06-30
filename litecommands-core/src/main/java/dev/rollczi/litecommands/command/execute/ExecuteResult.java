@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.command.execute;
 
 import dev.rollczi.litecommands.command.FindResult;
 
+@Deprecated
 public class ExecuteResult {
 
     private final FindResult based;

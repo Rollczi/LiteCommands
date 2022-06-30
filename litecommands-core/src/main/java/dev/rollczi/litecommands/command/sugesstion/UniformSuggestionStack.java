@@ -6,26 +6,44 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public final class TwinSuggestionStack extends SuggestionStack {
+public final class UniformSuggestionStack extends SuggestionStack {
 
     private final int multilevelLength;
 
-    private TwinSuggestionStack(List<Suggestion> suggestions, int multilevelLength) {
+    private UniformSuggestionStack(List<Suggestion> suggestions, int multilevelLength) {
         super(suggestions);
         this.multilevelLength = multilevelLength;
     }
 
-    public int multilevelLength() {
+    public int lengthMultilevel() {
         return multilevelLength;
     }
 
+    public boolean isMultilevel() {
+        return multilevelLength > 1;
+    }
+
+    public UniformSuggestionStack slashLevel(int level) {
+        if (this.suggestions.isEmpty()) {
+            return this;
+        }
+
+        List<Suggestion> slashed = new ArrayList<>();
+
+        for (Suggestion suggestion : this.suggestions) {
+            slashed.add(suggestion.slashLevel(level));
+        }
+
+        return new UniformSuggestionStack(slashed,  this.multilevelLength - level);
+    }
+
     @Override
-    public TwinSuggestionStack with(Suggestion... suggestions) {
+    public UniformSuggestionStack with(Suggestion... suggestions) {
         return this.with(Arrays.asList(suggestions));
     }
 
     @Override
-    public TwinSuggestionStack with(Iterable<Suggestion> suggestions) {
+    public UniformSuggestionStack with(Iterable<Suggestion> suggestions) {
         ArrayList<Suggestion> list = new ArrayList<>(this.suggestions);
 
         for (Suggestion suggestion : suggestions) {
@@ -35,11 +53,11 @@ public final class TwinSuggestionStack extends SuggestionStack {
         return of(list);
     }
 
-    public static TwinSuggestionStack empty() {
-        return new TwinSuggestionStack(Collections.emptyList(), 0);
+    public static UniformSuggestionStack empty() {
+        return new UniformSuggestionStack(Collections.emptyList(), 0);
     }
 
-    public static TwinSuggestionStack of(Collection<Suggestion> suggestions) {
+    public static UniformSuggestionStack of(Collection<Suggestion> suggestions) {
         int last = - 1;
 
         for (Suggestion suggestion : suggestions) {
@@ -59,7 +77,7 @@ public final class TwinSuggestionStack extends SuggestionStack {
             return empty();
         }
 
-        return new TwinSuggestionStack(new ArrayList<>(suggestions), last);
+        return new UniformSuggestionStack(new ArrayList<>(suggestions), last);
     }
 
 }

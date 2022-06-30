@@ -44,7 +44,7 @@ public class CommandService<SENDER> {
                     this.handler.handle(sender, invocation, result);
                     return result;
                 },
-                (sender, invocation) -> section.suggestion(invocation.withHandle(sender))
+                (sender, invocation) -> section.findSuggestion(invocation.withHandle(sender), 0).merge()
         );
     }
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Suggestion {
 
@@ -65,6 +66,25 @@ public class Suggestion {
         }
 
         return complete;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Suggestion)) {
+            return false;
+        }
+
+        Suggestion that = (Suggestion) obj;
+        return this.multilevel().equals(that.multilevel());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.multilevel());
     }
 
 }

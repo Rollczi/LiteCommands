@@ -1,43 +1,44 @@
 package dev.rollczi.litecommands.command.sugesstion;
 
-import java.util.List;
+import dev.rollczi.litecommands.command.LiteInvocation;
+
+import java.util.Arrays;
 
 public interface Suggester {
 
-    Suggester NONE = TwinSuggestionStack::empty;
+    UniformSuggestionStack suggest();
 
-    static Suggester of(Iterable<Suggestion> iterable) {
-        return new IteratorSuggester(iterable);
-    }
-
-    TwinSuggestionStack suggest();
-
-    default boolean verify(List<String> arguments) {
-        TwinSuggestionStack stack = this.suggest();
-        String multilevel = String.join(" ", arguments.subList(0, Math.min(stack.multilevelLength(), arguments.size())))
+    default UniformSuggestionStack filterSuggestions(int route, LiteInvocation invocation) {
+        String[] rawArguments = invocation.arguments();
+        UniformSuggestionStack stack = this.suggest();
+        String multilevel = String.join(" ", Arrays.asList(rawArguments).subList(route, Math.min(route  + stack.lengthMultilevel(), rawArguments.length)))
                 .toLowerCase();
 
         if (multilevel.isEmpty()) {
-            return true;
+            return stack;
         }
 
-        if (arguments.size() > stack.multilevelLength()) {
-            for (String suggest : stack.multilevelSuggestions()) {
-                if (suggest.toLowerCase().equals(multilevel)) {
-                    return true;
+        if (rawArguments.length - route > stack.lengthMultilevel()) {
+            UniformSuggestionStack suggestionStack = UniformSuggestionStack.empty();
+
+            for (Suggestion suggestion : stack.suggestions()) {
+                if (suggestion.multilevel().toLowerCase().equals(multilevel)) {
+                    suggestionStack = suggestionStack.with(suggestion);
                 }
             }
 
-            return false;
+            return suggestionStack;
         }
 
-        for (String suggest : stack.multilevelSuggestions()) {
-            if (suggest.toLowerCase().startsWith(multilevel)) {
-                return true;
+        UniformSuggestionStack suggestionStack = UniformSuggestionStack.empty();
+
+        for (Suggestion suggestion : stack.suggestions()) {
+            if (suggestion.multilevel().toLowerCase().startsWith(multilevel)) {
+                suggestionStack = suggestionStack.with(suggestion);
             }
         }
 
-        return false;
+        return suggestionStack;
     }
 
 }
