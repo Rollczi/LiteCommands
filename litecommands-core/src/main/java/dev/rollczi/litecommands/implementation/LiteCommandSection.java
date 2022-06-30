@@ -18,7 +18,6 @@ import dev.rollczi.litecommands.shared.Validation;
 import panda.std.Option;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -110,7 +109,9 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
         int routeAbove = route + 1;
 
         for (CommandSection<SENDER> section : this.childSections) {
-            if (!section.verify(Arrays.asList(invocation.arguments()).subList(route, invocation.arguments().length))) {
+            UniformSuggestionStack suggestionStack = section.filterSuggestions(route, invocation.toLite());
+
+            if (suggestionStack.multilevelSuggestions().isEmpty()) {
                 continue;
             }
 
@@ -137,14 +138,14 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
         }
 
         AnnotatedParameter<SENDER, ?> parameter = list.get(0);
-        Suggester suggester = parameter.toSuggester(lite);
+        Suggester suggester = parameter.toSuggester(lite, routeAbove);
+        UniformSuggestionStack suggest = suggester.filterSuggestions(routeReal - 1 + margin, lite);
 
-        if (!suggester.verify(Arrays.asList(lite.arguments()).subList(routeReal - 1 + margin, lite.arguments().length))) {
+        if (suggest.suggestions().isEmpty()) {
             return SuggestionStack.empty();
         }
 
         SuggestionMerger merger = SuggestionMerger.empty(lite);
-        UniformSuggestionStack suggest = suggester.suggest();
         int nextMargin = margin + suggest.lengthMultilevel() - 1;
 
         merger.append(routeReal + margin, suggest);
@@ -161,8 +162,6 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
 
         return merger.merge();
     }
-
-
 
     @Override
     public FindResult<SENDER> find(LiteInvocation invocation, int route, FindResult<SENDER> lastResult) {

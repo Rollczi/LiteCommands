@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.sugesstion.Suggest;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
@@ -127,6 +128,24 @@ class SuggestionTest {
     }
 
     @Test
+    void suggestionsWithOptionalArgumentOnyOneTest() {
+        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-2", "arg-1.1", "arg-2.1");
+
+        assertEquals(1, suggestion.size());
+        assertEquals("arg-2.1", suggestion.get(0));
+    }
+
+    @Test
+    void suggestionsWithOptionalArgumentsAndStaticTest() {
+        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "");
+
+        assertSize(10, suggestion);
+        assertCollection(list("static"), suggestion);
+        assertCollection(list("arg-1.1", "arg-1.2", "arg-1.3"), suggestion);
+        assertCollection(list("arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
+    }
+
+    @Test
     void suggestionsWithOptionalArgumentsTest() {
         List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "arg");
 
@@ -179,7 +198,7 @@ class SuggestionTest {
     static class SuggestionsCommand {
         @Execute(route = "execute-1") void execute1(@Arg @By("1") String a1, @Arg @By("2") String a2, @Arg @By("3") String a3) {}
         @Execute(route = "execute-2") void execute2(@Arg @By("1") String a1, @Arg @By("2") String a2, @Opt @By("3") Option<String> a3) {}
-        @Execute(route = "execute-3") void execute3(@Opt @By("1") Option<String> a1, @Opt @By("2") Option<String> a2, @Arg @By("3") String a3) {}
+        @Execute(route = "execute-3") void execute3(@Opt @Suggest("static") @By("1") Option<String> a1, @Opt @By("2") Option<String> a2, @Arg @By("3") String a3) {}
     }
 
     @Section(route = "teleport")

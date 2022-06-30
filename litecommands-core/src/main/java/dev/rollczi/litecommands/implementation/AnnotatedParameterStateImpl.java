@@ -50,12 +50,8 @@ final class AnnotatedParameterStateImpl<SENDER, A extends Annotation> extends An
 
     @Override
     public UniformSuggestionStack suggest() {
-        UniformSuggestionStack.empty()
-                .with(Suggestion.multilevel("", ""))
-                .with(Suggestion.multilevel("", ""))
-                .with(Suggestion.multilevel("", ""));
-
-        return UniformSuggestionStack.of(this.suggestions.get());
+        return UniformSuggestionStack.of(this.suggestions.get())
+                .with(this.staticSuggestions());
     }
 
 }

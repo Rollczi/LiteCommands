@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.argument.ArgumentContext;
+import dev.rollczi.litecommands.command.sugesstion.Suggest;
 import dev.rollczi.litecommands.command.sugesstion.Suggester;
 import dev.rollczi.litecommands.command.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -13,7 +14,10 @@ import panda.std.Option;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedParameter<SENDER, A> {
 
@@ -59,12 +63,25 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
     }
 
     @Override
+    public List<Suggestion> staticSuggestions() {
+        Suggest suggest = parameter.getAnnotation(Suggest.class);
+
+        if (suggest == null) {
+            return Collections.emptyList();
+        }
+
+        return Arrays.stream(suggest.value())
+                .map(Suggestion::of)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Option<String> schematic() {
         return this.argument.getSchematic(annotationInstance);
     }
 
     @Override
-    public Suggester toSuggester(LiteInvocation invocation) {
+    public Suggester toSuggester(LiteInvocation invocation, int route) {
         return new SimpleSuggester<>(this, invocation);
     }
 
@@ -80,7 +97,8 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
 
         @Override
         public UniformSuggestionStack suggest() {
-            return UniformSuggestionStack.of(annotatedParameter.extractSuggestion(invocation));
+            return UniformSuggestionStack.of(annotatedParameter.extractSuggestion(invocation))
+                    .with(annotatedParameter.staticSuggestions());
         }
     }
 
