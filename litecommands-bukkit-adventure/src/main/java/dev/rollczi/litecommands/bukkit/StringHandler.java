@@ -12,15 +12,15 @@ class StringHandler implements Handler<CommandSender, String> {
             .postProcessor(new LegacyProcessor())
             .build();
 
-    private final KyoriComponentHandler kyoriComponentHandler;
+    private final KyoriComponentSender kyoriComponentSender;
 
-    StringHandler(KyoriComponentHandler kyoriComponentHandler) {
-        this.kyoriComponentHandler = kyoriComponentHandler;
+    StringHandler(KyoriComponentSender kyoriComponentSender) {
+        this.kyoriComponentSender = kyoriComponentSender;
     }
 
     @Override
     public void handle(CommandSender sender, LiteInvocation invocation, String value) {
-        this.kyoriComponentHandler.handle(sender, invocation, MINI_MESSAGE.deserialize(value));
+        this.kyoriComponentSender.send(sender, MINI_MESSAGE.deserialize(value));
     }
 
 }
