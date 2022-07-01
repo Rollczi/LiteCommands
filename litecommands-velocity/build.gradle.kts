@@ -1,5 +1,6 @@
 dependencies {
     api(project(":litecommands-core"))
+    api(project(":shared:adventure"))
 
     compileOnly("com.velocitypowered:velocity-api:3.1.2-SNAPSHOT")
 }
