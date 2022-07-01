@@ -42,7 +42,7 @@ class InjectorContextProcessor<SENDER> {
 
         Map<Class<?>, Contextual<SENDER, ?>> binds = this.settings.getContextualBinds();
 
-        return MapUtil.findByKeyAssignableFrom(type, binds)
+        return MapUtil.findByAssignableFromKey(type, binds)
                 .map(contextual -> contextual.extract(invocation.handle(), invocation))
                 .<Object>map(result -> result.orThrow(LiteException::new))
                 .orElse(() -> this.extract(parameter));
@@ -57,7 +57,7 @@ class InjectorContextProcessor<SENDER> {
         Class<?> type = parameter.getType();
         Map<Class<?>, TypeBind<?>> binds = this.settings.getTypeBinds();
 
-        return MapUtil.findByKeyAssignableFrom(type, binds)
+        return MapUtil.findByAssignableFromKey(type, binds)
                 .map(typeBind -> typeBind.extract(parameter));
     }
 

@@ -8,11 +8,11 @@ public final class MapUtil {
 
     private MapUtil() {}
 
-    public static <E> Option<E> findByKeyAssignableFrom(Class<?> type, Map<Class<?>, E> map) {
-        E handler = map.get(type);
+    public static <E> Option<E> findByAssignableFromKey(Class<?> type, Map<Class<?>, E> map) {
+        E element = map.get(type);
 
-        if (handler != null) {
-            return Option.of(handler);
+        if (element != null) {
+            return Option.of(element);
         }
 
         for (Map.Entry<Class<?>, E> entry : map.entrySet()) {

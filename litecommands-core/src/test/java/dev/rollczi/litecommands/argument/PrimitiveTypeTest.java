@@ -10,40 +10,43 @@ class PrimitiveTypeTest {
 
     TestPlatform platform = TestFactory.withCommands(Command.class);
 
+    @Section(route = "test")
+    private static class Command {
+        @Execute(route = "int")             void test(@Arg int __) {}
+        @Execute(route = "int-object")      void test(@Arg Integer __) {}
+
+        @Execute(route = "float")           void test(@Arg float __) {}
+        @Execute(route = "float-object")    void test(@Arg Float __) {}
+
+        @Execute(route = "double")          void test(@Arg double __) {}
+        @Execute(route = "double-object")   void test(@Arg Double __) {}
+
+        @Execute(route = "boolean")         void test(@Arg boolean __) {}
+        @Execute(route = "boolean-object")  void test(@Arg Boolean __) {}
+    }
+
     @Test
     void testInt() {
-        platform.assertSuccess("test", "int", "1");
-        platform.assertSuccess("test", "int-object", "1");
+        platform.execute("test", "int", "1").assertSuccess();
+        platform.execute("test", "int-object", "1").assertSuccess();
     }
 
     @Test
     void testFloat() {
-        platform.assertSuccess("test", "float", "0.5F");
-        platform.assertSuccess("test", "float-object", "0.5F");
+        platform.execute("test", "float", "0.5F").assertSuccess();
+        platform.execute("test", "float-object", "0.5F").assertSuccess();
     }
 
     @Test
     void testDouble() {
-        platform.assertSuccess("test", "double", "0.5D");
-        platform.assertSuccess("test", "double-object", "0.5D");
+        platform.execute("test", "double", "0.5D").assertSuccess();
+        platform.execute("test", "double-object", "0.5D").assertSuccess();
     }
 
     @Test
     void testBoolean() {
-        platform.assertSuccess("test", "boolean", "true");
-        platform.assertSuccess("test", "boolean-object", "false");
-    }
-
-    @Section(route = "test")
-    private static class Command {
-        @Execute(route = "int") void test(@Arg int __) {}
-        @Execute(route = "int-object") void test(@Arg Integer __) {}
-        @Execute(route = "float") void test(@Arg float __) {}
-        @Execute(route = "float-object") void test(@Arg Float __) {}
-        @Execute(route = "double") void test(@Arg double __) {}
-        @Execute(route = "double-object") void test(@Arg Double __) {}
-        @Execute(route = "boolean") void test(@Arg boolean __) {}
-        @Execute(route = "boolean-object") void test(@Arg Boolean __) {}
+        platform.execute("test", "boolean", "true").assertSuccess();
+        platform.execute("test", "boolean-object", "false").assertSuccess();
     }
 
 }
