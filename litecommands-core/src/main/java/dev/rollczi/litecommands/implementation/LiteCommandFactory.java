@@ -81,7 +81,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
 
         for (Annotation annotation : sectionClass.getAnnotations()) {
             for (FactoryAnnotationResolver<? extends Annotation> resolver : annotationResolvers) {
-                if (!annotation.annotationType().isAssignableFrom(resolver.getAnnotationClass())) {
+                if (!annotation.annotationType().equals(resolver.getAnnotationClass())) {
                     continue;
                 }
 
@@ -100,7 +100,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
 
             for (Annotation annotation : method.getAnnotations()) {
                 for (FactoryAnnotationResolver<? extends Annotation> resolver : annotationResolvers) {
-                    if (!annotation.annotationType().isAssignableFrom(resolver.getAnnotationClass())) {
+                    if (!annotation.annotationType().equals(resolver.getAnnotationClass())) {
                         continue;
                     }
 

@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.handle;
 
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.scheme.SchemeFormat;
 import dev.rollczi.litecommands.scheme.SchemeGenerator;
 import dev.rollczi.litecommands.shared.MapUtil;
@@ -39,7 +38,7 @@ public class ExecuteResultHandler<SENDER> {
         }
 
         Class<?> type = object.getClass();
-        Option<Handler<SENDER, ?>> handlerOpt = MapUtil.findByKeyAssignableFrom(type, this.handlers);
+        Option<Handler<SENDER, ?>> handlerOpt = MapUtil.findByAssignableFromKey(type, this.handlers);
 
         if (handlerOpt.isEmpty()) {
             Redirector<?, ?> forwarding = this.redirectors.get(type);
@@ -49,7 +48,7 @@ public class ExecuteResultHandler<SENDER> {
             }
 
             Object to = handleForwarding(forwarding, object);
-            Handler<SENDER, ?> handler = MapUtil.findByKeyAssignableFrom(to.getClass(), this.handlers)
+            Handler<SENDER, ?> handler = MapUtil.findByAssignableFromKey(to.getClass(), this.handlers)
                     .orThrow(() -> new IllegalStateException("Missing result handler for type " + type + " or for redirected type " + to.getClass()));
 
             this.handle(handler, sender, invocation, to);
