@@ -43,4 +43,10 @@ class EnumArgumentTest {
         platform.suggest("test", "").assertWith("A", "B");
     }
 
+    @Test
+    void testSuggestionWithContent() {
+        platform.suggest("test", "A").assertWith("A");
+    }
+
+
 }

@@ -61,4 +61,8 @@ public class SimpleMultilevelArgument<SENDER, T> implements Argument<SENDER, Arg
         return this.multilevel.getClass();
     }
 
+    @Override
+    public boolean validate(LiteInvocation invocation, Suggestion suggestion) {
+        return this.multilevel.validate(invocation, suggestion);
+    }
 }

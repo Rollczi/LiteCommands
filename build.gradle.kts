@@ -2,6 +2,7 @@
 val coreArtifact by extra("core")
 val velocityArtifact by extra("velocity")
 val bukkitArtifact by extra("bukkit")
+val bukkitAdventureArtifact by extra("bukkit-adventure")
 val bungeeArtifact by extra("bungee")
 
 plugins {

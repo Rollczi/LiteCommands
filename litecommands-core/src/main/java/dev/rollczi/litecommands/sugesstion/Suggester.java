@@ -25,7 +25,7 @@ public interface Suggester {
         String multilevel = String.join(" ", multilevelArguments)
                 .toLowerCase();
 
-        UniformSuggestionStack suggestionStack = UniformSuggestionStack.empty();
+        UniformSuggestionStack suggestionStack = UniformSuggestionStack.empty(stack.lengthMultilevel());
 
         for (Suggestion suggestion : stack.suggestions()) {
             if (suggestion.multilevel().toLowerCase().startsWith(multilevel)) {

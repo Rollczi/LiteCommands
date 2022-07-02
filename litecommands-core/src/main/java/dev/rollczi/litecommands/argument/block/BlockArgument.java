@@ -45,7 +45,7 @@ public class BlockArgument<SENDER> implements Argument<SENDER, Block> {
     }
 
     @Override
-    public Option<String> getSchematic(Block annotation) {
+    public Option<String> getSchematic(Parameter parameter, Block annotation) {
         return Option.of(annotation.value());
     }
 
