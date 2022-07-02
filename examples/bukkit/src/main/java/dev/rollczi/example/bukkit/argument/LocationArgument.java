@@ -34,8 +34,18 @@ public class LocationArgument implements MultilevelArgument<Location> {
     }
 
     @Override
+    public boolean validate(LiteInvocation invocation, Suggestion suggestion) {
+        for (String suggest : suggestion.multilevelList()) {
+            if (!suggest.matches("-?[\\d.]+")) { // -? - optional negative, \\d - digit, . - dot
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public int countMultilevel() {
         return 3;
     }
-
 }

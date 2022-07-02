@@ -18,6 +18,10 @@ public class Suggestion {
         return String.join(" ", this.suggestion);
     }
 
+    public List<String> multilevelList() {
+        return this.suggestion;
+    }
+
     public String single() {
         return this.suggestion.get(0);
     }
