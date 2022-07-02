@@ -4,12 +4,12 @@ import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.argument.ArgumentContext;
-import dev.rollczi.litecommands.sugesstion.Suggest;
-import dev.rollczi.litecommands.sugesstion.Suggester;
-import dev.rollczi.litecommands.sugesstion.Suggestion;
+import dev.rollczi.litecommands.suggestion.Suggest;
+import dev.rollczi.litecommands.suggestion.Suggester;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
-import dev.rollczi.litecommands.sugesstion.UniformSuggestionStack;
+import dev.rollczi.litecommands.suggestion.UniformSuggestionStack;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;

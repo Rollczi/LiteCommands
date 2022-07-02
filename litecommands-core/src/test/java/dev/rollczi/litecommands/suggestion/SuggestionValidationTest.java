@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.sugesstion;
+package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;

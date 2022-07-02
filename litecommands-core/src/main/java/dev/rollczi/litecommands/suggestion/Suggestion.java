@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.sugesstion;
+package dev.rollczi.litecommands.suggestion;
 
 import java.util.ArrayList;
 import java.util.Arrays;

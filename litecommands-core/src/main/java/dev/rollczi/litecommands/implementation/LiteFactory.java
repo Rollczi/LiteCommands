@@ -22,7 +22,7 @@ import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.scheme.Scheme;
-import dev.rollczi.litecommands.sugesstion.Suggestion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
@@ -30,7 +30,7 @@ import panda.std.Result;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static dev.rollczi.litecommands.sugesstion.Suggestion.of;
+import static dev.rollczi.litecommands.suggestion.Suggestion.of;
 import static panda.std.Blank.BLANK;
 
 public final class LiteFactory {

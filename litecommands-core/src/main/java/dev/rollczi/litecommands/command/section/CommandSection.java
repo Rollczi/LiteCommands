@@ -2,9 +2,9 @@ package dev.rollczi.litecommands.command.section;
 
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.sugesstion.SuggestionMerger;
+import dev.rollczi.litecommands.suggestion.SuggestionMerger;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.sugesstion.Suggester;
+import dev.rollczi.litecommands.suggestion.Suggester;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.sugesstion.SuggestionStack;
+import dev.rollczi.litecommands.suggestion.SuggestionStack;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
