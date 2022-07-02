@@ -87,7 +87,7 @@ public class OptionArgument<SENDER, T> implements Argument<SENDER, Opt>, Paramet
     @Override
     public boolean canHandleAssignableFrom(Class<?> type, Parameter parameter) {
         return OptionUtils.extractOptionType(parameter)
-                .map(type::isAssignableFrom)
+                .map(paramType -> paramType.isAssignableFrom(type))
                 .orElseGet(false);
     }
 

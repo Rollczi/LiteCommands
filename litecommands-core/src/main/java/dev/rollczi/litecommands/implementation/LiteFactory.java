@@ -1,6 +1,10 @@
 package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.argument.ArgumentContext;
+import dev.rollczi.litecommands.argument.ParameterHandler;
+import dev.rollczi.litecommands.argument.SingleArgument;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.argument.block.BlockArgument;
 import dev.rollczi.litecommands.argument.flag.Flag;
@@ -9,23 +13,26 @@ import dev.rollczi.litecommands.argument.joiner.Joiner;
 import dev.rollczi.litecommands.argument.joiner.JoinerArgument;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.MatchResult;
 import dev.rollczi.litecommands.command.amount.Between;
 import dev.rollczi.litecommands.command.amount.Max;
 import dev.rollczi.litecommands.command.amount.Min;
 import dev.rollczi.litecommands.command.amount.Required;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
+import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
+import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.scheme.Scheme;
-import dev.rollczi.litecommands.sugesstion.Suggestion;
 import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static dev.rollczi.litecommands.sugesstion.Suggestion.of;
 import static panda.std.Blank.BLANK;
@@ -54,6 +61,39 @@ public final class LiteFactory {
     private static final OneArgument<Float> FLOAT_ARG =   create(Float::parseFloat,   "0", "1", "1.5", "10", "10.5", "100", "100.5");
 
     private LiteFactory() {
+    }
+
+    private static class EnumArgument<SENDER> implements SingleArgument<SENDER, Arg>, ParameterHandler {
+
+        @Override
+        public MatchResult match(LiteInvocation invocation, ArgumentContext<Arg> context, String argument) {
+            return EnumUtil.parse(context.parameter().getType(), argument)
+                    .fold(MatchResult::matchedSingle, (exception) -> MatchResult.notMatched());
+        }
+
+        @Override
+        public List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, Arg annotation) {
+            Object[] enumConstants = parameter.getType().getEnumConstants();
+
+            if (enumConstants == null) {
+                return Collections.emptyList();
+            }
+
+            return Arrays.stream(enumConstants)
+                    .map(Object::toString)
+                    .map(Suggestion::of)
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public boolean canHandleAssignableFrom(Class<?> type, Parameter parameter) {
+            return Enum.class.isAssignableFrom(parameter.getType());
+        }
+
+    }
+
+    private static <T> Result<T, Blank> parse(Supplier<T> parse) {
+        return Result.attempt(NumberFormatException.class, parse::get).mapErrToBlank();
     }
 
     public static <SENDER> LiteCommandsBuilder<SENDER> builder(Class<SENDER> senderType) {
@@ -92,6 +132,8 @@ public final class LiteFactory {
                 .argument(Float.class, FLOAT_ARG)
                 .argument(char.class, CHARACTER_ARG)
                 .argument(Character.class, CHARACTER_ARG)
+
+                .argument(Arg.class, Enum.class, new EnumArgument<>())
 
                 .redirectResult(Scheme.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getSchemes()))
                 .redirectResult(LitePermissions.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getPermissions()))

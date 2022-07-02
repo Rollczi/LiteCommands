@@ -49,4 +49,14 @@ public class BlockArgument<SENDER> implements Argument<SENDER, Block> {
         return Option.of(annotation.value());
     }
 
+    @Override
+    public boolean canHandle(Class<?> type, Parameter parameter) {
+        return true;
+    }
+
+    @Override
+    public boolean canHandleAssignableFrom(Class<?> type, Parameter parameter) {
+        return true;
+    }
+
 }

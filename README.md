@@ -1,10 +1,10 @@
-# ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
+# ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord) [![OSCS Status](https://www.oscs1024.com/platform/badge/Rollczi/LiteCommands.svg?size=small)](https://www.oscs1024.com/project/Rollczi/LiteCommands?ref=badge_small)
 
 #### Command framework for Velocity and your other implementations.
 Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
-- [Example (Modern 2.0.6)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
+- [Example (Modern 2.1.1)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
 - [Docs (Legacy 1.7.2)](https://docs.rollczi.dev/)
 
 ### Panda Repository (Maven or Gradle)  ❤️
@@ -23,11 +23,11 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>core</artifactId>
-    <version>2.0.6</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:core:2.0.6'
+implementation 'dev.rollczi.litecommands:core:2.1.1'
 ```
 
 ### First Simple Command
@@ -57,11 +57,11 @@ Add this to your dependencies if you want use ready-made implementation for velo
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>velocity</artifactId>
-    <version>2.0.6</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:2.0.6'
+implementation 'dev.rollczi.litecommands:velocity:2.1.1'
 ```
 
 #### All extensions: 

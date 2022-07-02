@@ -55,20 +55,23 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
         return ExecuteResult.failure(FindResult.none(invocation.withHandle(handle)));
     }
 
-    public void assertSuccess(String command, String... args) {
-        this.execute(command, args).assertSuccess();
-    }
-
-    public void assertFail(String command, String... args) {
-        this.execute(command, args).assertSuccess();
-    }
-
-    public void assertInvalid(String command, String... args) {
-        this.execute(command, args).assertSuccess();
-    }
-
     public AssertResult execute(String command, String... args) {
         return new AssertResult(this.executeLegacy(command, args));
+    }
+
+    public AssertSuggest suggest(String command, String... args) {
+        TestHandle handle = new TestHandle();
+        for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
+            CommandSection<TestHandle> section = entry.getKey();
+
+            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle), command, command, args);
+
+            if (section.isSimilar(command)) {
+                return new AssertSuggest(section.findSuggestion(liteInvocation, 0).merge());
+            }
+        }
+
+        throw new IllegalArgumentException();
     }
 
     public FindResult<TestHandle> find(String command, String... args) {

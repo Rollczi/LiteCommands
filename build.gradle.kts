@@ -2,7 +2,6 @@
 val coreArtifact by extra("core")
 val velocityArtifact by extra("velocity")
 val bukkitArtifact by extra("bukkit")
-val bukkitAdventureArtifact by extra("bukkit-adventure")
 val bungeeArtifact by extra("bungee")
 
 plugins {
@@ -14,7 +13,7 @@ plugins {
 
 allprojects {
     group = "dev.rollczi.litecommands"
-    version = "2.2.0-pre2"
+    version = "2.2.0"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
