@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.Invocation;
+import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.sugesstion.Suggester;
 import dev.rollczi.litecommands.sugesstion.SuggesterResult;
 import dev.rollczi.litecommands.sugesstion.SuggestionMerger;
@@ -109,7 +110,16 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
 
         int routeAbove = route + 1;
 
+        root:
         for (CommandSection<SENDER> section : this.childSections) {
+            for (String permission : section.meta().getPermissions()) {
+                LiteSender sender = invocation.sender();
+
+                if (!sender.hasPermission(permission)) {
+                    continue root;
+                }
+            }
+
             SuggesterResult result = section.extractSuggestions(route, invocation.toLite());
 
             if (result.isFailure()) {
