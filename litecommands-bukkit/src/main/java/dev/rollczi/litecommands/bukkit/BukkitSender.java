@@ -1,11 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.meta.MetaData;
 import dev.rollczi.litecommands.platform.LiteSender;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockDataMeta;
 
 class BukkitSender implements LiteSender {
 
@@ -18,6 +14,11 @@ class BukkitSender implements LiteSender {
     @Override
     public boolean hasPermission(String permission) {
         return this.handle.hasPermission(permission);
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        this.handle.sendMessage(StringHandler.DESERIALIZE_AMPERSAND.apply(message));
     }
 
     @Override

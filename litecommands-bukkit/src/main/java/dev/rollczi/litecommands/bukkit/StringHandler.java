@@ -5,11 +5,11 @@ import dev.rollczi.litecommands.handle.Handler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 class StringHandler implements Handler<CommandSender, String> {
 
-    private static final Function<String, String> DESERIALIZE_AMPERSAND = text -> ChatColor.translateAlternateColorCodes('&', text);
+    static final UnaryOperator<String> DESERIALIZE_AMPERSAND = text -> ChatColor.translateAlternateColorCodes('&', text);
 
     @Override
     public void handle(CommandSender sender, LiteInvocation invocation, String value) {

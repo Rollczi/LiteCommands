@@ -6,11 +6,11 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 class StringHandler implements Handler<CommandSender, String> {
 
-    private static final Function<String, String> DESERIALIZE_AMPERSAND = text -> ChatColor.translateAlternateColorCodes('&', text);
+    static final UnaryOperator<String> DESERIALIZE_AMPERSAND = text -> ChatColor.translateAlternateColorCodes('&', text);
 
     @Override
     public void handle(CommandSender sender, LiteInvocation invocation, String value) {
