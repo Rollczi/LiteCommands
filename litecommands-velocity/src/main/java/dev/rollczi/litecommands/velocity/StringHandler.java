@@ -7,7 +7,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 class StringHandler implements Handler<CommandSource, String> {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder()
+    static final MiniMessage MINI_MESSAGE = MiniMessage.builder()
             .postProcessor(new LegacyProcessor())
             .build();
 
