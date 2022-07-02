@@ -15,46 +15,43 @@ import dev.rollczi.litecommands.command.amount.Min;
 import dev.rollczi.litecommands.command.amount.Required;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
-import dev.rollczi.litecommands.command.permission.ExecutedPermissions;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.permission.Permissions;
 import dev.rollczi.litecommands.command.section.Section;
-import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.scheme.Scheme;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
-import static dev.rollczi.litecommands.argument.simple.OneArgument.create;
-import static dev.rollczi.litecommands.command.sugesstion.Suggestion.of;
+import static dev.rollczi.litecommands.sugesstion.Suggestion.of;
 import static panda.std.Blank.BLANK;
 
 public final class LiteFactory {
 
-    private static final OneArgument<Boolean> BOOLEAN_ARG = create((invocation, argument) -> Option.of(argument)
+    private static final OneArgument<Boolean> BOOLEAN_ARG = OneArgument.create((invocation, argument) -> Option.of(argument)
                     .filter(arg -> arg.equalsIgnoreCase("true") || arg.equalsIgnoreCase("false"))
                     .map(Boolean::parseBoolean)
                     .toResult(BLANK),
             invocation -> of("true", "false")
     );
 
-    private static final OneArgument<Character> CHARACTER_ARG = create((inv, argument) -> Option.of(argument)
+    private static final OneArgument<Character> CHARACTER_ARG = OneArgument.create((inv, argument) -> Option.of(argument)
                     .filter(arg -> arg.length() == 1)
                     .map(arg -> arg.charAt(0))
                     .toResult(BLANK),
             invocation -> of("abcdefghijklmnoprstuwxyz0123456789".split(""))
     );
 
-    private static final OneArgument<Long> LONG_ARG =     create((inv, arg) -> parse(() -> Long.parseLong(arg)), inv -> of("0", "1", "5", "10", "50", "100", "500"));
-    private static final OneArgument<Integer> INT_ARG =   create((inv, arg) -> parse(() -> Integer.parseInt(arg)), inv -> of("0", "1", "5", "10", "50", "100", "500"));
-    private static final OneArgument<Short> SHORT_ARG =   create((inv, arg) -> parse(() -> Short.parseShort(arg)), inv -> of("0", "1", "5", "10", "50"));
-    private static final OneArgument<Byte> BYTE_ARG =     create((inv, arg) -> parse(() -> Byte.parseByte(arg)), inv -> of("0", "1", "5", "10", "50"));
-    private static final OneArgument<Double> DOUBLE_ARG = create((inv, arg) -> parse(() -> Double.parseDouble(arg)), inv -> of("0", "1", "1.5", "10", "10.5", "100", "100.5"));
-    private static final OneArgument<Float> FLOAT_ARG =   create((inv, arg) -> parse(() -> Float.parseFloat(arg)), inv -> of("0", "1", "1.5", "10", "10.5", "100", "100.5"));
+    private static final OneArgument<Long> LONG_ARG =     create(Long::parseLong,     "0", "1", "5", "10", "50", "100", "500");
+    private static final OneArgument<Integer> INT_ARG =   create(Integer::parseInt,   "0", "1", "5", "10", "50", "100", "500");
+    private static final OneArgument<Short> SHORT_ARG =   create(Short::parseShort,   "0", "1", "5", "10", "50");
+    private static final OneArgument<Byte> BYTE_ARG =     create(Byte::parseByte,     "0", "1", "5", "10", "50");
+    private static final OneArgument<Double> DOUBLE_ARG = create(Double::parseDouble, "0", "1", "1.5", "10", "10.5", "100", "100.5");
+    private static final OneArgument<Float> FLOAT_ARG =   create(Float::parseFloat,   "0", "1", "1.5", "10", "10.5", "100", "100.5");
 
     private LiteFactory() {
     }
@@ -105,8 +102,22 @@ public final class LiteFactory {
                 .contextualBind(senderType, (sender, invocation) -> Result.ok(sender));
     }
 
-    private static <T> Result<T, Blank> parse(Supplier<T> parse) {
-        return Result.attempt(NumberFormatException.class, parse::get).mapErrToBlank();
+    private static <T> OneArgument<T> create(Function<String, T> parse, String... suggestions) {
+        return OneArgument.create((invocation, arg) -> parse(parse, arg), invocation -> Suggestion.of(suggestions), (inv, suggestion) -> validate(parse, suggestion));
+    }
+
+    private static <T> Result<T, Blank> parse(Function<String, T> parse, String value) {
+        return Result.attempt(NumberFormatException.class, () -> parse.apply(value)).mapErrToBlank();
+    }
+
+    private static boolean validate(Function<String, ?> parse, Suggestion suggestion) {
+        try {
+            parse.apply(suggestion.single());
+            return true;
+        }
+        catch (NumberFormatException ignore) {
+            return false;
+        }
     }
 
 }

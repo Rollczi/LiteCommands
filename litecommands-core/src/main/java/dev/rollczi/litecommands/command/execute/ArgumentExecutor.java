@@ -6,9 +6,8 @@ import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.sugesstion;
+package dev.rollczi.litecommands.sugesstion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,15 +50,23 @@ public final class UniformSuggestionStack extends SuggestionStack {
             list.add(suggestion);
         }
 
-        return of(list);
+        return of(list, this.multilevelLength);
     }
 
     public static UniformSuggestionStack empty() {
         return new UniformSuggestionStack(Collections.emptyList(), 0);
     }
 
+    public static UniformSuggestionStack empty(int initialMultilevelLength) {
+        return new UniformSuggestionStack(Collections.emptyList(), initialMultilevelLength);
+    }
+
     public static UniformSuggestionStack of(Collection<Suggestion> suggestions) {
-        int last = - 1;
+        return of(new ArrayList<>(suggestions), 0);
+    }
+
+    public static UniformSuggestionStack of(Collection<Suggestion> suggestions, int multilevelLength) {
+        int last = multilevelLength == 0 ? - 1 : multilevelLength;
 
         for (Suggestion suggestion : suggestions) {
             int length = suggestion.lengthMultilevel();

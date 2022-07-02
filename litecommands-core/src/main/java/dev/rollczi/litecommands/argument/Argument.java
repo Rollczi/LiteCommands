@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Option;
@@ -16,6 +16,10 @@ public interface Argument<SENDER, A extends Annotation> extends ParameterHandler
 
     default List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, A annotation) {
         return Collections.emptyList();
+    }
+
+    default boolean validate(LiteInvocation invocation, Suggestion suggestion) {
+        return false;
     }
 
     default boolean isOptional() {
@@ -45,7 +49,7 @@ public interface Argument<SENDER, A extends Annotation> extends ParameterHandler
         return Option.none();
     }
 
-    default Option<String> getSchematic(A annotation) {
+    default Option<String> getSchematic(Parameter parameter, A annotation) {
         return Option.none();
     }
 

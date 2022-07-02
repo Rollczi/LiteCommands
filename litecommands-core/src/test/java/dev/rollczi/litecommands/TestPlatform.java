@@ -2,7 +2,6 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;

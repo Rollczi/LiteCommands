@@ -166,9 +166,6 @@ public final class FindResult<SENDER> {
         return Collections.unmodifiableList(results);
     }
 
-
-
-
     public boolean isLongerThan(FindResult<SENDER> findResult) {
         if (this.isFailed() && !findResult.isFailed()) {
             return false;

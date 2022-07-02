@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentContext;
 import dev.rollczi.litecommands.argument.ParameterHandler;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Blank;
