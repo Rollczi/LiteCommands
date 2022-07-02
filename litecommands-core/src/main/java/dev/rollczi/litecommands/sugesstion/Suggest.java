@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.sugesstion;
+package dev.rollczi.litecommands.sugesstion;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

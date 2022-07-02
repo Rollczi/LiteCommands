@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentContext;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import panda.std.Blank;
 import panda.std.Result;
 
@@ -61,4 +61,8 @@ public class SimpleMultilevelArgument<SENDER, T> implements Argument<SENDER, Arg
         return this.multilevel.getClass();
     }
 
+    @Override
+    public boolean validate(LiteInvocation invocation, Suggestion suggestion) {
+        return this.multilevel.validate(invocation, suggestion);
+    }
 }

@@ -2,15 +2,17 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.command.sugesstion.Suggester;
-import dev.rollczi.litecommands.command.sugesstion.SuggestionMerger;
+import dev.rollczi.litecommands.platform.LiteSender;
+import dev.rollczi.litecommands.sugesstion.Suggester;
+import dev.rollczi.litecommands.sugesstion.SuggesterResult;
+import dev.rollczi.litecommands.sugesstion.SuggestionMerger;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
-import dev.rollczi.litecommands.command.sugesstion.UniformSuggestionStack;
+import dev.rollczi.litecommands.sugesstion.SuggestionStack;
+import dev.rollczi.litecommands.sugesstion.UniformSuggestionStack;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
@@ -54,7 +56,7 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
     }
 
     @Override
-    public UniformSuggestionStack suggest() {
+    public UniformSuggestionStack suggestion() {
         Set<String> suggestions = new HashSet<>(this.aliases);
         suggestions.add(this.name);
 
@@ -103,15 +105,24 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
         SuggestionMerger suggestionMerger = SuggestionMerger.empty(invocation);
 
         if (invocation.arguments().length == route) {
-            return suggestionMerger.appendRoot(this.suggest());
+            return suggestionMerger.appendRoot(this.suggestion());
         }
 
         int routeAbove = route + 1;
 
+        root:
         for (CommandSection<SENDER> section : this.childSections) {
-            UniformSuggestionStack suggestionStack = section.filterSuggestions(route, invocation.toLite());
+            for (String permission : section.meta().getPermissions()) {
+                LiteSender sender = invocation.sender();
 
-            if (suggestionStack.multilevelSuggestions().isEmpty()) {
+                if (!sender.hasPermission(permission)) {
+                    continue root;
+                }
+            }
+
+            SuggesterResult result = section.extractSuggestions(route, invocation.toLite());
+
+            if (result.isFailure()) {
                 continue;
             }
 
@@ -139,16 +150,20 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
 
         AnnotatedParameter<SENDER, ?> parameter = list.get(0);
         Suggester suggester = parameter.toSuggester(lite, routeAbove);
-        UniformSuggestionStack suggest = suggester.filterSuggestions(routeReal - 1 + margin, lite);
+        SuggesterResult result = suggester.extractSuggestions(routeReal - 1 + margin, lite);
 
-        if (suggest.suggestions().isEmpty()) {
+        if (result.isFailure()) {
             return SuggestionStack.empty();
         }
 
         SuggestionMerger merger = SuggestionMerger.empty(lite);
+
+        UniformSuggestionStack suggest = result.getSuggestions();
         int nextMargin = margin + suggest.lengthMultilevel() - 1;
 
-        merger.append(routeReal + margin, suggest);
+        if (!suggest.isEmpty()) {
+            merger.append(routeReal + margin, suggest);
+        }
 
         SuggestionStack stack = suggestionParameters(lite, nextMargin, routeAbove, parameterIndex + 1, parameters);
 

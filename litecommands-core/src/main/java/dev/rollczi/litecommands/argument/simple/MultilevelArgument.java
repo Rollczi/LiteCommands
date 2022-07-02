@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.argument.simple;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import panda.std.Result;
 
 import java.util.Collections;
@@ -13,6 +13,10 @@ public interface MultilevelArgument<T> {
 
     default List<Suggestion> suggest(LiteInvocation invocation) {
         return Collections.emptyList();
+    }
+
+    default boolean validate(LiteInvocation invocation, Suggestion suggestion) {
+        return false;
     }
 
     int countMultilevel();

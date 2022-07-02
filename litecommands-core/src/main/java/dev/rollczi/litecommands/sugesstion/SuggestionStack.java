@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.sugesstion;
+package dev.rollczi.litecommands.sugesstion;
 
 import panda.std.stream.PandaStream;
 
@@ -55,6 +55,10 @@ public class SuggestionStack {
 
     public static SuggestionStack of(Collection<Suggestion> suggestions) {
         return new SuggestionStack(new ArrayList<>(suggestions));
+    }
+
+    public boolean isEmpty() {
+        return suggestions.isEmpty();
     }
 
 }

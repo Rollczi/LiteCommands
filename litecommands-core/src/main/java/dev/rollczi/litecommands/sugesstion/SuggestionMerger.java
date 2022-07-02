@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.sugesstion;
+package dev.rollczi.litecommands.sugesstion;
 
 import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.command.LiteInvocation;

@@ -3,7 +3,7 @@ package dev.rollczi.example.bukkit.argument;
 import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import org.bukkit.Location;
 import panda.std.Result;
 
@@ -34,8 +34,18 @@ public class LocationArgument implements MultilevelArgument<Location> {
     }
 
     @Override
+    public boolean validate(LiteInvocation invocation, Suggestion suggestion) {
+        for (String suggest : suggestion.multilevelList()) {
+            if (!suggest.matches("-?[\\d.]+")) { // -? - optional negative, \\d - digit, . - dot
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public int countMultilevel() {
         return 3;
     }
-
 }

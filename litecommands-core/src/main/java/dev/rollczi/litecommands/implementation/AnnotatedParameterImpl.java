@@ -4,12 +4,12 @@ import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.argument.ArgumentContext;
-import dev.rollczi.litecommands.command.sugesstion.Suggest;
-import dev.rollczi.litecommands.command.sugesstion.Suggester;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggest;
+import dev.rollczi.litecommands.sugesstion.Suggester;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
-import dev.rollczi.litecommands.command.sugesstion.UniformSuggestionStack;
+import dev.rollczi.litecommands.sugesstion.UniformSuggestionStack;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;
@@ -43,6 +43,7 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
         return parameter;
     }
 
+    @Deprecated
     AnnotatedParameterState<SENDER, A> createState(LiteInvocation invocation, int route) {
         return new AnnotatedParameterStateImpl<>(annotationInstance, parameter, argument, invocation, route);
     }
@@ -77,7 +78,7 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
 
     @Override
     public Option<String> schematic() {
-        return this.argument.getSchematic(annotationInstance);
+        return this.argument.getSchematic(parameter, annotationInstance);
     }
 
     @Override
@@ -96,7 +97,12 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
         }
 
         @Override
-        public UniformSuggestionStack suggest() {
+        public boolean validate(Suggestion suggestion) {
+            return this.annotatedParameter.argument().validate(invocation, suggestion);
+        }
+
+        @Override
+        public UniformSuggestionStack suggestion() {
             return UniformSuggestionStack.of(annotatedParameter.extractSuggestion(invocation))
                     .with(annotatedParameter.staticSuggestions());
         }

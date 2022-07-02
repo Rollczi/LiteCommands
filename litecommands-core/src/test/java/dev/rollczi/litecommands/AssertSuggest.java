@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.command.sugesstion.SuggestionStack;
+import dev.rollczi.litecommands.sugesstion.SuggestionStack;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class AssertSuggest {
         Assertions.assertEquals(suggestionSet.size(), suggestions.length);
 
         for (String suggestion : suggestions) {
-            Assertions.assertTrue(suggestionSet.contains(suggestion), "Suggestion '" + suggestion + "' not found");
+            Assertions.assertTrue(suggestionSet.contains(suggestion), "Suggestion '" + suggestion + "' not found! " + String.join(", ", suggestionSet));
         }
     }
 

@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.argument;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.command.sugesstion.Suggester;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggester;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;

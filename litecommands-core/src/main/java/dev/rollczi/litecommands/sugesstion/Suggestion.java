@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.sugesstion;
+package dev.rollczi.litecommands.sugesstion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +16,10 @@ public class Suggestion {
 
     public String multilevel() {
         return String.join(" ", this.suggestion);
+    }
+
+    public List<String> multilevelList() {
+        return this.suggestion;
     }
 
     public String single() {

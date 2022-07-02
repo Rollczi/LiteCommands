@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.argument.block;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentContext;
-import dev.rollczi.litecommands.command.sugesstion.Suggestion;
+import dev.rollczi.litecommands.sugesstion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Blank;
@@ -45,7 +45,7 @@ public class BlockArgument<SENDER> implements Argument<SENDER, Block> {
     }
 
     @Override
-    public Option<String> getSchematic(Block annotation) {
+    public Option<String> getSchematic(Parameter parameter, Block annotation) {
         return Option.of(annotation.value());
     }
 
