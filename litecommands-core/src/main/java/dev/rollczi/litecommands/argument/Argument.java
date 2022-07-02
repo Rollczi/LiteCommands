@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.sugesstion.Suggestion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import panda.std.Option;

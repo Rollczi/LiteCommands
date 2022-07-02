@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.platform;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.sugesstion.SuggestionStack;
+import dev.rollczi.litecommands.suggestion.SuggestionStack;
 
 @FunctionalInterface
 public interface SuggestionListener<SENDER> {

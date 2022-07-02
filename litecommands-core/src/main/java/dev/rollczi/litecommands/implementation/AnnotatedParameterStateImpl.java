@@ -4,13 +4,10 @@ import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
-import dev.rollczi.litecommands.sugesstion.Suggestion;
-import dev.rollczi.litecommands.sugesstion.UniformSuggestionStack;
 import panda.std.Lazy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
-import java.util.Collections;
 import java.util.List;
 
 @Deprecated

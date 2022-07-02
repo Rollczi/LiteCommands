@@ -3,7 +3,7 @@ package dev.rollczi.example.bukkit.argument;
 import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.sugesstion.Suggestion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.generator.WorldInfo;

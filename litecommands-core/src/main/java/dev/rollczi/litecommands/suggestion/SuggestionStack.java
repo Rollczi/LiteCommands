@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.sugesstion;
+package dev.rollczi.litecommands.suggestion;
 
 import panda.std.stream.PandaStream;
 

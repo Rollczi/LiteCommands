@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.argument.SingleArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import dev.rollczi.litecommands.shared.EnumUtil;
-import dev.rollczi.litecommands.sugesstion.Suggestion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
