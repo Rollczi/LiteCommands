@@ -16,6 +16,11 @@ class TestSender implements LiteSender {
     }
 
     @Override
+    public void sendMessage(String message) {
+
+    }
+
+    @Override
     public Object getHandle() {
         return testHandle;
     }
