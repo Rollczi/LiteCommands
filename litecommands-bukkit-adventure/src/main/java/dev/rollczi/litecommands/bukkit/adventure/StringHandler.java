@@ -1,8 +1,7 @@
-package dev.rollczi.litecommands.bukkit;
+package dev.rollczi.litecommands.bukkit.adventure;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.handle.Handler;
-import dev.rollczi.litecommands.shared.adventure.LegacyProcessor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 

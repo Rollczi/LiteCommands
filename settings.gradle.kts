@@ -1,7 +1,5 @@
 rootProject.name = "LiteCommands"
 
-include(":shared")
-include(":shared:adventure")
 include(":litecommands-core")
 include(":litecommands-velocity")
 include(":litecommands-bukkit")

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.bukkit;
+package dev.rollczi.litecommands.bukkit.adventure;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;

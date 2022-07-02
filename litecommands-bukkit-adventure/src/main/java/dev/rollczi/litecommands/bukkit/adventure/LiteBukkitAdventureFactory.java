@@ -1,6 +1,7 @@
-package dev.rollczi.litecommands.bukkit;
+package dev.rollczi.litecommands.bukkit.adventure;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Server;

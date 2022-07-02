@@ -3,11 +3,7 @@ package dev.rollczi.litecommands.velocity;
 import com.velocitypowered.api.command.CommandSource;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.handle.Handler;
-import dev.rollczi.litecommands.shared.adventure.LegacyProcessor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-
-import java.util.regex.Pattern;
 
 class StringHandler implements Handler<CommandSource, String> {
 

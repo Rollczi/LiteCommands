@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.shared.adventure;
+package dev.rollczi.litecommands.bukkit.adventure;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -11,7 +11,7 @@ import java.util.function.UnaryOperator;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-public final class LegacyProcessor implements UnaryOperator<Component> {
+final class LegacyProcessor implements UnaryOperator<Component> {
 
     private static final char AMPERSAND = '&';
     private static final char COLOR_CHAR = '\u00A7';

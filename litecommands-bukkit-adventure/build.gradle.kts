@@ -1,5 +1,5 @@
 dependencies {
-    api(project(":shared:adventure"))
+
     api(project(":litecommands-core"))
     api(project(":litecommands-bukkit"))
 
