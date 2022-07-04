@@ -1,15 +1,9 @@
 package dev.rollczi.litecommands.bukkit.adventure;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 final class LegacyProcessor implements UnaryOperator<Component> {
