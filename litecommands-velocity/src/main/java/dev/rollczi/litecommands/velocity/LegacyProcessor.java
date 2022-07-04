@@ -13,39 +13,11 @@ import java.util.regex.Pattern;
 
 final class LegacyProcessor implements UnaryOperator<Component> {
 
-    private static final char AMPERSAND = '&';
-    private static final char COLOR_CHAR = '\u00A7';
-
-    private final static Replacer REPLACER = new Replacer();
-
-    private final static Pattern LEGACY_COLOR = Pattern.compile( "(?i)" + AMPERSAND + "[0-9A-FK-ORX]" );
-    private final static Replacement REPLACEMENT = new Replacement();
+    private static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 
     @Override
     public Component apply(Component component) {
-        return component.replaceText(REPLACER);
-    }
-
-    private final static class Replacer implements Consumer<TextReplacementConfig.Builder> {
-
-        @Override
-        public void accept(TextReplacementConfig.Builder builder) {
-            builder
-                .match(LEGACY_COLOR)
-                .replacement(REPLACEMENT);
-        }
-
-    }
-
-    private final static class Replacement implements BiFunction<MatchResult, TextComponent.Builder, ComponentLike> {
-
-        @Override
-        public ComponentLike apply(MatchResult matchResult, TextComponent.Builder builder) {
-            String color = String.valueOf(COLOR_CHAR) + matchResult.group(0).charAt(1);
-
-            return Component.text(color);
-        }
-
+        return component.replaceText(builder -> builder.match(Pattern.compile(".*")).replacement((matchResult, build) -> SERIALIZER.deserialize(matchResult.group())))
     }
 
 }
