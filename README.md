@@ -4,7 +4,7 @@
 Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
-- [Example (Modern 2.2.1)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
+- [Example (Modern 2.2.2)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
 - [Docs (Legacy 1.7.2)](https://docs.rollczi.dev/)
 
 ### Panda Repository (Maven or Gradle)  ❤️
@@ -23,11 +23,11 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>core</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.2</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:core:2.2.1'
+implementation 'dev.rollczi.litecommands:core:2.2.2'
 ```
 
 ### First Simple Command
@@ -57,11 +57,11 @@ Add this to your dependencies if you want use ready-made implementation for velo
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>velocity</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.2</version>
 </dependency>
 ```
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:2.2.1'
+implementation 'dev.rollczi.litecommands:velocity:2.2.2'
 ```
 
 #### All extensions: 

@@ -4,12 +4,12 @@ Maven
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>velocity</artifactId>
-    <version>2.2.1</version>
+    <version>2.2.2</version>
 </dependency>
 ```
 Gradle
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:2.2.1'
+implementation 'dev.rollczi.litecommands:velocity:2.2.2'
 ```
 
 #### Examples:
