@@ -11,7 +11,7 @@ public class LiteInvocation {
     private final String label;
     private final String[] args;
 
-    public LiteInvocation(LiteSender sender, String command, String label, String[] args) {
+    public LiteInvocation(LiteSender sender, String command, String label, String... args) {
         this.sender = sender;
         this.command = command;
         this.label = label;

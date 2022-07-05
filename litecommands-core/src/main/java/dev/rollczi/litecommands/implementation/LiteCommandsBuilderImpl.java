@@ -107,13 +107,13 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
 
     @Override
     public <T> LiteCommandsBuilderImpl<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler) {
-        this.executeResultHandler.register(on, handler);
+        this.executeResultHandler.registerHandler(on, handler);
         return this;
     }
 
     @Override
     public <FROM, TO> LiteCommandsBuilder<SENDER> redirectResult(Class<FROM> from, Class<TO> to, Redirector<FROM, TO> redirector) {
-        this.executeResultHandler.redirector(from, to, redirector);
+        this.executeResultHandler.registerRedirector(from, to, redirector);
         return this;
     }
 

@@ -9,6 +9,7 @@ import panda.std.Option;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class ExecuteResultHandler<SENDER> {
 
@@ -37,6 +38,16 @@ public class ExecuteResultHandler<SENDER> {
             object = this.schemeGenerator.generateScheme(result.getBased(), schemeFormat);
         }
 
+        if (object instanceof CompletableFuture<?>) {
+            CompletableFuture<?> future = ((CompletableFuture<?>) object);
+            future.thenAccept(o -> handleResult(sender, invocation, result));
+            return;
+        }
+
+        this.handleResult(sender, invocation, object);
+    }
+
+    private void handleResult(SENDER sender, LiteInvocation invocation, Object object) {
         Class<?> type = object.getClass();
         Option<Handler<SENDER, ?>> handlerOpt = MapUtil.findByAssignableFromKey(type, this.handlers);
 
@@ -47,32 +58,32 @@ public class ExecuteResultHandler<SENDER> {
                 throw new IllegalStateException("Missing result handler for type " + type);
             }
 
-            Object to = handleForwarding(forwarding, object);
+            Object to = handleRedirector(forwarding, object);
             Handler<SENDER, ?> handler = MapUtil.findByAssignableFromKey(to.getClass(), this.handlers)
                     .orThrow(() -> new IllegalStateException("Missing result handler for type " + type + " or for redirected type " + to.getClass()));
 
-            this.handle(handler, sender, invocation, to);
+            this.handleHandler(handler, sender, invocation, to);
             return;
         }
 
-        this.handle(handlerOpt.get(), sender, invocation, object);
+        this.handleHandler(handlerOpt.get(), sender, invocation, object);
     }
 
     @SuppressWarnings("unchecked")
-    private <FROM, TO> TO handleForwarding(Redirector<FROM, TO> redirector, Object object) {
+    private <FROM, TO> TO handleRedirector(Redirector<FROM, TO> redirector, Object object) {
         return redirector.redirect((FROM) object);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void handle(Handler<SENDER, T> handler, SENDER sender, LiteInvocation invocation, Object result) {
+    private <T> void handleHandler(Handler<SENDER, T> handler, SENDER sender, LiteInvocation invocation, Object result) {
         handler.handle(sender, invocation, (T) result);
     }
 
-    public <FROM, TO> void redirector(Class<FROM> from, Class<TO> to, Redirector<FROM, TO> redirector) {
+    public <FROM, TO> void registerRedirector(Class<FROM> from, Class<TO> to, Redirector<FROM, TO> redirector) {
         this.redirectors.put(from, redirector);
     }
 
-    public <T> void register(Class<T> type, Handler<SENDER, T> handler) {
+    public <T> void registerHandler(Class<T> type, Handler<SENDER, T> handler) {
         this.handlers.put(type, handler);
     }
 
