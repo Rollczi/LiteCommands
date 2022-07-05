@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ExecuteResultHandler<SENDER> {
 
-    private final SchemeGenerator schemeGenerator = new SchemeGenerator();
+    private final SchemeGenerator schemeGenerator = SchemeGenerator.simple();
     private final Map<Class<?>, Handler<SENDER, ?>> handlers = new HashMap<>();
     private final Map<Class<?>, Redirector<?, ?>> redirectors = new HashMap<>();
 

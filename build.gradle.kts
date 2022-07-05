@@ -43,32 +43,32 @@ subprojects {
     publishing {
         repositories {
             mavenLocal()
-//
-//            maven {
-//                name = "panda-repository"
-//                url = uri("https://repo.panda-lang.org/releases")
-//                credentials {
-//                    username = properties["panda_user_litecommands"] as String
-//                    password = properties["panda_pass_litecommands"] as String
-//                }
-//            }
-//
-//            maven {
-//                name = "eternalcode-repository"
-//                url = uri("https://repo.eternalcode.pl/releases")
-//                credentials {
-//                    username = properties["lucky_user_litecommands"] as String
-//                    password = properties["lucky_pass_litecommands"] as String
-//                }
-//            }
-//            maven {
-//                name = "mine-repository"
-//                url = uri("https://repository.minecodes.pl/releases")
-//                credentials {
-//                    username = properties["mine_user"] as String
-//                    password = properties["mine_pass"] as String
-//                }
-//            }
+
+            maven {
+                name = "panda-repository"
+                url = uri("https://repo.panda-lang.org/releases")
+                credentials {
+                    username = properties["panda_user_litecommands"] as String
+                    password = properties["panda_pass_litecommands"] as String
+                }
+            }
+
+            maven {
+                name = "eternalcode-repository"
+                url = uri("https://repo.eternalcode.pl/releases")
+                credentials {
+                    username = properties["lucky_user_litecommands"] as String
+                    password = properties["lucky_pass_litecommands"] as String
+                }
+            }
+            maven {
+                name = "mine-repository"
+                url = uri("https://repository.minecodes.pl/releases")
+                credentials {
+                    username = properties["mine_user"] as String
+                    password = properties["mine_pass"] as String
+                }
+            }
         }
     }
 }
