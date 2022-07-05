@@ -1,5 +1,6 @@
-package dev.rollczi.litecommands.bukkit.adventure;
+package dev.rollczi.litecommands.bukkit.adventure.platform;
 
+import dev.rollczi.litecommands.bukkit.adventure.KyoriAudienceProvider;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;
 import org.bukkit.command.CommandSender;
@@ -7,15 +8,16 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-class KyoriAudienceExtractor {
+class KyoriAudienceAdventurePlatformProvider implements KyoriAudienceProvider {
 
     private final AudienceProvider audienceProvider;
 
-    public KyoriAudienceExtractor(AudienceProvider audienceProvider) {
+    public KyoriAudienceAdventurePlatformProvider(AudienceProvider audienceProvider) {
         this.audienceProvider = audienceProvider;
     }
 
-    public Audience extract(CommandSender commandSender) {
+    @Override
+    public Audience sender(CommandSender commandSender) {
         if (commandSender instanceof Audience) {
             return (Audience) commandSender;
         }

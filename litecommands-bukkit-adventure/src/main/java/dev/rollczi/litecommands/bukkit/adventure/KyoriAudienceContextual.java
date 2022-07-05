@@ -8,15 +8,15 @@ import panda.std.Result;
 
 class KyoriAudienceContextual implements Contextual<CommandSender, Audience> {
 
-    private final KyoriAudienceExtractor kyoriAudienceExtractor;
+    private final KyoriAudienceProvider kyoriAudienceProvider;
 
-    KyoriAudienceContextual(KyoriAudienceExtractor kyoriAudienceExtractor) {
-        this.kyoriAudienceExtractor = kyoriAudienceExtractor;
+    KyoriAudienceContextual(KyoriAudienceProvider kyoriAudienceProvider) {
+        this.kyoriAudienceProvider = kyoriAudienceProvider;
     }
 
     @Override
     public Result<Audience, Object> extract(CommandSender commandSender, Invocation<CommandSender> invocation) {
-        return Result.attempt(IllegalArgumentException.class, () -> this.kyoriAudienceExtractor.extract(commandSender))
+        return Result.attempt(IllegalArgumentException.class, () -> this.kyoriAudienceProvider.sender(commandSender))
                 .mapErr(Throwable::getMessage);
     }
 
