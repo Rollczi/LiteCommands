@@ -164,7 +164,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
                 Object createdInstance = optionReturnValue.get();
 
                 parameters.add(createdInstance);
-                processor.settings().unSafeTypeBind(parameterType, () -> createdInstance);
+                processor.settings().typeUnsafeBind(parameterType, parm -> createdInstance);
                 continue;
             }
 
