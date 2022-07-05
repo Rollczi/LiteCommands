@@ -41,6 +41,7 @@ subprojects {
     }
 
     publishing {
+        /*
         repositories {
             mavenLocal()
 
@@ -70,6 +71,7 @@ subprojects {
                 }
             }
         }
+        */
     }
 }
 
