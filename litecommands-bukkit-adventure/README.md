@@ -9,5 +9,5 @@ Maven
 ```
 Gradle
 ```groovy
-implementation 'dev.rollczi.litecommands:bukkit-bukkit:2.2.0'
+implementation 'dev.rollczi.litecommands:bukkit-adventure:2.2.0'
 ```
