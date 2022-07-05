@@ -1,7 +1,11 @@
 package dev.rollczi.litecommands.factory;
 
+import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
+
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 
 public interface CommandEditor {
 
@@ -38,6 +42,8 @@ public interface CommandEditor {
         State permissionExcluded(Collection<String> permissions, boolean removeOld);
 
         State cancel(boolean canceled);
+
+        State meta(Function<CommandMeta, CommandMeta> edit);
 
     }
 

@@ -15,7 +15,7 @@ class ExecutedPermissionsAnnotationResolver implements FactoryAnnotationResolver
                 .flatMap(Arrays::stream)
                 .toArray(String[]::new);
 
-        return Option.of(commandState.executedPermission(perms));
+        return Option.of(commandState.meta(meta -> meta.addExcludedPermission(perms)));
     }
 
     @Override

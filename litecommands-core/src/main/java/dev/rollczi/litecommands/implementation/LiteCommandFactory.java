@@ -126,7 +126,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
     private CommandSection<SENDER> stateToSection(CommandState state, Object instance) {
         CommandSection<SENDER> section = new LiteCommandSection<>(state.getName(), state.getAliases());
 
-        this.applyStateToMeta(section.meta(), state);
+        section.meta().applyCommandMeta(state.getMeta());
         section = this.resolveStateOnSection(section, instance, state);
 
         PandaStream.of(instance.getClass().getDeclaredClasses())
@@ -140,7 +140,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
     private CommandSection<SENDER> stateToSection(CommandState state, Object instance, CommandMeta before) {
         CommandSection<SENDER> section = new LiteCommandSection<>(state.getName(), state.getAliases());
 
-        this.applyStateToMeta(section.meta(), state);
+        section.meta().applyCommandMeta(state.getMeta());
         section.meta().applyCommandMeta(before);
         section = this.resolveStateOnSection(section, instance, state);
 
@@ -203,17 +203,11 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
             }
         }
 
-        LiteArgumentArgumentExecutor<SENDER> executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getValidator());
+        LiteArgumentArgumentExecutor<SENDER> executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getMeta().getAmountValidator());
 
-        this.applyStateToMeta(executor.meta(), state);
+        executor.meta().applyCommandMeta(state.getMeta());
 
         return executor;
-    }
-
-    private void applyStateToMeta(CommandMeta meta, CommandState state) {
-        meta.addPermission(state.getPermissions());
-        meta.addExcludedPermission(state.getExecutedPermissions());
-        meta.setAmountValidator(state.getValidator());
     }
 
     @SuppressWarnings("unchecked")

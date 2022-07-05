@@ -16,11 +16,11 @@ public interface FactoryAnnotationResolver<A extends Annotation> {
     Class<A> getAnnotationClass();
 
     static <T extends Annotation> FactoryAnnotationResolver<T> of(Class<T> type, BiFunction<T, CommandState, CommandState> resolver) {
-        return new SimpleAnnotationResolver<T>(type, (t, commandState) -> Option.of(resolver.apply(t, commandState)));
+        return new SimpleAnnotationResolver<>(type, (t, commandState) -> Option.of(resolver.apply(t, commandState)));
     }
 
     static <T extends Annotation> FactoryAnnotationResolver<T> ofOption(Class<T> type, BiFunction<T, CommandState, Option<CommandState>> resolver) {
-        return new SimpleAnnotationResolver<T>(type, resolver);
+        return new SimpleAnnotationResolver<>(type, resolver);
     }
 
 }

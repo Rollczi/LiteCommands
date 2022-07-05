@@ -10,7 +10,7 @@ class PermissionsAnnotationResolver implements FactoryAnnotationResolver<Permiss
 
     @Override
     public Option<CommandState> resolve(Permission permissions, CommandState commandState) {
-        return Option.of(commandState.permission(permissions.value()));
+        return Option.of(commandState.meta(meta -> meta.addPermission(permissions.value())));
     }
 
     @Override

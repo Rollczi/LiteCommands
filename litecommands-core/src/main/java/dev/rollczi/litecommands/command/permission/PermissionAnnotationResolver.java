@@ -16,7 +16,7 @@ class PermissionAnnotationResolver implements FactoryAnnotationResolver<Permissi
                 .flatMap(Arrays::stream)
                 .toArray(String[]::new);
 
-        return Option.of(commandState.permission(perms));
+        return Option.of(commandState.meta(meta -> meta.addPermission(perms)));
     }
 
     @Override

@@ -18,15 +18,20 @@ import panda.std.Option;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private final MethodExecutor<SENDER> executor;
     private final List<AnnotatedParameterImpl<SENDER, ?>> arguments = new ArrayList<>();
     private final AmountValidator amountValidator;
 
-    private final CommandMeta meta = new LiteCommandMeta();
+    private final CommandMeta meta = CommandMeta.create();
 
     private LiteArgumentArgumentExecutor(List<AnnotatedParameterImpl<SENDER, ?>> arguments, MethodExecutor<SENDER> executor, AmountValidator amountValidator) {
         this.executor = executor;
@@ -50,6 +55,13 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
 
         if (!findResult.isFound()) {
             return ExecuteResult.failure(findResult);
+        }
+
+        if (this.meta.get(CommandMeta.ASYNCHRONOUS)) {
+            CompletableFuture<Object> future = CompletableFuture
+                    .supplyAsync(() -> executor.execute(invocation, findResult.extractResults()), executorService);
+
+            return ExecuteResult.success(findResult, future);
         }
 
         return ExecuteResult.success(findResult, executor.execute(invocation, findResult.extractResults()));

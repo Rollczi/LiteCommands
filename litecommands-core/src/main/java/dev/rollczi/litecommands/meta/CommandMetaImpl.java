@@ -1,49 +1,48 @@
-package dev.rollczi.litecommands.implementation;
+package dev.rollczi.litecommands.meta;
 
 import dev.rollczi.litecommands.command.amount.AmountValidator;
-import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.meta.MetaKey;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-class LiteCommandMeta implements CommandMeta {
+class CommandMetaImpl extends MetaData implements CommandMeta {
 
-    private final Map<MetaKey<?>, Object> meta = new HashMap<>();
     private final Set<String> permissions = new HashSet<>();
     private final Set<String> excludedPermissions = new HashSet<>();
     private AmountValidator amountValidator = AmountValidator.NONE;
 
     @Override
-    public void addPermission(String... permissions) {
+    public CommandMetaImpl addPermission(String... permissions) {
         this.permissions.addAll(Arrays.asList(permissions));
+        return this;
     }
 
     @Override
-    public void addPermission(Collection<String> permissions) {
+    public CommandMetaImpl addPermission(Collection<String> permissions) {
         this.permissions.addAll(permissions);
+        return this;
     }
 
     @Override
-    public void removePermission(String... permissions) {
+    public CommandMetaImpl removePermission(String... permissions) {
         Arrays.asList(permissions).forEach(this.permissions::remove);
+        return this;
     }
 
     @Override
-    public void removePermission(Collection<String> permissions) {
+    public CommandMetaImpl removePermission(Collection<String> permissions) {
         this.permissions.removeAll(permissions);
+        return this;
     }
 
     @Override
-    public void clearPermissions() {
+    public CommandMetaImpl clearPermissions() {
         this.permissions.clear();
+        return this;
     }
 
     @Override
@@ -52,28 +51,33 @@ class LiteCommandMeta implements CommandMeta {
     }
 
     @Override
-    public void addExcludedPermission(String... permissions) {
+    public CommandMetaImpl addExcludedPermission(String... permissions) {
         this.excludedPermissions.addAll(Arrays.asList(permissions));
+        return this;
     }
 
     @Override
-    public void addExcludedPermission(Collection<String> permissions) {
+    public CommandMetaImpl addExcludedPermission(Collection<String> permissions) {
         this.excludedPermissions.addAll(permissions);
+        return this;
     }
 
     @Override
-    public void removeExcludedPermission(String... permissions) {
+    public CommandMetaImpl removeExcludedPermission(String... permissions) {
         Arrays.asList(permissions).forEach(this.excludedPermissions::remove);
+        return this;
     }
 
     @Override
-    public void removeExcludedPermission(Collection<String> permissions) {
+    public CommandMetaImpl removeExcludedPermission(Collection<String> permissions) {
         this.excludedPermissions.removeAll(permissions);
+        return this;
     }
 
     @Override
-    public void clearExcludedPermissions() {
+    public CommandMetaImpl clearExcludedPermissions() {
         this.excludedPermissions.clear();
+        return this;
     }
 
     @Override
@@ -82,13 +86,15 @@ class LiteCommandMeta implements CommandMeta {
     }
 
     @Override
-    public void setAmountValidator(AmountValidator validator) {
+    public CommandMetaImpl setAmountValidator(AmountValidator validator) {
         this.amountValidator = validator;
+        return this;
     }
 
     @Override
-    public void applyAmountValidator(Function<AmountValidator, AmountValidator> edit) {
+    public CommandMetaImpl applyAmountValidator(Function<AmountValidator, AmountValidator> edit) {
         this.amountValidator = edit.apply(this.amountValidator);
+        return this;
     }
 
     @Override
@@ -97,31 +103,24 @@ class LiteCommandMeta implements CommandMeta {
     }
 
     @Override
-    public <T> void set(MetaKey<T> key, T value) {
-        this.meta.put(key, value);
+    public <T> CommandMetaImpl set(MetaKey<T> key, T value) {
+        super.set(key, value);
+        return this;
     }
 
     @Override
-    public <T> T get(MetaKey<T> key) {
-        return key.getType().cast(this.meta.get(key));
+    public CommandMetaImpl apply(Meta meta) {
+        super.apply(meta);
+        return this;
     }
 
     @Override
-    public Map<MetaKey<?>, Object> getMeta() {
-        return Collections.unmodifiableMap(this.meta);
-    }
-
-    @Override
-    public void apply(Meta meta) {
-        this.meta.putAll(meta.getMeta());
-    }
-
-    @Override
-    public void applyCommandMeta(CommandMeta meta) {
+    public CommandMetaImpl applyCommandMeta(CommandMeta meta) {
         this.amountValidator = meta.getAmountValidator();
         this.permissions.addAll(meta.getPermissions());
         this.excludedPermissions.addAll(meta.getExcludedPermissions());
-        this.apply((Meta) meta);
+        this.apply(meta);
+        return this;
     }
 
 }

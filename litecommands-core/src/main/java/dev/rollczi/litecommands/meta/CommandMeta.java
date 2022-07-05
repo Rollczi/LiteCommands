@@ -3,50 +3,67 @@ package dev.rollczi.litecommands.meta;
 import dev.rollczi.litecommands.command.amount.AmountValidator;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
 
 public interface CommandMeta extends Meta {
 
-    MetaKey<String> USAGE_MESSAGE = MetaKey.of("USAGE_MESSAGE", String.class);
+    MetaKey<Boolean> ASYNCHRONOUS = MetaKey.of("asynchronous", Boolean.class, false);
+
+    @Override
+    <T> CommandMeta set(MetaKey<T> key, T value);
+
+    @Override
+    <T> T get(MetaKey<T> key);
+
+    @Override
+    Map<MetaKey<?>, Object> getMeta();
+
+    @Override
+    CommandMeta apply(Meta meta);
 
     // Permission
 
-    void addPermission(String... permissions);
+    CommandMeta addPermission(String... permissions);
 
-    void addPermission(Collection<String> permissions);
+    CommandMeta addPermission(Collection<String> permissions);
 
-    void removePermission(String... permissions);
+    CommandMeta removePermission(String... permissions);
 
-    void removePermission(Collection<String> permissions);
+    CommandMeta removePermission(Collection<String> permissions);
 
-    void clearPermissions();
+    CommandMeta clearPermissions();
 
     Collection<String> getPermissions();
 
     // Excluded Permission
 
-    void addExcludedPermission(String... permissions);
+    CommandMeta addExcludedPermission(String... permissions);
 
-    void addExcludedPermission(Collection<String> permissions);
+    CommandMeta addExcludedPermission(Collection<String> permissions);
 
-    void removeExcludedPermission(String... permissions);
+    CommandMeta removeExcludedPermission(String... permissions);
 
-    void removeExcludedPermission(Collection<String> permissions);
+    CommandMeta removeExcludedPermission(Collection<String> permissions);
 
-    void clearExcludedPermissions();
+    CommandMeta clearExcludedPermissions();
 
     Collection<String> getExcludedPermissions();
 
     // Amount Validator
 
-    void applyAmountValidator(Function<AmountValidator, AmountValidator> edit);
+    CommandMeta applyAmountValidator(Function<AmountValidator, AmountValidator> edit);
 
     AmountValidator getAmountValidator();
 
-    void setAmountValidator(AmountValidator validator);
+    CommandMeta setAmountValidator(AmountValidator validator);
 
     // Meta
 
-    void applyCommandMeta(CommandMeta meta);
+    CommandMeta applyCommandMeta(CommandMeta meta);
+
+    static CommandMeta create() {
+        return new CommandMetaImpl();
+    }
 
 }

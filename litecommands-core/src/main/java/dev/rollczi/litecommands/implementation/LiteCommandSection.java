@@ -35,7 +35,7 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
     private final List<CommandSection<SENDER>> childSections = new ArrayList<>();
     private final List<ArgumentExecutor<SENDER>> argumentExecutors = new ArrayList<>();
 
-    private final CommandMeta meta = new LiteCommandMeta();
+    private final CommandMeta meta = CommandMeta.create();
 
     LiteCommandSection(String name, Collection<String> aliases) {
         Validation.isNotNull(name, "name");

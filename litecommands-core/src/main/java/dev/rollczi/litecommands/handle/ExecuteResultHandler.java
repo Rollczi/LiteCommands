@@ -40,9 +40,19 @@ public class ExecuteResultHandler<SENDER> {
 
         if (object instanceof CompletableFuture<?>) {
             CompletableFuture<?> future = ((CompletableFuture<?>) object);
-            future.thenAccept(o -> handleResult(sender, invocation, result));
+
+            future.whenComplete((o, ex) -> {
+                if (ex != null) {
+                    ex.printStackTrace();
+                    return;
+                }
+
+                this.handleResult(sender, invocation, result);
+            });
+
             return;
         }
+
 
         this.handleResult(sender, invocation, object);
     }

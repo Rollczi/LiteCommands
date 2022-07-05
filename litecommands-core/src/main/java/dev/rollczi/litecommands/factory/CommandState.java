@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.factory;
 
 import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.meta.CommandMeta;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,80 +20,62 @@ public class CommandState implements CommandEditor.State {
     private final String name;
     private final List<Route> routesBefore = new ArrayList<>();
     private final Set<String> aliases = new HashSet<>();
-    private final Set<String> permissions = new HashSet<>();
-    private final Set<String> executedPermissions = new HashSet<>();
     private final Set<CommandState> children = new HashSet<>();
     private final Map<Method, CommandState> executors = new HashMap<>();
-    private final AmountValidator validator;
+    private final CommandMeta meta;
     private final boolean canceled;
 
     public CommandState() {
         this.name = null;
-        this.validator = AmountValidator.none();
+        this.meta = CommandMeta.create();
         this.canceled = false;
     }
 
-    private CommandState(String name, List<Route> routesBefore, Set<String> aliases, Set<String> permissions, Set<String> executedPermissions, Set<CommandState> children, Map<Method, CommandState> executors, AmountValidator validator, boolean canceled) {
+    private CommandState(String name, List<Route> routesBefore, Set<String> aliases, Set<CommandState> children, Map<Method, CommandState> executors, CommandMeta meta, boolean canceled) {
         this.name = name;
+        this.meta = meta;
         this.canceled = canceled;
         this.routesBefore.addAll(routesBefore);
         this.aliases.addAll(aliases);
-        this.permissions.addAll(permissions);
-        this.executedPermissions.addAll(executedPermissions);
         this.children.addAll(children);
         this.executors.putAll(executors);
-        this.validator = validator;
     }
 
     @Override
     public CommandState name(String name) {
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routesBefore, aliases, children, executors, meta, canceled);
     }
 
     public CommandState routeBefore(Route route) {
         ArrayList<Route> routes = new ArrayList<>(routesBefore);
         routes.add(route);
 
-        return new CommandState(name, routes, aliases, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routes, aliases, children, executors, meta, canceled);
     }
 
     public CommandState alias(String... alias) {
         Set<String> aliases = new HashSet<>(this.aliases);
         Collections.addAll(aliases, alias);
 
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
-    }
-
-    public CommandState permission(String... permission) {
-        Set<String> permissions = new HashSet<>(this.permissions);
-        Collections.addAll(permissions, permission);
-
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
-    }
-
-    public CommandState executedPermission(String... permission) {
-        Set<String> permissions = new HashSet<>(this.executedPermissions);
-        Collections.addAll(permissions, permission);
-
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routesBefore, aliases, children, executors, meta, canceled);
     }
 
     public CommandState child(CommandState... child) {
         Set<CommandState> children = new HashSet<>(this.children);
         Collections.addAll(children, child);
 
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routesBefore, aliases, children, executors, meta, canceled);
     }
 
     public CommandState executor(Method method, CommandState state) {
         Map<Method, CommandState> executors = new HashMap<>(this.executors);
         executors.put(method, state);
 
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routesBefore, aliases, children, executors, meta, canceled);
     }
 
     public CommandState validator(Function<AmountValidator, AmountValidator> edit) {
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, edit.apply(this.validator), canceled);
+        return this.meta(commandMeta -> commandMeta.applyAmountValidator(edit));
     }
 
     public String getName() {
@@ -107,24 +90,12 @@ public class CommandState implements CommandEditor.State {
         return Collections.unmodifiableSet(aliases);
     }
 
-    public Set<String> getPermissions() {
-        return Collections.unmodifiableSet(permissions);
-    }
-
-    public Set<String> getExecutedPermissions() {
-        return Collections.unmodifiableSet(executedPermissions);
-    }
-
     public Set<CommandState> getChildren() {
         return Collections.unmodifiableSet(children);
     }
 
     public Map<Method, CommandState> getExecutors() {
         return Collections.unmodifiableMap(executors);
-    }
-
-    public AmountValidator getValidator() {
-        return validator;
     }
 
     public CommandState mergeMethod(Method method, CommandState other) {
@@ -155,7 +126,7 @@ public class CommandState implements CommandEditor.State {
         Set<String> aliasesSet = new HashSet<>(this.aliases);
         aliasesSet.addAll(aliases);
 
-        return new CommandState(name, routesBefore, aliasesSet, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routesBefore, aliasesSet, children, executors, meta, canceled);
     }
 
     public boolean isCanceled() {
@@ -188,28 +159,50 @@ public class CommandState implements CommandEditor.State {
         Set<String> aliasesSet = removeOld ? new HashSet<>() : new HashSet<>(this.aliases);
         aliasesSet.addAll(aliases);
 
-        return new CommandState(name, routesBefore, aliasesSet, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routesBefore, aliasesSet, children, executors, meta, canceled);
     }
 
     @Override
     public CommandState permission(Collection<String> permissions, boolean removeOld) {
-        Set<String> perm = removeOld ? new HashSet<>() : new HashSet<>(this.permissions);
-        perm.addAll(permissions);
+        return this.meta(commandMeta -> {
+            if (removeOld) {
+                commandMeta.clearPermissions();
+            }
 
-        return new CommandState(name, routesBefore, aliases, perm, executedPermissions, children, executors, validator, canceled);
+            commandMeta.addPermission(permissions);
+            return commandMeta;
+        });
     }
 
     @Override
     public CommandState permissionExcluded(Collection<String> executedPermissions, boolean removeOld) {
-        Set<String> executedPerm = removeOld ? new HashSet<>() : new HashSet<>(this.executedPermissions);
-        executedPerm.addAll(executedPermissions);
+        return this.meta(commandMeta -> {
+            if (removeOld) {
+                commandMeta.clearExcludedPermissions();
+            }
 
-        return new CommandState(name, routesBefore, aliases, permissions, executedPerm, children, executors, validator, canceled);
+            commandMeta.addExcludedPermission(executedPermissions);
+            return commandMeta;
+        });
     }
 
     @Override
     public CommandState cancel(boolean canceled) {
-        return new CommandState(name, routesBefore, aliases, permissions, executedPermissions, children, executors, validator, canceled);
+        return new CommandState(name, routesBefore, aliases, children, executors, meta, canceled);
+    }
+
+    @Override
+    public CommandState meta(Function<CommandMeta, CommandMeta> edit) {
+        CommandMeta newMeta = CommandMeta.create();
+        newMeta.apply(this.meta);
+
+        CommandMeta metaData = edit.apply(newMeta);
+
+        return new CommandState(name, routesBefore, aliases, children, executors, metaData, canceled);
+    }
+
+    public CommandMeta getMeta() {
+        return meta;
     }
 
     public static class Route {

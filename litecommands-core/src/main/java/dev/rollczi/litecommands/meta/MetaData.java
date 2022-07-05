@@ -9,13 +9,20 @@ public class MetaData implements Meta {
     private final Map<MetaKey<?>, Object> meta = new HashMap<>();
 
     @Override
-    public <T> void set(MetaKey<T> key, T value) {
+    public <T> Meta set(MetaKey<T> key, T value) {
         this.meta.put(key, value);
+        return this;
     }
 
     @Override
     public <T> T get(MetaKey<T> key) {
-        return key.getType().cast(this.meta.get(key));
+        Object value = this.meta.get(key);
+
+        if (value == null) {
+            return key.getDefaultValue();
+        }
+
+        return key.getType().cast(value);
     }
 
     @Override
@@ -24,8 +31,9 @@ public class MetaData implements Meta {
     }
 
     @Override
-    public void apply(Meta meta) {
+    public Meta apply(Meta meta) {
         this.meta.putAll(meta.getMeta());
+        return this;
     }
 
 }

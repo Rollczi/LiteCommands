@@ -10,7 +10,7 @@ class ExecutedPermissionAnnotationResolver implements FactoryAnnotationResolver<
 
     @Override
     public Option<CommandState> resolve(ExecutedPermission permissions, CommandState commandState) {
-        return Option.of(commandState.executedPermission(permissions.value()));
+        return Option.of(commandState.meta(meta -> meta.addExcludedPermission(permissions.value())));
     }
 
     @Override
