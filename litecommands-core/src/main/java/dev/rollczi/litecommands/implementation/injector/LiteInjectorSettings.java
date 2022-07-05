@@ -23,8 +23,9 @@ class LiteInjectorSettings<SENDER> implements InjectorSettings<SENDER> {
         return this;
     }
 
-    LiteInjectorSettings<SENDER> unSafeTypeBind(Class<?> type, Supplier<?> supplier) {
-        this.typeBinds.put(type, parameter -> supplier.get());
+    @Override
+    public InjectorSettings<SENDER> typeUnsafeBind(Class<?> type, TypeBind<?> supplier) {
+        this.typeBinds.put(type, supplier);
         return this;
     }
 

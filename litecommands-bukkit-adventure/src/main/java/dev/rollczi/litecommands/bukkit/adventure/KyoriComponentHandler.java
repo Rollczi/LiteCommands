@@ -7,15 +7,15 @@ import org.bukkit.command.CommandSender;
 
 class KyoriComponentHandler implements Handler<CommandSender, Component> {
 
-    private final KyoriComponentSender kyoriComponentSender;
+    private final KyoriAudienceExtractor extractor;
 
-    KyoriComponentHandler(KyoriComponentSender kyoriComponentSender) {
-        this.kyoriComponentSender = kyoriComponentSender;
+    KyoriComponentHandler(KyoriAudienceExtractor extractor) {
+        this.extractor = extractor;
     }
 
     @Override
     public void handle(CommandSender commandSource, LiteInvocation invocation, Component value) {
-        this.kyoriComponentSender.send(commandSource, value);
+        this.extractor.extract(commandSource).sendMessage(value);
     }
 
 }

@@ -51,6 +51,8 @@ public interface LiteCommandsBuilder<SENDER> {
 
     <T> LiteCommandsBuilder<SENDER> typeBind(Class<T> type, TypeBind<T> typeBind);
 
+    LiteCommandsBuilder<SENDER> typeUnsafeBind(Class<?> type, TypeBind<?> typeBind);
+
     <T, A extends Annotation> LiteCommandsBuilder<SENDER> annotatedBind(Class<T> type, Class<A> annotationType, AnnotationBind<T, A> annotationBind);
 
     <T> LiteCommandsBuilder<SENDER> contextualBind(Class<T> on, Contextual<SENDER, T> contextual);

@@ -11,6 +11,8 @@ public interface InjectorSettings<CONTEXT> {
 
     <T> InjectorSettings<CONTEXT> typeBind(Class<T> type, Supplier<T> supplier);
 
+    InjectorSettings<CONTEXT> typeUnsafeBind(Class<?> type, TypeBind<?> supplier);
+
     <T> InjectorSettings<CONTEXT> typeBind(Class<T> type, TypeBind<T> typeBind);
 
     <T, A extends Annotation> InjectorSettings<CONTEXT> annotationBind(Class<T> type, Class<A> on, AnnotationBind<T, A> annotationBind);

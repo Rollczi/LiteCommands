@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.implementation.injector;
 
-import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;
 
 public class InjectorProvider {
