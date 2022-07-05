@@ -41,13 +41,13 @@ public class ExecuteResultHandler<SENDER> {
         if (object instanceof CompletableFuture<?>) {
             CompletableFuture<?> future = ((CompletableFuture<?>) object);
 
-            future.whenComplete((o, ex) -> {
+            future.whenComplete((obj, ex) -> {
                 if (ex != null) {
                     ex.printStackTrace();
                     return;
                 }
 
-                this.handleResult(sender, invocation, result);
+                this.handleResult(sender, invocation, obj);
             });
 
             return;
