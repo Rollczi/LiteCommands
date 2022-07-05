@@ -49,7 +49,7 @@ public class ExecuteResultHandler<SENDER> {
 
     private void handleResult(SENDER sender, LiteInvocation invocation, Object object) {
         Class<?> type = object.getClass();
-        Option<Handler<SENDER, ?>> handlerOpt = MapUtil.findByAssignableFromKey(type, this.handlers);
+        Option<Handler<SENDER, ?>> handlerOpt = MapUtil.findSuperTypeOf(type, this.handlers);
 
         if (handlerOpt.isEmpty()) {
             Redirector<?, ?> forwarding = this.redirectors.get(type);
@@ -59,7 +59,7 @@ public class ExecuteResultHandler<SENDER> {
             }
 
             Object to = handleRedirector(forwarding, object);
-            Handler<SENDER, ?> handler = MapUtil.findByAssignableFromKey(to.getClass(), this.handlers)
+            Handler<SENDER, ?> handler = MapUtil.findSuperTypeOf(to.getClass(), this.handlers)
                     .orThrow(() -> new IllegalStateException("Missing result handler for type " + type + " or for redirected type " + to.getClass()));
 
             this.handleHandler(handler, sender, invocation, to);
