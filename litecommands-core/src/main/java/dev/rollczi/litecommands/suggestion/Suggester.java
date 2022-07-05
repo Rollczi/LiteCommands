@@ -16,7 +16,13 @@ public interface Suggester {
     default SuggesterResult extractSuggestions(int route, LiteInvocation invocation) {
         String[] rawArguments = invocation.arguments();
         UniformSuggestionStack stack = this.suggestion();
-        List<String> multilevelArguments = Arrays.asList(rawArguments).subList(route, Math.min(route + stack.lengthMultilevel(), rawArguments.length));
+        int end = Math.min(route + stack.lengthMultilevel(), rawArguments.length);
+
+        if (route > end) {
+            return new SuggesterResult(stack, true);
+        }
+
+        List<String> multilevelArguments = Arrays.asList(rawArguments).subList(route, end);
 
         if (multilevelArguments.isEmpty()) {
             return new SuggesterResult(stack, true);

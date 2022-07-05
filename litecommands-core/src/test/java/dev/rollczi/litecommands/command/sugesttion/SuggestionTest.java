@@ -188,6 +188,22 @@ class SuggestionTest {
 
     @Test
     void allArgumentsMultilevelTest() {
+        List<String> suggestion = testPlatform.suggestion("teleport", "100", "100", "100");
+
+        assertEquals(1, suggestion.size());
+        assertEquals("100", suggestion.get(0));
+    }
+
+    @Test
+    void allArgumentsMultilevelTest2() {
+        List<String> suggestion = testPlatform.suggestion("teleport", "100", "");
+
+        assertEquals(1, suggestion.size());
+        assertEquals("100 100", suggestion.get(0));
+    }
+
+    @Test
+    void allArgumentsMultilevelWithNextTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "100", "100", "100", "");
 
         assertEquals(1, suggestion.size());
