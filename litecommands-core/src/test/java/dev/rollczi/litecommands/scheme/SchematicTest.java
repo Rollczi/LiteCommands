@@ -38,7 +38,7 @@ class SchematicTest {
     @Test
     void schemeBeforeExecutorsTest() {
         FindResult<TestHandle> result = testPlatform.find("teleport");
-        SchemeGenerator schemeGenerator = new SchemeGenerator();
+        SimpleSchemeGenerator schemeGenerator = new SimpleSchemeGenerator();
 
         List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
@@ -53,7 +53,7 @@ class SchematicTest {
     @Test
     void testMatchedNormal() {
         FindResult<TestHandle> result = testPlatform.find("teleport", "test");
-        SchemeGenerator schemeGenerator = new SchemeGenerator();
+        SimpleSchemeGenerator schemeGenerator = new SimpleSchemeGenerator();
 
         List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
@@ -64,7 +64,7 @@ class SchematicTest {
     @Test
     void testMatchedLocation() {
         FindResult<TestHandle> result = testPlatform.find("teleport", "100", "100", "100", "world");
-        SchemeGenerator schemeGenerator = new SchemeGenerator();
+        SimpleSchemeGenerator schemeGenerator = new SimpleSchemeGenerator();
 
         List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
