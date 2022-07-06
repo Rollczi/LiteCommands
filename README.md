@@ -1,3 +1,5 @@
+<div align="center"><img src="https://savemc.pl/files/litecommandsbanner.png" alt="banner" width="50%"/></div>
+
 # ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord) [![OSCS Status](https://www.oscs1024.com/platform/badge/Rollczi/LiteCommands.svg?size=small)](https://www.oscs1024.com/project/Rollczi/LiteCommands?ref=badge_small)
 
 #### Command framework for Velocity, Bukkit, Paper, BungeeCord and your other implementations.
@@ -41,6 +43,11 @@ public class HelloWorldCommand {
     @Min(1)
     public void execute(LiteSender sender, String[] args) {
         sender.sendMessage(String.join(" ", args));
+    }
+    
+    @Execute(route = "subcommand")
+    public void execute(LiteSender sender, @Arg String text) {
+        sender.sendMessage(text);
     }
 
 }
