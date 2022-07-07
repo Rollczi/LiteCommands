@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.bukkit.adventure;
+package dev.rollczi.litecommands.velocity;
 
 import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
