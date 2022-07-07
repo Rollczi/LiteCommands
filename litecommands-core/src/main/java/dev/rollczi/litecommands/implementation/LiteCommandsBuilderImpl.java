@@ -2,7 +2,8 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
-import dev.rollczi.litecommands.LiteCommandsProcess;
+import dev.rollczi.litecommands.LiteCommandsPostProcess;
+import dev.rollczi.litecommands.LiteCommandsPreProcess;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
@@ -33,8 +34,10 @@ import dev.rollczi.litecommands.scheme.SchemeFormat;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -49,8 +52,8 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     private RegistryPlatform<SENDER> registryPlatform;
     private CommandStateFactory<SENDER> commandStateFactory;
 
-    private LiteCommandsProcess<SENDER> preProcess = (builder, platform, injector) -> {};
-    private LiteCommandsProcess<SENDER> postProcess = (builder, platform, injector) -> {};
+    private LiteCommandsPreProcess<SENDER> preProcess = (builder, platform, injector) -> {};
+    private LiteCommandsPostProcess<SENDER> postProcess = (builder, platform, injector, commandService) -> {};
 
     private final Set<Consumer<CommandStateFactory<SENDER>>> commandStateFactoryEditors = new HashSet<>();
     private final CommandEditorRegistry editorRegistry = new CommandEditorRegistry();
@@ -216,13 +219,13 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER> beforeRegister(LiteCommandsProcess<SENDER> preProcess) {
+    public LiteCommandsBuilder<SENDER> beforeRegister(LiteCommandsPreProcess<SENDER> preProcess) {
         this.preProcess = preProcess;
         return this;
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER> afterRegister(LiteCommandsProcess<SENDER> postProcess) {
+    public LiteCommandsBuilder<SENDER> afterRegister(LiteCommandsPostProcess<SENDER> postProcess) {
         this.postProcess = postProcess;
         return this;
     }
@@ -233,10 +236,12 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
             throw new IllegalStateException("Registry platform is not set");
         }
 
+
         this.preProcess.process(this, this.registryPlatform, this.injectorSettings.create());
 
+        CommandService<SENDER> commandService = new CommandService<>(this.registryPlatform, this.executeResultHandler);
         Injector<SENDER> injector = this.injectorSettings.create();
-        LiteCommands<SENDER> commands = new LiteCommandsImpl<>(senderType, registryPlatform, executeResultHandler, injector);
+        LiteCommands<SENDER> liteCommands = new LiteCommandsImpl<>(commandService, senderType, injector);
 
         if (this.commandStateFactory == null) {
             this.commandStateFactory = new LiteCommandFactory<>(injector, this.argumentsRegistry, this.editorRegistry);
@@ -252,12 +257,13 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
 
                 this.commandsInstances.add(command);
             }
-        } catch (Throwable throwable) {
-            throw new RuntimeException(throwable);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
         }
 
-        CommandService<SENDER> service = commands.getCommandService();
+        List<CommandSection<SENDER>> commandSections = new ArrayList<>();
 
+        root:
         for (Object instance : commandsInstances) {
             Option<CommandSection<SENDER>> option = this.commandStateFactory.create(instance);
 
@@ -265,12 +271,25 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
                 continue;
             }
 
-            service.register(option.get());
+            CommandSection<SENDER> currentCommand = option.get();
+
+            for (CommandSection<SENDER> commandSection : commandSections) {
+                if (commandSection.isSimilar(currentCommand.getName())) {
+                    commandSection.mergeSection(currentCommand);
+                    continue root;
+                }
+            }
+
+            commandSections.add(currentCommand);
         }
 
-        this.postProcess.process(this, this.registryPlatform, injector);
+        for (CommandSection<SENDER> commandSection : commandSections) {
+            commandService.register(commandSection);
+        }
 
-        return commands;
+        this.postProcess.process(this, this.registryPlatform, injector, commandService);
+
+        return liteCommands;
     }
 
     public static <T> LiteCommandsBuilder<T> builder(Class<T> senderType) {

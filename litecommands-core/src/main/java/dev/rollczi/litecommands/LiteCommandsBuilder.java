@@ -73,9 +73,9 @@ public interface LiteCommandsBuilder<SENDER> {
 
     Class<SENDER> getSenderType();
 
-    LiteCommandsBuilder<SENDER> beforeRegister(LiteCommandsProcess<SENDER> preProcess);
+    LiteCommandsBuilder<SENDER> beforeRegister(LiteCommandsPreProcess<SENDER> preProcess);
 
-    LiteCommandsBuilder<SENDER> afterRegister(LiteCommandsProcess<SENDER> postProcess);
+    LiteCommandsBuilder<SENDER> afterRegister(LiteCommandsPostProcess<SENDER> postProcess);
 
     LiteCommands<SENDER> register();
 

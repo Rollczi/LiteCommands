@@ -48,4 +48,12 @@ public class CommandService<SENDER> {
         );
     }
 
+    public RegistryPlatform<SENDER> getPlatform() {
+        return platform;
+    }
+
+    public ExecuteResultHandler<SENDER> getHandler() {
+        return handler;
+    }
+
 }

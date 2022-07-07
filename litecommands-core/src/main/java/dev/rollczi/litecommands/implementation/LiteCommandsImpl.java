@@ -9,17 +9,13 @@ import dev.rollczi.litecommands.platform.RegistryPlatform;
 class LiteCommandsImpl<SENDER> implements LiteCommands<SENDER> {
 
     private final CommandService<SENDER> commandService;
-    private final RegistryPlatform<SENDER> platform;
     private final Injector<SENDER> injector;
     private final Class<SENDER> senderType;
-    private final ExecuteResultHandler<SENDER> executeResultHandler;
 
-    LiteCommandsImpl(Class<SENDER> senderType, RegistryPlatform<SENDER> platform, ExecuteResultHandler<SENDER> handler, Injector<SENDER> injector) {
+    LiteCommandsImpl(CommandService<SENDER> commandService, Class<SENDER> senderType,Injector<SENDER> injector) {
+        this.commandService = commandService;
         this.senderType = senderType;
         this.injector = injector;
-        this.commandService = new CommandService<>(platform, handler);
-        this.platform = platform;
-        this.executeResultHandler = handler;
     }
 
     @Override
@@ -29,7 +25,7 @@ class LiteCommandsImpl<SENDER> implements LiteCommands<SENDER> {
 
     @Override
     public RegistryPlatform<SENDER> getPlatform() {
-        return this.platform;
+        return this.commandService.getPlatform();
     }
 
     @Override
@@ -44,7 +40,7 @@ class LiteCommandsImpl<SENDER> implements LiteCommands<SENDER> {
 
     @Override
     public ExecuteResultHandler<SENDER> getExecuteResultHandler() {
-        return executeResultHandler;
+        return this.commandService.getHandler();
     }
 
 }
