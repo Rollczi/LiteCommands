@@ -103,6 +103,13 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
     @Override
     public SuggestionMerger findSuggestion(Invocation<SENDER> invocation, int route) {
         SuggestionMerger suggestionMerger = SuggestionMerger.empty(invocation);
+        LiteSender sender = invocation.sender();
+
+        for (String permission : this.meta.getPermissions()) {
+            if (!sender.hasPermission(permission)) {
+                return suggestionMerger;
+            }
+        }
 
         if (invocation.arguments().length == route) {
             return suggestionMerger.appendRoot(this.suggestion());
@@ -110,16 +117,7 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
 
         int routeAbove = route + 1;
 
-        root:
         for (CommandSection<SENDER> section : this.childSections) {
-            for (String permission : section.meta().getPermissions()) {
-                LiteSender sender = invocation.sender();
-
-                if (!sender.hasPermission(permission)) {
-                    continue root;
-                }
-            }
-
             SuggesterResult result = section.extractSuggestions(route, invocation.toLite());
 
             if (result.isFailure()) {
