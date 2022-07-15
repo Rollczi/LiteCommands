@@ -8,7 +8,7 @@ val bungeeArtifact by extra("bungee")
 plugins {
     id("idea")
     id("maven-publish")
-    id("org.jetbrains.kotlin.jvm") version "1.7.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
