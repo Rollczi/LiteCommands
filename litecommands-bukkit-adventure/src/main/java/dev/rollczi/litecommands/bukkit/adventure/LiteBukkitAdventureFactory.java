@@ -7,17 +7,30 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public final class LiteBukkitAdventureFactory {
 
     private LiteBukkitAdventureFactory() {
     }
 
+    @ApiStatus.Internal
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, KyoriAudienceProvider kyoriAudienceProvider) {
+        return builder(server, fallbackPrefix, kyoriAudienceProvider, false);
+    }
+
+    @ApiStatus.Internal
     public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, KyoriAudienceProvider kyoriAudienceProvider, boolean supportsMiniMessage) {
-        ComponentSerializer<Component, ?, String> kyoriComponentSerializer = supportsMiniMessage
+        ComponentSerializer<Component, ? extends Component, String> serializer = supportsMiniMessage
                 ? MiniMessageFactory.produce()
                 : LegacyProcessor.LEGACY_SERIALIZER;
 
+        return builder(server, fallbackPrefix, kyoriAudienceProvider, serializer);
+    }
+
+    @ApiStatus.Internal
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, KyoriAudienceProvider kyoriAudienceProvider, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
         return LiteBukkitFactory.builder(server, fallbackPrefix)
                 .argument(Component.class, new KyoriComponentArgument())
                 .argument(Component.class, "color", new KyoriColoredComponentArgument(kyoriComponentSerializer))
