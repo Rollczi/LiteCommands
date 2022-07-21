@@ -9,6 +9,10 @@ import org.bukkit.command.CommandSender;
 
 public final class LiteBukkitAdventureFactory {
 
+    private LiteBukkitAdventureFactory() {
+
+    }
+
     public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, KyoriAudienceProvider kyoriAudienceProvider) {
         return LiteBukkitFactory.builder(server, fallbackPrefix)
                 .argument(Component.class, new KyoriComponentArgument())
