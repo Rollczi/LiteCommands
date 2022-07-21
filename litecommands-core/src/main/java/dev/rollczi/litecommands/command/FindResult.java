@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
+import dev.rollczi.litecommands.scheme.SchematicContext;
 import dev.rollczi.litecommands.shared.Validation;
 import panda.std.Option;
 
@@ -15,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Deprecated
-public final class FindResult<SENDER> {
+public final class FindResult<SENDER> implements SchematicContext<SENDER> {
 
     private final Invocation<SENDER> invocation;
 
@@ -118,18 +119,22 @@ public final class FindResult<SENDER> {
         return new FindResult<>(invocation, sections, executor, arguments, false, false, result);
     }
 
+    @Override
     public Invocation<SENDER> getInvocation() {
         return this.invocation;
     }
 
+    @Override
     public List<CommandSection<SENDER>> getSections() {
         return Collections.unmodifiableList(sections);
     }
 
+    @Override
     public Optional<ArgumentExecutor<SENDER>> getExecutor() {
         return Optional.ofNullable(executor);
     }
 
+    @Override
     public List<AnnotatedParameter<SENDER, ?>> getAllArguments() {
         return Collections.unmodifiableList(executor.annotatedParameters());
     }

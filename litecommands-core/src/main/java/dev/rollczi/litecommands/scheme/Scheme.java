@@ -7,6 +7,10 @@ public class Scheme {
 
     private final List<String> schemes;
 
+    public String first() {
+        return schemes.get(0);
+    }
+
     public Scheme(List<String> schemes) {
         this.schemes = schemes;
     }
