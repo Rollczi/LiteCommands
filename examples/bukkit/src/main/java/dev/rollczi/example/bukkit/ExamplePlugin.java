@@ -30,7 +30,7 @@ public class ExamplePlugin extends JavaPlugin {
                 .contextualBind(Player.class, new BukkitOnlyPlayerContextual("&cKomenda tylko dla gracza!"))
 
                 // Commands
-                .command(TeleportCommand.class)
+                .command(TeleportCommand.class, KickCommand.class)
 
                 // Handlers
                 .invalidUsageHandler(new InvalidUsage())
