@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 
 final class LegacyProcessor implements UnaryOperator<Component> {
 
-    private static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 
     @Override
     public Component apply(Component component) {
-        return component.replaceText(builder -> builder.match(Pattern.compile(".*")).replacement((matchResult, build) -> SERIALIZER.deserialize(matchResult.group())));
+        return component.replaceText(builder -> builder.match(Pattern.compile(".*")).replacement((matchResult, build) -> LEGACY_SERIALIZER.deserialize(matchResult.group())));
     }
 
 }
