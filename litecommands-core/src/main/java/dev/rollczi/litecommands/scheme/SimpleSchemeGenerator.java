@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 class SimpleSchemeGenerator implements SchemeGenerator {
 
     @Override
-    public Scheme generateScheme(FindResult<?> result, SchemeFormat schemeFormat) {
+    public Scheme generateScheme(SchematicContext<?> result, SchemeFormat schemeFormat) {
         return new Scheme(this.generate(result, schemeFormat));
     }
 
     @Override
-    public List<String> generate(FindResult<?> result, SchemeFormat schemeFormat) {
+    public List<String> generate(SchematicContext<?> result, SchemeFormat schemeFormat) {
         Invocation<?> invocation = result.getInvocation();
         List<? extends CommandSection<?>> sections = result.getSections();
 
