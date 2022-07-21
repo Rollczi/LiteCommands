@@ -38,7 +38,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
     @Override
     public <T> T createInstance(Class<T> type, InvokeContext<SENDER> context) {
         return this.createInstance0(type, context, false)
-                .orThrow((exception) -> new InjectException("Can't create new instance of class " + ReflectFormat.singleClass(type), exception))
+                .orThrow(exception -> new InjectException("Can't create new instance of class " + ReflectFormat.singleClass(type), exception))
                 .orThrow(() -> new InjectException("Can't create new instance of class " + ReflectFormat.singleClass(type)));
     }
 
@@ -75,13 +75,13 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
             }
         }
 
-        return this.invokeExecutables(type, constructorsArray, context, (constructor, arg) -> type.cast(constructor.newInstance(arg)));
+        return this.invokeExecutables(constructorsArray, context, (constructor, arg) -> type.cast(constructor.newInstance(arg)));
     }
 
     @Override
     public Object invokeMethod(Method method, Object instance, InvokeContext<SENDER> context) {
-        return this.invokeExecutables(Object.class, new Method[]{ method }, context, (m, arg) -> m.invoke(instance, arg))
-                .orThrow((exception) -> new IllegalStateException("The method " + ReflectFormat.docsExecutable(method) + " cannot be invoked!", exception))
+        return this.invokeExecutables(new Method[]{ method }, context, (m, arg) -> m.invoke(instance, arg))
+                .orThrow(exception -> new IllegalStateException("The method " + ReflectFormat.docsExecutable(method) + " cannot be invoked!", exception))
                 .orNull();
     }
 
@@ -95,7 +95,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         return this.processor.settings().duplicate();
     }
 
-    private <T extends Executable, R> Result<Option<R>, Exception> invokeExecutables(Class<R> type, T[] executables, @Nullable InvokeContext<SENDER> context, Invoker<T, R> invoker) {
+    private <T extends Executable, R> Result<Option<R>, Exception> invokeExecutables(T[] executables, @Nullable InvokeContext<SENDER> context, Invoker<T, R> invoker) {
         List<Exception> errors = new ArrayList<>();
 
         for (T executable : executables) {
@@ -132,7 +132,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
                 if (!iterator.hasNext()) {
                     if (executable instanceof Method) {
                         return Result.error(new MissingBindException(Collections.singletonList(parameterType),
-                                "Missing " + ReflectFormat.singleClass(parameterType) + " argument for method: " + ReflectFormat.docsExecutable((Method) executable) + " Have you added argument()?"));
+                                "Missing " + ReflectFormat.singleClass(parameterType) + " argument for method: " + ReflectFormat.docsExecutable(executable) + " Have you added argument()?"));
                     }
 
                     return Result.error(new MissingBindException(Collections.singletonList(parameterType), "Argument in constructor? Missing bind's"));
