@@ -18,6 +18,7 @@ import panda.std.Option;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,7 +58,7 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
             return ExecuteResult.failure(findResult);
         }
 
-        if (this.meta.get(CommandMeta.ASYNCHRONOUS)) {
+        if (Boolean.TRUE.equals(this.meta.get(CommandMeta.ASYNCHRONOUS))) {
             CompletableFuture<Object> future = CompletableFuture
                     .supplyAsync(() -> executor.execute(invocation, findResult.extractResults()), executorService);
 
@@ -85,10 +86,12 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
                         continue;
                     }
 
-                    if (result.getNoMatchedResult().isPresent()) {
+                    Optional<Object> resultNoMatchedResult = result.getNoMatchedResult();
+
+                    if (resultNoMatchedResult.isPresent()) {
                         return currentResult
                                 .withArgument(state)
-                                .invalid(result.getNoMatchedResult().get());
+                                .invalid(resultNoMatchedResult.get());
                     }
 
                     return currentResult

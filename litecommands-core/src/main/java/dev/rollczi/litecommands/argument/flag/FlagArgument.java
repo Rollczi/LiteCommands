@@ -1,13 +1,11 @@
 package dev.rollczi.litecommands.argument.flag;
 
 import dev.rollczi.litecommands.argument.ArgumentContext;
-import dev.rollczi.litecommands.argument.SingleArgument;
+import dev.rollczi.litecommands.argument.SingleOrElseArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 
-import java.lang.reflect.Parameter;
-
-public class FlagArgument<SENDER> implements SingleArgument<SENDER, Flag> {
+public class FlagArgument<SENDER> implements SingleOrElseArgument<SENDER, Flag> {
 
     @Override
     public MatchResult match(LiteInvocation invocation, ArgumentContext<Flag> context, String argument) {
@@ -15,6 +13,11 @@ public class FlagArgument<SENDER> implements SingleArgument<SENDER, Flag> {
             return MatchResult.matched(true, 1);
         }
 
+        return MatchResult.matched(false, 0);
+    }
+
+    @Override
+    public MatchResult orElse(LiteInvocation invocation, ArgumentContext<Flag> context) {
         return MatchResult.matched(false, 0);
     }
 

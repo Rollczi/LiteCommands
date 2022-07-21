@@ -102,6 +102,9 @@ public final class LiteFactory {
 
                 .argument(Arg.class, Enum.class, new EnumArgument<>())
 
+                .resultHandler(boolean.class, (sender, invocation, value) -> {})
+                .resultHandler(Boolean.class, (sender, invocation, value) -> {})
+
                 .redirectResult(Scheme.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getSchemes()))
                 .redirectResult(LitePermissions.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getPermissions()))
 
