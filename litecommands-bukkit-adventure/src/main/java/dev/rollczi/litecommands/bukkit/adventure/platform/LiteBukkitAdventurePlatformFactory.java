@@ -11,10 +11,10 @@ public final class LiteBukkitAdventurePlatformFactory {
     private LiteBukkitAdventurePlatformFactory() {
     }
 
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, AudienceProvider audienceProvider) {
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, AudienceProvider audienceProvider, boolean supportsMiniMessage) {
         KyoriAudienceAdventurePlatformProvider audienceAdventurePlatformProvider = new KyoriAudienceAdventurePlatformProvider(audienceProvider);
 
-        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, audienceAdventurePlatformProvider);
+        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, audienceAdventurePlatformProvider, supportsMiniMessage);
     }
 
 }

@@ -5,19 +5,21 @@ import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.ComponentSerializer;
 import panda.std.Result;
 
 @ArgumentName("text")
 class KyoriColoredComponentArgument implements OneArgument<Component> {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder()
-            .postProcessor(new LegacyProcessor())
-            .build();
+    private final ComponentSerializer<Component, ?, String> kyoriComponentSerializer;
+
+    public KyoriColoredComponentArgument(ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
+        this.kyoriComponentSerializer = kyoriComponentSerializer;
+    }
 
     @Override
     public Result<Component, ?> parse(LiteInvocation invocation, String argument) {
-        return Result.ok(MINI_MESSAGE.deserialize(argument));
+        return Result.ok(this.kyoriComponentSerializer.deserialize(argument));
     }
 
     @Override
