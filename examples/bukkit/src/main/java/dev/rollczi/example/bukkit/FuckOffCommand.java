@@ -10,14 +10,14 @@ import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.section.Section;
 
-@Section(route = "fuckoff", aliases = "wypierdalaj")
-@Permission("dev.rollczi.fuckoff")
-public class FuckOffCommand {
+@Section(route = "kick")
+@Permission("dev.rollczi.kick")
+public class KickCommand {
 
     @Execute(min = 2)
-    public void banPlayer(final Player sender, @Arg @Name("target") final Player target, @Joiner final String reason){
+    public void kickPlayer(Player sender, @Arg @Name("target") Player target, @Joiner String reason){
         target.kickPlayer(ChatUtil.color(reason));
-        Bukkit.broadcastMessage(ChatUtil.color("&cPlayer &7" + target.getName() + " &cgot fucked up!"));
+        Bukkit.broadcastMessage(ChatUtil.color("&cPlayer &7" + target.getName() + " &chas been kicked!"));
     }
 
 }
