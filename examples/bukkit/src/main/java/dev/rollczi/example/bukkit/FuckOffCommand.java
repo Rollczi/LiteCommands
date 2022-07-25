@@ -4,7 +4,7 @@ import dev.rollczi.example.bukkit.util.ChatUtil;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Name;
 import org.bukkit.entity.Player;
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import dev.rollczi.litecommands.argument.joiner.Joiner;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.Permission;
