@@ -17,16 +17,16 @@ import java.util.stream.Collectors;
 public class BukkitPlayerArgument implements OneArgument<Player> {
 
     private final Server server;
-    private final String playerNotFound;
+    private final String playerNotFoundMessage;
 
-    public BukkitPlayerArgument(Server server, String playerNotFound) {
+    public BukkitPlayerArgument(Server server, String playerNotFoundMessage) {
         this.server = server;
-        this.playerNotFound = playerNotFound;
+        this.playerNotFoundMessage = playerNotFoundMessage;
     }
 
     @Override
     public Result<Player, Object> parse(LiteInvocation invocation, String argument) {
-        return Option.of(this.server.getPlayer(argument)).toResult(playerNotFound);
+        return Option.of(this.server.getPlayer(argument)).toResult(playerNotFoundMessage);
     }
 
     @Override
