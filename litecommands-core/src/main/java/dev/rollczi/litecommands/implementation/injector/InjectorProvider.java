@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.implementation.injector;
 
 import dev.rollczi.litecommands.injector.InjectorSettings;
 
-public class InjectorProvider {
+public final class InjectorProvider {
 
     private InjectorProvider() {
     }
