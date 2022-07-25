@@ -1,17 +1,18 @@
-package dev.rollczi.litecommands.bukkit.tools;
+package dev.rollczi.litecommands.bukkit.adventure.tools;
 
 import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.contextual.Contextual;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import panda.std.Option;
 import panda.std.Result;
 
-public class BukkitOnlyPlayerContextual implements Contextual<CommandSender, Player> {
+public class KyoriBukkitOnlyPlayerContextual implements Contextual<CommandSender, Player> {
 
-    private final String onlyPlayerMessage;
+    private final Component onlyPlayerMessage;
 
-    public BukkitOnlyPlayerContextual(String onlyPlayerMessage) {
+    public KyoriBukkitOnlyPlayerContextual(Component onlyPlayerMessage) {
         this.onlyPlayerMessage = onlyPlayerMessage;
     }
 
