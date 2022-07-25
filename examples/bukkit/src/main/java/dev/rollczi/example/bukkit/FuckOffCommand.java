@@ -15,9 +15,9 @@ import dev.rollczi.litecommands.command.section.Section;
 public class KickCommand {
 
     @Execute(min = 2)
-    public void kickPlayer(Player sender, @Arg @Name("target") Player target, @Joiner String reason){
+    public void kickPlayer(Player sender, @Arg @Name("target") Player target, @Joiner String reason) {
         target.kickPlayer(ChatUtil.color(reason));
-        Bukkit.broadcastMessage(ChatUtil.color("&cPlayer &7" + target.getName() + " &chas been kicked!"));
+        Bukkit.getServer().broadcastMessage(ChatUtil.color("&cPlayer &7" + target.getName() + " &chas been kicked!"));
     }
 
 }
