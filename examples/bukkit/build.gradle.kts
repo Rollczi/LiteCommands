@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 }
 
 
