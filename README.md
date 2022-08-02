@@ -76,8 +76,6 @@ implementation 'dev.rollczi.litecommands:velocity:2.4.1'
  - [Bukkit](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit)
  - [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
 #### Other examples: 
- - [Wiki Velocity Example](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(simple))
- - [Wiki Velocity Example (advanced)](https://github.com/Rollczi/LiteCommands/wiki/Velocity-Example-(advanced))
  - [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
 
 See (Important dependencies used)
