@@ -3,7 +3,7 @@ dependencies {
     api(project(":litecommands-core"))
     api(project(":litecommands-bukkit"))
 
-    compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.19.1-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-platform-api:4.1.1")
     compileOnly("net.kyori:adventure-text-minimessage:4.11.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.11.0")
