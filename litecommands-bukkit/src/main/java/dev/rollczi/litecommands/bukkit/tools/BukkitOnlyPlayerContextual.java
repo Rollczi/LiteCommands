@@ -7,11 +7,11 @@ import org.bukkit.entity.Player;
 import panda.std.Option;
 import panda.std.Result;
 
-public class BukkitOnlyPlayerContextual implements Contextual<CommandSender, Player> {
+public class BukkitOnlyPlayerContextual<MESSAGE> implements Contextual<CommandSender, Player> {
 
-    private final String onlyPlayerMessage;
+    private final MESSAGE onlyPlayerMessage;
 
-    public BukkitOnlyPlayerContextual(String onlyPlayerMessage) {
+    public BukkitOnlyPlayerContextual(MESSAGE onlyPlayerMessage) {
         this.onlyPlayerMessage = onlyPlayerMessage;
     }
 
