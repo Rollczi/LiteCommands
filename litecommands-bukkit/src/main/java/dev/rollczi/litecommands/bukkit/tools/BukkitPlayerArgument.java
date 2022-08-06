@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ArgumentName("player")
-public class BukkitPlayerArgument implements OneArgument<Player> {
+public class BukkitPlayerArgument<MESSAGE> implements OneArgument<Player> {
 
     private final Server server;
-    private final String playerNotFoundMessage;
+    private final MESSAGE playerNotFoundMessage;
 
-    public BukkitPlayerArgument(Server server, String playerNotFoundMessage) {
+    public BukkitPlayerArgument(Server server, MESSAGE playerNotFoundMessage) {
         this.server = server;
         this.playerNotFoundMessage = playerNotFoundMessage;
     }
