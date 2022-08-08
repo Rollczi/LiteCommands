@@ -30,13 +30,11 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
 
     private final MethodExecutor<SENDER> executor;
     private final List<AnnotatedParameterImpl<SENDER, ?>> arguments = new ArrayList<>();
-    private final AmountValidator amountValidator;
 
     private final CommandMeta meta = CommandMeta.create();
 
-    private LiteArgumentArgumentExecutor(List<AnnotatedParameterImpl<SENDER, ?>> arguments, MethodExecutor<SENDER> executor, AmountValidator amountValidator) {
+    private LiteArgumentArgumentExecutor(List<AnnotatedParameterImpl<SENDER, ?>> arguments, MethodExecutor<SENDER> executor) {
         this.executor = executor;
-        this.amountValidator = amountValidator;
         this.arguments.addAll(arguments);
     }
 
@@ -109,18 +107,11 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
             }
         }
 
-        if (!amountValidator.valid(invocation.arguments().length - route + 1)) {
+        if (!meta.getAmountValidator().valid(invocation.arguments().length - route + 1)) {
             return currentResult.invalid();
         }
 
         return currentResult.found();
-    }
-
-    @Override
-    public List<Argument<SENDER, ?>> arguments() {
-        return this.arguments.stream()
-                .map(AnnotatedParameterImpl::argument)
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -133,24 +124,8 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
         return this.meta;
     }
 
-    @Override
-    public AmountValidator amountValidator() {
-        return this.amountValidator;
-    }
-
-    static <T> LiteArgumentArgumentExecutor<T> of(List<AnnotatedParameterImpl<T, ?>> arguments, MethodExecutor<T> executor, AmountValidator amountValidator) {
-        return new LiteArgumentArgumentExecutor<>(arguments, executor, amountValidator);
-    }
-
-    @Override
-    public List<Suggestion> firstSuggestions(LiteInvocation invocation) {
-        if (arguments.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        AnnotatedParameterImpl<SENDER, ?> parameter = arguments.get(0);
-
-        return parameter.extractSuggestion(invocation);
+    static <T> LiteArgumentArgumentExecutor<T> of(List<AnnotatedParameterImpl<T, ?>> arguments, MethodExecutor<T> executor) {
+        return new LiteArgumentArgumentExecutor<>(arguments, executor);
     }
 
 }

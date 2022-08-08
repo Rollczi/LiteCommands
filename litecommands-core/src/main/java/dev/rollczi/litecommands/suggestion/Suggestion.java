@@ -54,10 +54,6 @@ public class Suggestion {
         return Suggestion.multilevel(Arrays.asList(suggestion));
     }
 
-    public static Suggestion of(String suggestion) {
-        return new Suggestion(Collections.singletonList(suggestion));
-    }
-
     public static List<Suggestion> of(String... suggestions) {
         return of(Arrays.asList(suggestions));
     }
@@ -70,6 +66,14 @@ public class Suggestion {
         }
 
         return complete;
+    }
+
+    public static Suggestion of(String suggestion) {
+        return new Suggestion(Collections.singletonList(suggestion));
+    }
+
+    public static Suggestion empty() {
+        return new Suggestion(Collections.emptyList());
     }
 
     @Override

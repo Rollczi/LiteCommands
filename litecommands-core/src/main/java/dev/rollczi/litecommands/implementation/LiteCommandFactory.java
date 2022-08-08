@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.implementation;
 
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.injector.InjectException;
 import dev.rollczi.litecommands.injector.Injectable;
 import dev.rollczi.litecommands.argument.By;
 import dev.rollczi.litecommands.injector.Injector;
@@ -130,7 +131,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
         section = this.resolveStateOnSection(section, instance, state);
 
         PandaStream.of(instance.getClass().getDeclaredClasses())
-                .mapOpt(type -> Option.attempt(Throwable.class, () -> injector.createInstance(type)))
+                .mapOpt(type -> Option.attempt(InjectException.class, () -> injector.createInstance(type)))
                 .mapOpt(this::create)
                 .forEach(section::childSection);
 
@@ -203,7 +204,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
             }
         }
 
-        LiteArgumentArgumentExecutor<SENDER> executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor, state.getMeta().getAmountValidator());
+        LiteArgumentArgumentExecutor<SENDER> executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor);
 
         executor.meta().applyCommandMeta(state.getMeta());
 

@@ -30,9 +30,6 @@ class MethodExecutor<SENDER> {
         catch (LiteException exception) {
             return exception.getResult();
         }
-        catch (Throwable throwable) {
-            throw new RuntimeException(throwable);
-        }
     }
 
 }

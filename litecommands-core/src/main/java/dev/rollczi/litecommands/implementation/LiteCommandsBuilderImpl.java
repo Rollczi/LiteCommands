@@ -24,6 +24,7 @@ import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.handle.PermissionHandler;
 import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.implementation.injector.InjectorProvider;
+import dev.rollczi.litecommands.injector.InjectException;
 import dev.rollczi.litecommands.injector.bind.AnnotationBind;
 import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;
@@ -251,14 +252,10 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
             editor.accept(this.commandStateFactory);
         }
 
-        try {
-            for (Class<?> commandsClass : this.commandsClasses) {
-                Object command = injector.createInstance(commandsClass);
+        for (Class<?> commandsClass : this.commandsClasses) {
+            Object command = injector.createInstance(commandsClass);
 
-                this.commandsInstances.add(command);
-            }
-        } catch (Exception exception) {
-            throw new RuntimeException(exception);
+            this.commandsInstances.add(command);
         }
 
         List<CommandSection<SENDER>> commandSections = new ArrayList<>();

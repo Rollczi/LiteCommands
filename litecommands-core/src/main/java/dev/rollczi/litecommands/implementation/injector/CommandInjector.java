@@ -47,7 +47,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         return this.createInstance(type, null);
     }
 
-    private <T> Result<Option<T>, Exception> createInstance0(Class<T> type, InvokeContext<SENDER> context, boolean onlyWitInjectAnnotation) {
+    private <T> Result<Option<T>, InjectException> createInstance0(Class<T> type, InvokeContext<SENDER> context, boolean onlyWitInjectAnnotation) {
         if (type.isInterface()) {
             return Result.ok(Option.none());
         }
@@ -67,12 +67,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         Constructor<?>[] constructorsArray = sortedConstructors.toArray(new Constructor<?>[0]);
 
         if (constructorsArray.length == 0) {
-            try {
-                constructorsArray = new Constructor[] { type.getDeclaredConstructor() };
-            }
-            catch (NoSuchMethodException ignore) {
-                return Result.error(new InjectException("Did you forget the @Inject annotation in front of the constructor of class " + type + "?"));
-            }
+            return Result.error(new InjectException("Did you forget the @Inject annotation in front of the constructor of class " + type + "?"));
         }
 
         return this.invokeExecutables(constructorsArray, context, (constructor, arg) -> type.cast(constructor.newInstance(arg)));
@@ -81,7 +76,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
     @Override
     public Object invokeMethod(Method method, Object instance, InvokeContext<SENDER> context) {
         return this.invokeExecutables(new Method[]{ method }, context, (m, arg) -> m.invoke(instance, arg))
-                .orThrow(exception -> new IllegalStateException("The method " + ReflectFormat.docsExecutable(method) + " cannot be invoked!", exception))
+                .orThrow(exception -> exception)
                 .orNull();
     }
 
@@ -95,11 +90,11 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         return this.processor.settings().duplicate();
     }
 
-    private <T extends Executable, R> Result<Option<R>, Exception> invokeExecutables(T[] executables, @Nullable InvokeContext<SENDER> context, Invoker<T, R> invoker) {
-        List<Exception> errors = new ArrayList<>();
+    private <T extends Executable, R> Result<Option<R>, InjectException> invokeExecutables(T[] executables, @Nullable InvokeContext<SENDER> context, Invoker<T, R> invoker) {
+        List<InjectException> errors = new ArrayList<>();
 
         for (T executable : executables) {
-            Result<Option<R>, Exception> result = this.invokeExecutable(executable, context, invoker);
+            Result<Option<R>, InjectException> result = this.invokeExecutable(executable, context, invoker);
 
             if (result.isOk()) {
                 return Result.ok(result.get());
@@ -117,7 +112,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         return Result.error(exception);
     }
 
-    private <T extends Executable, R> Result<Option<R>, Exception> invokeExecutable(T executable, InvokeContext<SENDER> context, Invoker<T, R> invoker) {
+    private <T extends Executable, R> Result<Option<R>, InjectException> invokeExecutable(T executable, InvokeContext<SENDER> context, Invoker<T, R> invoker) {
         boolean useContext = context != null;
         Iterator<Object> iterator = useContext ? context.getInjectable().iterator() : Collections.emptyIterator();
 
@@ -131,8 +126,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
             if (useContext && this.isInjectAnnotation(parameter)) {
                 if (!iterator.hasNext()) {
                     if (executable instanceof Method) {
-                        return Result.error(new MissingBindException(Collections.singletonList(parameterType),
-                                "Missing " + ReflectFormat.singleClass(parameterType) + " argument for method: " + ReflectFormat.docsExecutable(executable) + " Have you added argument()?"));
+                        return Result.error(new MissingBindException(Collections.singletonList(parameterType), "Missing " + ReflectFormat.singleClass(parameterType) + " argument for method: " + ReflectFormat.docsExecutable(executable) + " Have you added argument()?"));
                     }
 
                     return Result.error(new MissingBindException(Collections.singletonList(parameterType), "Argument in constructor? Missing bind's"));
@@ -151,7 +145,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
                 continue;
             }
 
-            Result<? extends Option<?>, Exception> result = this.createInstance0(parameterType, context, true);
+            Result<? extends Option<?>, InjectException> result = this.createInstance0(parameterType, context, true);
 
             if (result.isOk()) {
                 Option<?> optionReturnValue = result.get();
@@ -184,13 +178,16 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
 
         try {
             executable.setAccessible(true);
-            return Result.ok(Option.of(invoker.apply(executable, parameters.toArray(new Object[0]))));
+            R result = invoker.apply(executable, parameters.toArray(new Object[0]));
+
+            return Result.ok(Option.of(result));
         }
         catch (Exception exception) {
-            return Result.error(new InjectException(
-                    "Injected parameters: " +
-                    parameters.stream().map(o -> o.getClass().getName()).collect(Collectors.joining(", ")), exception
-            ));
+            String formattedParams = parameters.stream()
+                    .map(obj -> obj.getClass().getName())
+                    .collect(Collectors.joining(", "));
+
+            return Result.error(new InjectException("Injected parameters: " + formattedParams, exception));
         }
     }
 
