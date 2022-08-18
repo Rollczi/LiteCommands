@@ -1,10 +1,12 @@
 package dev.rollczi.litecommands.injector.bind;
 
+import dev.rollczi.litecommands.command.Invocation;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
-public interface AnnotationBind<T, A extends Annotation> {
+public interface AnnotationBind<TYPE, SENDER, ANNOTATION extends Annotation> {
 
-    T extract(Parameter parameter, A annotation);
+    TYPE extract(Invocation<SENDER> invocation, Parameter parameter, ANNOTATION annotation);
 
 }

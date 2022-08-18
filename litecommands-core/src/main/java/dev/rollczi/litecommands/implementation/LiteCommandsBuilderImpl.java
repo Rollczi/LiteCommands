@@ -167,7 +167,7 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     }
 
     @Override
-    public <T, A extends Annotation> LiteCommandsBuilder<SENDER> annotatedBind(Class<T> type, Class<A> annotationType, AnnotationBind<T, A> annotationBind) {
+    public <T, A extends Annotation> LiteCommandsBuilder<SENDER> annotatedBind(Class<T> type, Class<A> annotationType, AnnotationBind<T, SENDER, A> annotationBind) {
         this.injectorSettings.annotationBind(type, annotationType, annotationBind);
         return this;
     }

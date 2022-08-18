@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.argument.Args;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.argument.block.BlockArgument;
 import dev.rollczi.litecommands.argument.enumeration.EnumArgument;
@@ -20,6 +21,7 @@ import dev.rollczi.litecommands.command.permission.ExecutedPermission;
 import dev.rollczi.litecommands.command.permission.LitePermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.scheme.Scheme;
 import dev.rollczi.litecommands.suggestion.Suggestion;
@@ -27,13 +29,19 @@ import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import static dev.rollczi.litecommands.suggestion.Suggestion.of;
 import static panda.std.Blank.BLANK;
 
 public final class LiteFactory {
+
+    private static final OneArgument<String>  STRING_ARG = create(arg -> arg, "text");
 
     private static final OneArgument<Boolean> BOOLEAN_ARG = OneArgument.create((invocation, argument) -> Option.of(argument)
                     .filter(arg -> arg.equalsIgnoreCase("true") || arg.equalsIgnoreCase("false"))
@@ -56,11 +64,10 @@ public final class LiteFactory {
     private static final OneArgument<Double> DOUBLE_ARG = create(Double::parseDouble, "0", "1", "1.5", "10", "10.5", "100", "100.5");
     private static final OneArgument<Float> FLOAT_ARG =   create(Float::parseFloat,   "0", "1", "1.5", "10", "10.5", "100", "100.5");
 
-    private LiteFactory() {
-    }
+    private static final Redirector<Scheme, String> MAP_SCHEME_TO_STRING = scheme -> String.join(System.lineSeparator(), scheme.getSchemes());
+    private static final Redirector<LitePermissions, String> MAP_PERMISSIONS_TO_STRING = scheme -> String.join(System.lineSeparator(), scheme.getPermissions());
 
-    private static <T> Result<T, Blank> parse(Supplier<T> parse) {
-        return Result.attempt(NumberFormatException.class, parse::get).mapErrToBlank();
+    private LiteFactory() {
     }
 
     public static <SENDER> LiteCommandsBuilder<SENDER> builder(Class<SENDER> senderType) {
@@ -82,7 +89,7 @@ public final class LiteFactory {
                 .argument(Joiner.class, String.class, new JoinerArgument<>())
                 .argument(Block.class, Object.class, new BlockArgument<>())
 
-                .argument(String.class, (invocation, argument) -> Result.ok(argument))
+                .argument(String.class, STRING_ARG)
                 .argument(boolean.class, BOOLEAN_ARG)
                 .argument(Boolean.class, BOOLEAN_ARG)
                 .argument(long.class, LONG_ARG)
@@ -105,21 +112,44 @@ public final class LiteFactory {
                 .resultHandler(boolean.class, (sender, invocation, value) -> {})
                 .resultHandler(Boolean.class, (sender, invocation, value) -> {})
 
-                .redirectResult(Scheme.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getSchemes()))
-                .redirectResult(LitePermissions.class, String.class, scheme -> String.join(System.lineSeparator(), scheme.getPermissions()))
+                .redirectResult(Scheme.class, String.class, MAP_SCHEME_TO_STRING)
+                .redirectResult(LitePermissions.class, String.class, MAP_PERMISSIONS_TO_STRING)
 
                 .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation.toLite()))
                 .contextualBind(LiteSender.class, (sender, invocation) -> Result.ok(invocation.sender()))
-                .contextualBind(String[].class, (sender, invocation) -> Result.ok(invocation.arguments()))
-                .contextualBind(senderType, (sender, invocation) -> Result.ok(sender));
+                .contextualBind(senderType, (sender, invocation) -> Result.ok(sender))
+
+                .annotatedBind(String[].class, Args.class, (invocation, parameter, annotation) -> invocation.arguments())
+                .annotatedBind(List.class, Args.class, (invocation, parameter, annotation) -> Arrays.asList(invocation.arguments()))
+
+                .contextualBind(String[].class, (sender, invocation) -> {
+                    Logger.getLogger("LiteCommands").warning("Add @Args to String[] parameter in command " + invocation.name());
+
+                    return Result.ok(invocation.arguments());
+                })
+                ;
+
     }
 
     private static <T> OneArgument<T> create(Function<String, T> parse, String... suggestions) {
-        return OneArgument.create((invocation, arg) -> parse(parse, arg), invocation -> Suggestion.of(suggestions), (inv, suggestion) -> validate(parse, suggestion));
+        return OneArgument.create(
+                (inv, arg) -> parse(parse, arg),
+                inv -> {
+                    List<Suggestion> parsedSuggestions = new ArrayList<>(of(suggestions));
+                    Optional<Suggestion> optionalSuggestion = inv.argument(inv.arguments().length - 1)
+                            .filter(arg -> !arg.isEmpty())
+                            .map(Suggestion::of);
+
+                    optionalSuggestion.ifPresent(parsedSuggestions::add);
+
+                    return parsedSuggestions;
+                },
+                (inv, suggestion) -> validate(parse, suggestion)
+        );
     }
 
     private static <T> Result<T, Blank> parse(Function<String, T> parse, String value) {
-        return Result.attempt(NumberFormatException.class, () -> parse.apply(value)).mapErrToBlank();
+        return Result.supplyThrowing(NumberFormatException.class, () -> parse.apply(value)).mapErrToBlank();
     }
 
     private static boolean validate(Function<String, ?> parse, Suggestion suggestion) {

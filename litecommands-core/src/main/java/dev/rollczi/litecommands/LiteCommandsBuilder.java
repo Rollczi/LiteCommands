@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.Args;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
@@ -53,7 +54,7 @@ public interface LiteCommandsBuilder<SENDER> {
 
     LiteCommandsBuilder<SENDER> typeUnsafeBind(Class<?> type, TypeBind<?> typeBind);
 
-    <T, A extends Annotation> LiteCommandsBuilder<SENDER> annotatedBind(Class<T> type, Class<A> annotationType, AnnotationBind<T, A> annotationBind);
+    <T, A extends Annotation> LiteCommandsBuilder<SENDER> annotatedBind(Class<T> type, Class<A> annotationType, AnnotationBind<T, SENDER, A> annotationBind);
 
     <T> LiteCommandsBuilder<SENDER> contextualBind(Class<T> on, Contextual<SENDER, T> contextual);
 

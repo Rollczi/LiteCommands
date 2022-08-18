@@ -26,7 +26,7 @@ class AnnotationBindTest {
 
     TestPlatform platform = TestFactory.create(builder -> builder
             .command(Command.class)
-            .annotatedBind(String.class, Annotation.class, (parameter, annotation) -> annotation.value())
+            .annotatedBind(String.class, Annotation.class, (invocation, parameter, annotation) -> annotation.value())
     );
 
     @Test

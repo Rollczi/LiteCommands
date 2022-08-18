@@ -15,7 +15,7 @@ class LiteInjectorSettings<SENDER> implements InjectorSettings<SENDER> {
 
     private final Map<Class<?>, TypeBind<?>> typeBinds = new HashMap<>();
     private final Map<Class<?>, Contextual<SENDER, ?>> contextualBinds = new HashMap<>();
-    private final Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, ?>>> annotationBinds = new HashMap<>();
+    private final Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, SENDER, ?>>> annotationBinds = new HashMap<>();
 
     @Override
     public <T> LiteInjectorSettings<SENDER> typeBind(Class<T> type, Supplier<T> supplier) {
@@ -36,7 +36,7 @@ class LiteInjectorSettings<SENDER> implements InjectorSettings<SENDER> {
     }
 
     @Override
-    public <T, A extends Annotation> InjectorSettings<SENDER> annotationBind(Class<T> type, Class<A> on, AnnotationBind<T, A> annotationBind) {
+    public <T, A extends Annotation> InjectorSettings<SENDER> annotationBind(Class<T> type, Class<A> on, AnnotationBind<T, SENDER, A> annotationBind) {
         this.annotationBinds.computeIfAbsent(on, k -> new HashMap<>()).put(type, annotationBind);
         return this;
     }
@@ -70,7 +70,7 @@ class LiteInjectorSettings<SENDER> implements InjectorSettings<SENDER> {
         return typeBinds;
     }
 
-    Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, ?>>> getAnnotationBinds() {
+    Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, SENDER, ?>>> getAnnotationBinds() {
         return annotationBinds;
     }
 

@@ -20,7 +20,7 @@ public class EnumArgument<SENDER> implements SingleArgument<SENDER, Arg>, Parame
     @Override
     public MatchResult match(LiteInvocation invocation, ArgumentContext<Arg> context, String argument) {
         return EnumUtil.parse(context.parameter().getType(), argument)
-                .fold(MatchResult::matchedSingle, (exception) -> MatchResult.notMatched());
+                .fold(MatchResult::matchedSingle, exception -> MatchResult.notMatched());
     }
 
     @Override

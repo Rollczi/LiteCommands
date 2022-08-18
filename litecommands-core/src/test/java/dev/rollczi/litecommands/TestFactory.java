@@ -26,6 +26,12 @@ public final class TestFactory {
         return create(liteCommandsBuilder -> liteCommandsBuilder.command(commands));
     }
 
+    public static TestPlatform withCommandsUniversalHandler(Class<?>... commands) {
+        return create(liteCommandsBuilder -> liteCommandsBuilder.command(commands)
+                .resultHandler(Object.class, (testHandle, invocation, value) -> {})
+        );
+    }
+
     public interface Configurator {
         void config(LiteCommandsBuilder<TestHandle> builder);
     }

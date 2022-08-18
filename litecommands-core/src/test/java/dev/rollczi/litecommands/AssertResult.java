@@ -11,24 +11,34 @@ public class AssertResult {
         this.executeResult = executeResult;
     }
 
-    public void assertSuccess() {
+    public AssertResult assertSuccess() {
         Assertions.assertTrue(executeResult.isSuccess());
+        return this;
     }
 
-    public void assertFail() {
+    public AssertResult assertFail() {
         Assertions.assertTrue(executeResult.isFailure());
+        return this;
     }
 
-    public void assertInvalid() {
+    public AssertResult assertInvalid() {
         Assertions.assertTrue(executeResult.isInvalid());
+        return this;
     }
 
-    public void assertResult(Object result) {
+    public AssertResult assertResult(Object result) {
         Assertions.assertEquals(result, executeResult.getResult());
+        return this;
     }
 
-    public void assertNullResult() {
+    public <T> T assertResultIs(Class<T> clazz) {
+        Assertions.assertTrue(clazz.isInstance(executeResult.getResult()));
+        return clazz.cast(executeResult.getResult());
+    }
+
+    public AssertResult assertNullResult() {
         Assertions.assertNull(executeResult.getResult());
+        return this;
     }
 
 }

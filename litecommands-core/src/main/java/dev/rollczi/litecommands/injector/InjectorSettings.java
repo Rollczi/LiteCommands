@@ -15,7 +15,7 @@ public interface InjectorSettings<CONTEXT> {
 
     <T> InjectorSettings<CONTEXT> typeBind(Class<T> type, TypeBind<T> typeBind);
 
-    <T, A extends Annotation> InjectorSettings<CONTEXT> annotationBind(Class<T> type, Class<A> on, AnnotationBind<T, A> annotationBind);
+    <T, A extends Annotation> InjectorSettings<CONTEXT> annotationBind(Class<T> type, Class<A> on, AnnotationBind<T, CONTEXT, A> annotationBind);
 
     <T> InjectorSettings<CONTEXT> contextualBind(Class<T> on, Contextual<CONTEXT, T> contextual);
 

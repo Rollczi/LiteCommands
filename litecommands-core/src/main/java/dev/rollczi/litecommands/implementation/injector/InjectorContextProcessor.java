@@ -22,22 +22,22 @@ class InjectorContextProcessor<SENDER> {
 
     Option<?> extract(Parameter parameter, Invocation<SENDER> invocation) {
         Class<?> type = parameter.getType();
-        Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, ?>>> annotationBinds = settings.getAnnotationBinds();
+        Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, SENDER, ?>>> annotationBinds = settings.getAnnotationBinds();
 
         for (Annotation annotation : parameter.getAnnotations()) {
-            Map<Class<?>, AnnotationBind<?, ?>> bindsByType = annotationBinds.get(annotation.annotationType());
+            Map<Class<?>, AnnotationBind<?, SENDER, ?>> bindsByType = annotationBinds.get(annotation.annotationType());
 
             if (bindsByType == null) {
                 continue;
             }
 
-            AnnotationBind<?, ?> annotationBind = bindsByType.get(parameter.getType());
+            AnnotationBind<?, SENDER, ?> annotationBind = bindsByType.get(parameter.getType());
 
             if (annotationBind == null) {
                 continue;
             }
 
-            return Option.of(handleExtract(annotationBind, parameter, annotation));
+            return Option.of(handleExtract(annotationBind, invocation, parameter, annotation));
         }
 
         Map<Class<?>, Contextual<SENDER, ?>> binds = this.settings.getContextualBinds();
@@ -49,8 +49,8 @@ class InjectorContextProcessor<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    private <S, A extends Annotation> Object handleExtract(AnnotationBind<S, A> annotationBind, Parameter parameter, Annotation annotation) {
-        return annotationBind.extract(parameter, (A) annotation);
+    private <TYPE, ANNOTATION extends Annotation> Object handleExtract(AnnotationBind<TYPE, SENDER, ANNOTATION> annotationBind, Invocation<SENDER> invocation, Parameter parameter, Annotation annotation) {
+        return annotationBind.extract(invocation, parameter, (ANNOTATION) annotation);
     }
 
     Option<Object> extract(Parameter parameter) {
