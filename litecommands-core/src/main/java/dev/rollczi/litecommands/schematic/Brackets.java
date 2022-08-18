@@ -1,4 +1,6 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
+
+import dev.rollczi.litecommands.shared.Validation;
 
 public class Brackets {
 
@@ -22,6 +24,13 @@ public class Brackets {
         }
 
         return this.front + text + this.back;
+    }
+
+    public static Brackets of(String front, String back) {
+        Validation.isNotNull(front, "Front must not be null");
+        Validation.isNotNull(back, "Back must not be null");
+
+        return new Brackets(front, back);
     }
 
 }

@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.handle;
 
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.scheme.SchemeFormat;
-import dev.rollczi.litecommands.scheme.SchemeGenerator;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.shared.MapUtil;
 import panda.std.Option;
 
@@ -13,18 +13,26 @@ import java.util.concurrent.CompletableFuture;
 
 public class ExecuteResultHandler<SENDER> {
 
-    private final SchemeGenerator schemeGenerator = SchemeGenerator.simple();
     private final Map<Class<?>, Handler<SENDER, ?>> handlers = new HashMap<>();
     private final Map<Class<?>, Redirector<?, ?>> redirectors = new HashMap<>();
 
-    private SchemeFormat schemeFormat = SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE;
+    private SchematicGenerator schematicGenerator = SchematicGenerator.simple();
+    private SchematicFormat schematicFormat = SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE;
 
-    public void schemeFormat(SchemeFormat schemeFormat) {
-        this.schemeFormat = schemeFormat;
+    public SchematicGenerator getSchematicGenerator() {
+        return schematicGenerator;
     }
 
-    public SchemeFormat schemeFormat() {
-        return schemeFormat;
+    public void setSchematicGenerator(SchematicGenerator schematicGenerator) {
+        this.schematicGenerator = schematicGenerator;
+    }
+
+    public void setSchematicFormat(SchematicFormat schematicFormat) {
+        this.schematicFormat = schematicFormat;
+    }
+
+    public SchematicFormat getSchematicFormat() {
+        return schematicFormat;
     }
 
     public void handle(SENDER sender, LiteInvocation invocation, ExecuteResult result) {
@@ -35,7 +43,7 @@ public class ExecuteResultHandler<SENDER> {
                 return;
             }
 
-            object = this.schemeGenerator.generateScheme(result.getBased(), schemeFormat);
+            object = this.schematicGenerator.generateSchematic(result.getBased(), schematicFormat);
         }
 
         if (object instanceof CompletableFuture<?>) {

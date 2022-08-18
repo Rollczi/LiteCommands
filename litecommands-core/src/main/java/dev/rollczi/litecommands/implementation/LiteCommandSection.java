@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.suggestion.Suggester;
 import dev.rollczi.litecommands.suggestion.SuggesterResult;
 import dev.rollczi.litecommands.suggestion.SuggestionMerger;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.command.permission.LitePermissions;
+import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
@@ -202,20 +202,20 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
             }
         }
 
-        LitePermissions missingSection = LitePermissions.of(this.meta, invocation.sender());
+        RequiredPermissions missingSection = RequiredPermissions.of(this.meta, invocation.sender());
 
         for (ArgumentExecutor<SENDER> argumentExecutor : argumentExecutors) {
             FindResult<SENDER> findResult = argumentExecutor.find(invocation, route + 1, lastResult.withSection(this));
 
             if (findResult.isFound()) {
-                LitePermissions missingExecutor = LitePermissions.of(argumentExecutor.meta(), invocation.sender());
+                RequiredPermissions missingExecutor = RequiredPermissions.of(argumentExecutor.meta(), invocation.sender());
 
                 if (!missingSection.isEmpty() || !missingExecutor.isEmpty()) {
-                    if (last != null && last.getResult().is(LitePermissions.class).isPresent()) {
+                    if (last != null && last.getResult().is(RequiredPermissions.class).isPresent()) {
                         return last;
                     }
 
-                    LitePermissions all = missingSection.with(missingExecutor);
+                    RequiredPermissions all = missingSection.with(missingExecutor);
 
                     return lastResult.withSection(this)
                             .invalid(all);

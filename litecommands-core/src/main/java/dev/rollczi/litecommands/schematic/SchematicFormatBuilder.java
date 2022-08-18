@@ -1,10 +1,10 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.command.section.CommandSection;
 
 import java.util.stream.Collectors;
 
-public class SchemeFormatBuilder {
+public class SchematicFormatBuilder {
 
     private String slash = "/";
     private Brackets command = Brackets.NONE;
@@ -14,43 +14,43 @@ public class SchemeFormatBuilder {
     private Brackets argument = Brackets.ANGLED;
     private Brackets optionalArgument = Brackets.SQUARE;
 
-    public SchemeFormatBuilder slash(String slash) {
+    public SchematicFormatBuilder slash(String slash) {
         this.slash = slash;
         return this;
     }
 
-    public SchemeFormatBuilder command(Brackets command) {
+    public SchematicFormatBuilder command(Brackets command) {
         this.command = command;
         return this;
     }
 
-    public SchemeFormatBuilder subcommand(Brackets subcommand) {
+    public SchematicFormatBuilder subcommand(Brackets subcommand) {
         this.subcommand = subcommand;
         return this;
     }
 
-    public SchemeFormatBuilder subcommands(String subcommands) {
+    public SchematicFormatBuilder subcommands(String subcommands) {
         this.subcommands = subcommands;
         return this;
     }
 
-    public SchemeFormatBuilder subcommands(Brackets subcommandsBrackets) {
+    public SchematicFormatBuilder subcommands(Brackets subcommandsBrackets) {
         this.subcommandsBrackets = subcommandsBrackets;
         return this;
     }
 
-    public SchemeFormatBuilder argument(Brackets argument) {
+    public SchematicFormatBuilder argument(Brackets argument) {
         this.argument = argument;
         return this;
     }
 
-    public SchemeFormatBuilder optionalArgument(Brackets optionalArgument) {
+    public SchematicFormatBuilder optionalArgument(Brackets optionalArgument) {
         this.optionalArgument = optionalArgument;
         return this;
     }
 
-    public SchemeFormat build() {
-        return new SimpleSchemeFormat(
+    public SchematicFormat build() {
+        return new SimpleSchematicFormat(
                 this.slash,
                 section -> this.command.close(section.getName()),
                 section -> this.subcommand.close(section.getName()),

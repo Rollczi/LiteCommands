@@ -3,7 +3,7 @@ package dev.rollczi.example.bukkit.handler;
 import dev.rollczi.example.bukkit.util.ChatUtil;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
-import dev.rollczi.litecommands.scheme.Scheme;
+import dev.rollczi.litecommands.schematic.Schematic;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -11,16 +11,16 @@ import java.util.List;
 public class InvalidUsage implements InvalidUsageHandler<CommandSender> {
 
     @Override
-    public void handle(CommandSender sender, LiteInvocation invocation, Scheme scheme) {
-        List<String> schemes = scheme.getSchemes();
+    public void handle(CommandSender sender, LiteInvocation invocation, Schematic schematic) {
+        List<String> schematics = schematic.getSchematics();
 
-        if (schemes.size() == 1) {
-            sender.sendMessage(ChatUtil.color("&cNie poprawne użycie komendy &8>> &7" + schemes.get(0)));
+        if (schematics.size() == 1) {
+            sender.sendMessage(ChatUtil.color("&cNie poprawne użycie komendy &8>> &7" + schematics.get(0)));
             return;
         }
 
         sender.sendMessage(ChatUtil.color("&cNie poprawne użycie komendy!"));
-        for (String sch : schemes) {
+        for (String sch : schematics) {
             sender.sendMessage(ChatUtil.color("&8 >> &7" + sch));
         }
     }

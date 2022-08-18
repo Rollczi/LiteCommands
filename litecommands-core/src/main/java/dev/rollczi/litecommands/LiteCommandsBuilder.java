@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.argument.Args;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
@@ -14,7 +13,8 @@ import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.injector.bind.AnnotationBind;
 import dev.rollczi.litecommands.injector.bind.TypeBind;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
-import dev.rollczi.litecommands.scheme.SchemeFormat;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Consumer;
@@ -34,7 +34,9 @@ public interface LiteCommandsBuilder<SENDER> {
 
     LiteCommandsBuilder<SENDER> commandGlobalEditor(CommandEditor allCommandsEditor);
 
-    LiteCommandsBuilder<SENDER> schemeFormat(SchemeFormat schemeFormat);
+    LiteCommandsBuilder<SENDER> schematicGenerator(SchematicGenerator schematicGenerator);
+
+    LiteCommandsBuilder<SENDER> schematicFormat(SchematicFormat schematicFormat);
 
     <T> LiteCommandsBuilder<SENDER> resultHandler(Class<T> on, Handler<SENDER, T> handler);
 

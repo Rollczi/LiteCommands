@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.scheme.SchematicContext;
+import dev.rollczi.litecommands.schematic.SchematicContext;
 import dev.rollczi.litecommands.shared.Validation;
 import panda.std.Option;
 
@@ -16,6 +16,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Deprecated
+// TODO: PL Klasa jest za duża, ma za wiele odpowiedzialności. Należy ją podzielić między odpowiednie domeny.
+// TODO: EN Class is too big, it has too many responsibilities. It should be divided into appropriate domains.
 public final class FindResult<SENDER> implements SchematicContext<SENDER> {
 
     private final Invocation<SENDER> invocation;

@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.argument.simple.SimpleMultilevelArgument;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.argument.option.OptionArgument;
-import dev.rollczi.litecommands.command.permission.LitePermissions;
+import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import dev.rollczi.litecommands.contextual.Contextual;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandEditorRegistry;
@@ -29,8 +29,9 @@ import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;
 import dev.rollczi.litecommands.injector.bind.TypeBind;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
-import dev.rollczi.litecommands.scheme.Scheme;
-import dev.rollczi.litecommands.scheme.SchemeFormat;
+import dev.rollczi.litecommands.schematic.Schematic;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;
@@ -103,8 +104,14 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER> schemeFormat(SchemeFormat schemeFormat) {
-        this.executeResultHandler.schemeFormat(schemeFormat);
+    public LiteCommandsBuilder<SENDER> schematicGenerator(SchematicGenerator schematicGenerator) {
+        this.executeResultHandler.setSchematicGenerator(schematicGenerator);
+        return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER> schematicFormat(SchematicFormat schematicFormat) {
+        this.executeResultHandler.setSchematicFormat(schematicFormat);
         return this;
     }
 
@@ -121,12 +128,12 @@ class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
     }
 
     public LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler) {
-        return this.resultHandler(Scheme.class, handler);
+        return this.resultHandler(Schematic.class, handler);
     }
 
     @Override
     public LiteCommandsBuilder<SENDER> permissionHandler(PermissionHandler<SENDER> handler) {
-        return this.resultHandler(LitePermissions.class, handler);
+        return this.resultHandler(RequiredPermissions.class, handler);
     }
 
     @Override

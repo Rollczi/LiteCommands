@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestHandle;
@@ -19,7 +19,7 @@ import static dev.rollczi.litecommands.Assert.assertCollection;
 class SchematicInParallelTest {
 
     TestPlatform testPlatform = TestFactory.withCommands(Command.class);
-    SchemeGenerator schemeGenerator = SchemeGenerator.simple();
+    SchematicGenerator schematicGenerator = SchematicGenerator.simple();
 
     @Section(route = "test")
     private static class Command {
@@ -37,13 +37,13 @@ class SchematicInParallelTest {
     @Test
     void test() {
         FindResult<TestHandle> result = testPlatform.find("test");
-        List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
+        List<String> schematics = schematicGenerator.generate(result, SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
         assertCollection(3, Arrays.asList(
                 "/test <argument>",
                 "/test add <argument>",
                 "/test remove <argument>"
-        ), schemes);
+        ), schematics);
     }
 
 }

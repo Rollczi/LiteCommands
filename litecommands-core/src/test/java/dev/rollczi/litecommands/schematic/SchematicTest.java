@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.argument.Arg;
@@ -36,40 +36,40 @@ class SchematicTest {
             .register();
 
     @Test
-    void schemeBeforeExecutorsTest() {
+    void schematicBeforeExecutorsTest() {
         FindResult<TestHandle> result = testPlatform.find("teleport");
-        SimpleSchemeGenerator schemeGenerator = new SimpleSchemeGenerator();
+        SimpleSchematicGenerator schematicGenerator = new SimpleSchematicGenerator();
 
-        List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
+        List<String> schematics = schematicGenerator.generate(result, SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
         assertCollection(4, Arrays.asList(
                 "/teleport test <target> [to]",
                 "/teleport <target> [to]",
                 "/teleport <x y z> [world]",
                 "/teleport class test <target>"
-        ), schemes);
+        ), schematics);
     }
 
     @Test
     void testMatchedNormal() {
         FindResult<TestHandle> result = testPlatform.find("teleport", "test");
-        SimpleSchemeGenerator schemeGenerator = new SimpleSchemeGenerator();
+        SimpleSchematicGenerator schematicGenerator = new SimpleSchematicGenerator();
 
-        List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
+        List<String> schematics = schematicGenerator.generate(result, SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
-        assertEquals(1, schemes.size());
-        assertEquals("/teleport <target> [to]", schemes.get(0));
+        assertEquals(1, schematics.size());
+        assertEquals("/teleport <target> [to]", schematics.get(0));
     }
 
     @Test
     void testMatchedLocation() {
         FindResult<TestHandle> result = testPlatform.find("teleport", "100", "100", "100", "world");
-        SimpleSchemeGenerator schemeGenerator = new SimpleSchemeGenerator();
+        SimpleSchematicGenerator schematicGenerator = new SimpleSchematicGenerator();
 
-        List<String> schemes = schemeGenerator.generate(result, SchemeFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
+        List<String> schematics = schematicGenerator.generate(result, SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
-        assertEquals(1, schemes.size());
-        assertEquals("/teleport <x y z> [world]", schemes.get(0));
+        assertEquals(1, schematics.size());
+        assertEquals("/teleport <x y z> [world]", schematics.get(0));
     }
 
     @Section(route = "teleport")

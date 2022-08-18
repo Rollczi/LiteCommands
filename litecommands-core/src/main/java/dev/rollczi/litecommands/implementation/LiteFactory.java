@@ -18,12 +18,12 @@ import dev.rollczi.litecommands.command.amount.Min;
 import dev.rollczi.litecommands.command.amount.Required;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
-import dev.rollczi.litecommands.command.permission.LitePermissions;
+import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
-import dev.rollczi.litecommands.scheme.Scheme;
+import dev.rollczi.litecommands.schematic.Schematic;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import panda.std.Blank;
 import panda.std.Option;
@@ -64,8 +64,8 @@ public final class LiteFactory {
     private static final OneArgument<Double> DOUBLE_ARG = create(Double::parseDouble, "0", "1", "1.5", "10", "10.5", "100", "100.5");
     private static final OneArgument<Float> FLOAT_ARG =   create(Float::parseFloat,   "0", "1", "1.5", "10", "10.5", "100", "100.5");
 
-    private static final Redirector<Scheme, String> MAP_SCHEME_TO_STRING = scheme -> String.join(System.lineSeparator(), scheme.getSchemes());
-    private static final Redirector<LitePermissions, String> MAP_PERMISSIONS_TO_STRING = scheme -> String.join(System.lineSeparator(), scheme.getPermissions());
+    private static final Redirector<Schematic, String> MAP_SCHEMATIC_TO_STRING = schematic -> String.join(System.lineSeparator(), schematic.getSchematics());
+    private static final Redirector<RequiredPermissions, String> MAP_PERMISSIONS_TO_STRING = permissions -> String.join(System.lineSeparator(), permissions.getPermissions());
 
     private LiteFactory() {
     }
@@ -112,8 +112,8 @@ public final class LiteFactory {
                 .resultHandler(boolean.class, (sender, invocation, value) -> {})
                 .resultHandler(Boolean.class, (sender, invocation, value) -> {})
 
-                .redirectResult(Scheme.class, String.class, MAP_SCHEME_TO_STRING)
-                .redirectResult(LitePermissions.class, String.class, MAP_PERMISSIONS_TO_STRING)
+                .redirectResult(Schematic.class, String.class, MAP_SCHEMATIC_TO_STRING)
+                .redirectResult(RequiredPermissions.class, String.class, MAP_PERMISSIONS_TO_STRING)
 
                 .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation.toLite()))
                 .contextualBind(LiteSender.class, (sender, invocation) -> Result.ok(invocation.sender()))

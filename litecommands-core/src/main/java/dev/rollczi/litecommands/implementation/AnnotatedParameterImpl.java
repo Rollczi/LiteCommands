@@ -39,10 +39,6 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
         return argument.suggestion(invocation, parameter, annotationInstance);
     }
 
-    Parameter getParameter() {
-        return parameter;
-    }
-
     @Deprecated
     AnnotatedParameterState<SENDER, A> createState(LiteInvocation invocation, int route) {
         return new AnnotatedParameterStateImpl<>(annotationInstance, parameter, argument, invocation, route);

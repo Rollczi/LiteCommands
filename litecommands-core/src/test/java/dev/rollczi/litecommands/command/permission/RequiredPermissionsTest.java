@@ -8,7 +8,6 @@ import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.TestHandle;
 import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.Test;
-import panda.std.Result;
 
 import java.util.List;
 
@@ -18,18 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class LitePermissionsTest {
+class RequiredPermissionsTest {
 
     TestPlatform platform = TestFactory.withCommands(PermissionsCommand.class);
 
     @Test
-    void testLitePermissionsOfMethod() {
+    void testRequiredPermissionsOfMethod() {
         CommandSection<TestHandle> section = platform.getSection("test");
 
         assertNotNull(section);
         assertTrue(section.meta().getPermissions().contains("dev.rollczi.litecommands"));
 
-        LitePermissions permissions = LitePermissions.of(section.meta(), platform.createSender());
+        RequiredPermissions permissions = RequiredPermissions.of(section.meta(), platform.createSender());
 
         assertFalse(permissions.isEmpty());
         assertEquals(1, permissions.getPermissions().size());
@@ -41,9 +40,9 @@ class LitePermissionsTest {
         ExecuteResult result = platform.executeLegacy("test");
 
         assertTrue(result.isInvalid());
-        assertInstanceOf(LitePermissions.class, result.getResult());
+        assertInstanceOf(RequiredPermissions.class, result.getResult());
 
-        LitePermissions permissions = (LitePermissions) result.getResult();
+        RequiredPermissions permissions = (RequiredPermissions) result.getResult();
         List<String> perm = permissions.getPermissions();
 
         assertEquals(2, perm.size());
@@ -56,9 +55,9 @@ class LitePermissionsTest {
         ExecuteResult result = platform.executeLegacy("test", "siema");
 
         assertTrue(result.isInvalid());
-        assertInstanceOf(LitePermissions.class, result.getResult());
+        assertInstanceOf(RequiredPermissions.class, result.getResult());
 
-        LitePermissions permissions = (LitePermissions) result.getResult();
+        RequiredPermissions permissions = (RequiredPermissions) result.getResult();
         List<String> perm = permissions.getPermissions();
 
         assertEquals(2, perm.size());

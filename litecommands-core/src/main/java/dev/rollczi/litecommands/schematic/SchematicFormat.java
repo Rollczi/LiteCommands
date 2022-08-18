@@ -1,11 +1,11 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.section.CommandSection;
 
 import java.util.List;
 
-public interface SchemeFormat {
+public interface SchematicFormat {
 
     String slash();
 
@@ -17,14 +17,14 @@ public interface SchemeFormat {
 
     String argument(AnnotatedParameter<?, ?> argument);
 
-    SchemeFormat ARGUMENT_ANGLED_OPTIONAL_SQUARE = new SchemeFormatBuilder()
+    SchematicFormat ARGUMENT_ANGLED_OPTIONAL_SQUARE = new SchematicFormatBuilder()
             .slash("/")
             .subcommands("|")
             .argument(Brackets.ANGLED)
             .optionalArgument(Brackets.SQUARE)
             .build();
 
-    SchemeFormat ARGUMENT_SQUARE_OPTIONAL_ANGLED = new SchemeFormatBuilder()
+    SchematicFormat ARGUMENT_SQUARE_OPTIONAL_ANGLED = new SchematicFormatBuilder()
             .slash("/")
             .subcommands("|")
             .argument(Brackets.SQUARE)

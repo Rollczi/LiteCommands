@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.handle;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.command.permission.LitePermissions;
+import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 
-public interface PermissionHandler<SENDER> extends Handler<SENDER, LitePermissions> {
+public interface PermissionHandler<SENDER> extends Handler<SENDER, RequiredPermissions> {
 
-    void handle(SENDER sender, LiteInvocation invocation, LitePermissions litePermissions);
+    void handle(SENDER sender, LiteInvocation invocation, RequiredPermissions requiredPermissions);
 
 }

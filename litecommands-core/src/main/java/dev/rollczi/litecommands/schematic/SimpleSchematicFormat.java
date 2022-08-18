@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.section.CommandSection;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-class SimpleSchemeFormat implements SchemeFormat {
+class SimpleSchematicFormat implements SchematicFormat {
 
     private final String slash;
     private final Function<CommandSection<?>, String> command;
@@ -16,7 +16,7 @@ class SimpleSchemeFormat implements SchemeFormat {
     private final Function<AnnotatedParameter<?, ?>, String> argument;
     private final Function<AnnotatedParameter<?, ?>, String> optionalArgument;
 
-    SimpleSchemeFormat(
+    SimpleSchematicFormat(
             String slash,
             Function<CommandSection<?>, String> command,
             Function<CommandSection<?>, String> subcommand,

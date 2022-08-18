@@ -10,11 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class LitePermissions {
+public class RequiredPermissions {
 
     private final List<String> permissions;
 
-    public LitePermissions(Collection<String> permissions) {
+    public RequiredPermissions(Collection<String> permissions) {
         this.permissions = new ArrayList<>(permissions);
     }
 
@@ -26,15 +26,15 @@ public class LitePermissions {
         return this.permissions.isEmpty();
     }
 
-    public LitePermissions with(LitePermissions permissions) {
+    public RequiredPermissions with(RequiredPermissions permissions) {
         List<String> perm = new ArrayList<>(this.permissions);
 
         perm.addAll(permissions.permissions);
 
-        return new LitePermissions(perm);
+        return new RequiredPermissions(perm);
     }
 
-    public static LitePermissions of(CommandMeta meta, LiteSender liteSender) {
+    public static RequiredPermissions of(CommandMeta meta, LiteSender liteSender) {
         Set<String> perms = new HashSet<>(meta.getPermissions());
         Set<String> noPermissions = new HashSet<>();
 
@@ -48,7 +48,7 @@ public class LitePermissions {
             noPermissions.add(perm);
         }
 
-        return new LitePermissions(noPermissions);
+        return new RequiredPermissions(noPermissions);
     }
 
 }

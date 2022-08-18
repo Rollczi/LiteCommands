@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.scheme;
+package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
 import dev.rollczi.litecommands.command.Invocation;
