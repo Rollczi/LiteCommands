@@ -8,7 +8,7 @@ public final class EnumUtil {
 
     @SuppressWarnings("unchecked")
     public static Result<Enum<?>, Exception> parse(Class<?> type, String argument) {
-        return Result.attempt(Exception.class, () -> Enum.valueOf((Class<? extends Enum>) type, argument));
+        return Result.supplyThrowing(Exception.class, () -> Enum.valueOf((Class<? extends Enum>) type, argument));
     }
 
 }

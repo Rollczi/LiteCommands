@@ -6,12 +6,10 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.FindResult;
-import dev.rollczi.litecommands.command.amount.AmountValidator;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.handle.LiteException;
 import panda.std.Option;
 
@@ -22,7 +20,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
 

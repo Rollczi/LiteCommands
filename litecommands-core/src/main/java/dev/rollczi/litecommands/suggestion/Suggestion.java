@@ -8,38 +8,38 @@ import java.util.Objects;
 
 public class Suggestion {
 
-    private final List<String> suggestion;
+    private final List<String> multiSuggestion;
 
-    private Suggestion(List<String> suggestion) {
-        this.suggestion = suggestion;
+    private Suggestion(List<String> multiSuggestion) {
+        this.multiSuggestion = multiSuggestion;
     }
 
     public String multilevel() {
-        return String.join(" ", this.suggestion);
+        return String.join(" ", this.multiSuggestion);
     }
 
     public List<String> multilevelList() {
-        return this.suggestion;
+        return this.multiSuggestion;
     }
 
     public String single() {
-        return this.suggestion.get(0);
+        return this.multiSuggestion.get(0);
     }
 
     public boolean isMultilevel() {
-        return suggestion.size() > 1;
+        return multiSuggestion.size() > 1;
     }
 
     public int lengthMultilevel() {
-        return this.suggestion.size();
+        return this.multiSuggestion.size();
     }
 
     public Suggestion slashLevel(int level) {
-        if (this.suggestion.isEmpty()) {
+        if (this.multiSuggestion.isEmpty()) {
             throw new UnsupportedOperationException();
         }
 
-        return Suggestion.multilevel(this.suggestion.subList(level, this.suggestion.size()));
+        return Suggestion.multilevel(this.multiSuggestion.subList(level, this.multiSuggestion.size()));
     }
 
     public static Suggestion multilevel(List<String> suggestion) {

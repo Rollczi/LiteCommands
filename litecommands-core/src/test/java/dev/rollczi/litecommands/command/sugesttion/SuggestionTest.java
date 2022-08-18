@@ -261,7 +261,7 @@ class SuggestionTest {
     static class SuggestionLocationArg implements MultilevelArgument<Location> {
         @Override
         public Result<Location, ?> parseMultilevel(LiteInvocation invocation, String... arguments) {
-            return Result.attempt(NumberFormatException.class, () -> new Location(Double.parseDouble(arguments[0]), Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2])));
+            return Result.supplyThrowing(NumberFormatException.class, () -> new Location(Double.parseDouble(arguments[0]), Double.parseDouble(arguments[1]), Double.parseDouble(arguments[2])));
         }
 
         @Override

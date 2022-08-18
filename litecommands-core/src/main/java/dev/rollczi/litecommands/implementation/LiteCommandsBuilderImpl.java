@@ -24,7 +24,6 @@ import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.handle.PermissionHandler;
 import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.implementation.injector.InjectorProvider;
-import dev.rollczi.litecommands.injector.InjectException;
 import dev.rollczi.litecommands.injector.bind.AnnotationBind;
 import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;

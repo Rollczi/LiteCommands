@@ -16,7 +16,7 @@ class KyoriAudienceContextual implements Contextual<CommandSender, Audience> {
 
     @Override
     public Result<Audience, Object> extract(CommandSender commandSender, Invocation<CommandSender> invocation) {
-        return Result.attempt(IllegalArgumentException.class, () -> this.kyoriAudienceProvider.sender(commandSender))
+        return Result.supplyThrowing(IllegalArgumentException.class, () -> this.kyoriAudienceProvider.sender(commandSender))
                 .mapErr(Throwable::getMessage);
     }
 

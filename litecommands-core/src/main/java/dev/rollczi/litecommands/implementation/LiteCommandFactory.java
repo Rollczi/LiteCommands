@@ -131,7 +131,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
         section = this.resolveStateOnSection(section, instance, state);
 
         PandaStream.of(instance.getClass().getDeclaredClasses())
-                .mapOpt(type -> Option.attempt(InjectException.class, () -> injector.createInstance(type)))
+                .mapOpt(type -> Option.supplyThrowing(InjectException.class, () -> injector.createInstance(type)))
                 .mapOpt(this::create)
                 .forEach(section::childSection);
 
