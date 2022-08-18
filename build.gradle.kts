@@ -53,13 +53,12 @@ subprojects {
                 }
             }
 
-            /*
             maven {
                 name = "eternalcode-repository"
                 url = uri("https://repo.eternalcode.pl/releases")
                 credentials {
-                    username = properties["lucky_user_litecommands"] as String
-                    password = properties["lucky_pass_litecommands"] as String
+                    username = System.getenv("ETERNAL_CODE_MAVEN_USERNAME")
+                    password = System.getenv("ETERNAL_CODE_MAVEN_PASSWORD")
                 }
             }
 
@@ -67,11 +66,11 @@ subprojects {
                 name = "mine-repository"
                 url = uri("https://repository.minecodes.pl/releases")
                 credentials {
-                    username = properties["mine_user"] as String
-                    password = properties["mine_pass"] as String
+                    username = System.getenv("MINE_CODES_MAVEN_USERNAME")
+                    password = System.getenv("MINE_CODES_MAVEN_PASSWORD")
                 }
             }
-            */
+
         }
     }
 }
