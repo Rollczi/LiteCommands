@@ -44,36 +44,35 @@ subprojects {
         repositories {
             mavenLocal()
 
-            maven {
-                configureMaven(this, "panda-repository", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD")
-            }
+            maven("panda", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD", false)
 
-            maven {
-                configureMaven(this, "eternalcode-repository", "https://repo.eternalcode.pl", "ETERNAL_CODE_MAVEN_USERNAME", "ETERNAL_CODE_MAVEN_PASSWORD")
-            }
+            maven("eternalcode", "https://repo.eternalcode.pl", "ETERNAL_CODE_MAVEN_USERNAME", "ETERNAL_CODE_MAVEN_PASSWORD")
 
-            maven {
-                configureMaven(this, "mine-repository", "https://repository.minecodes.pl", "MINE_CODES_MAVEN_USERNAME", "MINE_CODES_MAVEN_PASSWORD")
-            }
-
+            maven("minecodes", "https://repository.minecodes.pl", "MINE_CODES_MAVEN_USERNAME", "MINE_CODES_MAVEN_PASSWORD",)
         }
     }
 }
 
-fun configureMaven(repository: MavenArtifactRepository, name: String, url: String, username: String, password: String) {
+fun RepositoryHandler.maven(name: String, url: String, username: String, password: String, deploySnapshots: Boolean = true) {
     val isSnapshot = version.toString().endsWith("-SNAPSHOT")
 
-    repository.name =
-        if (isSnapshot) "$name-snapshots"
-        else "$name-releases"
+    if (isSnapshot && !deploySnapshots) {
+        return
+    }
 
-    repository.url =
-        if (isSnapshot) uri("$url/snapshots")
-        else uri("$url/releases")
+    this.maven {
+        this.name =
+            if (isSnapshot) "$name-snapshots"
+            else "$name-releases"
 
-    repository.credentials {
-        this.username = System.getenv(username)
-        this.password = System.getenv(password)
+        this.url =
+            if (isSnapshot) uri("$url/snapshots")
+            else uri("$url/releases")
+
+        this.credentials {
+            this.username = System.getenv(username)
+            this.password = System.getenv(password)
+        }
     }
 }
 
