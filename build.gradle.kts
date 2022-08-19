@@ -14,7 +14,7 @@ plugins {
 
 allprojects {
     group = "dev.rollczi.litecommands"
-    version = "2.5.0"
+    version = "2.5.0-SNAPSHOT"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -45,33 +45,35 @@ subprojects {
             mavenLocal()
 
             maven {
-                name = "panda-repository"
-                url = uri("https://repo.panda-lang.org/releases")
-                credentials {
-                    username = System.getenv("MAVEN_USERNAME")
-                    password = System.getenv("MAVEN_PASSWORD")
-                }
+                configureMaven(this, "panda-repository", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD")
             }
 
             maven {
-                name = "eternalcode-repository"
-                url = uri("https://repo.eternalcode.pl/releases")
-                credentials {
-                    username = System.getenv("ETERNAL_CODE_MAVEN_USERNAME")
-                    password = System.getenv("ETERNAL_CODE_MAVEN_PASSWORD")
-                }
+                configureMaven(this, "eternalcode-repository", "https://repo.eternalcode.pl", "ETERNAL_CODE_MAVEN_USERNAME", "ETERNAL_CODE_MAVEN_PASSWORD")
             }
 
             maven {
-                name = "mine-repository"
-                url = uri("https://repository.minecodes.pl/releases")
-                credentials {
-                    username = System.getenv("MINE_CODES_MAVEN_USERNAME")
-                    password = System.getenv("MINE_CODES_MAVEN_PASSWORD")
-                }
+                configureMaven(this, "mine-repository", "https://repository.minecodes.pl", "MINE_CODES_MAVEN_USERNAME", "MINE_CODES_MAVEN_PASSWORD")
             }
 
         }
+    }
+}
+
+fun configureMaven(repository: MavenArtifactRepository, name: String, url: String, username: String, password: String) {
+    val isSnapshot = version.toString().endsWith("-SNAPSHOT")
+
+    repository.name =
+        if (isSnapshot) "$name-snapshots"
+        else "$name-releases"
+
+    repository.url =
+        if (isSnapshot) uri("$url/snapshots")
+        else uri("$url/releases")
+
+    repository.credentials {
+        this.username = System.getenv(username)
+        this.password = System.getenv(password)
     }
 }
 
