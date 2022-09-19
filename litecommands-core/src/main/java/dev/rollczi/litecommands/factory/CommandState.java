@@ -194,7 +194,7 @@ public class CommandState implements CommandEditor.State {
     @Override
     public CommandState meta(Function<CommandMeta, CommandMeta> edit) {
         CommandMeta newMeta = CommandMeta.create();
-        newMeta.apply(this.meta);
+        newMeta.applyCommandMeta(this.meta);
 
         CommandMeta metaData = edit.apply(newMeta);
 
