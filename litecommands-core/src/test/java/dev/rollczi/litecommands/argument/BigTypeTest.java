@@ -27,8 +27,17 @@ class BigTypeTest {
     }
 
     @Test
-    void test() {
-        platform.execute("test", "int", "10000000000").assertResult(new BigInteger("10000000000"));
+    void testBigInteger() {
+        platform.execute("command", "int", "1000000")
+                .assertSuccess()
+                .assertResult(new BigInteger("1000000"));
+    }
+
+    @Test
+    void testBigDecimal() {
+        platform.execute("command", "decimal", "1000000.123")
+                .assertSuccess()
+                .assertResult(new BigDecimal("1000000.123"));
     }
 
 }
