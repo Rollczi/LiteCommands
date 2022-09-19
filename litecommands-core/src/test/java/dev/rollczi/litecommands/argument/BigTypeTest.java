@@ -28,7 +28,7 @@ class BigTypeTest {
 
     @Test
     void test() {
-        platform.execute("test", "int");
+        platform.execute("test", "int", "10000000000").assertResult(new BigInteger("10000000000"));
     }
 
 }

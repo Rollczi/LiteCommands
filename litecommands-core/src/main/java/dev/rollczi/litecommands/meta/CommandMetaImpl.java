@@ -116,7 +116,7 @@ class CommandMetaImpl extends MetaData implements CommandMeta {
 
     @Override
     public CommandMetaImpl applyCommandMeta(CommandMeta meta) {
-        this.amountValidator = meta.getAmountValidator();
+        this.amountValidator = this.amountValidator.and(meta.getAmountValidator());
         this.permissions.addAll(meta.getPermissions());
         this.excludedPermissions.addAll(meta.getExcludedPermissions());
         this.apply(meta);
