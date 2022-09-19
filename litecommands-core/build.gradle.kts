@@ -1,5 +1,5 @@
 dependencies {
-    api("org.panda-lang:expressible:1.2.0")
+    api("org.panda-lang:expressible:1.2.1")
 
     testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
