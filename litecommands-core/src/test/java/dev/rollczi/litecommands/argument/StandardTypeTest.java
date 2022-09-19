@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.Test;
 
-class PrimitiveTypeTest {
+class StandardTypeTest {
 
     TestPlatform platform = TestFactory.withCommands(Command.class);
 

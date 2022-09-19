@@ -29,6 +29,8 @@ import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,12 +59,14 @@ public final class LiteFactory {
             invocation -> of("abcdefghijklmnoprstuwxyz0123456789".split(""))
     );
 
-    private static final OneArgument<Long> LONG_ARG =     create(Long::parseLong,     "0", "1", "5", "10", "50", "100", "500");
-    private static final OneArgument<Integer> INT_ARG =   create(Integer::parseInt,   "0", "1", "5", "10", "50", "100", "500");
-    private static final OneArgument<Short> SHORT_ARG =   create(Short::parseShort,   "0", "1", "5", "10", "50");
-    private static final OneArgument<Byte> BYTE_ARG =     create(Byte::parseByte,     "0", "1", "5", "10", "50");
-    private static final OneArgument<Double> DOUBLE_ARG = create(Double::parseDouble, "0", "1", "1.5", "10", "10.5", "100", "100.5");
-    private static final OneArgument<Float> FLOAT_ARG =   create(Float::parseFloat,   "0", "1", "1.5", "10", "10.5", "100", "100.5");
+    private static final OneArgument<Long> LONG_ARG =          create(Long::parseLong,     "0", "1", "5", "10", "50", "100", "500");
+    private static final OneArgument<Integer> INT_ARG =        create(Integer::parseInt,   "0", "1", "5", "10", "50", "100", "500");
+    private static final OneArgument<Short> SHORT_ARG =        create(Short::parseShort,   "0", "1", "5", "10", "50");
+    private static final OneArgument<Byte> BYTE_ARG =          create(Byte::parseByte,     "0", "1", "5", "10", "50");
+    private static final OneArgument<Double> DOUBLE_ARG =      create(Double::parseDouble, "0", "1", "1.5", "10", "10.5", "100", "100.5");
+    private static final OneArgument<Float> FLOAT_ARG =        create(Float::parseFloat,   "0", "1", "1.5", "10", "10.5", "100", "100.5");
+    private static final OneArgument<BigInteger> BIG_INT_ARG = create(BigInteger::new,     "0", "1", "5", "10", "50", "100", "500");
+    private static final OneArgument<BigDecimal> BIG_DEC_ARG = create(BigDecimal::new,     "0", "1", "1.5", "10", "10.5", "100", "100.5");
 
     private static final Redirector<Schematic, String> MAP_SCHEMATIC_TO_STRING = schematic -> String.join(System.lineSeparator(), schematic.getSchematics());
     private static final Redirector<RequiredPermissions, String> MAP_PERMISSIONS_TO_STRING = permissions -> String.join(System.lineSeparator(), permissions.getPermissions());
@@ -106,6 +110,8 @@ public final class LiteFactory {
                 .argument(Float.class, FLOAT_ARG)
                 .argument(char.class, CHARACTER_ARG)
                 .argument(Character.class, CHARACTER_ARG)
+                .argument(BigInteger.class, BIG_INT_ARG)
+                .argument(BigDecimal.class, BIG_DEC_ARG)
 
                 .argument(Arg.class, Enum.class, new EnumArgument<>())
 
