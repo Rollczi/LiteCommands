@@ -37,12 +37,10 @@ class RequiredPermissionsTest {
 
     @Test
     void executeCommandTest() {
-        ExecuteResult result = platform.executeLegacy("test");
+        RequiredPermissions permissions = platform.execute("test")
+                .assertInvalid()
+                .assertResultIs(RequiredPermissions.class);
 
-        assertTrue(result.isInvalid());
-        assertInstanceOf(RequiredPermissions.class, result.getResult());
-
-        RequiredPermissions permissions = (RequiredPermissions) result.getResult();
         List<String> perm = permissions.getPermissions();
 
         assertEquals(2, perm.size());
@@ -52,12 +50,10 @@ class RequiredPermissionsTest {
 
     @Test
     void executeCommandSiema() {
-        ExecuteResult result = platform.executeLegacy("test", "siema");
+        RequiredPermissions permissions = platform.execute("test", "siema")
+                .assertInvalid()
+                .assertResultIs(RequiredPermissions.class);
 
-        assertTrue(result.isInvalid());
-        assertInstanceOf(RequiredPermissions.class, result.getResult());
-
-        RequiredPermissions permissions = (RequiredPermissions) result.getResult();
         List<String> perm = permissions.getPermissions();
 
         assertEquals(2, perm.size());

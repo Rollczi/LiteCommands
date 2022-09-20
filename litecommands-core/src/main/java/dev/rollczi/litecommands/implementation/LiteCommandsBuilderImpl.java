@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
+final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDER> {
 
     private final Class<SENDER> senderType;
 

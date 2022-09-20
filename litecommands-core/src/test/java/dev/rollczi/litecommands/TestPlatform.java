@@ -38,8 +38,7 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
         return new TestSender(new TestHandle());
     }
 
-    @Deprecated
-    public ExecuteResult executeLegacy(String command, String... args) {
+    public AssertResult execute(String command, String... args) {
         TestHandle handle = new TestHandle();
         LiteInvocation invocation = new LiteInvocation(new TestSender(handle), command, command, args);
 
@@ -48,15 +47,11 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
             Command cmd = entry.getValue();
 
             if (section.isSimilar(command)) {
-                return cmd.getExecuteListener().execute(handle, invocation);
+                return new AssertResult(cmd.getExecuteListener().execute(handle, invocation));
             }
         }
 
-        return ExecuteResult.failure(FindResult.none(invocation.withHandle(handle)));
-    }
-
-    public AssertResult execute(String command, String... args) {
-        return new AssertResult(this.executeLegacy(command, args));
+        return new AssertResult(ExecuteResult.failure(FindResult.none(invocation.withHandle(handle))));
     }
 
     public AssertSuggest suggest(String command, String... args) {

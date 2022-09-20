@@ -2,6 +2,7 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.suggestion.SuggestionStack;
 import org.junit.jupiter.api.Assertions;
+import panda.std.stream.PandaStream;
 
 import java.util.List;
 
@@ -25,6 +26,15 @@ public class AssertSuggest {
         for (String suggestion : suggestions) {
             Assertions.assertTrue(suggestionSet.contains(suggestion), "Suggestion '" + suggestion + "' not found! " + String.join(", ", suggestionSet));
         }
+    }
+
+    public void assertWith(String[] suggestionArray, String... suggestions) {
+        String[] merged = PandaStream.of(suggestionArray)
+                .concat(suggestions)
+                .toList()
+                .toArray(new String[0]);
+
+        assertWith(merged);
     }
 
 }

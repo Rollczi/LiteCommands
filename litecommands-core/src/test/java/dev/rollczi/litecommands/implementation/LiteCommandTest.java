@@ -14,79 +14,69 @@ class LiteCommandTest {
 
     @Test
     void testSet() {
-        ExecuteResult result = platform.executeLegacy("lp", "user", "Rollczi", "parent", "set", "vip");
-
-        assertTrue(result.isSuccess());
-        assertEquals("Rollczi -> vip", result.getResult());
+        platform.execute("lp", "user", "Rollczi", "parent", "set", "vip")
+                .assertSuccess()
+                .assertResult("Rollczi -> vip");
     }
 
     @Test
     void testUnSet() {
-        ExecuteResult result = platform.executeLegacy("lp", "user", "Rollczi", "parent", "unset", "vip");
-
-        assertTrue(result.isSuccess());
-        assertEquals("Rollczi -x vip", result.getResult());
+        platform.execute("lp", "user", "Rollczi", "parent", "unset", "vip")
+                .assertSuccess()
+                .assertResult("Rollczi -x vip");
     }
 
     @Test
     void testSetWithAlias() {
-        ExecuteResult result = platform.executeLegacy("luckperms", "user", "Rollczi", "parent", "set", "vip");
-
-        assertTrue(result.isSuccess());
-        assertEquals("Rollczi -> vip", result.getResult());
+        platform.execute("luckperms", "user", "Rollczi", "parent", "set", "vip")
+                .assertSuccess()
+                .assertResult("Rollczi -> vip");
     }
 
     @Test
     void testUnSetWithAlias() {
-        ExecuteResult result = platform.executeLegacy("luckperms", "user", "Rollczi", "parent", "unset", "vip");
-
-        assertTrue(result.isSuccess());
-        assertEquals("Rollczi -x vip", result.getResult());
+        platform.execute("luckperms", "user", "Rollczi", "parent", "unset", "vip")
+                .assertSuccess()
+                .assertResult("Rollczi -x vip");
     }
 
     @Test
     void testReload() {
-        ExecuteResult result = platform.executeLegacy("luckperms", "user", "Rollczi", "reload");
-
-        assertTrue(result.isSuccess());
-        assertEquals("Rollczi -reload", result.getResult());
+        platform.execute("luckperms", "user", "Rollczi", "reload")
+                .assertSuccess()
+                .assertResult("Rollczi -reload");
     }
 
     @Test
     void testAdminChatFalse() {
-        ExecuteResult result = platform.executeLegacy("ac", "siema");
-
-        assertTrue(result.isSuccess());
-        assertEquals("false -> siema", result.getResult());
+        platform.execute("ac", "siema")
+                .assertSuccess()
+                .assertResult("false -> siema");
     }
 
     @Test
     void testAdminChatTrue() {
-        ExecuteResult result = platform.executeLegacy("ac", "-s", "siema");
-
-        assertTrue(result.isSuccess());
-        assertEquals("true -> siema", result.getResult());
+        platform.execute("ac", "-s", "siema")
+                .assertSuccess()
+                .assertResult("true -> siema");
     }
 
     @Test
     void testAdminChatKeyAndOption() {
-        ExecuteResult result = platform.executeLegacy("ac", "key", "siema");
+        platform.execute("ac", "key", "siema")
+                .assertSuccess()
+                .assertResult("siema");
 
-        assertTrue(result.isSuccess());
-        assertEquals("siema", result.getResult());
-
-        ExecuteResult resultNull = platform.executeLegacy("ac", "key");
-
-        assertTrue(resultNull.isSuccess());
-        assertEquals("null", resultNull.getResult());
+        platform.execute("ac", "key")
+                .assertSuccess()
+                .assertResult("null");
     }
 
     @Test
     void testAdminChatTrueMore() {
-        ExecuteResult result = platform.executeLegacy("ac", "-s", "siema", "test", "hejo");
-
-        assertTrue(result.isSuccess());
-        assertEquals("true -> siema test hejo", result.getResult());
+        platform.execute("ac", "-s", "siema", "test", "hejo")
+                .assertSuccess()
+                .assertResult("true -> siema test hejo");
     }
 
 }
