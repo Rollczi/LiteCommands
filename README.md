@@ -7,6 +7,7 @@ Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
 - [Example (Modern 2.5.0)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
+- [Example (In EternalCore Plugin)](https://github.com/EternalCodeTeam/EternalCore/tree/master/eternalcore/src/main/java/com/eternalcode/core/command)
 - [Docs (Legacy 1.7.2)](https://docs.rollczi.dev/)
 
 ### Panda Repository (Maven or Gradle)  ❤️
