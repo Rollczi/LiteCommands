@@ -7,7 +7,6 @@ Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
 - [Example (Modern 2.5.0)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
-- [Example (In EternalCore Plugin)](https://github.com/EternalCodeTeam/EternalCore/tree/master/eternalcore/src/main/java/com/eternalcode/core/command)
 - [Docs (Legacy 1.7.2)](https://docs.rollczi.dev/)
 
 ### Panda Repository (Maven or Gradle)  ❤️
@@ -78,6 +77,10 @@ implementation 'dev.rollczi.litecommands:velocity:2.5.0'
  - [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
 #### Other examples: 
  - [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
+
+#### Plugin using LiteCommands:
+- [EternalCore](https://github.com/EternalCodeTeam/EternalCore/)
+- [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
 
 See (Important dependencies used)
  - [panda-lang/expressible](https://github.com/panda-lang/expressible)
