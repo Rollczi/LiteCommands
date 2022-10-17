@@ -75,13 +75,14 @@ implementation 'dev.rollczi.litecommands:velocity:2.5.0'
  - [Velocity](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-velocity)
  - [Bukkit](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit)
  - [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
+ - 
 #### Other examples: 
  - [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
 
-#### Plugin using LiteCommands:
-- [EternalCore](https://github.com/EternalCodeTeam/EternalCore/)
-- [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
-
-See (Important dependencies used)
+#### See (Important dependencies used)
  - [panda-lang/expressible](https://github.com/panda-lang/expressible)
  - [panda-lang/panda (panda-utilities)](https://github.com/panda-lang/panda) (v1.0.0 - v1.9.2) (in v2.0.0 and above a built-in DI modeled on it is used)
+
+#### Plugins that use LiteCommands:
+- [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
+- [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
