@@ -14,7 +14,7 @@ plugins {
 
 allprojects {
     group = "dev.rollczi.litecommands"
-    version = "2.5.0-SNAPSHOT"
+    version = "2.6.0"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
