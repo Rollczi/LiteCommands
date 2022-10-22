@@ -85,4 +85,6 @@ implementation 'dev.rollczi.litecommands:velocity:2.5.0'
 
 #### Plugins that use LiteCommands:
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
+- [EternalCheck](https://github.com/EternalCodeTeam/EternalCheck)
+- [EternalRTP](https://github.com/EternalCodeTeam/EternalRTP)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
