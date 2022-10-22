@@ -1,19 +1,17 @@
 package dev.rollczi.litecommands.command.permission;
 
 import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.execute.ExecuteResult;
-import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.TestHandle;
 import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.command.execute.Execute;
+import dev.rollczi.litecommands.command.section.CommandSection;
+import dev.rollczi.litecommands.command.section.Section;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -2,13 +2,13 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.platform.LiteSender;
-import dev.rollczi.litecommands.platform.SuggestionListener;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
+import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.platform.ExecuteListener;
+import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 
 import java.util.HashMap;
 import java.util.List;

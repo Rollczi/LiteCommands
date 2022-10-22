@@ -4,8 +4,6 @@ import dev.rollczi.litecommands.factory.CommandState;
 import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import panda.std.Option;
 
-import java.util.Arrays;
-
 class ExecutedPermissionAnnotationResolver implements FactoryAnnotationResolver<ExecutedPermission> {
 
     @Override

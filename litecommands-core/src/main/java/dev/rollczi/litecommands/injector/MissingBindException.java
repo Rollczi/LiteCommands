@@ -1,7 +1,5 @@
 package dev.rollczi.litecommands.injector;
 
-import dev.rollczi.litecommands.shared.ReflectFormat;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

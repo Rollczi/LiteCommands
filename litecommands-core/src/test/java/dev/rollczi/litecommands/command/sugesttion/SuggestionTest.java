@@ -8,15 +8,15 @@ import dev.rollczi.litecommands.argument.By;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.argument.flag.Flag;
 import dev.rollczi.litecommands.argument.joiner.Joiner;
+import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggest;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
+import dev.rollczi.litecommands.suggestion.Suggest;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 import panda.std.Blank;
 import panda.std.Option;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import static dev.rollczi.litecommands.Assert.assertCollection;
 import static dev.rollczi.litecommands.Assert.assertSize;
 import static dev.rollczi.litecommands.TestUtils.list;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SuggestionTest {
 

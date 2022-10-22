@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.implementation;
 
-import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.argument.flag.Flag;
 import dev.rollczi.litecommands.argument.joiner.Joiner;
 import dev.rollczi.litecommands.argument.option.Opt;
+import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
 import panda.std.Option;
 

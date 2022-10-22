@@ -2,19 +2,19 @@ package dev.rollczi.litecommands.implementation;
 
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.injector.InjectException;
-import dev.rollczi.litecommands.injector.Injectable;
 import dev.rollczi.litecommands.argument.By;
-import dev.rollczi.litecommands.injector.Injector;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
+import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.factory.CommandEditor;
 import dev.rollczi.litecommands.factory.CommandEditorRegistry;
-import dev.rollczi.litecommands.factory.CommandStateFactoryProcessor;
-import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
-import dev.rollczi.litecommands.factory.CommandStateFactory;
-import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import dev.rollczi.litecommands.factory.CommandState;
+import dev.rollczi.litecommands.factory.CommandStateFactory;
+import dev.rollczi.litecommands.factory.CommandStateFactoryProcessor;
+import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
+import dev.rollczi.litecommands.injector.InjectException;
+import dev.rollczi.litecommands.injector.Injectable;
+import dev.rollczi.litecommands.injector.Injector;
+import dev.rollczi.litecommands.meta.CommandMeta;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
 

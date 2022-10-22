@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;

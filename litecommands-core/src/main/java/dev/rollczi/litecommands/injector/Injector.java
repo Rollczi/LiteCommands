@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.injector;
 
-import dev.rollczi.litecommands.meta.Meta;
 import java.lang.reflect.Method;
 
 public interface Injector<CONTEXT> {

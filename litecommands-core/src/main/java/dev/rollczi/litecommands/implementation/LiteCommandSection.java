@@ -1,22 +1,22 @@
 package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
+import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.Invocation;
+import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
+import dev.rollczi.litecommands.command.permission.RequiredPermissions;
+import dev.rollczi.litecommands.command.section.CommandSection;
+import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.platform.LiteSender;
+import dev.rollczi.litecommands.shared.Validation;
 import dev.rollczi.litecommands.suggestion.Suggester;
 import dev.rollczi.litecommands.suggestion.SuggesterResult;
-import dev.rollczi.litecommands.suggestion.SuggestionMerger;
-import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import dev.rollczi.litecommands.suggestion.Suggestion;
-import dev.rollczi.litecommands.command.FindResult;
-import dev.rollczi.litecommands.command.section.CommandSection;
+import dev.rollczi.litecommands.suggestion.SuggestionMerger;
 import dev.rollczi.litecommands.suggestion.SuggestionStack;
 import dev.rollczi.litecommands.suggestion.UniformSuggestionStack;
-import dev.rollczi.litecommands.command.execute.ExecuteResult;
-import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.shared.Validation;
 import panda.std.Option;
 
 import java.util.ArrayList;

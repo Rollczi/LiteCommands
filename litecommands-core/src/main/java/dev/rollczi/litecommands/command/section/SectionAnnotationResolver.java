@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.command.section;
 
-import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import dev.rollczi.litecommands.factory.CommandState;
+import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import panda.std.Option;
 
 import java.util.ArrayList;

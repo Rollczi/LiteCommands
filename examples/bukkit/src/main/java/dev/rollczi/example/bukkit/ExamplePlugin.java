@@ -1,5 +1,6 @@
 package dev.rollczi.example.bukkit;
 
+import dev.rollczi.example.bukkit.argument.LocationArgument;
 import dev.rollczi.example.bukkit.argument.WorldArgument;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
@@ -7,10 +8,9 @@ import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.handler.InvalidUsage;
 import dev.rollczi.example.bukkit.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
-import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
-import dev.rollczi.example.bukkit.argument.LocationArgument;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;

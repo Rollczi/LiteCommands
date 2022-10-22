@@ -2,11 +2,7 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;
-import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LiteCommandTest {
 

@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.argument;
 
 import dev.rollczi.litecommands.TestFactory;
+import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
-import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.Test;
 
 class StandardTypeTest {
