@@ -1,4 +1,4 @@
-package dev.rollczi.example.bukkit;
+package dev.rollczi.example.bukkit.command;
 
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Name;
@@ -15,20 +15,20 @@ import panda.std.Option;
 @Permission("dev.rollczi.teleport")
 public class TeleportCommand {
 
+    @Execute(required = 1)
+    public void teleportSelf(Player sender, @Arg Player to) {
+        sender.teleport(to.getLocation());
+    }
+
     @Execute(min = 3, max = 4)
-    public void to(Player sender, @Arg Location location, @Opt Option<World> world) {
+    public void teleportSelfToPosition(Player sender, @Arg Location location, @Opt Option<World> world) {
         location.setWorld(world.orElseGet(sender.getWorld()));
         sender.teleport(location);
     }
 
-    @Execute(required = 1)
-    public void toPlayer(Player sender, @Arg Player to) {
-        sender.teleport(to.getLocation());
-    }
-
     @Execute(required = 2)
     @Permission("dev.rollczi.teleport.other")
-    public void targetToPlayer(@Arg @Name("target") Player target, @Arg @Name("to") Player to) {
+    public void teleportOther(@Arg @Name("target") Player target, @Arg @Name("to") Player to) {
         target.teleport(to.getLocation());
     }
 

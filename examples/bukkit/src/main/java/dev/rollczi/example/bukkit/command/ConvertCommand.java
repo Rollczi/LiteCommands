@@ -1,4 +1,4 @@
-package dev.rollczi.example.bukkit;
+package dev.rollczi.example.bukkit.command;
 
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
