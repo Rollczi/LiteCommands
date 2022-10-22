@@ -18,6 +18,10 @@ public class AssertSuggest {
         Assertions.assertTrue(suggestions.suggestions().isEmpty());
     }
 
+    public void assertNonEmpty() {
+        Assertions.assertFalse(suggestions.suggestions().isEmpty());
+    }
+
     public void assertWith(String... suggestions) {
         List<String> suggestionSet = this.suggestions.multilevelSuggestions();
 

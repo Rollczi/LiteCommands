@@ -15,18 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IntegerArgumentTest {
 
-    IntegerArgument doubleArgument = new IntegerArgument();
+    IntegerArgument integerArgument = new IntegerArgument();
 
     @Test
     void testParse() {
-        Result<Integer, ?> result = doubleArgument.parse(TestUtils.invocation(), "100");
+        Result<Integer, ?> result = integerArgument.parse(TestUtils.invocation(), "100");
 
         assertEquals(100, result.get());
     }
 
     @Test
     void testValidate() {
-        boolean validate = doubleArgument.validate(TestUtils.invocation(), Suggestion.of("123"));
+        boolean validate = integerArgument.validate(TestUtils.invocation(), Suggestion.of("123"));
 
         assertTrue(validate);
     }

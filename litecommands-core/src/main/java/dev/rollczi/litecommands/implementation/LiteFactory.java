@@ -3,14 +3,9 @@ package dev.rollczi.litecommands.implementation;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Args;
+import dev.rollczi.litecommands.argument.basictype.*;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.argument.block.BlockArgument;
-import dev.rollczi.litecommands.argument.basictype.BigDecimalArgument;
-import dev.rollczi.litecommands.argument.basictype.BigIntegerArgument;
-import dev.rollczi.litecommands.argument.basictype.BooleanArgument;
-import dev.rollczi.litecommands.argument.basictype.ByteArgument;
-import dev.rollczi.litecommands.argument.basictype.CharacterArgument;
-import dev.rollczi.litecommands.argument.basictype.DoubleArgument;
 import dev.rollczi.litecommands.argument.enumeration.EnumArgument;
 import dev.rollczi.litecommands.argument.flag.Flag;
 import dev.rollczi.litecommands.argument.flag.FlagArgument;
@@ -27,24 +22,30 @@ import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.handle.Redirector;
-import dev.rollczi.litecommands.argument.basictype.FloatArgument;
-import dev.rollczi.litecommands.argument.basictype.IntegerArgument;
-import dev.rollczi.litecommands.argument.basictype.LongArgument;
-import dev.rollczi.litecommands.argument.basictype.ShortArgument;
-import dev.rollczi.litecommands.argument.basictype.StringArgument;
 import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.schematic.Schematic;
 import panda.std.Result;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
 
 public final class LiteFactory {
 
     private static final Redirector<Schematic, String> MAP_SCHEMATIC_TO_STRING = schematic -> String.join(System.lineSeparator(), schematic.getSchematics());
     private static final Redirector<RequiredPermissions, String> MAP_PERMISSIONS_TO_STRING = permissions -> String.join(System.lineSeparator(), permissions.getPermissions());
+    private static final DateFormat DEFAULT_INSTANT_DATE_FORMAT;
+
+    static {
+        DEFAULT_INSTANT_DATE_FORMAT = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+        DEFAULT_INSTANT_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     private LiteFactory() {
     }
@@ -88,6 +89,9 @@ public final class LiteFactory {
                 .argument(Character.class, new CharacterArgument())
                 .argument(BigInteger.class, new BigIntegerArgument())
                 .argument(BigDecimal.class, new BigDecimalArgument())
+                .argument(Duration.class, new DurationArgument())
+
+                .argumentMultilevel(Instant.class, new InstantArgument(DEFAULT_INSTANT_DATE_FORMAT))
 
                 .resultHandler(boolean.class, (sender, invocation, value) -> {})
                 .resultHandler(Boolean.class, (sender, invocation, value) -> {})
