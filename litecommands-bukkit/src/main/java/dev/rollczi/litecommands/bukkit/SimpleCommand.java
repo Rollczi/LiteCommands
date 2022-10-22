@@ -2,14 +2,12 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
-import org.bukkit.Bukkit;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class SimpleCommand extends org.bukkit.command.Command {

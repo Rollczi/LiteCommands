@@ -1,11 +1,10 @@
 package dev.rollczi.litecommands.command.permission;
 
-import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import dev.rollczi.litecommands.factory.CommandState;
+import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 import panda.std.Option;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 class PermissionAnnotationResolver implements FactoryAnnotationResolver<Permissions> {
 

@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.velocity;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.shared.StringUtils;
 
 import java.util.ArrayList;

@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.factory;
 
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.meta.Meta;
 
 import java.util.Collection;
 import java.util.Set;

@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.TestHandle;
+import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.ArgumentName;
 import dev.rollczi.litecommands.argument.By;
@@ -13,8 +15,6 @@ import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.implementation.LiteFactory;
-import dev.rollczi.litecommands.TestHandle;
-import dev.rollczi.litecommands.TestPlatform;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
 import panda.std.Result;

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.argument.simple;
 
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import panda.std.Result;
 
 import java.util.Collections;

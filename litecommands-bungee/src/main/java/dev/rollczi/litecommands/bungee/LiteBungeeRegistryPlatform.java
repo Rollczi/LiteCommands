@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;

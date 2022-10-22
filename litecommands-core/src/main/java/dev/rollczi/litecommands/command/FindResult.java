@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.argument.AnnotatedParameter;
-import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.AnnotatedParameterState;
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.schematic.SchematicContext;

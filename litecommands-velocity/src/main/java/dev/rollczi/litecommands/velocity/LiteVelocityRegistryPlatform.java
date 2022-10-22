@@ -5,9 +5,9 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.SuggestionListener;
 import dev.rollczi.litecommands.platform.ExecuteListener;
 import dev.rollczi.litecommands.platform.RegistryPlatform;
+import dev.rollczi.litecommands.platform.SuggestionListener;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.handle;
 
-import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.shared.MapUtil;
