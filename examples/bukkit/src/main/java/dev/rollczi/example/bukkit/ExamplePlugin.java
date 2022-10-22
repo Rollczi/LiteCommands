@@ -1,6 +1,9 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.WorldArgument;
+import dev.rollczi.example.bukkit.command.ConvertCommand;
+import dev.rollczi.example.bukkit.command.KickCommand;
+import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.handler.InvalidUsage;
 import dev.rollczi.example.bukkit.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
@@ -24,10 +27,10 @@ public class ExamplePlugin extends JavaPlugin {
                 // Arguments
                 .argumentMultilevel(Location.class, new LocationArgument())
                 .argument(World.class, new WorldArgument(this.getServer()))
-                .argument(Player.class, new BukkitPlayerArgument(this.getServer(), "&cNie ma takiego gracza!"))
+                .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), "&cNie ma takiego gracza!"))
 
                 // Contextual Bind
-                .contextualBind(Player.class, new BukkitOnlyPlayerContextual("&cKomenda tylko dla gracza!"))
+                .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
 
                 // Commands
                 .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)
