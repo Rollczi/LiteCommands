@@ -6,6 +6,6 @@ import panda.std.Result;
 @FunctionalInterface
 public interface Contextual<SENDER, T> {
 
-    Result<T, Object> extract(SENDER sender, Invocation<SENDER> invocation);
+    Result<T, ?> extract(SENDER sender, Invocation<SENDER> invocation);
 
 }
