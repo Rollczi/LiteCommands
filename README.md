@@ -34,19 +34,30 @@ implementation 'dev.rollczi.litecommands:core:2.6.0'
 
 ### First Simple Command
  `/helloworld <text...>`
+ `/helloworld other-solution <text...>`
+ `/helloworld subcommand <text>`
 ```java
 @Section(route = "helloworld")
 @Permission("dev.rollczi.helloworld")
 public class HelloWorldCommand {
 
+    // -> /helloworld <text...>
     @Execute
     @Min(1)
-    public void execute(LiteSender sender, String[] args) {
+    public void command(LiteSender sender, @Args String[] args) {
         sender.sendMessage(String.join(" ", args));
     }
+
+    // -> /helloworld other-solution <text...>
+    @Execute(route = "other-solution")
+    @Min(1)
+    public void otherSolution(LiteSender sender, @Joiner String text) {
+        sender.sendMessage(text);
+    }
     
+    // -> /helloworld subcommand <text>
     @Execute(route = "subcommand")
-    public void execute(LiteSender sender, @Arg String text) {
+    public void subcommand(LiteSender sender, @Arg String text) {
         sender.sendMessage(text);
     }
 
@@ -74,6 +85,7 @@ implementation 'dev.rollczi.litecommands:velocity:2.6.0'
 #### All extensions: 
  - [Velocity](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-velocity)
  - [Bukkit](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit)
+ - [Bukkit Adventure extension](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit-adventure)
  - [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
  
 #### Other examples: 
