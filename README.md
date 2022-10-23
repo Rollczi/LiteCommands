@@ -6,8 +6,8 @@
 Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
-- [Example (Modern 2.6.0)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
-- [Docs (Legacy 1.7.2)](https://docs.rollczi.dev/)
+- [Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
+- [Documentation](https://docs.rollczi.dev/)
 
 ### Panda Repository (Maven or Gradle)  ❤️
 ```xml
@@ -33,29 +33,26 @@ implementation 'dev.rollczi.litecommands:core:2.6.0'
 ```
 
 ### First Simple Command
- `/helloworld <text...>`
- `/helloworld other-solution <text...>`
- `/helloworld subcommand <text>`
+ `/helloworld <text...>`  
+ `/helloworld other-solution <text...>`  
+ `/helloworld subcommand <text>`  
 ```java
 @Section(route = "helloworld")
 @Permission("dev.rollczi.helloworld")
 public class HelloWorldCommand {
 
-    // -> /helloworld <text...>
     @Execute
     @Min(1)
     public void command(LiteSender sender, @Args String[] args) {
         sender.sendMessage(String.join(" ", args));
     }
 
-    // -> /helloworld other-solution <text...>
     @Execute(route = "other-solution")
     @Min(1)
     public void otherSolution(LiteSender sender, @Joiner String text) {
         sender.sendMessage(text);
     }
     
-    // -> /helloworld subcommand <text>
     @Execute(route = "subcommand")
     public void subcommand(LiteSender sender, @Arg String text) {
         sender.sendMessage(text);
