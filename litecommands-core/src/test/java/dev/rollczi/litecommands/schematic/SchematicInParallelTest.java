@@ -39,7 +39,7 @@ class SchematicInParallelTest {
         FindResult<TestHandle> result = testPlatform.find("test");
         List<String> schematics = schematicGenerator.generate(result, SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
-        assertCollection(3, Arrays.asList(
+        assertCollection(Arrays.asList(
                 "/test <argument>",
                 "/test add <argument>",
                 "/test remove <argument>"
