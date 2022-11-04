@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Name;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.suggestion.Suggest;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ class SchematicInParallelTest {
     TestPlatform testPlatform = TestFactory.withCommands(Command.class);
     SchematicGenerator schematicGenerator = SchematicGenerator.simple();
 
-    @Section(route = "test")
+    @Route(name = "test")
     private static class Command {
 
         @Execute(required = 1)

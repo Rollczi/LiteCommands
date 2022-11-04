@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.section;
+package dev.rollczi.litecommands.command.route;
 
 import dev.rollczi.litecommands.factory.FactoryAnnotationResolver;
 
@@ -7,15 +7,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface Section {
+public @interface Route {
 
-    String route();
+    String name();
 
     String[] aliases() default {};
 
-    FactoryAnnotationResolver<Section> RESOLVER = new SectionAnnotationResolver();
+    FactoryAnnotationResolver<Route> RESOLVER = new RouteAnnotationResolver();
 
 }

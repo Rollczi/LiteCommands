@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Joiner {
 
-    String[] value() default {};
+    String delimiter() default " ";
+
+    int limit() default -1;
 
 }

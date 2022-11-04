@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.argument.joiner.Joiner;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ class AmountValidatorTest {
 
     TestPlatform platform = TestFactory.withCommands(TestCommand.class);
 
-    @Section(route = "test")
+    @Route(name = "test")
     static class TestCommand {
         @Execute(min = 1)
         public String minOneArgument(@Joiner String text) {

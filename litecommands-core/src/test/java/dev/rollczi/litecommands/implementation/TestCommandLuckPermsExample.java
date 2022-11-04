@@ -3,10 +3,10 @@ package dev.rollczi.litecommands.implementation;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import panda.std.Blank;
 
-@Section(route = "lp user", aliases = "luckperms user")
+@Route(name = "lp user", aliases = "luckperms user")
 class TestCommandLuckPermsExample {
 
     @Execute

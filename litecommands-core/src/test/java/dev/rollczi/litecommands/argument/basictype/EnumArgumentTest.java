@@ -1,10 +1,10 @@
-package dev.rollczi.litecommands.implementation;
+package dev.rollczi.litecommands.argument.basictype;
 
 import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.Test;
 
 class EnumArgumentTest {
@@ -14,7 +14,7 @@ class EnumArgumentTest {
             .resultHandler(TestEnum.class, (testHandle, invocation, value) -> {})
     );
 
-    @Section(route = "test")
+    @Route(name = "test")
     static class Command {
         @Execute(required = 1)
         TestEnum execute(@Arg TestEnum testEnum) { return testEnum; }

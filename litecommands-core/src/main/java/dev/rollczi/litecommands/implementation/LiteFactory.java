@@ -32,6 +32,7 @@ import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.permission.RequiredPermissions;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
@@ -66,6 +67,7 @@ public final class LiteFactory {
         return LiteCommandsBuilderImpl.builder(senderType)
                 .configureFactory(factory -> {
                     factory.annotationResolver(Section.RESOLVER);
+                    factory.annotationResolver(Route.RESOLVER);
                     factory.annotationResolver(Execute.RESOLVER);
                     factory.annotationResolver(Permission.RESOLVER);
                     factory.annotationResolver(Permission.REPEATABLE_RESOLVER);

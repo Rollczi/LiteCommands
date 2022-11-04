@@ -4,14 +4,14 @@ import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.Test;
 
 class SuggestionValidationTest {
 
     TestPlatform platform = TestFactory.withCommands(Command.class);
 
-    @Section(route = "test")
+    @Route(name = "test")
     private static class Command {
         @Execute void test(@Arg int arg0, @Arg int arg1, @Arg String text) {}
     }

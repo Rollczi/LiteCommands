@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.Test;
 
 class ContextualTest {
@@ -19,7 +19,7 @@ class ContextualTest {
         result.assertResult("contextual + Rollczi");
     }
 
-    @Section(route = "test")
+    @Route(name = "test")
     static class Command {
         @Execute
         String execute(String contextual, @Arg String argument) {

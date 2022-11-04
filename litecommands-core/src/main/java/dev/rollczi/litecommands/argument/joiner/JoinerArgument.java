@@ -18,14 +18,17 @@ public class JoinerArgument<SENDER> implements Argument<SENDER, Joiner> {
             return MatchResult.notMatched();
         }
 
+        Joiner joiner = context.annotation();
+
         List<String> args = Arrays.asList(invocation.arguments());
-        List<String> toJoin = args.subList(currentArgument, args.size());
+        int toCut =  joiner.limit() == - 1 ? args.size() : Math.min(args.size(), joiner.limit() + currentArgument);
+        List<String> toJoin = args.subList(currentArgument, toCut);
 
         if (toJoin.isEmpty()) {
             return MatchResult.notMatched();
         }
 
-        return MatchResult.matched(String.join(" ", toJoin), toJoin.size());
+        return MatchResult.matched(String.join(joiner.delimiter(), toJoin), toCut);
     }
 
 }
