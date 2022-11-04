@@ -5,13 +5,13 @@ import dev.rollczi.litecommands.argument.Name;
 import dev.rollczi.litecommands.argument.option.Opt;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import panda.std.Option;
 
-@Section(route = "teleport", aliases = "tp")
+@Route(name = "teleport", aliases = "tp")
 @Permission("dev.rollczi.teleport")
 public class TeleportCommand {
 

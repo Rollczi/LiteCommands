@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.TestHandle;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.command.CommandService;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class CommandEditorTest {
         assertEquals(2, section.getAliases().size());
     }
 
-    @Section(route = "test")
+    @Route(name = "test")
     static class ToEdit {
 
     }

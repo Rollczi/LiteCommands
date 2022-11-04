@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class FindResultTest {
         Assertions.assertTrue(findResult.isFound());
     }
 
-    @Section(route = "lp user", aliases = "luckperms user")
+    @Route(name = "lp user", aliases = "luckperms user")
     private static class TestCommandLuckPermsExample {
         @Execute void set(@Arg String user, @Block("parent set") @Arg String rank) {}
         @Execute void unset(@Arg String user, @Block("parent unset") @Arg String rank) {}

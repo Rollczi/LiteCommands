@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.TestUtils;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,7 +62,7 @@ class DurationArgumentTest {
 
     TestPlatform testPlatform = TestFactory.withCommandsUniversalHandler(Command.class);
 
-    @Section(route = "command")
+    @Route(name = "command")
     static class Command {
         @Execute
         Duration execute(@Arg Duration argument) {

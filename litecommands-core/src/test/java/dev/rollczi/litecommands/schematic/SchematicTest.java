@@ -13,7 +13,7 @@ import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.command.FindResult;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
@@ -72,7 +72,7 @@ class SchematicTest {
         assertEquals("/teleport <x y z> [world]", schematics.get(0));
     }
 
-    @Section(route = "teleport")
+    @Route(name = "teleport")
     static class Command {
         @Execute(min = 3, max = 4)
         void toLocation(@Arg @By("loc") String text, @Opt @Name("world") Option<String> world) {}
@@ -80,7 +80,7 @@ class SchematicTest {
         void targetToPlayer(@Arg @Name("target") String target, @Opt @Name("to") Option<String> to) {}
         @Execute(route = "test")
         void test(@Arg @Name("target") String target, @Opt @Name("to") Option<String> to) {}
-        @Section(route = "class")
+        @Route(name = "class")
         static class In {
             @Execute(route = "test")
             void test(@Arg @Name("target") String target) {}

@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.TestUtils;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 import panda.std.Result;
@@ -33,8 +33,9 @@ class DoubleArgumentTest {
 
     TestPlatform testPlatform = TestFactory.withCommandsUniversalHandler(Command.class);
 
-    @Section(route = "command")
+    @Route(name = "command")
     static class Command {
+
         @Execute(route = "double")
         double execute(@Arg double argument) {
             return argument;
@@ -44,6 +45,7 @@ class DoubleArgumentTest {
         Double executeClass(@Arg Double argument) {
             return argument;
         }
+
     }
 
     @Test

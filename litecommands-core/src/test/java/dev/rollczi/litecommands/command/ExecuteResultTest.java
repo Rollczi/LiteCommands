@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.TestHandle;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import org.junit.jupiter.api.Test;
 import panda.std.Result;
@@ -43,7 +43,7 @@ class ExecuteResultTest {
         result.assertResult("error");
     }
 
-    @Section(route = "info")
+    @Route(name = "info")
     static class InfoCommand {
         @Execute(route = "player", required = 0)
         String execute() {

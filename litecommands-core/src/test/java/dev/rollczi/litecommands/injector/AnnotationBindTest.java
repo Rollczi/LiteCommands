@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.injector;
 import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Retention;
@@ -16,7 +16,7 @@ class AnnotationBindTest {
         String value();
     }
 
-    @Section(route = "test")
+    @Route(name = "test")
     static class Command {
         @Execute
         String execute(@Annotation("custom") String test) {

@@ -3,12 +3,12 @@ package dev.rollczi.example.bukkit.command;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 
 import java.time.Duration;
 import java.time.Instant;
 
-@Section(route = "convert")
+@Route(name = "convert")
 @Permission("dev.rollczi.convert")
 public class ConvertCommand {
 

@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.AssertResult;
 import dev.rollczi.litecommands.TestFactory;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ class ArgsAnnotationTest {
 
     TestPlatform platform = TestFactory.withCommandsUniversalHandler(Command.class, CommandList.class);
 
-    @Section(route = "test-primitive")
+    @Route(name = "test-primitive")
     private static class Command {
         @Execute
         String[] test(@Args String[] arguments) {
@@ -24,7 +24,7 @@ class ArgsAnnotationTest {
         }
     }
 
-    @Section(route = "test-list")
+    @Route(name = "test-list")
     private static class CommandList {
         @Execute
         List<String> test(@Args List<String> arguments) {

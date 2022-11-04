@@ -37,7 +37,7 @@ implementation 'dev.rollczi.litecommands:core:2.6.0'
  `/helloworld other-solution <text...>`  
  `/helloworld subcommand <text>`  
 ```java
-@Section(route = "helloworld")
+@Route(name = "helloworld")
 @Permission("dev.rollczi.helloworld")
 public class HelloWorldCommand {
 

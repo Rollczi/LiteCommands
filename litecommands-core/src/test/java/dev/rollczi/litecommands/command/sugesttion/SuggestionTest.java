@@ -13,7 +13,7 @@ import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import dev.rollczi.litecommands.suggestion.Suggest;
 import dev.rollczi.litecommands.suggestion.Suggestion;
@@ -210,27 +210,27 @@ class SuggestionTest {
         assertEquals("text", suggestion.get(0));
     }
 
-    @Section(route = "suggestions-test")
+    @Route(name = "suggestions-test")
     static class SuggestionsCommand {
         @Execute(route = "execute-1") void execute1(@Arg @By("1") String a1, @Arg @By("2") String a2, @Arg @By("3") String a3) {}
         @Execute(route = "execute-2") void execute2(@Arg @By("1") String a1, @Arg @By("2") String a2, @Opt @By("3") Option<String> a3) {}
         @Execute(route = "execute-3") void execute3(@Opt @Suggest("static") @By("1") Option<String> a1, @Opt @By("2") Option<String> a2, @Arg @By("3") String a3) {}
     }
 
-    @Section(route = "teleport")
+    @Route(name = "teleport")
     static class TeleportCommand {
         @Execute(min = 3, max = 4) void execute1(@Arg Location location, @Opt Option<String> world) {}
         @Execute(required = 1) void execute2(@Arg String player) {}
     }
 
-    @Section(route = "lp user", aliases = "luckperms user")
+    @Route(name = "lp user", aliases = "luckperms user")
     static class LuckPermsCommand {
         @Execute String set(@Arg String user, @Block("parent set") @Arg String rank) { return user + " -> " + rank; }
         @Execute String unset(@Arg String user, @Block("parent unset") @Arg String rank) { return user + " -x " + rank;}
         @Execute String reload(@Arg String user, @Block("reload") Blank none) { return user + " -x ";}
     }
 
-    @Section(route = "ac", aliases = "adminchat")
+    @Route(name = "ac", aliases = "adminchat")
     static class AdminChatCommand {
         @Execute String unset(@Flag("-s") boolean silent, @Joiner String text) { return silent + " -> " + text; }
         @Execute(route = "key") String unset(@Opt Option<String> first) { return first.isPresent() ? first.get() : "null"; }

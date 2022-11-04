@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.TestHandle;
 import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -59,7 +59,7 @@ class RequiredPermissionsTest {
         assertEquals("dev.rollczi.litecommands.execute.siema", perm.get(1));
     }
 
-    @Section(route = "test")
+    @Route(name = "test")
     @Permission("dev.rollczi.litecommands")
     static class PermissionsCommand {
 
