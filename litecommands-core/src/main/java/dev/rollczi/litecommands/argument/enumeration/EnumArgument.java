@@ -27,7 +27,7 @@ public class EnumArgument<SENDER> implements SingleArgument<SENDER, Arg>, Parame
     public List<Suggestion> suggestion(LiteInvocation invocation, Parameter parameter, Arg annotation) {
         Object[] enumConstants = parameter.getType().getEnumConstants();
 
-        if (enumConstants == null) {
+        if (enumConstants == null || enumConstants.length == 0) {
             return Collections.emptyList();
         }
 
