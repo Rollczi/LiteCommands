@@ -1,5 +1,6 @@
-package dev.rollczi.litecommands;
+package dev.rollczi.litecommands.test;
 
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.implementation.LiteFactory;
 import panda.std.Result;
 

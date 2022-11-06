@@ -1,7 +1,7 @@
-package dev.rollczi.litecommands.argument.basictype;
+package dev.rollczi.litecommands.argument.enumeration;
 
-import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.TestFactory;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
@@ -18,9 +18,14 @@ class EnumArgumentTest {
     static class Command {
         @Execute(required = 1)
         TestEnum execute(@Arg TestEnum testEnum) { return testEnum; }
+
+        @Execute(route = "empty")
+        void executeEmpty(@Arg EmptyEnum emptyEnum) {}
     }
 
     enum TestEnum { A, B }
+
+    enum EmptyEnum {}
 
     @Test
     void testA() {
@@ -40,7 +45,7 @@ class EnumArgumentTest {
 
     @Test
     void testSuggestion() {
-        platform.suggest("test", "").assertWith("A", "B");
+        platform.suggest("test", "").assertWith("A", "B", "empty");
     }
 
     @Test
@@ -48,5 +53,11 @@ class EnumArgumentTest {
         platform.suggest("test", "A").assertWith("A");
     }
 
+    @Test
+    void testEmptyEnum() {
+        platform.execute("test", "empty").assertFail();
+        platform.suggest("test", "empty", "")
+            .assertWith();
+    }
 
 }

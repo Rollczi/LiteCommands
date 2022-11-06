@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.factory;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.TestHandle;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.TestHandle;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.command.CommandService;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.route.Route;

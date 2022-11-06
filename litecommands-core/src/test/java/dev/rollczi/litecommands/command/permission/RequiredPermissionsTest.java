@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.command.permission;
 
-import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.TestHandle;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.TestFactory;
+import dev.rollczi.litecommands.test.TestHandle;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.command.route.Route;

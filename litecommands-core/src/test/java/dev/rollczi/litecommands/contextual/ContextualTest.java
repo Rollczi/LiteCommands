@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.contextual;
 
-import dev.rollczi.litecommands.AssertResult;
-import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.AssertResult;
+import dev.rollczi.litecommands.test.TestFactory;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;

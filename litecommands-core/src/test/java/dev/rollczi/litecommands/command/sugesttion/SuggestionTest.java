@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.command.sugesttion;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.TestHandle;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.TestHandle;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.By;
 import dev.rollczi.litecommands.argument.block.Block;
@@ -27,9 +27,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.rollczi.litecommands.Assert.assertCollection;
-import static dev.rollczi.litecommands.Assert.assertSize;
-import static dev.rollczi.litecommands.TestUtils.list;
+import static dev.rollczi.litecommands.test.Assert.assertCollection;
+import static dev.rollczi.litecommands.test.Assert.assertSize;
+import static dev.rollczi.litecommands.test.TestUtils.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SuggestionTest {

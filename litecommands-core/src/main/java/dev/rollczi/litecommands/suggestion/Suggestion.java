@@ -95,4 +95,9 @@ public class Suggestion {
         return Objects.hash(this.multilevel());
     }
 
+    @Override
+    public String toString() {
+        return this.multilevel();
+    }
+
 }

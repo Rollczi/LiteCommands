@@ -1,11 +1,12 @@
-package dev.rollczi.litecommands.argument.basictype;
+package dev.rollczi.litecommands.argument.basictype.time;
 
-import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.TestPlatform;
-import dev.rollczi.litecommands.TestUtils;
+import dev.rollczi.litecommands.test.TestFactory;
+import dev.rollczi.litecommands.test.TestPlatform;
+import dev.rollczi.litecommands.test.TestUtils;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
+import dev.rollczi.litecommands.shared.EstimatedTemporalAmountParser;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +25,7 @@ class DurationArgumentTest {
 
     @Test
     void testParse() {
-        Result<Duration, ?> result = durationArgument.parse(TestUtils.invocation(), "1m20s");
+        Result<Duration, ?> result = durationArgument.parseMultilevel(TestUtils.invocation(), "1m20s");
 
         assertEquals(Duration.ofMinutes(1).plus(20, ChronoUnit.SECONDS), result.get());
     }
@@ -36,7 +37,7 @@ class DurationArgumentTest {
     })
     @ParameterizedTest
     void testParseWithMixedUnits(String period, int expectedSecondsCount) {
-        Result<Duration, ?> result = durationArgument.parse(TestUtils.invocation(), period);
+        Result<Duration, ?> result = durationArgument.parseMultilevel(TestUtils.invocation(), period);
 
         assertEquals(Duration.ofSeconds(expectedSecondsCount), result.get());
     }
@@ -48,7 +49,7 @@ class DurationArgumentTest {
     })
     @ParameterizedTest
     void testParseWithSingleUnits(String period, int expectedSecondsCount) {
-        Result<Duration, ?> result = durationArgument.parse(TestUtils.invocation(), period);
+        Result<Duration, ?> result = durationArgument.parseMultilevel(TestUtils.invocation(), period);
 
         assertEquals(Duration.ofSeconds(expectedSecondsCount), result.get());
     }
@@ -86,10 +87,10 @@ class DurationArgumentTest {
     @Test
     void testSuggestionOnPlatform() {
         testPlatform.suggest("command", "")
-                .assertWith(TypeUtils.DURATION_SUGGESTION);
+                .assertWith(DurationArgument.SUGGESTED_DURATIONS.stream().map(EstimatedTemporalAmountParser.DATE_TIME_UNITS::format).toArray(String[]::new));
 
         testPlatform.suggest("command", "1m")
-                .assertWith("1m", "1m30s");
+                .assertWith("1m", "1m30s", "1mo");
     }
 
 }
