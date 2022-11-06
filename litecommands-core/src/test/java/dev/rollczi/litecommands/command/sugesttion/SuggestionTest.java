@@ -72,14 +72,14 @@ class SuggestionTest {
     void firstBlockSuggestion() {
         List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "p");
 
-        assertCollection(2, list("parent set", "parent unset"), suggestion);
+        assertCollection(list("parent set", "parent unset"), suggestion);
     }
 
     @Test
     void firsEmptyBlockSuggestion() {
         List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "");
 
-        assertCollection(3, list("parent set", "parent unset", "reload"), suggestion);
+        assertCollection(list("parent set", "parent unset", "reload"), suggestion);
     }
 
 
@@ -87,7 +87,7 @@ class SuggestionTest {
     void secondBlockSuggestion() {
         List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "parent", "");
 
-        assertCollection(2, list("set", "unset"), suggestion);
+        assertCollection(list("set", "unset"), suggestion);
     }
 
     @Test
@@ -140,9 +140,11 @@ class SuggestionTest {
         List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "");
 
         assertSize(10, suggestion);
-        assertCollection(list("static"), suggestion);
-        assertCollection(list("arg-1.1", "arg-1.2", "arg-1.3"), suggestion);
-        assertCollection(list("arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
+        assertCollection(list("static",
+            "arg-1.1", "arg-1.2", "arg-1.3",
+            "arg-2.1", "arg-2.2", "arg-2.3",
+            "arg-3.1", "arg-3.2", "arg-3.3"
+        ), suggestion);
     }
 
     @Test
@@ -150,8 +152,11 @@ class SuggestionTest {
         List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "arg");
 
         assertSize(9, suggestion);
-        assertCollection(list("arg-1.1", "arg-1.2", "arg-1.3"), suggestion);
-        assertCollection(list("arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
+        assertCollection(list(
+            "arg-1.1", "arg-1.2", "arg-1.3",
+            "arg-2.1", "arg-2.2", "arg-2.3",
+            "arg-3.1", "arg-3.2", "arg-3.3"
+        ), suggestion);
     }
 
     @Test
@@ -159,15 +164,14 @@ class SuggestionTest {
         List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "arg-1.1", "arg-");
 
         assertSize(6, suggestion);
-        assertCollection(list("arg-2.1", "arg-2.2", "arg-2.3"), suggestion);
-        assertCollection(list("arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
+        assertCollection(list("arg-2.1", "arg-2.2", "arg-2.3", "arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
     }
 
     @Test
     void multilevelEmptyArgumentTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "");
 
-        assertCollection(2, list("text", "100 100 100"), suggestion);
+        assertCollection(list("text", "100 100 100"), suggestion);
     }
 
     @Test
@@ -183,7 +187,7 @@ class SuggestionTest {
     nextToMultilevelExecuteTest() {
         List<String> suggestion = testPlatform.suggestion("teleport", "Rollczi", "");
 
-        assertEquals(0, suggestion.size());
+        assertSize(0, suggestion);
     }
 
     @Test

@@ -42,7 +42,7 @@ class SchematicTest {
 
         List<String> schematics = schematicGenerator.generate(result, SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE);
 
-        assertCollection(4, Arrays.asList(
+        assertCollection(Arrays.asList(
                 "/teleport test <target> [to]",
                 "/teleport <target> [to]",
                 "/teleport <x y z> [world]",
