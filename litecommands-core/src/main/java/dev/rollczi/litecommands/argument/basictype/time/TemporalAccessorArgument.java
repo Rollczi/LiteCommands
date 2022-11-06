@@ -43,7 +43,7 @@ public abstract class TemporalAccessorArgument<T extends TemporalAccessor> imple
     @Override
     public Result<T, ?> parseMultilevel(LiteInvocation invocation, String... arguments) {
         return this.parseTemporal(String.join(MULTI_LEVEL_ARGUMENT_SEPARATOR, arguments))
-            .mapErr(dateTimeParseException -> "Invalid temporal format");
+            .mapErr(dateTimeParseException -> "Invalid temporal format: " + dateTimeParseException.getMessage());
     }
 
     @Override

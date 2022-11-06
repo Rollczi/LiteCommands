@@ -2,6 +2,9 @@ package dev.rollczi.litecommands.argument.basictype.time;
 
 import dev.rollczi.litecommands.test.TestUtils;
 import dev.rollczi.litecommands.suggestion.Suggestion;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import panda.std.Result;
@@ -33,16 +36,29 @@ class TemporalAccessorArgumentTest {
 
         "ZoneOffsetArgument, +01:00",
 
-        "JapaneseDateArgument, Reiwa 0001-01-01",
+        "JapaneseDateArgument, Heisei 0001-01-01",
         "HijrahDateArgument, AH 1442-01-01",
         "MinguoDateArgument, R.O.C. 0110-01-01",
-        "ThaiBuddhistDateArgument, BE 2564-01-01",
     })
     @ParameterizedTest
-    void testParseAndSuggest(
-        String className,
-        String arguments
-    ) {
+    void testParseAndSuggestNormal(String className, String arguments) {
+        this.testParseAndSuggest(className, arguments);
+    }
+
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_9)
+    void testParseAndSuggestThaiBuddhistDateOnModernJre() {
+        testParseAndSuggest("ThaiBuddhistDateArgument", "BE 2564-01-01");
+    }
+
+    @Test
+    @EnabledForJreRange(max = JRE.JAVA_8)
+    void testParseAndSuggestThaiBuddhistDateOnLegacyJre() {
+        testParseAndSuggest("ThaiBuddhistDateArgument", "B.E. 2564-01-01");
+    }
+
+    private void testParseAndSuggest(String className, String arguments) {
         TemporalAccessorArgument<?> temporalAccessorArgument = this.createTemporalAccessorArgument(className);
 
         {
