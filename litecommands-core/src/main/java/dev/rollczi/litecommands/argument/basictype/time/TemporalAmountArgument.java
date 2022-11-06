@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.shared.EstimatedTemporalAmountParser;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import panda.std.Result;
 
-import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.function.Supplier;
@@ -47,8 +46,8 @@ public abstract class TemporalAmountArgument<T extends TemporalAmount> implement
         return this.parseTemporal(suggestion.multilevel()).isOk();
     }
 
-    private Result<T, DateTimeParseException> parseTemporal(String arguments) {
-        return Result.supplyThrowing(DateTimeParseException.class, () -> parser.parse(arguments));
+    private Result<T, IllegalArgumentException> parseTemporal(String arguments) {
+        return Result.supplyThrowing(IllegalArgumentException.class, () -> parser.parse(arguments));
     }
 
 }

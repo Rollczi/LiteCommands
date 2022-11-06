@@ -33,8 +33,10 @@ public interface Suggester {
 
         UniformSuggestionStack suggestionStack = UniformSuggestionStack.empty(stack.lengthMultilevel());
 
+        boolean isLast = end == rawArguments.length;
+
         for (Suggestion suggestion : stack.suggestions()) {
-            if (suggestion.multilevel().toLowerCase().startsWith(multilevel)) {
+            if ((isLast && suggestion.multilevel().toLowerCase().startsWith(multilevel)) || suggestion.multilevel().equalsIgnoreCase(multilevel)) {
                 suggestionStack = suggestionStack.with(suggestion);
             }
         }
