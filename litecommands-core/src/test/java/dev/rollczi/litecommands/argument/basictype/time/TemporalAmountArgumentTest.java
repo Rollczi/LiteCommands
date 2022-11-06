@@ -15,8 +15,10 @@ class TemporalAmountArgumentTest {
     private static final String PREFIX_PACKAGE = "dev.rollczi.litecommands.argument.basictype.time.";
 
     @CsvSource({
-        "PeriodArgument, 1y2m3d",
+        "PeriodArgument, 1y2mo3d",
+        "PeriodArgument, -1y2mo3d",
         "DurationArgument, 1h2m3s",
+        "DurationArgument, -1h2m3s",
     })
     @ParameterizedTest
     void testParseAndSuggest(String className, String pattern) {

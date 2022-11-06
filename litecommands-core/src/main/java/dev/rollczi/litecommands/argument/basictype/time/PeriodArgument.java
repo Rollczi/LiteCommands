@@ -1,8 +1,7 @@
 package dev.rollczi.litecommands.argument.basictype.time;
 
-import dev.rollczi.litecommands.shared.TemporalAmountParser;
+import dev.rollczi.litecommands.shared.EstimatedTemporalAmountParser;
 
-import java.time.Duration;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +20,7 @@ public class PeriodArgument extends TemporalAmountArgument<Period> {
 
     public PeriodArgument() {
         super(
-            TemporalAmountParser.DATE_UNITS,
+            EstimatedTemporalAmountParser.DATE_UNITS,
             () -> SUGGESTED_PERIODS
         );
     }

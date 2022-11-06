@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.argument.basictype.time;
 
-import dev.rollczi.litecommands.shared.TemporalAmountParser;
+import dev.rollczi.litecommands.shared.EstimatedTemporalAmountParser;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class DurationArgument extends TemporalAmountArgument<Duration> {
 
     public DurationArgument() {
         super(
-            TemporalAmountParser.DATE_TIME_UNITS,
+            EstimatedTemporalAmountParser.DATE_TIME_UNITS,
             () -> SUGGESTED_DURATIONS
         );
     }

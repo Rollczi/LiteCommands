@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.command.route;
 
-import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.TestPlatform;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.section.CommandSection;
+import dev.rollczi.litecommands.test.TestFactory;
+import dev.rollczi.litecommands.test.TestPlatform;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -11,8 +11,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.rollczi.litecommands.Assert.assertCollection;
-import static dev.rollczi.litecommands.TestUtils.list;
+import static dev.rollczi.litecommands.test.Assert.assertCollection;
+import static dev.rollczi.litecommands.test.TestUtils.list;
 
 class RouteTest {
 

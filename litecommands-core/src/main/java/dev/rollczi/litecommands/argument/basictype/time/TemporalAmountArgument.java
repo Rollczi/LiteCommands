@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.argument.basictype.time;
 
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.shared.TemporalAmountParser;
+import dev.rollczi.litecommands.shared.EstimatedTemporalAmountParser;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import panda.std.Result;
 
@@ -16,10 +16,10 @@ public abstract class TemporalAmountArgument<T extends TemporalAmount> implement
 
     private static final String MULTI_LEVEL_ARGUMENT_SEPARATOR = " ";
 
-    private final TemporalAmountParser<T> parser;
+    private final EstimatedTemporalAmountParser<T> parser;
     private final Supplier<List<T>> suggestedTemporal;
 
-    protected TemporalAmountArgument(TemporalAmountParser<T> parser, Supplier<List<T>> suggestedTemporal) {
+    protected TemporalAmountArgument(EstimatedTemporalAmountParser<T> parser, Supplier<List<T>> suggestedTemporal) {
         this.parser = parser;
         this.suggestedTemporal = suggestedTemporal;
     }

@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.test.TestUtils;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
-import dev.rollczi.litecommands.shared.TemporalAmountParser;
+import dev.rollczi.litecommands.shared.EstimatedTemporalAmountParser;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,7 +87,7 @@ class DurationArgumentTest {
     @Test
     void testSuggestionOnPlatform() {
         testPlatform.suggest("command", "")
-                .assertWith(DurationArgument.SUGGESTED_DURATIONS.stream().map(TemporalAmountParser.DATE_TIME_UNITS::format).toArray(String[]::new));
+                .assertWith(DurationArgument.SUGGESTED_DURATIONS.stream().map(EstimatedTemporalAmountParser.DATE_TIME_UNITS::format).toArray(String[]::new));
 
         testPlatform.suggest("command", "1m")
                 .assertWith("1m", "1m30s", "1mo");
