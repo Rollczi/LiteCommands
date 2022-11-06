@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.injector;
 
-import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.TestFactory;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.Test;

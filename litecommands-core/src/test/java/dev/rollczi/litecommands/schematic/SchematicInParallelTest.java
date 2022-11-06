@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.schematic;
 
-import dev.rollczi.litecommands.TestFactory;
-import dev.rollczi.litecommands.TestHandle;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.TestFactory;
+import dev.rollczi.litecommands.test.TestHandle;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Name;
 import dev.rollczi.litecommands.command.FindResult;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static dev.rollczi.litecommands.Assert.assertCollection;
+import static dev.rollczi.litecommands.test.Assert.assertCollection;
 
 class SchematicInParallelTest {
 

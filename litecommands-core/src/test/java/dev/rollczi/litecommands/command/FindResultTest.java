@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.TestHandle;
-import dev.rollczi.litecommands.TestPlatform;
+import dev.rollczi.litecommands.test.TestHandle;
+import dev.rollczi.litecommands.test.TestPlatform;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.block.Block;
 import dev.rollczi.litecommands.command.execute.Execute;
