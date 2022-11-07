@@ -97,3 +97,4 @@ implementation 'dev.rollczi.litecommands:velocity:2.6.0'
 - [EternalCheck](https://github.com/EternalCodeTeam/EternalCheck)
 - [EternalRTP](https://github.com/EternalCodeTeam/EternalRTP)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
+- [NameMCPlugin](https://github.com/kakuszCode/NameMC)
