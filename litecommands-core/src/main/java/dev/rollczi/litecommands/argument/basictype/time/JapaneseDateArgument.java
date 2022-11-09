@@ -53,6 +53,10 @@ public class JapaneseDateArgument extends TemporalAccessorArgument<JapaneseDate>
     private static final Supplier<List<JapaneseDate>> JAPANESE_DATE_SUPPLIER = () -> Stream.concat(FIRST_DAY_OF_EACH_ERA.stream(), Stream.of(JapaneseDate.now()))
         .collect(Collectors.toList());
 
+    public JapaneseDateArgument() {
+        super(NATIVE_JAPANESE_DATE_FORMATTER, JAPANESE_DATE_QUERY, JAPANESE_DATE_SUPPLIER);
+    }
+
     protected JapaneseDateArgument(DateTimeFormatter dateTimeFormatter) {
         super(dateTimeFormatter, JAPANESE_DATE_QUERY, JAPANESE_DATE_SUPPLIER);
     }

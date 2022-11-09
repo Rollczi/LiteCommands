@@ -37,7 +37,7 @@ class TemporalAccessorArgumentTest {
 
         "ZoneOffsetArgument, +01:00",
 
-        "JapaneseDateArgument, " + '\u660e' + " 1" + '\u5e74' + "1" + '\u6708' + "1" + '\u65e5',
+        "JapaneseDateArgument, " + '\u5E73' + '\u6210' + " 1" + '\u5e74' + "1" + '\u6708' + "8" + '\u65e5',
         "HijrahDateArgument, AH 1442-01-01",
         "MinguoDateArgument, R.O.C. 0110-01-01",
     })
@@ -62,11 +62,11 @@ class TemporalAccessorArgumentTest {
     private void testParseAndSuggest(String className, String arguments) {
         TemporalAccessorArgument<?> temporalAccessorArgument = this.createTemporalAccessorArgument(className);
 
-//        {
-//            Result<?, ?> result = temporalAccessorArgument.parseMultilevel(TestUtils.invocation(), arguments);
-//
-//            assertTrue(result.isOk());
-//        }
+        {
+            Result<?, ?> result = temporalAccessorArgument.parseMultilevel(TestUtils.invocation(), arguments);
+
+            assertTrue(result.isOk());
+        }
 
         {
             List<Suggestion> actual = temporalAccessorArgument.suggest(TestUtils.invocation());
