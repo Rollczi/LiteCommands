@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.shared;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -292,15 +293,17 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
                 throw new IllegalArgumentException("Unsupported unit " + chronoUnit);
             }
 
-            long allCount = duration.toNanos() / part;
-            long count = allCount % PART_TIME_UNITS.get(chronoUnit);
 
-            if (count == 0) {
+
+            BigInteger allCount = this.durationToNano(duration).divide(BigInteger.valueOf(part));
+            BigInteger count = allCount.mod(BigInteger.valueOf(PART_TIME_UNITS.get(chronoUnit)));
+
+            if (count.equals(BigInteger.ZERO)) {
                 continue;
             }
 
             builder.append(count).append(key);
-            duration = duration.minusNanos(count * part);
+            duration = duration.minusNanos(count.longValue() * part);
         }
 
         return builder.toString();
@@ -365,6 +368,12 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
             return localDate::atStartOfDay;
         }
 
+    }
+
+    BigInteger durationToNano(Duration duration) {
+        return BigInteger.valueOf(duration.getSeconds())
+            .multiply(BigInteger.valueOf(1_000_000_000))
+            .add(BigInteger.valueOf(duration.getNano()));
     }
 
 }

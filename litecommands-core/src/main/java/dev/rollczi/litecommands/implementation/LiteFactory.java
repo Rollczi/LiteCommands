@@ -11,7 +11,6 @@ import dev.rollczi.litecommands.argument.basictype.CharacterArgument;
 import dev.rollczi.litecommands.argument.basictype.DoubleArgument;
 import dev.rollczi.litecommands.argument.basictype.time.DurationArgument;
 import dev.rollczi.litecommands.argument.basictype.FloatArgument;
-import dev.rollczi.litecommands.argument.basictype.time.DayOfWeekArgument;
 import dev.rollczi.litecommands.argument.basictype.time.HijrahDateArgument;
 import dev.rollczi.litecommands.argument.basictype.time.InstantArgument;
 import dev.rollczi.litecommands.argument.basictype.IntegerArgument;
@@ -19,11 +18,11 @@ import dev.rollczi.litecommands.argument.basictype.LongArgument;
 import dev.rollczi.litecommands.argument.basictype.ShortArgument;
 import dev.rollczi.litecommands.argument.basictype.StringArgument;
 import dev.rollczi.litecommands.argument.basictype.time.JapaneseDateArgument;
+import dev.rollczi.litecommands.argument.basictype.time.JapaneseEraArgument;
 import dev.rollczi.litecommands.argument.basictype.time.LocalDateArgument;
 import dev.rollczi.litecommands.argument.basictype.time.LocalDateTimeArgument;
 import dev.rollczi.litecommands.argument.basictype.time.LocalTimeArgument;
 import dev.rollczi.litecommands.argument.basictype.time.MinguoDateArgument;
-import dev.rollczi.litecommands.argument.basictype.time.MonthArgument;
 import dev.rollczi.litecommands.argument.basictype.time.MonthDayArgument;
 import dev.rollczi.litecommands.argument.basictype.time.OffsetDateTimeArgument;
 import dev.rollczi.litecommands.argument.basictype.time.OffsetTimeArgument;
@@ -31,6 +30,7 @@ import dev.rollczi.litecommands.argument.basictype.time.PeriodArgument;
 import dev.rollczi.litecommands.argument.basictype.time.ThaiBuddhistDateArgument;
 import dev.rollczi.litecommands.argument.basictype.time.YearArgument;
 import dev.rollczi.litecommands.argument.basictype.time.YearMonthArgument;
+import dev.rollczi.litecommands.argument.basictype.time.ZoneIdArgument;
 import dev.rollczi.litecommands.argument.basictype.time.ZoneOffsetArgument;
 import dev.rollczi.litecommands.argument.basictype.time.ZonedDateTimeArgument;
 import dev.rollczi.litecommands.argument.block.Block;
@@ -58,25 +58,28 @@ import panda.std.Result;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.Period;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.HijrahDate;
+import java.time.chrono.HijrahEra;
 import java.time.chrono.JapaneseDate;
+import java.time.chrono.JapaneseEra;
 import java.time.chrono.MinguoDate;
+import java.time.chrono.MinguoEra;
 import java.time.chrono.ThaiBuddhistDate;
+import java.time.chrono.ThaiBuddhistEra;
 import java.util.Arrays;
 import java.util.List;
 
@@ -144,11 +147,11 @@ public final class LiteFactory {
             .argumentMultilevel(Year.class, new YearArgument())
             .argumentMultilevel(YearMonth.class, new YearMonthArgument())
             .argumentMultilevel(MonthDay.class, new MonthDayArgument())
-            .argumentMultilevel(Month.class, new MonthArgument())
-            .argumentMultilevel(DayOfWeek.class, new DayOfWeekArgument())
             .argumentMultilevel(ZoneOffset.class, new ZoneOffsetArgument())
+            .argumentMultilevel(ZoneId.class, new ZoneIdArgument())
 
-            .argumentMultilevel(JapaneseDate.class, new JapaneseDateArgument())
+            .argumentMultilevel(JapaneseDate.class, JapaneseDateArgument.nativeFormat())
+            .argumentMultilevel(JapaneseEra.class, new JapaneseEraArgument())
             .argumentMultilevel(HijrahDate.class, new HijrahDateArgument())
             .argumentMultilevel(MinguoDate.class, new MinguoDateArgument())
             .argumentMultilevel(ThaiBuddhistDate.class, new ThaiBuddhistDateArgument())

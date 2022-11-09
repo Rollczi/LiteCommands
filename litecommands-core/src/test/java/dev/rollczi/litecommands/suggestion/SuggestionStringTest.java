@@ -18,6 +18,7 @@ class SuggestionStringTest {
 
     @Test
     void test() {
+        
         platform.suggest("test", "").assertWith("text");
         platform.suggest("test", "t").assertWith("t", "text");
         platform.suggest("test", "siema").assertWith("siema");

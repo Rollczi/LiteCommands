@@ -25,7 +25,6 @@ public final class LiteBukkitAdventurePlatformFactory {
 
     public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, AudienceProvider audienceProvider, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
         KyoriAudienceAdventurePlatformProvider audienceAdventurePlatformProvider = new KyoriAudienceAdventurePlatformProvider(audienceProvider);
-
         return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, audienceAdventurePlatformProvider, kyoriComponentSerializer);
     }
 
