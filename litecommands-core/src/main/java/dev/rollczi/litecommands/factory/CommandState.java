@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.factory;
 
-import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.command.count.CountValidator;
 import dev.rollczi.litecommands.meta.CommandMeta;
 
 import java.lang.reflect.Method;
@@ -74,8 +74,8 @@ public class CommandState implements CommandEditor.State {
         return new CommandState(name, routesBefore, aliases, children, executors, meta, canceled);
     }
 
-    public CommandState validator(Function<AmountValidator, AmountValidator> edit) {
-        return this.meta(commandMeta -> commandMeta.applyAmountValidator(edit));
+    public CommandState validator(Function<CountValidator, CountValidator> edit) {
+        return this.meta(commandMeta -> commandMeta.applyCountValidator(edit));
     }
 
     public String getName() {

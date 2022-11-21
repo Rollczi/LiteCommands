@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
-import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.command.count.CountValidator;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +13,7 @@ class CommandMetaImpl extends MetaData implements CommandMeta {
 
     private final Set<String> permissions = new HashSet<>();
     private final Set<String> excludedPermissions = new HashSet<>();
-    private AmountValidator amountValidator = AmountValidator.NONE;
+    private CountValidator countValidator = CountValidator.NONE;
 
     @Override
     public CommandMetaImpl addPermission(String... permissions) {
@@ -86,20 +86,20 @@ class CommandMetaImpl extends MetaData implements CommandMeta {
     }
 
     @Override
-    public CommandMetaImpl setAmountValidator(AmountValidator validator) {
-        this.amountValidator = validator;
+    public CommandMetaImpl setCountValidator(CountValidator validator) {
+        this.countValidator = validator;
         return this;
     }
 
     @Override
-    public CommandMetaImpl applyAmountValidator(Function<AmountValidator, AmountValidator> edit) {
-        this.amountValidator = edit.apply(this.amountValidator);
+    public CommandMetaImpl applyCountValidator(Function<CountValidator, CountValidator> edit) {
+        this.countValidator = edit.apply(this.countValidator);
         return this;
     }
 
     @Override
-    public AmountValidator getAmountValidator() {
-        return this.amountValidator;
+    public CountValidator getCountValidator() {
+        return this.countValidator;
     }
 
     @Override
@@ -116,7 +116,7 @@ class CommandMetaImpl extends MetaData implements CommandMeta {
 
     @Override
     public CommandMetaImpl applyCommandMeta(CommandMeta meta) {
-        this.amountValidator = this.amountValidator.and(meta.getAmountValidator());
+        this.countValidator = this.countValidator.and(meta.getCountValidator());
         this.permissions.addAll(meta.getPermissions());
         this.excludedPermissions.addAll(meta.getExcludedPermissions());
         this.apply(meta);

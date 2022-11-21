@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
-import dev.rollczi.litecommands.command.amount.AmountValidator;
+import dev.rollczi.litecommands.command.count.CountValidator;
 
 import java.util.Collection;
 import java.util.Map;
@@ -52,11 +52,11 @@ public interface CommandMeta extends Meta {
 
     // Amount Validator
 
-    CommandMeta applyAmountValidator(Function<AmountValidator, AmountValidator> edit);
+    CommandMeta applyCountValidator(Function<CountValidator, CountValidator> edit);
 
-    AmountValidator getAmountValidator();
+    CountValidator getCountValidator();
 
-    CommandMeta setAmountValidator(AmountValidator validator);
+    CommandMeta setCountValidator(CountValidator validator);
 
     // Meta
 

@@ -42,9 +42,10 @@ import dev.rollczi.litecommands.argument.joiner.Joiner;
 import dev.rollczi.litecommands.argument.joiner.JoinerArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.amount.Between;
-import dev.rollczi.litecommands.command.amount.Max;
-import dev.rollczi.litecommands.command.amount.Min;
-import dev.rollczi.litecommands.command.amount.Required;
+import dev.rollczi.litecommands.command.count.Max;
+import dev.rollczi.litecommands.command.count.Min;
+import dev.rollczi.litecommands.command.count.Range;
+import dev.rollczi.litecommands.command.count.Required;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
 import dev.rollczi.litecommands.command.permission.Permission;
@@ -73,13 +74,10 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.HijrahDate;
-import java.time.chrono.HijrahEra;
 import java.time.chrono.JapaneseDate;
 import java.time.chrono.JapaneseEra;
 import java.time.chrono.MinguoDate;
-import java.time.chrono.MinguoEra;
 import java.time.chrono.ThaiBuddhistDate;
-import java.time.chrono.ThaiBuddhistEra;
 import java.util.Arrays;
 import java.util.List;
 
@@ -95,7 +93,6 @@ public final class LiteFactory {
     public static <SENDER> LiteCommandsBuilder<SENDER> builder(Class<SENDER> senderType) {
         return LiteCommandsBuilderImpl.builder(senderType)
             .configureFactory(factory -> {
-                factory.annotationResolver(Section.RESOLVER);
                 factory.annotationResolver(Route.RESOLVER);
                 factory.annotationResolver(Execute.RESOLVER);
                 factory.annotationResolver(Permission.RESOLVER);
@@ -104,7 +101,14 @@ public final class LiteFactory {
                 factory.annotationResolver(ExecutedPermission.REPEATABLE_RESOLVER);
                 factory.annotationResolver(Min.RESOLVER);
                 factory.annotationResolver(Max.RESOLVER);
+                factory.annotationResolver(Range.RESOLVER);
                 factory.annotationResolver(Required.RESOLVER);
+
+                // legacy annotations
+                factory.annotationResolver(Section.RESOLVER);
+                factory.annotationResolver(dev.rollczi.litecommands.command.amount.Required.RESOLVER);
+                factory.annotationResolver(dev.rollczi.litecommands.command.amount.Min.RESOLVER);
+                factory.annotationResolver(dev.rollczi.litecommands.command.amount.Max.RESOLVER);
                 factory.annotationResolver(Between.RESOLVER);
             })
             .argument(Flag.class, boolean.class, new FlagArgument<>())

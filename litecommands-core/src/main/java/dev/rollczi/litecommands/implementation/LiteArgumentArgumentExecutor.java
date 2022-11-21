@@ -104,7 +104,7 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
             }
         }
 
-        if (!meta.getAmountValidator().valid(invocation.arguments().length - route + 1)) {
+        if (!meta.getCountValidator().valid(invocation.arguments().length - route + 1)) {
             return currentResult.invalid();
         }
 

@@ -14,15 +14,15 @@ class ExecuteAnnotationResolver implements FactoryAnnotationResolver<Execute> {
     @Override
     public Option<CommandState> resolve(Execute annotation, CommandState commandState) {
         if (annotation.required() != -1) {
-            commandState = commandState.validator(amountValidator -> amountValidator.required(annotation.required()));
+            commandState = commandState.validator(countValidator -> countValidator.required(annotation.required()));
         }
 
         if (annotation.min() != -1) {
-            commandState = commandState.validator(amountValidator -> amountValidator.min(annotation.min()));
+            commandState = commandState.validator(countValidator -> countValidator.min(annotation.min()));
         }
 
         if (annotation.max() != -1) {
-            commandState = commandState.validator(amountValidator -> amountValidator.max(annotation.max()));
+            commandState = commandState.validator(countValidator -> countValidator.max(annotation.max()));
         }
 
         if (annotation.route().isEmpty()) {

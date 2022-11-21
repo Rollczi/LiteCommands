@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.amount;
+package dev.rollczi.litecommands.command.count;
 
 import dev.rollczi.litecommands.test.AssertResult;
 import dev.rollczi.litecommands.test.TestFactory;
@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.command.route.Route;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AmountValidatorTest {
+class CountRangeValidatorTest {
 
     TestPlatform platform = TestFactory.withCommands(TestCommand.class);
 
