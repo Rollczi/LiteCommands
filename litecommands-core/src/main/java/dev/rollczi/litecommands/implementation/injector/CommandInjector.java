@@ -16,6 +16,7 @@ import panda.std.function.ThrowingBiFunction;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -187,7 +188,9 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
                     .map(obj -> obj.getClass().getName())
                     .collect(Collectors.joining(", "));
 
-            return Result.error(new InjectException("Injected parameters: " + formattedParams, exception));
+            Throwable cause = exception instanceof InvocationTargetException ? exception.getCause() : exception;
+
+            return Result.error(new InjectException("Injected parameters: " + formattedParams, cause));
         }
     }
 
