@@ -4,10 +4,10 @@ Maven
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>bukkit-adventure</artifactId>
-    <version>2.6.0</version>
+    <version>2.7.0</version>
 </dependency>
 ```
 Gradle
 ```groovy
-implementation 'dev.rollczi.litecommands:bukkit-adventure:2.6.0'
+implementation 'dev.rollczi.litecommands:bukkit-adventure:2.7.0'
 ```

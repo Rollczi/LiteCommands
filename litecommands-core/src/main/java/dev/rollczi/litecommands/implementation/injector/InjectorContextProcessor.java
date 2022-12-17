@@ -21,28 +21,19 @@ class InjectorContextProcessor<SENDER> {
     }
 
     Option<?> extract(Parameter parameter, Invocation<SENDER> invocation) {
-        Class<?> type = parameter.getType();
-        Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, SENDER, ?>>> annotationBinds = settings.getAnnotationBinds();
+        Class<?> typeOfParameter = parameter.getType();
 
         for (Annotation annotation : parameter.getAnnotations()) {
-            Map<Class<?>, AnnotationBind<?, SENDER, ?>> bindsByType = annotationBinds.get(annotation.annotationType());
+            Option<AnnotationBind<?, SENDER, ?>> annotationBind = settings.getAnnotationBind(annotation.annotationType(), parameter.getType());
 
-            if (bindsByType == null) {
+            if (annotationBind.isEmpty()) {
                 continue;
             }
 
-            AnnotationBind<?, SENDER, ?> annotationBind = bindsByType.get(parameter.getType());
-
-            if (annotationBind == null) {
-                continue;
-            }
-
-            return Option.of(handleExtract(annotationBind, invocation, parameter, annotation));
+            return Option.of(handleExtract(annotationBind.get(), invocation, parameter, annotation));
         }
 
-        Map<Class<?>, Contextual<SENDER, ?>> binds = this.settings.getContextualBinds();
-
-        return MapUtil.findInstanceOf(type, binds)
+        return this.settings.getContextualBind(typeOfParameter)
                 .map(contextual -> contextual.extract(invocation.handle(), invocation))
                 .<Object>map(result -> result.orThrow(LiteException::new))
                 .orElse(() -> this.extract(parameter));
@@ -55,9 +46,8 @@ class InjectorContextProcessor<SENDER> {
 
     Option<Object> extract(Parameter parameter) {
         Class<?> type = parameter.getType();
-        Map<Class<?>, TypeBind<?>> binds = this.settings.getTypeBinds();
 
-        return MapUtil.findInstanceOf(type, binds)
+        return this.settings.getTypeBind(type)
                 .map(typeBind -> typeBind.extract(parameter));
     }
 

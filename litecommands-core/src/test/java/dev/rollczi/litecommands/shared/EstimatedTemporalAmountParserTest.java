@@ -28,16 +28,55 @@ class EstimatedTemporalAmountParserTest {
         "1d10m20s30ms40us,87020.03004",
         "50ns,0.00000005",
         "3w,1814400",
-        "1mo,2592000",
-        "1y,31536000",
     })
     @ParameterizedTest
     void testParse(String input, double expected) {
         EstimatedTemporalAmountParser<Duration> temporalAmountParser = EstimatedTemporalAmountParser.DATE_TIME_UNITS;
-
         Duration duration = temporalAmountParser.parse(input);
 
         assertEquals(expected, duration.toNanos() / 1_000_000_000.0);
+    }
+
+    @Test
+    void testMonthParse() {
+        LocalDateTime now = LocalDateTime.now();
+        BasisForTimeEstimation basis = BasisForTimeEstimation.of(now);
+
+        EstimatedTemporalAmountParser<Duration> temporalAmountParser = EstimatedTemporalAmountParser.DATE_TIME_UNITS
+            .withBasisForTimeEstimation(basis);
+
+        Duration duration = temporalAmountParser.parse("5mo");
+        LocalDateTime feature = now.plusMonths(5);
+
+        assertEquals(Duration.between(now, feature), duration);
+    }
+
+    @Test
+    void testMonthParseFebruary() {
+        LocalDateTime now = LocalDateTime.of(2021, Month.JANUARY, 31, 0, 0);
+        BasisForTimeEstimation basis = BasisForTimeEstimation.of(now);
+
+        EstimatedTemporalAmountParser<Duration> temporalAmountParser = EstimatedTemporalAmountParser.DATE_TIME_UNITS
+            .withBasisForTimeEstimation(basis);
+
+        Duration duration = temporalAmountParser.parse("1mo");
+        LocalDateTime feature = LocalDateTime.of(2021, Month.FEBRUARY, 28, 0, 0);
+
+        assertEquals(Duration.between(now, feature), duration);
+    }
+
+    @Test
+    void testYearParse() {
+        LocalDateTime now = LocalDateTime.of(2021, Month.JANUARY, 31, 0, 0);
+        BasisForTimeEstimation basis = BasisForTimeEstimation.of(now);
+
+        EstimatedTemporalAmountParser<Duration> temporalAmountParser = EstimatedTemporalAmountParser.DATE_TIME_UNITS
+            .withBasisForTimeEstimation(basis);
+
+        Duration duration = temporalAmountParser.parse("1y");
+        LocalDateTime feature = LocalDateTime.of(2022, Month.JANUARY, 31, 0, 0);
+
+        assertEquals(Duration.between(now, feature), duration);
     }
 
     @Test

@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;
 import dev.rollczi.litecommands.injector.bind.AnnotationBind;
 import dev.rollczi.litecommands.injector.bind.TypeBind;
+import dev.rollczi.litecommands.shared.MapUtil;
+import panda.std.Option;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -62,16 +64,21 @@ class LiteInjectorSettings<SENDER> implements InjectorSettings<SENDER> {
         return settings;
     }
 
-    Map<Class<?>, Contextual<SENDER, ?>> getContextualBinds() {
-        return contextualBinds;
+    Option<TypeBind<?>> getTypeBind(Class<?> type) {
+        return MapUtil.findInstanceOf(type, typeBinds);
     }
 
-    Map<Class<?>, TypeBind<?>> getTypeBinds() {
-        return typeBinds;
+    Option<Contextual<SENDER, ?>> getContextualBind(Class<?> type) {
+        return MapUtil.findInstanceOf(type, contextualBinds);
     }
+    
+    Option<AnnotationBind<?, SENDER, ?>> getAnnotationBind(Class<? extends Annotation> annotation, Class<?> type) {
+        Map<Class<?>, AnnotationBind<?, SENDER, ?>> binds = annotationBinds.get(annotation);
+        if (binds == null) {
+            return Option.none();
+        }
 
-    Map<Class<? extends Annotation>, Map<Class<?>, AnnotationBind<?, SENDER, ?>>> getAnnotationBinds() {
-        return annotationBinds;
+        return Option.of(binds.get(type));
     }
 
 }

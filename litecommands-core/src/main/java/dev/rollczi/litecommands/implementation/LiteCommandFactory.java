@@ -76,27 +76,27 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
     }
 
     private CommandState createState(Object instance) {
-        Class<?> sectionClass = instance.getClass();
-        CommandState root = new CommandState()
+        Class<?> commandClass = instance.getClass();
+        CommandState rootCommandState = new CommandState()
                 .cancel(true);
 
-        for (Annotation annotation : sectionClass.getAnnotations()) {
+        for (Annotation annotation : commandClass.getAnnotations()) {
             for (FactoryAnnotationResolver<? extends Annotation> resolver : annotationResolvers) {
                 if (!annotation.annotationType().equals(resolver.getAnnotationClass())) {
                     continue;
                 }
 
-                Option<CommandState> resolve = resolver.tryResolve(annotation, root);
+                Option<CommandState> resolve = resolver.tryResolve(annotation, rootCommandState);
 
                 if (resolve.isPresent()) {
-                    root = resolve.get()
+                    rootCommandState = resolve.get()
                             .cancel(false);
                 }
             }
         }
 
-        for (Method method : sectionClass.getDeclaredMethods()) {
-            CommandState stateMethod = new CommandState()
+        for (Method method : commandClass.getDeclaredMethods()) {
+            CommandState potentialMethodState = new CommandState()
                     .cancel(true);
 
             for (Annotation annotation : method.getAnnotations()) {
@@ -105,23 +105,23 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
                         continue;
                     }
 
-                    Option<CommandState> resolve = resolver.tryResolve(annotation, stateMethod);
+                    Option<CommandState> resolve = resolver.tryResolve(annotation, potentialMethodState);
 
                     if (resolve.isPresent()) {
-                        stateMethod = resolve.get()
+                        potentialMethodState = resolve.get()
                                 .cancel(false);
                     }
                 }
             }
 
-            root = root.mergeMethod(method, stateMethod);
+            rootCommandState = rootCommandState.mergeMethod(method, potentialMethodState);
         }
 
         for (CommandStateFactoryProcessor processor : processors) {
-            root = processor.process(root);
+            rootCommandState = processor.process(rootCommandState);
         }
 
-        return (CommandState) editorRegistry.apply(sectionClass, root);
+        return (CommandState) editorRegistry.apply(commandClass, rootCommandState);
     }
 
     private CommandSection<SENDER> stateToSection(CommandState state, Object instance) {
