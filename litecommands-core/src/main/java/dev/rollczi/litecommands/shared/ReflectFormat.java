@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -46,13 +47,17 @@ public final class ReflectFormat {
     }
 
     public static String parameters(Executable executable) {
-        return Arrays.stream(executable.getParameters()).map(param -> {
-            String annotations = Arrays.stream(param.getAnnotations()).map(annotation -> "@" + annotation.annotationType().getSimpleName()).collect(Collectors.joining(" "));
-            String type = param.getType().getSimpleName();
-            String name = param.getName();
+        return Arrays.stream(executable.getParameters())
+            .map(ReflectFormat::parameter)
+            .collect(Collectors.joining(", "));
+    }
 
-            return annotations.isEmpty() ? type + " " + name : annotations + " " + type + " " + name;
-        }).collect(Collectors.joining(", "));
+    public static String parameter(Parameter parameter) {
+        String annotations = Arrays.stream(parameter.getAnnotations()).map(annotation -> "@" + annotation.annotationType().getSimpleName()).collect(Collectors.joining(" "));
+        String type = parameter.getType().getSimpleName();
+        String name = parameter.getName();
+
+        return annotations.isEmpty() ? type + " " + name : annotations + " " + type + " " + name;
     }
 
     public static String modifier(Method method) {
