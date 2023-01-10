@@ -1,10 +1,12 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation.warpper;
 
+import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
+import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
 import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.implementations.ValueExpectedValueWrapperFactory;
+import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class ExpectedValueService {
 
@@ -15,14 +17,15 @@ public class ExpectedValueService {
         factories.put(factory.getWrapperType(), factory);
     }
 
-    public <T> ExpectedValueWrapper<T> wrap(Class<?> wrapperType, Class<T> valueType, Supplier<T> supplier) {
-        ExpectedValueWrapperFactory factory = factories.get(wrapperType);
+    public <DETERMINANT, EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(ArgumentResult<EXPECTED> result, ArgumentContext<DETERMINANT, EXPECTED> context) {
+        ExpectedValueWrapperFactory factory = factories.get(context.getExpectedWrapperType());
 
         if (factory == null) {
-            return defaultFactory.wrap(valueType, supplier);
+            factory = defaultFactory;
         }
 
-        return factory.wrap(valueType, supplier);
+
+        return factory.wrap(result, context);
     }
 
     public <EXPECTED> boolean isWrapper(Class<EXPECTED> expectedType) {

@@ -1,9 +1,13 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation;
 
+import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
+import dev.rollczi.litecommands.modern.command.count.WithCountRange;
 
-public interface ArgumentResolver<SENDER, ARGUMENT, TYPE, CONTEXT extends ArgumentContext<ARGUMENT, TYPE>> {
+import java.util.List;
 
-    ArgumentResultCollector<SENDER> resolve(CONTEXT context, ArgumentResultPreparedCollector<SENDER, ARGUMENT, TYPE, CONTEXT> collector);
+public interface ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> extends WithCountRange {
+
+    ArgumentResult<EXPECTED> parse(Invocation<SENDER> invocation, List<String> arguments, CONTEXT context);
 
 }

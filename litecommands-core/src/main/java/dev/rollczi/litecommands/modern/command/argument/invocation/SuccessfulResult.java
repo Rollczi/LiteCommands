@@ -12,7 +12,7 @@ public class SuccessfulResult<EXPECTED> {
         this.consumedRawArguments = consumedRawArguments;
     }
 
-    public Supplier<EXPECTED> getParsedArgumentProvider() {
+    public Supplier<EXPECTED> getParsedArgument() {
         return parsedArgument;
     }
 

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.command.argument.method;
+package dev.rollczi.litecommands.modern.command.method;
 
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueService;
@@ -19,7 +19,7 @@ public class MethodExecuteCommandService {
         this.expectedValueService = expectedValueService;
     }
 
-    public MethodCommandExecute create(Method method) {
+    public MethodCommandExecutor create(Method method) {
         List<ArgumentContext<Annotation, Object>> contexts = new ArrayList<>();
 
         for (Parameter parameter : method.getParameters()) {
@@ -28,7 +28,7 @@ public class MethodExecuteCommandService {
             }
         }
 
-        return new MethodCommandExecute(contexts);
+        return new MethodCommandExecutor(contexts, method); //TODO napisać prosty injector
     }
 
     @SuppressWarnings("unchecked")

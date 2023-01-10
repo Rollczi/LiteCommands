@@ -1,10 +1,14 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation.warpper;
 
-import java.util.function.Supplier;
+import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
+import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
 
 public interface ExpectedValueWrapperFactory {
 
-    <EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(Class<EXPECTED> type, Supplier<EXPECTED> value);
+    <DETERMINANT, EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(
+        ArgumentResult<EXPECTED> result,
+        ArgumentContext<DETERMINANT, EXPECTED> context
+    );
 
     Class<?> getWrapperType();
 

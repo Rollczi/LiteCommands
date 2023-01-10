@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation.warpper.implementations;
 
+import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
+import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
 import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapper;
 import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapperFactory;
 
@@ -9,8 +11,17 @@ import java.util.function.Supplier;
 public class CompletableFutureExpectedValueWrapperFactory implements ExpectedValueWrapperFactory {
 
     @Override
-    public <EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(Class<EXPECTED> type, Supplier<EXPECTED> value) {
-        return new CompletableFutureWrapper<>(type, value);
+    public <DETERMINANT, EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(
+        ArgumentResult<EXPECTED> result,
+        ArgumentContext<DETERMINANT, EXPECTED> context
+    ) {
+        Class<EXPECTED> expectedType = context.getExpectedType();
+
+        if (result.isFailed()) {
+            throw new IllegalArgumentException("Result can not be failed");
+        }
+
+        return new CompletableFutureWrapper<>(expectedType, result.getSuccessfulResult().getParsedArgument());
     }
 
     @Override

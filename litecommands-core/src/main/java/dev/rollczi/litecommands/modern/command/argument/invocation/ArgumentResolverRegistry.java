@@ -46,12 +46,30 @@ public interface ArgumentResolverRegistry<SENDER> {
             return contextType;
         }
 
-        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT contextBox, ArgumentKey argumentKey) {
-            return of(contextBox.getDeterminantType(), contextBox.getExpectedType(), contextBox.getClass(), argumentKey);
+
+        public boolean isUniversal() {
+            return ArgumentContext.class.equals(contextType) && Object.class.equals(determinantType);
         }
 
-        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT contextBox) {
-            return of(contextBox.getDeterminantType(), contextBox.getExpectedType(), contextBox.getClass(), ArgumentKey.DEFAULT);
+        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT context, ArgumentKey argumentKey) {
+            return of(context.getDeterminantType(), context.getExpectedType(), context.getClass(), argumentKey);
+        }
+
+        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT context) {
+            return of(context.getDeterminantType(), context.getExpectedType(), context.getClass(), ArgumentKey.DEFAULT);
+        }
+
+        public static <EXPECTED> IndexKey<Object, EXPECTED, ArgumentContext<Object, EXPECTED>> universal(
+            Class<EXPECTED> expectedType
+        ) {
+            return IndexKey.of(Object.class, expectedType, ArgumentContext.class, ArgumentKey.DEFAULT);
+        }
+
+        public static <EXPECTED> IndexKey<Object, EXPECTED, ArgumentContext<Object, EXPECTED>> universal(
+            Class<EXPECTED> expectedType,
+            ArgumentKey argumentKey
+        ) {
+            return IndexKey.of(Object.class, expectedType, ArgumentContext.class, argumentKey);
         }
 
         public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> of(

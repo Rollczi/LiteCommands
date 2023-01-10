@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.command.argument.method;
+package dev.rollczi.litecommands.modern.command.method;
 
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 
