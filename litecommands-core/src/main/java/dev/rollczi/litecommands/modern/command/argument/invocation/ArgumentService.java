@@ -12,11 +12,11 @@ public class ArgumentService<SENDER> {
 
     private final ArgumentResolverRegistry<SENDER> resolverRegistry = new ArgumentResolverRegistryImpl<>();
 
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> ArgumentResolverContext<EXPECTED> resolve(
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> ArgumentResolverContext resolve(
         Invocation<SENDER> invocation,
         CONTEXT context,
         ArgumentKey argumentKey,
-        ArgumentResolverContext<?> resolverContext
+        ArgumentResolverContext resolverContext
     ) {
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey = IndexKey.from(context, argumentKey);
 

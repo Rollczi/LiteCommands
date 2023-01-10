@@ -1,7 +1,7 @@
-package dev.rollczi.litecommands.modern.command.method;
+package dev.rollczi.litecommands.modern.extension.annotation.method;
 
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueService;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentService;
 import dev.rollczi.litecommands.shared.ReflectFormat;
 import panda.std.Option;
 
@@ -13,10 +13,10 @@ import java.util.List;
 
 public class MethodExecuteCommandService {
 
-    private final ExpectedValueService expectedValueService;
+    private final WrappedArgumentService wrappedArgumentService;
 
-    public MethodExecuteCommandService(ExpectedValueService expectedValueService) {
-        this.expectedValueService = expectedValueService;
+    public MethodExecuteCommandService(WrappedArgumentService wrappedArgumentService) {
+        this.wrappedArgumentService = wrappedArgumentService;
     }
 
     public MethodCommandExecutor create(Method method) {
@@ -40,7 +40,7 @@ public class MethodExecuteCommandService {
         Class<?> expectedType = parameter.getType();
         Class<?> expectedWrapperType = expectedType;
 
-        if (expectedValueService.isWrapper(expectedType)) {
+        if (wrappedArgumentService.isWrapper(expectedType)) {
             Option<Class<?>> option = ParameterizedTypeUtils.extractType(parameter);
 
             if (option.isEmpty()) {

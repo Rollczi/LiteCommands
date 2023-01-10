@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandRootRoute implements CommandRoute {
+class CommandRootRouteImpl implements CommandRoute {
 
     private final List<CommandRoute> children = new ArrayList<>();
 
@@ -19,6 +19,11 @@ public class CommandRootRoute implements CommandRoute {
     @Override
     public List<String> getAliases() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isNameOrAlias(String name) {
+        return false;
     }
 
     @Override

@@ -6,29 +6,25 @@ import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResol
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
 import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueService;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapper;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentService;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentSet;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import panda.std.Option;
-import panda.std.Pair;
 import panda.std.Result;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
-
-import static com.sun.javafx.tk.quantum.PaintCollector.collector;
 
 public class CommandManager<SENDER> {
 
-    private final CommandRootRoute root = new CommandRootRoute();
+    private final CommandRootRouteImpl root = new CommandRootRouteImpl();
 
-    private final ExpectedValueService expectedValueService;
+    private final WrappedArgumentService wrappedArgumentService;
     private final ArgumentService<SENDER> argumentService;
     private final Platform<SENDER> platform;
 
-    public CommandManager(ExpectedValueService expectedValueService, ArgumentService<SENDER> argumentService, Platform<SENDER> platform) {
-        this.expectedValueService = expectedValueService;
+    public CommandManager(WrappedArgumentService wrappedArgumentService, ArgumentService<SENDER> argumentService, Platform<SENDER> platform) {
+        this.wrappedArgumentService = wrappedArgumentService;
         this.argumentService = argumentService;
         this.platform = platform;
     }
@@ -70,7 +66,7 @@ public class CommandManager<SENDER> {
     }
 
     private Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, CommandExecutor executor) {
-        List<Supplier<ExpectedValueWrapper<?>>> argumentsProviders = new ArrayList<>();
+        WrappedArgumentSet wrappedArgumentSet = new WrappedArgumentSet();
         ArgumentResolverContext resolverContext = ArgumentResolverContext.create();
 
         for (ArgumentContext<?, ?> argumentContext : executor) {
@@ -87,22 +83,15 @@ public class CommandManager<SENDER> {
                 return Result.error(argumentResult.getFailedReason());
             }
 
-            argumentsProviders.add(() -> expectedValueService.wrap(argumentResult, argumentContext))
+            wrappedArgumentSet.add(() -> wrap(argumentResult, argumentContext));
         }
 
-        for (ArgumentResultContext<?, ?> resultContext : collector.getResults()) {
-            Result<? extends ExpectedValueWrapper<?>, FailedReason> result = expectedValueService.wrap(resultContext);
-
-            if (result.isErr()) {
-                return; // return error
-            }
-
-            return wrapResult.get();
-        }
-
-        Result<Object, FailedReason> execute = commandExecutor.execute(collector);
+        return Result.ok(executor.execute(invocation, wrappedArgumentSet));
     }
 
-
+    @SuppressWarnings("unchecked")
+    private <T> WrappedArgumentWrapper<T> wrap(ArgumentResult<T> argumentResult, ArgumentContext<?, ?> argumentContext) {
+        return wrappedArgumentService.wrap(argumentResult, (ArgumentContext<?, T>) argumentContext);
+    }
 
 }

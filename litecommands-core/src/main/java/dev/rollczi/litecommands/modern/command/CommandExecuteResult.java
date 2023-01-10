@@ -16,33 +16,33 @@ public class CommandExecuteResult {
     }
 
     public Option<Object> getResult() {
-        Validation.isTrue(this.isSuccessful(), "Result isn't successful!");
+        Validation.isTrue(this.isSuccessful(), "Cannot get result when command failed");
 
         return Option.of(result);
     }
 
-    public Option<FailedReason> getFailedReason() {
-        Validation.isTrue(this.isFailed(), "Result isn't failed!");
+    public Option<Exception> getException() {
+        Validation.isTrue(this.isFailed(), "Cannot get exception when command was successful");
 
-        return Option.of(failedReason);
+        return Option.of(exception);
     }
 
     public boolean isFailed() {
-        return failedReason != null;
+        return exception != null;
     }
 
     public boolean isSuccessful() {
-        return failedReason == null;
+        return exception == null;
     }
 
     public static CommandExecuteResult success(@Nullable Object result) {
         return new CommandExecuteResult(result, null);
     }
 
-    public static CommandExecuteResult failed(FailedReason failedReason) {
-        Validation.isNotNull(failedReason, "failed reason can't not be null");
+    public static CommandExecuteResult failed(Exception exception) {
+        Validation.isNotNull(exception, "exception cannot be null");
 
-        return new CommandExecuteResult(null, failedReason);
+        return new CommandExecuteResult(null, exception);
     }
 
 }

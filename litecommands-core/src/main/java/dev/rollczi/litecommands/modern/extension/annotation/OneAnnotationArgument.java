@@ -1,8 +1,9 @@
-package dev.rollczi.litecommands.modern.command.method;
+package dev.rollczi.litecommands.modern.extension.annotation;
 
 import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.command.count.CountRange;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
+import dev.rollczi.litecommands.modern.extension.annotation.method.AnnotatedParameterArgumentContext;
 
 import java.util.List;
 

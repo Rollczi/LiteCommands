@@ -1,14 +1,14 @@
-package dev.rollczi.litecommands.modern.extension;
+package dev.rollczi.litecommands.modern.extension.annotation;
 
 import dev.rollczi.litecommands.modern.LiteCommands;
 import dev.rollczi.litecommands.modern.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.modern.LiteCommandsInternalBuilderPattern;
 import dev.rollczi.litecommands.modern.command.api.StringArgument;
 
-public class LiteCommandsOtherBuilder<SENDER>
-    extends LiteCommandsBaseBuilder<SENDER, LiteCommandsOtherBuilder<SENDER>> {
+public class LiteCommandsAnnotationBuilder<SENDER>
+    extends LiteCommandsBaseBuilder<SENDER, LiteCommandsAnnotationBuilder<SENDER>> {
 
-    protected LiteCommandsOtherBuilder(LiteCommandsInternalBuilderPattern<SENDER> pattern) {
+    protected LiteCommandsAnnotationBuilder(LiteCommandsInternalBuilderPattern<SENDER> pattern) {
         super(pattern);
     }
 
@@ -19,7 +19,7 @@ public class LiteCommandsOtherBuilder<SENDER>
         return super.register();
     }
 
-    public LiteCommandsOtherBuilder<SENDER> otherAction() {
+    public LiteCommandsAnnotationBuilder<SENDER> otherAction() {
         return this;
     }
 

@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.modern;
 
-import dev.rollczi.litecommands.modern.command.api.StringArgument;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
@@ -8,27 +7,32 @@ import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResol
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverRegistry.IndexKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverRegistryImpl;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
-import dev.rollczi.litecommands.modern.extension.LiteCommandsOtherExtension;
+import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;
 import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<SENDER, B>> implements LiteCommandsBuilder<SENDER, B>, LiteCommandsInternalBuilderPattern<SENDER> {
 
     protected final ArgumentResolverRegistry<SENDER> argumentResolverRegistry;
+    protected final Class<SENDER> senderClass;
+    protected
 
-    LiteCommandsBaseBuilder() {
+    LiteCommandsBaseBuilder(Class<SENDER> senderClass) {
         this(
-            new ArgumentResolverRegistryImpl<>()
+            new ArgumentResolverRegistryImpl<>(),
+            senderClass
         );
     }
 
     protected LiteCommandsBaseBuilder(LiteCommandsInternalBuilderPattern<SENDER> pattern) {
-        this(pattern.getArgumentResolver());
+        this(pattern.getArgumentResolver(), pattern.getSenderClass());
     }
 
     protected LiteCommandsBaseBuilder(
-        ArgumentResolverRegistry<SENDER> argumentResolverRegistry
+        ArgumentResolverRegistry<SENDER> argumentResolverRegistry,
+        Class<SENDER> senderClass
     ) {
         this.argumentResolverRegistry = argumentResolverRegistry;
+        this.senderClass = senderClass;
     }
 
     @Override
@@ -103,21 +107,19 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     public LiteCommands<SENDER> register() {
-        LiteCommandsBaseBuilder<SENDER, ?> liteCommandsBuilder = new LiteCommandsBaseBuilder<>();
-
-        LiteCommands<SENDER> register = liteCommandsBuilder
-            .argument(String.class, new StringArgument<>())
-            .argument(String.class, new StringArgument<>())
-            .argument(String.class, new StringArgument<>())
-            .withExtension(new LiteCommandsOtherExtension<>())
-            .otherAction()
-            .register();
+        return new LiteCommandsBase<>(); //TODO add other stuff
     }
 
     @Override
     @ApiStatus.Internal
     public ArgumentResolverRegistry<SENDER> getArgumentResolver() {
         return argumentResolverRegistry;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public Class<SENDER> getSenderClass() {
+        return senderClass;
     }
 
 }

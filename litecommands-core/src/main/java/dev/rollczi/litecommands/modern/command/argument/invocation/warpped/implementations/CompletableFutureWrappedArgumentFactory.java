@@ -1,17 +1,17 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation.warpper.implementations;
+package dev.rollczi.litecommands.modern.command.argument.invocation.warpped.implementations;
 
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapper;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapperFactory;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class CompletableFutureExpectedValueWrapperFactory implements ExpectedValueWrapperFactory {
+public class CompletableFutureWrappedArgumentFactory implements WrappedArgumentFactory {
 
     @Override
-    public <DETERMINANT, EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(
+    public <DETERMINANT, EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(
         ArgumentResult<EXPECTED> result,
         ArgumentContext<DETERMINANT, EXPECTED> context
     ) {
@@ -29,7 +29,7 @@ public class CompletableFutureExpectedValueWrapperFactory implements ExpectedVal
         return CompletableFuture.class;
     }
 
-    private static class CompletableFutureWrapper<EXPECTED> implements ExpectedValueWrapper<EXPECTED> {
+    private static class CompletableFutureWrapper<EXPECTED> implements WrappedArgumentWrapper<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final CompletableFuture<EXPECTED> completableFuture;
@@ -40,7 +40,7 @@ public class CompletableFutureExpectedValueWrapperFactory implements ExpectedVal
         }
 
         @Override
-        public Object getWrappedValue() {
+        public Object unwrap() {
             return completableFuture;
         }
 

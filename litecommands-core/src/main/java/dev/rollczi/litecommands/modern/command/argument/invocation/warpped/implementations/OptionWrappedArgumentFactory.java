@@ -1,18 +1,18 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation.warpper.implementations;
+package dev.rollczi.litecommands.modern.command.argument.invocation.warpped.implementations;
 
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
 import dev.rollczi.litecommands.modern.command.argument.invocation.SuccessfulResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapper;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapperFactory;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentFactory;
 import panda.std.Option;
 
 import java.util.function.Supplier;
 
-public class OptionExpectedValueWrapperFactory implements ExpectedValueWrapperFactory {
+public class OptionWrappedArgumentFactory implements WrappedArgumentFactory {
 
     @Override
-    public <DETERMINANT, EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(ArgumentResult<EXPECTED> result, ArgumentContext<DETERMINANT, EXPECTED> context) {
+    public <DETERMINANT, EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(ArgumentResult<EXPECTED> result, ArgumentContext<DETERMINANT, EXPECTED> context) {
         Class<EXPECTED> expectedType = context.getExpectedType();
 
         if (result.isSuccessful()) {
@@ -29,7 +29,7 @@ public class OptionExpectedValueWrapperFactory implements ExpectedValueWrapperFa
         return Option.class;
     }
 
-    private static class OptionWrapper<EXPECTED> implements ExpectedValueWrapper<EXPECTED> {
+    private static class OptionWrapper<EXPECTED> implements WrappedArgumentWrapper<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<EXPECTED> expectedSupplier;
@@ -40,7 +40,7 @@ public class OptionExpectedValueWrapperFactory implements ExpectedValueWrapperFa
         }
 
         @Override
-        public Option<EXPECTED> getWrappedValue() {
+        public Option<EXPECTED> unwrap() {
             return Option.of(expectedSupplier.get());
         }
 

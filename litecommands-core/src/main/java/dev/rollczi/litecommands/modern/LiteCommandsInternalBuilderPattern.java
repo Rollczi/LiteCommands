@@ -8,4 +8,7 @@ public interface LiteCommandsInternalBuilderPattern<SENDER> {
     @ApiStatus.Internal
     ArgumentResolverRegistry<SENDER> getArgumentResolver();
 
+    @ApiStatus.Internal
+    Class<SENDER> getSenderClass();
+
 }

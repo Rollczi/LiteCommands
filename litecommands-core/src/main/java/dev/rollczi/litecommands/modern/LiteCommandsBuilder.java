@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
+import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;
 
 public interface LiteCommandsBuilder<SENDER, B extends LiteCommandsBuilder<SENDER, B>> {
 

@@ -1,10 +1,10 @@
-package dev.rollczi.litecommands.modern.command.method;
+package dev.rollczi.litecommands.modern.extension.annotation.method;
 
+import dev.rollczi.litecommands.modern.command.CommandExecuteResult;
+import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
-import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
-import dev.rollczi.litecommands.modern.command.argument.invocation.SuccessfulResult;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentSet;
 import org.jetbrains.annotations.NotNull;
 import panda.std.Result;
 
@@ -32,19 +32,12 @@ class MethodCommandExecutor implements CommandExecutor {
     }
 
     @Override
-    public <SENDER> Result<Object, FailedReason> execute(ArgumentResultCollector<SENDER> collector) {
+    public <SENDER> CommandExecuteResult execute(Invocation<SENDER> invocation, WrappedArgumentSet arguments) {
         List<Supplier<?>> list = new ArrayList<>();
+        Iterator<Object> argumentsIterator = arguments.unwrap().iterator();
 
-        for (ArgumentResultContext<?, ?> resultContext : collector.getResults()) {
-            ArgumentResult<?> result = resultContext.getResult();
+        for (ArgumentContext<?, ?> context : contexts) {
 
-            if (result.isFailed()) {
-                return Result.error(result.getFailedReason());
-            }
-
-            SuccessfulResult<?> successfulResult = result.getSuccessfulResult();
-
-            list.add(successfulResult.getParsedArgument());
         }
 
         Object[] objects = list.stream()

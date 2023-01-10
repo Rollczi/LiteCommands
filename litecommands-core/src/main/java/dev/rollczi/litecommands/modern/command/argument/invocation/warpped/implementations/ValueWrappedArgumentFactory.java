@@ -1,25 +1,23 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation.warpper.implementations;
+package dev.rollczi.litecommands.modern.command.argument.invocation.warpped.implementations;
 
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
 import dev.rollczi.litecommands.modern.command.argument.invocation.SuccessfulResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapper;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpper.ExpectedValueWrapperFactory;
-import panda.std.Result;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentFactory;
 
 import java.util.function.Supplier;
 
-public class ValueExpectedValueWrapperFactory implements ExpectedValueWrapperFactory {
+public class ValueWrappedArgumentFactory implements WrappedArgumentFactory {
 
     @Override
-    public <DETERMINANT, EXPECTED> ExpectedValueWrapper<EXPECTED> wrap(ArgumentResult<EXPECTED> result, ArgumentContext<DETERMINANT, EXPECTED> context) {
+    public <DETERMINANT, EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(ArgumentResult<EXPECTED> result, ArgumentContext<DETERMINANT, EXPECTED> context) {
         Class<EXPECTED> expectedType = context.getExpectedType();
 
         if (result.isSuccessful()) {
             SuccessfulResult<EXPECTED> successfulResult = result.getSuccessfulResult();
 
-            return new ValueWrapper<>(expectedType, successfulResult.getParsedArgument());
+            return new ArgumentWrapper<>(expectedType, successfulResult.getParsedArgument());
         }
 
         throw new IllegalArgumentException("Result can not be failed");
@@ -30,18 +28,18 @@ public class ValueExpectedValueWrapperFactory implements ExpectedValueWrapperFac
         return Void.class;
     }
 
-    private static class ValueWrapper<EXPECTED> implements ExpectedValueWrapper<EXPECTED> {
+    private static class ArgumentWrapper<EXPECTED> implements WrappedArgumentWrapper<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<EXPECTED> expectedSupplier;
 
-        public ValueWrapper(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
+        public ArgumentWrapper(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
             this.expectedType = expectedType;
             this.expectedSupplier = expectedSupplier;
         }
 
         @Override
-        public EXPECTED getWrappedValue() {
+        public EXPECTED unwrap() {
             return expectedSupplier.get();
         }
 
