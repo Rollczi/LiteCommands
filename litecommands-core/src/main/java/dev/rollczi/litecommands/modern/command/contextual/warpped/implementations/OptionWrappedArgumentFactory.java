@@ -1,10 +1,11 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation.warpped.implementations;
+package dev.rollczi.litecommands.modern.command.contextual.warpped.implementations;
 
-import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
 import dev.rollczi.litecommands.modern.command.argument.invocation.SuccessfulResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentWrapper;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentFactory;
+import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentFactory;
+import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
 import panda.std.Option;
 
 import java.util.function.Supplier;
@@ -12,16 +13,15 @@ import java.util.function.Supplier;
 public class OptionWrappedArgumentFactory implements WrappedArgumentFactory {
 
     @Override
-    public <DETERMINANT, EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(ArgumentResult<EXPECTED> result, ArgumentContext<DETERMINANT, EXPECTED> context) {
+    public <EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(ExpectedContextualProvider<EXPECTED> expectedContextualProvider, ExpectedContextual<EXPECTED> context) {
         Class<EXPECTED> expectedType = context.getExpectedType();
 
-        if (result.isSuccessful()) {
-            SuccessfulResult<EXPECTED> successfulResult = result.getSuccessfulResult();
+        return new OptionWrapper<>(expectedType, expectedContextualProvider);
+    }
 
-            return new OptionWrapper<>(expectedType, successfulResult.getParsedArgument());
-        }
-
-        return new OptionWrapper<>(expectedType, null);
+    @Override
+    public <EXPECTED> Option<WrappedArgumentWrapper<EXPECTED>> empty(ExpectedContextual<EXPECTED> context) {
+        return Option.of(new OptionWrapper<>(context.getExpectedType(), () -> null));
     }
 
     @Override

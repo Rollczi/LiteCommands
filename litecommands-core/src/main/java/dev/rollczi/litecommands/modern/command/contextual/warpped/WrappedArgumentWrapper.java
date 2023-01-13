@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation.warpped;
+package dev.rollczi.litecommands.modern.command.contextual.warpped;
 
 public interface WrappedArgumentWrapper<EXPECTED> {
 

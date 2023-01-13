@@ -1,22 +1,22 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation;
 
-import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
+import dev.rollczi.litecommands.modern.command.argument.ArgumentContextual;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 
 import java.util.Optional;
 
 public interface ArgumentResolverRegistry<SENDER> {
 
-    <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> void registerResolver(
+    <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> void registerResolver(
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey,
-        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, ? extends ArgumentContext<DETERMINANT, EXPECTED>> resolver
+        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, ? extends ArgumentContextual<DETERMINANT, EXPECTED>> resolver
     );
 
-    <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
+    <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey
     );
 
-    class IndexKey<DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> {
+    class IndexKey<DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> {
 
         private final Class<DETERMINANT> determinantType;
         private final Class<EXPECTED> expectedType;
@@ -48,31 +48,31 @@ public interface ArgumentResolverRegistry<SENDER> {
 
 
         public boolean isUniversal() {
-            return ArgumentContext.class.equals(contextType) && Object.class.equals(determinantType);
+            return ArgumentContextual.class.equals(contextType) && Object.class.equals(determinantType);
         }
 
-        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT context, ArgumentKey argumentKey) {
+        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT context, ArgumentKey argumentKey) {
             return of(context.getDeterminantType(), context.getExpectedType(), context.getClass(), argumentKey);
         }
 
-        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT context) {
+        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> from(CONTEXT context) {
             return of(context.getDeterminantType(), context.getExpectedType(), context.getClass(), ArgumentKey.DEFAULT);
         }
 
-        public static <EXPECTED> IndexKey<Object, EXPECTED, ArgumentContext<Object, EXPECTED>> universal(
+        public static <EXPECTED> IndexKey<Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> universal(
             Class<EXPECTED> expectedType
         ) {
-            return IndexKey.of(Object.class, expectedType, ArgumentContext.class, ArgumentKey.DEFAULT);
+            return IndexKey.of(Object.class, expectedType, ArgumentContextual.class, ArgumentKey.DEFAULT);
         }
 
-        public static <EXPECTED> IndexKey<Object, EXPECTED, ArgumentContext<Object, EXPECTED>> universal(
+        public static <EXPECTED> IndexKey<Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> universal(
             Class<EXPECTED> expectedType,
             ArgumentKey argumentKey
         ) {
-            return IndexKey.of(Object.class, expectedType, ArgumentContext.class, argumentKey);
+            return IndexKey.of(Object.class, expectedType, ArgumentContextual.class, argumentKey);
         }
 
-        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> of(
+        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> of(
             Class<DETERMINANT> determinantType,
             Class<EXPECTED> expectedType,
             Class<?> contextType
@@ -81,7 +81,7 @@ public interface ArgumentResolverRegistry<SENDER> {
         }
 
         @SuppressWarnings("unchecked")
-        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> of(
+        public static <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> IndexKey<DETERMINANT, EXPECTED, CONTEXT> of(
             Class<DETERMINANT> determinantType,
             Class<EXPECTED> expectedType,
             Class<?> contextType,

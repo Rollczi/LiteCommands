@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.modern.command;
 
-import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
 import dev.rollczi.litecommands.shared.Validation;
 import org.jetbrains.annotations.Nullable;
 import panda.std.Option;
@@ -8,10 +7,12 @@ import panda.std.Option;
 public class CommandExecuteResult {
 
     private final @Nullable Object result;
+    private final Class<?> resultType;
     private final @Nullable Exception exception;
 
-    private CommandExecuteResult(@Nullable Object result, @Nullable Exception exception) {
+    private CommandExecuteResult(@Nullable Object result, Class<?> resultType, @Nullable Exception exception) {
         this.result = result;
+        this.resultType = resultType;
         this.exception = exception;
     }
 
@@ -21,10 +22,10 @@ public class CommandExecuteResult {
         return Option.of(result);
     }
 
-    public Option<Exception> getException() {
+    public Exception getException() {
         Validation.isTrue(this.isFailed(), "Cannot get exception when command was successful");
 
-        return Option.of(exception);
+        return exception;
     }
 
     public boolean isFailed() {
@@ -35,14 +36,14 @@ public class CommandExecuteResult {
         return exception == null;
     }
 
-    public static CommandExecuteResult success(@Nullable Object result) {
-        return new CommandExecuteResult(result, null);
+    public static CommandExecuteResult success(@Nullable Object result, Class<?> resultType) {
+        return new CommandExecuteResult(result, resultType, null);
     }
 
     public static CommandExecuteResult failed(Exception exception) {
         Validation.isNotNull(exception, "exception cannot be null");
 
-        return new CommandExecuteResult(null, exception);
+        return new CommandExecuteResult(null, null, exception);
     }
 
 }

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation;
 
 import dev.rollczi.litecommands.modern.command.Invocation;
-import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
+import dev.rollczi.litecommands.modern.command.argument.ArgumentContextual;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverRegistry.IndexKey;
 import panda.std.Option;
@@ -12,11 +12,11 @@ public class ArgumentService<SENDER> {
 
     private final ArgumentResolverRegistry<SENDER> resolverRegistry = new ArgumentResolverRegistryImpl<>();
 
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> ArgumentResolverContext resolve(
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> ArgumentResolverContext<EXPECTED> resolve(
         Invocation<SENDER> invocation,
         CONTEXT context,
         ArgumentKey argumentKey,
-        ArgumentResolverContext resolverContext
+        ArgumentResolverContext<?> resolverContext
     ) {
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey = IndexKey.from(context, argumentKey);
 
@@ -51,9 +51,9 @@ public class ArgumentService<SENDER> {
         return resolverContext.with(successfulResult.getConsumedRawArguments(), result);
     }
 
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> void registerResolver(
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> void registerResolver(
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey,
-        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, ? extends ArgumentContext<DETERMINANT, EXPECTED>> resolver
+        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, ? extends ArgumentContextual<DETERMINANT, EXPECTED>> resolver
     ) {
         resolverRegistry.registerResolver(indexKey, resolver);
     }

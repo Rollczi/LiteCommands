@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation;
 
+import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -46,15 +47,15 @@ public class ArgumentResult<EXPECTED> {
         return failedResult;
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> successMultilevel(Supplier<EXPECTED> expectedReturn, int consumedRawArguments) {
+    public static <EXPECTED> ArgumentResult<EXPECTED> successMultilevel(ExpectedContextualProvider<EXPECTED> expectedReturn, int consumedRawArguments) {
         return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, consumedRawArguments), null);
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> success(Supplier<EXPECTED> expectedReturn) {
+    public static <EXPECTED> ArgumentResult<EXPECTED> success(ExpectedContextualProvider<EXPECTED> expectedReturn) {
         return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, 1), null);
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> successOptional(Supplier<EXPECTED> expectedReturn) {
+    public static <EXPECTED> ArgumentResult<EXPECTED> successOptional(ExpectedContextualProvider<EXPECTED> expectedReturn) {
         return new ArgumentResult<>(SuccessfulResult.optionalArgument(expectedReturn), null);
     }
 

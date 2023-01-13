@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.command.argument.invocation;
 
-import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
+import dev.rollczi.litecommands.modern.command.argument.ArgumentContextual;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 
 import java.util.HashMap;
@@ -14,9 +14,9 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
 
     @Override
     @SuppressWarnings("unchecked")
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> void registerResolver(
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> void registerResolver(
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey,
-        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, ? extends ArgumentContext<DETERMINANT, EXPECTED>> resolver
+        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, ? extends ArgumentContextual<DETERMINANT, EXPECTED>> resolver
     ) {
         ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> castedResolver = (ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>) resolver;
 
@@ -29,7 +29,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
     }
 
     @Override
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey
     ) {
         Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> resolverOptional = determinantTypeIndex.getResolver(indexKey);
@@ -45,7 +45,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         private final Map<Class<?>, ExpectedTypeIndex<?>> indexesByContextType = new HashMap<>();
 
         @SuppressWarnings("unchecked")
-        public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> void putResolver(
+        public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> void putResolver(
             IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey,
             ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> resolver
         ) {
@@ -55,7 +55,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         }
 
         @SuppressWarnings("unchecked")
-        public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
+        public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
             IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey
         ) {
             ExpectedTypeIndex<DETERMINANT> expectedTypeIndex = (ExpectedTypeIndex<DETERMINANT>) this.indexesByContextType.get(indexKey.determinantType());
@@ -73,7 +73,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         private final Map<Class<?>, ContextTypeIndex<DETERMINANT, ?>> resolversByContext = new HashMap<>();
 
         @SuppressWarnings("unchecked")
-        <EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> void putResolver(
+        <EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> void putResolver(
             IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey,
             ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> resolver
         ) {
@@ -83,7 +83,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         }
 
         @SuppressWarnings("unchecked")
-        <EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
+        <EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
             IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey
         ) {
             ContextTypeIndex<DETERMINANT, EXPECTED> contextTypeIndex = (ContextTypeIndex<DETERMINANT, EXPECTED>) this.resolversByContext.get(indexKey.expectedType());
@@ -101,7 +101,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         private final Map<Class<?>, ArgumentKeyIndex<DETERMINANT, EXPECTED, ?>> containersByContext = new HashMap<>();
 
         @SuppressWarnings("unchecked")
-        <CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> void putResolver(
+        <CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> void putResolver(
             IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey,
             ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> resolver
         ) {
@@ -111,7 +111,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         }
 
         @SuppressWarnings("unchecked")
-        <CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
+        <CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(
             IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey
         ) {
             ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT> argumentKeyIndex = (ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT>) this.containersByContext.get(indexKey.contextType());
@@ -124,7 +124,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         }
     }
 
-    class ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> {
+    class ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> {
         private final Map<ArgumentKey, ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> resolversByKey = new HashMap<>();
 
         void putResolver(
@@ -143,17 +143,17 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
 
     private class UniversalIndex {
 
-        private final Map<Class<?>, ArgumentKeyIndex<Object, Object, ArgumentContext<Object, Object>>> map = new HashMap<>();
+        private final Map<Class<?>, ArgumentKeyIndex<Object, Object, ArgumentContextual<Object, Object>>> map = new HashMap<>();
 
         @SuppressWarnings("unchecked")
-        <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> void putResolver(IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey, ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> resolver) {
+        <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> void putResolver(IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey, ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> resolver) {
             ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT> index = (ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT>) this.map.computeIfAbsent(indexKey.expectedType(), key -> new ArgumentKeyIndex<>());
 
             index.putResolver(indexKey, resolver);
         }
 
         @SuppressWarnings("unchecked")
-        <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContext<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey) {
+        <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> Optional<ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> getResolver(IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey) {
             ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT> index = (ArgumentKeyIndex<DETERMINANT, EXPECTED, CONTEXT>) this.map.get(indexKey.expectedType());
 
             if (index == null) {

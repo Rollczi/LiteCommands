@@ -1,9 +1,10 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation.warpped.implementations;
+package dev.rollczi.litecommands.modern.command.contextual.warpped.implementations;
 
-import dev.rollczi.litecommands.modern.command.argument.ArgumentContext;
-import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentWrapper;
-import dev.rollczi.litecommands.modern.command.argument.invocation.warpped.WrappedArgumentFactory;
+import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentFactory;
+import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
+import panda.std.Option;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -11,17 +12,18 @@ import java.util.function.Supplier;
 public class CompletableFutureWrappedArgumentFactory implements WrappedArgumentFactory {
 
     @Override
-    public <DETERMINANT, EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(
-        ArgumentResult<EXPECTED> result,
-        ArgumentContext<DETERMINANT, EXPECTED> context
+    public <EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(
+        ExpectedContextualProvider<EXPECTED> expectedContextualProvider,
+        ExpectedContextual<EXPECTED> context
     ) {
         Class<EXPECTED> expectedType = context.getExpectedType();
 
-        if (result.isFailed()) {
-            throw new IllegalArgumentException("Result can not be failed");
-        }
+        return new CompletableFutureWrapper<>(expectedType, expectedContextualProvider);
+    }
 
-        return new CompletableFutureWrapper<>(expectedType, result.getSuccessfulResult().getParsedArgument());
+    @Override
+    public <EXPECTED> Option<WrappedArgumentWrapper<EXPECTED>> empty(ExpectedContextual<EXPECTED> context) {
+        return Option.none();
     }
 
     @Override
