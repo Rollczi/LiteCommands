@@ -13,13 +13,17 @@ public final class LiteBungeeFactory {
     }
 
     public static LiteCommandsBuilder<CommandSender> builder(Plugin plugin) {
+        return builder(plugin, false);
+    }
+
+    public static LiteCommandsBuilder<CommandSender> builder(Plugin plugin, boolean nativePermissions) {
         return LiteFactory.builder(CommandSender.class)
                 .typeBind(ProxyServer.class, plugin::getProxy)
 
                 .resultHandler(BaseComponent.class, new BaseComponentHandler())
                 .resultHandler(String.class, new StringHandler())
 
-                .platform(new LiteBungeeRegistryPlatform(plugin));
+                .platform(new LiteBungeeRegistryPlatform(plugin, nativePermissions));
     }
 
 }
