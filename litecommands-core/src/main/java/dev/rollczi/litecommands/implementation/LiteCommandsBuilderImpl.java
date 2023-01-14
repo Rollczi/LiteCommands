@@ -53,8 +53,8 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
     private RegistryPlatform<SENDER> registryPlatform;
     private CommandStateFactory<SENDER> commandStateFactory;
 
-    private LiteCommandsPreProcess<SENDER> preProcess = (builder, platform, injector) -> {};
-    private LiteCommandsPostProcess<SENDER> postProcess = (builder, platform, injector, commandService) -> {};
+    private final List<LiteCommandsPreProcess<SENDER>> preProcess = new ArrayList<>();
+    private final List<LiteCommandsPostProcess<SENDER>> postProcess = new ArrayList<>();
 
     private final Set<Consumer<CommandStateFactory<SENDER>>> commandStateFactoryEditors = new HashSet<>();
     private final CommandEditorRegistry editorRegistry = new CommandEditorRegistry();
@@ -81,7 +81,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
     @Override
     public LiteCommandsBuilder<SENDER> configureFactory(Consumer<CommandStateFactory<SENDER>> consumer) {
-        commandStateFactoryEditors.add(consumer);
+        this.commandStateFactoryEditors.add(consumer);
         return this;
     }
 
@@ -127,6 +127,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         return this;
     }
 
+    @Override
     public LiteCommandsBuilder<SENDER> invalidUsageHandler(InvalidUsageHandler<SENDER> handler) {
         return this.resultHandler(Schematic.class, handler);
     }
@@ -144,13 +145,13 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
     @Override
     public LiteCommandsBuilderImpl<SENDER> command(Class<?>... commandClass) {
-        commandsClasses.addAll(Arrays.asList(commandClass));
+        this.commandsClasses.addAll(Arrays.asList(commandClass));
         return this;
     }
 
     @Override
     public LiteCommandsBuilderImpl<SENDER> commandInstance(Object... commandInstance) {
-        commandsInstances.addAll(Arrays.asList(commandInstance));
+        this.commandsInstances.addAll(Arrays.asList(commandInstance));
         return this;
     }
 
@@ -227,28 +228,30 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
     @Override
     public LiteCommandsBuilder<SENDER> beforeRegister(LiteCommandsPreProcess<SENDER> preProcess) {
-        this.preProcess = preProcess;
+        this.preProcess.add(preProcess);
         return this;
     }
 
     @Override
     public LiteCommandsBuilder<SENDER> afterRegister(LiteCommandsPostProcess<SENDER> postProcess) {
-        this.postProcess = postProcess;
+        this.postProcess.add(postProcess);
         return this;
     }
 
     @Override
     public LiteCommands<SENDER> register() {
-        if (registryPlatform == null) {
+        if (this.registryPlatform == null) {
             throw new IllegalStateException("Registry platform is not set");
         }
 
 
-        this.preProcess.process(this, this.registryPlatform, this.injectorSettings.create());
+        for (LiteCommandsPreProcess<SENDER> process : this.preProcess) {
+            process.process(this, this.registryPlatform, this.executeResultHandler, this.injectorSettings.create());
+        }
 
         CommandService<SENDER> commandService = new CommandService<>(this.registryPlatform, this.executeResultHandler);
         Injector<SENDER> injector = this.injectorSettings.create();
-        LiteCommands<SENDER> liteCommands = new LiteCommandsImpl<>(commandService, senderType, injector);
+        LiteCommands<SENDER> liteCommands = new LiteCommandsImpl<>(commandService, this.senderType, injector);
 
         if (this.commandStateFactory == null) {
             this.commandStateFactory = new LiteCommandFactory<>(injector, this.argumentsRegistry, this.editorRegistry);
@@ -267,7 +270,7 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
         List<CommandSection<SENDER>> commandSections = new ArrayList<>();
 
         root:
-        for (Object instance : commandsInstances) {
+        for (Object instance : this.commandsInstances) {
             Option<CommandSection<SENDER>> option = this.commandStateFactory.create(instance);
 
             if (option.isEmpty()) {
@@ -290,7 +293,9 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
             commandService.register(commandSection);
         }
 
-        this.postProcess.process(this, this.registryPlatform, injector, commandService);
+        for (LiteCommandsPostProcess<SENDER> process : this.postProcess) {
+            process.process(this, this.registryPlatform, injector, this.executeResultHandler, commandService);
+        }
 
         return liteCommands;
     }
