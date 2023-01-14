@@ -1,4 +1,3 @@
-
 val coreArtifact by extra("core")
 val velocityArtifact by extra("velocity")
 val bukkitArtifact by extra("bukkit")
@@ -14,7 +13,7 @@ plugins {
 
 allprojects {
     group = "dev.rollczi.litecommands"
-    version = "2.7.0-SNAPSHOT"
+    version = "2.7.1"
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -46,14 +45,30 @@ subprojects {
 
             maven("panda", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD", false)
 
-            maven("eternalcode", "https://repo.eternalcode.pl", "ETERNAL_CODE_MAVEN_USERNAME", "ETERNAL_CODE_MAVEN_PASSWORD")
+            maven(
+                "eternalcode",
+                "https://repo.eternalcode.pl",
+                "ETERNAL_CODE_MAVEN_USERNAME",
+                "ETERNAL_CODE_MAVEN_PASSWORD"
+            )
 
-            maven("minecodes", "https://repository.minecodes.pl", "MINE_CODES_MAVEN_USERNAME", "MINE_CODES_MAVEN_PASSWORD",)
+            maven(
+                "minecodes",
+                "https://repository.minecodes.pl",
+                "MINE_CODES_MAVEN_USERNAME",
+                "MINE_CODES_MAVEN_PASSWORD",
+            )
         }
     }
 }
 
-fun RepositoryHandler.maven(name: String, url: String, username: String, password: String, deploySnapshots: Boolean = true) {
+fun RepositoryHandler.maven(
+    name: String,
+    url: String,
+    username: String,
+    password: String,
+    deploySnapshots: Boolean = true
+) {
     val isSnapshot = version.toString().endsWith("-SNAPSHOT")
 
     if (isSnapshot && !deploySnapshots) {
