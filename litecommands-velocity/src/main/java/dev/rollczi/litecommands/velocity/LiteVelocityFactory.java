@@ -14,6 +14,10 @@ public final class LiteVelocityFactory {
     }
 
     public static LiteCommandsBuilder<CommandSource> builder(ProxyServer proxy) {
+        return builder(proxy, false);
+    }
+
+    public static LiteCommandsBuilder<CommandSource> builder(ProxyServer proxy, boolean nativePermissions) {
         return LiteFactory.builder(CommandSource.class)
                 .typeBind(ProxyServer.class, () -> proxy)
 
@@ -26,7 +30,7 @@ public final class LiteVelocityFactory {
                 .resultHandler(String.class, new StringHandler())
                 .resultHandler(Component.class, new KyoriComponentHandler())
 
-                .platform(new LiteVelocityRegistryPlatform(proxy));
+                .platform(new LiteVelocityRegistryPlatform(proxy, nativePermissions));
     }
 
 }
