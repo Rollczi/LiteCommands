@@ -24,10 +24,12 @@ class LiteBukkitRegistryPlatform implements RegistryPlatform<CommandSender> {
     private final Map<String, org.bukkit.command.Command> knownCommands;
     private final String fallbackPrefix;
     private ExecuteResultHandler<CommandSender> executeResultHandler = new ExecuteResultHandler<>();
+    private final boolean nativePermissions;
 
     @SuppressWarnings("unchecked")
-    LiteBukkitRegistryPlatform(Server server, String fallbackPrefix) {
+    LiteBukkitRegistryPlatform(Server server, String fallbackPrefix, boolean nativePermissions) {
         this.fallbackPrefix = fallbackPrefix;
+        this.nativePermissions = nativePermissions;
 
         try {
             Field commandMapField = server.getClass().getDeclaredField("commandMap");
@@ -47,6 +49,18 @@ class LiteBukkitRegistryPlatform implements RegistryPlatform<CommandSender> {
 
     @Override
     public void registerListener(CommandSection<CommandSender> command, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
+        SimpleCommand bukkitSimpleCommand = this.createCommand(command, executeListener, suggestionListener);
+
+        this.commandMap.register(command.getName(), this.fallbackPrefix, bukkitSimpleCommand);
+        this.commands.add(command.getName());
+        this.commands.addAll(command.getAliases());
+    }
+
+    private SimpleCommand createCommand(CommandSection<CommandSender> command, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
+        if (!this.nativePermissions) {
+            return new SimpleCommand(command, executeListener, suggestionListener);
+        }
+
         BukkitNoPermission noPermissionHandler = (sender, requiredPermissions) -> {
             LiteInvocation invocation = new LiteInvocation(new BukkitSender(sender), command.getName(), command.getName());
 
@@ -58,11 +72,7 @@ class LiteBukkitRegistryPlatform implements RegistryPlatform<CommandSender> {
             }
         };
 
-        SimpleCommand bukkitSimpleCommand = new SimpleCommand(command, executeListener, suggestionListener, noPermissionHandler);
-
-        this.commandMap.register(command.getName(), this.fallbackPrefix, bukkitSimpleCommand);
-        this.commands.add(command.getName());
-        this.commands.addAll(command.getAliases());
+        return new SimpleBlockedCommand(command, executeListener, suggestionListener, noPermissionHandler);
     }
 
     @Override

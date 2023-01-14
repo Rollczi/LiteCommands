@@ -11,7 +11,12 @@ public final class LiteBukkitFactory {
     }
 
     public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix) {
-        LiteBukkitRegistryPlatform registryPlatform = new LiteBukkitRegistryPlatform(server, fallbackPrefix);
+        return builder(server, fallbackPrefix, false);
+    }
+
+
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean nativePermissions) {
+        LiteBukkitRegistryPlatform registryPlatform = new LiteBukkitRegistryPlatform(server, fallbackPrefix, nativePermissions);
 
         return LiteFactory.builder(CommandSender.class)
             .typeBind(Server.class, () -> server)
