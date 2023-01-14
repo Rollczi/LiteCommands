@@ -16,29 +16,24 @@ public final class LiteBukkitAdventureFactory {
     }
 
     @ApiStatus.Internal
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, KyoriAudienceProvider kyoriAudienceProvider) {
-        return builder(server, fallbackPrefix, kyoriAudienceProvider, false);
-    }
-
-    @ApiStatus.Internal
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, KyoriAudienceProvider kyoriAudienceProvider, boolean supportsMiniMessage) {
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean nativePermissions, KyoriAudienceProvider kyoriAudienceProvider, boolean supportsMiniMessage) {
         ComponentSerializer<Component, ? extends Component, String> serializer = supportsMiniMessage
-                ? MiniMessageFactory.produce()
-                : LegacyProcessor.LEGACY_SERIALIZER;
+            ? MiniMessageFactory.produce()
+            : LegacyProcessor.LEGACY_SERIALIZER;
 
-        return builder(server, fallbackPrefix, kyoriAudienceProvider, serializer);
+        return builder(server, fallbackPrefix, nativePermissions, kyoriAudienceProvider, serializer);
     }
 
     @ApiStatus.Internal
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, KyoriAudienceProvider kyoriAudienceProvider, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
-        return LiteBukkitFactory.builder(server, fallbackPrefix)
-                .argument(Component.class, new KyoriComponentArgument())
-                .argument(Component.class, "color", new KyoriColoredComponentArgument(kyoriComponentSerializer))
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean nativePermissions, KyoriAudienceProvider kyoriAudienceProvider, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
+        return LiteBukkitFactory.builder(server, fallbackPrefix, nativePermissions)
+            .argument(Component.class, new KyoriComponentArgument())
+            .argument(Component.class, "color", new KyoriColoredComponentArgument(kyoriComponentSerializer))
 
-                .contextualBind(Audience.class, new KyoriAudienceContextual(kyoriAudienceProvider))
+            .contextualBind(Audience.class, new KyoriAudienceContextual(kyoriAudienceProvider))
 
-                .resultHandler(Component.class, new KyoriComponentHandler(kyoriAudienceProvider))
-                .resultHandler(String.class, new StringHandler(kyoriAudienceProvider, kyoriComponentSerializer));
+            .resultHandler(Component.class, new KyoriComponentHandler(kyoriAudienceProvider))
+            .resultHandler(String.class, new StringHandler(kyoriAudienceProvider, kyoriComponentSerializer));
     }
 
 }

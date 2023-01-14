@@ -14,18 +14,18 @@ public final class LiteBukkitAdventurePlatformFactory {
     }
 
     public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, AudienceProvider audienceProvider) {
-        return builder(server, fallbackPrefix, audienceProvider, false);
+        return builder(server, fallbackPrefix, false, audienceProvider, false);
     }
 
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, AudienceProvider audienceProvider, boolean supportsMiniMessage) {
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean nativePermissions, AudienceProvider audienceProvider, boolean supportsMiniMessage) {
         KyoriAudienceAdventurePlatformProvider audienceAdventurePlatformProvider = new KyoriAudienceAdventurePlatformProvider(audienceProvider);
 
-        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, audienceAdventurePlatformProvider, supportsMiniMessage);
+        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, nativePermissions, audienceAdventurePlatformProvider, supportsMiniMessage);
     }
 
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, AudienceProvider audienceProvider, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean nativePermissions, AudienceProvider audienceProvider, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
         KyoriAudienceAdventurePlatformProvider audienceAdventurePlatformProvider = new KyoriAudienceAdventurePlatformProvider(audienceProvider);
-        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, audienceAdventurePlatformProvider, kyoriComponentSerializer);
+        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, nativePermissions, audienceAdventurePlatformProvider, kyoriComponentSerializer);
     }
 
 }
