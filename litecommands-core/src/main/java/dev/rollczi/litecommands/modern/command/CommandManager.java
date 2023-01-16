@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.modern.command.argument.invocation.WrappedArgume
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.extension.annotated.inject.InjectBindRegistry;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import panda.std.Option;
 import panda.std.Result;
@@ -26,12 +27,14 @@ public class CommandManager<SENDER> {
     private final ArgumentService<SENDER> argumentService;
     private final Platform<SENDER> platform;
     private final CommandExecuteResultResolver<SENDER> resultResolver;
+    private final InjectBindRegistry<SENDER> injectBindRegistry;
 
-    public CommandManager(WrappedArgumentService wrappedArgumentService, ArgumentService<SENDER> argumentService, Platform<SENDER> platform, CommandExecuteResultResolver<SENDER> resultResolver) {
+    public CommandManager(WrappedArgumentService wrappedArgumentService, ArgumentService<SENDER> argumentService, Platform<SENDER> platform, CommandExecuteResultResolver<SENDER> resultResolver, InjectBindRegistry<SENDER> injectBindRegistry) {
         this.wrappedArgumentService = wrappedArgumentService;
         this.argumentService = argumentService;
         this.platform = platform;
         this.resultResolver = resultResolver;
+        this.injectBindRegistry = injectBindRegistry;
     }
 
     public CommandRoute getRoot() {
@@ -62,6 +65,7 @@ public class CommandManager<SENDER> {
 
         if (lastFailedReason != null) {
             Object reason = lastFailedReason.getReason();
+
 
         }
     }
@@ -127,7 +131,7 @@ public class CommandManager<SENDER> {
         }
 
         private <EXPECTED> Result<Supplier<WrappedArgumentWrapper<EXPECTED>>, FailedReason> provideContextual(Invocation<SENDER> invocation, ExpectedContextual<EXPECTED> expectedContextual) {
-
+            injectBindRegistry
             return Result.error(FailedReason.of("Not supported")); //TODO search beans and contextual beans
         }
 

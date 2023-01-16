@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation;
+package dev.rollczi.litecommands.modern.extension.annotated;
 
 import dev.rollczi.litecommands.modern.LiteCommandsInternalBuilderPattern;
 import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;

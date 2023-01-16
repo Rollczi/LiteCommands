@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.method;
+package dev.rollczi.litecommands.modern.extension.annotated.executor;
 
 import dev.rollczi.litecommands.modern.command.CommandExecuteResult;
 import dev.rollczi.litecommands.modern.command.Invocation;
@@ -20,9 +20,9 @@ class MethodCommandExecutor implements CommandExecutor {
     private final Method method;
     private final Object instance;
     private final Class<?> returnType;
-    private final List<ExpectedContextual<?>> expectedContextual = new ArrayList<>();
+    private final List<ParameterContextual<?>> expectedContextual = new ArrayList<>();
 
-    MethodCommandExecutor(Method method, List<ExpectedContextual<?>> expectedContextual, Object instance) {
+    MethodCommandExecutor(Method method, List<ParameterContextual<?>> expectedContextual, Object instance) {
         this.method = method;
         this.instance = instance;
         this.expectedContextual.addAll(expectedContextual);
@@ -33,8 +33,8 @@ class MethodCommandExecutor implements CommandExecutor {
     public <SENDER> Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, WrappedArgumentProvider<SENDER> provider) {
         List<Supplier<WrappedArgumentWrapper<Object>>> suppliers = new ArrayList<>();
 
-        for (ExpectedContextual<?> contextual : expectedContextual) {
-            Result<Supplier<WrappedArgumentWrapper<Object>>, FailedReason> result = provider.provide(invocation, (ExpectedContextual<Object>) contextual);
+        for (ParameterContextual<?> parameterContextual : expectedContextual) {
+            Result<Supplier<WrappedArgumentWrapper<Object>>, FailedReason> result = provider.provide(invocation, (ExpectedContextual<Object>) parameterContextual);
 
             if (result.isErr()) {
                 return Result.error(result.getError());

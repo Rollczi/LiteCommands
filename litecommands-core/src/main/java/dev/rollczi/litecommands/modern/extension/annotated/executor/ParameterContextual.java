@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.method;
+package dev.rollczi.litecommands.modern.extension.annotated.executor;
 
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
 

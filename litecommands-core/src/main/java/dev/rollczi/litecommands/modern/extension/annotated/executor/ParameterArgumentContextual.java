@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.method;
+package dev.rollczi.litecommands.modern.extension.annotated.executor;
 
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContextual;
 
@@ -6,14 +6,14 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-public class AnnotatedParameterArgumentContextual<A extends Annotation, EXPECTED> extends ParameterContextual<EXPECTED> implements ArgumentContextual<A, EXPECTED> {
+public class ParameterArgumentContextual<A extends Annotation, EXPECTED> extends ParameterContextual<EXPECTED> implements ArgumentContextual<A, EXPECTED> {
 
-    private final AnnotatedParameterArgument<A> argument;
+    private final ParameterArgument<A> argument;
 
     private final A annotation;
     private final Class<A> annotationType;
 
-    AnnotatedParameterArgumentContextual(AnnotatedParameterArgument<A> argument, Parameter parameter, Method method, A annotation, Class<A> annotationType, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
+    ParameterArgumentContextual(ParameterArgument<A> argument, Parameter parameter, Method method, A annotation, Class<A> annotationType, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
         super(method, parameter, expectedType, expectedWrapperType);
         this.argument = argument;
         this.annotation = annotation;
@@ -21,7 +21,7 @@ public class AnnotatedParameterArgumentContextual<A extends Annotation, EXPECTED
     }
 
     @Override
-    public AnnotatedParameterArgument<A> getArgument() {
+    public ParameterArgument<A> getArgument() {
         return argument;
     }
 

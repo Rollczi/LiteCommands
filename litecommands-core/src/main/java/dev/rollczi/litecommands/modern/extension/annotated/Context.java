@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.injector;
+package dev.rollczi.litecommands.modern.extension.annotated;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,6 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.CONSTRUCTOR)
-public @interface Inject {
+@Target(ElementType.PARAMETER)
+public @interface Context {
 }
