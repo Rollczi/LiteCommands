@@ -26,18 +26,18 @@ class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        this.executeListener.execute(sender, new LiteInvocation(new BungeeSender(sender), commandSection.getName(), commandSection.getName(), args));
+        this.executeListener.execute(sender, new LiteInvocation(new BungeeSender(sender), this.commandSection.getName(), this.commandSection.getName(), args));
     }
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return suggestionListener.suggest(sender, new LiteInvocation(new BungeeSender(sender), commandSection.getName(), commandSection.getName(), args)).multilevelSuggestions();
+        return this.suggestionListener.suggest(sender, new LiteInvocation(new BungeeSender(sender), this.commandSection.getName(), this.commandSection.getName(), args)).multilevelSuggestions();
     }
 
     @Override
     public boolean hasPermission(CommandSender sender) {
 
-        if(this.nativePermissions) {
+        if (this.nativePermissions) {
             RequiredPermissions requiredPermissions = RequiredPermissions.of(this.commandSection.meta(), new BungeeSender(sender));
             return requiredPermissions.isEmpty();
         }

@@ -40,7 +40,7 @@ class VelocityCommand implements SimpleCommand {
     @Override
     public boolean hasPermission(Invocation invocation) {
 
-        if(this.nativePermissions) {
+        if (this.nativePermissions) {
             RequiredPermissions requiredPermissions = RequiredPermissions.of(this.commandSection.meta(), new VelocitySender(invocation.source()));
             return requiredPermissions.isEmpty();
         }
