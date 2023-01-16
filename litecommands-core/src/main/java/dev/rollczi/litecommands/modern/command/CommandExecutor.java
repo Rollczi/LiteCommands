@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.command;
 
 import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
-import dev.rollczi.litecommands.modern.command.argument.invocation.WrappedArgumentProvider;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentProvider;
 import panda.std.Result;
 
 public interface CommandExecutor {
