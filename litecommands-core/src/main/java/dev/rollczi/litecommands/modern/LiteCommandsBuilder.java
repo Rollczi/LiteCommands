@@ -5,94 +5,54 @@ import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
 import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.modern.platform.Platform;
 
 public interface LiteCommandsBuilder<SENDER, B extends LiteCommandsBuilder<SENDER, B>> {
 
-    <
-        EXPECTED,
-        ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>
-        > LiteCommandsBuilder<SENDER, B> argumentOnly(
-            Class<EXPECTED> type,
-            ARGUMENT argument
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsBuilder<SENDER, B> argumentOnly(
+        Class<T> type,
+        ARG argument
     );
 
-    <
-        EXPECTED,
-        ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>
-        > LiteCommandsBuilder<SENDER, B> argumentOnly(
-        Class<EXPECTED> type,
-        ARGUMENT argument,
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsBuilder<SENDER, B> argumentOnly(
+        Class<T> type,
+        ARG argument,
         ArgumentKey argumentKey
     );
 
-    <
-        EXPECTED,
-        ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> & SuggestionResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>
-        > LiteCommandsBuilder<SENDER, B> argument(
-            Class<EXPECTED> type,
-            ARGUMENT argument
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>> & SuggestionResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsBuilder<SENDER, B> argument(
+        Class<T> type,
+        ARG argument
     );
 
-    <
-        EXPECTED,
-        ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> & SuggestionResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>
-        > LiteCommandsBuilder<SENDER, B> argument(
-        Class<EXPECTED> type,
-        ARGUMENT argument,
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>> & SuggestionResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsBuilder<SENDER, B> argument(
+        Class<T> type,
+        ARG argument,
         ArgumentKey argumentKey
     );
 
-    <
-        DETERMINANT,
-        EXPECTED,
-        CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>,
-        ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>
-        > LiteCommandsBuilder<SENDER, B> argumentOnly(
-            Class<DETERMINANT> determinantType,
-            Class<EXPECTED> expectedType,
-            Class<CONTEXT> contextType,
-            ARGUMENT argument
-    );
-
-    <
-        DETERMINANT,
-        EXPECTED,
-        CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>,
-        ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>
-        > LiteCommandsBuilder<SENDER, B> argumentOnly(
-        Class<DETERMINANT> determinantType,
-        Class<EXPECTED> expectedType,
+    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT>> LiteCommandsBuilder<SENDER, B> argumentOnly(
+        Class<D> determinantType,
+        Class<T> expectedType,
         Class<CONTEXT> contextType,
-        ARGUMENT argument,
-        ArgumentKey argumentKey
+        ARG argument
     );
 
-    <
-        DETERMINANT,
-        EXPECTED,
-        CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>,
-        ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> & SuggestionResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>
-        > LiteCommandsBuilder<SENDER, B> argument(
-            Class<DETERMINANT> determinantType,
-            Class<EXPECTED> expectedType,
-            Class<CONTEXT> contextType,
-            ARGUMENT argument
-    );
-
-    <
-        DETERMINANT,
-        EXPECTED,
-        CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>,
-        ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> & SuggestionResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>
-        > LiteCommandsBuilder<SENDER, B> argument(
-        Class<DETERMINANT> determinantType,
-        Class<EXPECTED> expectedType,
+    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT>> LiteCommandsBuilder<SENDER, B> argumentOnly(
+        Class<D> determinantType,
+        Class<T> expectedType,
         Class<CONTEXT> contextType,
-        ARGUMENT argument,
+        ARG argument,
         ArgumentKey argumentKey
     );
 
-    <NEW_BUILDER extends LiteCommandsBuilder<SENDER, NEW_BUILDER>> NEW_BUILDER withExtension(LiteCommandsExtension<SENDER, NEW_BUILDER> extension);
+    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT> & SuggestionResolver<SENDER, D, T, CONTEXT>> LiteCommandsBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<CONTEXT> contextType, ARG argument);
+
+    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT> & SuggestionResolver<SENDER, D, T, CONTEXT>> LiteCommandsBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<CONTEXT> contextType, ARG argument, ArgumentKey argumentKey);
+
+    <NEW extends LiteCommandsBuilder<SENDER, NEW>> NEW withExtension(LiteCommandsExtension<SENDER, NEW> extension);
+
+    LiteCommandsBuilder<SENDER, B> platform(Platform<SENDER> platform);
 
     LiteCommands<SENDER> register();
 

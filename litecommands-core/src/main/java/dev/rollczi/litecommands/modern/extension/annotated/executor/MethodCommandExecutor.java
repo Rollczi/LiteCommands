@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.modern.extension.annotated.executor;
 
 import dev.rollczi.litecommands.modern.command.CommandExecuteResult;
-import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
+import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
-import dev.rollczi.litecommands.modern.command.argument.invocation.WrappedArgumentProvider;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentProvider;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
 import panda.std.Result;
 
@@ -33,7 +33,7 @@ class MethodCommandExecutor implements CommandExecutor {
     public <SENDER> Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, WrappedArgumentProvider<SENDER> provider) {
         List<Supplier<WrappedArgumentWrapper<Object>>> suppliers = new ArrayList<>();
 
-        for (ParameterContextual<?> parameterContextual : expectedContextual) {
+        for (ParameterContextual<?> parameterContextual : this.expectedContextual) {
             Result<Supplier<WrappedArgumentWrapper<Object>>, FailedReason> result = provider.provide(invocation, (ExpectedContextual<Object>) parameterContextual);
 
             if (result.isErr()) {
@@ -49,9 +49,9 @@ class MethodCommandExecutor implements CommandExecutor {
             .collect(Collectors.toList());
 
         try {
-            Object returnedValue = method.invoke(instance, objects.toArray());
+            Object returnedValue = this.method.invoke(this.instance, objects.toArray());
 
-            return Result.ok(CommandExecuteResult.success(returnedValue, returnType));
+            return Result.ok(CommandExecuteResult.success(returnedValue, this.returnType));
         } catch (Exception exception) {
             return Result.ok(CommandExecuteResult.failed(exception));
         }

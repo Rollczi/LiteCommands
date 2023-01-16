@@ -1,7 +1,7 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation;
+package dev.rollczi.litecommands.modern.command.contextual.warpped;
 
 import dev.rollczi.litecommands.modern.command.Invocation;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
 import panda.std.Result;
 
