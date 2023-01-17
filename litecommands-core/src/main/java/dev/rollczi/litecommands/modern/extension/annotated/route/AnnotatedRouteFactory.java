@@ -1,17 +1,27 @@
 package dev.rollczi.litecommands.modern.extension.annotated.route;
 
 import dev.rollczi.litecommands.modern.command.CommandRoute;
+import dev.rollczi.litecommands.modern.command.editor.CommandEditorContextStructurePiece;
+
+import java.lang.annotation.Annotation;
 
 public class AnnotatedRouteFactory {
 
-    private final AnnotatedRouteResolver annotatedRouteResolver;
+    private final AnnotatedRouteService annotatedRouteService;
 
-    public AnnotatedRouteFactory(AnnotatedRouteResolver annotatedRouteResolver) {
-        this.annotatedRouteResolver = annotatedRouteResolver;
+    public AnnotatedRouteFactory(AnnotatedRouteService annotatedRouteService) {
+        this.annotatedRouteService = annotatedRouteService;
     }
 
     public CommandRoute createRoute(Object instance) {
-        annotatedRouteResolver
+        Class<?> type = instance.getClass();
+        CommandEditorContextStructurePiece context = new CommandEditorContextStructurePiece();
+
+        for (Annotation annotation : type.getAnnotations()) {
+            annotatedRouteService.resolve(annotation, context);
+        }
+
+        return context.buildRoute();
     }
 
 

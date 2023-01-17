@@ -1,10 +1,11 @@
 package dev.rollczi.litecommands.modern.extension.annotated.route;
 
+import dev.rollczi.litecommands.modern.command.editor.CommandEditorContextStructurePiece;
+
 import java.lang.annotation.Annotation;
-import java.util.Map;
 
-public class AnnotatedRouteResolver {
+public interface AnnotatedRouteResolver {
 
-    private final Map<Class<? extends Annotation>, >
+    void resolve(Annotation annotation, CommandEditorContextStructurePiece context);
 
 }
