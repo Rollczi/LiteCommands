@@ -2,6 +2,7 @@ val coreArtifact by extra("core")
 val velocityArtifact by extra("velocity")
 val bukkitArtifact by extra("bukkit")
 val bukkitAdventureArtifact by extra("bukkit-adventure")
+val minestomArtifact by extra("minestom")
 val bungeeArtifact by extra("bungee")
 
 plugins {
@@ -31,6 +32,7 @@ subprojects {
 
         maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
         maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
+        maven { url = uri("https://jitpack.io/") }
         maven { url = uri("https://repo.panda-lang.org/releases/") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     }
