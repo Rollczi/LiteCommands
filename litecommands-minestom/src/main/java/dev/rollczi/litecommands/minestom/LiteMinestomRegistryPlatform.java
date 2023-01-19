@@ -60,7 +60,9 @@ class LiteMinestomRegistryPlatform implements RegistryPlatform<CommandSender> {
     public void unregisterListener(CommandSection<CommandSender> command) {
         Command commandToDelete = this.commandManager.getCommand(command.getName());
 
-        if(commandToDelete == null) return;
+        if (commandToDelete == null) {
+            return;
+        }
 
         this.commandManager.unregister(commandToDelete);
         this.commands.remove(command.getName());
