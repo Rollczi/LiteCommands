@@ -1,10 +1,10 @@
-package dev.rollczi.litecommands.modern.extension.annotated;
+package dev.rollczi.litecommands.modern.extension.annotation;
 
 import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
-import dev.rollczi.litecommands.modern.extension.annotated.executor.ParameterArgumentContextual;
+import dev.rollczi.litecommands.modern.extension.annotation.executor.ParameterArgumentContextual;
 
 import java.util.List;
 

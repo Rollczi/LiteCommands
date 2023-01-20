@@ -1,66 +1,135 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 abstract class CommandEditorContextBase implements CommandEditorContext {
 
-    protected String command;
-    protected List<String> aliases;
+    protected String name;
+    protected final List<String> aliases = new ArrayList<>();
+    protected final Map<String, CommandEditorContext> children = new HashMap<>();
+    protected boolean enabled = true;
+
+    protected CommandEditorContextDummy dummyPrefix;
 
     @Override
-    public CommandEditorContext name(String name) {
+    public @NotNull CommandEditorContext name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext aliases(List<String> aliases) {
+        this.aliases.clear();;
+        this.aliases.addAll(aliases);
+
+        return this;
+    }
+
+    @Override
+    public List<String> aliases() {
+        return Collections.unmodifiableList(aliases);
+    }
+
+    @Override
+    public @NotNull CommandEditorContext enable() {
+        this.enabled = true;
+        return this;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext disable() {
+        this.enabled = false;
+        return this;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext editChild(String name, UnaryOperator<CommandEditorContext> operator) {
+        CommandEditorContext child = children.get(name);
+        operator.apply(child);
+        children.put(name, child);
+        return this;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public CommandEditorContext routeName(String name) {
         name = name.trim();
 
         if (!name.contains(" ")) {
-            this.command = name;
+            this.name = name;
             return this;
         }
 
-        int separatorIndex = name.indexOf(" ");
-        this.command = name.substring(0, separatorIndex);
+        int separatorIndex = name.lastIndexOf(" ");
+        this.name = name.substring(separatorIndex + 1);
 
-        CommandEditorContextDummy structurePiece = new CommandEditorContextDummy(this);
+        String namePrefix = name.substring(0, separatorIndex);
 
-        return structurePiece.name(name.substring(separatorIndex + 1));
+        if (this.dummyPrefix == null) {
+            this.dummyPrefix = new CommandEditorContextDummy(this);
+        }
+
+        this.dummyPrefix.dummyName(namePrefix);
+        return this.dummyPrefix;
     }
-    
+
     @Override
-    public CommandEditorContext aliases(List<String> aliases) {
+    @ApiStatus.Internal
+    public CommandEditorContext routeAliases(List<String> aliases) {
         if (aliases.isEmpty()) {
             return this;
         }
-        
+
         int countDummy = countDummy(aliases.get(0));
-        
-        for (String alias : this.aliases) {
+
+        for (String alias : aliases) {
             validName(alias);
 
             if (countDummy(alias) != countDummy) {
                 throw new IllegalArgumentException("Aliases must have the same structure");
             }
         }
-        
+
         if (countDummy == 0) {
-            this.aliases = aliases;
+            this.aliases.clear();
+            this.aliases.addAll(aliases);
             return this;
         }
 
-        for (String alias : this.aliases) {
+        List<String> aliasesPrefix = new ArrayList<>();
+
+        for (String alias : aliases) {
             alias = alias.trim();
 
-            int separatorIndex = alias.indexOf(" ");
-            String command = alias.substring(0, separatorIndex);
+            int separatorIndex = alias.lastIndexOf(" ");
+            String command = alias.substring(separatorIndex + 1);
 
             this.aliases.add(command);
-
-            CommandEditorContextDummy structurePiece = new CommandEditorContextDummy(this);
-
-            structurePiece.name(alias.substring(separatorIndex + 1));
+            aliasesPrefix.add(alias.substring(0, separatorIndex));
         }
 
-        // TODO
+        if (this.dummyPrefix == null) {
+            this.dummyPrefix = new CommandEditorContextDummy(this);
+        }
+
+        this.dummyPrefix.dummyAliases(aliasesPrefix);
+        return this.dummyPrefix;
     }
-    
+
     private int countDummy(String name) {
         return name.split(" ").length - 1;
     }
@@ -74,5 +143,15 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
             throw new IllegalArgumentException("Name cannot start or end with space");
         }
     }
-    
+
+    @Override
+    @ApiStatus.Internal
+    public CommandEditorContext applyOnRoute(Function<CommandEditorContext, CommandEditorContext> apply) {
+        return apply.apply(this);
+    }
+
+    @Override
+    public boolean buildable() {
+        return false;
+    }
 }

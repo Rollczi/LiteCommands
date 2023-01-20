@@ -7,9 +7,10 @@ import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverRegistry.IndexKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
 import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.modern.extension.annotation.inject.InjectBindRegistry;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     protected final ArgumentService<SENDER> argumentService;
     protected final CommandExecuteResultResolver<SENDER> resultResolver;
-    protected final WrappedExpectedContextualService wrappedExpectedContextualService;
+    protected final WrappedArgumentService wrappedArgumentService;
 
     protected @Nullable Platform<SENDER> platform;
 
@@ -35,7 +36,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
             senderClass,
             new ArgumentService<>(),
             new CommandExecuteResultResolver<>(),
-            new WrappedExpectedContextualService(),
+            new WrappedArgumentService(),
             null
         );
     }
@@ -50,7 +51,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
             senderClass,
             new ArgumentService<>(),
             new CommandExecuteResultResolver<>(),
-            new WrappedExpectedContextualService(),
+            new WrappedArgumentService(),
             platform
         );
     }
@@ -70,19 +71,19 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      * @param senderClass            class of sender
      * @param argumentService        argument service
      * @param resultResolver         result resolver
-     * @param wrappedExpectedContextualService wrapped argument service
+     * @param wrappedArgumentService wrapped argument service
      */
     private LiteCommandsBaseBuilder(
         Class<SENDER> senderClass,
         ArgumentService<SENDER> argumentService,
         CommandExecuteResultResolver<SENDER> resultResolver,
-        WrappedExpectedContextualService wrappedExpectedContextualService,
+        WrappedArgumentService wrappedArgumentService,
         @Nullable Platform<SENDER> platform
     ) {
         this.senderClass = senderClass;
         this.argumentService = argumentService;
         this.resultResolver = resultResolver;
-        this.wrappedExpectedContextualService = wrappedExpectedContextualService;
+        this.wrappedArgumentService = wrappedArgumentService;
         this.platform = platform;
     }
 
@@ -164,7 +165,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     public LiteCommands<SENDER> register() {
-        CommandManager<SENDER> commandManager = new CommandManager<>(this.wrappedExpectedContextualService, this.argumentService, this.platform, this.resultResolver);
+        CommandManager<SENDER> commandManager = new CommandManager<>(this.wrappedArgumentService, this.argumentService, this.platform, this.resultResolver, new InjectBindRegistry<>());
 
 
         return new LiteCommandsBase<>(); //TODO add other stuff
@@ -190,8 +191,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     @ApiStatus.Internal
-    public WrappedExpectedContextualService getWrappedArgumentService() {
-        return this.wrappedExpectedContextualService;
+    public WrappedArgumentService getWrappedArgumentService() {
+        return this.wrappedArgumentService;
     }
 
     @Override
