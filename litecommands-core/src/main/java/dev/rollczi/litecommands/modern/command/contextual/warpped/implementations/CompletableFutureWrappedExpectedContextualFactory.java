@@ -1,18 +1,18 @@
 package dev.rollczi.litecommands.modern.command.contextual.warpped.implementations;
 
-import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentFactory;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualFactory;
 import panda.std.Option;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class CompletableFutureWrappedArgumentFactory implements WrappedArgumentFactory {
+public class CompletableFutureWrappedExpectedContextualFactory implements WrappedExpectedContextualFactory {
 
     @Override
-    public <EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(
+    public <EXPECTED> WrappedExpectedContextual<EXPECTED> wrap(
         ExpectedContextualProvider<EXPECTED> expectedContextualProvider,
         ExpectedContextual<EXPECTED> context
     ) {
@@ -22,7 +22,7 @@ public class CompletableFutureWrappedArgumentFactory implements WrappedArgumentF
     }
 
     @Override
-    public <EXPECTED> Option<WrappedArgumentWrapper<EXPECTED>> empty(ExpectedContextual<EXPECTED> context) {
+    public <EXPECTED> Option<WrappedExpectedContextual<EXPECTED>> empty(ExpectedContextual<EXPECTED> context) {
         return Option.none();
     }
 
@@ -31,7 +31,7 @@ public class CompletableFutureWrappedArgumentFactory implements WrappedArgumentF
         return CompletableFuture.class;
     }
 
-    private static class CompletableFutureWrapper<EXPECTED> implements WrappedArgumentWrapper<EXPECTED> {
+    private static class CompletableFutureWrapper<EXPECTED> implements WrappedExpectedContextual<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final CompletableFuture<EXPECTED> completableFuture;
@@ -43,12 +43,12 @@ public class CompletableFutureWrappedArgumentFactory implements WrappedArgumentF
 
         @Override
         public Object unwrap() {
-            return completableFuture;
+            return this.completableFuture;
         }
 
         @Override
         public Class<EXPECTED> getExpectedType() {
-            return expectedType;
+            return this.expectedType;
         }
 
     }

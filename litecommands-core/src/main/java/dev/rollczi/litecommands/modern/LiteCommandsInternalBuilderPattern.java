@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.modern;
 
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +19,7 @@ public interface LiteCommandsInternalBuilderPattern<SENDER> {
     CommandExecuteResultResolver<SENDER> getResultResolver();
 
     @ApiStatus.Internal
-    WrappedArgumentService getWrappedArgumentService();
+    WrappedExpectedContextualService getWrappedArgumentService();
 
     @Nullable
     @ApiStatus.Internal

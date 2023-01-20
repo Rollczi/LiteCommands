@@ -20,8 +20,8 @@ public class ArgumentService<SENDER> {
     ) {
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey = IndexKey.from(context, argumentKey);
 
-        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> resolver = resolverRegistry.getResolver(indexKey)
-            .orElseThrow(() -> new IllegalStateException("No resolver for " + context.getArgument()));
+        ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> resolver = this.resolverRegistry.getResolver(indexKey)
+            .orElseThrow(() -> new IllegalStateException("No resolver for " + context.getDeterminantType()));
 
 
         Option<? extends ArgumentResult<?>> lastResult = resolverContext.getLastArgumentResult();
@@ -55,7 +55,7 @@ public class ArgumentService<SENDER> {
         IndexKey<DETERMINANT, EXPECTED, CONTEXT> indexKey,
         ArgumentResolver<SENDER, DETERMINANT, EXPECTED, ? extends ArgumentContextual<DETERMINANT, EXPECTED>> resolver
     ) {
-        resolverRegistry.registerResolver(indexKey, resolver);
+        this.resolverRegistry.registerResolver(indexKey, resolver);
     }
 
 }

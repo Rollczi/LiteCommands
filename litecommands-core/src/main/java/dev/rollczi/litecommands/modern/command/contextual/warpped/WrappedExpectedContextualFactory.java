@@ -4,14 +4,14 @@ import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
 import panda.std.Option;
 
-public interface WrappedArgumentFactory {
+public interface WrappedExpectedContextualFactory {
 
-    <EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(
+    <EXPECTED> WrappedExpectedContextual<EXPECTED> wrap(
         ExpectedContextualProvider<EXPECTED> expectedContextualProvider,
         ExpectedContextual<EXPECTED> context
     );
 
-    <EXPECTED> Option<WrappedArgumentWrapper<EXPECTED>> empty(ExpectedContextual<EXPECTED> context);
+    <EXPECTED> Option<WrappedExpectedContextual<EXPECTED>> empty(ExpectedContextual<EXPECTED> context);
 
     Class<?> getWrapperType();
 

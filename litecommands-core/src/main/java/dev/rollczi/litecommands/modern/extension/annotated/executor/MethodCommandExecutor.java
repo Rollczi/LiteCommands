@@ -5,8 +5,8 @@ import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentProvider;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.ExpectedContextualWrapperProvider;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextual;
 import panda.std.Result;
 
 import java.lang.reflect.Method;
@@ -30,11 +30,11 @@ class MethodCommandExecutor implements CommandExecutor {
     }
 
     @Override
-    public <SENDER> Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, WrappedArgumentProvider<SENDER> provider) {
-        List<Supplier<WrappedArgumentWrapper<Object>>> suppliers = new ArrayList<>();
+    public <SENDER> Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, ExpectedContextualWrapperProvider<SENDER> provider) {
+        List<Supplier<WrappedExpectedContextual<Object>>> suppliers = new ArrayList<>();
 
         for (ParameterContextual<?> parameterContextual : this.expectedContextual) {
-            Result<Supplier<WrappedArgumentWrapper<Object>>, FailedReason> result = provider.provide(invocation, (ExpectedContextual<Object>) parameterContextual);
+            Result<Supplier<WrappedExpectedContextual<Object>>, FailedReason> result = provider.provide(invocation, (ExpectedContextual<Object>) parameterContextual);
 
             if (result.isErr()) {
                 return Result.error(result.getError());
@@ -45,7 +45,7 @@ class MethodCommandExecutor implements CommandExecutor {
 
         List<Object> objects = suppliers.stream()
             .map(Supplier::get)
-            .map(WrappedArgumentWrapper::unwrap)
+            .map(WrappedExpectedContextual::unwrap)
             .collect(Collectors.toList());
 
         try {

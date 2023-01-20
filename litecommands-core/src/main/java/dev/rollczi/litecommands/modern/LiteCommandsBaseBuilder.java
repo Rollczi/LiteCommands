@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverRegistry.IndexKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
 import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.modern.platform.Platform;
@@ -21,7 +21,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     protected final ArgumentService<SENDER> argumentService;
     protected final CommandExecuteResultResolver<SENDER> resultResolver;
-    protected final WrappedArgumentService wrappedArgumentService;
+    protected final WrappedExpectedContextualService wrappedExpectedContextualService;
 
     protected @Nullable Platform<SENDER> platform;
 
@@ -35,7 +35,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
             senderClass,
             new ArgumentService<>(),
             new CommandExecuteResultResolver<>(),
-            new WrappedArgumentService(),
+            new WrappedExpectedContextualService(),
             null
         );
     }
@@ -50,7 +50,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
             senderClass,
             new ArgumentService<>(),
             new CommandExecuteResultResolver<>(),
-            new WrappedArgumentService(),
+            new WrappedExpectedContextualService(),
             platform
         );
     }
@@ -70,19 +70,19 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      * @param senderClass            class of sender
      * @param argumentService        argument service
      * @param resultResolver         result resolver
-     * @param wrappedArgumentService wrapped argument service
+     * @param wrappedExpectedContextualService wrapped argument service
      */
     private LiteCommandsBaseBuilder(
         Class<SENDER> senderClass,
         ArgumentService<SENDER> argumentService,
         CommandExecuteResultResolver<SENDER> resultResolver,
-        WrappedArgumentService wrappedArgumentService,
+        WrappedExpectedContextualService wrappedExpectedContextualService,
         @Nullable Platform<SENDER> platform
     ) {
         this.senderClass = senderClass;
         this.argumentService = argumentService;
         this.resultResolver = resultResolver;
-        this.wrappedArgumentService = wrappedArgumentService;
+        this.wrappedExpectedContextualService = wrappedExpectedContextualService;
         this.platform = platform;
     }
 
@@ -164,7 +164,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     public LiteCommands<SENDER> register() {
-        CommandManager<SENDER> commandManager = new CommandManager<>(this.wrappedArgumentService, this.argumentService, this.platform, this.resultResolver);
+        CommandManager<SENDER> commandManager = new CommandManager<>(this.wrappedExpectedContextualService, this.argumentService, this.platform, this.resultResolver);
 
 
         return new LiteCommandsBase<>(); //TODO add other stuff
@@ -190,8 +190,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     @ApiStatus.Internal
-    public WrappedArgumentService getWrappedArgumentService() {
-        return this.wrappedArgumentService;
+    public WrappedExpectedContextualService getWrappedArgumentService() {
+        return this.wrappedExpectedContextualService;
     }
 
     @Override

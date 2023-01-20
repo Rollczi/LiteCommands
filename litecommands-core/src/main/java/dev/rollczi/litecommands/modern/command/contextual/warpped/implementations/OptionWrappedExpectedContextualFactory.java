@@ -1,26 +1,24 @@
 package dev.rollczi.litecommands.modern.command.contextual.warpped.implementations;
 
-import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.SuccessfulResult;
-import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentFactory;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextualProvider;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualFactory;
 import panda.std.Option;
 
 import java.util.function.Supplier;
 
-public class OptionWrappedArgumentFactory implements WrappedArgumentFactory {
+public class OptionWrappedExpectedContextualFactory implements WrappedExpectedContextualFactory {
 
     @Override
-    public <EXPECTED> WrappedArgumentWrapper<EXPECTED> wrap(ExpectedContextualProvider<EXPECTED> expectedContextualProvider, ExpectedContextual<EXPECTED> context) {
+    public <EXPECTED> WrappedExpectedContextual<EXPECTED> wrap(ExpectedContextualProvider<EXPECTED> expectedContextualProvider, ExpectedContextual<EXPECTED> context) {
         Class<EXPECTED> expectedType = context.getExpectedType();
 
         return new OptionWrapper<>(expectedType, expectedContextualProvider);
     }
 
     @Override
-    public <EXPECTED> Option<WrappedArgumentWrapper<EXPECTED>> empty(ExpectedContextual<EXPECTED> context) {
+    public <EXPECTED> Option<WrappedExpectedContextual<EXPECTED>> empty(ExpectedContextual<EXPECTED> context) {
         return Option.of(new OptionWrapper<>(context.getExpectedType(), () -> null));
     }
 
@@ -29,7 +27,7 @@ public class OptionWrappedArgumentFactory implements WrappedArgumentFactory {
         return Option.class;
     }
 
-    private static class OptionWrapper<EXPECTED> implements WrappedArgumentWrapper<EXPECTED> {
+    private static class OptionWrapper<EXPECTED> implements WrappedExpectedContextual<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<EXPECTED> expectedSupplier;
@@ -41,12 +39,12 @@ public class OptionWrappedArgumentFactory implements WrappedArgumentFactory {
 
         @Override
         public Option<EXPECTED> unwrap() {
-            return Option.of(expectedSupplier.get());
+            return Option.of(this.expectedSupplier.get());
         }
 
         @Override
         public Class<EXPECTED> getExpectedType() {
-            return expectedType;
+            return this.expectedType;
         }
     }
 

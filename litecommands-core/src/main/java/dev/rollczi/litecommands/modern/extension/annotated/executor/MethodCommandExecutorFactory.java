@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.extension.annotated.executor;
 
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
 import dev.rollczi.litecommands.shared.ReflectFormat;
 import panda.std.Option;
 
@@ -12,10 +12,10 @@ import java.util.List;
 
 public class MethodCommandExecutorFactory {
 
-    private final WrappedArgumentService wrappedArgumentService;
+    private final WrappedExpectedContextualService wrappedExpectedContextualService;
 
-    public MethodCommandExecutorFactory(WrappedArgumentService wrappedArgumentService) {
-        this.wrappedArgumentService = wrappedArgumentService;
+    public MethodCommandExecutorFactory(WrappedExpectedContextualService wrappedExpectedContextualService) {
+        this.wrappedExpectedContextualService = wrappedExpectedContextualService;
     }
 
     private MethodCommandExecutor create(Object instance, Method method) {
@@ -58,7 +58,7 @@ public class MethodCommandExecutorFactory {
         Class<?> expectedType = parameter.getType();
         Class<?> expectedWrapperType = expectedType;
 
-        if (wrappedArgumentService.isWrapper(expectedType)) {
+        if (this.wrappedExpectedContextualService.isWrapper(expectedType)) {
             Option<Class<?>> option = ParameterizedTypeUtils.extractType(parameter);
 
             if (option.isEmpty()) {
@@ -77,7 +77,7 @@ public class MethodCommandExecutorFactory {
         Class<?> expectedType = parameter.getType();
         Class<?> expectedWrapperType = expectedType;
 
-        if (wrappedArgumentService.isWrapper(expectedType)) {
+        if (this.wrappedExpectedContextualService.isWrapper(expectedType)) {
             Option<Class<?>> option = ParameterizedTypeUtils.extractType(parameter);
 
             if (option.isEmpty()) {
