@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotated.inject;
+package dev.rollczi.litecommands.modern.extension.annotation.inject;
 
 import dev.rollczi.litecommands.modern.command.Invocation;
 

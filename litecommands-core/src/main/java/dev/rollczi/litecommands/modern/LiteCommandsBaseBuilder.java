@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentServi
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
 import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.modern.extension.annotation.inject.InjectBindRegistry;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -164,7 +165,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     public LiteCommands<SENDER> register() {
-        CommandManager<SENDER> commandManager = new CommandManager<>(this.wrappedArgumentService, this.argumentService, this.platform, this.resultResolver);
+        CommandManager<SENDER> commandManager = new CommandManager<>(this.wrappedArgumentService, this.argumentService, this.platform, this.resultResolver, new InjectBindRegistry<>());
 
 
         return new LiteCommandsBase<>(); //TODO add other stuff

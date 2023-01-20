@@ -7,11 +7,11 @@ import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResul
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
 import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
 import dev.rollczi.litecommands.modern.command.argument.invocation.SuccessfulResult;
-import dev.rollczi.litecommands.modern.command.argument.invocation.WrappedArgumentProvider;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentProvider;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentWrapper;
-import dev.rollczi.litecommands.modern.extension.annotated.inject.InjectBindRegistry;
+import dev.rollczi.litecommands.modern.extension.annotation.inject.InjectBindRegistry;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import panda.std.Option;
 import panda.std.Result;
@@ -131,7 +131,6 @@ public class CommandManager<SENDER> {
         }
 
         private <EXPECTED> Result<Supplier<WrappedArgumentWrapper<EXPECTED>>, FailedReason> provideContextual(Invocation<SENDER> invocation, ExpectedContextual<EXPECTED> expectedContextual) {
-            injectBindRegistry
             return Result.error(FailedReason.of("Not supported")); //TODO search beans and contextual beans
         }
 

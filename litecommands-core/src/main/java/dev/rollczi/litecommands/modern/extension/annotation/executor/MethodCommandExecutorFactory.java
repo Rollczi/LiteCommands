@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotated.executor;
+package dev.rollczi.litecommands.modern.extension.annotation.executor;
 
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
 import dev.rollczi.litecommands.shared.ReflectFormat;

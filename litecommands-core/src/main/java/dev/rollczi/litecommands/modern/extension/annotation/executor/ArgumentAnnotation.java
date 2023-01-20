@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotated.executor;
+package dev.rollczi.litecommands.modern.extension.annotation.executor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

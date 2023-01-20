@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.modern;
 
 import dev.rollczi.litecommands.modern.command.api.StringArgument;
 import dev.rollczi.litecommands.modern.env.Sender;
-import dev.rollczi.litecommands.modern.extension.annotated.LiteCommandsAnnotationExtension;
+import dev.rollczi.litecommands.modern.extension.annotation.LiteCommandsAnnotationExtension;
 import org.junit.jupiter.api.Test;
 
 class TestModernImpl {
