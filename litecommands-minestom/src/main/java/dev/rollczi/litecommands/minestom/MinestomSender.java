@@ -18,11 +18,12 @@ class MinestomSender implements LiteSender {
 
     @Override
     public void sendMessage(String message) {
-        this.handle.sendMessage(StringHandler.MINI_MESSAGE.deserialize(message));
+        this.handle.sendMessage(StringHandler.SERIALIZER.deserialize(message));
     }
 
     @Override
     public Object getHandle() {
         return this.handle;
     }
+
 }

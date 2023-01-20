@@ -1,7 +1,6 @@
 dependencies {
     api(project(":litecommands-core"))
-    compileOnly("com.github.Minestom.Minestom:Minestom:c995f9c3a9")
-    compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
+    compileOnly("com.github.Minestom.Minestom:Minestom:1.19.3-SNAPSHOT")
 }
 
 val minestomArtifact: String by rootProject.extra

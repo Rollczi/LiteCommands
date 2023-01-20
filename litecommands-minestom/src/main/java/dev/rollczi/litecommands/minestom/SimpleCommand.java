@@ -11,6 +11,7 @@ import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentStringArray;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 
+import java.util.Arrays;
 import java.util.Set;
 
 class SimpleCommand extends Command {
@@ -26,27 +27,46 @@ class SimpleCommand extends Command {
         this.executeListener = executeListener;
         this.suggestionListener = suggestionListener;
 
-        ArgumentStringArray arguments = new ArgumentStringArray("args");
-
+        ArgumentStringArray arguments = new ArgumentStringArray("[...]");
+        arguments.setDefaultValue(new String[0]);
         arguments.setSuggestionCallback((sender, context, suggestionCallback) -> {
             String alias = context.getCommandName();
-            String[] args = context.get(arguments);
-            LiteInvocation liteInvocation = new LiteInvocation(new MinestomSender(sender), this.commandSection.getName(), alias, args);
+            String[] args = this.fixArguments(context.get(arguments));
+
+            LiteInvocation liteInvocation = this.createInvocation(sender, alias, args);
             Set<Suggestion> suggestions = this.suggestionListener.suggest(sender, liteInvocation).suggestions();
+
             for (Suggestion suggestion : suggestions) {
                 suggestionCallback.addEntry(new SuggestionEntry(suggestion.multilevel(), Component.empty()));
             }
         });
 
-        addSyntax(((sender, context) -> {
+        this.addSyntax(((sender, context) -> {
             String alias = context.getCommandName();
-            String[] args = context.get(arguments);
-            this.executeListener.execute(sender, new LiteInvocation(new MinestomSender(sender), this.commandSection.getName(), alias, args));
+            String[] args = this.fixArguments(context.get(arguments));
+
+            this.executeListener.execute(sender, this.createInvocation(sender, alias, args));
         }), arguments);
 
-        setDefaultExecutor(((sender, context) -> {
+        this.setDefaultExecutor(((sender, context) -> {
             String alias = context.getCommandName();
-            this.executeListener.execute(sender, new LiteInvocation(new MinestomSender(sender), this.commandSection.getName(), alias, alias));
+            this.executeListener.execute(sender, this.createInvocation(sender, alias));
         }));
     }
+
+    private LiteInvocation createInvocation(CommandSender sender, String alias, String... args) {
+        return new LiteInvocation(new MinestomSender(sender), this.commandSection.getName(), alias, args);
+    }
+
+    private String[] fixArguments(String[] args) {
+        // Minestom set null character to end of array
+        if (args.length > 0 && args[args.length - 1].equals("\u0000")) {
+            args = Arrays.copyOf(args, args.length);
+
+            args[args.length - 1] = "";
+        }
+
+        return args;
+    }
+
 }
