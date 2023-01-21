@@ -22,17 +22,19 @@ final class TypeUtils {
 
     static final String[] BOOLEAN_SUGGESTION = { "true", "false" };
 
-    private TypeUtils() {}
+    private TypeUtils() {
+    }
 
     static <T> Result<T, Blank> parse(Supplier<T> parse) {
         return Result.supplyThrowing(NumberFormatException.class, parse::get).mapErrToBlank();
     }
 
-    static List<Suggestion> suggestion(LiteInvocation invocation, String... suggestions) {
+    static List<Suggestion> suggestion(Function<String, ?> parse, LiteInvocation invocation, String... suggestions) {
         List<Suggestion> parsedSuggestions = new ArrayList<>(Suggestion.of(suggestions));
         Optional<Suggestion> optionalSuggestion = invocation.argument(invocation.arguments().length - 1)
-                .filter(argument -> !argument.isEmpty())
-                .map(Suggestion::of);
+            .filter(argument -> !argument.isEmpty())
+            .map(Suggestion::of)
+            .filter(argument -> validate(parse, argument));
 
         optionalSuggestion.ifPresent(parsedSuggestions::add);
 

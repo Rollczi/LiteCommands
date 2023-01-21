@@ -22,17 +22,17 @@ public abstract class AbstractBasicTypeArgument<T> implements OneArgument<T> {
 
     @Override
     public Result<T, Blank> parse(LiteInvocation invocation, String argument) {
-        return TypeUtils.parse(() -> parser.apply(argument));
+        return TypeUtils.parse(() -> this.parser.apply(argument));
     }
 
     @Override
     public List<Suggestion> suggest(LiteInvocation invocation) {
-        return TypeUtils.suggestion(invocation, this.suggestions.get());
+        return TypeUtils.suggestion(this.parser, invocation, this.suggestions.get());
     }
 
     @Override
     public boolean validate(LiteInvocation invocation, Suggestion suggestion) {
-        return TypeUtils.validate(parser, suggestion);
+        return TypeUtils.validate(this.parser, suggestion);
     }
 
 }
