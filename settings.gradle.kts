@@ -5,5 +5,11 @@ include(":litecommands-velocity")
 include(":litecommands-bukkit")
 include(":litecommands-bukkit-adventure")
 include(":litecommands-bungee")
-include(":litecommands-minestom")
+includeModule(":litecommands-minestom", JavaVersion.VERSION_17)
 include(":examples:bukkit")
+
+fun includeModule(projectPath : String, version : JavaVersion) {
+    if (JavaVersion.current().isCompatibleWith(version)) {
+        include(projectPath)
+    }
+}
