@@ -45,6 +45,15 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
     }
 
     @Override
+    public List<String> names() {
+        List<String> names = new ArrayList<>();
+        names.add(name);
+        names.addAll(aliases);
+
+        return Collections.unmodifiableList(names);
+    }
+
+    @Override
     public @NotNull CommandEditorContext enable() {
         this.enabled = true;
         return this;
