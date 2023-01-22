@@ -19,6 +19,8 @@ public interface CommandEditorContext {
 
     List<String> aliases();
 
+    List<String> names();
+
     @NotNull
     CommandEditorContext enable();
 
