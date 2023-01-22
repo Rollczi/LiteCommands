@@ -1,9 +1,13 @@
+plugins {
+    id("litecommands.java-conventions")
+}
+
 dependencies {
     api(project(":litecommands-core"))
     compileOnly("com.github.Minestom.Minestom:Minestom:1.19.3-SNAPSHOT")
 }
 
-val minestomArtifact: String by rootProject.extra
+val minestomArtifact: String by extra
 
 publishing {
     publications {

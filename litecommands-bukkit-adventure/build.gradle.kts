@@ -1,3 +1,7 @@
+plugins {
+    id("litecommands.java-conventions")
+}
+
 dependencies {
 
     api(project(":litecommands-core"))
@@ -10,7 +14,7 @@ dependencies {
 
 }
 
-val bukkitAdventureArtifact: String by rootProject.extra
+val bukkitAdventureArtifact: String by extra
 
 publishing {
     publications {

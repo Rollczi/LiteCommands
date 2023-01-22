@@ -1,10 +1,14 @@
+plugins {
+    id("litecommands.java-conventions")
+}
+
 dependencies {
     api(project(":litecommands-core"))
 
     compileOnly("com.velocitypowered:velocity-api:3.1.2-SNAPSHOT")
 }
 
-val velocityArtifact: String by rootProject.extra
+val velocityArtifact: String by extra
 
 publishing {
     publications {
