@@ -1,3 +1,7 @@
+plugins {
+    id("litecommands.java-conventions")
+}
+
 dependencies {
     api("org.panda-lang:expressible:1.2.2")
 
@@ -8,7 +12,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
-val coreArtifact: String by rootProject.extra
+val coreArtifact: String by extra
 
 publishing {
     publications {
