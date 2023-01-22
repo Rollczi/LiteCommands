@@ -13,19 +13,19 @@ public final class LitePaperAdventureFactory {
     }
 
     public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix) {
-        return builder(server, fallbackPrefix, false);
+        return builder(server, fallbackPrefix, false, false);
     }
 
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean supportsMiniMessage) {
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean nativePermissions, boolean supportsMiniMessage) {
         KyoriAudiencePaperProvider audienceAdventurePlatformProvider = new KyoriAudiencePaperProvider();
 
-        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, audienceAdventurePlatformProvider, supportsMiniMessage);
+        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, nativePermissions, audienceAdventurePlatformProvider, supportsMiniMessage);
     }
 
-    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
+    public static LiteCommandsBuilder<CommandSender> builder(Server server, String fallbackPrefix, boolean nativePermissions, ComponentSerializer<Component, ?, String> kyoriComponentSerializer) {
         KyoriAudiencePaperProvider audienceAdventurePlatformProvider = new KyoriAudiencePaperProvider();
 
-        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, audienceAdventurePlatformProvider, kyoriComponentSerializer);
+        return LiteBukkitAdventureFactory.builder(server, fallbackPrefix, nativePermissions, audienceAdventurePlatformProvider, kyoriComponentSerializer);
     }
 
 }

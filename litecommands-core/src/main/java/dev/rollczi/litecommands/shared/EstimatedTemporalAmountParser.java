@@ -110,7 +110,7 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
     }
 
     public EstimatedTemporalAmountParser<T> withUnit(String symbol, ChronoUnit chronoUnit) {
-        if (units.containsKey(symbol)) {
+        if (this.units.containsKey(symbol)) {
             throw new IllegalArgumentException("Symbol " + symbol + " is already used");
         }
 
@@ -118,13 +118,13 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
             throw new IllegalArgumentException("Symbol " + symbol + " contains non-letter characters");
         }
 
-        Map<String, ChronoUnit> newUnits = new LinkedHashMap<>(units);
+        Map<String, ChronoUnit> newUnits = new LinkedHashMap<>(this.units);
         newUnits.put(symbol, chronoUnit);
-        return new EstimatedTemporalAmountParser<>(newUnits, temporalAmountFactory, durationExtractor, baseForTimeEstimation);
+        return new EstimatedTemporalAmountParser<>(newUnits, this.temporalAmountFactory, this.durationExtractor, this.baseForTimeEstimation);
     }
 
     public EstimatedTemporalAmountParser<T> withBasisForTimeEstimation(BasisForTimeEstimation baseForTimeEstimation) {
-        return new EstimatedTemporalAmountParser<>(units, temporalAmountFactory, durationExtractor, baseForTimeEstimation);
+        return new EstimatedTemporalAmountParser<>(this.units, this.temporalAmountFactory, this.durationExtractor, baseForTimeEstimation);
     }
 
     private boolean validCharacters(String content, Predicate<Character> predicate) {
@@ -226,7 +226,7 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
             total = total.negated();
         }
 
-        return temporalAmountFactory.create(baseForTimeEstimation, total);
+        return this.temporalAmountFactory.create(this.baseForTimeEstimation, total);
     }
 
     private Duration parseDuration(String number, String unit) {
@@ -234,7 +234,7 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
             throw new IllegalArgumentException("Missing number before unit " + unit);
         }
 
-        ChronoUnit chronoUnit = units.get(unit);
+        ChronoUnit chronoUnit = this.units.get(unit);
 
         if (chronoUnit == null) {
             throw new IllegalArgumentException("Unknown unit " + unit);
@@ -244,7 +244,7 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
             long count = Long.parseLong(number);
 
             if (chronoUnit.isDurationEstimated()) {
-                LocalDateTime localDate = baseForTimeEstimation.get();
+                LocalDateTime localDate = this.baseForTimeEstimation.get();
                 LocalDateTime estimatedDate = localDate.plus(count, chronoUnit);
 
                 return Duration.between(localDate, estimatedDate);
@@ -260,33 +260,34 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
      * Formats the given estimated temporal amount to a string.
      * <p>
      *     Examples:
-     *     <ul>
-     *         <li>Duration of 30 seconds: {@code 30s}</li>
-     *         <li>Duration of 25 hours: {@code 1d1h}</li>
-     *         <li>Duration of 1 year, 2 months, 3 weeks, 4 days, 5 hours, 6 minutes and 7 seconds: {@code 1y2mo3w4d5h6m7s}</li>
-     *         <li>Duration of 1 hours and 61 minutes: {@code 2h1m}</li>
-     *         <li>Past duration of 1 hours and 61 minutes: {@code -2h1m}</li>
-     *         <li>Period of 1 year, 2 months, 4 days: {@code 1y2mo4d}</li>
-     *         <li>Past period of 1 year, 2 months, 4 days: {@code -1y2mo4d}</li>
-     *     </ul>
      * </p>
+     * <ul>
+     *     <li>Duration of 30 seconds: {@code 30s}</li>
+     *     <li>Duration of 25 hours: {@code 1d1h}</li>
+     *     <li>Duration of 1 year, 2 months, 3 weeks, 4 days, 5 hours, 6 minutes and 7 seconds: {@code 1y2mo3w4d5h6m7s}</li>
+     *     <li>Duration of 1 hours and 61 minutes: {@code 2h1m}</li>
+     *     <li>Past duration of 1 hours and 61 minutes: {@code -2h1m}</li>
+     *     <li>Period of 1 year, 2 months, 4 days: {@code 1y2mo4d}</li>
+     *     <li>Past period of 1 year, 2 months, 4 days: {@code -1y2mo4d}</li>
+     * </ul>
+     *
      * @param temporalAmount the temporal amount to format. Must not be null.
      * @return the formatted string
      */
     public String format(T temporalAmount) {
         StringBuilder builder = new StringBuilder();
-        Duration duration = durationExtractor.extract(baseForTimeEstimation, temporalAmount);
+        Duration duration = this.durationExtractor.extract(this.baseForTimeEstimation, temporalAmount);
 
         if (duration.isNegative()) {
             builder.append('-');
             duration = duration.negated();
         }
 
-        List<String> keys = new ArrayList<>(units.keySet());
+        List<String> keys = new ArrayList<>(this.units.keySet());
         Collections.reverse(keys);
 
         for (String key : keys) {
-            ChronoUnit chronoUnit = units.get(key);
+            ChronoUnit chronoUnit = this.units.get(key);
             Long part = UNIT_TO_NANO.get(chronoUnit);
 
             if (part == null) {

@@ -16,14 +16,16 @@ class LiteVelocityRegistryPlatform implements RegistryPlatform<CommandSource> {
 
     private final Set<String> commands = new HashSet<>();
     private final ProxyServer proxyServer;
+    private final boolean nativePermissions;
 
-    public LiteVelocityRegistryPlatform(ProxyServer proxyServer) {
+    public LiteVelocityRegistryPlatform(ProxyServer proxyServer, boolean nativePermissions) {
         this.proxyServer = proxyServer;
+        this.nativePermissions = nativePermissions;
     }
 
     @Override
     public void registerListener(CommandSection<CommandSource> command, ExecuteListener<CommandSource> listener, SuggestionListener<CommandSource> suggestionListener) {
-        VelocityCommand velocityCommand = new VelocityCommand(command.getName(), listener, suggestionListener);
+        VelocityCommand velocityCommand = new VelocityCommand(command, listener, suggestionListener, nativePermissions);
 
         CommandManager commandManager = this.proxyServer.getCommandManager();
         CommandMeta meta = commandManager.metaBuilder(command.getName())

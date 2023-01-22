@@ -24,26 +24,27 @@ public class ExamplePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.liteCommands = LiteBukkitFactory.builder(this.getServer(), "example-plugin")
-                // Arguments
-                .argumentMultilevel(Location.class, new LocationArgument())
-                .argument(World.class, new WorldArgument(this.getServer()))
-                .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), "&cNie ma takiego gracza!"))
+            // Arguments
+            .argumentMultilevel(Location.class, new LocationArgument())
+            .argument(World.class, new WorldArgument(this.getServer()))
+            .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), "&cNie ma takiego gracza!"))
 
-                // Contextual Bind
-                .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
+            // Contextual Bind
+            .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
 
-                // Commands
-                .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)
+            // Commands
+            .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)
 
-                // Handlers
-                .invalidUsageHandler(new InvalidUsage())
-                .permissionHandler(new PermissionMessage())
+            // Handlers
+            .invalidUsageHandler(new InvalidUsage())
+            .permissionHandler(new PermissionMessage())
 
-                .register();
+            .register();
     }
 
     @Override
     public void onDisable() {
         this.liteCommands.getPlatform().unregisterAll();
     }
+
 }

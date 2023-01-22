@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.shared.MapUtil;
+import org.jetbrains.annotations.ApiStatus;
 import panda.std.Option;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class ExecuteResultHandler<SENDER> {
     private SchematicFormat schematicFormat = SchematicFormat.ARGUMENT_ANGLED_OPTIONAL_SQUARE;
 
     public SchematicGenerator getSchematicGenerator() {
-        return schematicGenerator;
+        return this.schematicGenerator;
     }
 
     public void setSchematicGenerator(SchematicGenerator schematicGenerator) {
@@ -32,7 +33,7 @@ public class ExecuteResultHandler<SENDER> {
     }
 
     public SchematicFormat getSchematicFormat() {
-        return schematicFormat;
+        return this.schematicFormat;
     }
 
     public void handle(SENDER sender, LiteInvocation invocation, ExecuteResult result) {
@@ -43,7 +44,7 @@ public class ExecuteResultHandler<SENDER> {
                 return;
             }
 
-            object = this.schematicGenerator.generateSchematic(result.getBased(), schematicFormat);
+            object = this.schematicGenerator.generateSchematic(result.getBased(), this.schematicFormat);
         }
 
         if (object instanceof CompletableFuture<?>) {
@@ -65,7 +66,8 @@ public class ExecuteResultHandler<SENDER> {
         this.handleResult(sender, invocation, object);
     }
 
-    private void handleResult(SENDER sender, LiteInvocation invocation, Object object) {
+    @ApiStatus.Internal
+    public void handleResult(SENDER sender, LiteInvocation invocation, Object object) {
         Class<?> type = object.getClass();
         Option<Handler<SENDER, ?>> handlerOpt = MapUtil.findSuperTypeOf(type, this.handlers);
 
@@ -76,9 +78,9 @@ public class ExecuteResultHandler<SENDER> {
                 throw new IllegalStateException("Missing result handler for type " + type);
             }
 
-            Object to = handleRedirector(forwarding, object);
+            Object to = this.handleRedirector(forwarding, object);
             Handler<SENDER, ?> handler = MapUtil.findSuperTypeOf(to.getClass(), this.handlers)
-                    .orThrow(() -> new IllegalStateException("Missing result handler for type " + type + " or for redirected type " + to.getClass()));
+                .orThrow(() -> new IllegalStateException("Missing result handler for type " + type + " or for redirected type " + to.getClass()));
 
             this.handleHandler(handler, sender, invocation, to);
             return;

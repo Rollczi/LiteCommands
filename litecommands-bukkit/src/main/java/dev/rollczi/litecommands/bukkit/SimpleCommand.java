@@ -16,7 +16,8 @@ class SimpleCommand extends org.bukkit.command.Command {
     private final ExecuteListener<CommandSender> executeListener;
     private final SuggestionListener<CommandSender> suggestionListener;
 
-    public SimpleCommand(CommandSection<CommandSender> commandSection, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
+
+    SimpleCommand(CommandSection<CommandSender> commandSection, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
         super(commandSection.getName(), "", "/" + commandSection.getName(), new ArrayList<>(commandSection.getAliases()));
         this.commandSection = commandSection;
         this.executeListener = executeListener;
@@ -25,13 +26,13 @@ class SimpleCommand extends org.bukkit.command.Command {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        this.executeListener.execute(sender, new LiteInvocation(new BukkitSender(sender), commandSection.getName(), alias, args));
+        this.executeListener.execute(sender, new LiteInvocation(new BukkitSender(sender), this.commandSection.getName(), alias, args));
         return true;
     }
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        return this.suggestionListener.suggest(sender, new LiteInvocation(new BukkitSender(sender), commandSection.getName(), alias, args)).multilevelSuggestions();
+        return this.suggestionListener.suggest(sender, new LiteInvocation(new BukkitSender(sender), this.commandSection.getName(), alias, args)).multilevelSuggestions();
     }
 
 }

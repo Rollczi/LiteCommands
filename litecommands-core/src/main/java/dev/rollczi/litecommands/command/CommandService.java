@@ -30,30 +30,30 @@ public class CommandService<SENDER> {
     }
 
     public void register(CommandSection<SENDER> section) {
-        commands.put(section.getName(), section);
+        this.commands.put(section.getName(), section);
 
-        for (String label : section.getAliases()) {
-            commands.put(label, section);
+        for (String alias : section.getAliases()) {
+            this.commands.put(alias, section);
         }
 
-        platform.registerListener(
-                section,
-                (sender, invocation) -> {
-                    ExecuteResult result = section.execute(invocation.withHandle(sender));
+        this.platform.registerListener(
+            section,
+            (sender, invocation) -> {
+                ExecuteResult result = section.execute(invocation.withHandle(sender));
 
-                    this.handler.handle(sender, invocation, result);
-                    return result;
-                },
-                (sender, invocation) -> section.findSuggestion(invocation.withHandle(sender), 0).merge()
+                this.handler.handle(sender, invocation, result);
+                return result;
+            },
+            (sender, invocation) -> section.findSuggestion(invocation.withHandle(sender), 0).merge()
         );
     }
 
     public RegistryPlatform<SENDER> getPlatform() {
-        return platform;
+        return this.platform;
     }
 
     public ExecuteResultHandler<SENDER> getHandler() {
-        return handler;
+        return this.handler;
     }
 
 }
