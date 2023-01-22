@@ -35,7 +35,7 @@ publishing {
     repositories {
         mavenLocal()
 
-//        maven("panda", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD", false)
+        maven("panda", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD", false)
 
         maven(
             "eternalcode",
@@ -44,12 +44,12 @@ publishing {
             "ETERNAL_CODE_MAVEN_PASSWORD"
         )
 
-//        maven(
-//            "minecodes",
-//            "https://repository.minecodes.pl",
-//            "MINE_CODES_MAVEN_USERNAME",
-//            "MINE_CODES_MAVEN_PASSWORD",
-//        )
+        maven(
+            "minecodes",
+            "https://repository.minecodes.pl",
+            "MINE_CODES_MAVEN_USERNAME",
+            "MINE_CODES_MAVEN_PASSWORD",
+        )
     }
 }
 
