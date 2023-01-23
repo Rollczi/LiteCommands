@@ -8,7 +8,7 @@ include(":litecommands-bungee")
 include(":litecommands-minestom", JavaVersion.VERSION_17)
 include(":examples:bukkit")
 
-fun include(projectPath : String, version : JavaVersion) {
+fun include(projectPath: String, version: JavaVersion) {
     if (JavaVersion.current().isCompatibleWith(version)) {
         include(projectPath)
     }
