@@ -1,27 +1,34 @@
-package dev.rollczi.litecommands.modern.command.argument.invocation;
+package dev.rollczi.litecommands.modern.command;
 
-import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentContextual;
 import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
+import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverContext;
+import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResult;
+import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
+import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
+import dev.rollczi.litecommands.modern.command.argument.invocation.SuccessfulResult;
+import dev.rollczi.litecommands.modern.command.bind.BindRegistry;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.ExpectedContextualWrapperProvider;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualProvider;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
 import panda.std.Option;
 import panda.std.Result;
 
 import java.util.function.Supplier;
 
-public class CommandExpectedContextualWrapperProvider<SENDER> implements ExpectedContextualWrapperProvider<SENDER> {
+public class CommandWrappedExpectedContextualProvider<SENDER> implements WrappedExpectedContextualProvider<SENDER> {
 
     private final ArgumentService<SENDER> argumentService;
     private final WrappedExpectedContextualService wrappedExpectedContextualService;
+    private final BindRegistry<SENDER> bindRegistry;
 
     private ArgumentResolverContext<?> resolverContext = ArgumentResolverContext.create();
 
-    CommandExpectedContextualWrapperProvider(ArgumentService<SENDER> argumentService, WrappedExpectedContextualService wrappedExpectedContextualService) {
+    public CommandWrappedExpectedContextualProvider(ArgumentService<SENDER> argumentService, WrappedExpectedContextualService wrappedExpectedContextualService, BindRegistry<SENDER> bindRegistry) {
         this.argumentService = argumentService;
         this.wrappedExpectedContextualService = wrappedExpectedContextualService;
+        this.bindRegistry = bindRegistry;
     }
 
     @Override

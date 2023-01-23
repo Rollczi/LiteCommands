@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.analyzer;
+package dev.rollczi.litecommands.modern.extension.annotation.processor;
 
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
 
@@ -12,11 +12,11 @@ public class CommandAnnotationRegistry {
     private final Map<Class<? extends Annotation>, CommandAnnotationResolver<?>> resolvers = new HashMap<>();
 
     public <A extends Annotation> void registerResolver(Class<A> annotation, CommandAnnotationResolver<A> resolver) {
-        resolvers.put(annotation, resolver);
+        this.resolvers.put(annotation, resolver);
     }
 
     public <A extends Annotation> void replaceResolver(Class<A> annotation, Function<CommandAnnotationResolver<A>, CommandAnnotationResolver<A>> resolver) {
-        resolvers.replace(annotation, resolver.apply(this.getResolver(annotation)));
+        this.resolvers.replace(annotation, resolver.apply(this.getResolver(annotation)));
     }
 
     @SuppressWarnings("unchecked")
@@ -33,7 +33,7 @@ public class CommandAnnotationRegistry {
 
     @SuppressWarnings("unchecked")
     private <A extends Annotation> CommandAnnotationResolver<A> getResolver(Class<A> annotation) {
-        return (CommandAnnotationResolver<A>) resolvers.get(annotation);
+        return (CommandAnnotationResolver<A>) this.resolvers.get(annotation);
     }
 
 }

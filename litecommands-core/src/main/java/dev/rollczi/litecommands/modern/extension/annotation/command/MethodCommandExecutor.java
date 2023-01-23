@@ -1,12 +1,13 @@
-package dev.rollczi.litecommands.modern.extension.annotation.executor;
+package dev.rollczi.litecommands.modern.extension.annotation.command;
 
 import dev.rollczi.litecommands.modern.command.CommandExecuteResult;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.command.Invocation;
 import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.ExpectedContextualWrapperProvider;
 import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextual;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualProvider;
+import dev.rollczi.litecommands.modern.extension.annotation.command.contextual.ParameterContextual;
 import panda.std.Result;
 
 import java.lang.reflect.Method;
@@ -30,7 +31,7 @@ class MethodCommandExecutor implements CommandExecutor {
     }
 
     @Override
-    public <SENDER> Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, ExpectedContextualWrapperProvider<SENDER> provider) {
+    public <SENDER> Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, WrappedExpectedContextualProvider<SENDER> provider) {
         List<Supplier<WrappedExpectedContextual<Object>>> suppliers = new ArrayList<>();
 
         for (ParameterContextual<?> parameterContextual : this.expectedContextual) {

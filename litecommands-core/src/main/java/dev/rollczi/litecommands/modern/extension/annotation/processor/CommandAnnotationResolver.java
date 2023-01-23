@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.analyzer;
+package dev.rollczi.litecommands.modern.extension.annotation.processor;
 
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
 

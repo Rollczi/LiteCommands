@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.inject;
+package dev.rollczi.litecommands.modern.command.bind;
 
 import dev.rollczi.litecommands.modern.command.Invocation;
 
@@ -7,17 +7,17 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class InjectBindRegistry<SENDER> {
+public class BindRegistry<SENDER> {
 
     private final Map<Class<?>, Supplier<?>> instanceBindings = new HashMap<>();
     private final Map<Class<?>, Function<Invocation<SENDER>, ?>> contextualBindings = new HashMap<>();
 
     public <T> void bindInstance(Class<T> clazz, Supplier<T> supplier) {
-        instanceBindings.put(clazz, supplier);
+        this.instanceBindings.put(clazz, supplier);
     }
 
     public <T> void bindContextual(Class<T> clazz, Function<Invocation<SENDER>, T> supplier) {
-        contextualBindings.put(clazz, supplier);
+        this.contextualBindings.put(clazz, supplier);
     }
 
     @SuppressWarnings("unchecked")
@@ -28,13 +28,13 @@ public class InjectBindRegistry<SENDER> {
             return instance;
         }
 
-        Function<Invocation<SENDER>, T> contextualSupplier = (Function<Invocation<SENDER>, T>) contextualBindings.get(clazz);
+        Function<Invocation<SENDER>, T> contextualSupplier = (Function<Invocation<SENDER>, T>) this.contextualBindings.get(clazz);
 
         if (contextualSupplier != null) {
             return contextualSupplier.apply(invocation);
         }
 
-        for (Map.Entry<Class<?>, Function<Invocation<SENDER>, ?>> entry : contextualBindings.entrySet()) {
+        for (Map.Entry<Class<?>, Function<Invocation<SENDER>, ?>> entry : this.contextualBindings.entrySet()) {
             if (entry.getKey().isAssignableFrom(clazz)) {
                 return ((Function<Invocation<SENDER>, T>) entry.getValue()).apply(invocation);
             }
@@ -45,13 +45,13 @@ public class InjectBindRegistry<SENDER> {
 
     @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> clazz) {
-        Supplier<T> supplier = (Supplier<T>) instanceBindings.get(clazz);
+        Supplier<T> supplier = (Supplier<T>) this.instanceBindings.get(clazz);
 
         if (supplier != null) {
             return supplier.get();
         }
 
-        for (Map.Entry<Class<?>, Supplier<?>> entry : instanceBindings.entrySet()) {
+        for (Map.Entry<Class<?>, Supplier<?>> entry : this.instanceBindings.entrySet()) {
             if (clazz.isAssignableFrom(entry.getKey())) {
                 return (T) entry.getValue().get();
             }

@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.modern.extension.annotation.inject;
 
 import dev.rollczi.litecommands.modern.command.Invocation;
+import dev.rollczi.litecommands.modern.command.bind.BindRegistry;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -11,18 +12,18 @@ import java.util.stream.Collectors;
 
 public class Injector<SENDER> {
 
-    private final InjectBindRegistry<SENDER> registry;
+    private final BindRegistry<SENDER> registry;
 
-    public Injector(InjectBindRegistry<SENDER> registry) {
+    public Injector(BindRegistry<SENDER> registry) {
         this.registry = registry;
     }
 
     public <T> T createInstance(Class<T> type) {
-        return createInstance(type, registry::getInstance);
+        return this.createInstance(type, this.registry::getInstance);
     }
 
     public <T> T createInstance(Class<T> type, Invocation<SENDER> invocation) {
-        return createInstance(type, parameterType -> registry.getInstance(parameterType, invocation));
+        return this.createInstance(type, parameterType -> this.registry.getInstance(parameterType, invocation));
     }
 
     @SuppressWarnings("unchecked")

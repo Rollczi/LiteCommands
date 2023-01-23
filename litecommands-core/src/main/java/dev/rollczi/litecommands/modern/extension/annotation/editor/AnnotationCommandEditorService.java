@@ -2,15 +2,21 @@ package dev.rollczi.litecommands.modern.extension.annotation.editor;
 
 import dev.rollczi.litecommands.modern.command.editor.CommandEditor;
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
-import dev.rollczi.litecommands.modern.command.editor.CommandEditorRegistry;
+import dev.rollczi.litecommands.modern.command.editor.CommandEditorService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationCommandEditorRegistry extends CommandEditorRegistry {
+public class AnnotationCommandEditorService {
+
+    private final CommandEditorService pattern;
 
     private final Map<Class<?>, CommandEditor> editorsByClass = new HashMap<>();
     private final Map<String, CommandEditor> editorsByEditorName = new HashMap<>();
+
+    public AnnotationCommandEditorService(CommandEditorService pattern) {
+        this.pattern = pattern;
+    }
 
     public void registerEditor(Class<?> clazz, CommandEditor editor) {
         this.editorsByClass.put(clazz, editor);
@@ -18,11 +24,6 @@ public class AnnotationCommandEditorRegistry extends CommandEditorRegistry {
 
     public void registerEditorKey(String name, CommandEditor editor) {
         this.editorsByEditorName.put(name, editor);
-    }
-
-    @Override
-    public CommandEditorContext edit(CommandEditorContext context) {
-        throw new UnsupportedOperationException("Use edit(Object, CommandEditorContext) instead");
     }
 
     public CommandEditorContext edit(Object instance, CommandEditorContext context) {
@@ -33,13 +34,14 @@ public class AnnotationCommandEditorRegistry extends CommandEditorRegistry {
         }
 
         for (Editor editorAnnotation : instance.getClass().getAnnotationsByType(Editor.class)) {
-            CommandEditor commandEditor = editorsByEditorName.get(editorAnnotation.key());
+            CommandEditor commandEditor = this.editorsByEditorName.get(editorAnnotation.key());
 
             if (commandEditor != null) {
                 context = commandEditor.edit(context);
             }
         }
 
-        return context;
+        return this.pattern.edit(context);
     }
+
 }

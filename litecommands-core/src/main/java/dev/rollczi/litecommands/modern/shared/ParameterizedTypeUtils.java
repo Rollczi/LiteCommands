@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.executor;
+package dev.rollczi.litecommands.modern.shared;
 
 import panda.std.Option;
 
@@ -6,9 +6,12 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-final class ParameterizedTypeUtils {
+public final class ParameterizedTypeUtils {
 
-    static Option<Class<?>> extractType(Parameter parameter) {
+    private ParameterizedTypeUtils() {
+    }
+
+    public static Option<Class<?>> extractFirstType(Parameter parameter) {
         Type parameterizedType = parameter.getParameterizedType();
 
         if (parameterizedType instanceof ParameterizedType) {

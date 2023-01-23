@@ -7,22 +7,28 @@ import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverRegistry.IndexKey;
 import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedArgumentService;
+import dev.rollczi.litecommands.modern.command.bind.BindRegistry;
+import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.command.editor.CommandEditorContextRegistry;
+import dev.rollczi.litecommands.modern.command.editor.CommandEditorService;
 import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
-import dev.rollczi.litecommands.modern.extension.LiteCommandsExtension;
-import dev.rollczi.litecommands.modern.extension.annotation.inject.InjectBindRegistry;
+import dev.rollczi.litecommands.modern.extension.LiteExtension;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<SENDER, B>> implements LiteCommandsBuilder<SENDER, B>, LiteCommandsInternalBuilderPattern<SENDER> {
+import java.util.function.UnaryOperator;
+
+public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<SENDER, B>> implements LiteCommandsBuilder<SENDER, B>, LiteCommandsInternalPattern<SENDER> {
 
     protected final Class<SENDER> senderClass;
 
+    protected final CommandEditorService commandEditorService;
     protected final ArgumentService<SENDER> argumentService;
+    protected final BindRegistry<SENDER> bindRegistry;
+    protected final WrappedExpectedContextualService wrappedExpectedContextualService;
     protected final CommandExecuteResultResolver<SENDER> resultResolver;
-    protected final WrappedArgumentService wrappedArgumentService;
+    protected final CommandEditorContextRegistry commandEditorContextRegistry;
 
     protected @Nullable Platform<SENDER> platform;
 
@@ -32,13 +38,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      * @param senderClass class of sender
      */
     public LiteCommandsBaseBuilder(Class<SENDER> senderClass) {
-        this(
-            senderClass,
-            new ArgumentService<>(),
-            new CommandExecuteResultResolver<>(),
-            new WrappedArgumentService(),
-            null
-        );
+        this(senderClass, null);
     }
 
     /**
@@ -46,12 +46,15 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      *
      * @param senderClass class of sender
      */
-    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, @NotNull Platform<SENDER> platform) {
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER> platform) {
         this(
             senderClass,
+            new CommandEditorService(),
             new ArgumentService<>(),
+            new BindRegistry<>(),
+            new WrappedExpectedContextualService(),
             new CommandExecuteResultResolver<>(),
-            new WrappedArgumentService(),
+            new CommandEditorContextRegistry(),
             platform
         );
     }
@@ -61,29 +64,39 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      *
      * @param pattern pattern to copy
      */
-    protected LiteCommandsBaseBuilder(LiteCommandsInternalBuilderPattern<SENDER> pattern) {
-        this(pattern.getSenderClass(), pattern.getArgumentService(), pattern.getResultResolver(), pattern.getWrappedArgumentService(), pattern.getPlatform());
+    protected LiteCommandsBaseBuilder(LiteCommandsInternalPattern<SENDER> pattern) {
+        this(
+            pattern.getSenderClass(),
+            pattern.getCommandEditorService(),
+            pattern.getArgumentService(),
+            pattern.getBindRegistry(),
+            pattern.getWrappedExpectedContextualService(),
+            pattern.getResultResolver(),
+            pattern.getCommandContextRegistry(),
+            pattern.getPlatform()
+        );
     }
 
     /**
      * Base constructor
-     *
-     * @param senderClass            class of sender
-     * @param argumentService        argument service
-     * @param resultResolver         result resolver
-     * @param wrappedArgumentService wrapped argument service
      */
-    private LiteCommandsBaseBuilder(
+    protected LiteCommandsBaseBuilder(
         Class<SENDER> senderClass,
+        CommandEditorService commandEditorService,
         ArgumentService<SENDER> argumentService,
+        BindRegistry<SENDER> bindRegistry,
+        WrappedExpectedContextualService wrappedExpectedContextualService,
         CommandExecuteResultResolver<SENDER> resultResolver,
-        WrappedArgumentService wrappedArgumentService,
+        CommandEditorContextRegistry commandEditorContextRegistry,
         @Nullable Platform<SENDER> platform
     ) {
         this.senderClass = senderClass;
+        this.commandEditorService = commandEditorService;
         this.argumentService = argumentService;
+        this.bindRegistry = bindRegistry;
+        this.wrappedExpectedContextualService = wrappedExpectedContextualService;
         this.resultResolver = resultResolver;
-        this.wrappedArgumentService = wrappedArgumentService;
+        this.commandEditorContextRegistry = commandEditorContextRegistry;
         this.platform = platform;
     }
 
@@ -151,10 +164,17 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
         return this;
     }
 
+    @Override
+    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, B> withExtension(E extension) {
+        extension.extend((B) this);
+        return this;
+    }
 
     @Override
-    public <NEW_BUILDER extends LiteCommandsBuilder<SENDER, NEW_BUILDER>> NEW_BUILDER withExtension(LiteCommandsExtension<SENDER, NEW_BUILDER> extension) {
-        return extension.extend(this);
+    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, B> withExtension(E extension, UnaryOperator<E> configuration) {
+        extension = configuration.apply(extension);
+        extension.extend((B) this);
+        return this;
     }
 
     @Override
@@ -165,10 +185,17 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     public LiteCommands<SENDER> register() {
-        CommandManager<SENDER> commandManager = new CommandManager<>(this.wrappedArgumentService, this.argumentService, this.platform, this.resultResolver, new InjectBindRegistry<>());
+        CommandManager<SENDER> commandManager = new CommandManager<>(
+            this.wrappedExpectedContextualService,
+            this.argumentService,
+            this.platform,
+            this.resultResolver,
+            this.bindRegistry
+        );
 
 
-        return new LiteCommandsBase<>(); //TODO add other stuff
+
+        return new LiteCommandsBase<>(commandManager); //TODO add other stuff
     }
 
     @Override
@@ -179,8 +206,25 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
 
     @Override
     @ApiStatus.Internal
+    public CommandEditorService getCommandEditorService() {
+        return this.commandEditorService;
+    }
+
+    @Override
+    @ApiStatus.Internal
     public ArgumentService<SENDER> getArgumentService() {
         return this.argumentService;
+    }
+
+    @Override
+    public BindRegistry<SENDER> getBindRegistry() {
+        return this.bindRegistry;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public WrappedExpectedContextualService getWrappedExpectedContextualService() {
+        return this.wrappedExpectedContextualService;
     }
 
     @Override
@@ -190,9 +234,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    @ApiStatus.Internal
-    public WrappedArgumentService getWrappedArgumentService() {
-        return this.wrappedArgumentService;
+    public CommandEditorContextRegistry getCommandContextRegistry() {
+        return this.commandEditorContextRegistry;
     }
 
     @Override

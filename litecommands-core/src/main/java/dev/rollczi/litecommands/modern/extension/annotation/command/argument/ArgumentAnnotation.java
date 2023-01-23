@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation;
+package dev.rollczi.litecommands.modern.extension.annotation.command.argument;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,6 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Context {
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface ArgumentAnnotation {
 }

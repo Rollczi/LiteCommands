@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.extension.annotation.executor;
+package dev.rollczi.litecommands.modern.extension.annotation.command.contextual;
 
 import dev.rollczi.litecommands.modern.command.contextual.ExpectedContextual;
 
@@ -12,7 +12,7 @@ public class ParameterContextual<EXPECTED> implements ExpectedContextual<EXPECTE
     private final Class<EXPECTED> expectedType;
     private final Class<?> expectedWrapperType;
 
-    public ParameterContextual(Method method, Parameter parameter, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
+    ParameterContextual(Method method, Parameter parameter, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
         this.method = method;
         this.parameter = parameter;
         this.expectedType = expectedType;
@@ -21,20 +21,20 @@ public class ParameterContextual<EXPECTED> implements ExpectedContextual<EXPECTE
 
     @Override
     public Class<EXPECTED> getExpectedType() {
-        return expectedType;
+        return this.expectedType;
     }
 
     @Override
     public Class<?> getExpectedWrapperType() {
-        return expectedWrapperType;
+        return this.expectedWrapperType;
     }
 
     public Parameter getParameter() {
-        return parameter;
+        return this.parameter;
     }
 
     public Method getMethod() {
-        return method;
+        return this.method;
     }
 
 }

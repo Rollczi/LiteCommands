@@ -7,7 +7,7 @@ import panda.std.Result;
 
 import java.util.function.Supplier;
 
-public interface ExpectedContextualWrapperProvider<SENDER> {
+public interface WrappedExpectedContextualProvider<SENDER> {
 
     <EXPECTED> Result<Supplier<WrappedExpectedContextual<EXPECTED>>, FailedReason> provide(Invocation<SENDER> invocation, ExpectedContextual<EXPECTED> expectedContextual);
 
