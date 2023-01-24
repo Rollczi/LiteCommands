@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.annotation;
 
 import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
-import dev.rollczi.litecommands.modern.LiteCommandsCoreBuilder;
+import dev.rollczi.litecommands.modern.core.LiteCommandsCoreBuilder;
 import dev.rollczi.litecommands.modern.LiteCommandsInternalPattern;
 import dev.rollczi.litecommands.modern.annotation.editor.AnnotationCommandEditorService;
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorContextRegistry;

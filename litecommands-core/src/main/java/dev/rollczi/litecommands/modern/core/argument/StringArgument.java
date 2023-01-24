@@ -1,7 +1,8 @@
-package dev.rollczi.litecommands.modern.argument.api;
+package dev.rollczi.litecommands.modern.core.argument;
 
 import dev.rollczi.litecommands.modern.argument.ArgumentContextual;
 import dev.rollczi.litecommands.modern.argument.ArgumentResult;
+import dev.rollczi.litecommands.modern.argument.api.OneArgument;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 

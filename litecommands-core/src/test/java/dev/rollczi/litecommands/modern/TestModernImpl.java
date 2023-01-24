@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern;
 
-import dev.rollczi.litecommands.modern.argument.api.StringArgument;
+import dev.rollczi.litecommands.modern.core.argument.StringArgument;
 import dev.rollczi.litecommands.modern.env.Sender;
 import org.junit.jupiter.api.Test;
 
