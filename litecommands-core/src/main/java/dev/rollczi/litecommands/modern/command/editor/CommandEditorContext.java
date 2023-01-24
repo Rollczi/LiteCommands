@@ -4,7 +4,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public interface CommandEditorContext {
@@ -37,7 +36,7 @@ public interface CommandEditorContext {
     CommandEditorContext routeAliases(List<String> aliases);
 
     @ApiStatus.Internal
-    CommandEditorContext applyOnRoute(Function<CommandEditorContext, CommandEditorContext> apply);
+    CommandEditorContext applyOnRoute(UnaryOperator<CommandEditorContext> apply);
 
     @ApiStatus.Internal
     boolean buildable();

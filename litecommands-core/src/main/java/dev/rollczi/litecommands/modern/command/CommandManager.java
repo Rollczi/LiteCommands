@@ -1,9 +1,11 @@
 package dev.rollczi.litecommands.modern.command;
 
-import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
-import dev.rollczi.litecommands.modern.command.argument.invocation.FailedReason;
-import dev.rollczi.litecommands.modern.command.bind.BindRegistry;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.argument.ArgumentService;
+import dev.rollczi.litecommands.modern.argument.FailedReason;
+import dev.rollczi.litecommands.modern.bind.BindRegistry;
+import dev.rollczi.litecommands.modern.command.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import panda.std.Result;
 
@@ -15,17 +17,27 @@ public class CommandManager<SENDER> {
 
     private final Platform<SENDER> platform;
 
-    private final WrappedExpectedContextualService wrappedArgumentService;
+    private final CommandFilterService<SENDER> commandFilterService;
     private final ArgumentService<SENDER> argumentService;
-    private final CommandExecuteResultResolver<SENDER> resultResolver;
     private final BindRegistry<SENDER> bindRegistry;
+    private final WrappedExpectedContextualService wrappedArgumentService;
+    private final CommandExecuteResultResolver<SENDER> resultResolver;
 
-    public CommandManager(WrappedExpectedContextualService wrappedArgumentService, ArgumentService<SENDER> argumentService, Platform<SENDER> platform, CommandExecuteResultResolver<SENDER> resultResolver, BindRegistry<SENDER> bindRegistry) {
-        this.wrappedArgumentService = wrappedArgumentService;
-        this.argumentService = argumentService;
+    public CommandManager(
+        Platform<SENDER> platform,
+        WrappedExpectedContextualService wrappedArgumentService,
+        ArgumentService<SENDER> argumentService,
+        CommandExecuteResultResolver<SENDER> resultResolver,
+        BindRegistry<SENDER> bindRegistry,
+        CommandFilterService<SENDER> commandFilterService
+    ) {
         this.platform = platform;
-        this.resultResolver = resultResolver;
+
+        this.commandFilterService = commandFilterService;
+        this.argumentService = argumentService;
         this.bindRegistry = bindRegistry;
+        this.wrappedArgumentService = wrappedArgumentService;
+        this.resultResolver = resultResolver;
     }
 
     public CommandRoute getRoot() {
@@ -41,7 +53,7 @@ public class CommandManager<SENDER> {
         FailedReason lastFailedReason = null;
 
         for (CommandExecutor executor : commandRoute.getExecutors()) {
-            CommandWrappedExpectedContextualProvider<SENDER> provider = new CommandWrappedExpectedContextualProvider<>(this.argumentService, this.wrappedArgumentService, this.bindRegistry);
+            CommandContextualConverter<SENDER> provider = new CommandContextualConverter<>(this.argumentService, this.bindRegistry, this.wrappedArgumentService);
             Result<CommandExecuteResult, FailedReason> result = executor.execute(invocation, provider);
 
             if (result.isErr()) {

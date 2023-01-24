@@ -1,8 +1,7 @@
 package dev.rollczi.litecommands.modern;
 
-import dev.rollczi.litecommands.modern.command.api.StringArgument;
+import dev.rollczi.litecommands.modern.argument.api.StringArgument;
 import dev.rollczi.litecommands.modern.env.Sender;
-import dev.rollczi.litecommands.modern.extension.LiteExtension;
 import org.junit.jupiter.api.Test;
 
 class TestModernImpl {
@@ -14,18 +13,16 @@ class TestModernImpl {
     @Test
     void test() {
 
-        LiteCommands<Sender> liteCommands = LiteCommandsFactory.builder(Sender.class)
+        LiteCommands<Sender> register = LiteCommandsFactory.annotation(Sender.class)
+            .editor(new String())
+            .command()
+            .command()
+            .command()
             .argument(String.class, new StringArgument<>())
-
-            .withExtension(LiteExtension.annotation(), extension -> extension
-                .command(Command.class)
-            )
-
+            .argument(String.class, new StringArgument<>())
+            .command()
+            .filter()
             .register();
-
-
-        liteCommands.equals()
-
 
     }
 

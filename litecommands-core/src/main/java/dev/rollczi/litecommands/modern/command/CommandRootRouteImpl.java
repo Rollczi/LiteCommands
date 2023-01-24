@@ -3,13 +3,16 @@ package dev.rollczi.litecommands.modern.command;
 import dev.rollczi.litecommands.shared.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-class CommandRootRouteImpl implements CommandRoute {
+final class CommandRootRouteImpl implements CommandRoute {
 
-    private final List<CommandRoute> children = new ArrayList<>();
+    private final Map<String, CommandRoute> children = new HashMap<>();
 
     @Override
     public String getName() {
@@ -27,13 +30,35 @@ class CommandRootRouteImpl implements CommandRoute {
     }
 
     @Override
-    public List<CommandRoute> getChildren() {
-        return Collections.unmodifiableList(children);
+    public Collection<CommandRoute> getChildren() {
+        return Collections.unmodifiableCollection(this.children.values());
     }
 
     @Override
-    public List<CommandExecutor> getExecutors() {
+    public Optional<CommandRoute> getChildren(String name) {
+        CommandRoute route = this.children.get(name);
+
+        if (route != null) {
+            return Optional.of(route);
+        }
+
+        for (CommandRoute commandRoute : this.children.values()) {
+            if (commandRoute.isNameOrAlias(name)) {
+                return Optional.of(commandRoute);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Collection<CommandExecutor> getExecutors() {
         throw new UnsupportedOperationException("Can not get executors from the root route");
+    }
+
+    @Override
+    public Optional<CommandExecutor> getExecutor(CommandExecutorKey key) {
+        throw new UnsupportedOperationException("Can not get executor from the root route");
     }
 
     @Override
@@ -53,7 +78,7 @@ class CommandRootRouteImpl implements CommandRoute {
 
     @ApiStatus.Internal
     void appendToRoot(CommandRoute children) {
-        this.children.add(children);
+        this.children.put(children.getName(), children);
     }
 
 }

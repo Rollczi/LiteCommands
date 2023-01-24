@@ -1,22 +1,30 @@
 package dev.rollczi.litecommands.modern;
 
+import dev.rollczi.litecommands.modern.argument.ArgumentContextual;
+import dev.rollczi.litecommands.modern.argument.ArgumentKey;
+import dev.rollczi.litecommands.modern.argument.ArgumentResolver;
+import dev.rollczi.litecommands.modern.argument.ArgumentResolverRegistry.IndexKey;
+import dev.rollczi.litecommands.modern.argument.ArgumentService;
+import dev.rollczi.litecommands.modern.bind.Bind;
+import dev.rollczi.litecommands.modern.bind.BindContextual;
+import dev.rollczi.litecommands.modern.bind.BindRegistry;
+import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
+import dev.rollczi.litecommands.modern.command.CommandExecuteResultMapper;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.command.CommandManager;
-import dev.rollczi.litecommands.modern.command.argument.ArgumentContextual;
-import dev.rollczi.litecommands.modern.command.argument.ArgumentKey;
-import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolver;
-import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentResolverRegistry.IndexKey;
-import dev.rollczi.litecommands.modern.command.argument.invocation.ArgumentService;
-import dev.rollczi.litecommands.modern.command.bind.BindRegistry;
-import dev.rollczi.litecommands.modern.command.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.command.editor.CommandEditor;
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorService;
-import dev.rollczi.litecommands.modern.command.suggestion.SuggestionResolver;
-import dev.rollczi.litecommands.modern.extension.LiteExtension;
+import dev.rollczi.litecommands.modern.command.filter.CommandFilter;
+import dev.rollczi.litecommands.modern.command.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualFactory;
+import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
 import dev.rollczi.litecommands.modern.platform.Platform;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionResolver;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<SENDER, B>> implements LiteCommandsBuilder<SENDER, B>, LiteCommandsInternalPattern<SENDER> {
@@ -24,10 +32,12 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     protected final Class<SENDER> senderClass;
 
     protected final CommandEditorService commandEditorService;
+    protected final CommandFilterService<SENDER> commandFilterService;
     protected final ArgumentService<SENDER> argumentService;
     protected final BindRegistry<SENDER> bindRegistry;
     protected final WrappedExpectedContextualService wrappedExpectedContextualService;
     protected final CommandExecuteResultResolver<SENDER> resultResolver;
+
     protected final CommandEditorContextRegistry commandEditorContextRegistry;
 
     protected @Nullable Platform<SENDER> platform;
@@ -50,6 +60,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
         this(
             senderClass,
             new CommandEditorService(),
+            new CommandFilterService<>(),
             new ArgumentService<>(),
             new BindRegistry<>(),
             new WrappedExpectedContextualService(),
@@ -68,6 +79,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
         this(
             pattern.getSenderClass(),
             pattern.getCommandEditorService(),
+            pattern.getCommandFilterService(),
             pattern.getArgumentService(),
             pattern.getBindRegistry(),
             pattern.getWrappedExpectedContextualService(),
@@ -83,7 +95,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     protected LiteCommandsBaseBuilder(
         Class<SENDER> senderClass,
         CommandEditorService commandEditorService,
-        ArgumentService<SENDER> argumentService,
+        CommandFilterService<SENDER> commandFilterService, ArgumentService<SENDER> argumentService,
         BindRegistry<SENDER> bindRegistry,
         WrappedExpectedContextualService wrappedExpectedContextualService,
         CommandExecuteResultResolver<SENDER> resultResolver,
@@ -92,6 +104,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     ) {
         this.senderClass = senderClass;
         this.commandEditorService = commandEditorService;
+        this.commandFilterService = commandFilterService;
         this.argumentService = argumentService;
         this.bindRegistry = bindRegistry;
         this.wrappedExpectedContextualService = wrappedExpectedContextualService;
@@ -101,99 +114,158 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> LiteCommandsBuilder<SENDER, B> argumentOnly(Class<EXPECTED> type, ARGUMENT argument) {
+    public B editor(String command, CommandEditor commandEditor) {
+        this.commandEditorService.registerEditor(command, commandEditor);
+        return this.getThis();
+    }
+
+    @Override
+    public B globalEditor(CommandEditor commandEditor) {
+        this.commandEditorService.registerGlobalEditor(commandEditor);
+        return this.getThis();
+    }
+
+    @Override
+    public B filter(CommandFilter<SENDER> filter) {
+        this.commandFilterService.registerFilter(filter);
+        return this.getThis();
+    }
+
+    @Override
+    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> B argumentOnly(Class<EXPECTED> type, ARGUMENT argument) {
         IndexKey<Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> key = IndexKey.universal(type);
 
         this.argumentService.registerResolver(key, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> LiteCommandsBuilder<SENDER, B> argumentOnly(Class<EXPECTED> type, ARGUMENT argument, ArgumentKey argumentKey) {
+    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> B argumentOnly(Class<EXPECTED> type, ARGUMENT argument, ArgumentKey argumentKey) {
         IndexKey<Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> key = IndexKey.universal(type, argumentKey);
 
         this.argumentService.registerResolver(key, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> & SuggestionResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> LiteCommandsBuilder<SENDER, B> argument(Class<EXPECTED> type, ARGUMENT argument) {
+    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> & SuggestionResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> B argument(Class<EXPECTED> type, ARGUMENT argument) {
         IndexKey<Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> key = IndexKey.universal(type);
 
         this.argumentService.registerResolver(key, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> & SuggestionResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> LiteCommandsBuilder<SENDER, B> argument(Class<EXPECTED> type, ARGUMENT argument, ArgumentKey argumentKey) {
+    public <EXPECTED, ARGUMENT extends ArgumentResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> & SuggestionResolver<SENDER, Object, EXPECTED, ArgumentContextual<Object, EXPECTED>>> B argument(Class<EXPECTED> type, ARGUMENT argument, ArgumentKey argumentKey) {
         IndexKey<Object, EXPECTED, ArgumentContextual<Object, EXPECTED>> key = IndexKey.universal(type, argumentKey);
 
         this.argumentService.registerResolver(key, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> LiteCommandsBuilder<SENDER, B> argumentOnly(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument) {
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> B argumentOnly(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument) {
         IndexKey<DETERMINANT, EXPECTED, ArgumentContextual<DETERMINANT, EXPECTED>> indexKey = IndexKey.of(determinantType, expectedType, contextType);
 
         this.argumentService.registerResolver(indexKey, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> LiteCommandsBuilder<SENDER, B> argumentOnly(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument, ArgumentKey argumentKey) {
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> B argumentOnly(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument, ArgumentKey argumentKey) {
         IndexKey<DETERMINANT, EXPECTED, ArgumentContextual<DETERMINANT, EXPECTED>> indexKey = IndexKey.of(determinantType, expectedType, contextType, argumentKey);
 
         this.argumentService.registerResolver(indexKey, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> & SuggestionResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> LiteCommandsBuilder<SENDER, B> argument(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument) {
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> & SuggestionResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> B argument(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument) {
         IndexKey<DETERMINANT, EXPECTED, ArgumentContextual<DETERMINANT, EXPECTED>> indexKey = IndexKey.of(determinantType, expectedType, contextType);
 
         this.argumentService.registerResolver(indexKey, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> & SuggestionResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> LiteCommandsBuilder<SENDER, B> argument(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument, ArgumentKey argumentKey) {
+    public <DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>, ARGUMENT extends ArgumentResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT> & SuggestionResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT>> B argument(Class<DETERMINANT> determinantType, Class<EXPECTED> expectedType, Class<CONTEXT> contextType, ARGUMENT argument, ArgumentKey argumentKey) {
         IndexKey<DETERMINANT, EXPECTED, ArgumentContextual<DETERMINANT, EXPECTED>> indexKey = IndexKey.of(determinantType, expectedType, contextType, argumentKey);
 
         this.argumentService.registerResolver(indexKey, argument);
-        return this;
+        return this.getThis();
     }
 
     @Override
-    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, B> withExtension(E extension) {
-        extension.extend((B) this);
-        return this;
+    public <T> B typeBind(Class<T> on, Bind<T> bind) {
+        this.bindRegistry.bindInstance(on, bind);
+        return this.getThis();
     }
 
     @Override
-    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, B> withExtension(E extension, UnaryOperator<E> configuration) {
+    public <T> B typeBind(Class<T> on, Supplier<T> bind) {
+        this.bindRegistry.bindInstance(on, bind);
+        return this.getThis();
+    }
+
+    @Override
+    public B typeBindUnsafe(Class<?> on, Supplier<?> bind) {
+        this.bindRegistry.bindInstanceUnsafe(on, bind);
+        return this.getThis();
+    }
+
+    @Override
+    public <T> B contextualBind(Class<T> on, BindContextual<SENDER, T> bind) {
+        this.bindRegistry.bindContextual(on, bind);
+        return this.getThis();
+    }
+
+    @Override
+    public B wrappedExpectedContextualFactory(WrappedExpectedContextualFactory factory) {
+        this.wrappedExpectedContextualService.registerFactory(factory);
+        return this.getThis();
+    }
+
+    @Override
+    public <T> B resultHandler(Class<T> resultType, CommandExecuteResultHandler<SENDER, T> handler) {
+        this.resultResolver.registerHandler(resultType, handler);
+        return this.getThis();
+    }
+
+    @Override
+    public <T> B resultMapper(Class<T> mapperFromType, CommandExecuteResultMapper<SENDER, T, ?> mapper) {
+        this.resultResolver.registerMapper(mapperFromType, mapper);
+        return this.getThis();
+    }
+
+    @Override
+    public <E extends LiteExtension<SENDER>> B withExtension(E extension) {
+        extension.extend(this.getThis());
+        return this.getThis();
+    }
+
+    @Override
+    public <E extends LiteExtension<SENDER>> B withExtension(E extension, UnaryOperator<E> configuration) {
         extension = configuration.apply(extension);
-        extension.extend((B) this);
-        return this;
+        extension.extend(this.getThis());
+        return this.getThis();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, B> platform(Platform<SENDER> platform) {
+    public B platform(Platform<SENDER> platform) {
         this.platform = platform;
-        return this;
+        return this.getThis();
     }
 
     @Override
     public LiteCommands<SENDER> register() {
         CommandManager<SENDER> commandManager = new CommandManager<>(
+            this.platform,
             this.wrappedExpectedContextualService,
             this.argumentService,
-            this.platform,
             this.resultResolver,
-            this.bindRegistry
+            this.bindRegistry,
+            this.commandFilterService
         );
-
-
 
         return new LiteCommandsBase<>(commandManager); //TODO add other stuff
     }
@@ -208,6 +280,11 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     @ApiStatus.Internal
     public CommandEditorService getCommandEditorService() {
         return this.commandEditorService;
+    }
+
+    @Override
+    public CommandFilterService<SENDER> getCommandFilterService() {
+        return this.commandFilterService;
     }
 
     @Override
@@ -243,6 +320,11 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     @ApiStatus.Internal
     public Platform<SENDER> getPlatform() {
         return this.platform;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected B getThis() {
+        return (B) this;
     }
 
 }
