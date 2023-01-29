@@ -22,10 +22,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
 
@@ -43,16 +45,31 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
     }
 
     @Override
-    public Option<CommandSection<SENDER>> create(Object instance) {
+    public Option<List<CommandSection<SENDER>>> create(Object instance) {
         CommandState state = this.createState(instance);
 
-        if (state.getName() == null || state.getName().isEmpty() || state.isCanceled()) {
+        if (state.getName() == null || state.isCanceled()) {
             return Option.none();
         }
 
         CommandSection<SENDER> section = this.stateToSection(state, instance);
+        List<CommandSection<SENDER>> sections = this.unpackEmptySection(section);
 
-        return Option.of(section);
+        return Option.of(sections);
+    }
+
+    private List<CommandSection<SENDER>> unpackEmptySection(CommandSection<SENDER> section) {
+        if (section.getName().isEmpty()) {
+            if (!section.executors().isEmpty()) {
+                throw new IllegalStateException("Empty section cannot have executors without name");
+            }
+
+            return section.childrenSection().stream()
+                .flatMap(child -> this.unpackEmptySection(child).stream())
+                .collect(Collectors.toList());
+        }
+
+        return Collections.singletonList(section);
     }
 
     @Override
@@ -131,9 +148,10 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
         section = this.resolveStateOnSection(section, instance, state);
 
         PandaStream.of(instance.getClass().getDeclaredClasses())
-                .mapOpt(type -> Option.supplyThrowing(InjectException.class, () -> injector.createInstance(type)))
-                .mapOpt(this::create)
-                .forEach(section::childSection);
+            .mapOpt(type -> Option.supplyThrowing(InjectException.class, () -> this.injector.createInstance(type)))
+            .mapOpt(this::create)
+            .flatMap(commandSections -> commandSections)
+            .forEach(section::childSection);
 
         return section;
     }
