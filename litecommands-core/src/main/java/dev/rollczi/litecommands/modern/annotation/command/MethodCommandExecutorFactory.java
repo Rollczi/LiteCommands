@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.modern.annotation.command;
 import dev.rollczi.litecommands.modern.annotation.argument.ParameterArgumentContextualCreator;
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual;
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextualCreator;
+import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
 
 import java.lang.reflect.Method;
@@ -18,7 +19,7 @@ public class MethodCommandExecutorFactory {
     private MethodCommandExecutorFactory() {
     }
 
-    private MethodCommandExecutor create(Object instance, Method method) {
+    public CommandExecutor create(Object instance, Method method) {
         List<ParameterContextual<?>> expectedContextuals = new ArrayList<>();
 
         for (Parameter parameter : method.getParameters()) {

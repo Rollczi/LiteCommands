@@ -2,8 +2,6 @@ package dev.rollczi.litecommands.modern.command.meta;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 public class CommandKey<T> {
     
     private final String key;
@@ -17,16 +15,16 @@ public class CommandKey<T> {
     }
 
     String getKey() {
-        return key;
+        return this.key;
     }
     
     Class<T> getType() {
-        return type.getType();
+        return this.type.getType();
     }
     
     @Nullable
     T getDefaultValue() {
-        return defaultValue;
+        return this.defaultValue;
     }
 
     public static <T> CommandKey<T> of(String key, Class<T> type) {

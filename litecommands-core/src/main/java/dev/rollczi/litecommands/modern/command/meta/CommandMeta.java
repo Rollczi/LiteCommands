@@ -13,11 +13,11 @@ public class CommandMeta {
     private final Map<String, Object> meta = new HashMap<>();
 
     public <T> void set(CommandKey<T> key, T value) {
-        meta.put(key.getKey(), value);
+        this.meta.put(key.getKey(), value);
     }
 
     public <T> T get(CommandKey<T> key) {
-        return key.getType().cast(meta.getOrDefault(key.getKey(), key.getDefaultValue()));
+        return key.getType().cast(this.meta.getOrDefault(key.getKey(), key.getDefaultValue()));
     }
 
 }

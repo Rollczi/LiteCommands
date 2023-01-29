@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.modern.annotation.editor.AnnotationCommandEditor
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 public class CommandAnnotationProcessor {
 
@@ -20,7 +21,14 @@ public class CommandAnnotationProcessor {
         CommandEditorContext context = CommandEditorContext.empty();
 
         for (Annotation annotation : type.getAnnotations()) {
-            context = this.commandAnnotationRegistry.resolve(annotation, context);
+            context = this.commandAnnotationRegistry.resolve(instance, annotation, context);
+        }
+
+        for (Method method : type.getDeclaredMethods()) {
+            for (Annotation annotation : method.getAnnotations()) {
+                context = this.commandAnnotationRegistry.resolve(instance, annotation, context);
+                context = this.commandAnnotationRegistry.resolve(instance, method, annotation, context);
+            }
         }
 
         context = this.annotationCommandEditorRegistry.edit(instance, context);

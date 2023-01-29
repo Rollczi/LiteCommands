@@ -24,7 +24,7 @@ public interface CommandMetaType<T> {
 
         @Override
         public Class<T> getType() {
-            return type;
+            return this.type;
         }
 
     }
@@ -41,7 +41,7 @@ public interface CommandMetaType<T> {
 
         @Override
         public Class<ArrayList<T>> getType() {
-            return type;
+            return this.type;
         }
     }
 

@@ -19,21 +19,21 @@ public class CommandExecuteResult {
     public Option<Object> getResult() {
         Validation.isTrue(this.isSuccessful(), "Cannot get result when command failed");
 
-        return Option.of(result);
+        return Option.of(this.result);
     }
 
     public Exception getException() {
         Validation.isTrue(this.isFailed(), "Cannot get exception when command was successful");
 
-        return exception;
+        return this.exception;
     }
 
     public boolean isFailed() {
-        return exception != null;
+        return this.exception != null;
     }
 
     public boolean isSuccessful() {
-        return exception == null;
+        return this.exception == null;
     }
 
     public static CommandExecuteResult success(@Nullable Object result, Class<?> resultType) {

@@ -75,7 +75,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      *
      * @param pattern pattern to copy
      */
-    protected LiteCommandsBaseBuilder(LiteCommandsInternalPattern<SENDER> pattern) {
+    public LiteCommandsBaseBuilder(LiteCommandsInternalPattern<SENDER> pattern) {
         this(
             pattern.getSenderClass(),
             pattern.getCommandEditorService(),

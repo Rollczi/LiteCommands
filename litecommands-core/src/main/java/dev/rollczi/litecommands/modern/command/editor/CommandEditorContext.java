@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
+import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,15 @@ public interface CommandEditorContext {
 
     @NotNull
     CommandEditorContext editChild(String name, UnaryOperator<CommandEditorContext> operator);
+
+    @NotNull
+    CommandEditorContext appendChild(String name, UnaryOperator<CommandEditorContext> operator);
+
+    @NotNull
+    CommandEditorContext appendChild(CommandEditorContext context);
+
+    @NotNull
+    CommandEditorContext appendExecutor(CommandExecutor executor);
 
     @ApiStatus.Internal
     CommandEditorContext routeName(String name);

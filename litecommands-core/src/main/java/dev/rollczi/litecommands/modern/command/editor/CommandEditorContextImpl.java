@@ -3,9 +3,6 @@ package dev.rollczi.litecommands.modern.command.editor;
 import dev.rollczi.litecommands.modern.command.CommandRoute;
 import dev.rollczi.litecommands.modern.command.meta.CommandMeta;
 
-import java.util.HashMap;
-import java.util.Map;
-
 class CommandEditorContextImpl extends CommandEditorContextBase implements CommandEditorContext {
 
     private String command;

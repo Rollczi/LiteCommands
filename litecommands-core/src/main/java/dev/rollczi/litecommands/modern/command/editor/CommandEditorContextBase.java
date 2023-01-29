@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
+import dev.rollczi.litecommands.modern.command.CommandExecutor;
+import dev.rollczi.litecommands.modern.command.CommandExecutorKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,7 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 abstract class CommandEditorContextBase implements CommandEditorContext {
@@ -16,6 +17,7 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
     protected String name;
     protected final List<String> aliases = new ArrayList<>();
     protected final Map<String, CommandEditorContext> children = new HashMap<>();
+    protected final Map<CommandExecutorKey, CommandExecutor> executors = new HashMap<>();
     protected boolean enabled = true;
 
     protected CommandEditorContextDummy dummyPrefix;
@@ -28,12 +30,12 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
 
     @Override
     public String name() {
-        return name;
+        return this.name;
     }
 
     @Override
     public @NotNull CommandEditorContext aliases(List<String> aliases) {
-        this.aliases.clear();;
+        this.aliases.clear();
         this.aliases.addAll(aliases);
 
         return this;
@@ -41,14 +43,14 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
 
     @Override
     public List<String> aliases() {
-        return Collections.unmodifiableList(aliases);
+        return Collections.unmodifiableList(this.aliases);
     }
 
     @Override
     public List<String> names() {
         List<String> names = new ArrayList<>();
-        names.add(name);
-        names.addAll(aliases);
+        names.add(this.name);
+        names.addAll(this.aliases);
 
         return Collections.unmodifiableList(names);
     }
@@ -67,9 +69,35 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
 
     @Override
     public @NotNull CommandEditorContext editChild(String name, UnaryOperator<CommandEditorContext> operator) {
-        CommandEditorContext child = children.get(name);
-        operator.apply(child);
-        children.put(name, child);
+        CommandEditorContext child = this.children.get(name);
+
+        if (child == null) {
+            throw new IllegalArgumentException("Child " + name + " not found");
+        }
+
+        child = operator.apply(child);
+        this.children.put(name, child);
+        return this;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext appendChild(String name, UnaryOperator<CommandEditorContext> operator) {
+        CommandEditorContext child = new CommandEditorContextImpl();
+
+        child = operator.apply(child);
+        this.children.put(name, child);
+        return this;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext appendChild(CommandEditorContext context) {
+        this.children.put(context.name(), context);
+        return this;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext appendExecutor(CommandExecutor executor) {
+        this.executors.put(executor.getKey(), executor);
         return this;
     }
 
@@ -103,12 +131,12 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
             return this;
         }
 
-        int countDummy = countDummy(aliases.get(0));
+        int countDummy = this.countDummy(aliases.get(0));
 
         for (String alias : aliases) {
-            validName(alias);
+            this.validName(alias);
 
-            if (countDummy(alias) != countDummy) {
+            if (this.countDummy(alias) != countDummy) {
                 throw new IllegalArgumentException("Aliases must have the same structure");
             }
         }
@@ -155,7 +183,7 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
 
     @Override
     @ApiStatus.Internal
-    public CommandEditorContext applyOnRoute(Function<CommandEditorContext, CommandEditorContext> apply) {
+    public CommandEditorContext applyOnRoute(UnaryOperator<CommandEditorContext> apply) {
         return apply.apply(this);
     }
 

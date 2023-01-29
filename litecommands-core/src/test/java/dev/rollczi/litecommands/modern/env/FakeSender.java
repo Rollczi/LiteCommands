@@ -1,5 +1,5 @@
 package dev.rollczi.litecommands.modern.env;
 
-public class Sender {
+public class FakeSender {
 
 }

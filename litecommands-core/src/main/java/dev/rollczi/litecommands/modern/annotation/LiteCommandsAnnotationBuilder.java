@@ -3,6 +3,8 @@ package dev.rollczi.litecommands.modern.annotation;
 import dev.rollczi.litecommands.modern.LiteCommands;
 import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
 import dev.rollczi.litecommands.modern.LiteExtension;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationResolver;
 import dev.rollczi.litecommands.modern.argument.ArgumentContextual;
 import dev.rollczi.litecommands.modern.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.argument.ArgumentResolver;
@@ -16,6 +18,7 @@ import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContext
 import dev.rollczi.litecommands.modern.platform.Platform;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionResolver;
 
+import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -24,6 +27,14 @@ public interface LiteCommandsAnnotationBuilder<SENDER, B extends LiteCommandsAnn
     LiteCommandsAnnotationBuilder<SENDER, B> command(Object... commands);
 
     LiteCommandsAnnotationBuilder<SENDER, B> command(Class<?>... commands);
+
+    <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationResolver<A> resolver);
+
+    <A extends Annotation> B annotation(Class<A> annotation, UnaryOperator<CommandAnnotationResolver<A>> resolver);
+
+    <A extends Annotation> B annotationMethod(Class<A> annotation, CommandAnnotationMethodResolver<A> resolver);
+
+    <A extends Annotation> B annotationMethod(Class<A> annotation, UnaryOperator<CommandAnnotationMethodResolver<A>> resolver);
 
     @Override
     LiteCommandsAnnotationBuilder<SENDER, B> editor(String command, CommandEditor commandEditor);

@@ -6,6 +6,6 @@ import java.lang.annotation.Annotation;
 
 public interface CommandAnnotationResolver<A extends Annotation> {
 
-    CommandEditorContext process(A annotation, CommandEditorContext context);
+    CommandEditorContext resolve(Object instance, A annotation, CommandEditorContext context);
 
 }

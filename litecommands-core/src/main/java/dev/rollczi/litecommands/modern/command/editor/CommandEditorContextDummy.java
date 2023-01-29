@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.modern.command.editor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 class CommandEditorContextDummy extends CommandEditorContextBase implements CommandEditorContext {
@@ -24,12 +23,12 @@ class CommandEditorContextDummy extends CommandEditorContextBase implements Comm
 
     @Override
     public CommandEditorContext routeName(String name) {
-        return parent.routeName(name);
+        return this.parent.routeName(name);
     }
 
     @Override
     public CommandEditorContext routeAliases(List<String> aliases) {
-        return parent.routeAliases(aliases);
+        return this.parent.routeAliases(aliases);
     }
 
     @Override
@@ -39,8 +38,8 @@ class CommandEditorContextDummy extends CommandEditorContextBase implements Comm
     }
 
     @Override
-    public CommandEditorContext applyOnRoute(Function<CommandEditorContext, CommandEditorContext> apply) {
-        this.parent = parent.applyOnRoute(apply);
+    public CommandEditorContext applyOnRoute(UnaryOperator<CommandEditorContext> apply) {
+        this.parent = this.parent.applyOnRoute(apply);
         return this;
     }
 }

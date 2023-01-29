@@ -45,7 +45,7 @@ public class CommandManager<SENDER> {
     }
 
     public void registerCommand(CommandRoute commandRoute) {
-        this.platform.registerCommandExecuteListener(invocation -> {});
+        this.platform.registerExecuteListener(commandRoute, invocation -> {});
     }
 
     private void execute(Invocation<SENDER> invocation) {
