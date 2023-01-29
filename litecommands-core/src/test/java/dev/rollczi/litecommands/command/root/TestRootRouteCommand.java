@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.test.TestFactory;
 import dev.rollczi.litecommands.test.TestPlatform;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static dev.rollczi.litecommands.test.Assert.assertCollection;
 
@@ -39,7 +39,7 @@ class TestRootRouteCommand {
             .assertInvalid()
             .assertResultIs(RequiredPermissions.class);
 
-        assertCollection(List.of("reply"), permissions.getPermissions());
+        assertCollection(Arrays.asList("reply"), permissions.getPermissions());
     }
 
 
