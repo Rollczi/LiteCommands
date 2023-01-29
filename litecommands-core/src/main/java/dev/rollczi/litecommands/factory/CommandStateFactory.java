@@ -4,10 +4,11 @@ import dev.rollczi.litecommands.command.section.CommandSection;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 public interface CommandStateFactory<SENDER> {
 
-    Option<CommandSection<SENDER>> create(Object instance);
+    Option<List<CommandSection<SENDER>>> create(Object instance);
 
     <A extends Annotation> void annotationResolver(FactoryAnnotationResolver<A> resolver);
 

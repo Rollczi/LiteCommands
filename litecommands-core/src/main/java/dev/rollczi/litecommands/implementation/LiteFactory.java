@@ -50,6 +50,7 @@ import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.permission.ExecutedPermission;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.permission.RequiredPermissions;
+import dev.rollczi.litecommands.command.root.RootRoute;
 import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.handle.Redirector;
@@ -95,6 +96,7 @@ public final class LiteFactory {
             .configureFactory(factory -> {
                 factory.annotationResolver(Section.RESOLVER);
                 factory.annotationResolver(Route.RESOLVER);
+                factory.annotationResolver(RootRoute.RESOLVER);
                 factory.annotationResolver(Execute.RESOLVER);
                 factory.annotationResolver(Permission.RESOLVER);
                 factory.annotationResolver(Permission.REPEATABLE_RESOLVER);

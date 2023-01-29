@@ -269,24 +269,26 @@ final class LiteCommandsBuilderImpl<SENDER> implements LiteCommandsBuilder<SENDE
 
         List<CommandSection<SENDER>> commandSections = new ArrayList<>();
 
-        root:
         for (Object instance : this.commandsInstances) {
-            Option<CommandSection<SENDER>> option = this.commandStateFactory.create(instance);
+            Option<List<CommandSection<SENDER>>> listOption = this.commandStateFactory.create(instance);
 
-            if (option.isEmpty()) {
+            if (listOption.isEmpty()) {
                 continue;
             }
 
-            CommandSection<SENDER> currentCommand = option.get();
+            List<CommandSection<SENDER>> currentCommands = listOption.get();
 
-            for (CommandSection<SENDER> commandSection : commandSections) {
-                if (commandSection.isSimilar(currentCommand.getName())) {
-                    commandSection.mergeSection(currentCommand);
-                    continue root;
+            root:
+            for (CommandSection<SENDER> currentCommand : currentCommands) {
+                for (CommandSection<SENDER> commandSection : commandSections) {
+                    if (commandSection.isSimilar(currentCommand.getName())) {
+                        commandSection.mergeSection(currentCommand);
+                        continue root;
+                    }
                 }
-            }
 
-            commandSections.add(currentCommand);
+                commandSections.add(currentCommand);
+            }
         }
 
         for (CommandSection<SENDER> commandSection : commandSections) {
