@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api("org.panda-lang:expressible:1.2.2")
+    api("org.jetbrains:annotations:16.0.2")
 
     testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
