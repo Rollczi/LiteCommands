@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface SuggestionResolver<SENDER, DETERMINANT, EXPECTED, CONTEXT extends ArgumentContextual<DETERMINANT, EXPECTED>> extends WithCountRange {
 
-    List<Suggestion> suggestion(Invocation<SENDER> invocation, CONTEXT context);
+    List<Suggestion> suggestion(Invocation<SENDER> invocation, CONTEXT context, Suggestion suggestion);
 
     default boolean validate(Invocation<SENDER> invocation, CONTEXT context) {
         return false;

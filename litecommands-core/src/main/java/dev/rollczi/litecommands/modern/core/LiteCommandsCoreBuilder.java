@@ -1,4 +1,6 @@
-package dev.rollczi.litecommands.modern;
+package dev.rollczi.litecommands.modern.core;
+
+import dev.rollczi.litecommands.modern.LiteCommandsBaseBuilder;
 
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.bind.BindRegistry;

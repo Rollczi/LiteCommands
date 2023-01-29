@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
-    public interface CommandEditor {
+public interface CommandEditor {
 
     CommandEditorContext edit(CommandEditorContext context);
 

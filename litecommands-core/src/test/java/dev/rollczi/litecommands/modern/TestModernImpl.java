@@ -13,8 +13,15 @@ class TestModernImpl {
     @Test
     void test() {
 
-        LiteCommands<FakeSender> register = LiteCommandsFactory.annotation(FakeSender.class)
-            .command(new Command())
+        LiteCommands<Sender> register = LiteCommandsFactory.annotation(Sender.class)
+            .editor(new String())
+            .command()
+            .command()
+            .command()
+            .argument(String.class, new StringArgument<>())
+            .argument(String.class, new StringArgument<>())
+            .command()
+            .filter()
             .register();
 
     }
