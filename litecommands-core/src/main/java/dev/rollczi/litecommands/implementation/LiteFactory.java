@@ -53,6 +53,7 @@ import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import dev.rollczi.litecommands.command.root.RootRoute;
 import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.command.section.Section;
+import dev.rollczi.litecommands.handle.LiteException;
 import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.schematic.Schematic;
@@ -165,6 +166,7 @@ public final class LiteFactory {
 
             .redirectResult(Schematic.class, String.class, MAP_SCHEMATIC_TO_STRING)
             .redirectResult(RequiredPermissions.class, String.class, MAP_PERMISSIONS_TO_STRING)
+            .redirectResult(LiteException.class, Object.class, LiteException::getResult)
 
             .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation.toLite()))
             .contextualBind(LiteSender.class, (sender, invocation) -> Result.ok(invocation.sender()))

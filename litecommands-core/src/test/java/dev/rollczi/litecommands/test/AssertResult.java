@@ -31,6 +31,12 @@ public class AssertResult {
         return this;
     }
 
+    public AssertResult assertMessage(String message) {
+        TestHandle testHandle = Assertions.assertInstanceOf(TestHandle.class, executeResult.getBased().getInvocation().handle());
+        Assertions.assertTrue(testHandle.containsMessage(message));
+        return this;
+    }
+
     public <T> T assertResultIs(Class<T> clazz) {
         Assertions.assertTrue(clazz.isInstance(executeResult.getResult()));
         return clazz.cast(executeResult.getResult());
