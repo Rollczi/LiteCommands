@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "dev.rollczi.litecommands"
-version = "2.8.1-SNAPSHOT"
+version = "2.8.2"
 
 repositories {
     mavenCentral()
