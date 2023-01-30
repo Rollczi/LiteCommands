@@ -75,6 +75,14 @@ public class ExecuteResultHandler<SENDER> {
             Redirector<?, ?> forwarding = this.redirectors.get(type);
 
             if (forwarding == null) {
+                if (object instanceof RuntimeException) {
+                    throw (RuntimeException) object;
+                }
+
+                if (object instanceof Throwable) {
+                    throw new RuntimeException("Exception thrown during command execution", (Throwable) object);
+                }
+
                 throw new IllegalStateException("Missing result handler for type " + type);
             }
 

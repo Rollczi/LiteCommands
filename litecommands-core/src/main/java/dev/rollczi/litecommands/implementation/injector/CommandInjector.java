@@ -1,7 +1,9 @@
 package dev.rollczi.litecommands.implementation.injector;
 
 import dev.rollczi.litecommands.injector.Inject;
+import dev.rollczi.litecommands.injector.InjectCausedException;
 import dev.rollczi.litecommands.injector.InjectException;
+import dev.rollczi.litecommands.injector.InjectSuppressedException;
 import dev.rollczi.litecommands.injector.Injectable;
 import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InjectorSettings;
@@ -39,7 +41,7 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
     @Override
     public <T> T createInstance(Class<T> type, InvokeContext<SENDER> context) {
         return this.createInstance0(type, context, false)
-                .orThrow(exception -> new InjectException("Can't create new instance of class " + ReflectFormat.singleClass(type), exception))
+                .orThrow(exception -> new InjectCausedException("Can't create new instance of class " + ReflectFormat.singleClass(type), exception))
                 .orThrow(() -> new InjectException("Can't create new instance of class " + ReflectFormat.singleClass(type)));
     }
 
@@ -104,7 +106,11 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
             errors.add(result.getError());
         }
 
-        InjectException exception = new InjectException("Can not execute: " + Arrays.stream(executables).map(ReflectFormat::docsExecutable).collect(Collectors.joining(", ")));
+        if (errors.size() == 1) {
+            return Result.error(errors.get(0));
+        }
+
+        InjectSuppressedException exception = new InjectSuppressedException("Can not execute: " + Arrays.stream(executables).map(ReflectFormat::docsExecutable).collect(Collectors.joining(", ")), errors);
 
         for (Exception error : errors) {
             exception.addSuppressed(error);
@@ -188,9 +194,13 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
                     .map(obj -> obj.getClass().getName())
                     .collect(Collectors.joining(", "));
 
+            if (formattedParams.isEmpty()) {
+                formattedParams = "[]";
+            }
+
             Throwable cause = exception instanceof InvocationTargetException ? exception.getCause() : exception;
 
-            return Result.error(new InjectException("Injected parameters: " + formattedParams, cause));
+            return Result.error(new InjectCausedException("Injected parameters: " + formattedParams, cause));
         }
     }
 

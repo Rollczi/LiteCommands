@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.implementation;
 
 import dev.rollczi.litecommands.command.Invocation;
 import dev.rollczi.litecommands.handle.LiteException;
+import dev.rollczi.litecommands.injector.InjectCausedException;
 import dev.rollczi.litecommands.injector.Injector;
 import dev.rollczi.litecommands.injector.InvokeContext;
 
@@ -24,8 +25,14 @@ class MethodExecutor<SENDER> {
         try {
             return injector.invokeMethod(method, instance, new InvokeContext<>(invocation, args));
         }
-        catch (LiteException exception) {
-            return exception.getResult();
+        catch (LiteException liteException) {
+            return liteException.getResult();
+        }
+        catch (InjectCausedException exception) {
+            return exception.getCause();
+        }
+        catch (Throwable throwable) {
+            return throwable;
         }
     }
 

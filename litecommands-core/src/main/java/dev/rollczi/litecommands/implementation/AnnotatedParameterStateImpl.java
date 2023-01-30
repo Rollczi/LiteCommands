@@ -17,7 +17,7 @@ final class AnnotatedParameterStateImpl<SENDER, A extends Annotation> extends An
 
     AnnotatedParameterStateImpl(A annotationInstance, Parameter parameter, Argument<SENDER, A> argument, LiteInvocation invocation, int route) {
         super(annotationInstance, parameter, argument);
-        this.matchResult = HandleUtil.handle(() -> this.match(invocation, route), ex -> MatchResult.notMatched(ex.getResult()));
+        this.matchResult = HandleLazyUtil.handle(() -> this.match(invocation, route), ex -> MatchResult.notMatched(ex.getResult()));
     }
 
     @Override
