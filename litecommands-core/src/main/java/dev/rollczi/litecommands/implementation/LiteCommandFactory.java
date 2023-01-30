@@ -66,6 +66,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
 
             return section.childrenSection().stream()
                 .flatMap(child -> this.unpackEmptySection(child).stream())
+                .peek(unpackedSection -> unpackedSection.meta().applyCommandMeta(section.meta()))
                 .collect(Collectors.toList());
         }
 
