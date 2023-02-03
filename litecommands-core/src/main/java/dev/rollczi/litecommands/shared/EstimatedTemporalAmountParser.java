@@ -294,10 +294,9 @@ public class EstimatedTemporalAmountParser<T extends TemporalAmount> {
                 throw new IllegalArgumentException("Unsupported unit " + chronoUnit);
             }
 
-
-
-            BigInteger allCount = this.durationToNano(duration).divide(BigInteger.valueOf(part));
-            BigInteger count = allCount.mod(BigInteger.valueOf(PART_TIME_UNITS.get(chronoUnit)));
+            BigInteger currentCount = this.durationToNano(duration).divide(BigInteger.valueOf(part));
+            BigInteger maxCount = BigInteger.valueOf(PART_TIME_UNITS.get(chronoUnit));
+            BigInteger count = currentCount.equals(maxCount) ? BigInteger.ONE : currentCount.mod(maxCount);
 
             if (count.equals(BigInteger.ZERO)) {
                 continue;
