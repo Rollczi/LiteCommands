@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(project(":litecommands-core"))
-    compileOnly("com.github.Minestom.Minestom:Minestom:1.19.3-SNAPSHOT")
+    compileOnly("com.github.Minestom.Minestom:Minestom:aebf72de90")
 }
 
 val minestomArtifact: String by extra
