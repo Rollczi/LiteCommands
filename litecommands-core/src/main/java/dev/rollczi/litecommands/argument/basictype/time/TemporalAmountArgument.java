@@ -26,7 +26,7 @@ public abstract class TemporalAmountArgument<T extends TemporalAmount> implement
     @Override
     public Result<T, ?> parseMultilevel(LiteInvocation invocation, String... arguments) {
         return this.parseTemporal(String.join(MULTI_LEVEL_ARGUMENT_SEPARATOR, arguments))
-            .mapErr(dateTimeParseException -> "Invalid temporal format");
+            .mapErrToBlank();
     }
 
     @Override
