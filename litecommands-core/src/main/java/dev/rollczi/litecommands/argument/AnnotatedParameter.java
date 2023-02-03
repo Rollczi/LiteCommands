@@ -14,7 +14,7 @@ public interface AnnotatedParameter<SENDER, A extends Annotation> {
 
     Argument<SENDER, A> argument();
 
-    Option<String> name();
+    String name();
 
     List<Suggestion> staticSuggestions();
 
