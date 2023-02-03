@@ -34,19 +34,19 @@ public interface Argument<SENDER, A extends Annotation> extends ParameterHandler
         return this.getClass();
     }
 
-    default Option<String> getName(Parameter parameter, A annotation) {
+    default String getName(Parameter parameter, A annotation) {
         Name name = parameter.getAnnotation(Name.class);
         ArgumentName argumentName = this.getNativeClass().getAnnotation(ArgumentName.class);
 
         if (name != null) {
-            return Option.of(name.value());
+            return name.value();
         }
 
         if (argumentName != null) {
-            return Option.of(argumentName.value());
+            return argumentName.value();
         }
 
-        return Option.none();
+        return parameter.getName();
     }
 
     default Option<String> getSchematic(Parameter parameter, A annotation) {
