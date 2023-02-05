@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "dev.rollczi.litecommands"
-version = "2.8.2"
+version = "2.8.3"
 
 repositories {
     mavenCentral()
@@ -35,7 +35,7 @@ publishing {
     repositories {
         mavenLocal()
 
-        maven("panda", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD", false)
+        maven("panda", "https://repo.panda-lang.org", "MAVEN_USERRNAME", "MAVEN_PASSWORD", false)
 
 /*        maven(
             "eternalcode",
