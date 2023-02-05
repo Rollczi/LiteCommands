@@ -99,7 +99,7 @@ Add this to your dependencies if you want use ready-made implementation for velo
 implementation 'dev.rollczi.litecommands:velocity:2.8.3'
 ```
 
-#### Add -parameters to your compiler
+#### Add -parameters to your compiler to use all features of LiteCommands
 
 ```groovy
 tasks.withType(JavaCompile) {
