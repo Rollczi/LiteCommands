@@ -63,7 +63,7 @@ public final class UniformSuggestionStack extends SuggestionStack {
     }
 
     public static UniformSuggestionStack of(Collection<Suggestion> suggestions) {
-        return of(new ArrayList<>(suggestions), 0);
+        return of(suggestions, 0);
     }
 
     public static UniformSuggestionStack of(Collection<Suggestion> suggestions, int multilevelLength) {
