@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.suggestion;
 
 import panda.std.stream.PandaStream;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,10 +12,10 @@ import java.util.stream.Collectors;
 
 public class SuggestionStack {
 
-    protected final LinkedHashSet<Suggestion> suggestions;
+    protected final LinkedHashSet<Suggestion> suggestions = new LinkedHashSet<>();
 
-    protected SuggestionStack(List<Suggestion> suggestions) {
-        this.suggestions = new LinkedHashSet<>(suggestions);
+    protected SuggestionStack(Collection<Suggestion> suggestions) {
+        this.suggestions.addAll(suggestions);
     }
 
     public Set<Suggestion> suggestions() {
@@ -39,14 +38,9 @@ public class SuggestionStack {
         return this.with(Arrays.asList(suggestions));
     }
 
-    public SuggestionStack with(Iterable<Suggestion> suggestions) {
-        ArrayList<Suggestion> list = new ArrayList<>(this.suggestions);
-
-        for (Suggestion suggestion : suggestions) {
-            list.add(suggestion);
-        }
-
-        return of(list);
+    public SuggestionStack with(Collection<Suggestion> suggestions) {
+        this.suggestions.addAll(suggestions);
+        return this;
     }
 
     public static SuggestionStack empty() {
@@ -54,7 +48,7 @@ public class SuggestionStack {
     }
 
     public static SuggestionStack of(Collection<Suggestion> suggestions) {
-        return new SuggestionStack(new ArrayList<>(suggestions));
+        return new SuggestionStack(suggestions);
     }
 
     public boolean isEmpty() {
