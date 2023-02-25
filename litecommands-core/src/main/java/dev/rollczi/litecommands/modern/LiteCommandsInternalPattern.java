@@ -18,7 +18,7 @@ public interface LiteCommandsInternalPattern<SENDER> {
     Class<SENDER> getSenderClass();
 
     @ApiStatus.Internal
-    CommandEditorService getCommandEditorService();
+    CommandEditorService<SENDER> getCommandEditorService();
 
     @ApiStatus.Internal
     CommandFilterService<SENDER> getCommandFilterService();
@@ -36,7 +36,7 @@ public interface LiteCommandsInternalPattern<SENDER> {
     CommandExecuteResultResolver<SENDER> getResultResolver();
 
     @ApiStatus.Internal
-    CommandEditorContextRegistry getCommandContextRegistry();
+    CommandEditorContextRegistry<SENDER> getCommandContextRegistry();
 
     @Nullable
     @ApiStatus.Internal

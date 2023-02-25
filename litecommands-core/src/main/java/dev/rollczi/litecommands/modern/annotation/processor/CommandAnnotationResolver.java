@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
 
 import java.lang.annotation.Annotation;
 
-public interface CommandAnnotationResolver<A extends Annotation> {
+public interface CommandAnnotationResolver<SENDER, A extends Annotation> {
 
-    CommandEditorContext resolve(Object instance, A annotation, CommandEditorContext context);
+    CommandEditorContext<SENDER> resolve(Object instance, A annotation, CommandEditorContext<SENDER> context);
 
 }

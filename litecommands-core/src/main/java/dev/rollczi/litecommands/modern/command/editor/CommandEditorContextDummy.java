@@ -1,15 +1,18 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
+import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-class CommandEditorContextDummy extends CommandEditorContextBase implements CommandEditorContext {
+class CommandEditorContextDummy<SENDER> extends CommandEditorContextBase<SENDER> implements CommandEditorContext<SENDER> {
 
-    protected CommandEditorContext parent;
+    protected CommandEditorContext<SENDER> parent;
 
-    public CommandEditorContextDummy(CommandEditorContext parent) {
+    public CommandEditorContextDummy(CommandEditorContext<SENDER> parent) {
         this.parent = parent;
     }
 
@@ -22,23 +25,28 @@ class CommandEditorContextDummy extends CommandEditorContextBase implements Comm
     }
 
     @Override
-    public CommandEditorContext routeName(String name) {
+    public Collection<CommandEditorContext<SENDER>> children() {
+        return Collections.singletonList(this.parent);
+    }
+
+    @Override
+    public CommandEditorContext<SENDER> routeName(String name) {
         return this.parent.routeName(name);
     }
 
     @Override
-    public CommandEditorContext routeAliases(List<String> aliases) {
+    public CommandEditorContext<SENDER> routeAliases(List<String> aliases) {
         return this.parent.routeAliases(aliases);
     }
 
     @Override
-    public @NotNull CommandEditorContext editChild(String name, UnaryOperator<CommandEditorContext> operator) {
+    public @NotNull CommandEditorContext<SENDER> editChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator) {
         this.parent = operator.apply(this.parent);
         return this;
     }
 
     @Override
-    public CommandEditorContext applyOnRoute(UnaryOperator<CommandEditorContext> apply) {
+    public CommandEditorContext<SENDER> applyOnRoute(UnaryOperator<CommandEditorContext<SENDER>> apply) {
         this.parent = this.parent.applyOnRoute(apply);
         return this;
     }

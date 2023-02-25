@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-final class CommandRootRouteImpl implements CommandRoute {
+final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
-    private final Map<String, CommandRoute> children = new HashMap<>();
+    private final Map<String, CommandRoute<SENDER>> children = new HashMap<>();
 
     @Override
     public String getName() {
@@ -30,19 +30,19 @@ final class CommandRootRouteImpl implements CommandRoute {
     }
 
     @Override
-    public Collection<CommandRoute> getChildren() {
+    public Collection<CommandRoute<SENDER>> getChildren() {
         return Collections.unmodifiableCollection(this.children.values());
     }
 
     @Override
-    public Optional<CommandRoute> getChildren(String name) {
-        CommandRoute route = this.children.get(name);
+    public Optional<CommandRoute<SENDER>> getChildren(String name) {
+        CommandRoute<SENDER> route = this.children.get(name);
 
         if (route != null) {
             return Optional.of(route);
         }
 
-        for (CommandRoute commandRoute : this.children.values()) {
+        for (CommandRoute<SENDER> commandRoute : this.children.values()) {
             if (commandRoute.isNameOrAlias(name)) {
                 return Optional.of(commandRoute);
             }
@@ -52,22 +52,22 @@ final class CommandRootRouteImpl implements CommandRoute {
     }
 
     @Override
-    public Collection<CommandExecutor> getExecutors() {
+    public Collection<CommandExecutor<SENDER>> getExecutors() {
         throw new UnsupportedOperationException("Can not get executors from the root route");
     }
 
     @Override
-    public Optional<CommandExecutor> getExecutor(CommandExecutorKey key) {
+    public Optional<CommandExecutor<SENDER>> getExecutor(CommandExecutorKey key) {
         throw new UnsupportedOperationException("Can not get executor from the root route");
     }
 
     @Override
-    public void appendChildren(CommandRoute children) {
+    public void appendChildren(CommandRoute<SENDER> children) {
         throw new UnsupportedOperationException("Can not append child route to the root route");
     }
 
     @Override
-    public void appendExecutor(CommandExecutor executor) {
+    public void appendExecutor(CommandExecutor<SENDER> executor) {
         throw new UnsupportedOperationException("Can not append command executor to the root route");
     }
 
@@ -77,7 +77,7 @@ final class CommandRootRouteImpl implements CommandRoute {
     }
 
     @ApiStatus.Internal
-    void appendToRoot(CommandRoute children) {
+    void appendToRoot(CommandRoute<SENDER> children) {
         this.children.put(children.getName(), children);
     }
 

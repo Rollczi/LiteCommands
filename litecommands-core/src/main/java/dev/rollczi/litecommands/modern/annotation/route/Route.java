@@ -11,6 +11,6 @@ public @interface Route {
 
     String name();
 
-    String[] aliases();
+    String[] aliases() default {};
 
 }

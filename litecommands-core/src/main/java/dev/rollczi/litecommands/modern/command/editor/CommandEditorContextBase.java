@@ -2,28 +2,31 @@ package dev.rollczi.litecommands.modern.command.editor;
 
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.command.CommandExecutorKey;
+import dev.rollczi.litecommands.modern.command.CommandRoute;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
-abstract class CommandEditorContextBase implements CommandEditorContext {
+abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<SENDER> {
 
-    protected String name;
+    protected @Nullable String name;
     protected final List<String> aliases = new ArrayList<>();
-    protected final Map<String, CommandEditorContext> children = new HashMap<>();
-    protected final Map<CommandExecutorKey, CommandExecutor> executors = new HashMap<>();
+    protected final Map<String, CommandEditorContext<SENDER>> children = new HashMap<>();
+    protected final Map<CommandExecutorKey, CommandExecutor<SENDER>> executors = new HashMap<>();
     protected boolean enabled = true;
 
-    protected CommandEditorContextDummy dummyPrefix;
+    protected CommandEditorContextDummy<SENDER> dummyPrefix;
 
     @Override
-    public @NotNull CommandEditorContext name(String name) {
+    public @NotNull CommandEditorContext<SENDER> name(String name) {
         this.name = name;
         return this;
     }
@@ -34,9 +37,17 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
     }
 
     @Override
-    public @NotNull CommandEditorContext aliases(List<String> aliases) {
+    public @NotNull CommandEditorContext<SENDER> aliases(List<String> aliases) {
         this.aliases.clear();
         this.aliases.addAll(aliases);
+
+        return this;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext<SENDER> aliases(String... aliases) {
+        this.aliases.clear();
+        Collections.addAll(this.aliases, aliases);
 
         return this;
     }
@@ -56,20 +67,44 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
     }
 
     @Override
-    public @NotNull CommandEditorContext enable() {
+    public boolean isNameOrAlias(String name) {
+        if (this.name != null && this.name.equals(name)) {
+            return true;
+        }
+
+        if (this.aliases.contains(name)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean hasSimilarNames(CommandEditorContext<SENDER> context) {
+        for (String name : context.names()) {
+            if (this.isNameOrAlias(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public @NotNull CommandEditorContext<SENDER> enable() {
         this.enabled = true;
         return this;
     }
 
     @Override
-    public @NotNull CommandEditorContext disable() {
+    public @NotNull CommandEditorContext<SENDER> disable() {
         this.enabled = false;
         return this;
     }
 
     @Override
-    public @NotNull CommandEditorContext editChild(String name, UnaryOperator<CommandEditorContext> operator) {
-        CommandEditorContext child = this.children.get(name);
+    public @NotNull CommandEditorContext<SENDER> editChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator) {
+        CommandEditorContext<SENDER> child = this.children.get(name);
 
         if (child == null) {
             throw new IllegalArgumentException("Child " + name + " not found");
@@ -81,8 +116,8 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
     }
 
     @Override
-    public @NotNull CommandEditorContext appendChild(String name, UnaryOperator<CommandEditorContext> operator) {
-        CommandEditorContext child = new CommandEditorContextImpl();
+    public @NotNull CommandEditorContext<SENDER> appendChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator) {
+        CommandEditorContext<SENDER> child = new CommandEditorContextImpl<>();
 
         child = operator.apply(child);
         this.children.put(name, child);
@@ -90,20 +125,30 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
     }
 
     @Override
-    public @NotNull CommandEditorContext appendChild(CommandEditorContext context) {
+    public @NotNull CommandEditorContext<SENDER> appendChild(CommandEditorContext<SENDER> context) {
         this.children.put(context.name(), context);
         return this;
     }
 
     @Override
-    public @NotNull CommandEditorContext appendExecutor(CommandExecutor executor) {
+    public Collection<CommandEditorContext<SENDER>> children() {
+        return Collections.unmodifiableCollection(this.children.values());
+    }
+
+    @Override
+    public @NotNull CommandEditorContext<SENDER> appendExecutor(CommandExecutor<SENDER> executor) {
         this.executors.put(executor.getKey(), executor);
         return this;
     }
 
     @Override
+    public Collection<CommandExecutor<SENDER>> executors() {
+        return Collections.unmodifiableCollection(this.executors.values());
+    }
+
+    @Override
     @ApiStatus.Internal
-    public CommandEditorContext routeName(String name) {
+    public CommandEditorContext<SENDER> routeName(String name) {
         name = name.trim();
 
         if (!name.contains(" ")) {
@@ -117,7 +162,7 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
         String namePrefix = name.substring(0, separatorIndex);
 
         if (this.dummyPrefix == null) {
-            this.dummyPrefix = new CommandEditorContextDummy(this);
+            this.dummyPrefix = new CommandEditorContextDummy<>(this);
         }
 
         this.dummyPrefix.dummyName(namePrefix);
@@ -126,7 +171,7 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
 
     @Override
     @ApiStatus.Internal
-    public CommandEditorContext routeAliases(List<String> aliases) {
+    public CommandEditorContext<SENDER> routeAliases(List<String> aliases) {
         if (aliases.isEmpty()) {
             return this;
         }
@@ -160,7 +205,7 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
         }
 
         if (this.dummyPrefix == null) {
-            this.dummyPrefix = new CommandEditorContextDummy(this);
+            this.dummyPrefix = new CommandEditorContextDummy<>(this);
         }
 
         this.dummyPrefix.dummyAliases(aliasesPrefix);
@@ -183,12 +228,66 @@ abstract class CommandEditorContextBase implements CommandEditorContext {
 
     @Override
     @ApiStatus.Internal
-    public CommandEditorContext applyOnRoute(UnaryOperator<CommandEditorContext> apply) {
+    public CommandEditorContext<SENDER> applyOnRoute(UnaryOperator<CommandEditorContext<SENDER>> apply) {
         return apply.apply(this);
     }
 
     @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    @Override
+    @ApiStatus.Internal
     public boolean buildable() {
-        return false;
+        return this.enabled && this.name != null && !this.name.isEmpty();
+    }
+
+    @Override
+    public CommandRoute<SENDER> build() {
+        CommandRoute<SENDER> route = CommandRoute.of(this.name, this.aliases);
+
+        for (CommandExecutor<SENDER> executor : this.executors.values()) {
+            route.appendExecutor(executor);
+        }
+
+        for (CommandEditorContext<SENDER> child : this.children.values()) {
+            if (!child.buildable()) {
+                continue;
+            }
+
+            route.appendChildren(child.build());
+        }
+
+        return route;
+    }
+
+    @Override
+    public void meagre(CommandEditorContext<SENDER> context) {
+        this.aliases.addAll(context.aliases());
+
+        for (CommandExecutor<SENDER> executor : context.executors()) {
+            this.appendExecutor(executor);
+        }
+
+        if (!context.isEnabled()) {
+            this.disable();
+        }
+
+        toMeagre:
+        for (CommandEditorContext<SENDER> childToMeagre : context.children()) {
+            for (CommandEditorContext<SENDER> current : this.children.values()) {
+                if (!current.hasSimilarNames(childToMeagre)) {
+                    continue;
+                }
+
+                current.meagre(childToMeagre);
+                continue toMeagre;
+            }
+
+            this.appendChild(childToMeagre);
+        }
+
+
     }
 }

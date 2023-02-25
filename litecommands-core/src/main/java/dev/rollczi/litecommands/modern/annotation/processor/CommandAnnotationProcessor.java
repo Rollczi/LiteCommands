@@ -6,19 +6,19 @@ import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public class CommandAnnotationProcessor {
+public class CommandAnnotationProcessor<SENDER> {
 
-    private final CommandAnnotationRegistry commandAnnotationRegistry;
+    private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry;
     private final AnnotationCommandEditorService annotationCommandEditorRegistry;
 
-    public CommandAnnotationProcessor(CommandAnnotationRegistry commandAnnotationRegistry, AnnotationCommandEditorService annotationCommandEditorRegistry) {
+    public CommandAnnotationProcessor(CommandAnnotationRegistry<SENDER> commandAnnotationRegistry, AnnotationCommandEditorService annotationCommandEditorRegistry) {
         this.commandAnnotationRegistry = commandAnnotationRegistry;
         this.annotationCommandEditorRegistry = annotationCommandEditorRegistry;
     }
 
-    public CommandEditorContext createContext(Object instance) {
+    public CommandEditorContext<SENDER> createContext(Object instance) {
         Class<?> type = instance.getClass();
-        CommandEditorContext context = CommandEditorContext.empty();
+        CommandEditorContext<SENDER> context = CommandEditorContext.empty();
 
         for (Annotation annotation : type.getAnnotations()) {
             context = this.commandAnnotationRegistry.resolve(instance, annotation, context);

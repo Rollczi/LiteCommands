@@ -10,4 +10,8 @@ public class LiteCommandsBase<SENDER> implements LiteCommands<SENDER> {
         this.commandManager = commandManager;
     }
 
+    @Override
+    public CommandManager<SENDER> getCommandManager() {
+        return commandManager;
+    }
 }

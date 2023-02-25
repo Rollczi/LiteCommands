@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.core.argument;
 
-import dev.rollczi.litecommands.modern.argument.ArgumentContextual;
+import dev.rollczi.litecommands.modern.argument.Argument;
 import dev.rollczi.litecommands.modern.argument.ArgumentResult;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.argument.api.OneArgument;
@@ -28,7 +28,7 @@ public abstract class AbstractNumberArgument<SENDER, T extends Number> extends O
     }
 
     @Override
-    protected ArgumentResult<T> parse(Invocation<SENDER> invocation, ArgumentContextual<Object, T> context, String argument) {
+    protected ArgumentResult<T> parse(Invocation<SENDER> invocation, Argument<Object, T> context, String argument) {
         try {
             return ArgumentResult.success(() -> parser.apply(argument));
         }
@@ -37,12 +37,12 @@ public abstract class AbstractNumberArgument<SENDER, T extends Number> extends O
         }
     }
 
-    protected FailedReason failedReason(Invocation<SENDER> invocation, ArgumentContextual<Object, T> context, String argument) {
+    protected FailedReason failedReason(Invocation<SENDER> invocation, Argument<Object, T> context, String argument) {
         return FailedReason.empty();
     }
 
     @Override
-    public List<Suggestion> suggestion(Invocation<SENDER> invocation, ArgumentContextual<Object, T> context, Suggestion suggestion) {
+    public List<Suggestion> suggestion(Invocation<SENDER> invocation, Argument<Object, T> context, Suggestion suggestion) {
         Suggestion last = suggestion.slashLevel(suggestion.lengthMultilevel() - 1);
         String input = last.single();
 
@@ -69,7 +69,7 @@ public abstract class AbstractNumberArgument<SENDER, T extends Number> extends O
         return AbstractNumberArgument.of(Arrays.asList(0, 1, 5, 10, 50, 100, 500), Integer::parseInt);
     }
 
-    public static <SENDER> OneArgument<SENDER, Integer> ofDouble() {
-        return AbstractNumberArgument.of(Arrays.asList(0, 0.5, 1, 1.5, 5.5), Integer::parseInt);
+    public static <SENDER> OneArgument<SENDER, Double> ofDouble() {
+        return AbstractNumberArgument.of(Arrays.asList(0.0, 0.5, 1.0, 1.5, 5.5), Double::parseDouble);
     }
 }

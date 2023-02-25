@@ -1,9 +1,17 @@
 package dev.rollczi.litecommands.modern.annotation;
 
-import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
-import dev.rollczi.litecommands.modern.LiteCommandsCoreBuilder;
+import dev.rollczi.litecommands.modern.LiteCommands;
+import dev.rollczi.litecommands.modern.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.modern.LiteCommandsInternalPattern;
 import dev.rollczi.litecommands.modern.annotation.editor.AnnotationCommandEditorService;
+import dev.rollczi.litecommands.modern.annotation.inject.Injector;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationProcessor;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationRegistry;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationResolver;
+import dev.rollczi.litecommands.modern.argument.ArgumentService;
+import dev.rollczi.litecommands.modern.bind.BindRegistry;
+import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.command.editor.CommandEditorService;
 import dev.rollczi.litecommands.modern.command.filter.CommandFilterService;
@@ -19,7 +27,7 @@ import java.util.function.UnaryOperator;
 
 public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnnotationBuilderImpl<SENDER, B>> extends LiteCommandsBaseBuilder<SENDER, B> implements LiteCommandsAnnotationBuilder<SENDER, B> {
 
-    private final CommandAnnotationRegistry commandAnnotationRegistry;
+    private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry;
     private final AnnotationCommandEditorService annotationCommandEditorService;
     private final List<Object> commandInstances;
     private final List<Class<?>> commandClasses;
@@ -40,7 +48,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
      */
     public LiteCommandsAnnotationBuilderImpl(Class<SENDER> senderClass, Platform<SENDER> platform) {
         super(senderClass, platform);
-        this.commandAnnotationRegistry = new CommandAnnotationRegistry();
+        this.commandAnnotationRegistry = new CommandAnnotationRegistry<>();
         this.annotationCommandEditorService = new AnnotationCommandEditorService(this.getCommandEditorService());
         this.commandInstances = new ArrayList<>();
         this.commandClasses = new ArrayList<>();
@@ -62,7 +70,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
             pattern.getResultResolver(),
             pattern.getCommandContextRegistry(),
             pattern.getPlatform(),
-            new CommandAnnotationRegistry(),
+            new CommandAnnotationRegistry<>(),
             new AnnotationCommandEditorService(pattern.getCommandEditorService()),
             new ArrayList<>(),
             new ArrayList<>()
@@ -74,15 +82,15 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
      */
     protected LiteCommandsAnnotationBuilderImpl(
         Class<SENDER> senderClass,
-        CommandEditorService commandEditorService,
+        CommandEditorService<SENDER> commandEditorService,
         CommandFilterService<SENDER> commandFilterService,
         ArgumentService<SENDER> argumentService,
         BindRegistry<SENDER> bindRegistry,
         WrappedExpectedContextualService wrappedExpectedContextualService,
         CommandExecuteResultResolver<SENDER> resultResolver,
-        CommandEditorContextRegistry commandEditorContextRegistry,
+        CommandEditorContextRegistry<SENDER> commandEditorContextRegistry,
         @Nullable Platform<SENDER> platform,
-        CommandAnnotationRegistry commandAnnotationRegistry,
+        CommandAnnotationRegistry<SENDER> commandAnnotationRegistry,
         AnnotationCommandEditorService annotationCommandEditorService,
         List<Object> commandInstances,
         List<Class<?>> commandClasses
@@ -107,32 +115,32 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
     }
 
     @Override
-    public <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationResolver<A> resolver) {
+    public <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerResolver(annotation, resolver);
         return this.getThis();
     }
 
     @Override
-    public <A extends Annotation> B annotation(Class<A> annotation, UnaryOperator<CommandAnnotationResolver<A>> resolver) {
+    public <A extends Annotation> B annotation(Class<A> annotation, UnaryOperator<CommandAnnotationResolver<SENDER, A>> resolver) {
         this.commandAnnotationRegistry.replaceResolver(annotation, resolver);
         return this.getThis();
     }
 
     @Override
-    public <A extends Annotation> B annotationMethod(Class<A> annotation, CommandAnnotationMethodResolver<A> resolver) {
+    public <A extends Annotation> B annotationMethod(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerMethodResolver(annotation, resolver);
         return this.getThis();
     }
 
     @Override
-    public <A extends Annotation> B annotationMethod(Class<A> annotation, UnaryOperator<CommandAnnotationMethodResolver<A>> resolver) {
+    public <A extends Annotation> B annotationMethod(Class<A> annotation, UnaryOperator<CommandAnnotationMethodResolver<SENDER, A>> resolver) {
         this.commandAnnotationRegistry.replaceMethodResolver(annotation, resolver);
         return this.getThis();
     }
 
     @Override
     public LiteCommands<SENDER> register() {
-        CommandEditorContextRegistry contextRegistry = this.getCommandContextRegistry();
+        CommandEditorContextRegistry<SENDER> contextRegistry = this.getCommandContextRegistry();
 
         CommandAnnotationProcessor processor = new CommandAnnotationProcessor(this.commandAnnotationRegistry, this.annotationCommandEditorService);
         Injector<SENDER> injector = new Injector<>(this.getBindRegistry());

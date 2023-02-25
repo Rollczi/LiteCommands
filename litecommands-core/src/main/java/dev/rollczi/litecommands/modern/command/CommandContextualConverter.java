@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.modern.command;
 
-import dev.rollczi.litecommands.modern.argument.ArgumentContextual;
-import dev.rollczi.litecommands.modern.argument.ArgumentKey;
+import dev.rollczi.litecommands.modern.argument.Argument;
 import dev.rollczi.litecommands.modern.argument.ArgumentResolverContext;
 import dev.rollczi.litecommands.modern.argument.ArgumentResult;
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
@@ -24,31 +23,31 @@ public class CommandContextualConverter<SENDER> implements ExpectedContextualCon
     private final BindRegistry<SENDER> bindRegistry;
     private final WrappedExpectedContextualService wrappedExpectedContextualService;
 
-    private ArgumentResolverContext<?> resolverContext = ArgumentResolverContext.create();
+    private ArgumentResolverContext<?> resolverContext;
 
     public CommandContextualConverter(
         ArgumentService<SENDER> argumentService,
         BindRegistry<SENDER> bindRegistry,
-        WrappedExpectedContextualService wrappedExpectedContextualService
+        WrappedExpectedContextualService wrappedExpectedContextualService,
+        int childIndex
     ) {
         this.argumentService = argumentService;
         this.bindRegistry = bindRegistry;
         this.wrappedExpectedContextualService = wrappedExpectedContextualService;
+        this.resolverContext = ArgumentResolverContext.create(childIndex);
     }
 
     @Override
     public <EXPECTED> Result<Supplier<WrappedExpectedContextual<EXPECTED>>, FailedReason> provide(Invocation<SENDER> invocation, ExpectedContextual<EXPECTED> expectedContextual) {
-        if (expectedContextual instanceof ArgumentContextual) {
-            ArgumentContextual<?, EXPECTED> argumentContextual = (ArgumentContextual<?, EXPECTED>) expectedContextual;
-
-            return this.provideArgumentContextual(invocation, argumentContextual);
+        if (expectedContextual instanceof ExecutableArgument) {
+            return this.provideExecuteableArgumentContextual(invocation, (ExecutableArgument<SENDER, ?, EXPECTED, ?>) expectedContextual);
         }
 
         return this.provideContextual(invocation, expectedContextual);
     }
 
-    private <EXPECTED> Result<Supplier<WrappedExpectedContextual<EXPECTED>>, FailedReason> provideArgumentContextual(Invocation<SENDER> invocation, ArgumentContextual<?, EXPECTED> argumentContextual) {
-        ArgumentResolverContext<EXPECTED> current = this.argumentService.resolve(invocation, argumentContextual, ArgumentKey.DEFAULT, this.resolverContext);
+    private <D, EXPECTED, C extends Argument<D, EXPECTED>> Result<Supplier<WrappedExpectedContextual<EXPECTED>>, FailedReason> provideExecuteableArgumentContextual(Invocation<SENDER> invocation, ExecutableArgument<SENDER, D, EXPECTED, C> argumentContextual) {
+        ArgumentResolverContext<EXPECTED> current = this.argumentService.resolve(invocation, argumentContextual, this.resolverContext);
         this.resolverContext = current;
 
         Option<ArgumentResult<EXPECTED>> result = current.getLastArgumentResult();

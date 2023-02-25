@@ -8,31 +8,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class CommandAnnotationRegistry {
+public class CommandAnnotationRegistry<SENDER> {
 
-    private final Map<Class<? extends Annotation>, CommandAnnotationResolver<?>> resolvers = new HashMap<>();
-    private final Map<Class<? extends Annotation>, CommandAnnotationMethodResolver<?>> methodResolvers = new HashMap<>();
+    private final Map<Class<? extends Annotation>, CommandAnnotationResolver<SENDER, ?>> resolvers = new HashMap<>();
+    private final Map<Class<? extends Annotation>, CommandAnnotationMethodResolver<SENDER, ?>> methodResolvers = new HashMap<>();
 
-    public <A extends Annotation> void registerResolver(Class<A> annotation, CommandAnnotationResolver<A> resolver) {
+    public <A extends Annotation> void registerResolver(Class<A> annotation, CommandAnnotationResolver<SENDER, A> resolver) {
         this.resolvers.put(annotation, resolver);
     }
 
-    public <A extends Annotation> void registerMethodResolver(Class<A> annotation, CommandAnnotationMethodResolver<A> resolver) {
+    public <A extends Annotation> void registerMethodResolver(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
         this.methodResolvers.put(annotation, resolver);
     }
 
-    public <A extends Annotation> void replaceResolver(Class<A> annotation, Function<CommandAnnotationResolver<A>, CommandAnnotationResolver<A>> resolver) {
+    public <A extends Annotation> void replaceResolver(Class<A> annotation, Function<CommandAnnotationResolver<SENDER, A>, CommandAnnotationResolver<SENDER, A>> resolver) {
         this.resolvers.replace(annotation, resolver.apply(this.getResolver(annotation)));
     }
 
-    public <A extends Annotation> void replaceMethodResolver(Class<A> annotation, Function<CommandAnnotationMethodResolver<A>, CommandAnnotationMethodResolver<A>> resolver) {
+    public <A extends Annotation> void replaceMethodResolver(Class<A> annotation, Function<CommandAnnotationMethodResolver<SENDER, A>, CommandAnnotationMethodResolver<SENDER, A>> resolver) {
         this.methodResolvers.replace(annotation, resolver.apply(this.getMethodResolver(annotation)));
     }
 
     @SuppressWarnings("unchecked")
-    public <A extends Annotation> CommandEditorContext resolve(Object instance, A annotation, CommandEditorContext context) {
+    public <A extends Annotation> CommandEditorContext<SENDER> resolve(Object instance, A annotation, CommandEditorContext<SENDER> context) {
         Class<A> annotationType = (Class<A>) annotation.annotationType();
-        CommandAnnotationResolver<A> resolver = this.getResolver(annotationType);
+        CommandAnnotationResolver<SENDER, A> resolver = this.getResolver(annotationType);
 
         if (resolver != null) {
             return resolver.resolve(instance, annotation, context);
@@ -42,14 +42,14 @@ public class CommandAnnotationRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private <A extends Annotation> CommandAnnotationResolver<A> getResolver(Class<A> annotation) {
-        return (CommandAnnotationResolver<A>) this.resolvers.get(annotation);
+    private <A extends Annotation> CommandAnnotationResolver<SENDER, A> getResolver(Class<A> annotation) {
+        return (CommandAnnotationResolver<SENDER, A>) this.resolvers.get(annotation);
     }
 
     @SuppressWarnings("unchecked")
-    public <A extends Annotation> CommandEditorContext resolve(Object instance, Method method, A annotation, CommandEditorContext context) {
+    public <A extends Annotation> CommandEditorContext<SENDER> resolve(Object instance, Method method, A annotation, CommandEditorContext<SENDER> context) {
         Class<A> annotationType = (Class<A>) annotation.annotationType();
-        CommandAnnotationMethodResolver<A> resolver = this.getMethodResolver(annotationType);
+        CommandAnnotationMethodResolver<SENDER, A> resolver = this.getMethodResolver(annotationType);
 
         if (resolver != null) {
             return resolver.resolve(instance, method, annotation, context);
@@ -59,8 +59,8 @@ public class CommandAnnotationRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private <A extends Annotation> CommandAnnotationMethodResolver<A> getMethodResolver(Class<A> annotation) {
-        return (CommandAnnotationMethodResolver<A>) this.methodResolvers.get(annotation);
+    private <A extends Annotation> CommandAnnotationMethodResolver<SENDER, A> getMethodResolver(Class<A> annotation) {
+        return (CommandAnnotationMethodResolver<SENDER, A>) this.methodResolvers.get(annotation);
     }
 
 }

@@ -7,6 +7,7 @@ import panda.std.Option;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -27,8 +28,10 @@ public class ParameterContextualCreator implements Function<Parameter, List<Para
     @SuppressWarnings("unchecked")
     private <EXPECTED> ParameterContextual<EXPECTED> createParameterContextual(Parameter parameter) {
         Method method = (Method) parameter.getDeclaringExecutable();
+        int index = Arrays.asList(method.getParameters()).indexOf(parameter);
+
         Class<?> expectedType = parameter.getType();
-        Class<?> expectedWrapperType = expectedType;
+        Class<?> expectedWrapperType = Void.class;
 
         if (this.wrappedExpectedContextualService.isWrapper(expectedType)) {
             Option<Class<?>> option = ParameterizedTypeUtil.extractFirstType(parameter);
@@ -37,11 +40,11 @@ public class ParameterContextualCreator implements Function<Parameter, List<Para
                 throw new IllegalArgumentException("Cannot extract expected type from parameter " + ReflectFormat.parameter(parameter));
             }
 
+            expectedWrapperType = expectedType;
             expectedType = option.get();
-            expectedWrapperType = Void.class;
         }
 
-        return new ParameterContextual<>(method, parameter, (Class<EXPECTED>) expectedType, expectedWrapperType);
+        return new ParameterContextual<>(method, parameter, index, (Class<EXPECTED>) expectedType, expectedWrapperType);
     }
 
 }

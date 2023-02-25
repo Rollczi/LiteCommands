@@ -5,10 +5,10 @@ import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
 
 import java.util.Arrays;
 
-public class RouteAnnotationResolver implements CommandAnnotationResolver<Route> {
+public class RouteAnnotationResolver<SENDER> implements CommandAnnotationResolver<SENDER, Route> {
 
     @Override
-    public CommandEditorContext resolve(Object instance, Route annotation, CommandEditorContext context) {
+    public CommandEditorContext<SENDER> resolve(Object instance, Route annotation, CommandEditorContext<SENDER> context) {
         return context
             .routeName(annotation.name())
             .routeAliases(Arrays.asList(annotation.aliases()));

@@ -9,22 +9,22 @@ import dev.rollczi.litecommands.modern.util.LiteCommandsRulesUtil;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class ExecuteAnnotationResolver implements CommandAnnotationMethodResolver<Execute> {
+public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMethodResolver<SENDER, Execute> {
 
-    private final MethodCommandExecutorFactory methodCommandExecutorFactory;
+    private final MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory;
 
-    public ExecuteAnnotationResolver(MethodCommandExecutorFactory methodCommandExecutorFactory) {
+    public ExecuteAnnotationResolver(MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory) {
         this.methodCommandExecutorFactory = methodCommandExecutorFactory;
     }
 
     @Override
-    public CommandEditorContext resolve(Object instance, Method method, Execute annotation, CommandEditorContext context) {
+    public CommandEditorContext<SENDER> resolve(Object instance, Method method, Execute annotation, CommandEditorContext<SENDER> context) {
         boolean canUse = LiteCommandsRulesUtil.checkConsistent(annotation.name(), annotation.aliases());
 
-        CommandExecutor executor = this.methodCommandExecutorFactory.create(instance, method);
+        CommandExecutor<SENDER> executor = this.methodCommandExecutorFactory.create(instance, method);
 
         if (canUse) {
-            return context.editChild(annotation.name(), child -> child
+            return context.appendChild(annotation.name(), child -> child
                 .name(annotation.name())
                 .aliases(Arrays.asList(annotation.aliases()))
                 .appendExecutor(executor)

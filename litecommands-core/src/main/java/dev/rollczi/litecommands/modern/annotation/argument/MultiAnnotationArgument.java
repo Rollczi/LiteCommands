@@ -8,10 +8,10 @@ import dev.rollczi.litecommands.modern.suggestion.SuggestionResolver;
 import java.util.List;
 
 public interface MultiAnnotationArgument<SENDER, TYPE> extends
-    ArgumentResolver<SENDER, Arg, TYPE, ParameterArgumentContextual<Arg, TYPE>>,
-    SuggestionResolver<SENDER, Arg, TYPE, ParameterArgumentContextual<Arg, TYPE>> {
+    ArgumentResolver<SENDER, Arg, TYPE, ParameterArgument<Arg, TYPE>>,
+    SuggestionResolver<SENDER, Arg, TYPE, ParameterArgument<Arg, TYPE>> {
 
     @Override
-    ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, List<String> arguments, ParameterArgumentContextual<Arg, TYPE> context);
+    ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, List<String> arguments, ParameterArgument<Arg, TYPE> context);
 
 }

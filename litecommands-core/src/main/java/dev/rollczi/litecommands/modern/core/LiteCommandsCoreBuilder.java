@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.modern.core;
 
 import dev.rollczi.litecommands.modern.LiteCommandsBaseBuilder;
 
+import dev.rollczi.litecommands.modern.LiteCommandsInternalPattern;
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.bind.BindRegistry;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;

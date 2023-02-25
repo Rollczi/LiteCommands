@@ -33,7 +33,7 @@ public class ArgumentResolverContext<E> {
         return this.with(0, argumentResult);
     }
 
-    public static <E> ArgumentResolverContext<E> create() {
-        return new ArgumentResolverContext<>(0, null);
+    public static <E> ArgumentResolverContext<E> create(int childIndex) {
+        return new ArgumentResolverContext<>(childIndex , null);
     }
 }

@@ -26,7 +26,7 @@ public class AnnotationCommandEditorService {
         this.editorsByEditorName.put(name, editor);
     }
 
-    public CommandEditorContext edit(Object instance, CommandEditorContext context) {
+    public <SENDER> CommandEditorContext<SENDER> edit(Object instance, CommandEditorContext<SENDER> context) {
         CommandEditor editor = this.editorsByClass.get(instance.getClass());
 
         if (editor != null) {

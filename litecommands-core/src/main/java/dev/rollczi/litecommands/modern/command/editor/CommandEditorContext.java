@@ -1,58 +1,80 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
+import dev.rollczi.litecommands.modern.command.CommandRoute;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-public interface CommandEditorContext {
+public interface CommandEditorContext<SENDER> {
 
     @NotNull
-    CommandEditorContext name(String name);
+    CommandEditorContext<SENDER> name(String name);
 
     String name();
 
     @NotNull
-    CommandEditorContext aliases(List<String> aliases);
+    CommandEditorContext<SENDER> aliases(List<String> aliases);
+
+    @NotNull
+    CommandEditorContext<SENDER> aliases(String... aliases);
+
+    boolean isNameOrAlias(String name);
+
+    boolean hasSimilarNames(CommandEditorContext<SENDER> context);
 
     List<String> aliases();
 
     List<String> names();
 
     @NotNull
-    CommandEditorContext enable();
+    CommandEditorContext<SENDER> enable();
 
     @NotNull
-    CommandEditorContext disable();
+    CommandEditorContext<SENDER> disable();
 
     @NotNull
-    CommandEditorContext editChild(String name, UnaryOperator<CommandEditorContext> operator);
+    CommandEditorContext<SENDER> editChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator);
 
     @NotNull
-    CommandEditorContext appendChild(String name, UnaryOperator<CommandEditorContext> operator);
+    CommandEditorContext<SENDER> appendChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator);
 
     @NotNull
-    CommandEditorContext appendChild(CommandEditorContext context);
+    CommandEditorContext<SENDER> appendChild(CommandEditorContext<SENDER> context);
+
+    Collection<CommandEditorContext<SENDER>> children();
 
     @NotNull
-    CommandEditorContext appendExecutor(CommandExecutor executor);
+    CommandEditorContext<SENDER> appendExecutor(CommandExecutor<SENDER> executor);
+
+    Collection<CommandExecutor<SENDER>> executors();
 
     @ApiStatus.Internal
-    CommandEditorContext routeName(String name);
+    CommandEditorContext<SENDER> routeName(String name);
 
     @ApiStatus.Internal
-    CommandEditorContext routeAliases(List<String> aliases);
+    CommandEditorContext<SENDER> routeAliases(List<String> aliases);
 
     @ApiStatus.Internal
-    CommandEditorContext applyOnRoute(UnaryOperator<CommandEditorContext> apply);
+    CommandEditorContext<SENDER> applyOnRoute(UnaryOperator<CommandEditorContext<SENDER>> apply);
+
+    @ApiStatus.Internal
+    void meagre(CommandEditorContext<SENDER> context);
+
+    @ApiStatus.Internal
+    boolean isEnabled();
 
     @ApiStatus.Internal
     boolean buildable();
 
-    static CommandEditorContext empty() {
-        return new CommandEditorContextImpl();
+    @ApiStatus.Internal
+    CommandRoute<SENDER> build();
+
+    static <SENDER> CommandEditorContext<SENDER> empty() {
+        return new CommandEditorContextImpl<>();
     }
 
 }

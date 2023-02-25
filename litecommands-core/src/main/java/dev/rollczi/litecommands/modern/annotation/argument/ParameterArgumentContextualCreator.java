@@ -10,6 +10,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -37,11 +38,12 @@ public class ParameterArgumentContextualCreator implements Function<Parameter, L
     }
 
     @SuppressWarnings("unchecked")
-    private <A extends Annotation, EXPECTED> ParameterArgumentContextual<A, EXPECTED> createParameterArgumentContextual(Parameter parameter, A annotation) {
+    private <A extends Annotation, EXPECTED> ParameterArgument<A, EXPECTED> createParameterArgumentContextual(Parameter parameter, A annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
+        int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         Class<A> annotationType = (Class<A>) annotation.annotationType();
         Class<?> expectedType = parameter.getType();
-        Class<?> expectedWrapperType = expectedType;
+        Class<?> expectedWrapperType = Void.class;
 
         if (this.wrappedExpectedContextualService.isWrapper(expectedType)) {
             Option<Class<?>> option = ParameterizedTypeUtil.extractFirstType(parameter);
@@ -50,11 +52,11 @@ public class ParameterArgumentContextualCreator implements Function<Parameter, L
                 throw new IllegalArgumentException("Cannot extract expected type from parameter " + ReflectFormat.parameter(parameter));
             }
 
+            expectedWrapperType = expectedType;
             expectedType = option.get();
-            expectedWrapperType = Void.class;
         }
 
-        return new ParameterArgumentContextual<>(parameter, method, annotation, annotationType, (Class<EXPECTED>)  expectedType, expectedWrapperType);
+        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (Class<EXPECTED>)  expectedType, expectedWrapperType);
     }
 
 }

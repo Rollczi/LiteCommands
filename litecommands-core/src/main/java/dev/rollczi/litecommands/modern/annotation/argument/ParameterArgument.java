@@ -1,20 +1,20 @@
 package dev.rollczi.litecommands.modern.annotation.argument;
 
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual;
-import dev.rollczi.litecommands.modern.argument.ArgumentContextual;
+import dev.rollczi.litecommands.modern.argument.Argument;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Objects;
 
-public class ParameterArgumentContextual<A extends Annotation, EXPECTED> extends ParameterContextual<EXPECTED> implements ArgumentContextual<A, EXPECTED> {
+public class ParameterArgument<A extends Annotation, EXPECTED> extends ParameterContextual<EXPECTED> implements Argument<A, EXPECTED> {
 
     private final A annotation;
     private final Class<A> annotationType;
 
-    protected ParameterArgumentContextual(Parameter parameter, Method method, A annotation, Class<A> annotationType, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
-        super(method, parameter, expectedType, expectedWrapperType);
+    protected ParameterArgument(Method method, Parameter parameter, int parameterIndex, A annotation, Class<A> annotationType, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
+        super(method, parameter, parameterIndex, expectedType, expectedWrapperType);
         this.annotation = annotation;
         this.annotationType = annotationType;
     }
@@ -34,13 +34,13 @@ public class ParameterArgumentContextual<A extends Annotation, EXPECTED> extends
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ParameterArgumentContextual)) {
+        if (!(o instanceof ParameterArgument)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
-        ParameterArgumentContextual<?, ?> that = (ParameterArgumentContextual<?, ?>) o;
+        ParameterArgument<?, ?> that = (ParameterArgument<?, ?>) o;
         return this.annotation.equals(that.annotation) && this.annotationType.equals(that.annotationType);
     }
 

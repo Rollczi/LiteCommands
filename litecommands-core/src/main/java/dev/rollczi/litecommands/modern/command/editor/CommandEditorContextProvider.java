@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
-public interface CommandEditorContextProvider {
+public interface CommandEditorContextProvider<SENDER> {
 
-    CommandEditorContext getContext();
+    CommandEditorContext<SENDER> getContext();
 
 }

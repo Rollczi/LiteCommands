@@ -15,7 +15,7 @@ public class CommandFilterService<SENDER> {
         this.commandFilters.add(commandFilter);
     }
 
-    public boolean isValid(Invocation<SENDER> invocation, CommandRoute commandRoute, CommandExecutor commandExecutor) {
+    public boolean isValid(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER> commandExecutor) {
         for (CommandFilter<SENDER> commandFilter : this.commandFilters) {
             if (!commandFilter.test(invocation, commandRoute, commandExecutor)) {
                 return false;

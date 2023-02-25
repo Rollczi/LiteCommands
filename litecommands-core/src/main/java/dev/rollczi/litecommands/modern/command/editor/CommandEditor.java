@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.command.editor;
 
-public interface CommandEditor {
+public interface CommandEditor<SENDER> {
 
-    CommandEditorContext edit(CommandEditorContext context);
+    CommandEditorContext<SENDER> edit(CommandEditorContext<SENDER> context);
 
 }

@@ -10,12 +10,14 @@ public class ParameterContextual<EXPECTED> implements ExpectedContextual<EXPECTE
 
     private final Method method;
     private final Parameter parameter;
+    private final int parameterIndex;
     private final Class<EXPECTED> expectedType;
     private final Class<?> expectedWrapperType;
 
-    protected ParameterContextual(Method method, Parameter parameter, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
+    protected ParameterContextual(Method method, Parameter parameter, int parameterIndex, Class<EXPECTED> expectedType, Class<?> expectedWrapperType) {
         this.method = method;
         this.parameter = parameter;
+        this.parameterIndex = parameterIndex;
         this.expectedType = expectedType;
         this.expectedWrapperType = expectedWrapperType;
     }
@@ -32,6 +34,10 @@ public class ParameterContextual<EXPECTED> implements ExpectedContextual<EXPECTE
 
     public Parameter getParameter() {
         return this.parameter;
+    }
+
+    public int getParameterIndex() {
+        return parameterIndex;
     }
 
     public Method getMethod() {

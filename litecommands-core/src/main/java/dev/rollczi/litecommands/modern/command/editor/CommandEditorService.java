@@ -5,26 +5,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class CommandEditorService {
+public class CommandEditorService<SENDER> {
 
-    private final Map<String, CommandEditor> editors = new HashMap<>();
-    private final Set<CommandEditor> globalEditors = new HashSet<>();
+    private final Map<String, CommandEditor<SENDER>> editors = new HashMap<>();
+    private final Set<CommandEditor<SENDER>> globalEditors = new HashSet<>();
 
-    public void registerEditor(String name, CommandEditor editor) {
+    public void registerEditor(String name, CommandEditor<SENDER> editor) {
         this.editors.put(name, editor);
     }
 
-    public void registerGlobalEditor(CommandEditor editor) {
+    public void registerGlobalEditor(CommandEditor<SENDER> editor) {
         this.globalEditors.add(editor);
     }
 
-    public CommandEditorContext edit(CommandEditorContext context) {
-        for (CommandEditor editor : this.globalEditors) {
+    public CommandEditorContext<SENDER> edit(CommandEditorContext<SENDER> context) {
+        for (CommandEditor<SENDER> editor : this.globalEditors) {
             context = editor.edit(context);
         }
 
         for (String name : context.names()) {
-            CommandEditor editor = this.editors.get(name);
+            CommandEditor<SENDER> editor = this.editors.get(name);
 
             if (editor != null) {
                 context = editor.edit(context);

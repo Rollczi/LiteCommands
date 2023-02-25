@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.modern.command.CommandRoute;
 
 public interface Platform<SENDER> {
 
-    void registerExecuteListener(CommandRoute commandRoute, PlatformExecuteListener<SENDER> executeListener);
+    void registerExecuteListener(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> executeListener);
 
-    void registerSuggestionListener(CommandRoute commandRoute, PlatformSuggestListener<SENDER> suggestListener);
+    void registerSuggestionListener(CommandRoute<SENDER> commandRoute, PlatformSuggestListener<SENDER> suggestListener);
 
 }

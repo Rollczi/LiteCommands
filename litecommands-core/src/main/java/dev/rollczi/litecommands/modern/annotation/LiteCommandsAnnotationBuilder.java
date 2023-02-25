@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
 import dev.rollczi.litecommands.modern.LiteExtension;
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationResolver;
-import dev.rollczi.litecommands.modern.argument.ArgumentContextual;
+import dev.rollczi.litecommands.modern.argument.Argument;
 import dev.rollczi.litecommands.modern.argument.ArgumentKey;
 import dev.rollczi.litecommands.modern.argument.ArgumentResolver;
 import dev.rollczi.litecommands.modern.bind.Bind;
@@ -28,46 +28,46 @@ public interface LiteCommandsAnnotationBuilder<SENDER, B extends LiteCommandsAnn
 
     LiteCommandsAnnotationBuilder<SENDER, B> command(Class<?>... commands);
 
-    <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationResolver<A> resolver);
+    <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationResolver<SENDER, A> resolver);
 
-    <A extends Annotation> B annotation(Class<A> annotation, UnaryOperator<CommandAnnotationResolver<A>> resolver);
+    <A extends Annotation> B annotation(Class<A> annotation, UnaryOperator<CommandAnnotationResolver<SENDER, A>> resolver);
 
-    <A extends Annotation> B annotationMethod(Class<A> annotation, CommandAnnotationMethodResolver<A> resolver);
+    <A extends Annotation> B annotationMethod(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver);
 
-    <A extends Annotation> B annotationMethod(Class<A> annotation, UnaryOperator<CommandAnnotationMethodResolver<A>> resolver);
-
-    @Override
-    LiteCommandsAnnotationBuilder<SENDER, B> editor(String command, CommandEditor commandEditor);
+    <A extends Annotation> B annotationMethod(Class<A> annotation, UnaryOperator<CommandAnnotationMethodResolver<SENDER, A>> resolver);
 
     @Override
-    LiteCommandsAnnotationBuilder<SENDER, B> globalEditor(CommandEditor commandEditor);
+    LiteCommandsAnnotationBuilder<SENDER, B> editor(String command, CommandEditor<SENDER> commandEditor);
+
+    @Override
+    LiteCommandsAnnotationBuilder<SENDER, B> globalEditor(CommandEditor<SENDER> commandEditor);
 
     @Override
     LiteCommandsAnnotationBuilder<SENDER, B> filter(CommandFilter<SENDER> filter);
 
     @Override
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<T> type, ARG argument);
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<T> type, ARG argument);
 
     @Override
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<T> type, ARG argument, ArgumentKey argumentKey);
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<T> type, ARG argument, ArgumentKey argumentKey);
 
     @Override
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>> & SuggestionResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<T> type, ARG argument);
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>> & SuggestionResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<T> type, ARG argument);
 
     @Override
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, ArgumentContextual<Object, T>> & SuggestionResolver<SENDER, Object, T, ArgumentContextual<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<T> type, ARG argument, ArgumentKey argumentKey);
+    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>> & SuggestionResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<T> type, ARG argument, ArgumentKey argumentKey);
 
     @Override
-    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<D> determinantType, Class<T> expectedType, Class<CONTEXT> contextType, ARG argument);
+    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<D> determinantType, Class<T> expectedType, Class<ARGUMENT> contextType, ARG argument);
 
     @Override
-    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<D> determinantType, Class<T> expectedType, Class<CONTEXT> contextType, ARG argument, ArgumentKey argumentKey);
+    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT>> LiteCommandsAnnotationBuilder<SENDER, B> argumentOnly(Class<D> determinantType, Class<T> expectedType, Class<ARGUMENT> contextType, ARG argument, ArgumentKey argumentKey);
 
     @Override
-    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT> & SuggestionResolver<SENDER, D, T, CONTEXT>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<CONTEXT> contextType, ARG argument);
+    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT> & SuggestionResolver<SENDER, D, T, ARGUMENT>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<ARGUMENT> contextType, ARG argument);
 
     @Override
-    <D, T, CONTEXT extends ArgumentContextual<D, T>, ARG extends ArgumentResolver<SENDER, D, T, CONTEXT> & SuggestionResolver<SENDER, D, T, CONTEXT>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<CONTEXT> contextType, ARG argument, ArgumentKey argumentKey);
+    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT> & SuggestionResolver<SENDER, D, T, ARGUMENT>> LiteCommandsAnnotationBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<ARGUMENT> contextType, ARG argument, ArgumentKey argumentKey);
 
     @Override
     <T> LiteCommandsAnnotationBuilder<SENDER, B> typeBind(Class<T> on, Bind<T> bind);

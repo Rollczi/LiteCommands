@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.modern.annotation.command;
 import dev.rollczi.litecommands.modern.annotation.argument.ParameterArgumentContextualCreator;
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual;
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextualCreator;
+import dev.rollczi.litecommands.modern.argument.ArgumentResolverRegistry;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
 
@@ -12,14 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class MethodCommandExecutorFactory {
+public class MethodCommandExecutorFactory<SENDER> {
 
     private final List<Function<Parameter, List<ParameterContextual<?>>>> creators = new ArrayList<>();
+    private final ArgumentResolverRegistry<SENDER> argumentResolverRegistry;
 
-    private MethodCommandExecutorFactory() {
+    private MethodCommandExecutorFactory(ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
+        this.argumentResolverRegistry = argumentResolverRegistry;
     }
 
-    public CommandExecutor create(Object instance, Method method) {
+    public CommandExecutor<SENDER> create(Object instance, Method method) {
         List<ParameterContextual<?>> expectedContextuals = new ArrayList<>();
 
         for (Parameter parameter : method.getParameters()) {
@@ -35,11 +38,11 @@ public class MethodCommandExecutorFactory {
             }
         }
 
-        return new MethodCommandExecutor(method, expectedContextuals, instance);
+        return MethodCommandExecutor.of(method, instance, expectedContextuals, argumentResolverRegistry);
     }
 
-    public static MethodCommandExecutorFactory create(WrappedExpectedContextualService wrappedExpectedContextualService) {
-        MethodCommandExecutorFactory factory = new MethodCommandExecutorFactory();
+    public static <SENDER> MethodCommandExecutorFactory<SENDER> create(WrappedExpectedContextualService wrappedExpectedContextualService, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
+        MethodCommandExecutorFactory<SENDER> factory = new MethodCommandExecutorFactory<>(argumentResolverRegistry);
 
         factory.creators.add(new ParameterArgumentContextualCreator(wrappedExpectedContextualService));
         factory.creators.add(new ParameterContextualCreator(wrappedExpectedContextualService));
