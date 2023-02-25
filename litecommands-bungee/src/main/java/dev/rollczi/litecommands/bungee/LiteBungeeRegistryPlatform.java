@@ -8,6 +8,8 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +38,7 @@ class LiteBungeeRegistryPlatform implements RegistryPlatform<CommandSender> {
     public void unregisterListener(CommandSection<CommandSender> command) {
         PluginManager pluginManager = this.plugin.getProxy().getPluginManager();
 
-        pluginManager.getCommands().stream()
+        new ArrayList<>(pluginManager.getCommands()).stream()
                 .filter(entry -> command.getName().equals(entry.getKey()) || command.getAliases().contains(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .forEach(pluginManager::unregisterCommand);
@@ -46,7 +48,7 @@ class LiteBungeeRegistryPlatform implements RegistryPlatform<CommandSender> {
     public void unregisterAll() {
         PluginManager pluginManager = this.plugin.getProxy().getPluginManager();
 
-        pluginManager.getCommands().stream()
+        new ArrayList<>(pluginManager.getCommands()).stream()
                 .filter(entry -> this.commands.contains(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .forEach(pluginManager::unregisterCommand);
