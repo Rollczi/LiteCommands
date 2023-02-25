@@ -55,8 +55,8 @@ public class SchematicFormatBuilder {
                 section -> this.command.close(section.getName()),
                 section -> this.subcommand.close(section.getName()),
                 commandSections -> this.subcommandsBrackets.close(commandSections.stream().map(CommandSection::getName).collect(Collectors.joining(this.subcommands))),
-                argument -> argument.schematic().orElseGet(() -> this.argument.close(argument.name().orElseGet("none"))),
-                argument -> argument.schematic().orElseGet(() -> this.optionalArgument.close(argument.name().orElseGet("none")))
+                argument -> argument.schematic().orElseGet(() -> this.argument.close(argument.name())),
+                argument -> argument.schematic().orElseGet(() -> this.optionalArgument.close(argument.name()))
         );
     }
 

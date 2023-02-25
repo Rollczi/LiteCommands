@@ -43,14 +43,15 @@ public final class UniformSuggestionStack extends SuggestionStack {
     }
 
     @Override
-    public UniformSuggestionStack with(Iterable<Suggestion> suggestions) {
-        ArrayList<Suggestion> list = new ArrayList<>(this.suggestions);
-
+    public UniformSuggestionStack with(Collection<Suggestion> suggestions) {
         for (Suggestion suggestion : suggestions) {
-            list.add(suggestion);
+            if (suggestion.lengthMultilevel() != this.multilevelLength) {
+                throw new IllegalArgumentException("length of multi-level suggestions must be same!");
+            }
         }
 
-        return of(list, this.multilevelLength);
+        this.suggestions.addAll(suggestions);
+        return this;
     }
 
     public static UniformSuggestionStack empty() {
@@ -62,7 +63,7 @@ public final class UniformSuggestionStack extends SuggestionStack {
     }
 
     public static UniformSuggestionStack of(Collection<Suggestion> suggestions) {
-        return of(new ArrayList<>(suggestions), 0);
+        return of(suggestions, 0);
     }
 
     public static UniformSuggestionStack of(Collection<Suggestion> suggestions, int multilevelLength) {

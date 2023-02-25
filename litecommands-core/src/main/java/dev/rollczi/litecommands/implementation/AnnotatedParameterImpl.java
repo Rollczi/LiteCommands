@@ -55,7 +55,7 @@ class AnnotatedParameterImpl<SENDER, A extends Annotation> implements AnnotatedP
     }
 
     @Override
-    public Option<String> name() {
+    public String name() {
         return this.argument.getName(parameter, annotationInstance);
     }
 

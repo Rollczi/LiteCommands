@@ -3,7 +3,7 @@ Maven
 ```xml
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
-    <artifactId>bungee</artifactId>
+    <artifactId>minestom</artifactId>
     <version>2.8.4</version>
 </dependency>
 ```

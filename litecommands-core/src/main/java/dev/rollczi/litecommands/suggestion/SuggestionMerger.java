@@ -14,7 +14,7 @@ public class SuggestionMerger {
 
     public SuggestionMerger append(int route, Suggestion suggestion) {
         if (route == argumentLevel) {
-            this.root = root.with(suggestion);
+            this.root.with(suggestion);
             return this;
         }
 
@@ -28,7 +28,7 @@ public class SuggestionMerger {
 
     public SuggestionMerger appendRoot(SuggestionStack suggestions) {
         for (Suggestion suggestion : suggestions.suggestions) {
-            this.root = this.root.with(suggestion);
+            this.root.with(suggestion);
         }
 
         return this;
@@ -48,7 +48,7 @@ public class SuggestionMerger {
 
     public SuggestionMerger append(int route, UniformSuggestionStack suggestions) {
         if (route == argumentLevel) {
-            this.root = root.with(suggestions.suggestions());
+            this.root.with(suggestions.suggestions());
             return this;
         }
 

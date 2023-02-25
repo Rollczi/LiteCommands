@@ -12,12 +12,14 @@ public final class TestFactory {
         TestPlatform testPlatform = new TestPlatform();
         LiteCommandsBuilder<TestHandle> liteCommandsBuilder = LiteFactory.builder(TestHandle.class);
 
+        liteCommandsBuilder
+            .contextualBind(String.class, (testHandle, invocation) -> Result.ok("contextual"))
+            .resultHandler(String.class, (v, invocation, value) -> {})
+            .platform(testPlatform);
+
         configurator.config(liteCommandsBuilder);
 
         liteCommandsBuilder
-                .contextualBind(String.class, (testHandle, invocation) -> Result.ok("contextual"))
-                .resultHandler(String.class, (v, invocation, value) -> {})
-                .platform(testPlatform)
                 .register();
 
         return testPlatform;
