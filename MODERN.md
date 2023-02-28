@@ -37,4 +37,4 @@ Modern TODO
 - [ ] @Arg @Regex("[a-zA-Z0-9_]") @Length(min = 3, max = 16) String playerName
 - [x] Return result handler
 - [x] Return result handler remapper
-- Support JDA XD
+- [ ] Support JDA XD
