@@ -1,30 +1,30 @@
 package dev.rollczi.litecommands.modern.argument;
 
-import dev.rollczi.litecommands.modern.contextual.ExpectedContextualProvider;
+import dev.rollczi.litecommands.modern.wrapper.ValueToWrap;
 
 public class SuccessfulResult<EXPECTED> {
 
-    private final ExpectedContextualProvider<EXPECTED> expectedContextualProvider;
+    private final ValueToWrap<EXPECTED> valueToWrap;
     private final int consumedRawArguments;
 
-    private SuccessfulResult(ExpectedContextualProvider<EXPECTED> expectedContextualProvider, int consumedRawArguments) {
-        this.expectedContextualProvider = expectedContextualProvider;
+    private SuccessfulResult(ValueToWrap<EXPECTED> valueToWrap, int consumedRawArguments) {
+        this.valueToWrap = valueToWrap;
         this.consumedRawArguments = consumedRawArguments;
     }
 
-    public ExpectedContextualProvider<EXPECTED> getExpectedContextualProvider() {
-        return this.expectedContextualProvider;
+    public ValueToWrap<EXPECTED> getExpectedProvider() {
+        return this.valueToWrap;
     }
 
     public int getConsumedRawArguments() {
         return this.consumedRawArguments;
     }
 
-    public static <EXPECTED> SuccessfulResult<EXPECTED> of(ExpectedContextualProvider<EXPECTED> parsedArgument, int consumedRawArguments) {
+    public static <EXPECTED> SuccessfulResult<EXPECTED> of(ValueToWrap<EXPECTED> parsedArgument, int consumedRawArguments) {
         return new SuccessfulResult<>(parsedArgument, consumedRawArguments);
     }
 
-    public static <EXPECTED> SuccessfulResult<EXPECTED> optionalArgument(ExpectedContextualProvider<EXPECTED> parsedArgument) {
+    public static <EXPECTED> SuccessfulResult<EXPECTED> optionalArgument(ValueToWrap<EXPECTED> parsedArgument) {
         return new SuccessfulResult<>(parsedArgument, 0);
     }
 

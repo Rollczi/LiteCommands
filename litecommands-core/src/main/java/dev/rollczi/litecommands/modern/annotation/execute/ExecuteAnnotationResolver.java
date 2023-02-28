@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.modern.annotation.execute;
 import dev.rollczi.litecommands.modern.annotation.command.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
-import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
+import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.util.LiteCommandsRulesUtil;
 
 import java.lang.reflect.Method;

@@ -18,8 +18,6 @@ public interface CommandRoute<SENDER> {
 
     Collection<CommandExecutor<SENDER>> getExecutors();
 
-    Optional<CommandExecutor<SENDER>> getExecutor(CommandExecutorKey key);
-
     void appendChildren(CommandRoute<SENDER> children);
 
     void appendExecutor(CommandExecutor<SENDER> executor);

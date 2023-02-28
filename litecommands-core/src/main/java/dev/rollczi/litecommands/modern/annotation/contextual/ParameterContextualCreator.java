@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.annotation.contextual;
 
-import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.util.ParameterizedTypeUtil;
 import dev.rollczi.litecommands.shared.ReflectFormat;
 import panda.std.Option;
@@ -14,10 +14,10 @@ import java.util.function.Function;
 
 public class ParameterContextualCreator implements Function<Parameter, List<ParameterContextual<?>>> {
 
-    private final WrappedExpectedContextualService wrappedExpectedContextualService;
+    private final WrappedExpectedService wrappedExpectedService;
 
-    public ParameterContextualCreator(WrappedExpectedContextualService wrappedExpectedContextualService) {
-        this.wrappedExpectedContextualService = wrappedExpectedContextualService;
+    public ParameterContextualCreator(WrappedExpectedService wrappedExpectedService) {
+        this.wrappedExpectedService = wrappedExpectedService;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ParameterContextualCreator implements Function<Parameter, List<Para
         Class<?> expectedType = parameter.getType();
         Class<?> expectedWrapperType = Void.class;
 
-        if (this.wrappedExpectedContextualService.isWrapper(expectedType)) {
+        if (this.wrappedExpectedService.isWrapper(expectedType)) {
             Option<Class<?>> option = ParameterizedTypeUtil.extractFirstType(parameter);
 
             if (option.isEmpty()) {

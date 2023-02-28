@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.annotation.argument;
 
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual;
-import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.util.ParameterizedTypeUtil;
 import dev.rollczi.litecommands.shared.ReflectFormat;
 import panda.std.Option;
@@ -16,10 +16,10 @@ import java.util.function.Function;
 
 public class ParameterArgumentContextualCreator implements Function<Parameter, List<ParameterContextual<?>>> {
 
-    private final WrappedExpectedContextualService wrappedExpectedContextualService;
+    private final WrappedExpectedService wrappedExpectedService;
 
-    public ParameterArgumentContextualCreator(WrappedExpectedContextualService wrappedExpectedContextualService) {
-        this.wrappedExpectedContextualService = wrappedExpectedContextualService;
+    public ParameterArgumentContextualCreator(WrappedExpectedService wrappedExpectedService) {
+        this.wrappedExpectedService = wrappedExpectedService;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ParameterArgumentContextualCreator implements Function<Parameter, L
         Class<?> expectedType = parameter.getType();
         Class<?> expectedWrapperType = Void.class;
 
-        if (this.wrappedExpectedContextualService.isWrapper(expectedType)) {
+        if (this.wrappedExpectedService.isWrapper(expectedType)) {
             Option<Class<?>> option = ParameterizedTypeUtil.extractFirstType(parameter);
 
             if (option.isEmpty()) {

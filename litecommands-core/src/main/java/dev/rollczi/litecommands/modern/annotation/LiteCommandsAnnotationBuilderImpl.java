@@ -12,10 +12,10 @@ import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationRes
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.bind.BindRegistry;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
-import dev.rollczi.litecommands.modern.command.editor.CommandEditorContextRegistry;
-import dev.rollczi.litecommands.modern.command.editor.CommandEditorService;
-import dev.rollczi.litecommands.modern.command.filter.CommandFilterService;
-import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
+import dev.rollczi.litecommands.modern.editor.CommandEditorService;
+import dev.rollczi.litecommands.modern.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,7 +86,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
         CommandFilterService<SENDER> commandFilterService,
         ArgumentService<SENDER> argumentService,
         BindRegistry<SENDER> bindRegistry,
-        WrappedExpectedContextualService wrappedExpectedContextualService,
+        WrappedExpectedService wrappedExpectedService,
         CommandExecuteResultResolver<SENDER> resultResolver,
         CommandEditorContextRegistry<SENDER> commandEditorContextRegistry,
         @Nullable Platform<SENDER> platform,
@@ -95,7 +95,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
         List<Object> commandInstances,
         List<Class<?>> commandClasses
     ) {
-        super(senderClass, commandEditorService, commandFilterService, argumentService, bindRegistry, wrappedExpectedContextualService, resultResolver, commandEditorContextRegistry, platform);
+        super(senderClass, commandEditorService, commandFilterService, argumentService, bindRegistry, wrappedExpectedService, resultResolver, commandEditorContextRegistry, platform);
         this.commandAnnotationRegistry = commandAnnotationRegistry;
         this.annotationCommandEditorService = annotationCommandEditorService;
         this.commandInstances = new ArrayList<>(commandInstances);

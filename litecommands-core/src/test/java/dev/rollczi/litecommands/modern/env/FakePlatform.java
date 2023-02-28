@@ -42,6 +42,23 @@ public class FakePlatform implements Platform<FakeSender> {
         throw new IllegalStateException("No command found for " + command);
     }
 
+
+    public InvocationResult<FakeSender> execute(String command, String... arguments) {
+        FakeSender fakeSender = new FakeSender();
+        FakePlatformSender fakePlatformSender = new FakePlatformSender(fakeSender);
+
+        Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, command, command, arguments);
+
+        for (Map.Entry<CommandRoute<FakeSender>, PlatformInvocationListener<FakeSender>> entry : this.executeListeners.entrySet()) {
+            if (entry.getKey().isNameOrAlias(command)) {
+                return entry.getValue().execute(invocation);
+            }
+        }
+
+        throw new IllegalStateException("No command found for " + command);
+    }
+
+
     public void suggest(String command) {
         FakeSender fakeSender = new FakeSender();
         FakePlatformSender fakePlatformSender = new FakePlatformSender(fakeSender);

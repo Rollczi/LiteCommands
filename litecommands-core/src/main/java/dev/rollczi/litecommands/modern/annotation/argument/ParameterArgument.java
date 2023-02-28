@@ -2,13 +2,14 @@ package dev.rollczi.litecommands.modern.annotation.argument;
 
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual;
 import dev.rollczi.litecommands.modern.argument.Argument;
+import dev.rollczi.litecommands.modern.util.ReflectFormatUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Objects;
 
-public class ParameterArgument<A extends Annotation, EXPECTED> extends ParameterContextual<EXPECTED> implements Argument<A, EXPECTED> {
+public class ParameterArgument<A extends Annotation, EXPECTED> extends ParameterContextual<EXPECTED> implements Argument<EXPECTED> {
 
     private final A annotation;
     private final Class<A> annotationType;
@@ -19,14 +20,12 @@ public class ParameterArgument<A extends Annotation, EXPECTED> extends Parameter
         this.annotationType = annotationType;
     }
 
-    @Override
-    public A getDeterminant() {
-        return this.annotation;
+    public A getAnnotation() {
+        return annotation;
     }
 
-    @Override
-    public Class<A> getDeterminantType() {
-        return this.annotationType;
+    public Class<A> getAnnotationType() {
+        return annotationType;
     }
 
     @Override
@@ -47,6 +46,11 @@ public class ParameterArgument<A extends Annotation, EXPECTED> extends Parameter
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), this.annotation, this.annotationType);
+    }
+
+    @Override
+    public String getName() {
+        return ReflectFormatUtil.parameter(this.getParameter(), this.annotation);
     }
 
 }

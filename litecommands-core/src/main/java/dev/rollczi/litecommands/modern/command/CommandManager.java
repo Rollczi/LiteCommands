@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.modern.command;
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.bind.BindRegistry;
-import dev.rollczi.litecommands.modern.command.filter.CommandFilterService;
-import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.invocation.InvocationResult;
 import dev.rollczi.litecommands.modern.platform.Platform;
@@ -21,12 +21,12 @@ public class CommandManager<SENDER> {
     private final CommandFilterService<SENDER> commandFilterService;
     private final ArgumentService<SENDER> argumentService;
     private final BindRegistry<SENDER> bindRegistry;
-    private final WrappedExpectedContextualService wrappedArgumentService;
+    private final WrappedExpectedService wrappedArgumentService;
     private final CommandExecuteResultResolver<SENDER> resultResolver;
 
     public CommandManager(
         Platform<SENDER> platform,
-        WrappedExpectedContextualService wrappedArgumentService,
+        WrappedExpectedService wrappedArgumentService,
         ArgumentService<SENDER> argumentService,
         CommandExecuteResultResolver<SENDER> resultResolver,
         BindRegistry<SENDER> bindRegistry,
@@ -46,7 +46,13 @@ public class CommandManager<SENDER> {
     }
 
     public void registerCommand(CommandRoute<SENDER> commandRoute) {
-        this.platform.registerExecuteListener(commandRoute, invocation -> this.execute(invocation, commandRoute));
+        this.platform.registerExecuteListener(commandRoute, invocation -> {
+            InvocationResult<SENDER> invocationResult = this.execute(invocation, commandRoute);
+
+            resultResolver.resolve(invocationResult);
+
+            return invocationResult;
+        });
         this.root.appendToRoot(commandRoute);
     }
 
@@ -60,17 +66,22 @@ public class CommandManager<SENDER> {
                 continue;
             }
 
-            CommandContextualConverter<SENDER> provider = new CommandContextualConverter<>(this.argumentService, this.bindRegistry, this.wrappedArgumentService, findResult.childIndex);
-            Result<CommandExecuteResult, FailedReason> result = executor.execute(invocation, provider);
+            InvokedWrapperInfoResolverImpl<SENDER> provider = new InvokedWrapperInfoResolverImpl<>(this.bindRegistry, this.wrappedArgumentService);
+            PreparedArgumentIterator<SENDER> cachedArgumentResolver = new PreparedArgumentIteratorImpl<>(this.argumentService, this.wrappedArgumentService, findResult.childIndex);
+
+            Result<CommandExecuteResult, FailedReason> result = executor.execute(invocation, provider, cachedArgumentResolver);
 
             if (result.isErr()) {
-                lastFailedReason = result.getError();
+                FailedReason current = result.getError();
+
+                if (!current.isEmpty()) {
+                    lastFailedReason = current;
+                }
+
                 continue;
             }
 
             CommandExecuteResult executeResult = result.get();
-
-            this.resultResolver.resolve(invocation, executeResult);
 
             return InvocationResult.success(invocation, executeResult);
         }

@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.modern.command;
 
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.invocation.InvocationResult;
 import panda.std.Option;
 
 import java.util.HashMap;
@@ -20,7 +21,18 @@ public class CommandExecuteResultResolver<SENDER> {
         this.mappers.put(resultType, mapper);
     }
 
-    public void resolve(Invocation<SENDER> invocation, CommandExecuteResult result) {
+    public void resolve(InvocationResult<SENDER> invocationResult) {
+        Invocation<SENDER> invocation = invocationResult.getInvocation();
+
+        if (invocationResult.isInvoked()) {
+            this.resolveCommandExecuteResult(invocation, invocationResult.getCommandExecuteResult());
+            return;
+        }
+
+        this.resolveFailedReason(invocation, invocationResult.getFailedReason());
+    }
+
+    private void resolveCommandExecuteResult(Invocation<SENDER> invocation, CommandExecuteResult result) {
         if (result.isSuccessful()) {
             Option<Object> resultResult = result.getResult();
 
@@ -36,7 +48,7 @@ public class CommandExecuteResultResolver<SENDER> {
         this.resolveFailed(invocation, exception);
     }
 
-    public void resolveFailedReason(Invocation<SENDER> invocation, FailedReason failedReason) {
+    private void resolveFailedReason(Invocation<SENDER> invocation, FailedReason failedReason) {
         if (failedReason.isEmpty()) {
             return;
         }

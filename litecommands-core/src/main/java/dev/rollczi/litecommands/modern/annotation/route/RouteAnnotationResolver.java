@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.annotation.route;
 
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationResolver;
-import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
+import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 
 import java.util.Arrays;
 

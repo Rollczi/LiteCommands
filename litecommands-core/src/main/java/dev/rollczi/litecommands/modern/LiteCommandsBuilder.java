@@ -1,17 +1,15 @@
 package dev.rollczi.litecommands.modern;
 
 import dev.rollczi.litecommands.modern.argument.Argument;
-import dev.rollczi.litecommands.modern.argument.ArgumentKey;
-import dev.rollczi.litecommands.modern.argument.ArgumentResolver;
+import dev.rollczi.litecommands.modern.argument.ArgumentParser;
 import dev.rollczi.litecommands.modern.bind.Bind;
 import dev.rollczi.litecommands.modern.bind.BindContextual;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultMapper;
-import dev.rollczi.litecommands.modern.command.editor.CommandEditor;
-import dev.rollczi.litecommands.modern.command.filter.CommandFilter;
-import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualFactory;
+import dev.rollczi.litecommands.modern.editor.CommandEditor;
+import dev.rollczi.litecommands.modern.filter.CommandFilter;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.modern.platform.Platform;
-import dev.rollczi.litecommands.modern.suggestion.SuggestionResolver;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -24,46 +22,13 @@ public interface LiteCommandsBuilder<SENDER, B extends LiteCommandsBuilder<SENDE
 
     LiteCommandsBuilder<SENDER, B> filter(CommandFilter<SENDER> filter);
 
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsBuilder<SENDER, B> argumentOnly(
-        Class<T> type,
-        ARG argument
-    );
+    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, RESOLVER resolver);
 
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsBuilder<SENDER, B> argumentOnly(
-        Class<T> type,
-        ARG argument,
-        ArgumentKey argumentKey
-    );
+    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, String key, RESOLVER resolver);
 
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>> & SuggestionResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsBuilder<SENDER, B> argument(
-        Class<T> type,
-        ARG argument
-    );
+    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
 
-    <T, ARG extends ArgumentResolver<SENDER, Object, T, Argument<Object, T>> & SuggestionResolver<SENDER, Object, T, Argument<Object, T>>> LiteCommandsBuilder<SENDER, B> argument(
-        Class<T> type,
-        ARG argument,
-        ArgumentKey argumentKey
-    );
-
-    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT>> LiteCommandsBuilder<SENDER, B> argumentOnly(
-        Class<D> determinantType,
-        Class<T> expectedType,
-        Class<ARGUMENT> contextType,
-        ARG argument
-    );
-
-    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT>> LiteCommandsBuilder<SENDER, B> argumentOnly(
-        Class<D> determinantType,
-        Class<T> expectedType,
-        Class<ARGUMENT> contextType,
-        ARG argument,
-        ArgumentKey argumentKey
-    );
-
-    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT> & SuggestionResolver<SENDER, D, T, ARGUMENT>> LiteCommandsBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<ARGUMENT> contextType, ARG argument);
-
-    <D, T, ARGUMENT extends Argument<D, T>, ARG extends ArgumentResolver<SENDER, D, T, ARGUMENT> & SuggestionResolver<SENDER, D, T, ARGUMENT>> LiteCommandsBuilder<SENDER, B> argument(Class<D> determinantType, Class<T> expectedType, Class<ARGUMENT> contextType, ARG argument, ArgumentKey argumentKey);
+    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
 
     <T> LiteCommandsBuilder<SENDER, B> typeBind(Class<T> on, Bind<T> bind);
 
@@ -73,7 +38,7 @@ public interface LiteCommandsBuilder<SENDER, B extends LiteCommandsBuilder<SENDE
 
     <T> LiteCommandsBuilder<SENDER, B> contextualBind(Class<T> on, BindContextual<SENDER, T> bind);
 
-    LiteCommandsBuilder<SENDER, B> wrappedExpectedContextualFactory(WrappedExpectedContextualFactory factory);
+    LiteCommandsBuilder<SENDER, B> wrapperFactory(WrappedExpectedFactory factory);
 
     <T> LiteCommandsBuilder<SENDER, B> resultHandler(Class<T> resultType, CommandExecuteResultHandler<SENDER, T> handler);
 

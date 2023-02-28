@@ -57,11 +57,6 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public Optional<CommandExecutor<SENDER>> getExecutor(CommandExecutorKey key) {
-        throw new UnsupportedOperationException("Can not get executor from the root route");
-    }
-
-    @Override
     public void appendChildren(CommandRoute<SENDER> children) {
         throw new UnsupportedOperationException("Can not append child route to the root route");
     }

@@ -1,13 +1,11 @@
 package dev.rollczi.litecommands.modern.argument;
 
-public interface Argument<DETERMINANT, EXPECTED> {
+import dev.rollczi.litecommands.modern.wrapper.WrapperFormat;
 
-    DETERMINANT getDeterminant();
+public interface Argument<EXPECTED> {
 
-    Class<DETERMINANT> getDeterminantType();
+    String getName();
 
-    Class<EXPECTED> getExpectedType();
-
-    Class<?> getExpectedWrapperType();
+    WrapperFormat<EXPECTED> getWrapperFormat();
 
 }

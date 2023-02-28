@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.argument;
 
-import dev.rollczi.litecommands.modern.contextual.ExpectedContextualProvider;
+import dev.rollczi.litecommands.modern.wrapper.ValueToWrap;
 import org.jetbrains.annotations.Nullable;
 
 public class ArgumentResult<EXPECTED> {
@@ -45,15 +45,15 @@ public class ArgumentResult<EXPECTED> {
         return this.failedResult;
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> successMultilevel(ExpectedContextualProvider<EXPECTED> expectedReturn, int consumedRawArguments) {
+    public static <EXPECTED> ArgumentResult<EXPECTED> successMultilevel(ValueToWrap<EXPECTED> expectedReturn, int consumedRawArguments) {
         return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, consumedRawArguments), null);
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> success(ExpectedContextualProvider<EXPECTED> expectedReturn) {
+    public static <EXPECTED> ArgumentResult<EXPECTED> success(ValueToWrap<EXPECTED> expectedReturn) {
         return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, 1), null);
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> successOptional(ExpectedContextualProvider<EXPECTED> expectedReturn) {
+    public static <EXPECTED> ArgumentResult<EXPECTED> successOptional(ValueToWrap<EXPECTED> expectedReturn) {
         return new ArgumentResult<>(SuccessfulResult.optionalArgument(expectedReturn), null);
     }
 

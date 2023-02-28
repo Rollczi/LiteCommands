@@ -1,21 +1,19 @@
 package dev.rollczi.litecommands.modern.command;
 
+import dev.rollczi.litecommands.modern.argument.PreparedArgumentImpl;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
-import dev.rollczi.litecommands.modern.contextual.ExpectedContextual;
-import dev.rollczi.litecommands.modern.contextual.warpped.ExpectedContextualConverter;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.wrapper.WrapperFormat;
 import panda.std.Result;
 
 import java.util.List;
 
 public interface CommandExecutor<SENDER> {
 
-    CommandExecutorKey getKey();
+    List<PreparedArgumentImpl<SENDER, ?>> arguments();
 
-    List<ExecutableArgument<SENDER, ?, ?, ?>> arguments();
+    List<WrapperFormat<?>> contextuals();
 
-    List<ExpectedContextual<?>> contextuals();
-
-    Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, ExpectedContextualConverter<SENDER> wrappedExpectedContextualProvider);
+    Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, InvokedWrapperInfoResolver<SENDER> invokedWrapperInfoResolver, PreparedArgumentIterator<SENDER> cachedArgumentResolver);
 
 }

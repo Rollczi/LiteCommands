@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextualCreator;
 import dev.rollczi.litecommands.modern.argument.ArgumentResolverRegistry;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
-import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextualService;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -41,11 +41,11 @@ public class MethodCommandExecutorFactory<SENDER> {
         return MethodCommandExecutor.of(method, instance, expectedContextuals, argumentResolverRegistry);
     }
 
-    public static <SENDER> MethodCommandExecutorFactory<SENDER> create(WrappedExpectedContextualService wrappedExpectedContextualService, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
+    public static <SENDER> MethodCommandExecutorFactory<SENDER> create(WrappedExpectedService wrappedExpectedService, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
         MethodCommandExecutorFactory<SENDER> factory = new MethodCommandExecutorFactory<>(argumentResolverRegistry);
 
-        factory.creators.add(new ParameterArgumentContextualCreator(wrappedExpectedContextualService));
-        factory.creators.add(new ParameterContextualCreator(wrappedExpectedContextualService));
+        factory.creators.add(new ParameterArgumentContextualCreator(wrappedExpectedService));
+        factory.creators.add(new ParameterContextualCreator(wrappedExpectedService));
 
         return factory;
     }

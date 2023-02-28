@@ -1,18 +1,19 @@
 package dev.rollczi.litecommands.modern.annotation.command;
 
 import dev.rollczi.litecommands.modern.annotation.argument.ParameterArgument;
+import dev.rollczi.litecommands.modern.annotation.argument.PreparedParameterArgumentImpl;
 import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual;
-import dev.rollczi.litecommands.modern.argument.ArgumentResolver;
+import dev.rollczi.litecommands.modern.argument.ArgumentParser;
 import dev.rollczi.litecommands.modern.argument.ArgumentResolverRegistry;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
+import dev.rollczi.litecommands.modern.command.PreparedArgumentIterator;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResult;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
-import dev.rollczi.litecommands.modern.command.CommandExecutorKey;
-import dev.rollczi.litecommands.modern.command.ExecutableArgument;
-import dev.rollczi.litecommands.modern.contextual.ExpectedContextual;
-import dev.rollczi.litecommands.modern.contextual.warpped.ExpectedContextualConverter;
-import dev.rollczi.litecommands.modern.contextual.warpped.WrappedExpectedContextual;
+import dev.rollczi.litecommands.modern.argument.PreparedArgumentImpl;
+import dev.rollczi.litecommands.modern.command.InvokedWrapperInfoResolver;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpected;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.wrapper.WrapperFormat;
 import panda.std.Result;
 
 import java.lang.annotation.Annotation;
@@ -31,47 +32,40 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
     private final Method method;
     private final Object instance;
     private final Class<?> returnType;
-    private final List<ParameterContextual<?>> expectedContextuals = new ArrayList<>();
-    private final List<ExecutableArgument<SENDER, ?, ?, ? extends ParameterArgument<?, ?>>> executableArguments = new ArrayList<>();
-    private final CommandExecutorKey executorKey;
+    private final List<ParameterContextual<?>> parameterContextuals = new ArrayList<>();
+    private final List<PreparedParameterArgumentImpl<SENDER, ?>> resolvedArguments = new ArrayList<>();
 
     private MethodCommandExecutor(
         Method method,
         Object instance,
-        List<ExpectedContextual<?>> allExpectedContextual,
-        List<ParameterContextual<?>> expectedContextuals,
-        List<ExecutableArgument<SENDER, ?, ?, ? extends ParameterArgument<?, ?>>> executableArguments
+        List<ParameterContextual<?>> parameterContextuals,
+        List<PreparedParameterArgumentImpl<SENDER, ?>> resolvedArguments
         ) {
         this.method = method;
         this.instance = instance;
         this.returnType = method.getReturnType();
-        this.executableArguments.addAll(executableArguments);
-        this.expectedContextuals.addAll(expectedContextuals);
-        this.executorKey = new CommandExecutorKey(Collections.unmodifiableList(allExpectedContextual));
+        this.resolvedArguments.addAll(resolvedArguments);
+        this.parameterContextuals.addAll(parameterContextuals);
     }
 
     @Override
-    public CommandExecutorKey getKey() {
-        return this.executorKey;
+    public List<PreparedArgumentImpl<SENDER, ?>> arguments() {
+        return Collections.unmodifiableList(resolvedArguments);
     }
 
     @Override
-    public List<ExecutableArgument<SENDER, ?, ?, ?>> arguments() {
-        return Collections.unmodifiableList(executableArguments);
+    public List<WrapperFormat<?>> contextuals() {
+        return parameterContextuals.stream()
+            .map(ParameterContextual::getWrapperFormat)
+            .collect(Collectors.toList());
     }
 
     @Override
-    public List<ExpectedContextual<?>> contextuals() {
-        return Collections.unmodifiableList(executableArguments);
-    }
+    public Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, InvokedWrapperInfoResolver<SENDER> wrapperInfoResolver, PreparedArgumentIterator<SENDER> cachedArgumentResolver) {
+        NavigableMap<Integer, Supplier<WrappedExpected<Object>>> suppliers = new TreeMap<>();
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Result<CommandExecuteResult, FailedReason> execute(Invocation<SENDER> invocation, ExpectedContextualConverter<SENDER> provider) {
-        NavigableMap<Integer, Supplier<WrappedExpectedContextual<Object>>> suppliers = new TreeMap<>();
-
-        for (ParameterContextual<?> parameterContextual : this.expectedContextuals) {
-            Result<Supplier<WrappedExpectedContextual<Object>>, FailedReason> result = provider.provide(invocation, (ExpectedContextual<Object>) parameterContextual);
+        for (ParameterContextual<?> parameterContextual : this.parameterContextuals) {
+            Result<Supplier<WrappedExpected<Object>>, FailedReason> result = provideParameterContextual(invocation, wrapperInfoResolver, parameterContextual);
 
             if (result.isErr()) {
                 return Result.error(result.getError());
@@ -80,14 +74,15 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
             suppliers.put(parameterContextual.getParameterIndex(), result.get());
         }
 
-        for (ExecutableArgument<SENDER, ?, ?, ? extends ParameterArgument<?, ?>> executableArgument : this.executableArguments) {
-            Result<Supplier<WrappedExpectedContextual<Object>>, FailedReason> result = provider.provide(invocation, (ExpectedContextual<Object>) executableArgument);
+        for (PreparedParameterArgumentImpl<SENDER, ?> cachedParameterArgument : this.resolvedArguments) {
+            Result<Supplier<WrappedExpected<Object>>, FailedReason> result = provideResolvedArgument(invocation, cachedArgumentResolver, cachedParameterArgument
+            );
 
             if (result.isErr()) {
                 return Result.error(result.getError());
             }
 
-            suppliers.put(executableArgument.getContextual().getParameterIndex(), result.get());
+            suppliers.put(cachedParameterArgument.getParameterIndex(), result.get());
         }
 
         if (suppliers.size() != this.method.getParameterCount()) {
@@ -96,7 +91,7 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
 
         List<Object> objects = suppliers.values().stream()
             .map(Supplier::get)
-            .map(WrappedExpectedContextual::unwrap)
+            .map(WrappedExpected::unwrap)
             .collect(Collectors.toList());
 
         try {
@@ -108,35 +103,39 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
         }
     }
 
+    private <T> Result<Supplier<WrappedExpected<Object>>, FailedReason> provideParameterContextual(Invocation<SENDER> invocation, InvokedWrapperInfoResolver<SENDER> provider, ParameterContextual<T> parameterContextual) {
+        return provider.resolve(invocation, (WrapperFormat<Object>) parameterContextual.getWrapperFormat());
+    }
+
+    private <T> Result<Supplier<WrappedExpected<Object>>, FailedReason> provideResolvedArgument(Invocation<SENDER> invocation, PreparedArgumentIterator<SENDER> cachedArgumentResolver, PreparedArgumentImpl<SENDER, T> preparedArgumentImpl) {
+        return cachedArgumentResolver.resolveNext(invocation, (PreparedArgumentImpl<SENDER, Object>) preparedArgumentImpl);
+    }
+
     public static <SENDER> MethodCommandExecutor<SENDER> of(Method method, Object instance, List<ParameterContextual<?>> contextuals, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
         List<ParameterContextual<?>> expectedContextuals = new ArrayList<>();
-        List<ExecutableArgument<SENDER, ?, ?, ? extends ParameterArgument<?, ?>>> executableArguments = new ArrayList<>();
+        List<PreparedParameterArgumentImpl<SENDER, ?>> resolvedArguments = new ArrayList<>();
 
         for (ParameterContextual<?> contextual : contextuals) {
             if (contextual instanceof ParameterArgument<?, ?>) {
-                executableArguments.add(createExecutableArgument((ParameterArgument<?, ?>) contextual, argumentResolverRegistry));
+                resolvedArguments.add(createExecutableArgument((ParameterArgument<?, ?>) contextual, argumentResolverRegistry));
             } else {
                 expectedContextuals.add(contextual);
             }
         }
 
-        List<ExpectedContextual<?>> allExpectedContextual = new ArrayList<>();
-        allExpectedContextual.addAll(expectedContextuals);
-        allExpectedContextual.addAll(executableArguments);
-
         method.setAccessible(true);
 
-        return new MethodCommandExecutor<>(method, instance, allExpectedContextual, expectedContextuals, executableArguments);
+        return new MethodCommandExecutor<>(method, instance, expectedContextuals, resolvedArguments);
     }
 
-    private static <SENDER, D extends Annotation, E, C extends ParameterArgument<D, E>> ExecutableArgument<SENDER, D, E, C> createExecutableArgument(C contextual, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
-        Optional<ArgumentResolver<SENDER, D, E, C>> resolver = argumentResolverRegistry.getResolver(ArgumentResolverRegistry.IndexKey.from(contextual));
+    private static <SENDER, D extends Annotation, E, ARGUMENT extends ParameterArgument<D, E>> PreparedParameterArgumentImpl<SENDER, E> createExecutableArgument(ARGUMENT argument, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
+        Optional<ArgumentParser<SENDER, E, ARGUMENT>> resolver = argumentResolverRegistry.getResolver(ArgumentResolverRegistry.IndexKey.from(argument));
 
         if (!resolver.isPresent()) {
-            throw new IllegalStateException("Cannot find resolver for " + contextual);
+            throw new IllegalStateException("Cannot find resolver for " + argument);
         }
 
-        return new ExecutableArgument<>(contextual, resolver.get());
+        return PreparedParameterArgumentImpl.create(argument, resolver.get());
     }
 
 }

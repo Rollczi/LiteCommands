@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.annotation.processor;
 
 import dev.rollczi.litecommands.modern.annotation.editor.AnnotationCommandEditorService;
-import dev.rollczi.litecommands.modern.command.editor.CommandEditorContext;
+import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
