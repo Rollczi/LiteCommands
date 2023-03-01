@@ -44,12 +44,12 @@ publishing {
             "ETERNAL_CODE_MAVEN_PASSWORD"
         )*/
 
-        maven(
+/*        maven(
             "minecodes",
             "https://repository.minecodes.pl",
             "MINE_CODES_MAVEN_USERNAME",
             "MINE_CODES_MAVEN_PASSWORD",
-        )
+        )*/
     }
 }
 
