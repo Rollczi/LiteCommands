@@ -1,6 +1,4 @@
-buildscript {
-    extra["kotlin_version"] = "1.8.0"
-}
+val kotlinVersion = "1.8.0"
 
 plugins {
     `kotlin-dsl`
@@ -8,4 +6,9 @@ plugins {
 
 repositories {
     gradlePluginPortal()
+}
+
+dependencies {
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    compileOnly("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
 }
