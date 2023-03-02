@@ -20,7 +20,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Publish with Gradle
-        run: ./gradlew clean build publish --stacktrace
+        run: ./gradlew clean build publish --scan
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
