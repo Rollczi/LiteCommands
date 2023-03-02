@@ -1,7 +1,5 @@
 package dev.rollczi.litecommands.modern.editor;
 
-import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
-import dev.rollczi.litecommands.modern.editor.CommandEditorContextDummy;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -19,7 +17,7 @@ class CommandEditorContextTest {
 
     @Test
     void testSimpleRoute() {
-        CommandEditorContext<?> context = CommandEditorContext.empty()
+        CommandEditorContext<?> context = CommandEditorContext.create()
             .routeName("test")
             .routeAliases(Arrays.asList("test1", "test2"));
 
@@ -29,7 +27,7 @@ class CommandEditorContextTest {
 
     @Test
     void testRouteWithChild() {
-        CommandEditorContext<?> context = CommandEditorContext.empty()
+        CommandEditorContext<?> context = CommandEditorContext.create()
             .routeName("test child")
             .routeAliases(Arrays.asList("alias1 child", "alias2 c"));
 
@@ -44,7 +42,7 @@ class CommandEditorContextTest {
 
     @Test
     void testNameAndAliasesMethods() {
-        CommandEditorContext<Object> context = CommandEditorContext.empty()
+        CommandEditorContext<Object> context = CommandEditorContext.create()
             .name("test")
             .aliases(Arrays.asList("test1", "test2"));
 
@@ -59,16 +57,16 @@ class CommandEditorContextTest {
 
     @Test
     void testHasSimilarNamesMethod() {
-        CommandEditorContext<Object> context = CommandEditorContext.empty()
+        CommandEditorContext<Object> context = CommandEditorContext.create()
             .name("test")
             .aliases(Arrays.asList("test1", "test2"));
 
-        CommandEditorContext<Object> other1 = CommandEditorContext.empty()
+        CommandEditorContext<Object> other1 = CommandEditorContext.create()
             .name("test");
 
         assertTrue(context.hasSimilarNames(other1));
 
-        CommandEditorContext<Object> other2 = CommandEditorContext.empty()
+        CommandEditorContext<Object> other2 = CommandEditorContext.create()
             .name("other");
 
         assertFalse(context.hasSimilarNames(other2));
@@ -76,7 +74,7 @@ class CommandEditorContextTest {
 
     @Test
     void testEditApiMethodsWithRoute() {
-        CommandEditorContext<?> context = CommandEditorContext.empty()
+        CommandEditorContext<?> context = CommandEditorContext.create()
             .routeName("test child")
             .routeAliases(Arrays.asList("alias1 child", "alias2 c"))
             .name("edited-test")
@@ -93,7 +91,7 @@ class CommandEditorContextTest {
 
     @Test
     void testEditApiMethodsWithChild() {
-        CommandEditorContext<?> context = CommandEditorContext.empty()
+        CommandEditorContext<?> context = CommandEditorContext.create()
             .routeName("test child")
             .routeAliases(Collections.singletonList("alias c"))
             .editChild("child", child -> child
@@ -111,7 +109,7 @@ class CommandEditorContextTest {
 
     @Test
     void testEnableAndDisableMethods() {
-        CommandEditorContext<?> context = CommandEditorContext.empty();
+        CommandEditorContext<?> context = CommandEditorContext.create();
         assertTrue(context.isEnabled());
 
         context.disable();
@@ -123,9 +121,9 @@ class CommandEditorContextTest {
 
     @Test
     void testEditChildMethod() {
-        CommandEditorContext<Object> context = CommandEditorContext.empty()
+        CommandEditorContext<Object> context = CommandEditorContext.create()
             .name("root")
-            .appendChild(CommandEditorContext.empty().name("first").aliases("sub-first"))
+            .appendChild(CommandEditorContext.create().name("first").aliases("sub-first"))
             .appendChild("second", child -> child.aliases("sub-second"));
 
         context.editChild("first", child -> {

@@ -28,7 +28,7 @@ import java.util.function.UnaryOperator;
 public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnnotationBuilderImpl<SENDER, B>> extends LiteCommandsBaseBuilder<SENDER, B> implements LiteCommandsAnnotationBuilder<SENDER, B> {
 
     private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry;
-    private final AnnotationCommandEditorService annotationCommandEditorService;
+    private final AnnotationCommandEditorService<SENDER> annotationCommandEditorService;
     private final List<Object> commandInstances;
     private final List<Class<?>> commandClasses;
 
@@ -49,7 +49,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
     public LiteCommandsAnnotationBuilderImpl(Class<SENDER> senderClass, Platform<SENDER> platform) {
         super(senderClass, platform);
         this.commandAnnotationRegistry = new CommandAnnotationRegistry<>();
-        this.annotationCommandEditorService = new AnnotationCommandEditorService(this.getCommandEditorService());
+        this.annotationCommandEditorService = new AnnotationCommandEditorService<>(this.getCommandEditorService());
         this.commandInstances = new ArrayList<>();
         this.commandClasses = new ArrayList<>();
     }
@@ -71,7 +71,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
             pattern.getCommandContextRegistry(),
             pattern.getPlatform(),
             new CommandAnnotationRegistry<>(),
-            new AnnotationCommandEditorService(pattern.getCommandEditorService()),
+            new AnnotationCommandEditorService<>(pattern.getCommandEditorService()),
             new ArrayList<>(),
             new ArrayList<>()
         );
@@ -91,7 +91,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
         CommandEditorContextRegistry<SENDER> commandEditorContextRegistry,
         @Nullable Platform<SENDER> platform,
         CommandAnnotationRegistry<SENDER> commandAnnotationRegistry,
-        AnnotationCommandEditorService annotationCommandEditorService,
+        AnnotationCommandEditorService<SENDER> annotationCommandEditorService,
         List<Object> commandInstances,
         List<Class<?>> commandClasses
     ) {
@@ -110,7 +110,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
 
     @Override
     public B command(Class<?>... commands) {
-        this.commandInstances.addAll(Arrays.asList(commands));
+        this.commandClasses.addAll(Arrays.asList(commands));
         return this.getThis();
     }
 
@@ -142,7 +142,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
     public LiteCommands<SENDER> register() {
         CommandEditorContextRegistry<SENDER> contextRegistry = this.getCommandContextRegistry();
 
-        CommandAnnotationProcessor processor = new CommandAnnotationProcessor(this.commandAnnotationRegistry, this.annotationCommandEditorService);
+        CommandAnnotationProcessor<SENDER> processor = new CommandAnnotationProcessor<>(this.commandAnnotationRegistry, this.annotationCommandEditorService);
         Injector<SENDER> injector = new Injector<>(this.getBindRegistry());
         List<Object> instances = new ArrayList<>(this.commandInstances);
 

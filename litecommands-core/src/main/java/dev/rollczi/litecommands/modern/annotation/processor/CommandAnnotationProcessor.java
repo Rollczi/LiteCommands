@@ -18,7 +18,7 @@ public class CommandAnnotationProcessor<SENDER> {
 
     public CommandEditorContext<SENDER> createContext(Object instance) {
         Class<?> type = instance.getClass();
-        CommandEditorContext<SENDER> context = CommandEditorContext.empty();
+        CommandEditorContext<SENDER> context = CommandEditorContext.create();
 
         for (Annotation annotation : type.getAnnotations()) {
             context = this.commandAnnotationRegistry.resolve(instance, annotation, context);

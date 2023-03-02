@@ -1,6 +1,6 @@
 Modern TODO
 - [x] @Route
-- [ ] @RootRoute
+- [x] @RootRoute
 - [x] @Execute
 - [ ] @ExecuteAsync vs @Execute(async = true)
 - [ ] @Timeout(second = 10)

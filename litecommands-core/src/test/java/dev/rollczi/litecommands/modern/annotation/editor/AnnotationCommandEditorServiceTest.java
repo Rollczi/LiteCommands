@@ -28,7 +28,7 @@ class AnnotationCommandEditorServiceTest {
         editorService.registerEditorKey(KEY, (context) -> context.name("prefix-" + context.name()));
 
         Command command = new Command();
-        CommandEditorContext<FakeSender> oldContext = CommandEditorContext.<FakeSender>empty().name("test");
+        CommandEditorContext<FakeSender> oldContext = CommandEditorContext.<FakeSender>create().name("test");
         CommandEditorContext<FakeSender> context = editorService.edit(command, oldContext);
 
         assertEquals("prefix-test", context.name());

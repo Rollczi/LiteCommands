@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.modern.annotation.LiteCommandsAnnotationBuilderI
 import dev.rollczi.litecommands.modern.annotation.command.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.annotation.execute.ExecuteAnnotationResolver;
+import dev.rollczi.litecommands.modern.annotation.route.RootRoute;
+import dev.rollczi.litecommands.modern.annotation.route.RootRouteAnnotationResolver;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
 import dev.rollczi.litecommands.modern.annotation.route.RouteAnnotationResolver;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
@@ -41,6 +43,7 @@ public final class LiteCommandsFactory {
 
         return (B) new LiteCommandsAnnotationBuilderImpl<>(internalPattern)
             .annotation(Route.class, new RouteAnnotationResolver<>())
+            .annotation(RootRoute.class, new RootRouteAnnotationResolver<>())
             .annotationMethod(Execute.class, new ExecuteAnnotationResolver<>(executorFactory));
     }
 

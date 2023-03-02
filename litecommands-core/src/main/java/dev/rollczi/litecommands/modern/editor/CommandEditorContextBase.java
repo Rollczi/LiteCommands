@@ -243,7 +243,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     }
 
     @Override
-    public CommandRoute<SENDER> build() {
+    public Collection<CommandRoute<SENDER>> build() {
         CommandRoute<SENDER> route = CommandRoute.of(this.name, this.aliases);
 
         for (CommandExecutor<SENDER> executor : this.executors) {
@@ -255,10 +255,12 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
                 continue;
             }
 
-            route.appendChildren(child.build());
+            for (CommandRoute<SENDER> childRoute : child.build()) {
+                route.appendChildren(childRoute);
+            }
         }
 
-        return route;
+        return Collections.singleton(route);
     }
 
     @Override

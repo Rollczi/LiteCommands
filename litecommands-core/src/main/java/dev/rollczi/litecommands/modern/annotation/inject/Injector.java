@@ -28,8 +28,8 @@ public class Injector<SENDER> {
 
     @SuppressWarnings("unchecked")
     private  <T> T createInstance(Class<T> type, Function<Class<?>, Object> instanceProvider) {
-        List<Constructor<?>> constructors = Arrays.stream(type.getConstructors())
-            .filter(constructor -> constructor.isAnnotationPresent(Inject.class))
+        List<Constructor<?>> constructors = Arrays.stream(type.getDeclaredConstructors())
+            .filter(constructor -> constructor.isAnnotationPresent(Inject.class) || constructor.getParameterCount() == 0)
             .sorted((o1, o2) -> Integer.compare(o2.getParameterCount(), o1.getParameterCount()))
             .collect(Collectors.toList());
 
@@ -55,6 +55,8 @@ public class Injector<SENDER> {
             }
 
             try {
+                constructor.setAccessible(true);
+
                 return (T) constructor.newInstance(parameters);
             } catch (Exception e) {
                 exceptions.add(new InjectorException("Cannot create instance of " + type.getName(), e));

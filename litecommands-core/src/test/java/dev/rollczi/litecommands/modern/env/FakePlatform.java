@@ -29,7 +29,9 @@ public class FakePlatform implements Platform<FakeSender> {
         FakeSender fakeSender = new FakeSender();
         FakePlatformSender fakePlatformSender = new FakePlatformSender(fakeSender);
         String label = command.split(" ")[0];
-        String[] args = command.substring(label.length() + 1).split(" ");
+        String[] args = command.length() > label.length()
+            ? command.substring(label.length() + 1).split(" ")
+            : new String[0];
 
         Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, label, label, args);
 

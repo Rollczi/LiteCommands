@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultMapper;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.command.CommandManager;
+import dev.rollczi.litecommands.modern.command.CommandRoute;
 import dev.rollczi.litecommands.modern.editor.CommandEditor;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
@@ -242,7 +243,9 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
                 continue;
             }
 
-            commandManager.registerCommand(context.build());
+            for (CommandRoute<SENDER> commandRoute : context.build()) {
+                commandManager.registerCommand(commandRoute);
+            }
         }
 
         return new LiteCommandsBase<>(commandManager); //TODO add other stuff

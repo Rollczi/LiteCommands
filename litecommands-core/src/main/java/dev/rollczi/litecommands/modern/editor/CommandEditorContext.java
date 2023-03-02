@@ -71,10 +71,14 @@ public interface CommandEditorContext<SENDER> {
     boolean buildable();
 
     @ApiStatus.Internal
-    CommandRoute<SENDER> build();
+    Collection<CommandRoute<SENDER>> build();
 
-    static <SENDER> CommandEditorContext<SENDER> empty() {
+    static <SENDER> CommandEditorContext<SENDER> create() {
         return new CommandEditorContextImpl<>();
+    }
+
+    static <SENDER> CommandEditorContext<SENDER> createRoot() {
+        return new CommandEditorContextRootImpl<>();
     }
 
 }
