@@ -224,9 +224,7 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
                 return findResult;
             }
 
-            if (last == null || findResult.isLongerThan(last)) {
-                last = findResult;
-            }
+            last = this.resolveCurrentAndLast(findResult, last);
         }
 
         if (!missingSection.isEmpty()) {
@@ -235,6 +233,32 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
         }
 
         return last != null ? last : lastResult.withSection(this);
+    }
+
+    private FindResult<SENDER> resolveCurrentAndLast(FindResult<SENDER> current, FindResult<SENDER> last) {
+        if (last == null) {
+            return current;
+        }
+
+        System.out.println();
+        if (!current.isLongerThan(last)) {
+            return last;
+        }
+
+        Option<RequiredPermissions> optionCurrent = current.getResult().is(RequiredPermissions.class);
+        Option<RequiredPermissions> optionLast = last.getResult().is(RequiredPermissions.class);
+
+        if (optionCurrent.isPresent() && optionLast.isEmpty()) {
+            RequiredPermissions currentPermission = optionCurrent.get();
+            RequiredPermissions lastPermissions = optionLast.get();
+
+            return current.withResult(currentPermission.with(lastPermissions));
+        }
+        else if (optionLast.isEmpty()) {
+            return current;
+        }
+
+        return last;
     }
 
     @Override

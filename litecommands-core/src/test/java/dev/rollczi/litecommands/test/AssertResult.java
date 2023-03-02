@@ -38,8 +38,7 @@ public class AssertResult {
     }
 
     public <T> T assertResultIs(Class<T> clazz) {
-        Assertions.assertTrue(clazz.isInstance(executeResult.getResult()));
-        return clazz.cast(executeResult.getResult());
+        return Assertions.assertInstanceOf(clazz, executeResult.getResult());
     }
 
     public AssertResult assertNullResult() {
