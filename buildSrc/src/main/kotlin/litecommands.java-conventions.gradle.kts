@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "dev.rollczi.litecommands"
-version = "2.8.4"
+version = "2.8.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -35,7 +35,13 @@ publishing {
     repositories {
         mavenLocal()
 
-        maven("panda", "https://repo.panda-lang.org", "MAVEN_USERNAME", "MAVEN_PASSWORD", false)
+        maven(
+            "panda",
+            "https://repo.panda-lang.org",
+            "MAVEN_USERNAME",
+            "MAVEN_PASSWORD",
+            false
+        )
 
         maven(
             "eternalcode",
@@ -68,8 +74,8 @@ fun RepositoryHandler.maven(
 
     this.maven {
         this.name =
-            if (isSnapshot) "$name-snapshots"
-            else "$name-releases"
+            if (isSnapshot) "${name}Snapshots"
+            else "${name}Releases"
 
         this.url =
             if (isSnapshot) uri("$url/snapshots")

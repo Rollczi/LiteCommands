@@ -1,10 +1,12 @@
 name: "LiteCommands CodeQL"
 
-on:
-  push:
-    branches: [ master ]
-  schedule:
-    - cron: '21 8 * * 6'
+#on:
+#  push:
+#    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+#  schedule:
+#    - cron: '21 8 * * 6'
 
 jobs:
   analyze:

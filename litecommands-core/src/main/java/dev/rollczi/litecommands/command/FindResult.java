@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.schematic.SchematicContext;
 import dev.rollczi.litecommands.shared.Validation;
+import org.jetbrains.annotations.ApiStatus;
 import panda.std.Option;
 
 import java.util.ArrayList;
@@ -149,6 +150,11 @@ public final class FindResult<SENDER> implements SchematicContext<SENDER> {
 
     public Option<Object> getResult() {
         return Option.of(result);
+    }
+
+    @ApiStatus.Internal
+    public FindResult<SENDER> withResult(Object result) {
+        return new FindResult<>(invocation, sections, executor, arguments, found, invalid, result);
     }
 
     public List<Object> extractResults() {
