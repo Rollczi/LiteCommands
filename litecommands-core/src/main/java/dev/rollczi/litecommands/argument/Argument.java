@@ -26,6 +26,10 @@ public interface Argument<SENDER, A extends Annotation> extends ParameterHandler
         return false;
     }
 
+    default boolean isOptionalStrict(A annotation) {
+        return false;
+    }
+
     default List<Object> defaultValue() {
         return Collections.emptyList();
     }

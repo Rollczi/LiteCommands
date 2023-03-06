@@ -11,8 +11,10 @@ import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.handle.LiteException;
 import dev.rollczi.litecommands.meta.CommandMeta;
+import panda.std.Blank;
 import panda.std.Option;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -76,14 +78,14 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
                 MatchResult result = state.matchResult();
 
                 if (result.isNotMatched()) {
-                    if (argument.isOptional()) {
+                    Optional<Object> resultNoMatchedResult = result.getNoMatchedResult();
+
+                    if (argument.isOptional() && (!isOptionStrict(annotatedParameter) || !resultNoMatchedResult.isPresent())) {
                         currentResult = currentResult.withArgument(state);
                         continue;
                     }
 
-                    Optional<Object> resultNoMatchedResult = result.getNoMatchedResult();
-
-                    if (resultNoMatchedResult.isPresent()) {
+                    if (resultNoMatchedResult.isPresent() && (!(resultNoMatchedResult.get() instanceof Blank))) {
                         return currentResult
                                 .withArgument(state)
                                 .invalid(resultNoMatchedResult.get());
@@ -109,6 +111,10 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
         }
 
         return currentResult.found();
+    }
+
+    private <A extends Annotation> boolean isOptionStrict(AnnotatedParameterImpl<SENDER, A> annotatedParameter) {
+        return annotatedParameter.argument().isOptionalStrict(annotatedParameter.annotation());
     }
 
     @Override
