@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.command;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,10 +11,10 @@ public class MatchResult {
 
     private final boolean matched;
     private final List<Object> results;
-    private final Object noMatchedResult;
+    private final @Nullable Object noMatchedResult;
     private final int consumed;
 
-    private MatchResult(boolean matched, List<Object> results, Object noMatchedResult, int consumed) {
+    private MatchResult(boolean matched, List<Object> results, @Nullable Object noMatchedResult, int consumed) {
         this.matched = matched;
         this.results = results;
         this.noMatchedResult = noMatchedResult;

@@ -240,7 +240,6 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
             return current;
         }
 
-        System.out.println();
         if (!current.isLongerThan(last)) {
             return last;
         }

@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.shared.MapUtil;
 import org.jetbrains.annotations.ApiStatus;
+import panda.std.Blank;
 import panda.std.Option;
 
 import java.util.HashMap;
@@ -81,6 +82,10 @@ public class ExecuteResultHandler<SENDER> {
 
                 if (object instanceof Throwable) {
                     throw new RuntimeException("Exception thrown during command execution", (Throwable) object);
+                }
+
+                if (object instanceof Blank) {
+                    return;
                 }
 
                 throw new IllegalStateException("Missing result handler for type " + type);
