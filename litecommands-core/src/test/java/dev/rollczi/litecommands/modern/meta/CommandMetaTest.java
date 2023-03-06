@@ -1,8 +1,5 @@
 package dev.rollczi.litecommands.modern.meta;
 
-import dev.rollczi.litecommands.modern.meta.CommandKey;
-import dev.rollczi.litecommands.modern.meta.CommandMeta;
-import dev.rollczi.litecommands.modern.meta.CommandMetaType;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,7 +16,7 @@ class CommandMetaTest {
 
     @Test
     void testSetAndGet() {
-        CommandMeta meta = new CommandMeta();
+        CommandMeta meta = CommandMeta.create();
         CommandKey<String> key = CommandKey.of("test", String.class);
         assertThrows(NoSuchElementException.class, () -> meta.get(key));
 
@@ -29,7 +26,7 @@ class CommandMetaTest {
 
     @Test
     void testClear() {
-        CommandMeta meta = new CommandMeta();
+        CommandMeta meta = CommandMeta.create();
         CommandKey<String> key = CommandKey.of("test", String.class, "def");
 
         meta.put(key, "value");
@@ -40,7 +37,7 @@ class CommandMetaTest {
 
     @Test
     void testGetDefaultValue() {
-        CommandMeta meta = new CommandMeta();
+        CommandMeta meta = CommandMeta.create();
         String text = meta.get(CommandKey.of("test", String.class, "default"));
 
         assertEquals("default", text);
@@ -48,12 +45,12 @@ class CommandMetaTest {
 
     @Test
     void testList() {
-        CommandMeta meta = new CommandMeta();
+        CommandMeta meta = CommandMeta.create();
         ArrayList<String> test = new ArrayList<>();
         test.add("first");
 
         meta.put(CommandMeta.PERMISSIONS, test);
-        meta.addToList(CommandMeta.PERMISSIONS, "second");
+        meta.appendToList(CommandMeta.PERMISSIONS, "second");
 
         List<String> list = meta.get(CommandMeta.PERMISSIONS);
 
@@ -64,11 +61,11 @@ class CommandMetaTest {
 
     @Test
     void testSet() {
-        CommandMeta meta = new CommandMeta();
+        CommandMeta meta = CommandMeta.create();
         CommandKey<Set<String>> key = CommandKey.of("test", CommandMetaType.set(), new HashSet<>());
 
-        meta.addToSet(key, "first");
-        meta.addToSet(key, "second");
+        meta.appendToSet(key, "first");
+        meta.appendToSet(key, "second");
 
         Set<String> set = meta.get(key);
 

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.editor;
 
-import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.command.CommandRoute;
+import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import dev.rollczi.litecommands.shared.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -100,23 +100,28 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
     }
 
     @Override
-    public @NotNull CommandEditorContext<SENDER> appendExecutor(CommandExecutor<SENDER> executor) {
+    public @NotNull CommandEditorContext<SENDER> appendExecutor(CommandEditorExecutorBuilder<SENDER> executor) {
         throw new UnsupportedOperationException("Cannot append executor to root command");
     }
 
     @Override
-    public Collection<CommandExecutor<SENDER>> executors() {
+    public List<CommandEditorExecutorBuilder<SENDER>> executors() {
         throw new UnsupportedOperationException("Cannot get executors from root command");
     }
 
     @Override
+    public CommandEditorContext<SENDER> applyMeta(UnaryOperator<CommandMeta> operator) {
+        throw new UnsupportedOperationException("Cannot apply meta to root command");
+    }
+
+    @Override
     public CommandEditorContext<SENDER> routeName(String name) {
-        throw new UnsupportedOperationException("Cannot set route name for root command");
+        throw new UnsupportedOperationException("Cannot set name for root command");
     }
 
     @Override
     public CommandEditorContext<SENDER> routeAliases(List<String> aliases) {
-        throw new UnsupportedOperationException("Cannot set route aliases for root command");
+        throw new UnsupportedOperationException("Cannot set aliases for root command");
     }
 
     @Override
@@ -146,11 +151,15 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build() {
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
         return this.children.values().stream()
-            .map(CommandEditorContext::build)
+            .map(senderCommandEditorContext -> senderCommandEditorContext.build(parent))
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
 
+    @Override
+    public CommandMeta getMeta() {
+        return null;
+    }
 }

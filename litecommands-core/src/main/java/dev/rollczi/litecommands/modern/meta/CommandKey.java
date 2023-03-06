@@ -2,6 +2,8 @@ package dev.rollczi.litecommands.modern.meta;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class CommandKey<T> {
     
     private final String key;
@@ -46,5 +48,18 @@ public class CommandKey<T> {
     public static <T> CommandKey<T> of(String key, CommandMetaType<T> type, T defaultValue) {
         return new CommandKey<>(key, type, defaultValue);
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommandKey<?> that = (CommandKey<?>) o;
+        return key.equals(that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key);
+    }
+
 }

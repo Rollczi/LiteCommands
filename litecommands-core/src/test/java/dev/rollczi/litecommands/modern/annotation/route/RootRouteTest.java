@@ -1,13 +1,10 @@
 package dev.rollczi.litecommands.modern.annotation.route;
 
-import dev.rollczi.litecommands.implementation.LiteFactory;
 import dev.rollczi.litecommands.modern.LiteCommandsFactory;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
-import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.env.FakePlatform;
 import dev.rollczi.litecommands.modern.env.FakeSender;
 import dev.rollczi.litecommands.modern.invocation.InvocationResult;
-import dev.rollczi.litecommands.test.TestPlatform;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RootRouteTest {
 
-    RootRouteAnnotationResolver<?> resolver = new RootRouteAnnotationResolver<>();
+    RootRoute.AnnotationResolver<?> resolver = new RootRoute.AnnotationResolver<>();
 
     @RootRoute
     static class Command {

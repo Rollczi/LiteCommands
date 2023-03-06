@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RootRouteAnnotationResolverTest {
+class RootAnnotationResolverTest {
 
-    RootRouteAnnotationResolver<?> resolver = new RootRouteAnnotationResolver<>();
+    RootRoute.AnnotationResolver<?> resolver = new RootRoute.AnnotationResolver<>();
 
     @RootRoute
     static class Command {}

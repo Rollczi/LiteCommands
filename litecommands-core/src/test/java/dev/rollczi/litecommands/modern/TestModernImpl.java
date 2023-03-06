@@ -53,17 +53,4 @@ class TestModernImpl {
         assertEquals("key:value", executeResult.getResult().get());
     }
 
-//    @Test
-    void executeForProfiler() {
-        long start = System.currentTimeMillis();
-
-        for (int i = 0; i < 1_000_000; i++) {
-            fakePlatform.execute("route", "key", "value");
-            fakePlatform.execute("route", "opt", "key", "value");
-        }
-
-        long result = System.currentTimeMillis() - start;
-        System.out.println(result);
-    }
-
 }

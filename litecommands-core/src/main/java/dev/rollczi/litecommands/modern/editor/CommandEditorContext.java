@@ -1,7 +1,8 @@
 package dev.rollczi.litecommands.modern.editor;
 
-import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.command.CommandRoute;
+import dev.rollczi.litecommands.modern.meta.CommandMeta;
+import dev.rollczi.litecommands.modern.meta.CommandMetaHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-public interface CommandEditorContext<SENDER> {
+public interface CommandEditorContext<SENDER> extends CommandMetaHolder {
 
     @NotNull
     CommandEditorContext<SENDER> name(String name);
@@ -48,9 +49,11 @@ public interface CommandEditorContext<SENDER> {
     Collection<CommandEditorContext<SENDER>> children();
 
     @NotNull
-    CommandEditorContext<SENDER> appendExecutor(CommandExecutor<SENDER> executor);
+    CommandEditorContext<SENDER> appendExecutor(CommandEditorExecutorBuilder<SENDER> executor);
 
-    Collection<CommandExecutor<SENDER>> executors();
+    Collection<CommandEditorExecutorBuilder<SENDER>> executors();
+
+    CommandEditorContext<SENDER> applyMeta(UnaryOperator<CommandMeta> operator);
 
     @ApiStatus.Internal
     CommandEditorContext<SENDER> routeName(String name);
@@ -71,7 +74,7 @@ public interface CommandEditorContext<SENDER> {
     boolean buildable();
 
     @ApiStatus.Internal
-    Collection<CommandRoute<SENDER>> build();
+    Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent);
 
     static <SENDER> CommandEditorContext<SENDER> create() {
         return new CommandEditorContextImpl<>();
@@ -80,5 +83,4 @@ public interface CommandEditorContext<SENDER> {
     static <SENDER> CommandEditorContext<SENDER> createRoot() {
         return new CommandEditorContextRootImpl<>();
     }
-
 }

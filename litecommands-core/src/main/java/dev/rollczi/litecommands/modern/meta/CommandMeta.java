@@ -2,62 +2,36 @@ package dev.rollczi.litecommands.modern.meta;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.Supplier;
 
-public class CommandMeta {
+public interface CommandMeta {
 
-    public static final CommandKey<List<String>> PERMISSIONS = CommandKey.of("permissions", CommandMetaType.list(), new ArrayList<>());
-    public static final CommandKey<List<String>> EXCLUDED_PERMISSIONS = CommandKey.of("excluded-permissions", CommandMetaType.list(), new ArrayList<>());
-    public static final CommandKey<Boolean> ASYNCHRONOUS = CommandKey.of("asynchronous", Boolean.class, false);
+    CommandKey<List<String>> PERMISSIONS = CommandKey.of("permissions", CommandMetaType.list(), Collections.emptyList());
+    CommandKey<List<String>> PERMISSIONS_EXCLUDED = CommandKey.of("permissions-excluded", CommandMetaType.list(), Collections.emptyList());
+    CommandKey<Boolean> ASYNCHRONOUS = CommandKey.of("asynchronous", Boolean.class, false);
 
-    private final Map<String, Object> meta = new HashMap<>();
+    CommandMeta EMPTY_IMMUTABLE = new CommandMetaEmptyImpl();
 
-    public <T> void put(CommandKey<T> key, T value) {
-        this.meta.put(key.getKey(), value);
-    }
+    <T> CommandMeta put(CommandKey<T> key, T value);
 
-    public <E> void addToList(CommandKey<List<E>> key, E element) {
-        this.addToCollection(key, element, ArrayList::new);
-    }
+    <E> CommandMeta appendToList(CommandKey<List<E>> key, E element);
 
-    public <E> void addToSet(CommandKey<Set<E>> key, E element) {
-        this.addToCollection(key, element, HashSet::new);
-    }
+    <E> CommandMeta appendToSet(CommandKey<Set<E>> key, E element);
 
-    private <E, C extends Collection<E>> void addToCollection(CommandKey<C> key, E element, Supplier<C> newCollection) {
-        Object objList = this.meta.getOrDefault(key.getKey(), key.getDefaultValue());
+    <T> CommandMeta remove(CommandKey<T> key);
 
-        C collection = objList == null
-            ? newCollection.get()
-            : key.getType().cast(objList);
+    <T> T get(CommandKey<T> key);
 
-        collection.add(element);
+    CommandMeta clear();
 
-        this.meta.put(key.getKey(), collection);
-    }
+    CommandMeta apply(CommandMeta meta);
 
-    public <T> void remove(CommandKey<T> key) {
-        this.meta.remove(key.getKey());
-    }
+    Collection<CommandKey<?>> getKeys();
 
-    public <T> T get(CommandKey<T> key) {
-        Object value = this.meta.get(key.getKey());
-
-        if (value != null) {
-            return key.getType().cast(value);
-        }
-
-        if (key.hasDefaultValue()) {
-            return key.getDefaultValue();
-        }
-
-        throw new NoSuchElementException();
+    static CommandMeta create() {
+        return new CommandMetaImpl();
     }
 
 }

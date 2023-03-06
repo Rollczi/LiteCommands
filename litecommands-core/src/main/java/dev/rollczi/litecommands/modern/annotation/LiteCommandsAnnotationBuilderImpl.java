@@ -5,16 +5,17 @@ import dev.rollczi.litecommands.modern.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.modern.LiteCommandsInternalPattern;
 import dev.rollczi.litecommands.modern.annotation.editor.AnnotationCommandEditorService;
 import dev.rollczi.litecommands.modern.annotation.inject.Injector;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMetaApplicator;
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationProcessor;
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationRegistry;
-import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationResolver;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationClassResolver;
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.bind.BindRegistry;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.editor.CommandEditorService;
-import dev.rollczi.litecommands.modern.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +84,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
     protected LiteCommandsAnnotationBuilderImpl(
         Class<SENDER> senderClass,
         CommandEditorService<SENDER> commandEditorService,
-        CommandFilterService<SENDER> commandFilterService,
+        CommandValidatorService<SENDER> commandValidatorService,
         ArgumentService<SENDER> argumentService,
         BindRegistry<SENDER> bindRegistry,
         WrappedExpectedService wrappedExpectedService,
@@ -95,7 +96,7 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
         List<Object> commandInstances,
         List<Class<?>> commandClasses
     ) {
-        super(senderClass, commandEditorService, commandFilterService, argumentService, bindRegistry, wrappedExpectedService, resultResolver, commandEditorContextRegistry, platform);
+        super(senderClass, commandEditorService, commandValidatorService, argumentService, bindRegistry, wrappedExpectedService, resultResolver, commandEditorContextRegistry, platform);
         this.commandAnnotationRegistry = commandAnnotationRegistry;
         this.annotationCommandEditorService = annotationCommandEditorService;
         this.commandInstances = new ArrayList<>(commandInstances);
@@ -115,26 +116,21 @@ public class LiteCommandsAnnotationBuilderImpl<SENDER, B extends LiteCommandsAnn
     }
 
     @Override
-    public <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationResolver<SENDER, A> resolver) {
+    public <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationClassResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerResolver(annotation, resolver);
         return this.getThis();
     }
 
     @Override
-    public <A extends Annotation> B annotation(Class<A> annotation, UnaryOperator<CommandAnnotationResolver<SENDER, A>> resolver) {
-        this.commandAnnotationRegistry.replaceResolver(annotation, resolver);
-        return this.getThis();
-    }
-
-    @Override
-    public <A extends Annotation> B annotationMethod(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
+    public <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerMethodResolver(annotation, resolver);
         return this.getThis();
     }
 
     @Override
-    public <A extends Annotation> B annotationMethod(Class<A> annotation, UnaryOperator<CommandAnnotationMethodResolver<SENDER, A>> resolver) {
-        this.commandAnnotationRegistry.replaceMethodResolver(annotation, resolver);
+    public <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationMetaApplicator<SENDER, A> resolver) {
+        this.commandAnnotationRegistry.registerResolver(annotation, resolver);
+        this.commandAnnotationRegistry.registerMethodResolver(annotation, resolver);
         return this.getThis();
     }
 

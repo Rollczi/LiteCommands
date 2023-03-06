@@ -27,7 +27,7 @@ public class Invocation<SENDER> {
         return this.handle;
     }
 
-    public PlatformSender platformSender() {
+    public PlatformSender getPlatformSender() {
         return this.platformSender;
     }
 

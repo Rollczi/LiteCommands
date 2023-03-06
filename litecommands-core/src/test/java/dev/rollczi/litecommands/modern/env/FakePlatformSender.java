@@ -4,15 +4,17 @@ import dev.rollczi.litecommands.modern.platform.PlatformSender;
 
 public class FakePlatformSender implements PlatformSender {
 
-    private final FakeSender fakeSender;
-
-    public FakePlatformSender(FakeSender fakeSender) {
-        this.fakeSender = fakeSender;
+    public FakePlatformSender() {
     }
 
     @Override
     public String getName() {
         return "FakeSender";
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return false;
     }
 
 }

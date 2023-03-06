@@ -3,17 +3,17 @@ package dev.rollczi.litecommands.modern.annotation;
 import dev.rollczi.litecommands.modern.LiteCommands;
 import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
 import dev.rollczi.litecommands.modern.LiteExtension;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMetaApplicator;
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
-import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationResolver;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationClassResolver;
 import dev.rollczi.litecommands.modern.argument.Argument;
 import dev.rollczi.litecommands.modern.argument.ArgumentParser;
 import dev.rollczi.litecommands.modern.bind.Bind;
 import dev.rollczi.litecommands.modern.bind.BindContextual;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
-import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultMapper;
 import dev.rollczi.litecommands.modern.editor.CommandEditor;
-import dev.rollczi.litecommands.modern.filter.CommandFilter;
+import dev.rollczi.litecommands.modern.validator.CommandValidator;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.modern.platform.Platform;
 
@@ -27,13 +27,11 @@ public interface LiteCommandsAnnotationBuilder<SENDER, B extends LiteCommandsAnn
 
     LiteCommandsAnnotationBuilder<SENDER, B> command(Class<?>... commands);
 
-    <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationResolver<SENDER, A> resolver);
+    <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationClassResolver<SENDER, A> resolver);
 
-    <A extends Annotation> B annotation(Class<A> annotation, UnaryOperator<CommandAnnotationResolver<SENDER, A>> resolver);
+    <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver);
 
-    <A extends Annotation> B annotationMethod(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver);
-
-    <A extends Annotation> B annotationMethod(Class<A> annotation, UnaryOperator<CommandAnnotationMethodResolver<SENDER, A>> resolver);
+    <A extends Annotation> B annotation(Class<A> annotation, CommandAnnotationMetaApplicator<SENDER, A> resolver);
 
     @Override
     LiteCommandsAnnotationBuilder<SENDER, B> editor(String command, CommandEditor<SENDER> commandEditor);
@@ -42,7 +40,7 @@ public interface LiteCommandsAnnotationBuilder<SENDER, B extends LiteCommandsAnn
     LiteCommandsAnnotationBuilder<SENDER, B> globalEditor(CommandEditor<SENDER> commandEditor);
 
     @Override
-    LiteCommandsAnnotationBuilder<SENDER, B> filter(CommandFilter<SENDER> filter);
+    LiteCommandsAnnotationBuilder<SENDER, B> validator(CommandValidator<SENDER> validator);
 
     @Override
     <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, RESOLVER resolver);

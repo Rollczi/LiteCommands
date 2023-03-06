@@ -4,4 +4,6 @@ public interface PlatformSender {
 
     String getName();
 
+    boolean hasPermission(String permission);
+
 }

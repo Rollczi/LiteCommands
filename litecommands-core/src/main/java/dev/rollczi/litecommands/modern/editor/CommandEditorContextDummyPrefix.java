@@ -7,11 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-class CommandEditorContextDummy<SENDER> extends CommandEditorContextBase<SENDER> implements CommandEditorContext<SENDER> {
+class CommandEditorContextDummyPrefix<SENDER> extends CommandEditorContextBase<SENDER> implements CommandEditorContext<SENDER> {
 
     protected CommandEditorContext<SENDER> parent;
 
-    public CommandEditorContextDummy(CommandEditorContext<SENDER> parent) {
+    public CommandEditorContextDummyPrefix(CommandEditorContext<SENDER> parent) {
         this.parent = parent;
     }
 

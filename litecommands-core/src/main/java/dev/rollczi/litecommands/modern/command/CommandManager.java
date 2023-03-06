@@ -3,12 +3,12 @@ package dev.rollczi.litecommands.modern.command;
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.bind.BindRegistry;
-import dev.rollczi.litecommands.modern.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.validator.CommandValidatorResult;
+import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.invocation.InvocationResult;
 import dev.rollczi.litecommands.modern.platform.Platform;
-import panda.std.Result;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class CommandManager<SENDER> {
 
     private final Platform<SENDER> platform;
 
-    private final CommandFilterService<SENDER> commandFilterService;
+    private final CommandValidatorService<SENDER> commandValidatorService;
     private final ArgumentService<SENDER> argumentService;
     private final BindRegistry<SENDER> bindRegistry;
     private final WrappedExpectedService wrappedArgumentService;
@@ -30,11 +30,11 @@ public class CommandManager<SENDER> {
         ArgumentService<SENDER> argumentService,
         CommandExecuteResultResolver<SENDER> resultResolver,
         BindRegistry<SENDER> bindRegistry,
-        CommandFilterService<SENDER> commandFilterService
+        CommandValidatorService<SENDER> commandValidatorService
     ) {
         this.platform = platform;
 
-        this.commandFilterService = commandFilterService;
+        this.commandValidatorService = commandValidatorService;
         this.argumentService = argumentService;
         this.bindRegistry = bindRegistry;
         this.wrappedArgumentService = wrappedArgumentService;
@@ -62,17 +62,13 @@ public class CommandManager<SENDER> {
         FailedReason lastFailedReason = null;
 
         for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
-            if (!this.commandFilterService.isValid(invocation, commandRoute, executor)) {
-                continue;
-            }
-
             InvokedWrapperInfoResolverImpl<SENDER> provider = new InvokedWrapperInfoResolverImpl<>(this.bindRegistry, this.wrappedArgumentService);
             PreparedArgumentIterator<SENDER> cachedArgumentResolver = new PreparedArgumentIteratorImpl<>(this.argumentService, this.wrappedArgumentService, findResult.childIndex);
 
-            Result<CommandExecuteResult, FailedReason> result = executor.execute(invocation, provider, cachedArgumentResolver);
+            CommandExecutorMatchResult match = executor.match(invocation, provider, cachedArgumentResolver);
 
-            if (result.isErr()) {
-                FailedReason current = result.getError();
+            if (match.isFailed()) {
+                FailedReason current = match.getFailedReason();
 
                 if (!current.isEmpty()) {
                     lastFailedReason = current;
@@ -81,7 +77,17 @@ public class CommandManager<SENDER> {
                 continue;
             }
 
-            CommandExecuteResult executeResult = result.get();
+            CommandValidatorResult validationResult = this.commandValidatorService.validate(invocation, commandRoute, executor);
+
+            if (validationResult.isInvalid()) {
+                if (validationResult.canBeIgnored()) {
+                    continue;
+                }
+
+                return InvocationResult.failed(invocation, FailedReason.of(validationResult.getInvalidResult()));
+            }
+
+            CommandExecuteResult executeResult = match.executeCommand();
 
             return InvocationResult.success(invocation, executeResult);
         }

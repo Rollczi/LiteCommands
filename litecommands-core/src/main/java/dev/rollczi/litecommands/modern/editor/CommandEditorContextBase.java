@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.editor;
 
-import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.command.CommandRoute;
+import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,10 +19,11 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     protected @Nullable String name;
     protected final List<String> aliases = new ArrayList<>();
     protected final Map<String, CommandEditorContext<SENDER>> children = new HashMap<>();
-    protected final List<CommandExecutor<SENDER>> executors = new ArrayList<>();
+    protected final List<CommandEditorExecutorBuilder<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
+    protected CommandMeta meta = CommandMeta.create();
 
-    protected CommandEditorContextDummy<SENDER> dummyPrefix;
+    protected CommandEditorContextDummyPrefix<SENDER> dummyPrefix;
 
     @Override
     public @NotNull CommandEditorContext<SENDER> name(String name) {
@@ -117,6 +118,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     @Override
     public @NotNull CommandEditorContext<SENDER> appendChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator) {
         CommandEditorContext<SENDER> child = new CommandEditorContextImpl<>();
+        child.name(name);
 
         child = operator.apply(child);
         this.children.put(name, child);
@@ -135,14 +137,20 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     }
 
     @Override
-    public @NotNull CommandEditorContext<SENDER> appendExecutor(CommandExecutor<SENDER> executor) {
+    public @NotNull CommandEditorContext<SENDER> appendExecutor(CommandEditorExecutorBuilder<SENDER> executor) {
         this.executors.add(executor);
         return this;
     }
 
     @Override
-    public Collection<CommandExecutor<SENDER>> executors() {
+    public Collection<CommandEditorExecutorBuilder<SENDER>> executors() {
         return Collections.unmodifiableCollection(this.executors);
+    }
+
+    @Override
+    public CommandEditorContext<SENDER> applyMeta(UnaryOperator<CommandMeta> operator) {
+        this.meta = operator.apply(this.meta);
+        return this;
     }
 
     @Override
@@ -161,7 +169,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
         String namePrefix = name.substring(0, separatorIndex);
 
         if (this.dummyPrefix == null) {
-            this.dummyPrefix = new CommandEditorContextDummy<>(this);
+            this.dummyPrefix = new CommandEditorContextDummyPrefix<>(this);
         }
 
         this.dummyPrefix.dummyName(namePrefix);
@@ -204,7 +212,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
         }
 
         if (this.dummyPrefix == null) {
-            this.dummyPrefix = new CommandEditorContextDummy<>(this);
+            this.dummyPrefix = new CommandEditorContextDummyPrefix<>(this);
         }
 
         this.dummyPrefix.dummyAliases(aliasesPrefix);
@@ -243,11 +251,17 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build() {
-        CommandRoute<SENDER> route = CommandRoute.of(this.name, this.aliases);
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
+        CommandRoute<SENDER> route = CommandRoute.create(parent, this.name, this.aliases);
 
-        for (CommandExecutor<SENDER> executor : this.executors) {
-            route.appendExecutor(executor);
+        route.getMeta().apply(this.meta);
+
+        for (CommandEditorExecutorBuilder<SENDER> executor : this.executors) {
+            if (!executor.buildable()) {
+                continue;
+            }
+
+            route.appendExecutor(executor.build());
         }
 
         for (CommandEditorContext<SENDER> child : this.children.values()) {
@@ -255,7 +269,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
                 continue;
             }
 
-            for (CommandRoute<SENDER> childRoute : child.build()) {
+            for (CommandRoute<SENDER> childRoute : child.build(route)) {
                 route.appendChildren(childRoute);
             }
         }
@@ -267,7 +281,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     public void meagre(CommandEditorContext<SENDER> context) {
         this.aliases.addAll(context.aliases());
 
-        for (CommandExecutor<SENDER> executor : context.executors()) {
+        for (CommandEditorExecutorBuilder<SENDER> executor : context.executors()) {
             this.appendExecutor(executor);
         }
 
@@ -289,6 +303,11 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
             this.appendChild(childToMeagre);
         }
 
-
     }
+
+    @Override
+    public CommandMeta getMeta() {
+        return this.meta;
+    }
+
 }

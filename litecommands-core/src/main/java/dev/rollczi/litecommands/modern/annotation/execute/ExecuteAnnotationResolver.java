@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.modern.annotation.command.MethodCommandExecutorF
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
+import dev.rollczi.litecommands.modern.editor.CommandEditorExecutorBuilder;
 import dev.rollczi.litecommands.modern.util.LiteCommandsRulesUtil;
 
 import java.lang.reflect.Method;
@@ -18,20 +19,22 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
     }
 
     @Override
-    public CommandEditorContext<SENDER> resolve(Object instance, Method method, Execute annotation, CommandEditorContext<SENDER> context) {
+    public CommandEditorContext<SENDER> resolve(Object instance, Method method, Execute annotation, CommandEditorContext<SENDER> context, CommandEditorExecutorBuilder<SENDER> executorBuilder) {
         boolean canUse = LiteCommandsRulesUtil.checkConsistent(annotation.name(), annotation.aliases());
 
         CommandExecutor<SENDER> executor = this.methodCommandExecutorFactory.create(instance, method);
 
+        executorBuilder.setExecutor(executor);
+
         if (canUse) {
-            return context.appendChild(annotation.name(), child -> child
-                .name(annotation.name())
-                .aliases(Arrays.asList(annotation.aliases()))
-                .appendExecutor(executor)
+            return context.appendChild(CommandEditorContext.<SENDER>create()
+                .routeName(annotation.name())
+                .routeAliases(Arrays.asList(annotation.aliases()))
+                .appendExecutor(executorBuilder)
             );
         }
 
-        return context.appendExecutor(executor);
+        return context.appendExecutor(executorBuilder);
     }
 
 }

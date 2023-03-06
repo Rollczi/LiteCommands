@@ -1,8 +1,11 @@
 package dev.rollczi.litecommands.modern.command;
 
-import java.util.Collection;
+import dev.rollczi.litecommands.modern.meta.CommandMeta;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface CommandRoute<SENDER> {
 
@@ -12,22 +15,30 @@ public interface CommandRoute<SENDER> {
 
     boolean isNameOrAlias(String name);
 
-    Collection<CommandRoute<SENDER>> getChildren();
-
-    Optional<CommandRoute<SENDER>> getChildren(String name);
-
-    Collection<CommandExecutor<SENDER>> getExecutors();
-
-    void appendChildren(CommandRoute<SENDER> children);
-
-    void appendExecutor(CommandExecutor<SENDER> executor);
+    CommandRoute<SENDER> getParent();
 
     default boolean isRoot() {
         return false;
     }
 
-    static <SENDER> CommandRoute<SENDER> of(String name, List<String> aliases) {
-        return new CommandRouteImpl<>(name, aliases);
+    void appendChildren(CommandRoute<SENDER> children);
+
+    List<CommandRoute<SENDER>> getChildren();
+
+    Optional<CommandRoute<SENDER>> getChildren(String name);
+
+    void appendExecutor(CommandExecutor<SENDER> executor);
+
+    List<CommandExecutor<SENDER>> getExecutors();
+
+    CommandMeta getMeta();
+
+    static <SENDER> CommandRoute<SENDER> create(CommandRoute<SENDER> parent, String name, List<String> aliases) {
+        return new CommandRouteImpl<>(name, aliases, parent);
+    }
+
+    static <SENDER> CommandRoute<SENDER> createRoot() {
+        return new CommandRootRouteImpl<>();
     }
 
 }

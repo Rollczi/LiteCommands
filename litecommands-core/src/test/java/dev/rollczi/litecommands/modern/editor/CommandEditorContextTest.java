@@ -34,7 +34,7 @@ class CommandEditorContextTest {
         assertEquals("test", context.name());
         assertEquals(Arrays.asList("alias1", "alias2"), context.aliases());
 
-        CommandEditorContextDummy<?> dummy = assertInstanceOf(CommandEditorContextDummy.class, context);
+        CommandEditorContextDummyPrefix<?> dummy = assertInstanceOf(CommandEditorContextDummyPrefix.class, context);
 
         assertEquals("child", dummy.parent.name());
         assertEquals(Arrays.asList("child", "c"), dummy.parent.aliases());
@@ -83,7 +83,7 @@ class CommandEditorContextTest {
         assertEquals("edited-test", context.name());
         assertEquals(Arrays.asList("edited-alias1", "edited-alias2"), context.aliases());
 
-        CommandEditorContextDummy<?> dummy = assertInstanceOf(CommandEditorContextDummy.class, context);
+        CommandEditorContextDummyPrefix<?> dummy = assertInstanceOf(CommandEditorContextDummyPrefix.class, context);
 
         assertEquals("child", dummy.parent.name());
         assertEquals(Arrays.asList("child", "c"), dummy.parent.aliases());
@@ -101,7 +101,7 @@ class CommandEditorContextTest {
         assertEquals("test", context.name());
         assertEquals(Collections.singletonList("alias"), context.aliases());
 
-        CommandEditorContextDummy<?> dummy = assertInstanceOf(CommandEditorContextDummy.class, context);
+        CommandEditorContextDummyPrefix<?> dummy = assertInstanceOf(CommandEditorContextDummyPrefix.class, context);
 
         assertEquals("edited-child", dummy.parent.name());
         assertEquals(Collections.singletonList("edited-c"), dummy.parent.aliases());

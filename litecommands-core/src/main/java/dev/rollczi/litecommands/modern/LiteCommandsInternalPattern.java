@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.modern.bind.BindRegistry;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.editor.CommandEditorService;
-import dev.rollczi.litecommands.modern.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,7 +21,7 @@ public interface LiteCommandsInternalPattern<SENDER> {
     CommandEditorService<SENDER> getCommandEditorService();
 
     @ApiStatus.Internal
-    CommandFilterService<SENDER> getCommandFilterService();
+    CommandValidatorService<SENDER> getCommandFilterService();
 
     @ApiStatus.Internal
     ArgumentService<SENDER> getArgumentService();

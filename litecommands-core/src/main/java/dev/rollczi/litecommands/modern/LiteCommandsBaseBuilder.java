@@ -16,8 +16,8 @@ import dev.rollczi.litecommands.modern.editor.CommandEditor;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.editor.CommandEditorService;
-import dev.rollczi.litecommands.modern.filter.CommandFilter;
-import dev.rollczi.litecommands.modern.filter.CommandFilterService;
+import dev.rollczi.litecommands.modern.validator.CommandValidator;
+import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.platform.Platform;
@@ -33,7 +33,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     protected final Class<SENDER> senderClass;
 
     protected final CommandEditorService<SENDER> commandEditorService;
-    protected final CommandFilterService<SENDER> commandFilterService;
+    protected final CommandValidatorService<SENDER> commandValidatorService;
     protected final ArgumentService<SENDER> argumentService;
     protected final BindRegistry<SENDER> bindRegistry;
     protected final WrappedExpectedService wrappedExpectedService;
@@ -61,7 +61,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
         this(
             senderClass,
             new CommandEditorService<>(),
-            new CommandFilterService<>(),
+            new CommandValidatorService<>(),
             new ArgumentService<>(),
             new BindRegistry<>(),
             new WrappedExpectedService(),
@@ -96,7 +96,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     protected LiteCommandsBaseBuilder(
         Class<SENDER> senderClass,
         CommandEditorService<SENDER> commandEditorService,
-        CommandFilterService<SENDER> commandFilterService, ArgumentService<SENDER> argumentService,
+        CommandValidatorService<SENDER> commandValidatorService, ArgumentService<SENDER> argumentService,
         BindRegistry<SENDER> bindRegistry,
         WrappedExpectedService wrappedExpectedService,
         CommandExecuteResultResolver<SENDER> resultResolver,
@@ -105,7 +105,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     ) {
         this.senderClass = senderClass;
         this.commandEditorService = commandEditorService;
-        this.commandFilterService = commandFilterService;
+        this.commandValidatorService = commandValidatorService;
         this.argumentService = argumentService;
         this.bindRegistry = bindRegistry;
         this.wrappedExpectedService = wrappedExpectedService;
@@ -127,8 +127,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public B filter(CommandFilter<SENDER> filter) {
-        this.commandFilterService.registerFilter(filter);
+    public B validator(CommandValidator<SENDER> validator) {
+        this.commandValidatorService.register(validator);
         return this.getThis();
     }
 
@@ -233,7 +233,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
             this.argumentService,
             this.resultResolver,
             this.bindRegistry,
-            this.commandFilterService
+            this.commandValidatorService
         );
 
         List<CommandEditorContext<SENDER>> collectedContexts = this.commandEditorContextRegistry.extractAndMergeContexts();
@@ -243,7 +243,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
                 continue;
             }
 
-            for (CommandRoute<SENDER> commandRoute : context.build()) {
+            for (CommandRoute<SENDER> commandRoute : context.build(commandManager.getRoot())) {
                 commandManager.registerCommand(commandRoute);
             }
         }
@@ -264,8 +264,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public CommandFilterService<SENDER> getCommandFilterService() {
-        return this.commandFilterService;
+    public CommandValidatorService<SENDER> getCommandFilterService() {
+        return this.commandValidatorService;
     }
 
     @Override

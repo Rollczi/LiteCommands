@@ -1,9 +1,10 @@
 package dev.rollczi.litecommands.modern.command;
 
+import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import dev.rollczi.litecommands.shared.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
     private final Map<String, CommandRoute<SENDER>> children = new HashMap<>();
+    private final List<CommandRoute<SENDER>> childrenList = new ArrayList<>();
 
     @Override
     public String getName() {
@@ -30,8 +32,13 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> getChildren() {
-        return Collections.unmodifiableCollection(this.children.values());
+    public CommandRoute<SENDER> getParent() {
+        throw new UnsupportedOperationException("Root route has no parent");
+    }
+
+    @Override
+    public List<CommandRoute<SENDER>> getChildren() {
+        return Collections.unmodifiableList(this.childrenList);
     }
 
     @Override
@@ -52,8 +59,13 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public Collection<CommandExecutor<SENDER>> getExecutors() {
+    public List<CommandExecutor<SENDER>> getExecutors() {
         throw new UnsupportedOperationException("Can not get executors from the root route");
+    }
+
+    @Override
+    public CommandMeta getMeta() {
+        return CommandMeta.EMPTY_IMMUTABLE;
     }
 
     @Override

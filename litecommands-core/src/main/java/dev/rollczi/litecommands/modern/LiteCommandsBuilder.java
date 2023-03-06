@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.modern.bind.BindContextual;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultMapper;
 import dev.rollczi.litecommands.modern.editor.CommandEditor;
-import dev.rollczi.litecommands.modern.filter.CommandFilter;
+import dev.rollczi.litecommands.modern.validator.CommandValidator;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.modern.platform.Platform;
 
@@ -20,7 +20,7 @@ public interface LiteCommandsBuilder<SENDER, B extends LiteCommandsBuilder<SENDE
 
     LiteCommandsBuilder<SENDER, B> globalEditor(CommandEditor<SENDER> commandEditor);
 
-    LiteCommandsBuilder<SENDER, B> filter(CommandFilter<SENDER> filter);
+    LiteCommandsBuilder<SENDER, B> validator(CommandValidator<SENDER> validator);
 
     <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, RESOLVER resolver);
 

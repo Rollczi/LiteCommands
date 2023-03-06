@@ -27,7 +27,7 @@ public class FakePlatform implements Platform<FakeSender> {
 
     public InvocationResult<FakeSender> execute(String command) {
         FakeSender fakeSender = new FakeSender();
-        FakePlatformSender fakePlatformSender = new FakePlatformSender(fakeSender);
+        FakePlatformSender fakePlatformSender = new FakePlatformSender();
         String label = command.split(" ")[0];
         String[] args = command.length() > label.length()
             ? command.substring(label.length() + 1).split(" ")
@@ -47,7 +47,7 @@ public class FakePlatform implements Platform<FakeSender> {
 
     public InvocationResult<FakeSender> execute(String command, String... arguments) {
         FakeSender fakeSender = new FakeSender();
-        FakePlatformSender fakePlatformSender = new FakePlatformSender(fakeSender);
+        FakePlatformSender fakePlatformSender = new FakePlatformSender();
 
         Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, command, command, arguments);
 
@@ -63,7 +63,7 @@ public class FakePlatform implements Platform<FakeSender> {
 
     public void suggest(String command) {
         FakeSender fakeSender = new FakeSender();
-        FakePlatformSender fakePlatformSender = new FakePlatformSender(fakeSender);
+        FakePlatformSender fakePlatformSender = new FakePlatformSender();
         String label = command.split(" ")[0];
         String[] args = command.substring(label.length()).split(" ");
 
