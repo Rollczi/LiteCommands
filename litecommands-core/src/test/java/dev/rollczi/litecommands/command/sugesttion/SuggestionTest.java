@@ -54,7 +54,7 @@ class SuggestionTest {
 
     @Test
     void normalSuggestion() {
-        List<String> suggestion = testPlatform.suggestion("lp", "user");
+        List<String> suggestion = testPlatform.suggestionAsOp("lp", "user");
 
         assertEquals(1, suggestion.size());
         assertEquals("user", suggestion.get(0));
@@ -62,7 +62,7 @@ class SuggestionTest {
 
     @Test
     void notFullSuggestion() {
-        List<String> suggestion = testPlatform.suggestion("lp", "use");
+        List<String> suggestion = testPlatform.suggestionAsOp("lp", "use");
 
         assertEquals(1, suggestion.size());
         assertEquals("user", suggestion.get(0));
@@ -70,14 +70,14 @@ class SuggestionTest {
 
     @Test
     void firstBlockSuggestion() {
-        List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "p");
+        List<String> suggestion = testPlatform.suggestionAsOp("lp", "user", "text", "p");
 
         assertCollection(list("parent set", "parent unset"), suggestion);
     }
 
     @Test
     void firsEmptyBlockSuggestion() {
-        List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("lp", "user", "text", "");
 
         assertCollection(list("parent set", "parent unset", "reload"), suggestion);
     }
@@ -85,14 +85,14 @@ class SuggestionTest {
 
     @Test
     void secondBlockSuggestion() {
-        List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "parent", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("lp", "user", "text", "parent", "");
 
         assertCollection(list("set", "unset"), suggestion);
     }
 
     @Test
     void afterBlockSuggestion() {
-        List<String> suggestion = testPlatform.suggestion("lp", "user", "text", "parent", "set", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("lp", "user", "text", "parent", "set", "");
 
         assertEquals(1, suggestion.size());
         assertEquals("text", suggestion.get(0));
@@ -100,7 +100,7 @@ class SuggestionTest {
 
     @Test
     void aliasesSuggestion() {
-        List<String> suggestion = testPlatform.suggestion("lp");
+        List<String> suggestion = testPlatform.suggestionAsOp("lp");
 
         assertEquals(2, suggestion.size());
         assertEquals("luckperms", suggestion.get(0));
@@ -109,7 +109,7 @@ class SuggestionTest {
 
     @Test
     void manySuggestionsTest() {
-        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-1", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("suggestions-test", "execute-1", "");
 
         assertEquals(3, suggestion.size());
         assertEquals("arg-1.1", suggestion.get(0));
@@ -119,7 +119,7 @@ class SuggestionTest {
 
     @Test
     void suggestionsWithOptionalArgumentTest() {
-        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-2", "arg-1.1", "arg-");
+        List<String> suggestion = testPlatform.suggestionAsOp("suggestions-test", "execute-2", "arg-1.1", "arg-");
 
         assertEquals(3, suggestion.size());
         assertEquals("arg-2.1", suggestion.get(0));
@@ -129,7 +129,7 @@ class SuggestionTest {
 
     @Test
     void suggestionsWithOptionalArgumentOnyOneTest() {
-        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-2", "arg-1.1", "arg-2.1");
+        List<String> suggestion = testPlatform.suggestionAsOp("suggestions-test", "execute-2", "arg-1.1", "arg-2.1");
 
         assertEquals(1, suggestion.size());
         assertEquals("arg-2.1", suggestion.get(0));
@@ -137,7 +137,7 @@ class SuggestionTest {
 
     @Test
     void suggestionsWithOptionalArgumentsAndStaticTest() {
-        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("suggestions-test", "execute-3", "");
 
         assertSize(10, suggestion);
         assertCollection(list("static",
@@ -149,7 +149,7 @@ class SuggestionTest {
 
     @Test
     void suggestionsWithOptionalArgumentsTest() {
-        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "arg");
+        List<String> suggestion = testPlatform.suggestionAsOp("suggestions-test", "execute-3", "arg");
 
         assertSize(9, suggestion);
         assertCollection(list(
@@ -161,7 +161,7 @@ class SuggestionTest {
 
     @Test
     void suggestionsWithTwoOptionalArgumentsTest() {
-        List<String> suggestion = testPlatform.suggestion("suggestions-test", "execute-3", "arg-1.1", "arg-");
+        List<String> suggestion = testPlatform.suggestionAsOp("suggestions-test", "execute-3", "arg-1.1", "arg-");
 
         assertSize(6, suggestion);
         assertCollection(list("arg-2.1", "arg-2.2", "arg-2.3", "arg-3.1", "arg-3.2", "arg-3.3"), suggestion);
@@ -169,14 +169,14 @@ class SuggestionTest {
 
     @Test
     void multilevelEmptyArgumentTest() {
-        List<String> suggestion = testPlatform.suggestion("teleport", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("teleport", "");
 
         assertCollection(list("text", "100 100 100"), suggestion);
     }
 
     @Test
     void multilevelOneArgumentTest() {
-        List<String> suggestion = testPlatform.suggestion("teleport", "1");
+        List<String> suggestion = testPlatform.suggestionAsOp("teleport", "1");
 
         assertEquals(1, suggestion.size());
         assertEquals("100 100 100", suggestion.get(0));
@@ -185,14 +185,14 @@ class SuggestionTest {
     @Test
     void
     nextToMultilevelExecuteTest() {
-        List<String> suggestion = testPlatform.suggestion("teleport", "Rollczi", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("teleport", "Rollczi", "");
 
         assertSize(0, suggestion);
     }
 
     @Test
     void allArgumentsMultilevelTest() {
-        List<String> suggestion = testPlatform.suggestion("teleport", "100", "100", "100");
+        List<String> suggestion = testPlatform.suggestionAsOp("teleport", "100", "100", "100");
 
         assertEquals(1, suggestion.size());
         assertEquals("100", suggestion.get(0));
@@ -200,7 +200,7 @@ class SuggestionTest {
 
     @Test
     void allArgumentsMultilevelTest2() {
-        List<String> suggestion = testPlatform.suggestion("teleport", "100", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("teleport", "100", "");
 
         assertEquals(1, suggestion.size());
         assertEquals("100 100", suggestion.get(0));
@@ -208,7 +208,7 @@ class SuggestionTest {
 
     @Test
     void allArgumentsMultilevelWithNextTest() {
-        List<String> suggestion = testPlatform.suggestion("teleport", "100", "100", "100", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("teleport", "100", "100", "100", "");
 
         assertEquals(1, suggestion.size());
         assertEquals("text", suggestion.get(0));

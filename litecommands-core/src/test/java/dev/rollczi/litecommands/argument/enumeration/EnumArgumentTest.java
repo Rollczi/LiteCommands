@@ -45,18 +45,18 @@ class EnumArgumentTest {
 
     @Test
     void testSuggestion() {
-        platform.suggest("test", "").assertWith("A", "B", "empty");
+        platform.suggestAsOp("test", "").assertWith("A", "B", "empty");
     }
 
     @Test
     void testSuggestionWithContent() {
-        platform.suggest("test", "A").assertWith("A");
+        platform.suggestAsOp("test", "A").assertWith("A");
     }
 
     @Test
     void testEmptyEnum() {
         platform.execute("test", "empty").assertFail();
-        platform.suggest("test", "empty", "")
+        platform.suggestAsOp("test", "empty", "")
             .assertWith();
     }
 

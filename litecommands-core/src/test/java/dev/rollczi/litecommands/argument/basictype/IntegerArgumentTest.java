@@ -62,10 +62,10 @@ class IntegerArgumentTest {
 
     @Test
     void testSuggestionOnPlatform() {
-        this.testPlatform.suggest("command", "int", "")
+        this.testPlatform.suggestAsOp("command", "int", "")
             .assertWith(TypeUtils.NUMBER_SUGGESTION);
 
-        this.testPlatform.suggest("command", "int", "23")
+        this.testPlatform.suggestAsOp("command", "int", "23")
             .assertWith("23");
     }
 

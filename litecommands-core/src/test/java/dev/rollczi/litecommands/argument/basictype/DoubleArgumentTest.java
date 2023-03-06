@@ -59,10 +59,10 @@ class DoubleArgumentTest {
 
     @Test
     void testSuggestionOnPlatform() {
-        testPlatform.suggest("command", "double-class", "")
+        testPlatform.suggestAsOp("command", "double-class", "")
                 .assertWith(TypeUtils.DECIMAL_SUGGESTION);
 
-        testPlatform.suggest("command", "double-class", "10.5")
+        testPlatform.suggestAsOp("command", "double-class", "10.5")
                 .assertWith("10.5");
     }
 

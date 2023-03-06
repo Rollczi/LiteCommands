@@ -14,4 +14,5 @@ public class TestHandle {
     public boolean containsMessage(String message) {
         return registeredMessages.contains(message);
     }
+
 }

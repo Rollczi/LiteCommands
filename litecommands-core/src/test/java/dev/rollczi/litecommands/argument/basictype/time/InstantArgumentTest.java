@@ -70,7 +70,7 @@ class InstantArgumentTest {
 
     @Test
     void testSuggestionOnPlatform() {
-        testPlatform.suggest("command", "")
+        testPlatform.suggestAsOp("command", "")
             .assertNonEmpty();
     }
 

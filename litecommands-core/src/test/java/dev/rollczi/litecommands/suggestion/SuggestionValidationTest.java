@@ -18,11 +18,11 @@ class SuggestionValidationTest {
 
     @Test
     void test() {
-        platform.suggest("test", "").assertWith("0", "1", "5", "10", "50", "100", "500");
-        platform.suggest("test", "5").assertWith("5", "50", "500");
-        platform.suggest("test", "55").assertWith( "55");
-        platform.suggest("test", "35", "").assertWith( "0", "1", "5", "10", "50", "100", "500");
-        platform.suggest("test", "text", "").assertWith();
+        platform.suggestAsOp("test", "").assertWith("0", "1", "5", "10", "50", "100", "500");
+        platform.suggestAsOp("test", "5").assertWith("5", "50", "500");
+        platform.suggestAsOp("test", "55").assertWith( "55");
+        platform.suggestAsOp("test", "35", "").assertWith( "0", "1", "5", "10", "50", "100", "500");
+        platform.suggestAsOp("test", "text", "").assertWith();
     }
 
 }
