@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.modern.annotation.route;
 
 import dev.rollczi.litecommands.modern.LiteCommandsFactory;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
-import dev.rollczi.litecommands.modern.env.FakePlatform;
-import dev.rollczi.litecommands.modern.env.FakeSender;
+import dev.rollczi.litecommands.modern.test.env.FakePlatform;
+import dev.rollczi.litecommands.modern.test.env.FakeSender;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

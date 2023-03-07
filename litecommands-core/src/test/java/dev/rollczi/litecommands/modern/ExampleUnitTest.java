@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.modern.annotation.argument.Arg;
 import dev.rollczi.litecommands.modern.annotation.contextual.Context;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
-import dev.rollczi.litecommands.modern.env.FakeSender;
+import dev.rollczi.litecommands.modern.test.env.FakeSender;
 import dev.rollczi.litecommands.modern.test.LiteTest;
 import dev.rollczi.litecommands.modern.test.LiteTestConfig;
 import dev.rollczi.litecommands.modern.test.LiteTestSpec;

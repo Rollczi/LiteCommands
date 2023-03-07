@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.env;
+package dev.rollczi.litecommands.modern.test.env;
 
 import dev.rollczi.litecommands.modern.argument.PreparedArgument;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResult;

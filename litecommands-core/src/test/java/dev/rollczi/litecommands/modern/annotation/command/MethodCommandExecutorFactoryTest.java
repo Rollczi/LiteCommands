@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.modern.argument.PreparedArgument;
 import dev.rollczi.litecommands.modern.argument.type.baisc.AbstractNumberArgumentResolver;
 import dev.rollczi.litecommands.modern.argument.type.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
-import dev.rollczi.litecommands.modern.env.FakeSender;
+import dev.rollczi.litecommands.modern.test.env.FakeSender;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;

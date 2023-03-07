@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.modern.LiteCommands;
 import dev.rollczi.litecommands.modern.LiteCommandsFactory;
 import dev.rollczi.litecommands.modern.annotation.LiteCommandsAnnotationBuilder;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
-import dev.rollczi.litecommands.modern.env.FakePlatform;
-import dev.rollczi.litecommands.modern.env.FakeSender;
+import dev.rollczi.litecommands.modern.test.env.FakePlatform;
+import dev.rollczi.litecommands.modern.test.env.FakeSender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 

@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.modern.annotation.argument;
 
 import dev.rollczi.litecommands.modern.argument.ArgumentResult;
-import dev.rollczi.litecommands.modern.env.FakeSender;
-import dev.rollczi.litecommands.modern.env.TestUtil;
+import dev.rollczi.litecommands.modern.test.env.FakeSender;
+import dev.rollczi.litecommands.modern.test.env.TestUtil;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.range.Range;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
