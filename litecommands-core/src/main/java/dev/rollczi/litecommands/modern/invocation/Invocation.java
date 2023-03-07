@@ -23,7 +23,7 @@ public class Invocation<SENDER> {
         this.rawArguments = Arrays.asList(rawArguments);
     }
 
-    public SENDER handle() {
+    public SENDER getSender() {
         return this.handle;
     }
 

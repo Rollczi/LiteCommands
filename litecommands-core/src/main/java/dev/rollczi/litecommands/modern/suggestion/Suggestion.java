@@ -18,7 +18,7 @@ public class Suggestion {
         return this.multiSuggestion;
     }
 
-    public String single() {
+    public String head() {
         return this.multiSuggestion.get(0);
     }
 

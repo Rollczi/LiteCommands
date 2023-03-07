@@ -6,4 +6,6 @@ public interface LiteCommands<SENDER> {
 
     CommandManager<SENDER> getCommandManager();
 
+    void unregister();
+
 }

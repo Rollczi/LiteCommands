@@ -7,8 +7,10 @@ import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.annotation.execute.ExecuteAnnotationResolver;
 import dev.rollczi.litecommands.modern.annotation.route.RootRoute;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
+import dev.rollczi.litecommands.modern.guide.GuideMissingPermissionHandler;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.permission.MissingPermissionValidator;
+import dev.rollczi.litecommands.modern.permission.MissingPermissions;
 import dev.rollczi.litecommands.modern.permission.annotation.Permission;
 import dev.rollczi.litecommands.modern.permission.annotation.PermissionExcluded;
 import dev.rollczi.litecommands.modern.permission.annotation.Permissions;
@@ -30,7 +32,7 @@ public final class LiteCommandsFactory {
              .wrapperFactory(new OptionWrappedExpectedFactory())
              .wrapperFactory(new CompletableFutureWrappedExpectedFactory())
 
-             .contextualBind(senderClass, Invocation::handle)
+             .contextualBind(senderClass, Invocation::getSender)
 
              .contextualBind(String[].class, Invocation::arguments)
              .contextualBind(PlatformSender.class, Invocation::getPlatformSender)
@@ -56,7 +58,13 @@ public final class LiteCommandsFactory {
             .annotation(Permission.class, new Permission.AnnotationResolver<>())
             .annotation(Permissions.class, new Permissions.AnnotationResolver<>())
             .annotation(PermissionExcluded.class, new PermissionExcluded.AnnotationResolver<>())
-            .annotation(PermissionsExcluded.class, new PermissionsExcluded.AnnotationResolver<>());
+            .annotation(PermissionsExcluded.class, new PermissionsExcluded.AnnotationResolver<>())
+
+            // guide
+            .resultHandler(MissingPermissions.class, new GuideMissingPermissionHandler<>())
+            ;
     }
+
+
 
 }

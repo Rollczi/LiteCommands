@@ -30,4 +30,8 @@ public class FailedReason {
         return new FailedReason(null, true);
     }
 
+    @Override
+    public String toString() {
+        return "FailedReason(" + reason + ")";
+    }
 }

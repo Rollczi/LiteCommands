@@ -9,16 +9,15 @@ import dev.rollczi.litecommands.modern.env.FakeSender;
 import dev.rollczi.litecommands.modern.env.TestUtil;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.meta.CommandMeta;
-import dev.rollczi.litecommands.modern.test.AssertCommand;
+import dev.rollczi.litecommands.modern.env.AssertCommand;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static dev.rollczi.litecommands.modern.test.Assert.assertPresent;
+import static dev.rollczi.litecommands.modern.env.Assert.assertPresent;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MissingPermissionValidatorTest {
@@ -56,7 +55,7 @@ class MissingPermissionValidatorTest {
         MissingPermissions missingPermissions = assertInstanceOf(MissingPermissions.class, result.getInvalidResult());
         assertTrue(missingPermissions.isMissing());
 
-        List<String> missing = missingPermissions.getMissing();
+        List<String> missing = missingPermissions.getPermissions();
         assertEquals(3, missing.size());
 
         assertTrue(missing.contains("permission.test"));

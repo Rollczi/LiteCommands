@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.test;
+package dev.rollczi.litecommands.modern.env;
 
 import dev.rollczi.litecommands.modern.command.CommandRoute;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;

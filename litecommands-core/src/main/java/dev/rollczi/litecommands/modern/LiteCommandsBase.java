@@ -14,4 +14,10 @@ public class LiteCommandsBase<SENDER> implements LiteCommands<SENDER> {
     public CommandManager<SENDER> getCommandManager() {
         return commandManager;
     }
+
+    @Override
+    public void unregister() {
+        commandManager.unregisterAll();
+    }
+
 }

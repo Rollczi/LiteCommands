@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.modern.LiteCommandsFactory;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.env.FakePlatform;
 import dev.rollczi.litecommands.modern.env.FakeSender;
-import dev.rollczi.litecommands.modern.invocation.InvocationResult;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,11 +31,11 @@ class RootRouteTest {
             .command(Command.class)
             .register();
 
-        InvocationResult<FakeSender> first = platform.execute("first");
-        assertTrue(first.isInvoked());
+        platform.execute("first")
+            .assertSuccessful();
 
-        InvocationResult<FakeSender> second = platform.execute("second");
-        assertTrue(second.isInvoked());
+        platform.execute("second")
+            .assertSuccessful();
     }
 
 }

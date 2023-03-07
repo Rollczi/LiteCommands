@@ -16,36 +16,31 @@ public class FakePlatform implements Platform<FakeSender> {
     private final Map<CommandRoute<FakeSender>, PlatformSuggestListener<FakeSender>> suggestListeners = new LinkedHashMap<>();
 
     @Override
-    public void registerExecuteListener(CommandRoute<FakeSender> commandRoute, PlatformInvocationListener<FakeSender> executeListener) {
+    public void listenExecute(CommandRoute<FakeSender> commandRoute, PlatformInvocationListener<FakeSender> executeListener) {
         this.executeListeners.put(commandRoute, executeListener);
     }
 
     @Override
-    public void registerSuggestionListener(CommandRoute<FakeSender> commandRoute, PlatformSuggestListener<FakeSender> suggestListener) {
+    public void listenSuggestion(CommandRoute<FakeSender> commandRoute, PlatformSuggestListener<FakeSender> suggestListener) {
         this.suggestListeners.put(commandRoute, suggestListener);
     }
 
-    public InvocationResult<FakeSender> execute(String command) {
-        FakeSender fakeSender = new FakeSender();
-        FakePlatformSender fakePlatformSender = new FakePlatformSender();
+    @Override
+    public void unregisterAll() {
+        this.executeListeners.clear();
+        this.suggestListeners.clear();
+    }
+
+    public AssertExecute execute(String command) {
         String label = command.split(" ")[0];
         String[] args = command.length() > label.length()
             ? command.substring(label.length() + 1).split(" ")
             : new String[0];
 
-        Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, label, label, args);
-
-        for (Map.Entry<CommandRoute<FakeSender>, PlatformInvocationListener<FakeSender>> entry : this.executeListeners.entrySet()) {
-            if (entry.getKey().isNameOrAlias(label)) {
-                return entry.getValue().execute(invocation);
-            }
-        }
-
-        throw new IllegalStateException("No command found for " + command);
+        return execute(label, args);
     }
 
-
-    public InvocationResult<FakeSender> execute(String command, String... arguments) {
+    public AssertExecute execute(String command, String... arguments) {
         FakeSender fakeSender = new FakeSender();
         FakePlatformSender fakePlatformSender = new FakePlatformSender();
 
@@ -53,7 +48,10 @@ public class FakePlatform implements Platform<FakeSender> {
 
         for (Map.Entry<CommandRoute<FakeSender>, PlatformInvocationListener<FakeSender>> entry : this.executeListeners.entrySet()) {
             if (entry.getKey().isNameOrAlias(command)) {
-                return entry.getValue().execute(invocation);
+                PlatformInvocationListener<FakeSender> listener = entry.getValue();
+                InvocationResult<FakeSender> result = listener.execute(invocation);
+
+                return new AssertExecute(result);
             }
         }
 

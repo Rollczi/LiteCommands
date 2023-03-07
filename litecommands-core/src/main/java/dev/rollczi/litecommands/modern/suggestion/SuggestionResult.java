@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.modern.suggestion;
 import dev.rollczi.litecommands.modern.util.IterableMutableArray;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SuggestionResult {
@@ -30,8 +31,8 @@ public class SuggestionResult {
                 level = rawSuggestion.length;
             }
 
-            if (level != parsedSuggestions.size()) {
-                throw new IllegalArgumentException();
+            if (level != rawSuggestion.length) {
+                throw new IllegalArgumentException("Suggestion level is not equal to previous suggestions. Expected: " + level + ", got: " + rawSuggestion.length);
             }
 
             parsedSuggestions.add(Suggestion.multilevel(suggestion));
@@ -69,6 +70,10 @@ public class SuggestionResult {
         }
 
         this.suggestions.add(suggestion);
+    }
+
+    public List<Suggestion> getSuggestions() {
+        return Collections.unmodifiableList(this.suggestions);
     }
 
 }

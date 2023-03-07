@@ -86,6 +86,13 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     @ApiStatus.Internal
     void appendToRoot(CommandRoute<SENDER> children) {
         this.children.put(children.getName(), children);
+        this.childrenList.add(children);
+    }
+
+    @ApiStatus.Internal
+    void clearChildren() {
+        this.children.clear();
+        this.childrenList.clear();
     }
 
 }

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.test;
+package dev.rollczi.litecommands.modern.env;
 
 import java.util.Optional;
 

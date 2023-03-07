@@ -20,8 +20,16 @@ public class MissingPermissions {
         return Collections.unmodifiableList(checkedPermissions);
     }
 
-    public List<String> getMissing() {
+    public List<String> getPermissions() {
         return Collections.unmodifiableList(missingPermissions);
+    }
+
+    public String joinPermissions() {
+        return joinPermissions(", ");
+    }
+
+    public String joinPermissions(String separator) {
+        return String.join(separator, missingPermissions);
     }
 
     public boolean isMissing() {

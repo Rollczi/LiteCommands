@@ -46,7 +46,7 @@ public class CommandManager<SENDER> {
     }
 
     public void registerCommand(CommandRoute<SENDER> commandRoute) {
-        this.platform.registerExecuteListener(commandRoute, invocation -> {
+        this.platform.listenExecute(commandRoute, invocation -> {
             InvocationResult<SENDER> invocationResult = this.execute(invocation, commandRoute);
 
             resultResolver.resolve(invocationResult);
@@ -117,6 +117,11 @@ public class CommandManager<SENDER> {
         }
 
         return new CommandRouteFindResult<>(command, rawArgumentsIndex);
+    }
+
+    public void unregisterAll() {
+        this.root.clearChildren();
+        this.platform.unregisterAll();
     }
 
     private static class CommandRouteFindResult<SENDER> {

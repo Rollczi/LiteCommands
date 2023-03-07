@@ -17,4 +17,8 @@ public class FakePlatformSender implements PlatformSender {
         return false;
     }
 
+    @Override
+    public void sendMessage(String message) {
+    }
+
 }
