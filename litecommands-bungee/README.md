@@ -4,12 +4,12 @@ Maven
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>bungee</artifactId>
-    <version>2.8.4</version>
+    <version>2.8.5</version>
 </dependency>
 ```
 Gradle
 ```groovy
-implementation 'dev.rollczi.litecommands:bungee:2.8.4'
+implementation 'dev.rollczi.litecommands:bungee:2.8.5'
 ```
 
 #### Examples:

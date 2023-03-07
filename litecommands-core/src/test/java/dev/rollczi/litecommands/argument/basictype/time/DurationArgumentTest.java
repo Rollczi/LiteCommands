@@ -86,10 +86,10 @@ class DurationArgumentTest {
 
     @Test
     void testSuggestionOnPlatform() {
-        testPlatform.suggest("command", "")
+        testPlatform.suggestAsOp("command", "")
                 .assertWith(DurationArgument.SUGGESTED_DURATIONS.stream().map(EstimatedTemporalAmountParser.DATE_TIME_UNITS::format).toArray(String[]::new));
 
-        testPlatform.suggest("command", "1m")
+        testPlatform.suggestAsOp("command", "1m")
                 .assertWith("1m", "1m30s", "1mo");
     }
 

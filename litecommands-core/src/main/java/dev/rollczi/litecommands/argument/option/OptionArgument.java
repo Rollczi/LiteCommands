@@ -47,7 +47,7 @@ public class OptionArgument<SENDER, T> implements Argument<SENDER, Opt>, Paramet
         if (parsed.isErr()) {
             Object error = parsed.getError();
 
-            if (error instanceof Blank) {
+            if (error instanceof Blank && !context.annotation().strict()) {
                 return MatchResult.notMatched();
             }
 
@@ -70,6 +70,11 @@ public class OptionArgument<SENDER, T> implements Argument<SENDER, Opt>, Paramet
     @Override
     public boolean isOptional() {
         return true;
+    }
+
+    @Override
+    public boolean isOptionalStrict(Opt opt) {
+        return opt.strict();
     }
 
     @Override

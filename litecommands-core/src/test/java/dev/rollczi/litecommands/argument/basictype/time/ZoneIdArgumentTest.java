@@ -68,10 +68,10 @@ class ZoneIdArgumentTest {
 
     @Test
     void testSuggestionOnPlatform() {
-        platform.suggest("test", "")
+        platform.suggestAsOp("test", "")
             .assertWith(ZoneId.getAvailableZoneIds().toArray(new String[0]));
 
-        platform.suggest("test", "Europe/Warsa")
+        platform.suggestAsOp("test", "Europe/Warsa")
             .assertWith("Europe/Warsaw");
     }
 

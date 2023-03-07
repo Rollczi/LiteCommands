@@ -26,7 +26,7 @@ class SuggestionCoverageTest {
 
     @Test
     void testLocalDate() {
-        List<String> suggestion = testPlatform.suggestion("command", "LocalDate", "");
+        List<String> suggestion = testPlatform.suggestionAsOp("command", "LocalDate", "");
 
         for (String suggest : suggestion) {
             assertPattern(suggest, "[0-9]{4}-[0-9]{2}-[0-9]{2}");

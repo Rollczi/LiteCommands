@@ -35,12 +35,12 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
     }
 
     public LiteSender createSender() {
-        return new TestSender(new TestHandle());
+        return new TestSender(new TestHandle(), false);
     }
 
     public AssertResult execute(String command, String... args) {
         TestHandle handle = new TestHandle();
-        LiteInvocation invocation = new LiteInvocation(new TestSender(handle), command, command, args);
+        LiteInvocation invocation = new LiteInvocation(new TestSender(handle, false), command, command, args);
 
         for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
             CommandSection<TestHandle> section = entry.getKey();
@@ -54,12 +54,16 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
         return new AssertResult(ExecuteResult.failure(FindResult.none(invocation.withHandle(handle))));
     }
 
-    public AssertSuggest suggest(String command, String... args) {
+    public AssertSuggest suggestAsOp(String command, String... args) {
         TestHandle handle = new TestHandle();
+        return suggest(new TestSender(handle, true), command, args);
+    }
+
+    public AssertSuggest suggest(LiteSender liteSender, String command, String... args) {
         for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
             CommandSection<TestHandle> section = entry.getKey();
 
-            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle), command, command, args);
+            Invocation<TestHandle> liteInvocation = new Invocation<>((TestHandle) liteSender.getHandle(), liteSender, command, command, args);
 
             if (section.isSimilar(command)) {
                 return new AssertSuggest(section.findSuggestion(liteInvocation, 0).merge());
@@ -74,7 +78,7 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
         for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
             CommandSection<TestHandle> section = entry.getKey();
 
-            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle), command, command, args);
+            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle, false), command, command, args);
 
             if (section.isSimilar(command)) {
                 return section.find(liteInvocation.toLite(), 0, FindResult.none(liteInvocation));
@@ -84,12 +88,12 @@ public class TestPlatform implements RegistryPlatform<TestHandle> {
         throw new IllegalArgumentException();
     }
 
-    public List<String> suggestion(String command, String... args) {
+    public List<String> suggestionAsOp(String command, String... args) {
         TestHandle handle = new TestHandle();
         for (Map.Entry<CommandSection<TestHandle>, Command> entry : commands.entrySet()) {
             CommandSection<TestHandle> section = entry.getKey();
 
-            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle), command, command, args);
+            Invocation<TestHandle> liteInvocation = new Invocation<>(handle, new TestSender(handle, true), command, command, args);
 
             if (section.isSimilar(command)) {
                 return section.findSuggestion(liteInvocation, 0).merge().multilevelSuggestions();

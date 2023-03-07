@@ -19,7 +19,7 @@ public final class TestUtils {
     }
 
     public static LiteInvocation invocation(String command, String... args) {
-        return new LiteInvocation(new TestSender(new TestHandle()), command, command, args);
+        return new LiteInvocation(new TestSender(new TestHandle(), false), command, command, args);
     }
 
 }

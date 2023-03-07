@@ -111,6 +111,21 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
             }
         }
 
+        root:
+        for (ArgumentExecutor<SENDER> executor : this.executors()) {
+            if (executor.meta().getPermissions().isEmpty()) {
+                continue;
+            }
+
+            for (String permission : executor.meta().getPermissions()) {
+                if (sender.hasPermission(permission)) {
+                    break root;
+                }
+            }
+
+            return suggestionMerger;
+        }
+
         if (invocation.arguments().length == route) {
             return suggestionMerger.appendRoot(this.suggestion());
         }
@@ -240,7 +255,6 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
             return current;
         }
 
-        System.out.println();
         if (!current.isLongerThan(last)) {
             return last;
         }
