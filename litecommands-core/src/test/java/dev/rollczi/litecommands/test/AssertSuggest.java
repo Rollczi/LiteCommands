@@ -25,7 +25,7 @@ public class AssertSuggest {
     public void assertWith(String... suggestions) {
         List<String> suggestionSet = this.suggestions.multilevelSuggestions();
 
-        Assertions.assertEquals(suggestionSet.size(), suggestions.length);
+        Assertions.assertEquals(suggestions.length, suggestionSet.size());
 
         for (String suggestion : suggestions) {
             Assertions.assertTrue(suggestionSet.contains(suggestion), "Suggestion '" + suggestion + "' not found! " + String.join(", ", suggestionSet));

@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.suggestion;
 
+import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.test.TestFactory;
@@ -15,9 +16,15 @@ public class SuggestionWithPermissionTest {
     @Permission("permission.test")
     static class Command {
 
+        enum TestEnum { A, B }
+
         @Route(name = "a")
         @Permission("test.a")
         void a() {}
+
+        @Route(name = "a")
+        @Permission("test.a.withArg")
+        void a(@Arg TestEnum testEnum) {}
 
         @Route(name = "b")
         @Permission("test.b")
@@ -43,6 +50,15 @@ public class SuggestionWithPermissionTest {
 
         platform.suggest(TestPermissionSender.with("permission.test", "test.a", "test.b"), "test", "")
             .assertWith("a", "b");
+    }
+
+    @Test
+    void testWithExecutor() {
+        platform.suggest(TestPermissionSender.with("permission.test", "test.a.withArg"), "test", "a", "")
+            .assertWith("A", "B");
+
+        platform.suggest(TestPermissionSender.with("permission.test", "test.a"), "test", "a", "")
+            .assertWith();
     }
 
 

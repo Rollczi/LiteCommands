@@ -111,18 +111,7 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
             }
         }
 
-        root:
-        for (ArgumentExecutor<SENDER> executor : this.executors()) {
-            if (executor.meta().getPermissions().isEmpty()) {
-                continue;
-            }
-
-            for (String permission : executor.meta().getPermissions()) {
-                if (sender.hasPermission(permission)) {
-                    break root;
-                }
-            }
-
+        if (!this.hasPermissionToAnyExecutor(invocation.sender())) {
             return suggestionMerger;
         }
 
@@ -145,12 +134,40 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
         LiteInvocation lite = invocation.toLite();
 
         for (ArgumentExecutor<SENDER> argumentExecutor : this.argumentExecutors) {
+            RequiredPermissions requiredPermissions = RequiredPermissions.of(argumentExecutor.meta(), lite.sender());
+
+            if (!requiredPermissions.isEmpty()) {
+                continue;
+            }
+
             List<AnnotatedParameter<SENDER, ?>> parameters = argumentExecutor.annotatedParameters();
 
             suggestionMerger.appendRoot(this.suggestionParameters(lite, 0, routeAbove, 0, parameters));
         }
 
         return suggestionMerger;
+    }
+
+    private boolean hasPermissionToAnyExecutor(LiteSender liteSender) {
+        if (this.executors().isEmpty()) {
+            return true;
+        }
+
+        for (ArgumentExecutor<SENDER> executor : this.argumentExecutors) {
+            Collection<String> permissions = executor.meta().getPermissions();
+
+            if (permissions.isEmpty()) {
+                return true;
+            }
+
+            for (String permission : permissions) {
+                if (liteSender.hasPermission(permission)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private SuggestionStack suggestionParameters(LiteInvocation lite, int margin, int routeAbove, int parameterIndex, List<AnnotatedParameter<SENDER, ?>> parameters) {
