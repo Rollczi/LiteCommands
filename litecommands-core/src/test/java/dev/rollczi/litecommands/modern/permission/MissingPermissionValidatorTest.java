@@ -33,11 +33,9 @@ class MissingPermissionValidatorTest {
             .name("test")
             .applyMeta(meta -> meta.appendToList(CommandMeta.PERMISSIONS, "permission.test"))
             .appendChild("sub", childContext -> {
-                CommandEditorExecutorBuilder<FakeSender> builder = new CommandEditorExecutorBuilder<>(new FakeExecutor<>());
-
-                builder.getMeta()
-                    .appendToList(CommandMeta.PERMISSIONS, "permission.sub.execute")
-                    .appendToList(CommandMeta.PERMISSIONS_EXCLUDED, "permission.sub.toexclude");
+                CommandEditorExecutorBuilder<FakeSender> builder = new CommandEditorExecutorBuilder<FakeSender>(new FakeExecutor<>())
+                    .applyMeta(meta -> meta.appendToList(CommandMeta.PERMISSIONS, "permission.sub.execute"))
+                    .applyMeta(meta -> meta.appendToList(CommandMeta.PERMISSIONS_EXCLUDED, "permission.sub.toexclude"));
 
                 return childContext
                     .applyMeta(meta -> meta.put(CommandMeta.PERMISSIONS, Arrays.asList("permission.sub", "permission.sub.toexclude")))

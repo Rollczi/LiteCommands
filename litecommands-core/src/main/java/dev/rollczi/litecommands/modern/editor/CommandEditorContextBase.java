@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<SENDER> {
@@ -151,6 +152,11 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     public CommandEditorContext<SENDER> applyMeta(UnaryOperator<CommandMeta> operator) {
         this.meta = operator.apply(this.meta);
         return this;
+    }
+
+    @Override
+    public CommandMeta getMeta() {
+        return this.meta;
     }
 
     @Override
@@ -306,8 +312,8 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     }
 
     @Override
-    public CommandMeta getMeta() {
-        return this.meta;
+    public void editMeta(Consumer<CommandMeta> operator) {
+        operator.accept(this.meta);
     }
 
 }

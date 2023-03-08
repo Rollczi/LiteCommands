@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.modern.test;
 import dev.rollczi.litecommands.modern.LiteCommands;
 import dev.rollczi.litecommands.modern.LiteCommandsFactory;
 import dev.rollczi.litecommands.modern.annotation.LiteCommandsAnnotationBuilder;
+import dev.rollczi.litecommands.modern.annotation.route.RootRoute;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
 import dev.rollczi.litecommands.modern.test.env.FakePlatform;
 import dev.rollczi.litecommands.modern.test.env.FakeSender;
@@ -31,7 +32,7 @@ public class LiteTestSpec {
         Class<?> type = testClass.get();
 
         Class<?>[] commands = Arrays.stream(type.getDeclaredClasses())
-            .filter(declaredClass -> declaredClass.isAnnotationPresent(Route.class))
+            .filter(declaredClass -> declaredClass.isAnnotationPresent(Route.class) || declaredClass.isAnnotationPresent(RootRoute.class))
             .toArray(Class<?>[]::new);
 
         platform = new FakePlatform();

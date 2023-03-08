@@ -40,8 +40,12 @@ class CommandEditorContextDummyPrefix<SENDER> extends CommandEditorContextBase<S
 
     @Override
     public @NotNull CommandEditorContext<SENDER> editChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator) {
-        this.parent = operator.apply(this.parent);
-        return this;
+        if (this.parent.name().equals(name)) {
+            this.parent = operator.apply(this.parent);
+            return this;
+        }
+
+        throw new IllegalArgumentException("Child with name " + name + " not found");
     }
 
     @Override

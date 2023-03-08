@@ -84,8 +84,7 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
         }
 
         for (PreparedParameterArgumentImpl<SENDER, ?> cachedParameterArgument : this.resolvedArguments) {
-            Result<Supplier<WrappedExpected<Object>>, FailedReason> result = provideResolvedArgument(invocation, cachedArgumentResolver, cachedParameterArgument
-            );
+            Result<Supplier<WrappedExpected<Object>>, FailedReason> result = provideResolvedArgument(invocation, cachedArgumentResolver, cachedParameterArgument);
 
             if (result.isErr()) {
                 return CommandExecutorMatchResult.failed(result.getError());

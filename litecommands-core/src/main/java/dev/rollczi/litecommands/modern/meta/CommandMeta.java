@@ -28,6 +28,8 @@ public interface CommandMeta {
 
     CommandMeta apply(CommandMeta meta);
 
+    CommandMeta copy();
+
     Collection<CommandKey<?>> getKeys();
 
     static CommandMeta create() {

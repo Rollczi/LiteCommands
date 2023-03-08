@@ -3,8 +3,11 @@ package dev.rollczi.litecommands.modern.test.env;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResult;
 import dev.rollczi.litecommands.modern.invocation.InvocationResult;
+import dev.rollczi.litecommands.modern.permission.MissingPermissions;
 import org.opentest4j.AssertionFailedError;
 import panda.std.Option;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertExecute {
 
@@ -109,6 +112,20 @@ public class AssertExecute {
 
         if (!failedReason.getReason().equals(reason)) {
             throw new AssertionFailedError("Failed reason is not equals", reason, failedReason.getReason());
+        }
+
+        return this;
+    }
+
+    public AssertExecute assertMissingPermission(String... permissions) {
+        MissingPermissions missingPermissions = assertFailedAs(MissingPermissions.class);
+
+        assertEquals(permissions.length, missingPermissions.getPermissions().size(), "Missing permissions size is not equals");
+
+        for (String permission : permissions) {
+            if (!missingPermissions.getPermissions().contains(permission)) {
+                throw new AssertionFailedError("Missing permissions does not contains " + permission);
+            }
         }
 
         return this;

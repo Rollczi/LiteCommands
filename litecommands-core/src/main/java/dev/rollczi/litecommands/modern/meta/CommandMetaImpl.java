@@ -71,6 +71,23 @@ class CommandMetaImpl implements CommandMeta {
     }
 
     @Override
+    public CommandMeta copy() {
+        CommandMetaImpl copy = new CommandMetaImpl();
+
+        for (CommandKey<?> key : this.meta.keySet()) {
+            copy.meta.put(key, this.getOut(key));
+        }
+
+        return copy;
+    }
+
+    private <T> T getOut(CommandKey<T> key) {
+        CommandMetaType<T> type = key.getType();
+
+        return type.out(type.cast(this.meta.get(key)));
+    }
+
+    @Override
     public Collection<CommandKey<?>> getKeys() {
         return Collections.unmodifiableSet(this.meta.keySet());
     }

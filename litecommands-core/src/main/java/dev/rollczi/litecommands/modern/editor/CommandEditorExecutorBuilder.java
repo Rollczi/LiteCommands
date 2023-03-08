@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.modern.command.CommandExecutor;
 import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import dev.rollczi.litecommands.modern.meta.CommandMetaHolder;
 
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 public class CommandEditorExecutorBuilder<SENDER> implements CommandMetaHolder {
@@ -22,8 +23,9 @@ public class CommandEditorExecutorBuilder<SENDER> implements CommandMetaHolder {
         this.executor = executor;
     }
 
-    public void applyMeta(UnaryOperator<CommandMeta> operator) {
+    public CommandEditorExecutorBuilder<SENDER> applyMeta(UnaryOperator<CommandMeta> operator) {
         this.meta = operator.apply(this.meta);
+        return this;
     }
 
     public boolean buildable() {
@@ -37,8 +39,8 @@ public class CommandEditorExecutorBuilder<SENDER> implements CommandMetaHolder {
     }
 
     @Override
-    public CommandMeta getMeta() {
-        return this.meta;
+    public void editMeta(Consumer<CommandMeta> operator) {
+        operator.accept(this.meta);
     }
 
 }

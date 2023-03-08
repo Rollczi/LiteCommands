@@ -44,6 +44,11 @@ class CommandMetaEmptyImpl implements CommandMeta {
     }
 
     @Override
+    public CommandMeta copy() {
+        return this;
+    }
+
+    @Override
     public Collection<CommandKey<?>> getKeys() {
         return Collections.emptyList();
     }

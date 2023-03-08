@@ -17,11 +17,11 @@ public @interface PermissionExcluded {
 
         @Override
         public void apply(Object instance, PermissionExcluded annotation, CommandMetaHolder metaHolder) {
-            CommandMeta meta = metaHolder.getMeta();
-
-            for (String permission : annotation.value()) {
-                meta.appendToList(CommandMeta.PERMISSIONS_EXCLUDED, permission);
-            }
+            metaHolder.editMeta(meta -> {
+                for (String permission : annotation.value()) {
+                    meta.appendToList(CommandMeta.PERMISSIONS_EXCLUDED, permission);
+                }
+            });
         }
 
     }

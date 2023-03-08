@@ -10,12 +10,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDER> {
 
     private final Map<String, CommandEditorContext<SENDER>> children = new HashMap<>();
+    private final CommandMeta meta = CommandMeta.create();
+    private final Map<String, CommandMeta> childrenMeta = new HashMap<>();
 
     @Override
     public @NotNull CommandEditorContext<SENDER> name(String name) {
@@ -39,12 +42,12 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
 
     @Override
     public boolean isNameOrAlias(String name) {
-        return false;
+        return name.isEmpty();
     }
 
     @Override
     public boolean hasSimilarNames(CommandEditorContext<SENDER> context) {
-        return false;
+        return context.name().isEmpty();
     }
 
     @Override
@@ -115,6 +118,11 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
     }
 
     @Override
+    public CommandMeta getMeta() {
+        return meta;
+    }
+
+    @Override
     public CommandEditorContext<SENDER> routeName(String name) {
         throw new UnsupportedOperationException("Cannot set name for root command");
     }
@@ -134,9 +142,19 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
         for (CommandEditorContext<SENDER> child : context.children()) {
             if (children.containsKey(child.name())) {
                 children.get(child.name()).meagre(child);
+
+                if (childrenMeta.containsKey(child.name())) {
+                    childrenMeta.get(child.name()).apply(context.getMeta());
+                } else {
+                    childrenMeta.put(child.name(), context.getMeta().copy().apply(this.meta));
+                }
+
             } else {
                 children.put(child.name(), child);
+                childrenMeta.put(child.name(), context.getMeta().copy());
             }
+
+
         }
     }
 
@@ -155,11 +173,13 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
         return this.children.values().stream()
             .map(senderCommandEditorContext -> senderCommandEditorContext.build(parent))
             .flatMap(Collection::stream)
+            .peek(route -> route.getMeta().apply(this.childrenMeta.getOrDefault(route.getName(), this.meta)))
             .collect(Collectors.toList());
     }
 
     @Override
-    public CommandMeta getMeta() {
-        return null;
+    public void editMeta(Consumer<CommandMeta> operator) {
+        operator.accept(meta);
     }
+
 }

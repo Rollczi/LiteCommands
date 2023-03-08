@@ -98,7 +98,7 @@ public class CommandManager<SENDER> {
             return InvocationResult.failed(invocation, FailedReason.of(reason));
         }
 
-        return InvocationResult.failed(invocation, FailedReason.empty());
+        return InvocationResult.failed(invocation, FailedReason.of(CommandExecuteError.UNKNOWN_COMMAND));
     }
 
     private CommandRouteFindResult<SENDER> find(CommandRoute<SENDER> command, List<String> arguments, int rawArgumentsIndex) {

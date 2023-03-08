@@ -61,6 +61,10 @@ public class ArgumentResult<EXPECTED> {
         return new ArgumentResult<>(null, failedReason);
     }
 
+    public static <EXPECTED> ArgumentResult<EXPECTED> failure(Object failedReason) {
+        return new ArgumentResult<>(null, FailedReason.of(failedReason));
+    }
+
     public static <EXPECTED> ArgumentResult<EXPECTED> failure() {
         return new ArgumentResult<>(null, FailedReason.empty());
     }

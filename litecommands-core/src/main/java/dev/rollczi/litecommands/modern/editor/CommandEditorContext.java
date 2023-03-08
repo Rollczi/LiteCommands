@@ -55,6 +55,8 @@ public interface CommandEditorContext<SENDER> extends CommandMetaHolder {
 
     CommandEditorContext<SENDER> applyMeta(UnaryOperator<CommandMeta> operator);
 
+    CommandMeta getMeta();
+
     @ApiStatus.Internal
     CommandEditorContext<SENDER> routeName(String name);
 

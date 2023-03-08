@@ -25,10 +25,6 @@ public class ArgumentResolverContext<E> {
         return new ArgumentResolverContext<>(this.lastResolvedRawArgument + consumed, lastArgumentResult);
     }
 
-    <T> ArgumentResolverContext<T> withFailure() {
-        return this.with(0, ArgumentResult.failure());
-    }
-
     <T> ArgumentResolverContext<T> withFailure(ArgumentResult<T> argumentResult) {
         return this.with(0, argumentResult);
     }

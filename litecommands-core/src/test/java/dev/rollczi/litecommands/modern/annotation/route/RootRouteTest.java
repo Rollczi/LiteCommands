@@ -1,17 +1,14 @@
 package dev.rollczi.litecommands.modern.annotation.route;
 
-import dev.rollczi.litecommands.modern.LiteCommandsFactory;
+import dev.rollczi.litecommands.modern.annotation.argument.Arg;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
-import dev.rollczi.litecommands.modern.test.env.FakePlatform;
-import dev.rollczi.litecommands.modern.test.env.FakeSender;
+import dev.rollczi.litecommands.modern.permission.annotation.Permission;
+import dev.rollczi.litecommands.modern.test.LiteTest;
+import dev.rollczi.litecommands.modern.test.LiteTestSpec;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-class RootRouteTest {
-
-    RootRoute.AnnotationResolver<?> resolver = new RootRoute.AnnotationResolver<>();
+@LiteTest
+class RootRouteTest extends LiteTestSpec {
 
     @RootRoute
     static class Command {
@@ -22,20 +19,33 @@ class RootRouteTest {
         public void test2() {}
     }
 
+    @RootRoute
+    @Permission("test.permission")
+    static class Command2 {
+        @Execute(name = "first")
+        @Permission("test.permission.execute")
+        public void test(@Arg String test) {}
+
+        @Execute(name = "third")
+        public void test2() {}
+    }
+
     @Test
-    void testExecuteRootRouteCommands() {
-        FakePlatform platform = new FakePlatform();
-
-        LiteCommandsFactory.annotation(FakeSender.class)
-            .platform(platform)
-            .command(Command.class)
-            .register();
-
+    void testExecuteRootRouteCommands() {;
         platform.execute("first")
-            .assertSuccessful();
+            .assertMissingPermission("test.permission");
 
         platform.execute("second")
             .assertSuccessful();
+    }
+
+    @Test
+    void testExecuteMergedRootRouteCommands() {
+        platform.execute("first test")
+            .assertMissingPermission("test.permission", "test.permission.execute");
+
+        platform.execute("third")
+            .assertMissingPermission("test.permission");
     }
 
 }
