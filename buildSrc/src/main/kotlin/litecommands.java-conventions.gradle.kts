@@ -1,4 +1,5 @@
 val coreArtifact by extra("core")
+val coreAnnotationsArtifact by extra("core")
 val velocityArtifact by extra("velocity")
 val bukkitArtifact by extra("bukkit")
 val bukkitAdventureArtifact by extra("bukkit-adventure")
