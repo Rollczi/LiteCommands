@@ -38,3 +38,10 @@ Modern TODO
 - [x] Return result handler
 - [x] Return result handler remapper
 - [ ] Support JDA XD
+- [ ] Support Sponge
+- [ ] Support BungeeCord
+- [ ] Support Velocity
+- [ ] Support Bukkit
+- [ ] Support Nukkit
+- [ ] Support Adventure
+- [ ] Support Paper?

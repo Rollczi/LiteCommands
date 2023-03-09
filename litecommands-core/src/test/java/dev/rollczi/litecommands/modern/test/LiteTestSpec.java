@@ -1,8 +1,9 @@
 package dev.rollczi.litecommands.modern.test;
 
 import dev.rollczi.litecommands.modern.LiteCommands;
+import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
 import dev.rollczi.litecommands.modern.LiteCommandsFactory;
-import dev.rollczi.litecommands.modern.annotation.LiteCommandsAnnotationBuilder;
+import dev.rollczi.litecommands.modern.annotation.LiteAnnotationExtension;
 import dev.rollczi.litecommands.modern.annotation.route.RootRoute;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
 import dev.rollczi.litecommands.modern.test.env.FakePlatform;
@@ -36,9 +37,11 @@ public class LiteTestSpec {
             .toArray(Class<?>[]::new);
 
         platform = new FakePlatform();
-        LiteCommandsAnnotationBuilder<FakeSender, ?> builder = LiteCommandsFactory.annotation(FakeSender.class)
+        LiteCommandsBuilder<FakeSender, ?> builder = LiteCommandsFactory.builder(FakeSender.class)
             .platform(platform)
-            .command(commands);
+            .extension(LiteAnnotationExtension.create(), extension -> extension
+                .command(commands)
+            );
 
         LiteTest annotation = type.getAnnotation(LiteTest.class);
 

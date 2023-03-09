@@ -16,7 +16,7 @@ public class StringArgumentResolver<SENDER> extends OneArgumentResolver<SENDER, 
 
     @Override
     protected boolean canParse(Invocation<SENDER> invocation, Argument<String> context, String argument) {
-        return false;
+        return true;
     }
 
     @Override

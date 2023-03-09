@@ -12,7 +12,7 @@ public abstract class OneArgumentResolver<SENDER, TYPE> implements ArgumentResol
     @Override
     public final ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, Argument<TYPE> argument, List<String> arguments) {
         if (arguments.isEmpty()) {
-            throw new IllegalArgumentException(); //TODO set error message
+            throw new IllegalArgumentException("To parse argument, you need to provide at least one argument.");
         }
 
         return this.parse(invocation, argument, arguments.get(0));
@@ -21,7 +21,7 @@ public abstract class OneArgumentResolver<SENDER, TYPE> implements ArgumentResol
     @Override
     public final boolean canParse(Invocation<SENDER> invocation, Argument<TYPE> argument, List<String> arguments) {
         if (arguments.isEmpty()) {
-            throw new IllegalArgumentException(); //TODO set error message
+            throw new IllegalArgumentException("To parse argument, you need to provide at least one argument.");
         }
 
         return this.canParse(invocation, argument, arguments.get(0));

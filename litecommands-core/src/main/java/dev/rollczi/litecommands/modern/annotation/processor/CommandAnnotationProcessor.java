@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.modern.annotation.processor;
 import dev.rollczi.litecommands.modern.annotation.editor.AnnotationCommandEditorService;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.editor.CommandEditorExecutorBuilder;
+import dev.rollczi.litecommands.modern.editor.CommandEditorService;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -11,10 +12,12 @@ public class CommandAnnotationProcessor<SENDER> {
 
     private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry;
     private final AnnotationCommandEditorService<SENDER> annotationCommandEditorRegistry;
+    private final CommandEditorService<SENDER> commandEditorService;
 
-    public CommandAnnotationProcessor(CommandAnnotationRegistry<SENDER> commandAnnotationRegistry, AnnotationCommandEditorService<SENDER> annotationCommandEditorRegistry) {
+    public CommandAnnotationProcessor(CommandAnnotationRegistry<SENDER> commandAnnotationRegistry, AnnotationCommandEditorService<SENDER> annotationCommandEditorRegistry, CommandEditorService<SENDER> commandEditorService) {
         this.commandAnnotationRegistry = commandAnnotationRegistry;
         this.annotationCommandEditorRegistry = annotationCommandEditorRegistry;
+        this.commandEditorService = commandEditorService;
     }
 
     public CommandEditorContext<SENDER> createContext(Object instance) {
@@ -34,6 +37,7 @@ public class CommandAnnotationProcessor<SENDER> {
         }
 
         context = this.annotationCommandEditorRegistry.edit(instance, context);
+        context = this.commandEditorService.edit(context);
 
         return context;
     }

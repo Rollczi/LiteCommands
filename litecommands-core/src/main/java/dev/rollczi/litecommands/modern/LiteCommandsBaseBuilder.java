@@ -207,15 +207,15 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public <E extends LiteExtension<SENDER>> B withExtension(E extension) {
-        extension.extend(this.getThis());
+    public <E extends LiteCommandsExtension<SENDER>> B extension(E extension) {
+        extension.extend(this, this);
         return this.getThis();
     }
 
     @Override
-    public <E extends LiteExtension<SENDER>> B withExtension(E extension, UnaryOperator<E> configuration) {
+    public <E extends LiteCommandsExtension<SENDER>> B extension(E extension, UnaryOperator<E> configuration) {
         extension = configuration.apply(extension);
-        extension.extend(this.getThis());
+        extension.extend(this, this);
         return this.getThis();
     }
 

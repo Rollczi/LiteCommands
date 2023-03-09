@@ -9,14 +9,8 @@ import java.util.Map;
 
 public class AnnotationCommandEditorService<SENDER> {
 
-    private final CommandEditorService<SENDER> pattern;
-
     private final Map<Class<?>, CommandEditor<SENDER>> editorsByClass = new HashMap<>();
     private final Map<String, CommandEditor<SENDER>> editorsByEditorName = new HashMap<>();
-
-    public AnnotationCommandEditorService(CommandEditorService<SENDER> pattern) {
-        this.pattern = pattern;
-    }
 
     public void registerEditor(Class<?> clazz, CommandEditor<SENDER> editor) {
         this.editorsByClass.put(clazz, editor);
@@ -41,7 +35,7 @@ public class AnnotationCommandEditorService<SENDER> {
             }
         }
 
-        return this.pattern.edit(context);
+        return context;
     }
 
 }

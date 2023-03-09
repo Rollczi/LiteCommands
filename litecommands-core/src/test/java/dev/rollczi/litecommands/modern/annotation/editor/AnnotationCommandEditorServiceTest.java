@@ -24,7 +24,7 @@ class AnnotationCommandEditorServiceTest {
 
     @Test
     void test() {
-        AnnotationCommandEditorService<FakeSender> editorService = new AnnotationCommandEditorService<>(new CommandEditorService<>());
+        AnnotationCommandEditorService<FakeSender> editorService = new AnnotationCommandEditorService<>();
         editorService.registerEditorKey(KEY, (context) -> context.name("prefix-" + context.name()));
 
         Command command = new Command();

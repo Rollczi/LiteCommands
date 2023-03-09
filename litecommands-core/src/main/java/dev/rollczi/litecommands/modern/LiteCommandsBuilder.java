@@ -44,9 +44,9 @@ public interface LiteCommandsBuilder<SENDER, B extends LiteCommandsBuilder<SENDE
 
     <T> LiteCommandsBuilder<SENDER, B> resultMapper(Class<T> mapperFromType, CommandExecuteResultMapper<SENDER, T, ?> mapper);
 
-        <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, B> withExtension(E extension);
+    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, B> extension(E extension);
 
-    <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, B> withExtension(E extension, UnaryOperator<E> configuration);
+    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, B> extension(E extension, UnaryOperator<E> configuration);
 
     LiteCommandsBuilder<SENDER, B> platform(Platform<SENDER> platform);
 
