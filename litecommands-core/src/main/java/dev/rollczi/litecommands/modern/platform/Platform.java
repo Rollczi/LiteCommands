@@ -1,12 +1,19 @@
 package dev.rollczi.litecommands.modern.platform;
 
+import dev.rollczi.litecommands.modern.LiteConfiguration;
 import dev.rollczi.litecommands.modern.command.CommandRoute;
+import org.jetbrains.annotations.NotNull;
 
-public interface Platform<SENDER> {
+public interface Platform<SENDER, C extends LiteConfiguration> {
 
-    void listenExecute(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> executeListener);
+    void setConfiguration(@NotNull C configuration);
 
-    void listenSuggestion(CommandRoute<SENDER> commandRoute, PlatformSuggestListener<SENDER> suggestListener);
+    @NotNull
+    C getConfiguration();
+
+    void register(CommandRoute<SENDER> commandRoute, PlatformInvocationHook<SENDER> invocationHook, PlatformSuggestionHook<SENDER> suggestionHook);
+
+    void unregister(CommandRoute<SENDER> commandRoute);
 
     void unregisterAll();
 

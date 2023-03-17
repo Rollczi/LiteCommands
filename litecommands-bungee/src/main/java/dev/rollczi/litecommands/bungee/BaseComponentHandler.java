@@ -1,15 +1,15 @@
 package dev.rollczi.litecommands.bungee;
 
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.handle.Handler;
+import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 
-class BaseComponentHandler implements Handler<CommandSender, BaseComponent> {
+class BaseComponentHandler implements CommandExecuteResultHandler<CommandSender, BaseComponent> {
 
     @Override
-    public void handle(CommandSender sender, LiteInvocation invocation, BaseComponent value) {
-        sender.sendMessage(value);
+    public void handle(Invocation<CommandSender> invocation, BaseComponent result) {
+        invocation.getSender().sendMessage(result);
     }
 
 }

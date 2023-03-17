@@ -9,10 +9,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
     private final String name;
+    private final UUID uniqueId = UUID.randomUUID();
     private final List<String> aliases;
     private final Set<String> namesAndAliases;
     private final CommandRoute<SENDER> parent;
@@ -38,8 +40,18 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
+
+    @Override
     public List<String> getAliases() {
-        return Collections.unmodifiableList(this.aliases);
+        return this.aliases;
+    }
+
+    @Override
+    public List<String> getAllNames() {
+        return Collections.unmodifiableList(new ArrayList<>(this.namesAndAliases));
     }
 
     @Override

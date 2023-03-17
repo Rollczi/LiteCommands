@@ -29,7 +29,7 @@ public class Range {
         return new Range(min, max);
     }
 
-    public static Range onlyRequire(int count) {
+    public static Range of(int count) {
         return new Range(count, count);
     }
 

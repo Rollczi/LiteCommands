@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.modern.editor;
 
 import dev.rollczi.litecommands.modern.command.CommandRoute;
 import dev.rollczi.litecommands.modern.meta.CommandMeta;
-import dev.rollczi.litecommands.shared.StringUtils;
+import dev.rollczi.litecommands.modern.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

@@ -1,16 +1,19 @@
 package dev.rollczi.example.bukkit.argument;
 
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.modern.argument.Argument;
+import dev.rollczi.litecommands.modern.argument.ArgumentResult;
+import dev.rollczi.litecommands.modern.argument.type.OneArgumentResolver;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
 import org.bukkit.GameMode;
+import org.bukkit.command.CommandSender;
 import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ArgumentName("gamemode")
-public class GameModeArgument implements OneArgument<GameMode> {
+public class GameModeArgument extends OneArgumentResolver<CommandSender, GameMode> {
 
     private static final Map<String, GameMode> GAME_MODE_ARGUMENTS = new HashMap<>();
 
@@ -22,13 +25,19 @@ public class GameModeArgument implements OneArgument<GameMode> {
     }
 
     @Override
-    public Result<GameMode, ?> parse(LiteInvocation invocation, String argument) {
+    protected ArgumentResult<GameMode> parse(Invocation<CommandSender> invocation, Argument<GameMode> context, String argument) {
         GameMode gameMode = GAME_MODE_ARGUMENTS.get(argument.toLowerCase());
 
         if (gameMode == null) {
-            return Result.error("Invalid gamemode");
+            return ArgumentResult.failure("Invalid gamemode argument!");
         }
 
-        return Result.ok(gameMode);
+        return ArgumentResult.success(gameMode);
     }
+
+    @Override
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<GameMode> argument, SuggestionContext suggestion) {
+        return SuggestionResult.of(GAME_MODE_ARGUMENTS.keySet());
+    }
+
 }

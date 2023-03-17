@@ -36,7 +36,7 @@ public class LiteTestSpec {
             .toArray(Class<?>[]::new);
 
         platform = new FakePlatform();
-        LiteCommandsBuilder<FakeSender, ?> builder = LiteCommandsFactory.builder(FakeSender.class)
+        LiteCommandsBuilder<FakeSender, C, ?> builder = LiteCommandsFactory.builder(FakeSender.class)
             .platform(platform)
             .extension(LiteAnnotationExtension.create(), extension -> extension
                 .command(commands)

@@ -29,6 +29,16 @@ class CommandMetaEmptyImpl implements CommandMeta {
     }
 
     @Override
+    public List<String> permissions() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<String> permissionsExcluded() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public <T> T get(CommandKey<T> key) {
         throw new NoSuchElementException();
     }

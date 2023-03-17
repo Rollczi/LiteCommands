@@ -1,40 +1,42 @@
 package dev.rollczi.litecommands.bukkit.tools;
 
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.modern.argument.Argument;
+import dev.rollczi.litecommands.modern.argument.ArgumentResult;
+import dev.rollczi.litecommands.modern.argument.type.OneArgumentResolver;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
 import org.bukkit.Server;
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import panda.std.Option;
-import panda.std.Result;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
-@ArgumentName("player")
-public class BukkitPlayerArgument<MESSAGE> implements OneArgument<Player> {
+public class BukkitPlayerArgument<MESSAGE> extends OneArgumentResolver<CommandSender, Player> {
 
     private final Server server;
-    private final MESSAGE playerNotFoundMessage;
+    private final Function<String, MESSAGE> playerNotFoundMessage;
 
-    public BukkitPlayerArgument(Server server, MESSAGE playerNotFoundMessage) {
+    public BukkitPlayerArgument(Server server, Function<String, MESSAGE> playerNotFoundMessage) {
         this.server = server;
         this.playerNotFoundMessage = playerNotFoundMessage;
     }
 
     @Override
-    public Result<Player, Object> parse(LiteInvocation invocation, String argument) {
-        return Option.of(this.server.getPlayer(argument)).toResult(playerNotFoundMessage);
+    protected ArgumentResult<Player> parse(Invocation<CommandSender> invocation, Argument<Player> context, String argument) {
+        Player player = server.getPlayer(argument);
+
+        if (player != null) {
+            return ArgumentResult.success(() -> player);
+        }
+
+        return ArgumentResult.failure(playerNotFoundMessage);
     }
 
     @Override
-    public List<Suggestion> suggest(LiteInvocation invocation) {
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext suggestion) {
         return server.getOnlinePlayers().stream()
-                .map(HumanEntity::getName)
-                .map(Suggestion::of)
-                .collect(Collectors.toList());
+            .map(Player::getName)
+            .collect(SuggestionResult.COLLECTOR);
     }
-
 }

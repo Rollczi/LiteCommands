@@ -20,7 +20,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
 
     @Override
     public CommandEditorContext<SENDER> resolve(Object instance, Method method, Execute annotation, CommandEditorContext<SENDER> context, CommandEditorExecutorBuilder<SENDER> executorBuilder) {
-        boolean canUse = LiteCommandsRulesUtil.checkConsistent(annotation.name(), annotation.aliases());
+        boolean canUse = LiteCommandsRulesUtil.checkConsistent(annotation.route(), annotation.aliases());
 
         CommandExecutor<SENDER> executor = this.methodCommandExecutorFactory.create(instance, method);
 
@@ -28,7 +28,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
 
         if (canUse) {
             return context.appendChild(CommandEditorContext.<SENDER>create()
-                .routeName(annotation.name())
+                .routeName(annotation.route())
                 .routeAliases(Arrays.asList(annotation.aliases()))
                 .appendExecutor(executorBuilder)
             );

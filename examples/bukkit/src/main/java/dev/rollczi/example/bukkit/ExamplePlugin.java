@@ -8,10 +8,10 @@ import dev.rollczi.example.bukkit.command.KickCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.handler.InvalidUsage;
 import dev.rollczi.example.bukkit.handler.PermissionMessage;
-import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
+import dev.rollczi.litecommands.modern.LiteCommands;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,9 +25,10 @@ public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.liteCommands = LiteBukkitFactory.builder(this.getServer(), "example-plugin")
+        this.liteCommands = LiteBukkitFactory.builder(this.getServer())
+            .configure(config -> config.fallbackPrefix("test"))
             // Arguments
-            .argumentMultilevel(Location.class, new LocationArgument())
+            .argument(Location.class, new LocationArgument())
             .argument(World.class, new WorldArgument(this.getServer()))
             .argument(GameMode.class, new GameModeArgument())
             .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), "&cNie ma takiego gracza!"))

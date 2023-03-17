@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.argument;
 
-import dev.rollczi.litecommands.modern.command.CommandExecuteError;
+import dev.rollczi.litecommands.modern.invalid.CommandInvalidUsage;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import panda.std.Option;
 
@@ -28,7 +28,7 @@ public class ArgumentService<SENDER> {
         int lastRequiredArgument = lastResolvedRawArgument + preparedArgument.getRange().getMin();
 
         if (lastRequiredArgument > rawArguments.size()) {
-            return resolverContext.withFailure(ArgumentResult.failure(CommandExecuteError.MISSING_ARGUMENT));
+            return resolverContext.withFailure(ArgumentResult.failure(CommandInvalidUsage.Cause.MISSING_ARGUMENT));
         }
 
         List<String> arguments = rawArguments.subList(lastResolvedRawArgument, lastRequiredArgument);

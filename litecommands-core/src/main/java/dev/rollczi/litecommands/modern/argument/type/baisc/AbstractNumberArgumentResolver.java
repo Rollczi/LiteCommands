@@ -4,13 +4,12 @@ import dev.rollczi.litecommands.modern.argument.Argument;
 import dev.rollczi.litecommands.modern.argument.ArgumentResult;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.argument.type.OneArgumentResolver;
-import dev.rollczi.litecommands.modern.command.CommandExecuteError;
+import dev.rollczi.litecommands.modern.invalid.CommandInvalidUsage;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.suggestion.Suggestion;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -41,7 +40,7 @@ public abstract class AbstractNumberArgumentResolver<SENDER, T extends Number> e
     }
 
     protected FailedReason failedReason(Invocation<SENDER> invocation, Argument<T> context, String argument) {
-        return FailedReason.of(CommandExecuteError.INVALID_ARGUMENT);
+        return FailedReason.of(CommandInvalidUsage.Cause.INVALID_ARGUMENT);
     }
 
     @Override

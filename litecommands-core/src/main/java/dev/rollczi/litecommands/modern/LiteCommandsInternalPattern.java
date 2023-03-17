@@ -9,10 +9,11 @@ import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.Internal
-public interface LiteCommandsInternalPattern<SENDER> {
+public interface LiteCommandsInternalPattern<SENDER, C extends LiteConfiguration> {
 
     @ApiStatus.Internal
     Class<SENDER> getSenderClass();
@@ -41,5 +42,9 @@ public interface LiteCommandsInternalPattern<SENDER> {
     @Nullable
     @ApiStatus.Internal
     Platform<SENDER> getPlatform();
+
+    @NotNull
+    @ApiStatus.Internal
+    C getConfiguration();
 
 }

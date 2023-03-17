@@ -11,10 +11,8 @@ public interface CommandExecutor<SENDER> {
 
     List<PreparedArgument<SENDER, ?>> getArguments();
 
-    List<WrapperFormat<?>> getContextuals();
-
     CommandMeta getMeta();
 
-    CommandExecutorMatchResult match(Invocation<SENDER> invocation, InvokedWrapperInfoResolver<SENDER> invokedWrapperInfoResolver, PreparedArgumentIterator<SENDER> cachedArgumentResolver);
+    CommandExecutorMatchResult match(Invocation<SENDER> invocation, PreparedArgumentIterator<SENDER> preparedArgumentIterator);
 
 }

@@ -4,24 +4,24 @@ import dev.rollczi.litecommands.modern.command.CommandRoute;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.invocation.InvocationResult;
 import dev.rollczi.litecommands.modern.platform.Platform;
-import dev.rollczi.litecommands.modern.platform.PlatformInvocationListener;
-import dev.rollczi.litecommands.modern.platform.PlatformSuggestListener;
+import dev.rollczi.litecommands.modern.platform.PlatformInvocationHook;
+import dev.rollczi.litecommands.modern.platform.PlatformSuggestionHook;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FakePlatform implements Platform<FakeSender> {
 
-    private final Map<CommandRoute<FakeSender>, PlatformInvocationListener<FakeSender>> executeListeners = new LinkedHashMap<>();
-    private final Map<CommandRoute<FakeSender>, PlatformSuggestListener<FakeSender>> suggestListeners = new LinkedHashMap<>();
+    private final Map<CommandRoute<FakeSender>, PlatformInvocationHook<FakeSender>> executeListeners = new LinkedHashMap<>();
+    private final Map<CommandRoute<FakeSender>, PlatformSuggestionHook<FakeSender>> suggestListeners = new LinkedHashMap<>();
 
     @Override
-    public void listenExecute(CommandRoute<FakeSender> commandRoute, PlatformInvocationListener<FakeSender> executeListener) {
+    public void listenExecute(CommandRoute<FakeSender> commandRoute, PlatformInvocationHook<FakeSender> executeListener) {
         this.executeListeners.put(commandRoute, executeListener);
     }
 
     @Override
-    public void listenSuggestion(CommandRoute<FakeSender> commandRoute, PlatformSuggestListener<FakeSender> suggestListener) {
+    public void listenSuggestion(CommandRoute<FakeSender> commandRoute, PlatformSuggestionHook<FakeSender> suggestListener) {
         this.suggestListeners.put(commandRoute, suggestListener);
     }
 
@@ -46,9 +46,9 @@ public class FakePlatform implements Platform<FakeSender> {
 
         Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, command, command, arguments);
 
-        for (Map.Entry<CommandRoute<FakeSender>, PlatformInvocationListener<FakeSender>> entry : this.executeListeners.entrySet()) {
+        for (Map.Entry<CommandRoute<FakeSender>, PlatformInvocationHook<FakeSender>> entry : this.executeListeners.entrySet()) {
             if (entry.getKey().isNameOrAlias(command)) {
-                PlatformInvocationListener<FakeSender> listener = entry.getValue();
+                PlatformInvocationHook<FakeSender> listener = entry.getValue();
                 InvocationResult<FakeSender> result = listener.execute(invocation);
 
                 return new AssertExecute(result);

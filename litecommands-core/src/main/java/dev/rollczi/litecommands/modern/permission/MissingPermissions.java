@@ -1,5 +1,9 @@
 package dev.rollczi.litecommands.modern.permission;
 
+import dev.rollczi.litecommands.modern.command.CommandExecutor;
+import dev.rollczi.litecommands.modern.command.CommandRoute;
+import dev.rollczi.litecommands.modern.command.CommandRouteUtils;
+import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import dev.rollczi.litecommands.modern.platform.PlatformSender;
 
 import java.util.ArrayList;
@@ -34,6 +38,35 @@ public class MissingPermissions {
 
     public boolean isMissing() {
         return !missingPermissions.isEmpty();
+    }
+
+    public boolean isPermitted() {
+        return missingPermissions.isEmpty();
+    }
+
+    public static <SENDER> MissingPermissions check(PlatformSender platformSender, CommandRoute<SENDER> command, CommandExecutor<SENDER> executor) {
+        List<String> permissions = new ArrayList<>();
+
+        CommandRouteUtils.consumeFromRootToChild(command, route -> {
+            permissions.addAll(route.getMeta().get(CommandMeta.PERMISSIONS));
+            permissions.removeAll(route.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+        });
+
+        permissions.addAll(executor.getMeta().get(CommandMeta.PERMISSIONS));
+        permissions.removeAll(executor.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+
+        return check(platformSender, permissions);
+    }
+
+    public static <SENDER> MissingPermissions check(PlatformSender platformSender, CommandRoute<SENDER> command) {
+        List<String> permissions = new ArrayList<>();
+
+        CommandRouteUtils.consumeFromRootToChild(command, route -> {
+            permissions.addAll(route.getMeta().get(CommandMeta.PERMISSIONS));
+            permissions.removeAll(route.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+        });
+
+        return check(platformSender, permissions);
     }
 
     public static MissingPermissions check(PlatformSender platformSender, List<String> permissions) {

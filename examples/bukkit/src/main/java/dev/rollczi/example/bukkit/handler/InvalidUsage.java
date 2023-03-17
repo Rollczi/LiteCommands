@@ -3,12 +3,13 @@ package dev.rollczi.example.bukkit.handler;
 import dev.rollczi.example.bukkit.util.ChatUtil;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
+import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
 import dev.rollczi.litecommands.schematic.Schematic;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class InvalidUsage implements InvalidUsageHandler<CommandSender> {
+public class InvalidUsage implements CommandExecuteResultHandler<CommandSender> {
 
     @Override
     public void handle(CommandSender sender, LiteInvocation invocation, Schematic schematic) {

@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.suggestion.ArgumentSuggester;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.command;
 
 import dev.rollczi.litecommands.modern.meta.CommandMeta;
-import dev.rollczi.litecommands.shared.StringUtils;
+import dev.rollczi.litecommands.modern.util.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
@@ -22,8 +23,18 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
+    public UUID getUniqueId() {
+        throw new UnsupportedOperationException("Root route has no unique id");
+    }
+
+    @Override
     public List<String> getAliases() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<String> getAllNames() {
+        return Collections.singletonList(this.getName());
     }
 
     @Override

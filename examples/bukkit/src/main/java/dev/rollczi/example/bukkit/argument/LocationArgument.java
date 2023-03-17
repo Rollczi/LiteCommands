@@ -1,51 +1,45 @@
 package dev.rollczi.example.bukkit.argument;
 
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import org.bukkit.Location;
-import panda.std.Result;
 
-import java.util.Arrays;
+import dev.rollczi.litecommands.modern.argument.Argument;
+import dev.rollczi.litecommands.modern.argument.ArgumentResult;
+import dev.rollczi.litecommands.modern.argument.type.ArgumentResolver;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.range.Range;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+
 import java.util.List;
 
-@ArgumentName("x y z")
-public class LocationArgument implements MultilevelArgument<Location> {
+public class LocationArgument implements ArgumentResolver<CommandSender, Location> {
 
     @Override
-    public Result<Location, Object> parseMultilevel(LiteInvocation invocation, String... arguments) {
-        return Result.supplyThrowing(NumberFormatException.class, () -> {
-            double x = Double.parseDouble(arguments[0]);
-            double y = Double.parseDouble(arguments[1]);
-            double z = Double.parseDouble(arguments[2]);
-
-            return new Location(null, x, y, z);
-        }).mapErr(ex -> "&cNie poprawna lokalizacja!");
+    public Range getRange() {
+        return Range.of(3);
     }
 
     @Override
-    public List<Suggestion> suggest(LiteInvocation invocation) {
-        return Arrays.asList(
-                Suggestion.multilevel("100", "100", "100"),
-                Suggestion.multilevel("5", "5", "5"),
-                Suggestion.multilevel("10", "35", "-10")
-        );
-    }
+    public ArgumentResult<Location> parse(Invocation<CommandSender> invocation, Argument<Location> argument, List<String> arguments) {
+        try {
+            double x = Double.parseDouble(arguments.get(0));
+            double y = Double.parseDouble(arguments.get(1));
+            double z = Double.parseDouble(arguments.get(2));
 
-    @Override
-    public boolean validate(LiteInvocation invocation, Suggestion suggestion) {
-        for (String suggest : suggestion.multilevelList()) {
-            if (!suggest.matches("-?[\\d.]+")) { // -? - optional negative, \\d - digit, . - dot
-                return false;
-            }
+            return ArgumentResult.success(() -> new Location(null, x, y, z));
         }
-
-        return true;
+        catch (NumberFormatException exception) {
+            return ArgumentResult.failure("Invalid location");
+        }
     }
 
     @Override
-    public int countMultilevel() {
-        return 3;
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Location> argument, SuggestionContext suggestion) {
+        return SuggestionResult.of(
+            "100 100 100",
+            "5 5 5",
+            "10 35 -10"
+        );
     }
 }

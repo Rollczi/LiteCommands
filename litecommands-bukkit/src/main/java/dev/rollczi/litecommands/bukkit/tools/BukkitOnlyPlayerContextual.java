@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.bukkit.tools;
 
-import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.contextual.Contextual;
+import dev.rollczi.litecommands.modern.bind.BindContextual;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import panda.std.Option;
 import panda.std.Result;
 
-public class BukkitOnlyPlayerContextual<MESSAGE> implements Contextual<CommandSender, Player> {
+public class BukkitOnlyPlayerContextual<MESSAGE> implements BindContextual<CommandSender, Player> {
 
     private final MESSAGE onlyPlayerMessage;
 
@@ -16,8 +16,7 @@ public class BukkitOnlyPlayerContextual<MESSAGE> implements Contextual<CommandSe
     }
 
     @Override
-    public Result<Player, Object> extract(CommandSender sender, Invocation<CommandSender> invocation) {
-        return Option.of(sender).is(Player.class).toResult(onlyPlayerMessage);
+    public Result<Player, Object> extract(Invocation<CommandSender> invocation) {
+        return Option.of(invocation.getSender()).is(Player.class).toResult(onlyPlayerMessage);
     }
-
 }

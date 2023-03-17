@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.modern.wrapper.Wrappable;
 import java.util.List;
 
 public interface PreparedArgument<SENDER, EXPECTED> extends Wrappable<EXPECTED>, Rangeable {
+
     ArgumentResult<EXPECTED> resolve(Invocation<SENDER> invocation, List<String> arguments);
 
 }

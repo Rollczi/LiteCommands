@@ -14,41 +14,43 @@ import dev.rollczi.litecommands.modern.platform.Platform;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-public interface LiteCommandsBuilder<SENDER, B extends LiteCommandsBuilder<SENDER, B>> {
+public interface LiteCommandsBuilder<SENDER, C extends LiteConfiguration, B extends LiteCommandsBuilder<SENDER, C, B>> {
 
-    LiteCommandsBuilder<SENDER, B> editor(String command, CommandEditor<SENDER> commandEditor);
+    LiteCommandsBuilder<SENDER, C, B> configure(UnaryOperator<C> operator);
 
-    LiteCommandsBuilder<SENDER, B> globalEditor(CommandEditor<SENDER> commandEditor);
+    LiteCommandsBuilder<SENDER, C, B> editor(String command, CommandEditor<SENDER> commandEditor);
 
-    LiteCommandsBuilder<SENDER, B> validator(CommandValidator<SENDER> validator);
+    LiteCommandsBuilder<SENDER, C, B> globalEditor(CommandEditor<SENDER> commandEditor);
 
-    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, RESOLVER resolver);
+    LiteCommandsBuilder<SENDER, C, B> validator(CommandValidator<SENDER> validator);
 
-    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, String key, RESOLVER resolver);
+    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver);
 
-    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
+    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, String key, RESOLVER resolver);
 
-    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
+    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
 
-    <T> LiteCommandsBuilder<SENDER, B> typeBind(Class<T> on, Bind<T> bind);
+    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
 
-    <T> LiteCommandsBuilder<SENDER, B> typeBind(Class<T> on, Supplier<T> bind);
+    <T> LiteCommandsBuilder<SENDER, C, B> typeBind(Class<T> on, Bind<T> bind);
 
-    LiteCommandsBuilder<SENDER, B> typeBindUnsafe(Class<?> on, Supplier<?> bind);
+    <T> LiteCommandsBuilder<SENDER, C, B> typeBind(Class<T> on, Supplier<T> bind);
 
-    <T> LiteCommandsBuilder<SENDER, B> contextualBind(Class<T> on, BindContextual<SENDER, T> bind);
+    LiteCommandsBuilder<SENDER, C, B> typeBindUnsafe(Class<?> on, Supplier<?> bind);
 
-    LiteCommandsBuilder<SENDER, B> wrapperFactory(WrappedExpectedFactory factory);
+    <T> LiteCommandsBuilder<SENDER, C, B> contextualBind(Class<T> on, BindContextual<SENDER, T> bind);
 
-    <T> LiteCommandsBuilder<SENDER, B> resultHandler(Class<T> resultType, CommandExecuteResultHandler<SENDER, T> handler);
+    LiteCommandsBuilder<SENDER, C, B> wrapperFactory(WrappedExpectedFactory factory);
 
-    <T> LiteCommandsBuilder<SENDER, B> resultMapper(Class<T> mapperFromType, CommandExecuteResultMapper<SENDER, T, ?> mapper);
+    <T> LiteCommandsBuilder<SENDER, C, B> resultHandler(Class<T> resultType, CommandExecuteResultHandler<SENDER, T> handler);
 
-    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, B> extension(E extension);
+    <T> LiteCommandsBuilder<SENDER, C, B> resultMapper(Class<T> mapperFromType, CommandExecuteResultMapper<SENDER, T, ?> mapper);
 
-    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, B> extension(E extension, UnaryOperator<E> configuration);
+    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension);
 
-    LiteCommandsBuilder<SENDER, B> platform(Platform<SENDER> platform);
+    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration);
+
+    LiteCommandsBuilder<SENDER, C, B> platform(Platform<SENDER> platform);
 
     LiteCommands<SENDER> register();
 

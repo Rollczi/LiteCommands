@@ -15,17 +15,7 @@ public class MissingPermissionValidator<SENDER> implements CommandValidator<SEND
 
     @Override
     public CommandValidatorResult validate(Invocation<SENDER> invocation, CommandRoute<SENDER> command, CommandExecutor<SENDER> executor) {
-        List<String> permissions = new ArrayList<>();
-
-        CommandRouteUtils.consumeFromRootToChild(command, route -> {
-            permissions.addAll(route.getMeta().get(CommandMeta.PERMISSIONS));
-            permissions.removeAll(route.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
-        });
-
-        permissions.addAll(executor.getMeta().get(CommandMeta.PERMISSIONS));
-        permissions.removeAll(executor.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
-
-        MissingPermissions missingPermissions = MissingPermissions.check(invocation.getPlatformSender(), permissions);
+        MissingPermissions missingPermissions = MissingPermissions.check(invocation.getPlatformSender(), command, executor);
 
         if (missingPermissions.isMissing()) {
             return CommandValidatorResult.invalid(missingPermissions, false);

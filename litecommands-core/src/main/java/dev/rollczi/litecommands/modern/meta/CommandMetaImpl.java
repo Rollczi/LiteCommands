@@ -39,6 +39,16 @@ class CommandMetaImpl implements CommandMeta {
         return this;
     }
 
+    @Override
+    public List<String> permissions() {
+        return this.get(CommandMeta.PERMISSIONS);
+    }
+
+    @Override
+    public List<String> permissionsExcluded() {
+        return this.get(CommandMeta.PERMISSIONS_EXCLUDED);
+    }
+
     public <T> T get(CommandKey<T> key) {
         Object value = this.meta.get(key);
         CommandMetaType<T> type = key.getType();

@@ -1,19 +1,19 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.handle.Handler;
+import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.function.UnaryOperator;
 
-class StringHandler implements Handler<CommandSender, String> {
+class StringHandler implements CommandExecuteResultHandler<CommandSender, String> {
 
     static final UnaryOperator<String> DESERIALIZE_AMPERSAND = text -> ChatColor.translateAlternateColorCodes('&', text);
 
     @Override
-    public void handle(CommandSender sender, LiteInvocation invocation, String value) {
-        sender.sendMessage(DESERIALIZE_AMPERSAND.apply(value));
+    public void handle(Invocation<CommandSender> invocation, String result) {
+        invocation.getSender().sendMessage(DESERIALIZE_AMPERSAND.apply(result));
     }
 
 }

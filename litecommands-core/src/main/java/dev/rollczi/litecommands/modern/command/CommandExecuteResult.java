@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.modern.command;
 
-import dev.rollczi.litecommands.shared.Validation;
+import dev.rollczi.litecommands.modern.util.Preconditions;
 import org.jetbrains.annotations.Nullable;
 import panda.std.Option;
 
@@ -17,13 +17,13 @@ public class CommandExecuteResult {
     }
 
     public Option<Object> getResult() {
-        Validation.isTrue(this.isSuccessful(), "Cannot get result when command failed");
+        Preconditions.checkState(this.isSuccessful(), "Cannot get result when command failed");
 
         return Option.of(this.result);
     }
 
     public Exception getException() {
-        Validation.isTrue(this.isFailed(), "Cannot get exception when command was successful");
+        Preconditions.checkState(this.isFailed(), "Cannot get exception when command was successful");
 
         return this.exception;
     }
@@ -41,7 +41,7 @@ public class CommandExecuteResult {
     }
 
     public static CommandExecuteResult failed(Exception exception) {
-        Validation.isNotNull(exception, "exception cannot be null");
+        Preconditions.notNull(exception, "exception cannot be null");
 
         return new CommandExecuteResult(null, null, exception);
     }

@@ -52,7 +52,7 @@ class OneAnnotationArgumentTest {
     @Test
     void testSuggest() {
         SuggestionResult result = argument.suggest(TestUtil.invocation("test"), null, null);
-        String suggestion = result.getSuggestions().get(0).head();
+        String suggestion = result.getSuggestions().get(0).multilevel();
 
         assertEquals("text", suggestion);
     }

@@ -3,6 +3,8 @@ package dev.rollczi.litecommands.modern.command;
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.bind.BindRegistry;
+import dev.rollczi.litecommands.modern.invalid.CommandInvalidUsage;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorResult;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
@@ -46,13 +48,14 @@ public class CommandManager<SENDER> {
     }
 
     public void registerCommand(CommandRoute<SENDER> commandRoute) {
-        this.platform.listenExecute(commandRoute, invocation -> {
+        this.platform.register(commandRoute, invocation -> {
             InvocationResult<SENDER> invocationResult = this.execute(invocation, commandRoute);
 
             resultResolver.resolve(invocationResult);
 
             return invocationResult;
-        });
+        }, invocation -> SuggestionResult.of());
+
         this.root.appendToRoot(commandRoute);
     }
 
@@ -98,7 +101,7 @@ public class CommandManager<SENDER> {
             return InvocationResult.failed(invocation, FailedReason.of(reason));
         }
 
-        return InvocationResult.failed(invocation, FailedReason.of(CommandExecuteError.UNKNOWN_COMMAND));
+        return InvocationResult.failed(invocation, FailedReason.of(CommandInvalidUsage.Cause.UNKNOWN_COMMAND));
     }
 
     private CommandRouteFindResult<SENDER> find(CommandRoute<SENDER> command, List<String> arguments, int rawArgumentsIndex) {

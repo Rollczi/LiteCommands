@@ -1,14 +1,19 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.platform.LiteSender;
+import dev.rollczi.litecommands.modern.platform.PlatformSender;
 import org.bukkit.command.CommandSender;
 
-class BukkitSender implements LiteSender {
+class BukkitSender implements PlatformSender {
 
     private final CommandSender handle;
 
     public BukkitSender(CommandSender handle) {
         this.handle = handle;
+    }
+
+    @Override
+    public String getName() {
+        return handle.getName();
     }
 
     @Override
@@ -21,8 +26,4 @@ class BukkitSender implements LiteSender {
         this.handle.sendMessage(StringHandler.DESERIALIZE_AMPERSAND.apply(message));
     }
 
-    @Override
-    public Object getHandle() {
-        return this.handle;
-    }
 }

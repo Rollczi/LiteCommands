@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.modern.bind;
 
+import dev.rollczi.litecommands.modern.exception.LiteException;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
+import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,7 @@ import java.util.function.Supplier;
 public class BindRegistry<SENDER> {
 
     private final Map<Class<?>, Supplier<?>> instanceBindings = new HashMap<>();
-    private final Map<Class<?>, Function<Invocation<SENDER>, ?>> contextualBindings = new HashMap<>();
+    private final Map<Class<?>, BindContextual<SENDER, ?>> contextualBindings = new HashMap<>();
 
     public <T> void bindInstance(Class<T> on, Supplier<T> bind) {
         this.instanceBindings.put(on, bind);
@@ -20,7 +22,7 @@ public class BindRegistry<SENDER> {
         this.instanceBindings.put(on, bind);
     }
 
-    public <T> void bindContextual(Class<T> clazz, Function<Invocation<SENDER>, T> supplier) {
+    public <T> void bindContextual(Class<T> clazz, BindContextual<SENDER, T> supplier) {
         this.contextualBindings.put(clazz, supplier);
     }
 
@@ -32,13 +34,19 @@ public class BindRegistry<SENDER> {
             return instance;
         }
 
-        Function<Invocation<SENDER>, T> contextualSupplier = (Function<Invocation<SENDER>, T>) this.contextualBindings.get(clazz);
+        BindContextual<SENDER, T> contextualSupplier = (BindContextual<SENDER, T>) this.contextualBindings.get(clazz);
 
         if (contextualSupplier != null) {
-            return contextualSupplier.apply(invocation);
+            Result<T, Object> extract = contextualSupplier.extract(invocation);
+
+            if (extract.isErr()) {
+                throw new LiteException(extract.getError());
+            }
+
+            return extract.get();
         }
 
-        for (Map.Entry<Class<?>, Function<Invocation<SENDER>, ?>> entry : this.contextualBindings.entrySet()) {
+        for (Map.Entry<Class<?>, BindContextual<SENDER, ?>> entry : this.contextualBindings.entrySet()) {
             if (entry.getKey().isAssignableFrom(clazz)) {
                 return ((Function<Invocation<SENDER>, T>) entry.getValue()).apply(invocation);
             }

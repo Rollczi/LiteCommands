@@ -11,8 +11,8 @@ public interface ArgumentResolverRegistry<SENDER> {
         ArgumentParser<SENDER, EXPECTED, ? extends Argument<EXPECTED>> resolver
     );
 
-    <EXPECTED, ARGUMENT extends Argument<EXPECTED>> Optional<ArgumentParser<SENDER, EXPECTED, ARGUMENT>> getResolver(
-        IndexKey<EXPECTED, ARGUMENT> indexKey
+    <EXPECTED> Optional<ArgumentParser<SENDER, EXPECTED, Argument<EXPECTED>>> getResolver(
+        IndexKey<EXPECTED, Argument<EXPECTED>> indexKey
     );
 
     class IndexKey<EXPECTED, ARGUMENT extends Argument<EXPECTED>> {
@@ -21,6 +21,7 @@ public interface ArgumentResolverRegistry<SENDER> {
         private final Class<ARGUMENT> argumentType;
         private final ArgumentKey argumentKey;
 
+        @SuppressWarnings("unchecked")
         private IndexKey(Class<EXPECTED> expectedType, Class<?> argumentType, ArgumentKey argumentKey) {
             this.expectedType = expectedType;
             this.argumentType = (Class<ARGUMENT>) argumentType;

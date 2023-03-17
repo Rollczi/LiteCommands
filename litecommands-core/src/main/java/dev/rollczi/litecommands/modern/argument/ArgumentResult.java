@@ -49,6 +49,10 @@ public class ArgumentResult<EXPECTED> {
         return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, consumedRawArguments), null);
     }
 
+    public static <EXPECTED> ArgumentResult<EXPECTED> success(EXPECTED expectedReturn) {
+        return new ArgumentResult<>(SuccessfulResult.of(() -> expectedReturn, 1), null);
+    }
+
     public static <EXPECTED> ArgumentResult<EXPECTED> success(ValueToWrap<EXPECTED> expectedReturn) {
         return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, 1), null);
     }

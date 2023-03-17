@@ -5,6 +5,6 @@ import dev.rollczi.litecommands.modern.test.FakeSender;
 
 public interface TestConfigurator {
 
-    LiteCommandsBuilder<FakeSender, ?> configure(LiteCommandsBuilder<FakeSender, ?> builder);
+    LiteCommandsBuilder<FakeSender, C, ?> configure(LiteCommandsBuilder<FakeSender, C, ?> builder);
 
 }

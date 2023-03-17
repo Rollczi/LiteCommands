@@ -10,16 +10,16 @@ public class Suggestion {
         this.multiSuggestion = multiSuggestion;
     }
 
+    public String firstLevel() {
+        return this.multiSuggestion.get(0);
+    }
+
     public String multilevel() {
         return String.join(" ", this.multiSuggestion);
     }
 
     public List<String> multilevelList() {
         return this.multiSuggestion;
-    }
-
-    public String head() {
-        return this.multiSuggestion.get(0);
     }
 
     public boolean isMultilevel() {

@@ -12,21 +12,21 @@ class RootRouteTest extends LiteTestSpec {
 
     @RootRoute
     static class Command {
-        @Execute(name = "first")
+        @Execute(route = "first")
         public void test() {}
 
-        @Execute(name = "second")
+        @Execute(route = "second")
         public void test2() {}
     }
 
     @RootRoute
     @Permission("test.permission")
     static class Command2 {
-        @Execute(name = "first")
+        @Execute(route = "first")
         @Permission("test.permission.execute")
         public void test(@Arg String test) {}
 
-        @Execute(name = "third")
+        @Execute(route = "third")
         public void test2() {}
     }
 

@@ -16,19 +16,21 @@ import dev.rollczi.litecommands.modern.editor.CommandEditor;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.editor.CommandEditorService;
+import dev.rollczi.litecommands.modern.util.Preconditions;
 import dev.rollczi.litecommands.modern.validator.CommandValidator;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<SENDER, B>> implements LiteCommandsBuilder<SENDER, B>, LiteCommandsInternalPattern<SENDER> {
+public class LiteCommandsBaseBuilder<SENDER, C extends LiteConfiguration, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements LiteCommandsBuilder<SENDER, C, B>, LiteCommandsInternalPattern<SENDER, C> {
 
     protected final Class<SENDER> senderClass;
 
@@ -42,14 +44,15 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     protected final CommandEditorContextRegistry<SENDER> commandEditorContextRegistry;
 
     protected @Nullable Platform<SENDER> platform;
+    protected @NotNull C configuration;
 
     /**
      * Simple constructor for api usage
      *
      * @param senderClass class of sender
      */
-    public LiteCommandsBaseBuilder(Class<SENDER> senderClass) {
-        this(senderClass, null);
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, C configuration) {
+        this(senderClass, null, configuration);
     }
 
     /**
@@ -57,7 +60,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      *
      * @param senderClass class of sender
      */
-    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER> platform) {
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER> platform, C configuration) {
         this(
             senderClass,
             new CommandEditorService<>(),
@@ -67,7 +70,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
             new WrappedExpectedService(),
             new CommandExecuteResultResolver<>(),
             new CommandEditorContextRegistry<>(),
-            platform
+            platform,
+            configuration
         );
     }
 
@@ -76,7 +80,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
      *
      * @param pattern pattern to copy
      */
-    public LiteCommandsBaseBuilder(LiteCommandsInternalPattern<SENDER> pattern) {
+    public LiteCommandsBaseBuilder(LiteCommandsInternalPattern<SENDER, C> pattern) {
         this(
             pattern.getSenderClass(),
             pattern.getCommandEditorService(),
@@ -86,7 +90,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
             pattern.getWrappedExpectedContextualService(),
             pattern.getResultResolver(),
             pattern.getCommandContextRegistry(),
-            pattern.getPlatform()
+            pattern.getPlatform(),
+            pattern.getConfiguration()
         );
     }
 
@@ -101,7 +106,8 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
         WrappedExpectedService wrappedExpectedService,
         CommandExecuteResultResolver<SENDER> resultResolver,
         CommandEditorContextRegistry<SENDER> commandEditorContextRegistry,
-        @Nullable Platform<SENDER> platform
+        @Nullable Platform<SENDER> platform,
+        C configuration
     ) {
         this.senderClass = senderClass;
         this.commandEditorService = commandEditorService;
@@ -112,6 +118,17 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
         this.resultResolver = resultResolver;
         this.commandEditorContextRegistry = commandEditorContextRegistry;
         this.platform = platform;
+        this.configuration = configuration;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER, C, B> configure(UnaryOperator<C> operator) {
+        C newConfig = operator.apply(this.configuration);
+        Preconditions.notNull(newConfig, "configuration");
+
+        this.configuration = newConfig;
+
+        return this.getThis();
     }
 
     @Override
@@ -133,7 +150,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, RESOLVER resolver) {
+    public <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver) {
         IndexKey<T, Argument<T>> key = IndexKey.universal(type);
 
         this.argumentService.registerResolver(key, resolver);
@@ -141,7 +158,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, String key, RESOLVER resolver) {
+    public <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, String key, RESOLVER resolver) {
         IndexKey<T, Argument<T>> indexKey = IndexKey.universal(type, key);
 
         this.argumentService.registerResolver(indexKey, resolver);
@@ -149,7 +166,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver) {
+    public <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver) {
         IndexKey<T, ARGUMENT> key = IndexKey.of(type, argumentType);
 
         this.argumentService.registerResolver(key, resolver);
@@ -157,7 +174,7 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     }
 
     @Override
-    public <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, B> argument(Class<T> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver) {
+    public <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver) {
         IndexKey<T, ARGUMENT> indexKey = IndexKey.of(type, argumentType);
 
         this.argumentService.registerResolver(indexKey, resolver);
@@ -301,6 +318,12 @@ public class LiteCommandsBaseBuilder<SENDER, B extends LiteCommandsBaseBuilder<S
     @ApiStatus.Internal
     public Platform<SENDER> getPlatform() {
         return this.platform;
+    }
+
+    @Override
+    @NotNull
+    public C getConfiguration() {
+        return this.configuration;
     }
 
     @SuppressWarnings("unchecked")

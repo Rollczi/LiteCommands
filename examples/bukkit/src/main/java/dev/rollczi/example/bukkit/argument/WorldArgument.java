@@ -1,20 +1,17 @@
 package dev.rollczi.example.bukkit.argument;
 
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.modern.argument.Argument;
+import dev.rollczi.litecommands.modern.argument.ArgumentResult;
+import dev.rollczi.litecommands.modern.argument.type.OneArgumentResolver;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.generator.WorldInfo;
-import panda.std.Option;
-import panda.std.Result;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-@ArgumentName("world")
-public class WorldArgument implements OneArgument<World> {
+public class WorldArgument extends OneArgumentResolver<CommandSender, World> {
 
     private final Server server;
 
@@ -23,15 +20,21 @@ public class WorldArgument implements OneArgument<World> {
     }
 
     @Override
-    public Result<World, Object> parse(LiteInvocation invocation, String argument) {
-        return Option.of(this.server.getWorld(argument)).toResult("&cNie ma takiego świata!");
+    protected ArgumentResult<World> parse(Invocation<CommandSender> invocation, Argument<World> context, String argument) {
+        World world = server.getWorld(argument);
+
+        if (world == null) {
+            return ArgumentResult.failure("World '" + argument + "' not exists");
+        }
+
+        return ArgumentResult.success(() -> world);
     }
 
     @Override
-    public List<Suggestion> suggest(LiteInvocation invocation) {
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<World> argument, SuggestionContext suggestion) {
         return this.server.getWorlds().stream()
-                .map(WorldInfo::getName)
-                .map(Suggestion::of)
-                .collect(Collectors.toList());
+            .map(WorldInfo::getName)
+            .collect(SuggestionResult.COLLECTOR);
     }
+
 }
