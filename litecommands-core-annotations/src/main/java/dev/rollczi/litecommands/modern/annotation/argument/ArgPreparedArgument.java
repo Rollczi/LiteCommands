@@ -1,11 +1,8 @@
-package dev.rollczi.litecommands.modern.annotation.command;
+package dev.rollczi.litecommands.modern.annotation.argument;
 
-import dev.rollczi.litecommands.modern.annotation.argument.ParameterArgument;
-import dev.rollczi.litecommands.modern.argument.Argument;
+import dev.rollczi.litecommands.modern.annotation.command.ParameterPreparedArgument;
 import dev.rollczi.litecommands.modern.argument.ArgumentParser;
 import dev.rollczi.litecommands.modern.argument.ArgumentResult;
-import dev.rollczi.litecommands.modern.argument.PreparedArgument;
-import dev.rollczi.litecommands.modern.argument.PreparedArgumentImpl;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.range.Range;
 import dev.rollczi.litecommands.modern.wrapper.WrapperFormat;
@@ -20,7 +17,7 @@ class ArgPreparedArgument<SENDER, EXPECTED> implements ParameterPreparedArgument
     private final ArgumentParser<SENDER, ?, ?> resolver;
     private final BiFunction<Invocation<SENDER>, List<String>, ArgumentResult<EXPECTED>> parser;
 
-    protected ArgPreparedArgument(
+    ArgPreparedArgument(
         ParameterArgument<?, EXPECTED> argument,
         ArgumentParser<SENDER, EXPECTED, ?> resolver,
         BiFunction<Invocation<SENDER>, List<String>, ArgumentResult<EXPECTED>> parser
@@ -53,10 +50,6 @@ class ArgPreparedArgument<SENDER, EXPECTED> implements ParameterPreparedArgument
     @Override
     public int getParameterIndex() {
         return argument.getParameterIndex();
-    }
-
-    public static <SENDER, E, A extends ParameterArgument<?, E>> ArgPreparedArgument<SENDER, E> create(A argument, ArgumentParser<SENDER, E, A> resolver) {
-        return new ArgPreparedArgument<>(argument, resolver, (invocation, arguments) -> resolver.parse(invocation, argument, arguments));
     }
 
 }

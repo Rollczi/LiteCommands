@@ -7,9 +7,9 @@ import dev.rollczi.litecommands.modern.bind.BindContextual;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultMapper;
 import dev.rollczi.litecommands.modern.editor.CommandEditor;
+import dev.rollczi.litecommands.modern.platform.Platform;
 import dev.rollczi.litecommands.modern.validator.CommandValidator;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedFactory;
-import dev.rollczi.litecommands.modern.platform.Platform;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -50,7 +50,7 @@ public interface LiteCommandsBuilder<SENDER, C extends LiteConfiguration, B exte
 
     <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration);
 
-    LiteCommandsBuilder<SENDER, C, B> platform(Platform<SENDER> platform);
+    LiteCommandsBuilder<SENDER, C, B> platform(Platform<SENDER, C> platform);
 
     LiteCommands<SENDER> register();
 

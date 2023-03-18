@@ -5,9 +5,9 @@ import dev.rollczi.litecommands.modern.bind.BindRegistry;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.editor.CommandEditorService;
+import dev.rollczi.litecommands.modern.platform.Platform;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
-import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +41,7 @@ public interface LiteCommandsInternalPattern<SENDER, C extends LiteConfiguration
 
     @Nullable
     @ApiStatus.Internal
-    Platform<SENDER> getPlatform();
+    Platform<SENDER, C> getPlatform();
 
     @NotNull
     @ApiStatus.Internal

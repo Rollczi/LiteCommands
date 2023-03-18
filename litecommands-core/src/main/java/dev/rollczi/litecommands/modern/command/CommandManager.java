@@ -1,44 +1,41 @@
 package dev.rollczi.litecommands.modern.command;
 
+import dev.rollczi.litecommands.modern.LiteConfiguration;
 import dev.rollczi.litecommands.modern.argument.ArgumentService;
 import dev.rollczi.litecommands.modern.argument.FailedReason;
-import dev.rollczi.litecommands.modern.bind.BindRegistry;
 import dev.rollczi.litecommands.modern.invalid.CommandInvalidUsage;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.invocation.InvocationResult;
+import dev.rollczi.litecommands.modern.platform.Platform;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorResult;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
-import dev.rollczi.litecommands.modern.invocation.Invocation;
-import dev.rollczi.litecommands.modern.invocation.InvocationResult;
-import dev.rollczi.litecommands.modern.platform.Platform;
 
 import java.util.List;
 
-public class CommandManager<SENDER> {
+public class CommandManager<SENDER, C extends LiteConfiguration> {
 
     private final CommandRootRouteImpl<SENDER> root = new CommandRootRouteImpl<>();
 
-    private final Platform<SENDER> platform;
+    private final Platform<SENDER, C> platform;
 
     private final CommandValidatorService<SENDER> commandValidatorService;
     private final ArgumentService<SENDER> argumentService;
-    private final BindRegistry<SENDER> bindRegistry;
     private final WrappedExpectedService wrappedArgumentService;
     private final CommandExecuteResultResolver<SENDER> resultResolver;
 
     public CommandManager(
-        Platform<SENDER> platform,
+        Platform<SENDER, C> platform,
         WrappedExpectedService wrappedArgumentService,
         ArgumentService<SENDER> argumentService,
         CommandExecuteResultResolver<SENDER> resultResolver,
-        BindRegistry<SENDER> bindRegistry,
         CommandValidatorService<SENDER> commandValidatorService
     ) {
         this.platform = platform;
 
         this.commandValidatorService = commandValidatorService;
         this.argumentService = argumentService;
-        this.bindRegistry = bindRegistry;
         this.wrappedArgumentService = wrappedArgumentService;
         this.resultResolver = resultResolver;
     }
@@ -65,10 +62,9 @@ public class CommandManager<SENDER> {
         FailedReason lastFailedReason = null;
 
         for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
-            InvokedWrapperInfoResolverImpl<SENDER> provider = new InvokedWrapperInfoResolverImpl<>(this.bindRegistry, this.wrappedArgumentService);
             PreparedArgumentIterator<SENDER> cachedArgumentResolver = new PreparedArgumentIteratorImpl<>(this.argumentService, this.wrappedArgumentService, findResult.childIndex);
 
-            CommandExecutorMatchResult match = executor.match(invocation, provider, cachedArgumentResolver);
+            CommandExecutorMatchResult match = executor.match(invocation, cachedArgumentResolver);
 
             if (match.isFailed()) {
                 FailedReason current = match.getFailedReason();

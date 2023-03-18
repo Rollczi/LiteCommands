@@ -4,9 +4,10 @@ import dev.rollczi.litecommands.modern.command.CommandRoute;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import dev.rollczi.litecommands.modern.permission.MissingPermissions;
-import dev.rollczi.litecommands.modern.platform.Platform;
+import dev.rollczi.litecommands.modern.platform.AbstractPlatform;
 import dev.rollczi.litecommands.modern.platform.PlatformInvocationHook;
 import dev.rollczi.litecommands.modern.platform.PlatformSuggestionHook;
+import dev.rollczi.litecommands.modern.suggestion.Suggestion;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -17,18 +18,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-class BungeePlatform implements Platform<CommandSender> {
+class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings> {
 
     private final Plugin plugin;
     private final PluginManager pluginManager;
-    private final LiteBungeeSettings liteBungeeSettings;
 
     private final Map<String, BungeeCommand> commands = new HashMap<>();
 
     public BungeePlatform(Plugin plugin, LiteBungeeSettings liteBungeeSettings) {
+        super(liteBungeeSettings);
         this.plugin = plugin;
         this.pluginManager = plugin.getProxy().getPluginManager();
-        this.liteBungeeSettings = liteBungeeSettings;
     }
 
     @Override
@@ -84,7 +84,7 @@ class BungeePlatform implements Platform<CommandSender> {
             return this.suggestionListener.suggest(this.newInvocation(sender, args))
                 .getSuggestions()
                 .stream()
-                .map(suggestion -> suggestion.multilevel())
+                .map(Suggestion::multilevel)
                 .collect(Collectors.toList());
         }
 
@@ -96,7 +96,7 @@ class BungeePlatform implements Platform<CommandSender> {
         public boolean hasPermission(CommandSender sender) {
             boolean isNative = commandSection.getMeta().get(CommandMeta.NATIVE_PERMISSIONS);
 
-            if (isNative || liteBungeeSettings.isNativePermissions()) {
+            if (isNative || liteConfiguration.isNativePermissions()) {
                 MissingPermissions missingPermissions = MissingPermissions.check(new BungeeSender(sender), this.commandSection);
 
                 return missingPermissions.isPermitted();

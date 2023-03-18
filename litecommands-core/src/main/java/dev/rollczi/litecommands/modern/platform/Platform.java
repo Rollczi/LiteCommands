@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Platform<SENDER, C extends LiteConfiguration> {
 
-    void setConfiguration(@NotNull C configuration);
+    void setConfiguration(@NotNull C liteConfiguration);
 
     @NotNull
     C getConfiguration();

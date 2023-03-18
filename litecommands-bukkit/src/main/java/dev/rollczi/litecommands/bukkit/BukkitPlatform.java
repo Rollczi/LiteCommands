@@ -48,8 +48,8 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitConfiguration>
     }
 
     @Override
-    public void setConfiguration(@NotNull LiteBukkitConfiguration configuration) {
-        this.liteBukkitConfiguration = configuration;
+    public void setConfiguration(@NotNull LiteBukkitConfiguration liteConfiguration) {
+        this.liteBukkitConfiguration = liteConfiguration;
     }
 
     @Override
@@ -99,13 +99,13 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitConfiguration>
 
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-            this.invocationHook.execute(newInvocation(sender, alias, args));
+            this.invocationHook.execute(this.newInvocation(sender, alias, args));
             return true;
         }
 
         @Override
         public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-            return this.suggestionHook.suggest(newInvocation(sender, alias, args)).asMultiLevelList();
+            return this.suggestionHook.suggest(this.newInvocation(sender, alias, args)).asMultiLevelList();
         }
 
         private Invocation<CommandSender> newInvocation(CommandSender sender, String alias, String[] args) {

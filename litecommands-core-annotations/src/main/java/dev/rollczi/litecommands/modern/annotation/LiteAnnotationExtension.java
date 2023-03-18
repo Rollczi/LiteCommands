@@ -4,28 +4,29 @@ import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
 import dev.rollczi.litecommands.modern.LiteCommandsExtension;
 import dev.rollczi.litecommands.modern.LiteCommandsInternalPattern;
 import dev.rollczi.litecommands.modern.annotation.argument.Arg;
-import dev.rollczi.litecommands.modern.annotation.command.ArgAnnotationResolver;
-import dev.rollczi.litecommands.modern.annotation.command.ArgumentAnnotationResolver;
-import dev.rollczi.litecommands.modern.annotation.command.ArgumentNoAnnotationResolver;
-import dev.rollczi.litecommands.modern.annotation.command.MethodCommandExecutorFactory;
-import dev.rollczi.litecommands.modern.annotation.command.ParameterPreparedArgumentFactory;
+import dev.rollczi.litecommands.modern.annotation.argument.ArgAnnotationResolver;
+import dev.rollczi.litecommands.modern.annotation.command.MethodCommandExecutorService;
+import dev.rollczi.litecommands.modern.annotation.command.ParameterWithAnnotationResolver;
+import dev.rollczi.litecommands.modern.annotation.command.ParameterWithoutAnnotationResolver;
+import dev.rollczi.litecommands.modern.annotation.context.Context;
+import dev.rollczi.litecommands.modern.annotation.context.ContextAnnotationResolver;
 import dev.rollczi.litecommands.modern.annotation.editor.AnnotationCommandEditorService;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.annotation.execute.ExecuteAnnotationResolver;
 import dev.rollczi.litecommands.modern.annotation.inject.Injector;
-import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMetaApplicator;
-import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
-import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationProcessor;
-import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationRegistry;
-import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationClassResolver;
-import dev.rollczi.litecommands.modern.annotation.route.RootRoute;
-import dev.rollczi.litecommands.modern.annotation.route.Route;
-import dev.rollczi.litecommands.modern.argument.ArgumentService;
-import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.annotation.permission.Permission;
 import dev.rollczi.litecommands.modern.annotation.permission.PermissionExcluded;
 import dev.rollczi.litecommands.modern.annotation.permission.Permissions;
 import dev.rollczi.litecommands.modern.annotation.permission.PermissionsExcluded;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationClassResolver;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMetaApplicator;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationMethodResolver;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationProcessor;
+import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationRegistry;
+import dev.rollczi.litecommands.modern.annotation.route.RootRoute;
+import dev.rollczi.litecommands.modern.annotation.route.Route;
+import dev.rollczi.litecommands.modern.argument.ArgumentResolverRegistry;
+import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 
 import java.lang.annotation.Annotation;
@@ -35,9 +36,10 @@ import java.util.List;
 
 public class LiteAnnotationExtension<SENDER> implements LiteCommandsExtension<SENDER> {
 
-    private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry;
-    private final AnnotationCommandEditorService<SENDER> annotationCommandEditorService;
-    private final ParameterPreparedArgumentFactory<SENDER> parameterPreparedArgumentFactory;
+    private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry = new CommandAnnotationRegistry<>();
+    private final AnnotationCommandEditorService<SENDER> annotationCommandEditorService = new AnnotationCommandEditorService<>();
+    private final MethodCommandExecutorService<SENDER> commandExecutorFactory = new MethodCommandExecutorService<>();
+
     private final List<Object> commandInstances;
     private final List<Class<?>> commandClasses;
 
@@ -48,11 +50,8 @@ public class LiteAnnotationExtension<SENDER> implements LiteCommandsExtension<SE
      * Simple constructor for api usage
      */
     protected LiteAnnotationExtension(LiteAnnotatedCommands commands) {
-        this.commandAnnotationRegistry = new CommandAnnotationRegistry<>();
-        this.annotationCommandEditorService = new AnnotationCommandEditorService<>();
         this.commandInstances = new ArrayList<>(commands.getCommandsInstances());
         this.commandClasses = new ArrayList<>(commands.getCommandsClasses());
-        this.parameterPreparedArgumentFactory = new ParameterPreparedArgumentFactory<>();
     }
 
     public LiteAnnotationExtension<SENDER> command(Object... commands) {
@@ -81,13 +80,13 @@ public class LiteAnnotationExtension<SENDER> implements LiteCommandsExtension<SE
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationExtension<SENDER> annotation(Class<A> annotation, ArgumentAnnotationResolver<A> resolver) {
-        this.parameterPreparedArgumentFactory.register(annotation, resolver);
+    public <A extends Annotation> LiteAnnotationExtension<SENDER> parameterAnnotation(Class<A> annotation, ParameterWithAnnotationResolver<SENDER, A> resolver) {
+        this.commandExecutorFactory.registerResolver(annotation, resolver);
         return this;
     }
 
-    public LiteAnnotationExtension<SENDER> noAnnotation(ArgumentNoAnnotationResolver resolver) {
-        this.parameterPreparedArgumentFactory.registerNoAnnotation(resolver);
+    public LiteAnnotationExtension<SENDER> parameterWithoutAnnotation(ParameterWithoutAnnotationResolver<SENDER> resolver) {
+        this.commandExecutorFactory.defaultResolver(resolver);
         return this;
     }
 
@@ -126,11 +125,10 @@ public class LiteAnnotationExtension<SENDER> implements LiteCommandsExtension<SE
 
     public static <SENDER> LiteAnnotationExtension<SENDER> create(LiteAnnotatedCommands commands) {
         return new LiteAnnotationExtension<SENDER>(commands).beforeRegister((extension, builder, pattern) -> {
-            WrappedExpectedService service = pattern.getWrappedExpectedContextualService();
-            ArgumentService<SENDER> argumentService = pattern.getArgumentService();
-            MethodCommandExecutorFactory<SENDER> commandExecutorFactory = new MethodCommandExecutorFactory<>(extension.parameterPreparedArgumentFactory);
+            WrappedExpectedService wrappedExpectedService = pattern.getWrappedExpectedContextualService();
+            ArgumentResolverRegistry<SENDER> argumentResolverRegistry = pattern.getArgumentService().getResolverRegistry();
 
-            extension
+            extension.command()
                 // class or method
                 .annotation(Route.class, new Route.AnnotationResolver<>())
                 .annotation(RootRoute.class, new RootRoute.AnnotationResolver<>())
@@ -141,11 +139,11 @@ public class LiteAnnotationExtension<SENDER> implements LiteCommandsExtension<SE
                 .annotation(PermissionsExcluded.class, new PermissionsExcluded.AnnotationResolver<>())
 
                 // method
-                .annotation(Execute.class, new ExecuteAnnotationResolver<>(commandExecutorFactory))
+                .annotation(Execute.class, new ExecuteAnnotationResolver<>(extension.commandExecutorFactory))
 
                 // argument
-                .annotation(Arg.class, new ArgAnnotationResolver(parameterArgumentFactory, argumentResolverRegistry))
-            ;
+                .parameterAnnotation(Arg.class, new ArgAnnotationResolver<>(wrappedExpectedService, argumentResolverRegistry))
+                .parameterAnnotation(Context.class, new ContextAnnotationResolver<>(pattern.getBindRegistry(), wrappedExpectedService))
             ;
         });
     }

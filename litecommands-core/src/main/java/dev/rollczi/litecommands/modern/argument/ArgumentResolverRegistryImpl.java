@@ -26,13 +26,11 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
     }
 
     @Override
-    public <EXPECTED, ARGUMENT extends Argument<EXPECTED>> Optional<ArgumentParser<SENDER, EXPECTED, ARGUMENT>> getResolver(
-        IndexKey<EXPECTED, ARGUMENT> indexKey
-    ) {
-        Optional<ArgumentParser<SENDER, EXPECTED, ARGUMENT>> resolverOptional = this.determinantTypeIndex.getResolver(indexKey);
+    public <EXPECTED> Optional<ArgumentParser<SENDER, EXPECTED, Argument<EXPECTED>>> getResolver(IndexKey<EXPECTED, Argument<EXPECTED>> indexKey) {
+        Optional<ArgumentParser<SENDER, EXPECTED, Argument<EXPECTED>>> resolver = this.determinantTypeIndex.getResolver(indexKey);
 
-        if (resolverOptional.isPresent()) {
-            return resolverOptional;
+        if (resolver.isPresent()) {
+            return resolver;
         }
 
         return this.universalIndex.getResolver(indexKey);

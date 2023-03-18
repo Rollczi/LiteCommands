@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.modern.annotation.argument;
 
-import dev.rollczi.litecommands.modern.annotation.contextual.ParameterContextual;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.modern.wrapper.implementations.OptionWrappedExpectedFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,7 +9,9 @@ import panda.std.Option;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ParameterArgumentContextualFactoryTest {
 
@@ -19,16 +20,15 @@ class ParameterArgumentContextualFactoryTest {
         void testInvalidMethod(@Arg Option arg0) {}
     }
 
-    private static ParameterArgumentFactory creator;
+    private static WrappedExpectedService wrappedExpectedService;
     private static Method method;
     private static Parameter invalidParameter;
 
     @BeforeAll
     static void setUp() throws NoSuchMethodException {
-        WrappedExpectedService wrappedExpectedService = new WrappedExpectedService();
+        wrappedExpectedService = new WrappedExpectedService();
         wrappedExpectedService.registerFactory(new OptionWrappedExpectedFactory());
 
-        creator = new ParameterArgumentFactory(wrappedExpectedService);
         method = TestClass.class.getDeclaredMethod("testMethod", String.class, int.class);
         invalidParameter = TestClass.class.getDeclaredMethod("testInvalidMethod", Option.class).getParameters()[0];
     }
@@ -39,7 +39,7 @@ class ParameterArgumentContextualFactoryTest {
 
         assertEquals(2, parameters.length);
 
-        ParameterContextual<?> firstContextual = creator.apply(parameters[0]).get(0);
+        ParameterArgument<?, ?> firstContextual = ParameterArgument.create(wrappedExpectedService, parameters[0], parameters[0].getAnnotation(Arg.class));
         ParameterArgument<Arg, String> parameterArgument = assertInstanceOf(ParameterArgument.class, firstContextual);
 
         assertEquals("@Arg String arg0", parameterArgument.getName());
@@ -47,7 +47,7 @@ class ParameterArgumentContextualFactoryTest {
         assertEquals(Void.class, parameterArgument.getWrapperFormat().getWrapperType());
         assertEquals(Arg.class, parameterArgument.getAnnotationType());
 
-        ParameterContextual<?> secondContextual = creator.apply(parameters[1]).get(0);
+        ParameterArgument<?, ?> secondContextual = ParameterArgument.create(wrappedExpectedService, parameters[1], parameters[1].getAnnotation(Arg.class));
         ParameterArgument<Arg, Integer> parameterArgument2 = assertInstanceOf(ParameterArgument.class, secondContextual);
 
         assertEquals("@Arg int arg1", parameterArgument2.getName());
@@ -58,7 +58,7 @@ class ParameterArgumentContextualFactoryTest {
 
     @Test
     void testCreateInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> creator.apply(invalidParameter));
+        assertThrows(IllegalArgumentException.class, () -> ParameterArgument.create(wrappedExpectedService, invalidParameter, invalidParameter.getAnnotation(Arg.class)));
     }
 
 }

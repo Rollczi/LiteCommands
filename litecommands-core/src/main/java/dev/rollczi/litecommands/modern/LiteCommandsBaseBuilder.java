@@ -16,12 +16,12 @@ import dev.rollczi.litecommands.modern.editor.CommandEditor;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.modern.editor.CommandEditorService;
+import dev.rollczi.litecommands.modern.platform.Platform;
 import dev.rollczi.litecommands.modern.util.Preconditions;
 import dev.rollczi.litecommands.modern.validator.CommandValidator;
 import dev.rollczi.litecommands.modern.validator.CommandValidatorService;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
-import dev.rollczi.litecommands.modern.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +43,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteConfiguration, B exte
 
     protected final CommandEditorContextRegistry<SENDER> commandEditorContextRegistry;
 
-    protected @Nullable Platform<SENDER> platform;
+    protected @Nullable Platform<SENDER, C> platform;
     protected @NotNull C configuration;
 
     /**
@@ -60,7 +60,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteConfiguration, B exte
      *
      * @param senderClass class of sender
      */
-    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER> platform, C configuration) {
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform, C configuration) {
         this(
             senderClass,
             new CommandEditorService<>(),
@@ -99,15 +99,15 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteConfiguration, B exte
      * Base constructor
      */
     protected LiteCommandsBaseBuilder(
-        Class<SENDER> senderClass,
-        CommandEditorService<SENDER> commandEditorService,
-        CommandValidatorService<SENDER> commandValidatorService, ArgumentService<SENDER> argumentService,
-        BindRegistry<SENDER> bindRegistry,
-        WrappedExpectedService wrappedExpectedService,
-        CommandExecuteResultResolver<SENDER> resultResolver,
-        CommandEditorContextRegistry<SENDER> commandEditorContextRegistry,
-        @Nullable Platform<SENDER> platform,
-        C configuration
+            Class<SENDER> senderClass,
+            CommandEditorService<SENDER> commandEditorService,
+            CommandValidatorService<SENDER> commandValidatorService, ArgumentService<SENDER> argumentService,
+            BindRegistry<SENDER> bindRegistry,
+            WrappedExpectedService wrappedExpectedService,
+            CommandExecuteResultResolver<SENDER> resultResolver,
+            CommandEditorContextRegistry<SENDER> commandEditorContextRegistry,
+            @Nullable Platform<SENDER, C> platform,
+            @NotNull C configuration
     ) {
         this.senderClass = senderClass;
         this.commandEditorService = commandEditorService;
@@ -237,19 +237,24 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteConfiguration, B exte
     }
 
     @Override
-    public B platform(Platform<SENDER> platform) {
+    public B platform(Platform<SENDER, C> platform) {
         this.platform = platform;
         return this.getThis();
     }
 
     @Override
     public LiteCommands<SENDER> register() {
-        CommandManager<SENDER> commandManager = new CommandManager<>(
+        if (this.platform == null) {
+            throw new IllegalStateException("No platform was set");
+        }
+
+        platform.setConfiguration(this.configuration);
+
+        CommandManager<SENDER, C> commandManager = new CommandManager<>(
             this.platform,
             this.wrappedExpectedService,
             this.argumentService,
             this.resultResolver,
-            this.bindRegistry,
             this.commandValidatorService
         );
 
@@ -265,7 +270,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteConfiguration, B exte
             }
         }
 
-        return new LiteCommandsBase<>(commandManager); //TODO add other stuff
+        return new LiteCommandsBase<>(commandManager);
     }
 
     @Override
@@ -316,7 +321,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteConfiguration, B exte
     @Override
     @Nullable
     @ApiStatus.Internal
-    public Platform<SENDER> getPlatform() {
+    public Platform<SENDER, C> getPlatform() {
         return this.platform;
     }
 

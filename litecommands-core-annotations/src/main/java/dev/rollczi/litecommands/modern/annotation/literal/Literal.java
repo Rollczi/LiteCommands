@@ -1,11 +1,14 @@
-package dev.rollczi.litecommands.modern.annotation.contextual;
+package dev.rollczi.litecommands.modern.annotation.literal;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Context {
+public @interface Literal {
+
+    String value();
+
 }

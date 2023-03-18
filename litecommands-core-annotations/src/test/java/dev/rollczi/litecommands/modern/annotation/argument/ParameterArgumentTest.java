@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ParameterArgumentTest {
 
@@ -28,8 +29,7 @@ class ParameterArgumentTest {
             0,
             parameter.getAnnotation(Arg.class),
             Arg.class,
-            String.class,
-            Void.class
+            new WrapperFormat<>(String.class, Void.class)
         );
     }
 

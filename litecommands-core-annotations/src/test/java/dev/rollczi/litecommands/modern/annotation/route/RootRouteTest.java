@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.modern.annotation.route;
 
-import dev.rollczi.litecommands.modern.annotation.argument.Arg;
-import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.annotation.LiteTest;
 import dev.rollczi.litecommands.modern.annotation.LiteTestSpec;
+import dev.rollczi.litecommands.modern.annotation.argument.Arg;
+import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.annotation.permission.Permission;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ class RootRouteTest extends LiteTestSpec {
     }
 
     @Test
-    void testExecuteRootRouteCommands() {;
+    void testExecuteRootRouteCommands() {
         platform.execute("first")
             .assertMissingPermission("test.permission");
 

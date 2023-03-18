@@ -1,17 +1,19 @@
 package dev.rollczi.litecommands.modern.annotation.argument;
 
 import dev.rollczi.litecommands.modern.argument.ArgumentResult;
-import dev.rollczi.litecommands.modern.test.FakeSender;
-import dev.rollczi.litecommands.modern.test.TestUtil;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.range.Range;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.modern.test.FakeSender;
+import dev.rollczi.litecommands.modern.test.TestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OneAnnotationArgumentTest {
 

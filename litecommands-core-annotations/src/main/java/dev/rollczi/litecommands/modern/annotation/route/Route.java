@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.modern.annotation.route;
 
 import dev.rollczi.litecommands.modern.annotation.processor.CommandAnnotationClassResolver;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
+import dev.rollczi.litecommands.modern.util.LiteCommandsUtil;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,9 +22,15 @@ public @interface Route {
 
         @Override
         public CommandEditorContext<SENDER> resolve(Object instance, Route annotation, CommandEditorContext<SENDER> context) {
-            return context
-                .routeName(annotation.name())
-                .routeAliases(Arrays.asList(annotation.aliases()));
+            boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
+
+            if (isNotEmpty) {
+                return context
+                    .routeName(annotation.name())
+                    .routeAliases(Arrays.asList(annotation.aliases()));
+            }
+
+            throw new IllegalArgumentException("Route name cannot be empty");
         }
 
     }

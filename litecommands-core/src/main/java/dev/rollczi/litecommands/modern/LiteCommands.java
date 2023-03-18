@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.modern.command.CommandManager;
 
 public interface LiteCommands<SENDER> {
 
-    CommandManager<SENDER> getCommandManager();
+    CommandManager<SENDER, ?> getCommandManager();
 
     void unregister();
 

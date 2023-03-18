@@ -1,12 +1,12 @@
 package dev.rollczi.litecommands.modern.annotation.editor;
 
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.route.Route;
+import dev.rollczi.litecommands.modern.annotation.execute.Execute;
+import dev.rollczi.litecommands.modern.annotation.route.Route;
 import dev.rollczi.litecommands.modern.editor.CommandEditorContext;
 import dev.rollczi.litecommands.modern.test.FakeSender;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AnnotationCommandEditorServiceTest {
 

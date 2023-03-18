@@ -2,13 +2,13 @@ package dev.rollczi.litecommands.modern.annotation.command;
 
 import dev.rollczi.litecommands.modern.argument.FailedReason;
 import dev.rollczi.litecommands.modern.argument.PreparedArgument;
-import dev.rollczi.litecommands.modern.command.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.modern.command.PreparedArgumentIterator;
 import dev.rollczi.litecommands.modern.command.CommandExecuteResult;
 import dev.rollczi.litecommands.modern.command.CommandExecutor;
+import dev.rollczi.litecommands.modern.command.CommandExecutorMatchResult;
+import dev.rollczi.litecommands.modern.command.PreparedArgumentIterator;
+import dev.rollczi.litecommands.modern.invocation.Invocation;
 import dev.rollczi.litecommands.modern.meta.CommandMeta;
 import dev.rollczi.litecommands.modern.wrapper.WrappedExpected;
-import dev.rollczi.litecommands.modern.invocation.Invocation;
 import panda.std.Result;
 
 import java.lang.reflect.Method;
@@ -73,6 +73,8 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
 
         return CommandExecutorMatchResult.success(() -> {
             try {
+                this.method.setAccessible(true);
+
                 return CommandExecuteResult.success(this.method.invoke(this.instance, objects), this.returnType);
             }
             catch (Exception exception) {
@@ -82,8 +84,8 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Result<Supplier<WrappedExpected<Object>>, FailedReason> resolve(Invocation<SENDER> invocation, PreparedArgumentIterator<SENDER> cachedArgumentResolver, ParameterPreparedArgument<SENDER, T> parameterPreparedArgument) {
-        return cachedArgumentResolver.resolveNext(invocation, (PreparedArgument<SENDER, Object>) parameterPreparedArgument);
+    private <T> Result<Supplier<WrappedExpected<Object>>, FailedReason> resolve(Invocation<SENDER> invocation, PreparedArgumentIterator<SENDER> preparedArgumentIterator, ParameterPreparedArgument<SENDER, T> parameterPreparedArgument) {
+        return preparedArgumentIterator.resolveNext(invocation, (PreparedArgument<SENDER, Object>) parameterPreparedArgument);
     }
 
 }

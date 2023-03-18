@@ -1,30 +1,30 @@
-package dev.rollczi.litecommands.modern.annotation.command;
+package dev.rollczi.litecommands.modern.annotation.argument;
 
-import dev.rollczi.litecommands.modern.annotation.argument.Arg;
-import dev.rollczi.litecommands.modern.annotation.argument.ParameterArgument;
-import dev.rollczi.litecommands.modern.annotation.argument.ParameterArgumentFactory;
+import dev.rollczi.litecommands.modern.annotation.command.ParameterPreparedArgument;
+import dev.rollczi.litecommands.modern.annotation.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.modern.argument.Argument;
 import dev.rollczi.litecommands.modern.argument.ArgumentParser;
 import dev.rollczi.litecommands.modern.argument.ArgumentResolverRegistry;
+import dev.rollczi.litecommands.modern.wrapper.WrappedExpectedService;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
-public class ArgAnnotationResolver<SENDER> implements ArgumentAnnotationResolver<SENDER, Arg> {
+public class ArgAnnotationResolver<SENDER> implements ParameterWithAnnotationResolver<SENDER, Arg> {
 
-    private final ParameterArgumentFactory parameterArgumentFactory;
+    private final WrappedExpectedService wrappedExpectedService;
     private final ArgumentResolverRegistry<SENDER> argumentResolverRegistry;
 
-    public ArgAnnotationResolver(ParameterArgumentFactory parameterArgumentFactory, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
-        this.parameterArgumentFactory = parameterArgumentFactory;
+    public ArgAnnotationResolver(WrappedExpectedService wrappedExpectedService, ArgumentResolverRegistry<SENDER> argumentResolverRegistry) {
+        this.wrappedExpectedService = wrappedExpectedService;
         this.argumentResolverRegistry = argumentResolverRegistry;
     }
 
     @Override
     public ParameterPreparedArgument<SENDER, ?> resolve(Parameter parameter, Arg annotation) {
-        ParameterArgument<Arg, Object> parameterArgument = parameterArgumentFactory.create(parameter, annotation);
+        ParameterArgument<Arg, Object> parameterArgument = ParameterArgument.create(wrappedExpectedService, parameter, annotation);
 
-        return resolve(parameterArgument);
+        return this.resolve(parameterArgument);
     }
 
     private <A extends Annotation, E, ARGUMENT extends ParameterArgument<A, E>> ParameterPreparedArgument<SENDER, E> resolve(ARGUMENT argument) {

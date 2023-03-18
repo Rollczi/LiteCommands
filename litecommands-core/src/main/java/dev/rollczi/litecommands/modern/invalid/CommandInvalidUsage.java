@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.modern.invalid;
 
 public class CommandInvalidUsage {
 
-    private final Cause cause;
+    private Cause cause;
     //private final Schematic
 
     public enum Cause {

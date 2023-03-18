@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.modern.util;
+package dev.rollczi.litecommands.modern.annotation.util;
 
 import panda.std.Option;
 

@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.modern.util;
 
-public final class LiteCommandsRulesUtil {
+public final class LiteCommandsUtil {
 
-    private LiteCommandsRulesUtil() {
+    private LiteCommandsUtil() {
     }
 
     /**
@@ -17,8 +17,10 @@ public final class LiteCommandsRulesUtil {
      *     <ul>
      *         <li>name: "command", aliases: ["command-1", "command-2"] - true</li>
      *         <li>name: "command", aliases: ["command-1", "command-2", "command-3"] - true</li>
-     *         <li>name: "command subcommand", aliases: ["command-1", "command-2"] - false</li>
+     *         <li>name: "command subcommand", aliases: ["command-1", "command-2"] - throws IllegalArgumentException</li>
      *         <li>name: "command subcommand", aliases: ["command-1 subcommand"] - true</li>
+     *         <li>name: "command", aliases: [] - true</li>
+     *         <li>name: "", aliases: [] - false</li>
      *         <li>name: null, aliases: ["command-1", "command-2"] - throws NullPointerException</li>
      *         <li>name: "command", aliases: null - throws NullPointerException</li>
      *         <li>name: "command", aliases: ["command-1", null, "command-2"] - throws NullPointerException</li>
@@ -52,7 +54,7 @@ public final class LiteCommandsRulesUtil {
 
         for (String alias : aliases) {
             if (!checkName(alias)) {
-                return false;
+                throw new IllegalStateException("Alias '" + alias + "' is not consistent");
             }
         }
 

@@ -2,11 +2,12 @@ package dev.rollczi.litecommands.modern.bind;
 
 import dev.rollczi.litecommands.modern.exception.LiteException;
 import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.modern.util.MapUtil;
+import panda.std.Option;
 import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BindRegistry<SENDER> {
@@ -27,11 +28,11 @@ public class BindRegistry<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getInstance(Class<T> clazz, Invocation<SENDER> invocation) {
-        T instance = this.getInstance(clazz);
+    public <T> Result<T, Object> getInstance(Class<T> clazz, Invocation<SENDER> invocation) {
+        Result<T, Object> result = this.getInstance(clazz);
 
-        if (instance != null) {
-            return instance;
+        if (result.isOk()) {
+            return result;
         }
 
         BindContextual<SENDER, T> contextualSupplier = (BindContextual<SENDER, T>) this.contextualBindings.get(clazz);
@@ -43,33 +44,31 @@ public class BindRegistry<SENDER> {
                 throw new LiteException(extract.getError());
             }
 
-            return extract.get();
+            return extract;
         }
 
         for (Map.Entry<Class<?>, BindContextual<SENDER, ?>> entry : this.contextualBindings.entrySet()) {
             if (entry.getKey().isAssignableFrom(clazz)) {
-                return ((Function<Invocation<SENDER>, T>) entry.getValue()).apply(invocation);
+                BindContextual<SENDER, T> bindContextual = (BindContextual<SENDER, T>) entry.getValue();
+
+                return bindContextual.extract(invocation);
             }
         }
 
-        return null;
+        return Result.error("Cannot find binding for " + clazz.getName());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getInstance(Class<T> clazz) {
-        Supplier<T> supplier = (Supplier<T>) this.instanceBindings.get(clazz);
+    public <T> Result<T, Object> getInstance(Class<T> clazz) {
+        Option<Supplier<?>> option = MapUtil.findKeyInstanceOf(clazz, this.instanceBindings);
 
-        if (supplier != null) {
-            return supplier.get();
+        if (option.isPresent()) {
+            Supplier<T> supplier = (Supplier<T>) option.get();
+
+            return Result.ok(supplier.get());
         }
 
-        for (Map.Entry<Class<?>, Supplier<?>> entry : this.instanceBindings.entrySet()) {
-            if (clazz.isAssignableFrom(entry.getKey())) {
-                return (T) entry.getValue().get();
-            }
-        }
-
-        return null;
+        return Result.error("Cannot find binding for " + clazz.getName());
     }
 
 }

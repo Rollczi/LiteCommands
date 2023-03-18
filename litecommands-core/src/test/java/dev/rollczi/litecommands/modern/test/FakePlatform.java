@@ -6,23 +6,37 @@ import dev.rollczi.litecommands.modern.invocation.InvocationResult;
 import dev.rollczi.litecommands.modern.platform.Platform;
 import dev.rollczi.litecommands.modern.platform.PlatformInvocationHook;
 import dev.rollczi.litecommands.modern.platform.PlatformSuggestionHook;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class FakePlatform implements Platform<FakeSender> {
+public class FakePlatform implements Platform<FakeSender, FakeConfig> {
 
     private final Map<CommandRoute<FakeSender>, PlatformInvocationHook<FakeSender>> executeListeners = new LinkedHashMap<>();
     private final Map<CommandRoute<FakeSender>, PlatformSuggestionHook<FakeSender>> suggestListeners = new LinkedHashMap<>();
+    private FakeConfig configuration = new FakeConfig();
 
     @Override
-    public void listenExecute(CommandRoute<FakeSender> commandRoute, PlatformInvocationHook<FakeSender> executeListener) {
-        this.executeListeners.put(commandRoute, executeListener);
+    public void setConfiguration(@NotNull FakeConfig liteConfiguration) {
+        this.configuration = liteConfiguration;
     }
 
     @Override
-    public void listenSuggestion(CommandRoute<FakeSender> commandRoute, PlatformSuggestionHook<FakeSender> suggestListener) {
-        this.suggestListeners.put(commandRoute, suggestListener);
+    public @NotNull FakeConfig getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public void register(CommandRoute<FakeSender> commandRoute, PlatformInvocationHook<FakeSender> invocationHook, PlatformSuggestionHook<FakeSender> suggestionHook) {
+        this.executeListeners.put(commandRoute, invocationHook);
+        this.suggestListeners.put(commandRoute, suggestionHook);
+    }
+
+    @Override
+    public void unregister(CommandRoute<FakeSender> commandRoute) {
+        this.executeListeners.remove(commandRoute);
+        this.suggestListeners.remove(commandRoute);
     }
 
     @Override
@@ -37,7 +51,7 @@ public class FakePlatform implements Platform<FakeSender> {
             ? command.substring(label.length() + 1).split(" ")
             : new String[0];
 
-        return execute(label, args);
+        return this.execute(label, args);
     }
 
     public AssertExecute execute(String command, String... arguments) {

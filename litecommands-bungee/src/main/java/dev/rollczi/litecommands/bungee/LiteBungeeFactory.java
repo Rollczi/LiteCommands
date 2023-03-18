@@ -14,12 +14,12 @@ public final class LiteBungeeFactory {
     private LiteBungeeFactory() {
     }
 
-    public static LiteCommandsBuilder<CommandSender, C, ?> builder(Plugin plugin) {
+    public static LiteCommandsBuilder<CommandSender, LiteBungeeSettings, ?> builder(Plugin plugin) {
         return builder(plugin, new LiteBungeeSettings());
     }
 
-    public static LiteCommandsBuilder<CommandSender, C, ?> builder(Plugin plugin, LiteBungeeSettings liteBungeeSettings) {
-        return LiteCommandsFactory.builder(CommandSender.class)
+    public static LiteCommandsBuilder<CommandSender, LiteBungeeSettings, ?> builder(Plugin plugin, LiteBungeeSettings liteBungeeSettings) {
+        return LiteCommandsFactory.builder(CommandSender.class, liteBungeeSettings)
             .platform(new BungeePlatform(plugin, liteBungeeSettings))
 
             .typeBind(ProxyServer.class, plugin::getProxy)

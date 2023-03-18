@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
 import dev.rollczi.litecommands.modern.LiteCommandsFactory;
 import dev.rollczi.litecommands.modern.annotation.route.RootRoute;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
+import dev.rollczi.litecommands.modern.test.FakeConfig;
 import dev.rollczi.litecommands.modern.test.FakePlatform;
 import dev.rollczi.litecommands.modern.test.FakeSender;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +37,7 @@ public class LiteTestSpec {
             .toArray(Class<?>[]::new);
 
         platform = new FakePlatform();
-        LiteCommandsBuilder<FakeSender, C, ?> builder = LiteCommandsFactory.builder(FakeSender.class)
+        LiteCommandsBuilder<FakeSender, FakeConfig, ?> builder = LiteCommandsFactory.builder(FakeSender.class, new FakeConfig())
             .platform(platform)
             .extension(LiteAnnotationExtension.create(), extension -> extension
                 .command(commands)

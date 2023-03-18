@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.modern.annotation;
 
 import dev.rollczi.litecommands.modern.annotation.argument.Arg;
-import dev.rollczi.litecommands.modern.annotation.contextual.Context;
+import dev.rollczi.litecommands.modern.annotation.context.Context;
 import dev.rollczi.litecommands.modern.annotation.execute.Execute;
 import dev.rollczi.litecommands.modern.annotation.route.Route;
 import dev.rollczi.litecommands.modern.test.FakeSender;
