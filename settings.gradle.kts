@@ -12,7 +12,7 @@ include(":litecommands-velocity")
 include(":litecommands-bungee")
 include(":litecommands-bukkit")
 include(":litecommands-bukkit-adventure-platform")
-include(":litecommands-paper")
+include(":litecommands-paper", JavaVersion.VERSION_17)
 include(":litecommands-minestom", JavaVersion.VERSION_17)
 
 // examples
