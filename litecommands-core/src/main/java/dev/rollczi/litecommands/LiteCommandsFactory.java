@@ -30,7 +30,7 @@ public final class LiteCommandsFactory {
 
              .contextualBind(String[].class, invocation -> Result.ok(invocation.arguments()))
              .contextualBind(PlatformSender.class, invocation -> Result.ok(invocation.getPlatformSender()))
-             .contextualBind(Invocation.class, Result::ok)
+             .contextualBind(Invocation.class, invocation -> Result.ok(invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
              .validator(new MissingPermissionValidator<>())
              .resultMapper(MissingPermissions.class, new GuideMissingPermission<>())

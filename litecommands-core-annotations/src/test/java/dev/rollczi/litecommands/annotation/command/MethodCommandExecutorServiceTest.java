@@ -42,7 +42,7 @@ class MethodCommandExecutorServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        bindRegistry.bindContextual(Invocation.class, Result::ok);
+        bindRegistry.bindContextual(Invocation.class, invocation -> Result.ok(invocation)); // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
         resolverRegistry.registerResolver(IndexKey.universal(String.class), new StringArgumentResolver<>());
         resolverRegistry.registerResolver(IndexKey.universal(int.class), AbstractNumberArgumentResolver.ofInteger());
 

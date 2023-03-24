@@ -19,7 +19,10 @@ include(":litecommands-minestom", JavaVersion.VERSION_17)
 include(":examples:bukkit")
 
 fun include(projectPath: String, version: JavaVersion) {
-    if (JavaVersion.current().isCompatibleWith(version)) {
-        include(projectPath)
+    if (!JavaVersion.current().isCompatibleWith(version)) {
+        println("Skipping $projectPath because of incompatible Java version, required: $version")
+        return
     }
+
+    include(projectPath)
 }
