@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.modern.command.CommandExecuteResultHandler;
-import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.command.CommandExecuteResultHandler;
+import dev.rollczi.litecommands.invocation.Invocation;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

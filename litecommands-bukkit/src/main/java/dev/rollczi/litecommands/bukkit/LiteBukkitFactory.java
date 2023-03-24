@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
-import dev.rollczi.litecommands.modern.LiteCommandsBuilder;
-import dev.rollczi.litecommands.modern.LiteCommandsFactory;
+import dev.rollczi.litecommands.LiteCommandsFactory;
+import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,11 +14,9 @@ public final class LiteBukkitFactory {
     private LiteBukkitFactory() {
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteBukkitConfiguration, ?> builder(Server server) {
-        BukkitPlatform registryPlatform = new BukkitPlatform(server, new LiteBukkitConfiguration());
-
-        return LiteCommandsFactory.builder(CommandSender.class, registryPlatform.getConfiguration())
-            .platform(registryPlatform)
+    public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Server server) {
+        return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(new LiteBukkitSettings()))
+            .settings(settings -> settings.commandsProvider(BukkitCommandsProviderImpl.create(server)))
 
             .typeBind(Server.class, () -> server)
             .typeBind(BukkitScheduler.class, server::getScheduler)

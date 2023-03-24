@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bukkit.tools;
 
-import dev.rollczi.litecommands.modern.bind.BindContextual;
-import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.bind.BindContextual;
+import dev.rollczi.litecommands.invocation.Invocation;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import panda.std.Option;

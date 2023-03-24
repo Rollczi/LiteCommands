@@ -1,19 +1,17 @@
 package dev.rollczi.litecommands.minestom.tools;
 
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.type.OneArgumentResolver;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionStream;
+import net.minestom.server.command.CommandSender;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.ConnectionManager;
-import panda.std.Option;
-import panda.std.Result;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-@ArgumentName("player")
-public class MinestomPlayerArgument<MESSAGE> implements OneArgument<Player> {
+public class MinestomPlayerArgument<MESSAGE> extends OneArgumentResolver<CommandSender, Player> {
 
     private final ConnectionManager connectionManager;
     private final MESSAGE playerNotFoundMessage;
@@ -24,16 +22,20 @@ public class MinestomPlayerArgument<MESSAGE> implements OneArgument<Player> {
     }
 
     @Override
-    public Result<Player, Object> parse(LiteInvocation invocation, String argument) {
-        return Option.of(this.connectionManager.getPlayer(argument)).toResult(this.playerNotFoundMessage);
+    protected ArgumentResult<Player> parse(Invocation<CommandSender> invocation, Argument<Player> context, String argument) {
+        Player player = this.connectionManager.getPlayer(argument);
+
+        if (player == null) {
+            return ArgumentResult.failure(this.playerNotFoundMessage);
+        }
+
+        return ArgumentResult.success(player);
     }
 
     @Override
-    public List<Suggestion> suggest(LiteInvocation invocation) {
-        return this.connectionManager.getOnlinePlayers().stream()
-                .map(Player::getUsername)
-                .map(Suggestion::of)
-                .collect(Collectors.toList());
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext suggestion) {
+        return SuggestionStream.of(this.connectionManager.getOnlinePlayers())
+            .collect(Player::getUsername);
     }
 
 }

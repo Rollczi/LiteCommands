@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.minestom;
 
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.command.section.CommandSection;
-import dev.rollczi.litecommands.platform.ExecuteListener;
-import dev.rollczi.litecommands.platform.SuggestionListener;
+import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.platform.PlatformInvocationHook;
+import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.command.CommandSender;
@@ -12,19 +12,18 @@ import net.minestom.server.command.builder.arguments.ArgumentStringArray;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 
 class SimpleCommand extends Command {
 
-    private final CommandSection<CommandSender> commandSection;
-    private final ExecuteListener<CommandSender> executeListener;
-    private final SuggestionListener<CommandSender> suggestionListener;
+    private final CommandRoute<CommandSender> command;
+    private final PlatformInvocationHook<CommandSender> invocationHook;
+    private final PlatformSuggestionHook<CommandSender> suggestionListener;
 
-
-    SimpleCommand(CommandSection<CommandSender> commandSection, ExecuteListener<CommandSender> executeListener, SuggestionListener<CommandSender> suggestionListener) {
-        super(commandSection.getName(), commandSection.getAliases().toArray(new String[0]));
-        this.commandSection = commandSection;
-        this.executeListener = executeListener;
+    SimpleCommand(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionListener) {
+        super(command.getName(), command.getAliases().toArray(new String[0]));
+        this.command = command;
+        this.invocationHook = invocationHook;
         this.suggestionListener = suggestionListener;
 
         ArgumentStringArray arguments = new ArgumentStringArray("[...]");
@@ -33,8 +32,8 @@ class SimpleCommand extends Command {
             String alias = context.getCommandName();
             String[] args = this.fixArguments(context.get(arguments));
 
-            LiteInvocation liteInvocation = this.createInvocation(sender, alias, args);
-            Set<Suggestion> suggestions = this.suggestionListener.suggest(sender, liteInvocation).suggestions();
+            Invocation<CommandSender> invocation = this.createInvocation(sender, alias, args);
+            List<Suggestion> suggestions = this.suggestionListener.suggest(invocation).getSuggestions();
 
             for (Suggestion suggestion : suggestions) {
                 suggestionCallback.addEntry(new SuggestionEntry(suggestion.multilevel(), Component.empty()));
@@ -45,17 +44,17 @@ class SimpleCommand extends Command {
             String alias = context.getCommandName();
             String[] args = this.fixArguments(context.get(arguments));
 
-            this.executeListener.execute(sender, this.createInvocation(sender, alias, args));
+            this.invocationHook.execute(this.createInvocation(sender, alias, args));
         }), arguments);
 
         this.setDefaultExecutor(((sender, context) -> {
             String alias = context.getCommandName();
-            this.executeListener.execute(sender, this.createInvocation(sender, alias));
+            this.invocationHook.execute(this.createInvocation(sender, alias));
         }));
     }
 
-    private LiteInvocation createInvocation(CommandSender sender, String alias, String... args) {
-        return new LiteInvocation(new MinestomSender(sender), this.commandSection.getName(), alias, args);
+    private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, String... args) {
+        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, args);
     }
 
     private String[] fixArguments(String[] args) {

@@ -1,9 +1,10 @@
 package dev.rollczi.litecommands.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
-import dev.rollczi.litecommands.platform.LiteSender;
+import com.velocitypowered.api.proxy.Player;
+import dev.rollczi.litecommands.platform.PlatformSender;
 
-class VelocitySender implements LiteSender {
+class VelocitySender implements PlatformSender {
 
     private final CommandSource handle;
 
@@ -12,18 +13,15 @@ class VelocitySender implements LiteSender {
     }
 
     @Override
+    public String getName() {
+        return this.handle instanceof Player
+                ? ((Player) this.handle).getUsername()
+                : "Console";
+    }
+
+    @Override
     public boolean hasPermission(String permission) {
         return this.handle.hasPermission(permission);
-    }
-
-    @Override
-    public void sendMessage(String message) {
-        this.handle.sendMessage(StringHandler.MINI_MESSAGE.deserialize(message));
-    }
-
-    @Override
-    public Object getHandle() {
-        return this.handle;
     }
 
 }

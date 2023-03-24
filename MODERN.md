@@ -30,7 +30,7 @@ Modern TODO
 - [ ] @Delay - Adnotacja ta może być użyta przed metodą, aby określić czas opóźnienia (w milisekundach) przed wykonaniem danej metody.
 - [ ] ??? @Warmup - Adnotacja ta pozwala na określenie czasu, przez który komenda będzie miała stan "rozgrzewania", czyli czasu, w którym użytkownik będzie miał możliwość anulowania wykonania komendy. Po tym czasie komenda zostanie wykonana automatycznie. Ta adnotacja jest przydatna, gdy chcesz dać graczowi czas na zastanowienie się przed wykonaniem danej akcji.
 - [ ] @Confirmation .confirmation()
-- [ ] @Context
+- [x] @Context
 - [ ] .debugger(true)
 - [ ] .errorHandler()
 - [ ] @Arg @Regex("") String

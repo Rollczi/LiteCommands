@@ -1,29 +1,15 @@
 plugins {
-    id("litecommands.java-conventions")
+    `litecommands-java`
+    `litecommands-java-unit-test`
+    `litecommands-repositories`
+    `litecommands-publish`
 }
 
 dependencies {
     api("org.panda-lang:expressible:1.3.1")
     api("org.jetbrains:annotations:24.0.1")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
-    testImplementation("org.awaitility:awaitility:4.2.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
-val coreArtifact: String by extra
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            this.artifactId = coreArtifact
-            this.from(components["java"])
-        }
-    }
-}
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+litecommandsPublish {
+    artifactId = "litecommands-core"
 }

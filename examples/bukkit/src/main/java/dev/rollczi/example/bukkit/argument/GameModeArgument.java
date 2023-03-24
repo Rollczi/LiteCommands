@@ -1,14 +1,13 @@
 package dev.rollczi.example.bukkit.argument;
 
-import dev.rollczi.litecommands.modern.argument.Argument;
-import dev.rollczi.litecommands.modern.argument.ArgumentResult;
-import dev.rollczi.litecommands.modern.argument.type.OneArgumentResolver;
-import dev.rollczi.litecommands.modern.invocation.Invocation;
-import dev.rollczi.litecommands.modern.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.modern.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.type.OneArgumentResolver;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
-import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;

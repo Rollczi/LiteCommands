@@ -2,12 +2,12 @@ package dev.rollczi.litecommands.velocity.tools;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.contextual.Contextual;
+import dev.rollczi.litecommands.bind.BindContextual;
+import dev.rollczi.litecommands.invocation.Invocation;
 import panda.std.Option;
 import panda.std.Result;
 
-public class VelocityOnlyPlayerContextual<MESSAGE> implements Contextual<CommandSource, Player> {
+public class VelocityOnlyPlayerContextual<MESSAGE> implements BindContextual<CommandSource, Player> {
 
     private final MESSAGE onlyPlayerMessage;
 
@@ -16,8 +16,8 @@ public class VelocityOnlyPlayerContextual<MESSAGE> implements Contextual<Command
     }
 
     @Override
-    public Result<Player, Object> extract(CommandSource source, Invocation<CommandSource> invocation) {
-        return Option.of(source).is(Player.class).toResult(onlyPlayerMessage);
+    public Result<Player, Object> extract(Invocation<CommandSource> invocation) {
+        return Option.of(invocation.getSender()).is(Player.class).toResult(onlyPlayerMessage);
     }
 
 }

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.modern.platform.PlatformSender;
+import dev.rollczi.litecommands.platform.PlatformSender;
 import org.bukkit.command.CommandSender;
 
 class BukkitSender implements PlatformSender {
@@ -19,11 +19,6 @@ class BukkitSender implements PlatformSender {
     @Override
     public boolean hasPermission(String permission) {
         return this.handle.hasPermission(permission);
-    }
-
-    @Override
-    public void sendMessage(String message) {
-        this.handle.sendMessage(StringHandler.DESERIALIZE_AMPERSAND.apply(message));
     }
 
 }

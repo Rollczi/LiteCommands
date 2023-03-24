@@ -1,9 +1,9 @@
 package dev.rollczi.example.bukkit.command;
 
-import dev.rollczi.litecommands.modern.annotation.argument.Arg;
-import dev.rollczi.litecommands.modern.annotation.execute.Execute;
-import dev.rollczi.litecommands.modern.annotation.permission.Permission;
-import dev.rollczi.litecommands.modern.annotation.route.Route;
+import dev.rollczi.litecommands.annotation.argument.Arg;
+import dev.rollczi.litecommands.annotation.execute.Execute;
+import dev.rollczi.litecommands.annotation.permission.Permission;
+import dev.rollczi.litecommands.annotation.route.Route;
 
 import java.time.Duration;
 import java.time.Instant;

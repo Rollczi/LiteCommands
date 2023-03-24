@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.bungee;
 
-import dev.rollczi.litecommands.modern.LiteConfiguration;
+import dev.rollczi.litecommands.platform.LiteSettings;
 
-public class LiteBungeeSettings implements LiteConfiguration {
+public class LiteBungeeSettings implements LiteSettings {
 
     private boolean nativePermissions = false;
 

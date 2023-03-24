@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bungee.tools;
 
-import dev.rollczi.litecommands.modern.bind.BindContextual;
-import dev.rollczi.litecommands.modern.invocation.Invocation;
+import dev.rollczi.litecommands.bind.BindContextual;
+import dev.rollczi.litecommands.invocation.Invocation;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import panda.std.Option;

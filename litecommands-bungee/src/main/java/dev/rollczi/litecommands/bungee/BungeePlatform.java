@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.bungee;
 
-import dev.rollczi.litecommands.modern.command.CommandRoute;
-import dev.rollczi.litecommands.modern.invocation.Invocation;
-import dev.rollczi.litecommands.modern.meta.CommandMeta;
-import dev.rollczi.litecommands.modern.permission.MissingPermissions;
-import dev.rollczi.litecommands.modern.platform.AbstractPlatform;
-import dev.rollczi.litecommands.modern.platform.PlatformInvocationHook;
-import dev.rollczi.litecommands.modern.platform.PlatformSuggestionHook;
-import dev.rollczi.litecommands.modern.suggestion.Suggestion;
+import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.platform.AbstractPlatform;
+import dev.rollczi.litecommands.platform.PlatformInvocationHook;
+import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -32,7 +32,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
     }
 
     @Override
-    public void register(CommandRoute<CommandSender> commandRoute, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
+    protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
         for (String name : commandRoute.getAllNames()) {
             BungeeCommand command = new BungeeCommand(commandRoute, name, invocationHook, suggestionHook);
 
@@ -42,20 +42,15 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
     }
 
     @Override
-    public void unregister(CommandRoute<CommandSender> commandRoute) {
+    protected void unhook(CommandRoute<CommandSender> commandRoute) {
         for (String name : commandRoute.getAllNames()) {
             BungeeCommand bungeeCommand = commands.get(name);
 
             if (bungeeCommand != null) {
                 pluginManager.unregisterCommand(bungeeCommand);
             }
-        }
-    }
 
-    @Override
-    public void unregisterAll() {
-        for (BungeeCommand command : commands.values()) {
-            pluginManager.unregisterCommand(command);
+            commands.remove(name);
         }
     }
 

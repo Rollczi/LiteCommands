@@ -1,5 +1,7 @@
 plugins {
-    id("litecommands.java-conventions")
+    `litecommands-java`
+    `litecommands-repositories`
+    `litecommands-publish`
 }
 
 dependencies {
@@ -10,11 +12,6 @@ dependencies {
 
 val bukkitArtifact: String by extra
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            this.artifactId = bukkitArtifact
-            this.from(components["java"])
-        }
-    }
+litecommandsPublish {
+    artifactId = "litecommands-bukkit"
 }

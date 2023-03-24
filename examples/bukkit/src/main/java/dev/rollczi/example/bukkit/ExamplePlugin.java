@@ -6,12 +6,15 @@ import dev.rollczi.example.bukkit.argument.WorldArgument;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
-import dev.rollczi.example.bukkit.handler.InvalidUsage;
-import dev.rollczi.example.bukkit.handler.PermissionMessage;
+import dev.rollczi.example.bukkit.handler.InvalidUsageHandlerImpl;
+import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
-import dev.rollczi.litecommands.modern.LiteCommands;
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.annotation.LiteAnnotationExtension;
+import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,30 +28,40 @@ public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         this.liteCommands = LiteBukkitFactory.builder(this.getServer())
-            .configure(config -> config.fallbackPrefix("test"))
+
+            // Settings
+            .settings(bukkitSettings -> bukkitSettings
+                .fallbackPrefix("test")
+                .nativePermissions(false)
+            )
+
             // Arguments
             .argument(Location.class, new LocationArgument())
             .argument(World.class, new WorldArgument(this.getServer()))
             .argument(GameMode.class, new GameModeArgument())
-            .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), "&cNie ma takiego gracza!"))
+            .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cNie ma takiego gracza!"))
 
             // Contextual Bind
             .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
 
-            // Commands
-            .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)
+            // Annotated commands extension
+            .extension(new LiteAnnotationExtension.Builder()
+                .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)
+                .build()
+            )
 
             // Handlers
-            .invalidUsageHandler(new InvalidUsage())
-            .permissionHandler(new PermissionMessage())
+            .resultHandler(MissingPermissions.class, new MissingPermissionsHandlerImpl())
+            .resultHandler(InvalidUsage.class, new InvalidUsageHandlerImpl())
 
             .register();
     }
 
     @Override
     public void onDisable() {
-        this.liteCommands.getPlatform().unregisterAll();
+        this.liteCommands.unregister();
     }
 
 }

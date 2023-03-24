@@ -1,5 +1,7 @@
 plugins {
-    id("litecommands.java-conventions")
+    `litecommands-java`
+    `litecommands-repositories`
+    `litecommands-publish`
 }
 
 dependencies {
@@ -8,13 +10,6 @@ dependencies {
     compileOnly("net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT")
 }
 
-val bungeeArtifact: String by extra
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            this.artifactId = bungeeArtifact
-            this.from(components["java"])
-        }
-    }
+litecommandsPublish {
+    artifactId = "litecommands-bungeecord"
 }

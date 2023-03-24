@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.minestom.tools;
 
-import dev.rollczi.litecommands.command.Invocation;
-import dev.rollczi.litecommands.contextual.Contextual;
+import dev.rollczi.litecommands.bind.BindContextual;
+import dev.rollczi.litecommands.invocation.Invocation;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.entity.Player;
 import panda.std.Option;
 import panda.std.Result;
 
-public class MinestomOnlyPlayerContextual<MESSAGE> implements Contextual<CommandSender, Player> {
+public class MinestomOnlyPlayerContextual<MESSAGE> implements BindContextual<CommandSender, Player> {
 
     private final MESSAGE onlyPlayerMessage;
 
@@ -16,8 +16,8 @@ public class MinestomOnlyPlayerContextual<MESSAGE> implements Contextual<Command
     }
 
     @Override
-    public Result<Player, Object> extract(CommandSender sender, Invocation<CommandSender> invocation) {
-        return Option.of(sender).is(Player.class).toResult(onlyPlayerMessage);
+    public Result<Player, Object> extract(Invocation<CommandSender> invocation) {
+        return Option.of(invocation.getSender()).is(Player.class).toResult(onlyPlayerMessage);
     }
 
 }
