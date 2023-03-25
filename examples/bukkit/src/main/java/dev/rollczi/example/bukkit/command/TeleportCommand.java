@@ -1,9 +1,9 @@
 package dev.rollczi.example.bukkit.command;
 
-import dev.rollczi.litecommands.annotation.argument.Arg;
-import dev.rollczi.litecommands.annotation.execute.Execute;
-import dev.rollczi.litecommands.annotation.permission.Permission;
-import dev.rollczi.litecommands.annotation.route.Route;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
+import dev.rollczi.litecommands.annotations.route.Route;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

@@ -1,7 +1,7 @@
 package dev.rollczi.example.bukkit.command;
 
-import dev.rollczi.litecommands.annotation.permission.Permission;
-import dev.rollczi.litecommands.annotation.route.Route;
+import dev.rollczi.litecommands.annotations.permission.Permission;
+import dev.rollczi.litecommands.annotations.route.Route;
 
 @Route(name = "kick")
 @Permission("dev.rollczi.kick")

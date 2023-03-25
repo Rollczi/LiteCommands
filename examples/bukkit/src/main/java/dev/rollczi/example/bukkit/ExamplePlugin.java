@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotation.LiteAnnotationExtension;
+import dev.rollczi.litecommands.annotations.LiteAnnotationsExtension;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.bukkit.GameMode;
@@ -45,9 +45,8 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Contextual Bind
             .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
-
             // Annotated commands extension
-            .extension(new LiteAnnotationExtension.Builder()
+            .extension(new LiteAnnotationsExtension.Builder()
                 .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)
                 .build()
             )
