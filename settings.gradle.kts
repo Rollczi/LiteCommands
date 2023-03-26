@@ -3,6 +3,7 @@ rootProject.name = "LiteCommands"
 // core
 include(":litecommands-core")
 include(":litecommands-core-annotations")
+include(":litecommands-unit")
 
 // adventure
 include(":litecommands-adventure")

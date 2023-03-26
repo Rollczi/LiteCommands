@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.test;
+package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.argument.PreparedArgument;
 import dev.rollczi.litecommands.command.CommandExecuteResult;

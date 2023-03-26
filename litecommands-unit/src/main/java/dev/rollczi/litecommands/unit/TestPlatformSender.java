@@ -1,15 +1,15 @@
-package dev.rollczi.litecommands.test;
+package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.platform.PlatformSender;
 
-public class FakePlatformSender implements PlatformSender {
+public class TestPlatformSender implements PlatformSender {
 
-    public FakePlatformSender() {
+    public TestPlatformSender() {
     }
 
     @Override
     public String getName() {
-        return "FakeSender";
+        return "TestSender";
     }
 
     @Override

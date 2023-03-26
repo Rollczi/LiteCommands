@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.editor.CommandEditorContext;
 import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.editor.CommandEditorExecutorBuilder;
-import dev.rollczi.litecommands.test.TestExecutor;
+import dev.rollczi.litecommands.unit.TestExecutor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.Test;

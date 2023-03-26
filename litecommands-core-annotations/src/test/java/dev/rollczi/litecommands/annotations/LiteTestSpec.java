@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.annotations.route.RootRoute;
 import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
-import dev.rollczi.litecommands.test.FakeConfig;
-import dev.rollczi.litecommands.test.FakePlatform;
-import dev.rollczi.litecommands.test.FakeSender;
+import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;
+import dev.rollczi.litecommands.unit.TestSettings;
+import dev.rollczi.litecommands.unit.TestPlatform;
+import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 
@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class LiteTestSpec {
 
-    protected static LiteCommands<FakeSender> liteCommands;
-    protected static FakePlatform platform;
+    protected static LiteCommands<TestSender> liteCommands;
+    protected static TestPlatform platform;
 
     @BeforeAll
     public static void beforeAll(TestInfo testInfo) {
@@ -36,12 +36,16 @@ public class LiteTestSpec {
             .filter(declaredClass -> declaredClass.isAnnotationPresent(Route.class) || declaredClass.isAnnotationPresent(RootRoute.class))
             .toArray(Class<?>[]::new);
 
-        platform = new FakePlatform();
-        LiteCommandsBuilder<FakeSender, FakeConfig, ?> builder = LiteCommandsFactory.builder(FakeSender.class, platform)
-            .extension(LiteAnnotationsExtension.create(), extension -> extension
+        platform = LiteCommandsTestFactory.startPlatform(builder -> {
+            builder.extension(LiteAnnotationsExtension.create(), extension -> extension
                 .command(commands)
             );
 
+            return configureLiteTest(builder, type);
+        });
+    }
+
+    private static LiteCommandsBuilder<TestSender, TestSettings, ?> configureLiteTest(LiteCommandsBuilder<TestSender, TestSettings, ?> builder, Class<?> type) {
         LiteTest annotation = type.getAnnotation(LiteTest.class);
 
         if (annotation == null) {
@@ -61,11 +65,11 @@ public class LiteTestSpec {
                 method.setAccessible(true);
                 Object result = method.invoke(null);
 
-                if (!(result instanceof TestConfigurator)) {
+                if (!(result instanceof LiteTestConfigurator)) {
                     throw new AssertionError("@LiteTestConfig must return TestConfigurator");
                 }
 
-                TestConfigurator configurator = (TestConfigurator) result;
+                LiteTestConfigurator configurator = (LiteTestConfigurator) result;
 
                 builder = configurator.configure(builder);
 
@@ -75,7 +79,7 @@ public class LiteTestSpec {
             }
         }
 
-        liteCommands = builder.register();
+        return builder;
     }
 
 }

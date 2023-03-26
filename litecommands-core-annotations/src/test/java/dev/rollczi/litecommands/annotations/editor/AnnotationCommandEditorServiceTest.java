@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.editor;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.editor.CommandEditorContext;
-import dev.rollczi.litecommands.test.FakeSender;
+import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,21 +14,21 @@ class AnnotationCommandEditorServiceTest {
 
     @Route(name = "test")
     @Editor(key = KEY)
-    public static class Command {
+    static class Command {
 
         @Execute
-        public void execute() {}
+        void execute() {}
 
     }
 
     @Test
     void test() {
-        AnnotationCommandEditorService<FakeSender> editorService = new AnnotationCommandEditorService<>();
+        AnnotationCommandEditorService<TestSender> editorService = new AnnotationCommandEditorService<>();
         editorService.registerEditorKey(KEY, (context) -> context.name("prefix-" + context.name()));
 
         Command command = new Command();
-        CommandEditorContext<FakeSender> oldContext = CommandEditorContext.<FakeSender>create().name("test");
-        CommandEditorContext<FakeSender> context = editorService.edit(command, oldContext);
+        CommandEditorContext<TestSender> oldContext = CommandEditorContext.<TestSender>create().name("test");
+        CommandEditorContext<TestSender> context = editorService.edit(command, oldContext);
 
         assertEquals("prefix-test", context.name());
     }

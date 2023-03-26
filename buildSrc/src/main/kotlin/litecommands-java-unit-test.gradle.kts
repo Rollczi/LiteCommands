@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    testImplementation(project(":litecommands-unit"))
+
     testImplementation("org.mockito:mockito-core:5.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")

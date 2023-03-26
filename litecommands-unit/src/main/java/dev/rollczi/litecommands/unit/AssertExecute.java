@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.test;
+package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssertExecute {
 
-    private final InvocationResult<FakeSender> result;
+    private final InvocationResult<TestSender> result;
 
-    public AssertExecute(InvocationResult<FakeSender> result) {
+    public AssertExecute(InvocationResult<TestSender> result) {
         this.result = result;
     }
 

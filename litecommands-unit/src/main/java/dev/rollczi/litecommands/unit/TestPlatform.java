@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.test;
+package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -11,30 +11,30 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class FakePlatform implements Platform<FakeSender, FakeConfig> {
+public class TestPlatform implements Platform<TestSender, TestSettings> {
 
-    private final Map<CommandRoute<FakeSender>, PlatformInvocationHook<FakeSender>> executeListeners = new LinkedHashMap<>();
-    private final Map<CommandRoute<FakeSender>, PlatformSuggestionHook<FakeSender>> suggestListeners = new LinkedHashMap<>();
-    private FakeConfig configuration = new FakeConfig();
+    private final Map<CommandRoute<TestSender>, PlatformInvocationHook<TestSender>> executeListeners = new LinkedHashMap<>();
+    private final Map<CommandRoute<TestSender>, PlatformSuggestionHook<TestSender>> suggestListeners = new LinkedHashMap<>();
+    private TestSettings configuration = new TestSettings();
 
     @Override
-    public void setConfiguration(@NotNull FakeConfig liteConfiguration) {
+    public void setConfiguration(@NotNull TestSettings liteConfiguration) {
         this.configuration = liteConfiguration;
     }
 
     @Override
-    public @NotNull FakeConfig getConfiguration() {
+    public @NotNull TestSettings getConfiguration() {
         return configuration;
     }
 
     @Override
-    public void register(CommandRoute<FakeSender> commandRoute, PlatformInvocationHook<FakeSender> invocationHook, PlatformSuggestionHook<FakeSender> suggestionHook) {
+    public void register(CommandRoute<TestSender> commandRoute, PlatformInvocationHook<TestSender> invocationHook, PlatformSuggestionHook<TestSender> suggestionHook) {
         this.executeListeners.put(commandRoute, invocationHook);
         this.suggestListeners.put(commandRoute, suggestionHook);
     }
 
     @Override
-    public void unregister(CommandRoute<FakeSender> commandRoute) {
+    public void unregister(CommandRoute<TestSender> commandRoute) {
         this.executeListeners.remove(commandRoute);
         this.suggestListeners.remove(commandRoute);
     }
@@ -55,15 +55,15 @@ public class FakePlatform implements Platform<FakeSender, FakeConfig> {
     }
 
     public AssertExecute execute(String command, String... arguments) {
-        FakeSender fakeSender = new FakeSender();
-        FakePlatformSender fakePlatformSender = new FakePlatformSender();
+        TestSender testSender = new TestSender();
+        TestPlatformSender testPlatformSender = new TestPlatformSender();
 
-        Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, command, command, arguments);
+        Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, command, command, arguments);
 
-        for (Map.Entry<CommandRoute<FakeSender>, PlatformInvocationHook<FakeSender>> entry : this.executeListeners.entrySet()) {
+        for (Map.Entry<CommandRoute<TestSender>, PlatformInvocationHook<TestSender>> entry : this.executeListeners.entrySet()) {
             if (entry.getKey().isNameOrAlias(command)) {
-                PlatformInvocationHook<FakeSender> listener = entry.getValue();
-                InvocationResult<FakeSender> result = listener.execute(invocation);
+                PlatformInvocationHook<TestSender> listener = entry.getValue();
+                InvocationResult<TestSender> result = listener.execute(invocation);
 
                 return new AssertExecute(result);
             }
@@ -74,12 +74,12 @@ public class FakePlatform implements Platform<FakeSender, FakeConfig> {
 
 
     public void suggest(String command) {
-        FakeSender fakeSender = new FakeSender();
-        FakePlatformSender fakePlatformSender = new FakePlatformSender();
+        TestSender testSender = new TestSender();
+        TestPlatformSender testPlatformSender = new TestPlatformSender();
         String label = command.split(" ")[0];
         String[] args = command.substring(label.length()).split(" ");
 
-        Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, label, label, args);
+        Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, label, label, args);
 
 
     }

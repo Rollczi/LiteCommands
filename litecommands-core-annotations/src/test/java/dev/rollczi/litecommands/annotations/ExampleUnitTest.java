@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.route.Route;
-import dev.rollczi.litecommands.test.FakeSender;
+import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
 
@@ -12,7 +12,7 @@ import panda.std.Option;
 class ExampleUnitTest extends LiteTestSpec {
 
     @LiteTestConfig
-    static TestConfigurator config() {
+    static LiteTestConfigurator config() {
         return builder ->
             builder.editor("route", context -> context.aliases("r"));
     }
@@ -22,7 +22,7 @@ class ExampleUnitTest extends LiteTestSpec {
 
         @Execute
         String execute(
-            @Context FakeSender sender,
+            @Context TestSender sender,
             @Arg String text,
             @Arg String test
         ) {

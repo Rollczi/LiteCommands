@@ -15,7 +15,7 @@ import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.test.FakeSender;
+import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,13 +31,13 @@ class MethodCommandExecutorServiceTest {
 
     static class TestCommand {
         @Execute
-        void execute(@Context Invocation<FakeSender> invocation, @Arg String text, @Arg int test) {
+        void execute(@Context Invocation<TestSender> invocation, @Arg String text, @Arg int test) {
         }
     }
 
-    static BindRegistry<FakeSender> bindRegistry = new BindRegistry<>();
-    static ArgumentResolverRegistry<FakeSender> resolverRegistry = new ArgumentResolverRegistryImpl<>();
-    static MethodCommandExecutorService<FakeSender> executorFactory = new MethodCommandExecutorService<>();
+    static BindRegistry<TestSender> bindRegistry = new BindRegistry<>();
+    static ArgumentResolverRegistry<TestSender> resolverRegistry = new ArgumentResolverRegistryImpl<>();
+    static MethodCommandExecutorService<TestSender> executorFactory = new MethodCommandExecutorService<>();
     static WrappedExpectedService expectedService = new WrappedExpectedService();
 
     @BeforeAll
@@ -55,9 +55,9 @@ class MethodCommandExecutorServiceTest {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
 
-        CommandExecutor<FakeSender> commandExecutor = executorFactory.create(testCommand, method);
+        CommandExecutor<TestSender> commandExecutor = executorFactory.create(testCommand, method);
 
-        List<PreparedArgument<FakeSender, ?>> arguments = commandExecutor.getArguments();
+        List<PreparedArgument<TestSender, ?>> arguments = commandExecutor.getArguments();
         assertEquals(3, arguments.size());
 
         CommandMeta meta = commandExecutor.getMeta();
