@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.argument.type;
 
-import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.range.Range;
 
 import java.util.List;
 

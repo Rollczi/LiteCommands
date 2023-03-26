@@ -46,6 +46,7 @@ public class ValueWrappedExpectedFactory implements WrappedExpectedFactory {
         public Class<EXPECTED> getExpectedType() {
             return this.expectedType;
         }
+
     }
 
 }

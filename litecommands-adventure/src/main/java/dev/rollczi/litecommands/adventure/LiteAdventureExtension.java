@@ -48,20 +48,20 @@ public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements L
     public void extend(LiteCommandsBuilder<SENDER, C, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
         if (componentSerializer == null) {
             componentSerializer = supportsMiniMessage
-                    ? AdventureMiniMessageFactory.produce(supportsLegacyColor)
-                    : PlainComponentSerializer.plain(supportsLegacyColor);
+                ? AdventureMiniMessageFactory.produce(supportsLegacyColor)
+                : PlainComponentSerializer.plain(supportsLegacyColor);
         }
 
         builder
-                .argument(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
-                .argument(Component.class, "raw", new AdventureComponentArgument<>())
-                .argument(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
+            .argument(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
+            .argument(Component.class, "raw", new AdventureComponentArgument<>())
+            .argument(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
 
-                .contextualBind(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
+            .contextualBind(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 
-                .resultHandler(Component.class, new AdventureComponentHandler<>(adventureAudienceProvider))
-                .resultHandler(String.class, new StringHandler<>(adventureAudienceProvider, componentSerializer)
-                );
+            .resultHandler(Component.class, new AdventureComponentHandler<>(adventureAudienceProvider))
+            .resultHandler(String.class, new StringHandler<>(adventureAudienceProvider, componentSerializer)
+            );
     }
 
 }

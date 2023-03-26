@@ -31,7 +31,7 @@ class MethodCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
         Method method,
         Object instance,
         List<ParameterPreparedArgument<SENDER, ?>> preparedArguments
-        ) {
+    ) {
         this.method = method;
         this.instance = instance;
         this.returnType = method.getReturnType();

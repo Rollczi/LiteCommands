@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.paper;
 
-import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.editor.CommandEditorContext;
 import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
@@ -20,17 +20,17 @@ class LitePaperExtensionTest {
         Server server = mock(Server.class);
 
         LiteCommands<CommandSender> liteCommands = LiteBukkitFactory.builder(server)
-                .extension(new LitePaperExtension<>())
-                .settings(settings -> settings.commandsProvider(new TestBukkitCommandProvider()))
-                .extension((builder, pattern) -> {
-                    CommandEditorContextRegistry<CommandSender> registry = pattern.getCommandContextRegistry();
+            .extension(new LitePaperExtension<>())
+            .settings(settings -> settings.commandsProvider(new TestBukkitCommandProvider()))
+            .extension((builder, pattern) -> {
+                CommandEditorContextRegistry<CommandSender> registry = pattern.getCommandContextRegistry();
 
-                    registry.register(() -> CommandEditorContext.<CommandSender>create()
-                            .name("test")
-                            .appendExecutor(new CommandEditorExecutorBuilder<>(new TestExecutor<>()))
-                    );
-                })
-                .register();
+                registry.register(() -> CommandEditorContext.<CommandSender>create()
+                    .name("test")
+                    .appendExecutor(new CommandEditorExecutorBuilder<>(new TestExecutor<>()))
+                );
+            })
+            .register();
 
         CommandManager<CommandSender, ?> commandManager = liteCommands.getCommandManager();
 

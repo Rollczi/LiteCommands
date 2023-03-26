@@ -13,9 +13,9 @@ final class AdventureMiniMessageFactory {
         }
 
         return MiniMessage.builder()
-                .preProcessor(new LegacyPreProcessor())
-                .postProcessor(new LegacyPostProcessor())
-                .build();
+            .preProcessor(new LegacyPreProcessor())
+            .postProcessor(new LegacyPostProcessor())
+            .build();
     }
 
 }

@@ -8,11 +8,11 @@ public interface AdventureAudienceProvider<SENDER> {
 
     static <SENDER> AdventureAudienceProvider<SENDER> simple() {
         return commandSender -> {
-           if (commandSender instanceof Audience) {
-               return (Audience) commandSender;
-           }
+            if (commandSender instanceof Audience) {
+                return (Audience) commandSender;
+            }
 
-           throw new IllegalArgumentException("Unsupported command sender type: " + commandSender.getClass().getName());
+            throw new IllegalArgumentException("Unsupported command sender type: " + commandSender.getClass().getName());
         };
     }
 

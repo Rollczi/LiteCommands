@@ -15,8 +15,8 @@ class VelocitySender implements PlatformSender {
     @Override
     public String getName() {
         return this.handle instanceof Player
-                ? ((Player) this.handle).getUsername()
-                : "Console";
+            ? ((Player) this.handle).getUsername()
+            : "Console";
     }
 
     @Override

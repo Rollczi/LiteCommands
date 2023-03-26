@@ -23,4 +23,5 @@ public class InjectorException extends RuntimeException {
         super(message + " (" + exceptions.size() + " exceptions)");
         exceptions.forEach(this::addSuppressed);
     }
+
 }

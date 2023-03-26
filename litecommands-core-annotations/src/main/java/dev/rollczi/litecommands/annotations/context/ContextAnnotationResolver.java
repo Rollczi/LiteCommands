@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.annotations.context;
 
-import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
-import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.annotations.command.ParameterPreparedArgument;
 import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
+import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
+import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.wrapper.WrapperFormat;
@@ -49,7 +49,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         @Override
         public ArgumentResult<EXPECTED> resolve(Invocation<SENDER> invocation, List<String> arguments) {
             return bindRegistry.getInstance(wrapperFormat.getType(), invocation)
-                    .fold(instance -> ArgumentResult.successOptional(() -> instance), ArgumentResult::failure);
+                .fold(instance -> ArgumentResult.successOptional(() -> instance), ArgumentResult::failure);
         }
 
         @Override
@@ -73,4 +73,5 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         }
 
     }
+
 }

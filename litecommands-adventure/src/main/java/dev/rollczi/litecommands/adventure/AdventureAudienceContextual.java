@@ -16,7 +16,7 @@ class AdventureAudienceContextual<SENDER> implements BindContextual<SENDER, Audi
     @Override
     public Result<Audience, Object> extract(Invocation<SENDER> invocation) {
         return Result.supplyThrowing(IllegalArgumentException.class, () -> this.adventureAudienceProvider.sender(invocation.getSender()))
-                .mapErr(Throwable::getMessage);
+            .mapErr(Throwable::getMessage);
     }
 
 }

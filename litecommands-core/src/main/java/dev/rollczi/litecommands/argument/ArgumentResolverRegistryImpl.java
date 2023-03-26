@@ -37,6 +37,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
     }
 
     class ExpectedTypeIndex {
+
         private final Map<Class<?>, ContextTypeIndex<?>> resolversByContext = new HashMap<>();
 
         @SuppressWarnings("unchecked")
@@ -61,10 +62,12 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
 
             return contextTypeIndex.getResolver(indexKey);
         }
+
     }
 
 
     class ContextTypeIndex<EXPECTED> {
+
         private final Map<Class<?>, ArgumentKeyIndex<EXPECTED, ?>> containersByContext = new HashMap<>();
 
         @SuppressWarnings("unchecked")
@@ -89,9 +92,11 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
 
             return argumentKeyIndex.getResolver(indexKey);
         }
+
     }
 
     class ArgumentKeyIndex<EXPECTED, ARGUMENT extends Argument<EXPECTED>> {
+
         private final Map<ArgumentKey, ArgumentParser<SENDER, EXPECTED, ARGUMENT>> resolversByKey = new HashMap<>();
 
         void putResolver(
@@ -106,6 +111,7 @@ public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverReg
         ) {
             return Optional.ofNullable(this.resolversByKey.get(indexKey.argumentKey()));
         }
+
     }
 
     private class UniversalIndex {

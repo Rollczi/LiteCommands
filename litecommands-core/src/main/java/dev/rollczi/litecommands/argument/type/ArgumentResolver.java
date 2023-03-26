@@ -15,4 +15,5 @@ public interface ArgumentResolver<SENDER, TYPE> extends
     default SuggestionResult suggest(Invocation<SENDER> invocation, Argument<TYPE> argument, SuggestionContext suggestion) {
         return SuggestionResult.of();
     }
+
 }

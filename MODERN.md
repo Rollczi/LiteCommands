@@ -1,4 +1,5 @@
 Modern TODO
+
 - [x] @Route
 - [x] @RootRoute
 - [x] @Execute
@@ -27,8 +28,12 @@ Modern TODO
 - [ ] @Cooldown - Określa cza s, przez który użytkownik nie może ponownie użyć danej komendy po jej wykonaniu.
 - [ ] @Cooldown(second = 10, bypass = "myplugin.bypass.cooldown", scope = CooldownScope.GLOBAL)
 - [ ] @MaxCalls(second = 10, max = 5)
-- [ ] @Delay - Adnotacja ta może być użyta przed metodą, aby określić czas opóźnienia (w milisekundach) przed wykonaniem danej metody.
-- [ ] ??? @Warmup - Adnotacja ta pozwala na określenie czasu, przez który komenda będzie miała stan "rozgrzewania", czyli czasu, w którym użytkownik będzie miał możliwość anulowania wykonania komendy. Po tym czasie komenda zostanie wykonana automatycznie. Ta adnotacja jest przydatna, gdy chcesz dać graczowi czas na zastanowienie się przed wykonaniem danej akcji.
+- [ ] @Delay - Adnotacja ta może być użyta przed metodą, aby określić czas opóźnienia (w milisekundach) przed wykonaniem
+  danej metody.
+- [ ] ??? @Warmup - Adnotacja ta pozwala na określenie czasu, przez który komenda będzie miała stan "rozgrzewania",
+  czyli czasu, w którym użytkownik będzie miał możliwość anulowania wykonania komendy. Po tym czasie komenda zostanie
+  wykonana automatycznie. Ta adnotacja jest przydatna, gdy chcesz dać graczowi czas na zastanowienie się przed
+  wykonaniem danej akcji.
 - [ ] @Confirmation .confirmation()
 - [x] @Context
 - [ ] .debugger(true)

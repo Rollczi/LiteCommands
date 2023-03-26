@@ -11,7 +11,8 @@ public final class Preconditions {
 
     @Contract("false, _ -> fail")
     public static void checkState(boolean value, String message) {
-        if (!value) throw new IllegalStateException(message);
+        if (!value)
+            throw new IllegalStateException(message);
     }
 
     @Contract("null, _ -> fail")

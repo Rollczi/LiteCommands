@@ -24,4 +24,5 @@ public class InvalidUsage<SENDER> {
     public Schematic getSchematic() {
         return schematic;
     }
+
 }

@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.annotations.argument;
 
+import dev.rollczi.litecommands.annotations.command.ParameterPreparedArgument;
+import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentParser;
 import dev.rollczi.litecommands.argument.ArgumentResolverRegistry;
-import dev.rollczi.litecommands.annotations.command.ParameterPreparedArgument;
-import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 
 import java.lang.annotation.Annotation;

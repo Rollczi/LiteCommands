@@ -1,7 +1,5 @@
 package dev.rollczi.litecommands.annotations.command;
 
-import dev.rollczi.litecommands.argument.type.baisc.AbstractNumberArgumentResolver;
-import dev.rollczi.litecommands.argument.type.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.ArgAnnotationResolver;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -11,6 +9,8 @@ import dev.rollczi.litecommands.argument.ArgumentResolverRegistry;
 import dev.rollczi.litecommands.argument.ArgumentResolverRegistry.IndexKey;
 import dev.rollczi.litecommands.argument.ArgumentResolverRegistryImpl;
 import dev.rollczi.litecommands.argument.PreparedArgument;
+import dev.rollczi.litecommands.argument.type.baisc.AbstractNumberArgumentResolver;
+import dev.rollczi.litecommands.argument.type.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -69,7 +69,7 @@ class MethodCommandExecutorServiceTest {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
 
-        assertThrows(IllegalArgumentException.class, () ->  new MethodCommandExecutorService<>().create(testCommand, method));
+        assertThrows(IllegalArgumentException.class, () -> new MethodCommandExecutorService<>().create(testCommand, method));
     }
 
 }

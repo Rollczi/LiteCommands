@@ -31,6 +31,7 @@ public interface ArgumentResolverRegistry<SENDER> {
         public ArgumentKey argumentKey() {
             return this.argumentKey;
         }
+
         public Class<EXPECTED> expectedType() {
             return this.expectedType;
         }

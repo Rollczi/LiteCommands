@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.inject;
 
-import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class Injector<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    private  <T> T createInstance(Class<T> type, Function<Class<?>, Object> instanceProvider) {
+    private <T> T createInstance(Class<T> type, Function<Class<?>, Object> instanceProvider) {
         List<Constructor<?>> constructors = Arrays.stream(type.getDeclaredConstructors())
             .filter(constructor -> constructor.isAnnotationPresent(Inject.class) || constructor.getParameterCount() == 0)
             .sorted((o1, o2) -> Integer.compare(o2.getParameterCount(), o1.getParameterCount()))
@@ -58,7 +58,8 @@ public class Injector<SENDER> {
                 constructor.setAccessible(true);
 
                 return (T) constructor.newInstance(parameters);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 exceptions.add(new InjectorException("Cannot create instance of " + type.getName(), e));
             }
         }

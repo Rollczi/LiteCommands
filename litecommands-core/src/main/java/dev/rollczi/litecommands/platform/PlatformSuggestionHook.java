@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 @FunctionalInterface
 public interface PlatformSuggestionHook<SENDER> {
-    
+
     SuggestionResult suggest(Invocation<SENDER> invocation);
-    
+
 }

@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.annotations.argument;
 
+import dev.rollczi.litecommands.annotations.command.ParameterPreparedArgument;
 import dev.rollczi.litecommands.argument.ArgumentParser;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.annotations.command.ParameterPreparedArgument;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.wrapper.WrapperFormat;
 

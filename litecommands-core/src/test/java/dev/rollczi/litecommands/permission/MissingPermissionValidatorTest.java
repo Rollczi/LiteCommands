@@ -4,12 +4,12 @@ import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.editor.CommandEditorContext;
 import dev.rollczi.litecommands.editor.CommandEditorExecutorBuilder;
-import dev.rollczi.litecommands.test.TestExecutor;
-import dev.rollczi.litecommands.test.FakeSender;
-import dev.rollczi.litecommands.test.TestUtil;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.test.AssertCommand;
+import dev.rollczi.litecommands.test.FakeSender;
+import dev.rollczi.litecommands.test.TestExecutor;
+import dev.rollczi.litecommands.test.TestUtil;
 import dev.rollczi.litecommands.validator.CommandValidatorResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static dev.rollczi.litecommands.test.Assert.assertPresent;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MissingPermissionValidatorTest {
 

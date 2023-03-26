@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.builder;
 
 import dev.rollczi.litecommands.argument.ArgumentService;
+import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.command.CommandExecuteResultResolver;
-import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.editor.CommandEditorService;
 import dev.rollczi.litecommands.platform.LiteSettings;

@@ -8,12 +8,12 @@ public final class LiteCommandsUtil {
     /**
      * Checks if name and aliases are consistent with LiteCommands rules.
      * <p>
-     *     Name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
-     *     Aliases cannot be null, cannot contain null, cannot contain empty, cannot contain two spaces in a row, cannot start or end with space, cannot contain different count of words than name
-     *     If name and aliases are consistent, returns true
+     * Name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
+     * Aliases cannot be null, cannot contain null, cannot contain empty, cannot contain two spaces in a row, cannot start or end with space, cannot contain different count of words than name
+     * If name and aliases are consistent, returns true
      * </p>
      * <p>
-     *     Example:
+     * Example:
      * </p>
      * <ul>
      *     <li>name: "command", aliases: ["command-1", "command-2"] - true</li>
@@ -27,11 +27,13 @@ public final class LiteCommandsUtil {
      *     <li>name: "command", aliases: ["command-1", null, "command-2"] - throws NullPointerException</li>
      * </ul>
      *
-     * @param name command name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
+     * @param name    command name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
      * @param aliases aliases name cannot be null, cannot contain null, cannot contain empty, cannot contain two spaces in a row, cannot start or end with space, cannot contain different count of words than name
+     *
      * @return true if name and aliases are consistent, if name and aliases are empty returns false, otherwise throws exception
+     *
      * @throws IllegalArgumentException if name or aliases are not consistent, if name or aliases contain two spaces in a row, if name or aliases start or end with space
-     * @throws NullPointerException if name or aliases are null
+     * @throws NullPointerException     if name or aliases are null
      * @see #checkName(String)
      */
     public static boolean checkConsistent(String name, String[] aliases) {
@@ -63,10 +65,10 @@ public final class LiteCommandsUtil {
     /**
      * Checks if name is consistent
      * <p>
-     *     Name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
+     * Name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
      * </p>
      * <p>
-     *     Example:
+     * Example:
      * </p>
      * <ul>
      *     <li>name: "command" - true</li>
@@ -78,11 +80,12 @@ public final class LiteCommandsUtil {
      *     <li>name: "" - false</li>
      * </ul>
      *
-     *
      * @param name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
+     *
      * @return true if name is not empty, otherwise throws exception
+     *
      * @throws IllegalArgumentException if name contains two spaces in a row, if name start or end with space
-     * @throws NullPointerException if name is null
+     * @throws NullPointerException     if name is null
      * @see #checkConsistent(String, String[])
      */
     public static boolean checkName(String name) {

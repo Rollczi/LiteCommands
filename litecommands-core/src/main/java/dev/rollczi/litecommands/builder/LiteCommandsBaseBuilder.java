@@ -1,9 +1,14 @@
 package dev.rollczi.litecommands.builder;
 
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.LiteCommandsBase;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentParser;
 import dev.rollczi.litecommands.argument.ArgumentResolverRegistry;
 import dev.rollczi.litecommands.argument.ArgumentService;
+import dev.rollczi.litecommands.bind.Bind;
+import dev.rollczi.litecommands.bind.BindContextual;
+import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
@@ -12,11 +17,6 @@ import dev.rollczi.litecommands.command.CommandExecuteResultMapper;
 import dev.rollczi.litecommands.command.CommandExecuteResultResolver;
 import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.LiteCommandsBase;
-import dev.rollczi.litecommands.bind.Bind;
-import dev.rollczi.litecommands.bind.BindContextual;
-import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.editor.CommandEditor;
 import dev.rollczi.litecommands.editor.CommandEditorContext;
 import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
@@ -35,8 +35,8 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
-        LiteCommandsBuilder<SENDER, C, B>,
-        LiteCommandsInternalBuilderApi<SENDER, C> {
+    LiteCommandsBuilder<SENDER, C, B>,
+    LiteCommandsInternalBuilderApi<SENDER, C> {
 
     protected final Class<SENDER> senderClass;
     protected final Platform<SENDER, C> platform;
@@ -98,16 +98,16 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
      * Base constructor
      */
     protected LiteCommandsBaseBuilder(
-            Class<SENDER> senderClass,
-            Platform<SENDER, C> platform,
-            LiteBuilderPreProcessor<SENDER, C> builderProcessor,
-            LiteBuilderPostProcessor<SENDER, C> postProcessor,
-            CommandEditorService<SENDER> commandEditorService,
-            CommandValidatorService<SENDER> commandValidatorService, ArgumentService<SENDER> argumentService,
-            BindRegistry<SENDER> bindRegistry,
-            WrappedExpectedService wrappedExpectedService,
-            CommandExecuteResultResolver<SENDER> resultResolver,
-            CommandEditorContextRegistry<SENDER> commandEditorContextRegistry
+        Class<SENDER> senderClass,
+        Platform<SENDER, C> platform,
+        LiteBuilderPreProcessor<SENDER, C> builderProcessor,
+        LiteBuilderPostProcessor<SENDER, C> postProcessor,
+        CommandEditorService<SENDER> commandEditorService,
+        CommandValidatorService<SENDER> commandValidatorService, ArgumentService<SENDER> argumentService,
+        BindRegistry<SENDER> bindRegistry,
+        WrappedExpectedService wrappedExpectedService,
+        CommandExecuteResultResolver<SENDER> resultResolver,
+        CommandEditorContextRegistry<SENDER> commandEditorContextRegistry
     ) {
         this.senderClass = senderClass;
         this.platform = platform;

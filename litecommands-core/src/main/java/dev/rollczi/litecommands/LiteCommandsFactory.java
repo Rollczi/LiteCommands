@@ -20,22 +20,22 @@ public final class LiteCommandsFactory {
     }
 
     public static <SENDER, C extends LiteSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
-         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform)
-             .resultHandler(Throwable.class, (invocation, result) -> result.printStackTrace())
+        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform)
+            .resultHandler(Throwable.class, (invocation, result) -> result.printStackTrace())
 
-             .wrapperFactory(new OptionWrappedExpectedFactory())
-             .wrapperFactory(new CompletableFutureWrappedExpectedFactory())
+            .wrapperFactory(new OptionWrappedExpectedFactory())
+            .wrapperFactory(new CompletableFutureWrappedExpectedFactory())
 
-             .contextualBind(senderClass, invocation -> Result.ok(invocation.getSender()))
+            .contextualBind(senderClass, invocation -> Result.ok(invocation.getSender()))
 
-             .contextualBind(String[].class, invocation -> Result.ok(invocation.arguments()))
-             .contextualBind(PlatformSender.class, invocation -> Result.ok(invocation.getPlatformSender()))
-             .contextualBind(Invocation.class, invocation -> Result.ok(invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
+            .contextualBind(String[].class, invocation -> Result.ok(invocation.arguments()))
+            .contextualBind(PlatformSender.class, invocation -> Result.ok(invocation.getPlatformSender()))
+            .contextualBind(Invocation.class, invocation -> Result.ok(invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
-             .validator(new MissingPermissionValidator<>())
-             .resultMapper(MissingPermissions.class, new GuideMissingPermission<>())
+            .validator(new MissingPermissionValidator<>())
+            .resultMapper(MissingPermissions.class, new GuideMissingPermission<>())
 
-             .argument(String.class, new StringArgumentResolver<>());
+            .argument(String.class, new StringArgumentResolver<>());
     }
 
 }

@@ -82,8 +82,6 @@ public class FakePlatform implements Platform<FakeSender, FakeConfig> {
         Invocation<FakeSender> invocation = new Invocation<>(fakeSender, fakePlatformSender, label, label, args);
 
 
-
-
     }
 
 }

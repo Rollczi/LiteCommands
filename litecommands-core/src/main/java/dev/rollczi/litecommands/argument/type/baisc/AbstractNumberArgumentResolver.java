@@ -72,4 +72,5 @@ public abstract class AbstractNumberArgumentResolver<SENDER, T extends Number> e
     public static <SENDER> OneArgumentResolver<SENDER, Double> ofDouble() {
         return AbstractNumberArgumentResolver.of(Arrays.asList(0.0, 0.5, 1.0, 1.5, 5.5), Double::parseDouble);
     }
+
 }

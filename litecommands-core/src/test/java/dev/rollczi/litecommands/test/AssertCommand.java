@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public class AssertCommand {
 
-    public static <T>CommandRoute<T> assertSingle(CommandEditorContext<T> context) {
+    public static <T> CommandRoute<T> assertSingle(CommandEditorContext<T> context) {
         Collection<CommandRoute<T>> routeCollection = context.build(CommandRoute.createRoot());
 
         if (routeCollection.size() != 1) {

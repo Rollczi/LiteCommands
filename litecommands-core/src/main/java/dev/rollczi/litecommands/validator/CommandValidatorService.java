@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.validator;
 
-import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.ArrayList;
 import java.util.List;

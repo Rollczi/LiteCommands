@@ -61,6 +61,7 @@ public interface CommandMetaType<T> {
         public List<T> out(List<T> value) {
             return new ArrayList<>(value);
         }
+
     }
 
     class CommandMetaTypeSet<T> implements CommandMetaType<Set<T>> {

@@ -19,4 +19,5 @@ public class BukkitOnlyPlayerContextual<MESSAGE> implements BindContextual<Comma
     public Result<Player, Object> extract(Invocation<CommandSender> invocation) {
         return Option.of(invocation.getSender()).is(Player.class).toResult(onlyPlayerMessage);
     }
+
 }

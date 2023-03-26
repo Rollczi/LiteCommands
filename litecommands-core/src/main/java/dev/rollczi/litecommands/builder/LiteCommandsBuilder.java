@@ -1,15 +1,15 @@
 package dev.rollczi.litecommands.builder;
 
+import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentParser;
+import dev.rollczi.litecommands.bind.Bind;
+import dev.rollczi.litecommands.bind.BindContextual;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.command.CommandExecuteResultHandler;
 import dev.rollczi.litecommands.command.CommandExecuteResultMapper;
-import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.bind.Bind;
-import dev.rollczi.litecommands.bind.BindContextual;
 import dev.rollczi.litecommands.editor.CommandEditor;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.validator.CommandValidator;

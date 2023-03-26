@@ -98,6 +98,7 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitSettings> {
 
             return check.isPermitted();
         }
+
     }
 
 }

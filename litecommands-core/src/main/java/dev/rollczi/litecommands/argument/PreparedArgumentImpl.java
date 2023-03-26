@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.wrapper.WrapperFormat;
 
 import java.util.List;
@@ -37,4 +37,5 @@ public class PreparedArgumentImpl<SENDER, EXPECTED> implements PreparedArgument<
     public static <SENDER, E, A extends Argument<E>> PreparedArgumentImpl<SENDER, E> create(A argument, ArgumentParser<SENDER, E, A> resolver) {
         return new PreparedArgumentImpl<>(argument, resolver, (invocation, arguments) -> resolver.parse(invocation, argument, arguments));
     }
+
 }

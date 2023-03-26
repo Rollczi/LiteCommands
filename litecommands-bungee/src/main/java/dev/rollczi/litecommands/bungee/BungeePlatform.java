@@ -99,5 +99,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
 
             return super.hasPermission(sender);
         }
+
     }
+
 }

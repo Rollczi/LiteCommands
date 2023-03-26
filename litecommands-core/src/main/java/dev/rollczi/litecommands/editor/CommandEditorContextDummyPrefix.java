@@ -53,4 +53,5 @@ class CommandEditorContextDummyPrefix<SENDER> extends CommandEditorContextBase<S
         this.parent = this.parent.applyOnRoute(apply);
         return this;
     }
+
 }

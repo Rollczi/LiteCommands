@@ -34,4 +34,5 @@ public class FailedReason {
     public String toString() {
         return "FailedReason(" + reason + ")";
     }
+
 }

@@ -42,4 +42,5 @@ public class LocationArgument implements ArgumentResolver<CommandSender, Locatio
             "10 35 -10"
         );
     }
+
 }

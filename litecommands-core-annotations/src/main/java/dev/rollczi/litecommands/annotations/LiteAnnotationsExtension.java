@@ -7,8 +7,10 @@ import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResol
 import dev.rollczi.litecommands.annotations.command.ParameterWithoutAnnotationResolver;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.context.ContextAnnotationResolver;
+import dev.rollczi.litecommands.annotations.editor.AnnotationCommandEditorService;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteAnnotationResolver;
+import dev.rollczi.litecommands.annotations.inject.Injector;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import dev.rollczi.litecommands.annotations.permission.PermissionExcluded;
 import dev.rollczi.litecommands.annotations.permission.Permissions;
@@ -18,14 +20,12 @@ import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaAppli
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMethodResolver;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationRegistry;
+import dev.rollczi.litecommands.annotations.route.RootRoute;
+import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.argument.ArgumentResolverRegistry;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
-import dev.rollczi.litecommands.annotations.editor.AnnotationCommandEditorService;
-import dev.rollczi.litecommands.annotations.inject.Injector;
-import dev.rollczi.litecommands.annotations.route.RootRoute;
-import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
@@ -161,7 +161,9 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
     }
 
     interface Processor<SENDER> {
+
         void process(LiteAnnotationsExtension<SENDER, ?> extension, LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern);
+
     }
 
     public static class Builder {
@@ -211,4 +213,5 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
         }
 
     }
+
 }

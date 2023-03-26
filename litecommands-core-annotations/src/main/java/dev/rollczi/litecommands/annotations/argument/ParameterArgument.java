@@ -67,7 +67,7 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
         Class<A> annotationType = (Class<A>) annotation.annotationType();
         WrapperFormat<?> wrapperFormat = WrapperParameterUtil.wrapperFormat(wrappedExpectedService, parameter);
 
-        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapperFormat<EXPECTED>)  wrapperFormat);
+        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapperFormat<EXPECTED>) wrapperFormat);
     }
 
 }

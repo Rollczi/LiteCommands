@@ -39,4 +39,5 @@ public class BukkitPlayerArgument<MESSAGE> extends OneArgumentResolver<CommandSe
             .map(Player::getName)
             .collect(SuggestionResult.collector());
     }
+
 }

@@ -27,11 +27,11 @@ open class TestImplementation {
         dependencies.add(dependency)
     }
 
-    internal fun projects() : List<Project> {
+    internal fun projects(): List<Project> {
         return projects
     }
 
-    internal fun dependencies() : List<String> {
+    internal fun dependencies(): List<String> {
         return dependencies
     }
 

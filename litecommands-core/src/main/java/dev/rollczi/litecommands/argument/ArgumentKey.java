@@ -41,8 +41,10 @@ public class ArgumentKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ArgumentKey that = (ArgumentKey) o;
         return namespace.equals(that.namespace) && key.equals(that.key);
     }
@@ -51,4 +53,5 @@ public class ArgumentKey {
     public int hashCode() {
         return Objects.hash(namespace, key);
     }
+
 }

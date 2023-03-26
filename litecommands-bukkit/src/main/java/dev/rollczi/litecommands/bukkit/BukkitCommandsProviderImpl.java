@@ -37,7 +37,8 @@ class BukkitCommandsProviderImpl implements BukkitCommandsProvider {
 
                 commandMapField.setAccessible(true);
                 return (CommandMap) commandMapField.get(server);
-            } catch (NoSuchFieldException | IllegalAccessException exception) {
+            }
+            catch (NoSuchFieldException | IllegalAccessException exception) {
                 throw new RuntimeException(exception);
             }
         });

@@ -85,4 +85,5 @@ public interface CommandEditorContext<SENDER> extends CommandMetaHolder {
     static <SENDER> CommandEditorContext<SENDER> createRoot() {
         return new CommandEditorContextRootImpl<>();
     }
+
 }

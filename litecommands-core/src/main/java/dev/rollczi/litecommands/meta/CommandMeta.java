@@ -28,8 +28,7 @@ public interface CommandMeta {
 
     List<String> permissionsExcluded();
 
-    @NotNull
-    <T> T get(CommandKey<T> key);
+    @NotNull <T> T get(CommandKey<T> key);
 
     CommandMeta clear();
 

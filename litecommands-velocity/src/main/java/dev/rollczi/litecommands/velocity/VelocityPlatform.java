@@ -78,10 +78,10 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
         @Override
         public List<String> suggest(Invocation invocation) {
             return this.suggestionListener.suggest(this.newInvocation(invocation, true))
-                    .getSuggestions()
-                    .stream()
-                    .map(Suggestion::multilevel)
-                    .collect(Collectors.toList());
+                .getSuggestions()
+                .stream()
+                .map(Suggestion::multilevel)
+                .collect(Collectors.toList());
         }
 
         // TODO suggestAsync
@@ -94,12 +94,14 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
             }
 
             return new dev.rollczi.litecommands.invocation.Invocation<>(
-                    invocation.source(),
-                    new VelocitySender(invocation.source()),
-                    this.commandSection.getName(),
-                    invocation.alias(),
-                    arguments.toArray(new String[0])
+                invocation.source(),
+                new VelocitySender(invocation.source()),
+                this.commandSection.getName(),
+                invocation.alias(),
+                arguments.toArray(new String[0])
             );
         }
+
     }
+
 }

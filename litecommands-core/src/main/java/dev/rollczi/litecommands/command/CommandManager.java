@@ -124,6 +124,7 @@ public class CommandManager<SENDER, C extends LiteSettings> {
     }
 
     private static class CommandRouteFindResult<SENDER> {
+
         private final CommandRoute<SENDER> commandRoute;
         private final int childIndex;
 
@@ -131,6 +132,7 @@ public class CommandManager<SENDER, C extends LiteSettings> {
             this.commandRoute = commandRoute;
             this.childIndex = childIndex;
         }
+
     }
 
 }

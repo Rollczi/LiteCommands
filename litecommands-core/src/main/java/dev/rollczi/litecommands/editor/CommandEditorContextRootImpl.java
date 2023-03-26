@@ -89,7 +89,8 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
 
         child = operator.apply(child);
         this.children.put(name, child);
-        return this;    }
+        return this;
+    }
 
     @Override
     public @NotNull CommandEditorContext<SENDER> appendChild(CommandEditorContext<SENDER> context) {
@@ -145,11 +146,13 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
 
                 if (childrenMeta.containsKey(child.name())) {
                     childrenMeta.get(child.name()).apply(context.getMeta());
-                } else {
+                }
+                else {
                     childrenMeta.put(child.name(), context.getMeta().copy().apply(this.meta));
                 }
 
-            } else {
+            }
+            else {
                 children.put(child.name(), child);
                 childrenMeta.put(child.name(), context.getMeta().copy());
             }

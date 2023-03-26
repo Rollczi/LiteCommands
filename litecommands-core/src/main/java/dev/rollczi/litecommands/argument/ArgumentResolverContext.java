@@ -30,6 +30,7 @@ public class ArgumentResolverContext<E> {
     }
 
     public static <E> ArgumentResolverContext<E> create(int childIndex) {
-        return new ArgumentResolverContext<>(childIndex , null);
+        return new ArgumentResolverContext<>(childIndex, null);
     }
+
 }
