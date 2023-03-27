@@ -11,15 +11,20 @@ import java.util.function.Supplier;
 public class OptionWrappedExpectedFactory implements WrappedExpectedFactory {
 
     @Override
-    public <EXPECTED> WrappedExpected<EXPECTED> wrap(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED> info) {
+    public <EXPECTED> WrappedExpected<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
         Class<EXPECTED> expectedType = info.getType();
 
         return new OptionWrapper<>(expectedType, valueToWrap);
     }
 
     @Override
-    public <EXPECTED> Option<WrappedExpected<EXPECTED>> empty(WrapperFormat<EXPECTED> info) {
-        return Option.of(new OptionWrapper<>(info.getType(), () -> null));
+    public <EXPECTED> WrappedExpected<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
+        return new OptionWrapper<>(info.getType(), () -> null);
+    }
+
+    @Override
+    public boolean canCreateEmpty() {
+        return true;
     }
 
     @Override

@@ -12,7 +12,8 @@ public class InvalidUsage<SENDER> {
     public enum Cause {
 
         UNKNOWN_COMMAND,
-        MISSING_ARGUMENT,
+        TOO_MANY_ARGUMENTS,
+        TOO_FEW_ARGUMENTS,
         INVALID_ARGUMENT,
 
     }

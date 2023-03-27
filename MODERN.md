@@ -8,7 +8,7 @@ Modern TODO
 - [x] @Arg
 - [x] @Arg Option<T>
 - [ ] @Arg @Strict Option<T>
-- [ ] @Arg Optional<T>
+- [x] @Arg Optional<T>
 - [x] @Arg CompletableFuture<User>
 - [ ] Support String and basic types
 - [ ] @Joiner String

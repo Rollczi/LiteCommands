@@ -12,18 +12,13 @@ import java.util.function.Supplier;
 public class CompletableFutureWrappedExpectedFactory implements WrappedExpectedFactory {
 
     @Override
-    public <EXPECTED> WrappedExpected<EXPECTED> wrap(
+    public <EXPECTED> WrappedExpected<EXPECTED> create(
         ValueToWrap<EXPECTED> valueToWrap,
-        WrapperFormat<EXPECTED> info
+        WrapperFormat<EXPECTED, ?> info
     ) {
         Class<EXPECTED> expectedType = info.getType();
 
         return new CompletableFutureWrapper<>(expectedType, valueToWrap);
-    }
-
-    @Override
-    public <EXPECTED> Option<WrappedExpected<EXPECTED>> empty(WrapperFormat<EXPECTED> info) {
-        return Option.none();
     }
 
     @Override

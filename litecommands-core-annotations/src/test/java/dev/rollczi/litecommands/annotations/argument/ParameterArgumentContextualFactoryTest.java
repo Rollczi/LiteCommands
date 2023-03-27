@@ -10,8 +10,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ParameterArgumentContextualFactoryTest {
 
@@ -44,7 +46,7 @@ class ParameterArgumentContextualFactoryTest {
 
         assertEquals("@Arg String arg0", parameterArgument.getName());
         assertEquals(String.class, parameterArgument.getWrapperFormat().getType());
-        assertEquals(Void.class, parameterArgument.getWrapperFormat().getWrapperType());
+        assertFalse(parameterArgument.getWrapperFormat().hasWrapper());
         assertEquals(Arg.class, parameterArgument.getAnnotationType());
 
         ParameterArgument<?, ?> secondContextual = ParameterArgument.create(wrappedExpectedService, parameters[1], parameters[1].getAnnotation(Arg.class));
@@ -52,7 +54,7 @@ class ParameterArgumentContextualFactoryTest {
 
         assertEquals("@Arg int arg1", parameterArgument2.getName());
         assertEquals(int.class, parameterArgument2.getWrapperFormat().getType());
-        assertEquals(Void.class, parameterArgument2.getWrapperFormat().getWrapperType());
+        assertFalse(parameterArgument2.getWrapperFormat().hasWrapper());
         assertEquals(Arg.class, parameterArgument2.getAnnotationType());
     }
 

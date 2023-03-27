@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.unit;
 
+import dev.rollczi.litecommands.argument.ArgumentResolverContext;
 import dev.rollczi.litecommands.argument.PreparedArgument;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
 import dev.rollczi.litecommands.command.CommandExecutor;
@@ -26,7 +27,7 @@ public class TestExecutor<SENDER> implements CommandExecutor<SENDER> {
     }
 
     @Override
-    public CommandExecutorMatchResult match(Invocation<SENDER> invocation, PreparedArgumentIterator<SENDER> cachedArgumentResolver) {
+    public CommandExecutorMatchResult match(Invocation<SENDER> invocation, ArgumentResolverContext<?> resolverContext) {
         return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(null, Void.class));
     }
 

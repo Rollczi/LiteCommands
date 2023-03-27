@@ -6,26 +6,26 @@ import panda.std.Option;
 public class ArgumentResolverContext<E> {
 
     private final int lastResolvedRawArgument;
-    private final @Nullable ArgumentResult<E> lastArgumentResult;
+    private final @Nullable PreparedArgumentResult<E> lastArgumentResult;
 
-    private ArgumentResolverContext(int lastResolvedRawArgument, @Nullable ArgumentResult<E> lastArgumentResult) {
+    private ArgumentResolverContext(int lastResolvedRawArgument, @Nullable PreparedArgumentResult<E> lastArgumentResult) {
         this.lastResolvedRawArgument = lastResolvedRawArgument;
         this.lastArgumentResult = lastArgumentResult;
     }
 
-    int getLastResolvedRawArgument() {
+    public int getLastResolvedRawArgument() {
         return this.lastResolvedRawArgument;
     }
 
-    public Option<ArgumentResult<E>> getLastArgumentResult() {
+    public Option<PreparedArgumentResult<E>> getLastArgumentResult() {
         return Option.of(this.lastArgumentResult);
     }
 
-    <T> ArgumentResolverContext<T> with(int consumed, ArgumentResult<T> lastArgumentResult) {
+    public <T> ArgumentResolverContext<T> with(int consumed, PreparedArgumentResult<T> lastArgumentResult) {
         return new ArgumentResolverContext<>(this.lastResolvedRawArgument + consumed, lastArgumentResult);
     }
 
-    <T> ArgumentResolverContext<T> withFailure(ArgumentResult<T> argumentResult) {
+    public <T> ArgumentResolverContext<T> withFailure(PreparedArgumentResult<T> argumentResult) {
         return this.with(0, argumentResult);
     }
 

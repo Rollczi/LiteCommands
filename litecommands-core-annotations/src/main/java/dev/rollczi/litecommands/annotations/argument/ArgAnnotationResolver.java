@@ -31,7 +31,7 @@ public class ArgAnnotationResolver<SENDER> implements ParameterWithAnnotationRes
         ArgumentParser<SENDER, E, Argument<E>> parser = argumentResolverRegistry.getResolver(ArgumentResolverRegistry.IndexKey.from(argument))
             .orElseThrow(() -> new IllegalArgumentException("Cannot find resolver for " + argument));
 
-        return new ArgPreparedArgument<>(argument, parser, (invocation, arguments) -> parser.parse(invocation, argument, arguments));
+        return new ArgPreparedArgument<>(argument, parser, (invocation, arguments) -> parser.parse(invocation, argument, arguments), wrappedExpectedService.getWrappedExpectedFactory(argument.getWrapperFormat()));
     }
 
 }

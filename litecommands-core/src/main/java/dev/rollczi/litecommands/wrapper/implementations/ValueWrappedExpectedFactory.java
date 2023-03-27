@@ -11,15 +11,10 @@ import java.util.function.Supplier;
 public class ValueWrappedExpectedFactory implements WrappedExpectedFactory {
 
     @Override
-    public <EXPECTED> WrappedExpected<EXPECTED> wrap(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED> info) {
+    public <EXPECTED> WrappedExpected<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
         Class<EXPECTED> expectedType = info.getType();
 
-        return new Expected<>(expectedType, valueToWrap);
-    }
-
-    @Override
-    public <EXPECTED> Option<WrappedExpected<EXPECTED>> empty(WrapperFormat<EXPECTED> info) {
-        return Option.none();
+        return new ValueWrappedExpected<>(expectedType, valueToWrap);
     }
 
     @Override
@@ -27,12 +22,12 @@ public class ValueWrappedExpectedFactory implements WrappedExpectedFactory {
         return Void.class;
     }
 
-    private static class Expected<EXPECTED> implements WrappedExpected<EXPECTED> {
+    private static class ValueWrappedExpected<EXPECTED> implements WrappedExpected<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<EXPECTED> expectedSupplier;
 
-        public Expected(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
+        public ValueWrappedExpected(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
             this.expectedType = expectedType;
             this.expectedSupplier = expectedSupplier;
         }

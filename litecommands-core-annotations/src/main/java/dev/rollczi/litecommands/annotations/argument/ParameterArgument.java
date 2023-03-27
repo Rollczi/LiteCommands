@@ -19,9 +19,9 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
     private final A annotation;
     private final Class<A> annotationType;
 
-    private final WrapperFormat<EXPECTED> wrapperFormat;
+    private final WrapperFormat<EXPECTED, ?> wrapperFormat;
 
-    protected ParameterArgument(Method method, Parameter parameter, int parameterIndex, A annotation, Class<A> annotationType, WrapperFormat<EXPECTED> wrapperFormat) {
+    protected ParameterArgument(Method method, Parameter parameter, int parameterIndex, A annotation, Class<A> annotationType, WrapperFormat<EXPECTED, ?> wrapperFormat) {
         this.method = method;
         this.parameter = parameter;
         this.parameterIndex = parameterIndex;
@@ -51,7 +51,7 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
     }
 
     @Override
-    public WrapperFormat<EXPECTED> getWrapperFormat() {
+    public WrapperFormat<EXPECTED, ?> getWrapperFormat() {
         return wrapperFormat;
     }
 
@@ -65,9 +65,9 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         Class<A> annotationType = (Class<A>) annotation.annotationType();
-        WrapperFormat<?> wrapperFormat = WrapperParameterUtil.wrapperFormat(wrappedExpectedService, parameter);
+        WrapperFormat<?, ?> wrapperFormat = WrapperParameterUtil.wrapperFormat(wrappedExpectedService, parameter);
 
-        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapperFormat<EXPECTED>) wrapperFormat);
+        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapperFormat<EXPECTED, ?>) wrapperFormat);
     }
 
 }

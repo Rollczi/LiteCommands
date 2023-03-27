@@ -12,22 +12,20 @@ public final class WrapperParameterUtil {
     private WrapperParameterUtil() {
     }
 
-    public static WrapperFormat<?> wrapperFormat(WrappedExpectedService wrappedExpectedService, Parameter parameter) {
+    public static WrapperFormat<?, ?> wrapperFormat(WrappedExpectedService wrappedExpectedService, Parameter parameter) {
         Class<?> expectedType = parameter.getType();
-        Class<?> expectedWrapperType = Void.class;
 
         if (wrappedExpectedService.isWrapper(expectedType)) {
-            Option<Class<?>> option = ParameterizedTypeUtil.extractFirstType(parameter);
+            Option<Class<?>> optionGenericType = ParameterizedTypeUtil.extractFirstType(parameter);
 
-            if (option.isEmpty()) {
+            if (optionGenericType.isEmpty()) {
                 throw new IllegalArgumentException("Cannot extract expected type from parameter " + ReflectFormatUtil.parameter(parameter));
             }
 
-            expectedWrapperType = expectedType;
-            expectedType = option.get();
+            return WrapperFormat.of(optionGenericType.get(), expectedType);
         }
 
-        return new WrapperFormat<>(expectedType, expectedWrapperType);
+        return WrapperFormat.notWrapped(expectedType);
     }
 
 }

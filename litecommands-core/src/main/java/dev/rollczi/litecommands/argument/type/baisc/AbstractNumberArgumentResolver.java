@@ -32,7 +32,9 @@ public abstract class AbstractNumberArgumentResolver<SENDER, T extends Number> e
     @Override
     protected ArgumentResult<T> parse(Invocation<SENDER> invocation, Argument<T> context, String argument) {
         try {
-            return ArgumentResult.success(() -> parser.apply(argument));
+            T applied = parser.apply(argument);
+
+            return ArgumentResult.success(() -> applied);
         }
         catch (NumberFormatException e) {
             return ArgumentResult.failure(this.failedReason(invocation, context, argument));
@@ -71,6 +73,14 @@ public abstract class AbstractNumberArgumentResolver<SENDER, T extends Number> e
 
     public static <SENDER> OneArgumentResolver<SENDER, Double> ofDouble() {
         return AbstractNumberArgumentResolver.of(Arrays.asList(0.0, 0.5, 1.0, 1.5, 5.5), Double::parseDouble);
+    }
+
+    public static <SENDER> OneArgumentResolver<SENDER, Float> ofFloat() {
+        return AbstractNumberArgumentResolver.of(Arrays.asList(0.0f, 0.5f, 1.0f, 1.5f, 5.5f), Float::parseFloat);
+    }
+
+    public static <SENDER> OneArgumentResolver<SENDER, Long> ofLong() {
+        return AbstractNumberArgumentResolver.of(Arrays.asList(0L, 1L, 5L, 10L, 50L, 100L, 500L), Long::parseLong);
     }
 
 }

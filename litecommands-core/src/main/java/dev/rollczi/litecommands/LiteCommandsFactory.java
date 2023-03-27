@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.type.baisc.AbstractNumberArgumentResolver;
 import dev.rollczi.litecommands.argument.type.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.builder.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
@@ -12,6 +13,7 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.wrapper.implementations.CompletableFutureWrappedExpectedFactory;
 import dev.rollczi.litecommands.wrapper.implementations.OptionWrappedExpectedFactory;
+import dev.rollczi.litecommands.wrapper.implementations.OptionalWrappedExpectedFactory;
 import panda.std.Result;
 
 public final class LiteCommandsFactory {
@@ -24,6 +26,7 @@ public final class LiteCommandsFactory {
             .resultHandler(Throwable.class, (invocation, result) -> result.printStackTrace())
 
             .wrapperFactory(new OptionWrappedExpectedFactory())
+            .wrapperFactory(new OptionalWrappedExpectedFactory())
             .wrapperFactory(new CompletableFutureWrappedExpectedFactory())
 
             .contextualBind(senderClass, invocation -> Result.ok(invocation.getSender()))
@@ -35,7 +38,10 @@ public final class LiteCommandsFactory {
             .validator(new MissingPermissionValidator<>())
             .resultMapper(MissingPermissions.class, new GuideMissingPermission<>())
 
-            .argument(String.class, new StringArgumentResolver<>());
+            .argument(String.class, new StringArgumentResolver<>())
+
+            .argument(Long.class, AbstractNumberArgumentResolver.ofLong())
+            ;
     }
 
 }

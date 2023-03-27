@@ -15,29 +15,38 @@ public class WrappedExpectedService {
         this.factories.put(factory.getWrapperType(), factory);
     }
 
-    public <EXPECTED> WrappedExpected<EXPECTED> wrap(ValueToWrap<EXPECTED> result, WrapperFormat<EXPECTED> info) {
-        WrappedExpectedFactory factory = this.factories.get(info.getWrapperType());
+    public <EXPECTED> WrappedExpected<EXPECTED> wrap(ValueToWrap<EXPECTED> result, WrapperFormat<EXPECTED, ?> wrapperFormat) {
+        WrappedExpectedFactory factory = this.getWrappedExpectedFactory(wrapperFormat);
 
-        if (factory == null) {
-            factory = this.defaultFactory;
-        }
-
-
-        return factory.wrap(result, info);
+        return factory.create(result, wrapperFormat);
     }
 
-    public <EXPECTED> Option<WrappedExpected<EXPECTED>> empty(WrapperFormat<EXPECTED> context) {
-        WrappedExpectedFactory factory = this.factories.get(context.getWrapperType());
+    public <EXPECTED> Option<WrappedExpected<EXPECTED>> empty(WrapperFormat<EXPECTED, ?> wrapperFormat) {
+        WrappedExpectedFactory factory = this.getWrappedExpectedFactory(wrapperFormat);
 
-        if (factory == null) {
-            factory = this.defaultFactory;
+        if (factory.canCreateEmpty()) {
+            return Option.of(factory.createEmpty(wrapperFormat));
         }
 
-        return factory.empty(context);
+        return Option.none();
     }
 
     public <EXPECTED> boolean isWrapper(Class<EXPECTED> expectedType) {
         return this.factories.containsKey(expectedType);
+    }
+
+    public WrappedExpectedFactory getWrappedExpectedFactory(WrapperFormat<?, ?> wrapperFormat) {
+        if (!wrapperFormat.hasWrapper()) {
+            return this.defaultFactory;
+        }
+
+        WrappedExpectedFactory factory = this.factories.get(wrapperFormat.getWrapperType());
+
+        if (factory == null) {
+            factory = this.defaultFactory;
+        }
+
+        return factory;
     }
 
 }

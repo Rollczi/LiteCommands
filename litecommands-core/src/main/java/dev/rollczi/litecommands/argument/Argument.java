@@ -6,6 +6,6 @@ public interface Argument<EXPECTED> {
 
     String getName();
 
-    WrapperFormat<EXPECTED> getWrapperFormat();
+    WrapperFormat<EXPECTED, ?> getWrapperFormat();
 
 }

@@ -21,8 +21,20 @@ public class Range {
         return max;
     }
 
+    public boolean isExact() {
+        return min == max;
+    }
+
     public boolean isInRange(int count) {
         return count >= min && count <= max;
+    }
+
+    public boolean isAbove(int count) {
+        return count > max;
+    }
+
+    public boolean isBelow(int count) {
+        return count < min;
     }
 
     public static Range range(int min, int max) {

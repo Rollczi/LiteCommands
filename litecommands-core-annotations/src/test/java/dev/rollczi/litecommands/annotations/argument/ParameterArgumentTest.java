@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ParameterArgumentTest {
@@ -29,7 +30,7 @@ class ParameterArgumentTest {
             0,
             parameter.getAnnotation(Arg.class),
             Arg.class,
-            new WrapperFormat<>(String.class, Void.class)
+            WrapperFormat.notWrapped(String.class)
         );
     }
 
@@ -50,11 +51,11 @@ class ParameterArgumentTest {
 
     @Test
     void testGetWrapperFormat() {
-        WrapperFormat<String> wrapperFormat = parameterArgument.getWrapperFormat();
+        WrapperFormat<String, ?> wrapperFormat = parameterArgument.getWrapperFormat();
 
         assertNotNull(wrapperFormat);
         assertEquals(String.class, wrapperFormat.getType());
-        assertEquals(Void.class, wrapperFormat.getWrapperType());
+        assertFalse(wrapperFormat.hasWrapper());
     }
 
     @Test

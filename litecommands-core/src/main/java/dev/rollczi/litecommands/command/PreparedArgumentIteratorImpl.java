@@ -1,51 +1,44 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.argument.ArgumentResolverContext;
-import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.ArgumentService;
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.PreparedArgument;
-import dev.rollczi.litecommands.argument.SuccessfulResult;
+import dev.rollczi.litecommands.argument.PreparedArgumentResult;
+import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.wrapper.WrappedExpected;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 import panda.std.Option;
 import panda.std.Result;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 class PreparedArgumentIteratorImpl<SENDER> implements PreparedArgumentIterator<SENDER> {
 
-    private final ArgumentService<SENDER> argumentService;
-    private final WrappedExpectedService wrappedExpectedService;
-
     private ArgumentResolverContext<?> resolverContext;
 
     PreparedArgumentIteratorImpl(
-        ArgumentService<SENDER> argumentService,
-        WrappedExpectedService wrappedExpectedService,
         int childIndex
     ) {
-        this.argumentService = argumentService;
-        this.wrappedExpectedService = wrappedExpectedService;
         this.resolverContext = ArgumentResolverContext.create(childIndex);
     }
 
     @Override
     public <EXPECTED> Result<Supplier<WrappedExpected<EXPECTED>>, FailedReason> resolveNext(Invocation<SENDER> invocation, PreparedArgument<SENDER, EXPECTED> preparedArgument) {
-        ArgumentResolverContext<EXPECTED> current = this.argumentService.resolve(invocation, preparedArgument, this.resolverContext);
+        ArgumentResolverContext<EXPECTED> current = resolve(invocation, preparedArgument, this.resolverContext);
         this.resolverContext = current;
 
-        Option<ArgumentResult<EXPECTED>> result = current.getLastArgumentResult();
+        Option<PreparedArgumentResult<EXPECTED>> result = current.getLastArgumentResult();
 
         if (result.isEmpty()) {
             throw new IllegalStateException();
         }
 
-        ArgumentResult<EXPECTED> argumentResult = result.get();
+        PreparedArgumentResult<EXPECTED> argumentResult = result.get();
 
-        if (argumentResult.isFailed()) {
-            Option<WrappedExpected<EXPECTED>> wrapper = this.wrappedExpectedService.empty(preparedArgument.getWrapperFormat());
+        if (argumentResult.isFailed()) { // TODO add option disable strict mode and use empty wrapper
+            Option<WrappedExpected<EXPECTED>> wrapper = Option.none();
 
             if (wrapper.isEmpty()) {
                 return Result.error(argumentResult.getFailedReason());
@@ -54,9 +47,48 @@ class PreparedArgumentIteratorImpl<SENDER> implements PreparedArgumentIterator<S
             return Result.ok(wrapper::get);
         }
 
-        SuccessfulResult<EXPECTED> successfulResult = argumentResult.getSuccessfulResult();
+        PreparedArgumentResult.Success<EXPECTED> successfulResult = argumentResult.getSuccess();
 
-        return Result.ok(() -> this.wrappedExpectedService.wrap(successfulResult.getExpectedProvider(), preparedArgument.getWrapperFormat()));
+        return Result.ok(successfulResult.getWrappedExpected());
+    }
+
+    public <EXPECTED> ArgumentResolverContext<EXPECTED> resolve(
+        Invocation<SENDER> invocation,
+        PreparedArgument<SENDER, EXPECTED> preparedArgument,
+        ArgumentResolverContext<?> resolverContext
+    ) {
+
+        Option<? extends PreparedArgumentResult<?>> lastResult = resolverContext.getLastArgumentResult();
+
+        if (lastResult.isPresent() && lastResult.get().isFailed()) {
+            throw new IllegalStateException("Cannot resolve arguments when last argument is failed");
+        }
+
+        Range range = preparedArgument.getRange();
+        int lastResolvedRawArgument = resolverContext.getLastResolvedRawArgument();
+
+        List<String> rawArguments = invocation.argumentsList();
+        int minArguments = range.getMin();
+        int maxArguments = range.getMax() == Integer.MAX_VALUE
+            ? rawArguments.size()
+            : lastResolvedRawArgument + range.getMax();
+
+        maxArguments = Math.min(maxArguments, rawArguments.size());
+
+        if (minArguments > rawArguments.size()) {
+            return resolverContext.withFailure(PreparedArgumentResult.failed(InvalidUsage.Cause.TOO_FEW_ARGUMENTS));
+        }
+
+        List<String> arguments = rawArguments.subList(lastResolvedRawArgument, maxArguments);
+        PreparedArgumentResult<EXPECTED> result = preparedArgument.resolve(invocation, arguments);
+
+        if (result.isFailed()) {
+            return resolverContext.withFailure(result);
+        }
+
+        PreparedArgumentResult.Success<EXPECTED> success = result.getSuccess();
+
+        return resolverContext.with(success.getConsumedRawArguments(), result);
     }
 
 }

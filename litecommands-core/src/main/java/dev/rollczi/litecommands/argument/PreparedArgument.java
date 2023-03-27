@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface PreparedArgument<SENDER, EXPECTED> extends Wrappable<EXPECTED>, Rangeable {
 
-    ArgumentResult<EXPECTED> resolve(Invocation<SENDER> invocation, List<String> arguments);
+    PreparedArgumentResult<EXPECTED> resolve(Invocation<SENDER> invocation, List<String> arguments);
 
 }

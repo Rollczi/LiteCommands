@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command;
 
+import dev.rollczi.litecommands.argument.ArgumentResolverContext;
 import dev.rollczi.litecommands.argument.ArgumentService;
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
@@ -62,9 +63,7 @@ public class CommandManager<SENDER, C extends LiteSettings> {
         FailedReason lastFailedReason = null;
 
         for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
-            PreparedArgumentIterator<SENDER> cachedArgumentResolver = new PreparedArgumentIteratorImpl<>(this.argumentService, this.wrappedArgumentService, findResult.childIndex);
-
-            CommandExecutorMatchResult match = executor.match(invocation, cachedArgumentResolver);
+            CommandExecutorMatchResult match = executor.match(invocation, ArgumentResolverContext.create(findResult.childIndex));
 
             if (match.isFailed()) {
                 FailedReason current = match.getFailedReason();
