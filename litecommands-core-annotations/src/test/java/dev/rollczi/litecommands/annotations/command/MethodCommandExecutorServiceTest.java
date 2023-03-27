@@ -5,9 +5,9 @@ import dev.rollczi.litecommands.annotations.argument.ArgAnnotationResolver;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.context.ContextAnnotationResolver;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.argument.ArgumentResolverRegistry;
-import dev.rollczi.litecommands.argument.ArgumentResolverRegistry.IndexKey;
-import dev.rollczi.litecommands.argument.ArgumentResolverRegistryImpl;
+import dev.rollczi.litecommands.argument.ArgumentService;
+import dev.rollczi.litecommands.argument.ArgumentService.IndexKey;
+import dev.rollczi.litecommands.argument.ArgumentServiceImpl;
 import dev.rollczi.litecommands.argument.PreparedArgument;
 import dev.rollczi.litecommands.argument.type.baisc.AbstractNumberArgumentResolver;
 import dev.rollczi.litecommands.argument.type.baisc.StringArgumentResolver;
@@ -36,7 +36,7 @@ class MethodCommandExecutorServiceTest {
     }
 
     static BindRegistry<TestSender> bindRegistry = new BindRegistry<>();
-    static ArgumentResolverRegistry<TestSender> resolverRegistry = new ArgumentResolverRegistryImpl<>();
+    static ArgumentService<TestSender> resolverRegistry = new ArgumentServiceImpl<>();
     static MethodCommandExecutorService<TestSender> executorFactory = new MethodCommandExecutorService<>();
     static WrappedExpectedService expectedService = new WrappedExpectedService();
 

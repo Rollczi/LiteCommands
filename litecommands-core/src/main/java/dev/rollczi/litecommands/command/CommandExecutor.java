@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.ArgumentResolverContext;
 import dev.rollczi.litecommands.argument.PreparedArgument;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
@@ -13,6 +12,20 @@ public interface CommandExecutor<SENDER> {
 
     CommandMeta getMeta();
 
-    CommandExecutorMatchResult match(Invocation<SENDER> invocation, ArgumentResolverContext<?> resolverContext);
+    CommandExecutorMatchResult match(Invocation<SENDER> invocation, Context context);
+
+    class Context {
+
+        private final int routeBeforeArguments;
+
+        public Context(int routeBeforeArguments) {
+            this.routeBeforeArguments = routeBeforeArguments;
+        }
+
+        public int getRouteBeforeArguments() {
+            return routeBeforeArguments;
+        }
+
+    }
 
 }

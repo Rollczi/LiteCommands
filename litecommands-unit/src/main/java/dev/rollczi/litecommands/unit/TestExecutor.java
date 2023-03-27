@@ -1,33 +1,23 @@
 package dev.rollczi.litecommands.unit;
 
-import dev.rollczi.litecommands.argument.ArgumentResolverContext;
 import dev.rollczi.litecommands.argument.PreparedArgument;
+import dev.rollczi.litecommands.argument.PreparedArgumentResult;
+import dev.rollczi.litecommands.command.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
-import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.command.PreparedArgumentIterator;
-import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import panda.std.Pair;
 
 import java.util.Collections;
 import java.util.List;
 
-public class TestExecutor<SENDER> implements CommandExecutor<SENDER> {
+public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, PreparedArgument<SENDER, ?>> {
 
-    private final CommandMeta meta = CommandMeta.create();
-
-    @Override
-    public List<PreparedArgument<SENDER, ?>> getArguments() {
-        return Collections.emptyList();
+    public TestExecutor() {
+        super(Collections.emptyList());
     }
 
     @Override
-    public CommandMeta getMeta() {
-        return meta;
-    }
-
-    @Override
-    public CommandExecutorMatchResult match(Invocation<SENDER> invocation, ArgumentResolverContext<?> resolverContext) {
+    protected CommandExecutorMatchResult match(List<Pair<PreparedArgument<SENDER, ?>, PreparedArgumentResult.Success<?>>> results) {
         return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(null, Void.class));
     }
 

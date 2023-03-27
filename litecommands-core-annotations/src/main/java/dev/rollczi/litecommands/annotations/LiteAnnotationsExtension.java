@@ -22,7 +22,7 @@ import dev.rollczi.litecommands.annotations.processor.CommandAnnotationProcessor
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationRegistry;
 import dev.rollczi.litecommands.annotations.route.RootRoute;
 import dev.rollczi.litecommands.annotations.route.Route;
-import dev.rollczi.litecommands.argument.ArgumentResolverRegistry;
+import dev.rollczi.litecommands.argument.ArgumentService;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
@@ -138,7 +138,7 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
     public static <SENDER, C extends LiteSettings> LiteAnnotationsExtension<SENDER, C> create(Builder commands) {
         return new LiteAnnotationsExtension<SENDER, C>(commands).beforeRegister((extension, builder, pattern) -> {
             WrappedExpectedService wrappedExpectedService = pattern.getWrappedExpectedContextualService();
-            ArgumentResolverRegistry<SENDER> argumentResolverRegistry = pattern.getArgumentService().getResolverRegistry();
+            ArgumentService<SENDER> argumentService = pattern.getArgumentService();
 
             extension.command()
                 // class or method
@@ -154,7 +154,7 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
                 .annotation(Execute.class, new ExecuteAnnotationResolver<>(extension.commandExecutorFactory))
 
                 // argument
-                .parameterAnnotation(Arg.class, new ArgAnnotationResolver<>(wrappedExpectedService, argumentResolverRegistry))
+                .parameterAnnotation(Arg.class, new ArgAnnotationResolver<>(wrappedExpectedService, argumentService))
                 .parameterAnnotation(Context.class, new ContextAnnotationResolver<>(pattern.getBindRegistry(), wrappedExpectedService))
             ;
         });

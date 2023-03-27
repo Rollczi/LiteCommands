@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ArgumentResolverRegistryImpl<SENDER> implements ArgumentResolverRegistry<SENDER> {
+public class ArgumentServiceImpl<SENDER> implements ArgumentService<SENDER> {
 
     private final ExpectedTypeIndex determinantTypeIndex = new ExpectedTypeIndex();
     private final UniversalIndex universalIndex = new UniversalIndex();

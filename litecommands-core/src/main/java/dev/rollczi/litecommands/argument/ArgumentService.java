@@ -1,64 +1,83 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.invalid.InvalidUsage;
-import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.range.Range;
-import panda.std.Option;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.List;
+import java.util.Optional;
 
-public class ArgumentService<SENDER> {
+public interface ArgumentService<SENDER> {
 
-    private final ArgumentResolverRegistry<SENDER> resolverRegistry = new ArgumentResolverRegistryImpl<>();
-
-    public <EXPECTED> ArgumentResolverContext<EXPECTED> resolve(
-        Invocation<SENDER> invocation,
-        PreparedArgument<SENDER, EXPECTED> preparedArgument,
-        ArgumentResolverContext<?> resolverContext
-    ) {
-
-        Option<? extends PreparedArgumentResult<?>> lastResult = resolverContext.getLastArgumentResult();
-
-        if (lastResult.isPresent() && lastResult.get().isFailed()) {
-            throw new IllegalStateException("Cannot resolve arguments when last argument is failed");
-        }
-
-        Range range = preparedArgument.getRange();
-        int lastResolvedRawArgument = resolverContext.getLastResolvedRawArgument();
-
-        List<String> rawArguments = invocation.argumentsList();
-        int minArguments = range.getMin();
-        int maxArguments = range.getMax() == Integer.MAX_VALUE
-            ? rawArguments.size()
-            : lastResolvedRawArgument + range.getMax();
-
-        maxArguments = Math.min(maxArguments, rawArguments.size());
-
-        if (minArguments > rawArguments.size()) {
-            return resolverContext.withFailure(PreparedArgumentResult.failed(InvalidUsage.Cause.TOO_FEW_ARGUMENTS));
-        }
-
-        List<String> arguments = rawArguments.subList(lastResolvedRawArgument, maxArguments);
-        PreparedArgumentResult<EXPECTED> result = preparedArgument.resolve(invocation, arguments);
-
-        if (result.isFailed()) {
-            return resolverContext.withFailure(result);
-        }
-
-        PreparedArgumentResult.Success<EXPECTED> success = result.getSuccess();
-
-        return resolverContext.with(success.getConsumedRawArguments(), result);
-    }
-
-    public <EXPECTED, ARGUMENT extends Argument<EXPECTED>> void registerResolver(
-        ArgumentResolverRegistry.IndexKey<EXPECTED, ARGUMENT> indexKey,
+    <EXPECTED, ARGUMENT extends Argument<EXPECTED>> void registerResolver(
+        IndexKey<EXPECTED, ARGUMENT> indexKey,
         ArgumentParser<SENDER, EXPECTED, ? extends Argument<EXPECTED>> resolver
-    ) {
-        this.resolverRegistry.registerResolver(indexKey, resolver);
-    }
+    );
 
-    public ArgumentResolverRegistry<SENDER> getResolverRegistry() {
-        return resolverRegistry;
+    <EXPECTED> Optional<ArgumentParser<SENDER, EXPECTED, Argument<EXPECTED>>> getResolver(
+        IndexKey<EXPECTED, Argument<EXPECTED>> indexKey
+    );
+
+    class IndexKey<EXPECTED, ARGUMENT extends Argument<EXPECTED>> {
+
+        private final Class<EXPECTED> expectedType;
+        private final Class<ARGUMENT> argumentType;
+        private final ArgumentKey argumentKey;
+
+        @SuppressWarnings("unchecked")
+        private IndexKey(Class<EXPECTED> expectedType, Class<?> argumentType, ArgumentKey argumentKey) {
+            this.expectedType = expectedType;
+            this.argumentType = (Class<ARGUMENT>) argumentType;
+            this.argumentKey = argumentKey;
+        }
+
+        public ArgumentKey argumentKey() {
+            return this.argumentKey;
+        }
+
+        public Class<EXPECTED> expectedType() {
+            return this.expectedType;
+        }
+
+        public Class<ARGUMENT> argumentType() {
+            return this.argumentType;
+        }
+
+
+        public boolean isUniversal() {
+            return Argument.class.equals(this.argumentType);
+        }
+
+        @ApiStatus.Internal
+        public static <EXPECTED, ARGUMENT extends Argument<EXPECTED>> IndexKey<EXPECTED, ARGUMENT> from(ARGUMENT argument) {
+            return new IndexKey<>(argument.getWrapperFormat().getType(), argument.getClass(), ArgumentKey.universal());
+        }
+
+        @ApiStatus.Internal
+        public static <EXPECTED, ARGUMENT extends Argument<EXPECTED>> IndexKey<EXPECTED, ARGUMENT> from(ARGUMENT argument, String customKey) {
+            return new IndexKey<>(argument.getWrapperFormat().getType(), argument.getClass(), ArgumentKey.universal(customKey));
+        }
+
+        public static <EXPECTED> IndexKey<EXPECTED, Argument<EXPECTED>> universal(Class<EXPECTED> expectedType) {
+            return new IndexKey<>(expectedType, Argument.class, ArgumentKey.universal());
+        }
+
+        public static <EXPECTED> IndexKey<EXPECTED, Argument<EXPECTED>> universal(Class<EXPECTED> expectedType, String customKey) {
+            return new IndexKey<>(expectedType, Argument.class, ArgumentKey.universal(customKey));
+        }
+
+        public static <EXPECTED, ARGUMENT extends Argument<EXPECTED>> IndexKey<EXPECTED, ARGUMENT> of(
+            Class<EXPECTED> expectedType,
+            Class<ARGUMENT> argumentType
+        ) {
+            return new IndexKey<>(expectedType, argumentType, ArgumentKey.key(argumentType));
+        }
+
+        public static <EXPECTED, ARGUMENT extends Argument<EXPECTED>> IndexKey<EXPECTED, ARGUMENT> of(
+            Class<EXPECTED> expectedType,
+            Class<ARGUMENT> contextType,
+            String customKey
+        ) {
+            return new IndexKey<>(expectedType, contextType, ArgumentKey.key(contextType, customKey));
+        }
+
     }
 
 }
