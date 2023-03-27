@@ -18,6 +18,7 @@ include(":litecommands-minestom", JavaVersion.VERSION_17)
 
 // examples
 include(":examples:bukkit")
+include(":examples:velocity")
 
 fun include(projectPath: String, version: JavaVersion) {
     if (!JavaVersion.current().isCompatibleWith(version)) {
