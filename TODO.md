@@ -44,9 +44,10 @@ Modern TODO
 - [x] Return result handler remapper
 - [ ] Support JDA XD
 - [ ] Support Sponge
-- [ ] Support BungeeCord
-- [ ] Support Velocity
-- [ ] Support Bukkit
+- [x] Support BungeeCord
+- [x] Support Velocity
+- [x] Support Bukkit
 - [ ] Support Nukkit
-- [ ] Support Adventure
-- [ ] Support Paper?
+- [x] Support Adventure
+- [x] Support Paper
+- [ ] Add support to provide other types of arguments by platforms
