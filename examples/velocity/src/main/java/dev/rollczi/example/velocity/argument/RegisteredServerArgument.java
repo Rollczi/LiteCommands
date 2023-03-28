@@ -1,21 +1,19 @@
 package dev.rollczi.example.velocity.argument;
 
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import com.velocitypowered.api.proxy.server.ServerInfo;
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import panda.std.Option;
-import panda.std.Result;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.type.OneArgumentResolver;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionStream;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@ArgumentName("server")
-public class RegisteredServerArgument implements OneArgument<RegisteredServer> {
+public class RegisteredServerArgument extends OneArgumentResolver<CommandSource, RegisteredServer> {
 
     private final ProxyServer server;
 
@@ -24,23 +22,18 @@ public class RegisteredServerArgument implements OneArgument<RegisteredServer> {
     }
 
     @Override
-    public Result<RegisteredServer, ?> parse(LiteInvocation liteInvocation, String argument) {
-        Optional<RegisteredServer> registeredServer = this.server.getServer(argument);
+    protected ArgumentResult<RegisteredServer> parse(Invocation<CommandSource> invocation, Argument<RegisteredServer> context, String argument) {
+        Optional<RegisteredServer> optionalServer = server.getServer(argument);
 
-        if (registeredServer.isPresent()) {
-            return Result.ok(registeredServer.get());
-        }
-
-        return Result.error("Server not found");
+        return optionalServer.map(server -> ArgumentResult.success(server))
+            .orElseGet(() -> ArgumentResult.failure("Server " + argument + " not found"));
     }
 
     @Override
-    public List<Suggestion> suggest(LiteInvocation invocation) {
-        return server.getAllServers().stream()
+    public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<RegisteredServer> argument, SuggestionContext suggestion) {
+        return SuggestionStream.of(server.getAllServers())
             .map(registeredServer -> registeredServer.getServerInfo())
-            .map(serverInfo -> serverInfo.getName())
-            .map(rawSuggestion -> Suggestion.of(rawSuggestion))
-            .collect(Collectors.toList());
+            .collect(serverInfo -> serverInfo.getName());
     }
 
 }

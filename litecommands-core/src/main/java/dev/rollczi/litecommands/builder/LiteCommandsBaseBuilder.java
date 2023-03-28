@@ -207,7 +207,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     }
 
     @Override
-    public B wrapperFactory(WrappedExpectedFactory factory) {
+    public B registerWrapperFactory(WrappedExpectedFactory factory) {
         this.wrappedExpectedService.registerFactory(factory);
         return this.getThis();
     }

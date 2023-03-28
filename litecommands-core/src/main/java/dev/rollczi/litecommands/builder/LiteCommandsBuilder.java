@@ -44,7 +44,7 @@ public interface LiteCommandsBuilder<SENDER, C extends LiteSettings, B extends L
 
     <T> LiteCommandsBuilder<SENDER, C, B> contextualBind(Class<T> on, BindContextual<SENDER, T> bind);
 
-    LiteCommandsBuilder<SENDER, C, B> wrapperFactory(WrappedExpectedFactory factory);
+    LiteCommandsBuilder<SENDER, C, B> registerWrapperFactory(WrappedExpectedFactory factory);
 
     <T> LiteCommandsBuilder<SENDER, C, B> resultHandler(Class<T> resultType, CommandExecuteResultHandler<SENDER, ? extends T> handler);
 

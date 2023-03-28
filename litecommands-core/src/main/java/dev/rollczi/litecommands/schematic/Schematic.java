@@ -13,7 +13,15 @@ public class Schematic {
         this.schematics.addAll(schematics);
     }
 
-    public List<String> getSchematics() {
+    public boolean isOnlyFirst() {
+        return schematics.size() == 1;
+    }
+
+    public String first() {
+        return schematics.get(0);
+    }
+
+    public List<String> all() {
         return Collections.unmodifiableList(schematics);
     }
 

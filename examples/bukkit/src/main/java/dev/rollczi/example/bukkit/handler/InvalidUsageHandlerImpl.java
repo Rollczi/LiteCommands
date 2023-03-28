@@ -13,7 +13,7 @@ public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSende
     @Override
     public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result) {
         CommandSender sender = invocation.getSender();
-        List<String> schematics = result.getSchematic().getSchematics();
+        List<String> schematics = result.getSchematic().all();
 
         if (schematics.size() == 1) {
             sender.sendMessage(ChatUtil.color("&cNie poprawne użycie komendy &8>> &7" + schematics.get(0)));

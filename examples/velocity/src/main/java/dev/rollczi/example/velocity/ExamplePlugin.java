@@ -12,9 +12,12 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.rollczi.example.velocity.argument.PlayerArgument;
 import dev.rollczi.example.velocity.argument.RegisteredServerArgument;
 import dev.rollczi.example.velocity.command.SendCommand;
-import dev.rollczi.example.velocity.handler.InvalidUsage;
+import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.annotations.LiteAnnotationsExtension;
+import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.velocity.LiteVelocityFactory;
 
 @Plugin(id = "example-plugin", name = "ExamplePlugin", version = "1.0.0", authors = { "Rollczi" }, url = "https://rollczi.dev/")
@@ -29,7 +32,6 @@ public class ExamplePlugin {
         this.proxyServer = proxyServer;
     }
 
-
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         this.liteCommands = LiteVelocityFactory.builder(this.proxyServer)
@@ -38,18 +40,21 @@ public class ExamplePlugin {
             .argument(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
 
             // Commands
-            .commandInstance(new SendCommand())
+            .extension(new LiteAnnotationsExtension.Builder()
+                .command(new SendCommand())
+                .build()
+            )
 
             // Handlers
-            .permissionHandler(new PermissionMessage())
-            .invalidUsageHandler(new InvalidUsage())
+            .resultHandler(MissingPermissions.class, new PermissionMessage())
+            .resultHandler(InvalidUsage.class, new InvalidUsageHandlerImpl())
 
             .register();
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        this.liteCommands.getPlatform().unregisterAll();
+        this.liteCommands.unregister();
     }
 
 }

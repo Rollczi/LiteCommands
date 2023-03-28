@@ -25,9 +25,9 @@ public final class LiteCommandsFactory {
         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform)
             .resultHandler(Throwable.class, (invocation, result) -> result.printStackTrace())
 
-            .wrapperFactory(new OptionWrappedExpectedFactory())
-            .wrapperFactory(new OptionalWrappedExpectedFactory())
-            .wrapperFactory(new CompletableFutureWrappedExpectedFactory())
+            .registerWrapperFactory(new OptionWrappedExpectedFactory())
+            .registerWrapperFactory(new OptionalWrappedExpectedFactory())
+            .registerWrapperFactory(new CompletableFutureWrappedExpectedFactory())
 
             .contextualBind(senderClass, invocation -> Result.ok(invocation.getSender()))
 
