@@ -16,6 +16,11 @@ tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }
 
+sourceSets.test {
+    java.setSrcDirs(listOf("test"))
+    resources.setSrcDirs(emptyList<String>())
+}
+
 open class TestImplementation {
 
     private val projects = mutableListOf<Project>()

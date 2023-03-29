@@ -1,6 +1,7 @@
 package dev.rollczi.example.bukkit.command;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import dev.rollczi.litecommands.annotations.route.Route;
@@ -14,12 +15,12 @@ import panda.std.Option;
 public class TeleportCommand {
 
     @Execute
-    public void teleportSelf(Player sender, @Arg Player to) {
+    public void teleportSelf(@Context Player sender, @Arg Player to) {
         sender.teleport(to.getLocation());
     }
 
     @Execute
-    public void teleportSelfToPosition(Player sender, @Arg Location location, @Arg Option<World> world) {
+    public void teleportSelfToPosition(@Context Player sender, @Arg Location location, @Arg Option<World> world) {
         location.setWorld(world.orElseGet(sender.getWorld()));
         sender.teleport(location);
     }

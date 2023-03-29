@@ -11,6 +11,7 @@ import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.LiteAnnotationsExtension;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
+import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
@@ -28,15 +29,11 @@ public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        LiteBukkitSettings settings = new LiteBukkitSettings()
+            .fallbackPrefix("test")
+            .nativePermissions(false);
 
-        this.liteCommands = LiteBukkitFactory.builder(this.getServer())
-
-            // Settings
-            .settings(bukkitSettings -> bukkitSettings
-                .fallbackPrefix("test")
-                .nativePermissions(false)
-            )
-
+        this.liteCommands = LiteBukkitFactory.builder(this.getServer(), settings)
             // Arguments
             .argument(Location.class, new LocationArgument())
             .argument(World.class, new WorldArgument(this.getServer()))
@@ -45,6 +42,7 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Contextual Bind
             .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
+
             // Annotated commands extension
             .extension(new LiteAnnotationsExtension.Builder()
                 .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)

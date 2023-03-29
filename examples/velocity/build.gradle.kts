@@ -34,3 +34,14 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     relocate("org.panda_lang", "dev.rollczi.example.bukkit.libs.org.panda")
     relocate("dev.rollczi.litecommands", "dev.rollczi.example.bukkit.libs.dev.rollczi")
 }
+
+sourceSets {
+    main {
+        resources.setSrcDirs(emptyList<String>())
+    }
+    test {
+        java.setSrcDirs(emptyList<String>())
+        resources.setSrcDirs(emptyList<String>())
+    }
+}
+
