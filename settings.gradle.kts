@@ -1,13 +1,13 @@
 rootProject.name = "LiteCommands"
 
 include(":litecommands-core")
-include(":litecommands-velocity")
+include(":litecommands-velocity", JavaVersion.VERSION_17)
 include(":litecommands-bukkit")
 include(":litecommands-bukkit-adventure")
 include(":litecommands-bungee")
 include(":litecommands-minestom", JavaVersion.VERSION_17)
 include(":examples:bukkit")
-include(":examples:velocity")
+include(":examples:velocity", JavaVersion.VERSION_17)
 
 fun include(projectPath: String, version: JavaVersion) {
     if (JavaVersion.current().isCompatibleWith(version)) {

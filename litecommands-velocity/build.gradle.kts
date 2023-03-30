@@ -5,7 +5,8 @@ plugins {
 dependencies {
     api(project(":litecommands-core"))
 
-    compileOnly("com.velocitypowered:velocity-api:3.1.2-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
 }
 
 val velocityArtifact: String by extra
@@ -17,4 +18,9 @@ publishing {
             this.from(components["java"])
         }
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
