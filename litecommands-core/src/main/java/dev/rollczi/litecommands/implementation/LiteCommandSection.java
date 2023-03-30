@@ -234,29 +234,36 @@ class LiteCommandSection<SENDER> implements CommandSection<SENDER> {
             }
         }
 
+        if (last != null && last.getResult().is(RequiredPermissions.class).isPresent()) {
+            return last;
+        }
+
         RequiredPermissions missingSection = RequiredPermissions.of(this.meta, invocation.sender());
 
         for (ArgumentExecutor<SENDER> argumentExecutor : argumentExecutors) {
             FindResult<SENDER> findResult = argumentExecutor.find(invocation, route + 1, lastResult.withSection(this));
+            RequiredPermissions missingExecutor = RequiredPermissions.of(argumentExecutor.meta(), invocation.sender());
 
             if (findResult.isFound()) {
-                RequiredPermissions missingExecutor = RequiredPermissions.of(argumentExecutor.meta(), invocation.sender());
-
                 if (!missingSection.isEmpty() || !missingExecutor.isEmpty()) {
-                    if (last != null && last.getResult().is(RequiredPermissions.class).isPresent()) {
-                        return last;
-                    }
-
                     RequiredPermissions all = missingSection.with(missingExecutor);
 
                     return lastResult.withSection(this)
-                            .invalid(all);
+                        .invalid(all);
                 }
 
                 return findResult;
             }
 
-            last = this.resolveCurrentAndLast(findResult, last);
+            if (!missingSection.isEmpty() || !missingExecutor.isEmpty()) {
+                RequiredPermissions all = missingSection.with(missingExecutor);
+
+                last = this.resolveCurrentAndLast(lastResult.withSection(this)
+                    .invalid(all), last);
+            }
+            else {
+                last = this.resolveCurrentAndLast(findResult, last);
+            }
         }
 
         if (!missingSection.isEmpty()) {
