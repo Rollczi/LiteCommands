@@ -7,6 +7,8 @@ import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResol
 import dev.rollczi.litecommands.annotations.command.ParameterWithoutAnnotationResolver;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.context.ContextAnnotationResolver;
+import dev.rollczi.litecommands.annotations.description.Description;
+import dev.rollczi.litecommands.annotations.description.DescriptionAnnotationResolver;
 import dev.rollczi.litecommands.annotations.editor.AnnotationCommandEditorService;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteAnnotationResolver;
@@ -146,6 +148,7 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
                 .annotation(Route.class, new Route.AnnotationResolver<>())
                 .annotation(RootRoute.class, new RootRoute.AnnotationResolver<>())
 
+                .annotation(Description.class, new DescriptionAnnotationResolver<>())
                 .annotation(Permission.class, new Permission.AnnotationResolver<>())
                 .annotation(Permissions.class, new Permissions.AnnotationResolver<>())
                 .annotation(PermissionExcluded.class, new PermissionExcluded.AnnotationResolver<>())

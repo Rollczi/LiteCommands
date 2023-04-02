@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface CommandMeta {
 
+    CommandKey<String> DESCRIPTION = CommandKey.of("description", String.class, "");
     CommandKey<List<String>> PERMISSIONS = CommandKey.of("permissions", CommandMetaType.list(), Collections.emptyList());
     CommandKey<List<String>> PERMISSIONS_EXCLUDED = CommandKey.of("permissions-excluded", CommandMetaType.list(), Collections.emptyList());
     CommandKey<Boolean> NATIVE_PERMISSIONS = CommandKey.of("native-permissions", Boolean.class, false);
