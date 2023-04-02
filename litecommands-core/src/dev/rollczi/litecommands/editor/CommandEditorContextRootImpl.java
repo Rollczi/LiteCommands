@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -101,6 +102,23 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
     @Override
     public Collection<CommandEditorContext<SENDER>> children() {
         return Collections.unmodifiableCollection(children.values());
+    }
+
+    @Override
+    public Optional<CommandEditorContext<SENDER>> getChild(String test) {
+        CommandEditorContext<SENDER> context = children.get(test);
+
+        if (context != null) {
+            return Optional.of(context);
+        }
+
+        for (CommandEditorContext<SENDER> child : children.values()) {
+            if (child.isNameOrAlias(test)) {
+                return Optional.of(child);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @Override

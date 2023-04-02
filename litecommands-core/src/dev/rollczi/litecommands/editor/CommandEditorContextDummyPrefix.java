@@ -15,12 +15,12 @@ class CommandEditorContextDummyPrefix<SENDER> extends CommandEditorContextBase<S
         this.parent = parent;
     }
 
-    void dummyName(String name) {
-        super.routeName(name);
+    CommandEditorContext<SENDER> dummyName(String name) {
+        return super.routeName(name);
     }
 
-    void dummyAliases(List<String> aliases) {
-        super.routeAliases(aliases);
+    CommandEditorContext<SENDER> dummyAliases(List<String> aliases) {
+        return super.routeAliases(aliases);
     }
 
     @Override

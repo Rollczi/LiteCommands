@@ -10,5 +10,4 @@ repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") } // spigot
     maven { url = uri("https://jitpack.io/") } // minestom
     maven { url = uri("https://repo.panda-lang.org/releases/") } // expressible
-//    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") } // bungeecord
 }

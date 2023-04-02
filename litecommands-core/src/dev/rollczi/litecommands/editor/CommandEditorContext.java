@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 public interface CommandEditorContext<SENDER> extends CommandMetaHolder {
@@ -47,6 +48,8 @@ public interface CommandEditorContext<SENDER> extends CommandMetaHolder {
     CommandEditorContext<SENDER> appendChild(CommandEditorContext<SENDER> context);
 
     Collection<CommandEditorContext<SENDER>> children();
+
+    Optional<CommandEditorContext<SENDER>> getChild(String test);
 
     @NotNull
     CommandEditorContext<SENDER> appendExecutor(CommandEditorExecutorBuilder<SENDER> executor);

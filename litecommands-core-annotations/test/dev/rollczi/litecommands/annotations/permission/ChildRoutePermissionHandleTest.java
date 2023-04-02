@@ -1,57 +1,52 @@
-package dev.rollczi.litecommands.command.permission;
+package dev.rollczi.litecommands.annotations.permission;
 
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.route.Route;
-import dev.rollczi.litecommands.test.TestFactory;
-import dev.rollczi.litecommands.test.TestPlatform;
+import dev.rollczi.litecommands.annotations.LiteTest;
+import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ChildRoutePermissionHandleTest {
-
-    TestPlatform platform = TestFactory.withCommands(
-        MainCommand.class
-    );
+@LiteTest
+class ChildRoutePermissionHandleTest extends LiteTestSpec {
 
     @Route(name = "main")
     static class MainCommand {
-        @Execute(required = 0)
+        @Execute
         void execute() {}
 
-        @Execute(route = "info", required = 1)
+        @Execute(route = "info")
         @Permission("main.info")
         void info() {}
 
-        @Execute(route = "test", required = 1)
+        @Execute(route = "test")
         @Permission("main.test")
         void test(@Arg String arg) {}
 
-        @Execute(route = "test", required = 2)
+        @Execute(route = "test")
         @Permission("main.test.2")
         void test(@Arg String arg, @Arg String arg2) {}
     }
 
     @Test
     void test() {
-        RequiredPermissions permissions = platform.execute("main", "info")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+        MissingPermissions permissions = platform.execute("main", "info")
+            .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.info", permissions.getPermissions().get(0));
 
         permissions = platform.execute("main", "test", "value")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.test", permissions.getPermissions().get(0));
 
         permissions = platform.execute("main", "test", "value", "value2")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.test.2", permissions.getPermissions().get(0));

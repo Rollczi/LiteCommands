@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.meta.CommandMeta;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import panda.std.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -105,11 +107,13 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
 
     @Override
     public @NotNull CommandEditorContext<SENDER> editChild(String name, UnaryOperator<CommandEditorContext<SENDER>> operator) {
-        CommandEditorContext<SENDER> child = this.children.get(name);
+        Optional<CommandEditorContext<SENDER>> contextOptional = this.getChild(name);
 
-        if (child == null) {
+        if (!contextOptional.isPresent()) {
             throw new IllegalArgumentException("Child " + name + " not found");
         }
+
+        CommandEditorContext<SENDER> child = contextOptional.get();
 
         child = operator.apply(child);
         this.children.put(name, child);
@@ -128,13 +132,34 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
 
     @Override
     public @NotNull CommandEditorContext<SENDER> appendChild(CommandEditorContext<SENDER> context) {
-        this.children.put(context.name(), context);
+        CommandEditorContext<SENDER> newContext = Option.ofOptional(this.getChild(context.name()))
+            .peek(current -> current.meagre(context))
+            .orElseGet(context);
+
+        this.children.put(newContext.name(), newContext);
         return this;
     }
 
     @Override
     public Collection<CommandEditorContext<SENDER>> children() {
         return Collections.unmodifiableCollection(this.children.values());
+    }
+
+    @Override
+    public Optional<CommandEditorContext<SENDER>> getChild(String test) {
+        CommandEditorContext<SENDER> context = this.children.get(test);
+
+        if (context != null) {
+            return Optional.of(context);
+        }
+
+        for (CommandEditorContext<SENDER> child : this.children.values()) {
+            if (child.isNameOrAlias(test)) {
+                return Optional.of(child);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -178,8 +203,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
             this.dummyPrefix = new CommandEditorContextDummyPrefix<>(this);
         }
 
-        this.dummyPrefix.dummyName(namePrefix);
-        return this.dummyPrefix;
+        return this.dummyPrefix.dummyName(namePrefix);
     }
 
     @Override
@@ -221,8 +245,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
             this.dummyPrefix = new CommandEditorContextDummyPrefix<>(this);
         }
 
-        this.dummyPrefix.dummyAliases(aliasesPrefix);
-        return this.dummyPrefix;
+        return this.dummyPrefix.dummyAliases(aliasesPrefix);
     }
 
     private int countDummy(String name) {

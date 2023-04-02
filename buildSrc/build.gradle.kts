@@ -19,3 +19,8 @@ sourceSets {
         resources.setSrcDirs(emptyList<String>())
     }
 }
+
+
+tasks.withType(org.gradle.api.tasks.testing.Test::class.java) {
+    forkEvery
+}
