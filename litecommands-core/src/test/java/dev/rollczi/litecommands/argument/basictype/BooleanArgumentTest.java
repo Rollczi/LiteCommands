@@ -10,6 +10,8 @@ import dev.rollczi.litecommands.test.TestUtils;
 import org.junit.jupiter.api.Test;
 import panda.std.Result;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,6 +54,12 @@ class BooleanArgumentTest {
 
         validate = argument.validate(TestUtils.invocation(), Suggestion.of(""));
         assertFalse(validate);
+    }
+
+    @Test
+    void testSuggestion() {
+        List<Suggestion> suggestions = argument.suggest(TestUtils.invocation("command", "test"));
+        assertEquals(2, suggestions.size());
     }
 
 
