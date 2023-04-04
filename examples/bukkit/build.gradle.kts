@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
-    // implementation("dev.rollczi.litecommands:bukkit:2.8.6") // <-- uncomment in your project
+    // implementation("dev.rollczi.litecommands:bukkit:2.8.7") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
