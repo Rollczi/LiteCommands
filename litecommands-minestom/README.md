@@ -1,4 +1,4 @@
-### Bungeecord Extension Dependencies
+### Minestom Extension Dependencies
 Maven
 ```xml
 <dependency>
@@ -9,7 +9,7 @@ Maven
 ```
 Gradle
 ```groovy
-implementation 'dev.rollczi.litecommands:bungee:2.8.7'
+implementation 'dev.rollczi.litecommands:minestom:2.8.7'
 ```
 
 #### Examples:
