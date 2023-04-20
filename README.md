@@ -132,7 +132,7 @@ tasks.withType<JavaCompile> {
 - [Bukkit](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit)
 - [Bukkit Adventure extension](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit-adventure)
 - [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
-- [MineStom](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-minestom)
+- [Minestom](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-minestom)
 
 #### Other examples:
 
