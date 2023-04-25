@@ -13,19 +13,19 @@ public final class WrapperParameterUtil {
     }
 
     public static WrapperFormat<?, ?> wrapperFormat(WrappedExpectedService wrappedExpectedService, Parameter parameter) {
-        Class<?> expectedType = parameter.getType();
+        Class<?> outParameterType = parameter.getType();
 
-        if (wrappedExpectedService.isWrapper(expectedType)) {
+        if (wrappedExpectedService.isWrapper(outParameterType)) {
             Option<Class<?>> optionGenericType = ParameterizedTypeUtil.extractFirstType(parameter);
 
             if (optionGenericType.isEmpty()) {
                 throw new IllegalArgumentException("Cannot extract expected type from parameter " + ReflectFormatUtil.parameter(parameter));
             }
 
-            return WrapperFormat.of(optionGenericType.get(), expectedType);
+            return WrapperFormat.of(optionGenericType.get(), outParameterType);
         }
 
-        return WrapperFormat.notWrapped(expectedType);
+        return WrapperFormat.notWrapped(outParameterType);
     }
 
 }

@@ -31,16 +31,16 @@ public final class LiteCommandsFactory {
 
             .contextualBind(senderClass, invocation -> Result.ok(invocation.getSender()))
 
-            .contextualBind(String[].class, invocation -> Result.ok(invocation.arguments()))
+            .contextualBind(String[].class, invocation -> Result.ok(invocation.arguments().asArray()))
             .contextualBind(PlatformSender.class, invocation -> Result.ok(invocation.getPlatformSender()))
             .contextualBind(Invocation.class, invocation -> Result.ok(invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
             .globalValidator(new MissingPermissionValidator<>())
             .resultMapper(MissingPermissions.class, new GuideMissingPermission<>())
 
-            .argument(String.class, new StringArgumentResolver<>())
+            .argumentParser(String.class, new StringArgumentResolver<>())
 
-            .argument(Long.class, AbstractNumberArgumentResolver.ofLong())
+            .argumentParser(Long.class, AbstractNumberArgumentResolver.ofLong())
             ;
     }
 

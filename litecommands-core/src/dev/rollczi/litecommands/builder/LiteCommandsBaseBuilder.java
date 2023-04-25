@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.builder;
 
-import dev.rollczi.litecommands.argument.ArgumentParser;
-import dev.rollczi.litecommands.argument.ArgumentService;
-import dev.rollczi.litecommands.argument.ArgumentServiceImpl;
+import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.argument.input.ArgumentParser;
+import dev.rollczi.litecommands.argument.input.ArgumentParserRegistry;
 import dev.rollczi.litecommands.bind.Bind;
 import dev.rollczi.litecommands.bind.BindContextual;
 import dev.rollczi.litecommands.bind.BindRegistry;
@@ -46,7 +46,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
 
     protected final CommandEditorService<SENDER> commandEditorService;
     protected final CommandValidatorService<SENDER> commandValidatorService;
-    protected final ArgumentService<SENDER> argumentService;
+    protected final ArgumentParserRegistry<SENDER> argumentParserRegistry;
     protected final BindRegistry<SENDER> bindRegistry;
     protected final WrappedExpectedService wrappedExpectedService;
     protected final CommandExecuteResultResolver<SENDER> resultResolver;
@@ -65,7 +65,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
             LiteBuilderPostProcessor.empty(),
             new CommandEditorService<>(),
             new CommandValidatorService<>(),
-            new ArgumentServiceImpl<>(),
+            ArgumentParserRegistry.createRegistry(),
             new BindRegistry<>(),
             new WrappedExpectedService(),
             new CommandExecuteResultResolver<>(),
@@ -103,7 +103,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
         LiteBuilderPreProcessor<SENDER, C> builderProcessor,
         LiteBuilderPostProcessor<SENDER, C> postProcessor,
         CommandEditorService<SENDER> commandEditorService,
-        CommandValidatorService<SENDER> commandValidatorService, ArgumentService<SENDER> argumentService,
+        CommandValidatorService<SENDER> commandValidatorService, ArgumentParserRegistry<SENDER> argumentParserRegistry,
         BindRegistry<SENDER> bindRegistry,
         WrappedExpectedService wrappedExpectedService,
         CommandExecuteResultResolver<SENDER> resultResolver,
@@ -115,7 +115,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
         this.postProcessor = postProcessor;
         this.commandEditorService = commandEditorService;
         this.commandValidatorService = commandValidatorService;
-        this.argumentService = argumentService;
+        this.argumentParserRegistry = argumentParserRegistry;
         this.bindRegistry = bindRegistry;
         this.wrappedExpectedService = wrappedExpectedService;
         this.resultResolver = resultResolver;
@@ -157,34 +157,26 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     }
 
     @Override
-    public <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver) {
-        ArgumentService.IndexKey<T, Argument<T>> key = ArgumentService.IndexKey.universal(type);
-
-        this.argumentService.registerResolver(key, resolver);
+    public <INPUT, PARSED, PARSER extends ArgumentParser<SENDER, INPUT, PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, PARSER parser) {
+        this.argumentParserRegistry.registerParser(type, ArgumentKey.universal(), parser);
         return this;
     }
 
     @Override
-    public <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, String key, RESOLVER resolver) {
-        ArgumentService.IndexKey<T, Argument<T>> indexKey = ArgumentService.IndexKey.universal(type, key);
-
-        this.argumentService.registerResolver(indexKey, resolver);
+    public <INPUT, PARSED, PARSER extends ArgumentParser<SENDER, INPUT, PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, String key, PARSER parser) {
+        this.argumentParserRegistry.registerParser(type, ArgumentKey.universal(key), parser);
         return this;
     }
 
     @Override
-    public <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver) {
-        ArgumentService.IndexKey<T, ARGUMENT> key = ArgumentService.IndexKey.of(type, argumentType);
-
-        this.argumentService.registerResolver(key, resolver);
+    public <INPUT, PARSED, PARSER extends Argument<PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, Class<PARSER> argumentType, ArgumentParser<SENDER, INPUT, PARSED> resolver) {
+        this.argumentParserRegistry.registerParser(type, ArgumentKey.key(argumentType), resolver);
         return this;
     }
 
     @Override
-    public <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver) {
-        ArgumentService.IndexKey<T, ARGUMENT> indexKey = ArgumentService.IndexKey.of(type, argumentType);
-
-        this.argumentService.registerResolver(indexKey, resolver);
+    public <INPUT, PARSED, PARSER extends Argument<PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, Class<PARSER> argumentType, String key, ArgumentParser<SENDER, INPUT, PARSED> resolver) {
+        this.argumentParserRegistry.registerParser(type, ArgumentKey.key(argumentType, key), resolver);
         return this;
     }
 
@@ -322,8 +314,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
 
     @Override
     @ApiStatus.Internal
-    public ArgumentService<SENDER> getArgumentService() {
-        return this.argumentService;
+    public ArgumentParserRegistry<SENDER> getArgumentService() {
+        return this.argumentParserRegistry;
     }
 
     @Override

@@ -1,9 +1,11 @@
 package dev.rollczi.litecommands.annotations.context;
 
-import dev.rollczi.litecommands.annotations.command.ParameterPreparedArgument;
+import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
 import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
-import dev.rollczi.litecommands.argument.PreparedArgumentResult;
+import dev.rollczi.litecommands.argument.input.InputArguments;
+import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
+import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
@@ -28,7 +30,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
     }
 
     @Override
-    public ParameterPreparedArgument<SENDER, ?> resolve(Parameter parameter, Context annotation) {
+    public ParameterCommandRequirement<SENDER, ?> resolve(Parameter parameter, Context annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         WrapperFormat<?, ?> wrapperFormat = WrapperParameterUtil.wrapperFormat(wrappedExpectedService, parameter);
@@ -36,7 +38,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         return new ContextParameterPreparedArgument<>(parameter, index, wrapperFormat, wrappedExpectedService.getWrappedExpectedFactory(wrapperFormat));
     }
 
-    private class ContextParameterPreparedArgument<EXPECTED> implements ParameterPreparedArgument<SENDER, EXPECTED> {
+    private class ContextParameterPreparedArgument<EXPECTED> implements ParameterCommandRequirement<SENDER, EXPECTED> {
 
         private final Parameter parameter;
         private final int index;
@@ -51,24 +53,14 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         }
 
         @Override
-        public PreparedArgumentResult<EXPECTED> resolve(Invocation<SENDER> invocation, List<String> arguments) {
+        public <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> check(Invocation<SENDER> invocation, InputArguments<CONTEXT> inputArguments, CONTEXT context) {
             Result<EXPECTED, Object> result = bindRegistry.getInstance(wrapperFormat.getType(), invocation);
 
             if (result.isOk()) {
-                return PreparedArgumentResult.success(() -> wrappedExpectedFactory.create(result::get, wrapperFormat), 0);
+                return CommandRequirementResult.success(() -> wrappedExpectedFactory.create(result::get, wrapperFormat));
             }
 
-            return PreparedArgumentResult.failed(result.getError());
-        }
-
-        @Override
-        public Range getRange() {
-            return Range.ZERO;
-        }
-
-        @Override
-        public WrapperFormat<EXPECTED, ?> getWrapperFormat() {
-            return wrapperFormat;
+            return CommandRequirementResult.failure(result.getError());
         }
 
         @Override

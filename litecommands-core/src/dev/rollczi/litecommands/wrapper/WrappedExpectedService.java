@@ -15,13 +15,13 @@ public class WrappedExpectedService {
         this.factories.put(factory.getWrapperType(), factory);
     }
 
-    public <EXPECTED> WrappedExpected<EXPECTED> wrap(ValueToWrap<EXPECTED> result, WrapperFormat<EXPECTED, ?> wrapperFormat) {
+    public <EXPECTED> Wrapped<EXPECTED> wrap(ValueToWrap<EXPECTED> result, WrapperFormat<EXPECTED, ?> wrapperFormat) {
         WrappedExpectedFactory factory = this.getWrappedExpectedFactory(wrapperFormat);
 
         return factory.create(result, wrapperFormat);
     }
 
-    public <EXPECTED> Option<WrappedExpected<EXPECTED>> empty(WrapperFormat<EXPECTED, ?> wrapperFormat) {
+    public <EXPECTED> Option<Wrapped<EXPECTED>> empty(WrapperFormat<EXPECTED, ?> wrapperFormat) {
         WrappedExpectedFactory factory = this.getWrappedExpectedFactory(wrapperFormat);
 
         if (factory.canCreateEmpty()) {

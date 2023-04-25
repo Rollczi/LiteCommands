@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.argument.FailedReason;
+import dev.rollczi.litecommands.argument.input.InputArguments;
+import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationResult;
@@ -9,8 +11,6 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.validator.CommandValidatorResult;
 import dev.rollczi.litecommands.validator.CommandValidatorService;
-
-import java.util.List;
 
 public class CommandManager<SENDER, C extends LiteSettings> {
 
@@ -38,7 +38,8 @@ public class CommandManager<SENDER, C extends LiteSettings> {
 
     public void register(CommandRoute<SENDER> commandRoute) {
         this.platform.register(commandRoute, invocation -> {
-            InvocationResult<SENDER> invocationResult = this.execute(invocation, commandRoute);
+            InputArguments<?> inputArguments = invocation.arguments();
+            InvocationResult<SENDER> invocationResult = this.execute(invocation, inputArguments, commandRoute);
 
             resultResolver.resolveInvocation(invocationResult);
 
@@ -48,14 +49,14 @@ public class CommandManager<SENDER, C extends LiteSettings> {
         this.root.appendToRoot(commandRoute);
     }
 
-    private InvocationResult<SENDER> execute(Invocation<SENDER> invocation, CommandRoute<SENDER> start) {
-        CommandRouteFindResult<SENDER> findResult = this.find(start, invocation.argumentsList(), 0);
-        CommandRoute<SENDER> commandRoute = findResult.commandRoute;
+    private <MATCHER extends InputArgumentsMatcher<MATCHER>> InvocationResult<SENDER> execute(Invocation<SENDER> invocation, InputArguments<MATCHER> inputArguments, CommandRoute<SENDER> start) {
+        MATCHER matcher = inputArguments.createMatcher();
+        CommandRoute<SENDER> commandRoute = this.findRoute(start, inputArguments, matcher);
         FailedReason lastFailedReason = null;
 
         for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
             // Handle matching arguments
-            CommandExecutorMatchResult match = executor.match(invocation, new CommandExecutor.Context(findResult.childIndex));
+            CommandExecutorMatchResult match = executor.match(invocation, inputArguments, matcher.copy());
 
             if (match.isFailed()) {
                 FailedReason current = match.getFailedReason();
@@ -102,39 +103,26 @@ public class CommandManager<SENDER, C extends LiteSettings> {
         return InvocationResult.failed(invocation, FailedReason.of(InvalidUsage.Cause.UNKNOWN_COMMAND));
     }
 
-    private CommandRouteFindResult<SENDER> find(CommandRoute<SENDER> command, List<String> arguments, int rawArgumentsIndex) {
-        int requiredSizeArguments = rawArgumentsIndex + 1;
-
-        if (arguments.size() < requiredSizeArguments) {
-            return new CommandRouteFindResult<>(command, rawArgumentsIndex);
+    private <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRoute<SENDER> findRoute(CommandRoute<SENDER> command, InputArguments<MATCHER> inputArguments, MATCHER matcher) {
+        if (!matcher.hasNextRoute()) {
+            return command;
         }
 
         for (CommandRoute<SENDER> child : command.getChildren()) {
-            if (!child.isNameOrAlias(arguments.get(rawArgumentsIndex))) {
+            if (!child.isNameOrAlias(matcher.showNextRoute())) {
                 continue;
             }
 
-            return this.find(child, arguments, rawArgumentsIndex + 1);
+            matcher.matchNextRoute();
+            return this.findRoute(child, inputArguments, matcher);
         }
 
-        return new CommandRouteFindResult<>(command, rawArgumentsIndex);
+        return command;
     }
 
     public void unregisterAll() {
         this.root.clearChildren();
         this.platform.unregisterAll();
-    }
-
-    private static class CommandRouteFindResult<SENDER> {
-
-        private final CommandRoute<SENDER> commandRoute;
-        private final int childIndex;
-
-        private CommandRouteFindResult(CommandRoute<SENDER> commandRoute, int childIndex) {
-            this.commandRoute = commandRoute;
-            this.childIndex = childIndex;
-        }
-
     }
 
 }

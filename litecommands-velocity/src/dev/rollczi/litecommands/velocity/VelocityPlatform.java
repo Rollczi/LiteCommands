@@ -98,8 +98,8 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
                 new VelocitySender(invocation.source()),
                 this.commandSection.getName(),
                 invocation.alias(),
-                arguments.toArray(new String[0])
-            );
+                arguments.toArray(new String[0]),
+                    arguments);
         }
 
     }

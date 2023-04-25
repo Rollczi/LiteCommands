@@ -15,6 +15,7 @@ public class InvalidUsage<SENDER> {
         TOO_MANY_ARGUMENTS,
         TOO_FEW_ARGUMENTS,
         INVALID_ARGUMENT,
+        MISSING_ARGUMENT,
 
     }
 

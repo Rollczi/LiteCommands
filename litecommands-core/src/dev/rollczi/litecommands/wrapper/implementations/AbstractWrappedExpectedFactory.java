@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.wrapper.implementations;
 
 import dev.rollczi.litecommands.wrapper.WrapperFormat;
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.WrappedExpected;
+import dev.rollczi.litecommands.wrapper.Wrapped;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
 
 import java.util.Optional;
@@ -22,19 +22,19 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
     }
 
     @Override
-    public <EXPECTED> WrappedExpected<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
         this.check(info);
 
-        return new TypeSafeWrappedExpected<>(info.getType(), this.wrapValue(valueToWrap, info));
+        return new TypeSafeWrapped<>(info.getType(), this.wrapValue(valueToWrap, info));
     }
 
     protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info);
 
     @Override
-    public <EXPECTED> WrappedExpected<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrapped<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
         this.check(info);
 
-        return new TypeSafeWrappedExpected<>(info.getType(), this.emptyValue(info));
+        return new TypeSafeWrapped<>(info.getType(), this.emptyValue(info));
     }
 
     protected abstract <EXPECTED> Supplier<WRAPPER> emptyValue(WrapperFormat<EXPECTED, ?> info);
@@ -56,12 +56,12 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
         }
     }
 
-    private class TypeSafeWrappedExpected<EXPECTED> implements WrappedExpected<EXPECTED> {
+    private class TypeSafeWrapped<EXPECTED> implements Wrapped<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<WRAPPER> wrapperSupplier;
 
-        TypeSafeWrappedExpected(Class<EXPECTED> expectedType, Supplier<WRAPPER> wrapperSupplier) {
+        TypeSafeWrapped(Class<EXPECTED> expectedType, Supplier<WRAPPER> wrapperSupplier) {
             this.expectedType = expectedType;
             this.wrapperSupplier = wrapperSupplier;
         }

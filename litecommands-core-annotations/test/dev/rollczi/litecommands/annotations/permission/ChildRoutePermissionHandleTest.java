@@ -29,17 +29,20 @@ class ChildRoutePermissionHandleTest extends LiteTestSpec {
         @Execute(route = "test")
         @Permission("main.test.2")
         void test(@Arg String arg, @Arg String arg2) {}
-    }
 
+    }
     @Test
-    void test() {
+    void testSinglePermission() {
         MissingPermissions permissions = platform.execute("main", "info")
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.info", permissions.getPermissions().get(0));
+    }
 
-        permissions = platform.execute("main", "test", "value")
+    @Test
+    void testPermissionInSameRoute() {
+        MissingPermissions permissions = platform.execute("main", "test", "value")
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());

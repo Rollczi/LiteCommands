@@ -84,7 +84,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
         }
 
         private Invocation<CommandSender> newInvocation(CommandSender sender, String[] args) {
-            return new Invocation<>(sender, new BungeeSender(sender), this.commandSection.getName(), this.label, args);
+            return new Invocation<>(sender, new BungeeSender(sender), this.commandSection.getName(), this.label, arguments);
         }
 
         @Override

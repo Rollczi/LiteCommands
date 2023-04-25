@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.PreparedArgument;
+import dev.rollczi.litecommands.argument.input.InputArguments;
+import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
+import dev.rollczi.litecommands.command.requirements.CommandRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 
@@ -8,24 +10,10 @@ import java.util.List;
 
 public interface CommandExecutor<SENDER> {
 
-    List<PreparedArgument<SENDER, ?>> getArguments();
+    List<CommandRequirement<SENDER, ?>> getRequirements();
 
     CommandMeta getMeta();
 
-    CommandExecutorMatchResult match(Invocation<SENDER> invocation, Context context);
-
-    class Context {
-
-        private final int routeBeforeArguments;
-
-        public Context(int routeBeforeArguments) {
-            this.routeBeforeArguments = routeBeforeArguments;
-        }
-
-        public int getRouteBeforeArguments() {
-            return routeBeforeArguments;
-        }
-
-    }
+    <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, InputArguments<CONTEXT> inputArguments, CONTEXT context);
 
 }

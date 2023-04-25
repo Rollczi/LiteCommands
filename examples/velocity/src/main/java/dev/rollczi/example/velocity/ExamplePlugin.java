@@ -36,8 +36,8 @@ public class ExamplePlugin {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         this.liteCommands = LiteVelocityFactory.builder(this.proxyServer)
             // Arguments
-            .argument(Player.class, new PlayerArgument(this.proxyServer))
-            .argument(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
+            .argumentParser(Player.class, new PlayerArgument(this.proxyServer))
+            .argumentParser(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
 
             // Commands
             .extension(new LiteAnnotationsExtension.Builder()

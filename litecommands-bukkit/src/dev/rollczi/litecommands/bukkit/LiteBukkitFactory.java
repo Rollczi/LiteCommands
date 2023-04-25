@@ -25,7 +25,7 @@ public final class LiteBukkitFactory {
             .typeBind(Server.class, () -> server)
             .typeBind(BukkitScheduler.class, server::getScheduler)
 
-            .argument(Player.class, new BukkitPlayerArgument<>(server, name -> "Player " + name + " is not online!")) // TODO WIKI GUIDE links
+            .argumentParser(Player.class, new BukkitPlayerArgument<>(server, name -> "Player " + name + " is not online!")) // TODO WIKI GUIDE links
             .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("This command is only for players!")) //TODO
             .resultHandler(String.class, new StringHandler())
             ;

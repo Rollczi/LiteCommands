@@ -53,9 +53,9 @@ public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements L
         }
 
         builder
-            .argument(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
-            .argument(Component.class, "raw", new AdventureComponentArgument<>())
-            .argument(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
+            .argumentParser(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
+            .argumentParser(Component.class, "raw", new AdventureComponentArgument<>())
+            .argumentParser(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
 
             .contextualBind(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 

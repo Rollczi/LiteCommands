@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.platform.LiteSettings;
+import org.bukkit.util.BoundingBox;
 
 public class LiteBukkitSettings implements LiteSettings {
 

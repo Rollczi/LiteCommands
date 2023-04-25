@@ -1,9 +1,7 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.argument.Arg;
-import dev.rollczi.litecommands.annotations.argument.OneAnnotationArgument;
-import dev.rollczi.litecommands.annotations.argument.ParameterArgument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.input.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
@@ -11,8 +9,6 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.TestUtil;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,7 +44,7 @@ class OneAnnotationArgumentTest {
 
     @Test
     void testParse() {
-        ArgumentResult<String> parseResult = argument.parse(TestUtil.invocation("test"), null, Collections.singletonList("test"));
+        ArgumentResult<String> parseResult = argument.parse(TestUtil.invocation("test"), null, RawInput.of("test"));
         String value = parseResult.getSuccessfulResult().getExpectedProvider().get();
 
         assertEquals("test", value);

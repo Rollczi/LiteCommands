@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.unit;
 
+import dev.rollczi.litecommands.argument.input.RawInputArguments;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationResult;
 import dev.rollczi.litecommands.platform.Platform;
@@ -8,6 +10,7 @@ import dev.rollczi.litecommands.platform.PlatformInvocationHook;
 import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -58,7 +61,9 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
         TestSender testSender = new TestSender();
         TestPlatformSender testPlatformSender = new TestPlatformSender();
 
-        Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, command, command, arguments);
+        InputArguments args = new RawInputArguments(Arrays.asList(arguments));
+
+        Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, command, command, args);
 
         for (Map.Entry<CommandRoute<TestSender>, PlatformInvocationHook<TestSender>> entry : this.executeListeners.entrySet()) {
             if (entry.getKey().isNameOrAlias(command)) {
@@ -79,9 +84,11 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
         String label = command.split(" ")[0];
         String[] args = command.substring(label.length()).split(" ");
 
-        Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, label, label, args);
+        InputArguments arguments = new RawInputArguments(Arrays.asList(args));
 
+        Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, label, label, arguments);
 
+        // TODO: implement
     }
 
 }

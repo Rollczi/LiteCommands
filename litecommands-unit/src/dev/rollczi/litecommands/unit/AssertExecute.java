@@ -48,9 +48,7 @@ public class AssertExecute {
             throw new AssertionError("Command result is empty");
         }
 
-        if (!option.get().equals(result)) {
-            throw new AssertionFailedError("Command result is not equals", result, option.get());
-        }
+        assertEquals(result, option.get());
 
         return this;
     }

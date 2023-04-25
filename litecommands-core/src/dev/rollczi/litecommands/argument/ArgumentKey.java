@@ -18,7 +18,6 @@ public class ArgumentKey {
         return this.key.isEmpty();
     }
 
-
     public static ArgumentKey universal(String key) {
         return ArgumentKey.key(Argument.class, key);
     }
@@ -33,6 +32,10 @@ public class ArgumentKey {
         }
 
         return new ArgumentKey(argumentType.getName(), key);
+    }
+
+    public boolean isUniversal() {
+        return this.namespace.equals(Argument.class.getName());
     }
 
     public static <A extends Argument<?>> ArgumentKey key(Class<A> argumentType) {

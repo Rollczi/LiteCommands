@@ -1,18 +1,15 @@
 package dev.rollczi.litecommands.annotations.command;
 
-import dev.rollczi.litecommands.argument.PreparedArgumentResult;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
 import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.wrapper.WrappedExpected;
-import panda.std.Pair;
+import dev.rollczi.litecommands.wrapper.Wrapped;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Supplier;
 
-class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, ParameterPreparedArgument<SENDER, ?>> {
+class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, ParameterCommandRequirement<SENDER, ?>> {
 
     private final Method method;
     private final Object instance;
@@ -21,7 +18,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
     MethodCommandExecutor(
         Method method,
         Object instance,
-        List<ParameterPreparedArgument<SENDER, ?>> preparedArguments
+        List<ParameterCommandRequirement<SENDER, ?>> preparedArguments
     ) {
         super(preparedArguments);
         this.method = method;
@@ -30,17 +27,16 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
     }
 
     @Override
-    protected CommandExecutorMatchResult match(List<Pair<ParameterPreparedArgument<SENDER, ?>, PreparedArgumentResult.Success<?>>> results) {
+    protected CommandExecutorMatchResult match(List<Match<ParameterCommandRequirement<SENDER, ?>>> results) {
         if (results.size() != this.method.getParameterCount()) {
             return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved"));
         }
 
         Object[] objects = results.stream()
-            .sorted(Comparator.comparingInt(pair -> pair.getFirst().getParameterIndex()))
-            .map(pair -> pair.getSecond())
-            .map(success -> success.getWrappedExpected())
-            .map(Supplier::get)
-            .map(WrappedExpected::unwrap)
+            .sorted(Comparator.comparingInt(pair -> pair.getArgument().getParameterIndex()))
+            .map(pair -> pair.getResult())
+            .map(success -> success.getSuccess())
+            .map(Wrapped::unwrap)
             .toArray();
 
         return CommandExecutorMatchResult.success(() -> {

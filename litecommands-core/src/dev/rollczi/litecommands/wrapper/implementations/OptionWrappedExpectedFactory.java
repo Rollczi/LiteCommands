@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.wrapper.implementations;
 
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.WrappedExpected;
+import dev.rollczi.litecommands.wrapper.Wrapped;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.wrapper.WrapperFormat;
 import panda.std.Option;
@@ -11,14 +11,14 @@ import java.util.function.Supplier;
 public class OptionWrappedExpectedFactory implements WrappedExpectedFactory {
 
     @Override
-    public <EXPECTED> WrappedExpected<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
         Class<EXPECTED> expectedType = info.getType();
 
         return new OptionWrapper<>(expectedType, valueToWrap);
     }
 
     @Override
-    public <EXPECTED> WrappedExpected<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrapped<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
         return new OptionWrapper<>(info.getType(), () -> null);
     }
 
@@ -32,7 +32,7 @@ public class OptionWrappedExpectedFactory implements WrappedExpectedFactory {
         return Option.class;
     }
 
-    private static class OptionWrapper<EXPECTED> implements WrappedExpected<EXPECTED> {
+    private static class OptionWrapper<EXPECTED> implements Wrapped<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<EXPECTED> expectedSupplier;

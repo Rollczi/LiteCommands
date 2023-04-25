@@ -54,7 +54,7 @@ class SimpleCommand extends Command {
     }
 
     private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, String... args) {
-        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, args);
+        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, arguments);
     }
 
     private String[] fixArguments(String[] args) {

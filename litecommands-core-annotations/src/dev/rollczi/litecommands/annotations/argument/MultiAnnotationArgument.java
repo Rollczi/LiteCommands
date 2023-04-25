@@ -1,17 +1,17 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.argument.ArgumentParser;
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.input.ArgumentRawParser;
+import dev.rollczi.litecommands.argument.input.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.ArgumentSuggester;
 
-import java.util.List;
-
 public interface MultiAnnotationArgument<SENDER, TYPE> extends
-    ArgumentParser<SENDER, TYPE, ParameterArgument<Arg, TYPE>>,
-    ArgumentSuggester<SENDER, TYPE, ParameterArgument<Arg, TYPE>> {
+    ArgumentSuggester<SENDER, TYPE, ParameterArgument<Arg, TYPE>>,
+    ArgumentRawParser<SENDER, TYPE> {
 
     @Override
-    ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, ParameterArgument<Arg, TYPE> argument, List<String> arguments);
+    ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, Argument<TYPE> argument, RawInput rawInput);
 
 }

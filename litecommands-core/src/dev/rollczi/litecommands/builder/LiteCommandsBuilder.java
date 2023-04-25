@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.builder;
 
-import dev.rollczi.litecommands.argument.ArgumentParser;
+import dev.rollczi.litecommands.argument.input.ArgumentParser;
 import dev.rollczi.litecommands.bind.Bind;
 import dev.rollczi.litecommands.bind.BindContextual;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
@@ -30,13 +30,13 @@ public interface LiteCommandsBuilder<SENDER, C extends LiteSettings, B extends L
 
     LiteCommandsBuilder<SENDER, C, B> globalValidator(CommandValidator<SENDER> validator);
 
-    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver);
+    <INPUT, PARSED, PARSER extends ArgumentParser<SENDER, INPUT, PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, PARSER parser);
 
-    <T, RESOLVER extends ArgumentParser<SENDER, T, Argument<T>>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, String key, RESOLVER resolver);
+    <INPUT, PARSED, PARSER extends ArgumentParser<SENDER, INPUT, PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, String key, PARSER parser);
 
-    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
+    <INPUT, PARSED, ARGUMENT extends Argument<PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, Class<ARGUMENT> argumentType, ArgumentParser<SENDER, INPUT, PARSED> resolver);
 
-    <T, ARGUMENT extends Argument<T>> LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, T, ? extends ARGUMENT> resolver);
+    <INPUT, PARSED, ARGUMENT extends Argument<PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, INPUT, PARSED> resolver);
 
     <T> LiteCommandsBuilder<SENDER, C, B> typeBind(Class<T> on, Bind<T> bind);
 

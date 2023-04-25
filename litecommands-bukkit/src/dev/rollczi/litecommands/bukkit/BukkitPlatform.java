@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.Platform;
@@ -85,7 +86,7 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitSettings> {
         }
 
         private Invocation<CommandSender> newInvocation(CommandSender sender, String alias, String[] args) {
-            return new Invocation<>(sender, new BukkitSender(sender), commandRoute.getName(), alias, args);
+            return new Invocation<>(sender, new BukkitSender(sender), commandRoute.getName(), alias, InputArguments.rawArguments(args));
         }
 
         @Override

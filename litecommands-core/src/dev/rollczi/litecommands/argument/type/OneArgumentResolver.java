@@ -2,29 +2,28 @@ package dev.rollczi.litecommands.argument.type;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.input.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 
-import java.util.List;
-
-public abstract class OneArgumentResolver<SENDER, TYPE> implements ArgumentResolver<SENDER, TYPE> {
+public abstract class OneArgumentResolver<SENDER, TYPE> implements MultipleArgumentResolver<SENDER, TYPE> {
 
     @Override
-    public final ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, Argument<TYPE> argument, List<String> arguments) {
-        if (arguments.isEmpty()) {
+    public final ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, Argument<TYPE> argument, RawInput rawInput) {
+        if (rawInput.hasNoNext()) {
             throw new IllegalArgumentException("To parse argument, you need to provide at least one argument.");
         }
 
-        return this.parse(invocation, argument, arguments.get(0));
+        return this.parse(invocation, argument, rawInput.consumeNext());
     }
 
     @Override
-    public final boolean canParse(Invocation<SENDER> invocation, Argument<TYPE> argument, List<String> arguments) {
-        if (arguments.isEmpty()) {
+    public final boolean canParse(Invocation<SENDER> invocation, Argument<TYPE> argument, RawInput rawInput) {
+        if (rawInput.hasNoNext()) {
             throw new IllegalArgumentException("To parse argument, you need to provide at least one argument.");
         }
 
-        return this.canParse(invocation, argument, arguments.get(0));
+        return this.canParse(invocation, argument, rawInput.consumeNext());
     }
 
     @Override

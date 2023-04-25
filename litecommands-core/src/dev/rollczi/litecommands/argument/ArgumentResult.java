@@ -45,12 +45,12 @@ public class ArgumentResult<EXPECTED> {
         return this.failedResult;
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> successMultilevel(ValueToWrap<EXPECTED> expectedReturn, int consumedRawArguments) {
-        return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, consumedRawArguments), null);
+    public static <PARSED> ArgumentResult<PARSED> successMultilevel(ValueToWrap<PARSED> parsed, int consumedRawArguments) {
+        return new ArgumentResult<>(SuccessfulResult.of(parsed, consumedRawArguments), null);
     }
 
-    public static <EXPECTED> ArgumentResult<EXPECTED> success(EXPECTED expectedReturn) {
-        return new ArgumentResult<>(SuccessfulResult.of(() -> expectedReturn, 1), null);
+    public static <PARSED> ArgumentResult<PARSED> success(PARSED parsed) {
+        return new ArgumentResult<>(SuccessfulResult.of(() -> parsed, 1), null);
     }
 
     public static <EXPECTED> ArgumentResult<EXPECTED> success(ValueToWrap<EXPECTED> expectedReturn) {

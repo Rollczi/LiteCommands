@@ -1,32 +1,32 @@
 package dev.rollczi.litecommands.wrapper;
 
-public class WrapperFormat<T, WRAPPER> {
+public class WrapperFormat<PARSED, OUT> {
 
-    private final Class<T> type;
-    private final Class<?> toWrapperType;
+    private final Class<PARSED> type;
+    private final Class<OUT> toWrapperType;
 
-    private WrapperFormat(Class<T> type, Class<?> toWrapperType) {
+    private WrapperFormat(Class<PARSED> type, Class<OUT> toWrapperType) {
         this.type = type;
         this.toWrapperType = toWrapperType;
     }
 
-    public Class<T> getType() {
+    public Class<PARSED> getType() {
         return type;
     }
 
     public boolean hasWrapper() {
-        return toWrapperType != Void.class;
+        return toWrapperType != null;
     }
 
-    public Class<?> getWrapperType() {
-        if (toWrapperType == Void.class) {
+    public Class<OUT> getWrapperType() {
+        if (toWrapperType == null) {
             throw new IllegalStateException("Wrapper type is not defined");
         }
 
         return toWrapperType;
     }
 
-    public static <T, WRAPPER> WrapperFormat<T, WRAPPER> of(Class<T> type, Class<WRAPPER> toWrapperType) {
+    public static <PARSED, OUT> WrapperFormat<PARSED, OUT> of(Class<PARSED> type, Class<OUT> toWrapperType) {
         if (toWrapperType == null) {
             throw new IllegalArgumentException("Wrapper type cannot be null");
         }
@@ -34,7 +34,8 @@ public class WrapperFormat<T, WRAPPER> {
         return new WrapperFormat<>(type, toWrapperType);
     }
 
-    public static <T> WrapperFormat<T, Void> notWrapped(Class<T> type) {
-        return new WrapperFormat<>(type, Void.class);
+    public static <PARSED> WrapperFormat<PARSED, PARSED> notWrapped(Class<PARSED> type) {
+        return new WrapperFormat<>(type, null);
     }
+
 }

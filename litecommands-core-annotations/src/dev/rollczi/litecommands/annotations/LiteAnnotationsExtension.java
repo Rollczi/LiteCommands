@@ -14,9 +14,7 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteAnnotationResolver;
 import dev.rollczi.litecommands.annotations.inject.Injector;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import dev.rollczi.litecommands.annotations.permission.PermissionExcluded;
 import dev.rollczi.litecommands.annotations.permission.Permissions;
-import dev.rollczi.litecommands.annotations.permission.PermissionsExcluded;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationClassResolver;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaApplicator;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMethodResolver;
@@ -25,7 +23,7 @@ import dev.rollczi.litecommands.annotations.processor.CommandAnnotationRegistry;
 import dev.rollczi.litecommands.annotations.route.RootRoute;
 import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.annotations.validator.Validate;
-import dev.rollczi.litecommands.argument.ArgumentService;
+import dev.rollczi.litecommands.argument.input.ArgumentParserRegistry;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
@@ -141,7 +139,7 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
     public static <SENDER, C extends LiteSettings> LiteAnnotationsExtension<SENDER, C> create(Builder commands) {
         return new LiteAnnotationsExtension<SENDER, C>(commands).beforeRegister((extension, builder, pattern) -> {
             WrappedExpectedService wrappedExpectedService = pattern.getWrappedExpectedContextualService();
-            ArgumentService<SENDER> argumentService = pattern.getArgumentService();
+            ArgumentParserRegistry<SENDER> argumentParserRegistry = pattern.getArgumentService();
 
             extension.command()
                 // class or method
@@ -151,15 +149,13 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
                 .annotation(Description.class, new DescriptionAnnotationResolver<>())
                 .annotation(Permission.class, new Permission.AnnotationResolver<>())
                 .annotation(Permissions.class, new Permissions.AnnotationResolver<>())
-                .annotation(PermissionExcluded.class, new PermissionExcluded.AnnotationResolver<>())
-                .annotation(PermissionsExcluded.class, new PermissionsExcluded.AnnotationResolver<>())
                 .annotation(Validate.class, new Validate.AnnotationResolver<>())
 
                 // method
                 .annotation(Execute.class, new ExecuteAnnotationResolver<>(extension.commandExecutorFactory))
 
                 // argument
-                .parameterAnnotation(Arg.class, new ArgAnnotationResolver<>(wrappedExpectedService, argumentService))
+                .parameterAnnotation(Arg.class, new ArgAnnotationResolver<>(wrappedExpectedService, argumentParserRegistry))
                 .parameterAnnotation(Context.class, new ContextAnnotationResolver<>(pattern.getBindRegistry(), wrappedExpectedService))
             ;
         });

@@ -19,7 +19,7 @@ public class MethodCommandExecutorService<SENDER> {
     };
 
     public CommandExecutor<SENDER> create(Object instance, Method method) {
-        List<ParameterPreparedArgument<SENDER, ?>> arguments = this.resolveParameters(method);
+        List<ParameterCommandRequirement<SENDER, ?>> arguments = this.resolveParameters(method);
 
         return new MethodCommandExecutor<>(method, instance, arguments);
     }
@@ -32,8 +32,8 @@ public class MethodCommandExecutorService<SENDER> {
         this.defaultResolver = defaultResolver;
     }
 
-    private List<ParameterPreparedArgument<SENDER, ?>> resolveParameters(Method method) {
-        List<ParameterPreparedArgument<SENDER, ?>> preparedArguments = new ArrayList<>();
+    private List<ParameterCommandRequirement<SENDER, ?>> resolveParameters(Method method) {
+        List<ParameterCommandRequirement<SENDER, ?>> preparedArguments = new ArrayList<>();
 
         for (Parameter parameter : method.getParameters()) {
             preparedArguments.addAll(this.resolveParameter(parameter));
@@ -42,16 +42,16 @@ public class MethodCommandExecutorService<SENDER> {
         return preparedArguments;
     }
 
-    private List<ParameterPreparedArgument<SENDER, ?>> resolveParameter(Parameter parameter) {
+    private List<ParameterCommandRequirement<SENDER, ?>> resolveParameter(Parameter parameter) {
         Annotation[] annotations = parameter.getAnnotations();
 
         if (annotations.length == 0) {
-            ParameterPreparedArgument<SENDER, ?> argument = defaultResolver.resolve(parameter);
+            ParameterCommandRequirement<SENDER, ?> argument = defaultResolver.resolve(parameter);
 
             return Collections.singletonList(argument);
         }
 
-        List<ParameterPreparedArgument<SENDER, ?>> preparedArguments = new ArrayList<>();
+        List<ParameterCommandRequirement<SENDER, ?>> preparedArguments = new ArrayList<>();
 
         for (Annotation annotation : annotations) {
             preparedArguments.add(this.resolveParameterWithAnnotation(parameter, annotation));
@@ -61,7 +61,7 @@ public class MethodCommandExecutorService<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    private <A extends Annotation> ParameterPreparedArgument<SENDER, ?> resolveParameterWithAnnotation(Parameter parameter, A annotation) {
+    private <A extends Annotation> ParameterCommandRequirement<SENDER, ?> resolveParameterWithAnnotation(Parameter parameter, A annotation) {
         ParameterWithAnnotationResolver<SENDER, A> resolver = (ParameterWithAnnotationResolver<SENDER, A>) resolvers.get(annotation.annotationType());
 
         if (resolver == null) {

@@ -1,8 +1,7 @@
 package dev.rollczi.litecommands.wrapper.implementations;
 
-import dev.rollczi.litecommands.wrapper.WrappedExpected;
+import dev.rollczi.litecommands.wrapper.Wrapped;
 import dev.rollczi.litecommands.wrapper.WrapperFormat;
-import dev.rollczi.litecommands.wrapper.implementations.OptionalWrappedExpectedFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -10,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class OptionalWrappedWrappedExpectedFactoryTest {
+class OptionalWrappedWrappedFactoryTest {
 
     OptionalWrappedExpectedFactory optionalFactory = new OptionalWrappedExpectedFactory();
 
@@ -26,11 +25,11 @@ class OptionalWrappedWrappedExpectedFactoryTest {
         assertThrows(IllegalArgumentException.class, () -> optionalFactory.create(() -> null, WrapperFormat.of(String.class, CompletableFuture.class)));
         assertThrows(IllegalArgumentException.class, () -> optionalFactory.create(() -> "value", WrapperFormat.of(String.class, CompletableFuture.class)));
 
-        WrappedExpected<String> emptyWrap = optionalFactory.create(() -> null, WrapperFormat.of(String.class, Optional.class));
+        Wrapped<String> emptyWrap = optionalFactory.create(() -> null, WrapperFormat.of(String.class, Optional.class));
         Optional emptyOptional = assertInstanceOf(Optional.class, emptyWrap.unwrap());
         assertFalse(emptyOptional.isPresent());
 
-        WrappedExpected<String> wrap = optionalFactory.create(() -> "value", WrapperFormat.of(String.class, Optional.class));
+        Wrapped<String> wrap = optionalFactory.create(() -> "value", WrapperFormat.of(String.class, Optional.class));
         Optional optional = assertInstanceOf(Optional.class, wrap.unwrap());
         assertTrue(optional.isPresent());
         assertEquals("value", optional.get());
@@ -43,7 +42,7 @@ class OptionalWrappedWrappedExpectedFactoryTest {
         assertThrows(IllegalArgumentException.class, () -> optionalFactory.createEmpty(WrapperFormat.notWrapped(String.class)));
         assertThrows(IllegalArgumentException.class, () -> optionalFactory.createEmpty(WrapperFormat.of(String.class, CompletableFuture.class)));
 
-        WrappedExpected<String> emptyWrap = optionalFactory.createEmpty(WrapperFormat.of(String.class, Optional.class));
+        Wrapped<String> emptyWrap = optionalFactory.createEmpty(WrapperFormat.of(String.class, Optional.class));
         Optional emptyOptional = assertInstanceOf(Optional.class, emptyWrap.unwrap());
         assertFalse(emptyOptional.isPresent());
     }

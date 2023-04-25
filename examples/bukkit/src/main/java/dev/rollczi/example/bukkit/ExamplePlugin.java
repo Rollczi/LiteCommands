@@ -35,10 +35,10 @@ public class ExamplePlugin extends JavaPlugin {
 
         this.liteCommands = LiteBukkitFactory.builder(this.getServer(), settings)
             // Arguments
-            .argument(Location.class, new LocationArgument())
-            .argument(World.class, new WorldArgument(this.getServer()))
-            .argument(GameMode.class, new GameModeArgument())
-            .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cNie ma takiego gracza!"))
+            .argumentParser(Location.class, new LocationArgument())
+            .argumentParser(World.class, new WorldArgument(this.getServer()))
+            .argumentParser(GameMode.class, new GameModeArgument())
+            .argumentParser(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cNie ma takiego gracza!"))
 
             // Contextual Bind
             .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
