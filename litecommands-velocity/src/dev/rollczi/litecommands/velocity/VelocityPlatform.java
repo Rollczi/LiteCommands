@@ -4,6 +4,7 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
@@ -98,8 +99,8 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
                 new VelocitySender(invocation.source()),
                 this.commandSection.getName(),
                 invocation.alias(),
-                arguments.toArray(new String[0]),
-                    arguments);
+                InputArguments.raw(arguments)
+            );
         }
 
     }

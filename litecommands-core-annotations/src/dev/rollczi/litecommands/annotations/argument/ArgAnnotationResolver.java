@@ -22,13 +22,13 @@ public class ArgAnnotationResolver<SENDER> implements ParameterWithAnnotationRes
 
     @Override
     public ParameterCommandRequirement<SENDER, ?> resolve(Parameter parameter, Arg annotation) {
-        ParameterArgument<Arg, Object> parameterArgument = ParameterArgument.create(wrappedExpectedService, parameter, annotation);
+        ParameterArgument<Arg, Object> parameterArgument = ArgParameterArgument.createArg(wrappedExpectedService, parameter, annotation);
 
         return this.resolve(parameterArgument);
     }
 
     private <A extends Annotation, PARSED, ARGUMENT extends ParameterArgument<A, PARSED>> ParameterCommandRequirement<SENDER, PARSED> resolve(ARGUMENT argument) {
-        ArgumentParserSet<SENDER, PARSED> parserSet = argumentParserRegistry.getParserSet(argument.getWrapperFormat().getType(), ArgumentKey.key(argument.getClass()));
+        ArgumentParserSet<SENDER, PARSED> parserSet = argumentParserRegistry.getParserSet(argument.getWrapperFormat().getParsedType(), ArgumentKey.key(argument.getClass()));
 
         return new ArgArgumentRequirement<>(argument, wrappedExpectedService.getWrappedExpectedFactory(argument.getWrapperFormat()), parserSet);
     }

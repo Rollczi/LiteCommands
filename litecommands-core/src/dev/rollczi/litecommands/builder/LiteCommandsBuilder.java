@@ -12,7 +12,8 @@ import dev.rollczi.litecommands.command.CommandExecuteResultHandler;
 import dev.rollczi.litecommands.command.CommandExecuteResultMapper;
 import dev.rollczi.litecommands.editor.CommandEditor;
 import dev.rollczi.litecommands.platform.LiteSettings;
-import dev.rollczi.litecommands.validator.CommandValidator;
+import dev.rollczi.litecommands.validator.Validator;
+import dev.rollczi.litecommands.validator.ValidatorScope;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
 
 import java.util.function.Supplier;
@@ -20,15 +21,15 @@ import java.util.function.UnaryOperator;
 
 public interface LiteCommandsBuilder<SENDER, C extends LiteSettings, B extends LiteCommandsBuilder<SENDER, C, B>> {
 
-    LiteCommandsBuilder<SENDER, C, B> settings(UnaryOperator<C> operator);
+    LiteCommandsBuilder<SENDER, C, B> applySettings(UnaryOperator<C> operator);
 
-    LiteCommandsBuilder<SENDER, C, B> editor(String command, CommandEditor<SENDER> commandEditor);
+    LiteCommandsBuilder<SENDER, C, B> withEditor(String command, CommandEditor<SENDER> commandEditor);
 
-    LiteCommandsBuilder<SENDER, C, B> globalEditor(CommandEditor<SENDER> commandEditor);
+    LiteCommandsBuilder<SENDER, C, B> withGlobalEditor(CommandEditor<SENDER> commandEditor);
 
-    LiteCommandsBuilder<SENDER, C, B> validator(CommandValidator<SENDER> validator);
+    LiteCommandsBuilder<SENDER, C, B> withValidator(Validator<SENDER> validator);
 
-    LiteCommandsBuilder<SENDER, C, B> globalValidator(CommandValidator<SENDER> validator);
+    LiteCommandsBuilder<SENDER, C, B> withValidator(Validator<SENDER> validator, ValidatorScope scope);
 
     <INPUT, PARSED, PARSER extends ArgumentParser<SENDER, INPUT, PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, PARSER parser);
 
@@ -38,13 +39,13 @@ public interface LiteCommandsBuilder<SENDER, C extends LiteSettings, B extends L
 
     <INPUT, PARSED, ARGUMENT extends Argument<PARSED>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, Class<ARGUMENT> argumentType, String key, ArgumentParser<SENDER, INPUT, PARSED> resolver);
 
-    <T> LiteCommandsBuilder<SENDER, C, B> typeBind(Class<T> on, Bind<T> bind);
+    <T> LiteCommandsBuilder<SENDER, C, B> bindStatic(Class<T> on, Bind<T> bind);
 
-    <T> LiteCommandsBuilder<SENDER, C, B> typeBind(Class<T> on, Supplier<T> bind);
+    <T> LiteCommandsBuilder<SENDER, C, B> bindStatic(Class<T> on, Supplier<T> bind);
 
-    LiteCommandsBuilder<SENDER, C, B> typeBindUnsafe(Class<?> on, Supplier<?> bind);
+    LiteCommandsBuilder<SENDER, C, B> bindStaticUnsafe(Class<?> on, Supplier<?> bind);
 
-    <T> LiteCommandsBuilder<SENDER, C, B> contextualBind(Class<T> on, BindContextual<SENDER, T> bind);
+    <T> LiteCommandsBuilder<SENDER, C, B> bindContext(Class<T> on, BindContextual<SENDER, T> bind);
 
     LiteCommandsBuilder<SENDER, C, B> registerWrapperFactory(WrappedExpectedFactory factory);
 
@@ -52,9 +53,9 @@ public interface LiteCommandsBuilder<SENDER, C extends LiteSettings, B extends L
 
     <T> LiteCommandsBuilder<SENDER, C, B> resultMapper(Class<T> mapperFromType, CommandExecuteResultMapper<SENDER, T, ?> mapper);
 
-    <E extends LiteCommandsExtension<SENDER, C>> LiteCommandsBuilder<SENDER, C, B> extension(E extension);
+    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> withExtension(E extension);
 
-    <E extends LiteCommandsExtension<SENDER, C>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration);
+    <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> withExtension(E extension, UnaryOperator<E> configuration);
 
     LiteCommandsBuilder<SENDER, C, B> preProcessor(LiteBuilderPreProcessor<SENDER, C> preProcessor);
 

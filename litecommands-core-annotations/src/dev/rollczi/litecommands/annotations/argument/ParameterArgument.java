@@ -57,7 +57,7 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
 
     @Override
     public String getName() {
-        return ReflectFormatUtil.parameter(this.getParameter(), this.annotation);
+        return this.getParameter().getName();
     }
 
     @SuppressWarnings("unchecked")

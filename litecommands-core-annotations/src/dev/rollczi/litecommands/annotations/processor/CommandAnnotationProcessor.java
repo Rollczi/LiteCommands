@@ -36,7 +36,7 @@ public class CommandAnnotationProcessor<SENDER> {
             }
         }
 
-        context = this.annotationCommandEditorRegistry.edit(instance, context);
+        context = this.annotationCommandEditorRegistry.edit(instance.getClass(), context);
         context = this.commandEditorService.edit(context);
 
         return context;

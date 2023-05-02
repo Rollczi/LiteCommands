@@ -29,11 +29,6 @@ class NamedInputArguments implements InputArguments<NamedInputArguments.NamedMat
     }
 
     @Override
-    public String[] asArray() {
-        return this.asList().toArray(new String[0]);
-    }
-
-    @Override
     public List<String> asList() {
         List<String> rawArgs = new ArrayList<>();
 

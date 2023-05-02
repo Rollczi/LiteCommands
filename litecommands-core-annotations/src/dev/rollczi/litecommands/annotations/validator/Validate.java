@@ -1,11 +1,9 @@
 package dev.rollczi.litecommands.annotations.validator;
 
-import dev.rollczi.litecommands.annotations.processor.CommandAnnotationClassResolver;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaApplicator;
-import dev.rollczi.litecommands.editor.CommandEditorContext;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.meta.CommandMetaHolder;
-import dev.rollczi.litecommands.validator.CommandValidator;
+import dev.rollczi.litecommands.validator.Validator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Validate {
 
-    Class<? extends CommandValidator<?>>[] value();
+    Class<? extends Validator<?>>[] value();
 
     class AnnotationResolver<SENDER> implements CommandAnnotationMetaApplicator<SENDER, Validate> {
 

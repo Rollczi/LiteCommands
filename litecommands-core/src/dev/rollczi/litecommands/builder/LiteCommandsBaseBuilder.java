@@ -24,8 +24,9 @@ import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.editor.CommandEditorService;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.platform.Platform;
-import dev.rollczi.litecommands.validator.CommandValidator;
-import dev.rollczi.litecommands.validator.CommandValidatorService;
+import dev.rollczi.litecommands.validator.Validator;
+import dev.rollczi.litecommands.validator.ValidatorScope;
+import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 import org.jetbrains.annotations.ApiStatus;
@@ -45,7 +46,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     protected LiteBuilderPostProcessor<SENDER, C> postProcessor;
 
     protected final CommandEditorService<SENDER> commandEditorService;
-    protected final CommandValidatorService<SENDER> commandValidatorService;
+    protected final ValidatorService<SENDER> validatorService;
     protected final ArgumentParserRegistry<SENDER> argumentParserRegistry;
     protected final BindRegistry<SENDER> bindRegistry;
     protected final WrappedExpectedService wrappedExpectedService;
@@ -64,7 +65,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
             LiteBuilderPreProcessor.empty(),
             LiteBuilderPostProcessor.empty(),
             new CommandEditorService<>(),
-            new CommandValidatorService<>(),
+            new ValidatorService<>(),
             ArgumentParserRegistry.createRegistry(),
             new BindRegistry<>(),
             new WrappedExpectedService(),
@@ -103,7 +104,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
         LiteBuilderPreProcessor<SENDER, C> builderProcessor,
         LiteBuilderPostProcessor<SENDER, C> postProcessor,
         CommandEditorService<SENDER> commandEditorService,
-        CommandValidatorService<SENDER> commandValidatorService, ArgumentParserRegistry<SENDER> argumentParserRegistry,
+        ValidatorService<SENDER> validatorService, ArgumentParserRegistry<SENDER> argumentParserRegistry,
         BindRegistry<SENDER> bindRegistry,
         WrappedExpectedService wrappedExpectedService,
         CommandExecuteResultResolver<SENDER> resultResolver,
@@ -114,7 +115,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
         this.preProcessor = builderProcessor;
         this.postProcessor = postProcessor;
         this.commandEditorService = commandEditorService;
-        this.commandValidatorService = commandValidatorService;
+        this.validatorService = validatorService;
         this.argumentParserRegistry = argumentParserRegistry;
         this.bindRegistry = bindRegistry;
         this.wrappedExpectedService = wrappedExpectedService;
@@ -123,7 +124,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> settings(UnaryOperator<C> operator) {
+    public LiteCommandsBuilder<SENDER, C, B> applySettings(UnaryOperator<C> operator) {
         C newConfig = operator.apply(this.platform.getConfiguration());
         Preconditions.notNull(newConfig, "configuration");
 
@@ -133,26 +134,26 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     }
 
     @Override
-    public B editor(String command, CommandEditor<SENDER> commandEditor) {
+    public B withEditor(String command, CommandEditor<SENDER> commandEditor) {
         this.commandEditorService.registerEditor(command, commandEditor);
         return this.getThis();
     }
 
     @Override
-    public B globalEditor(CommandEditor<SENDER> commandEditor) {
+    public B withGlobalEditor(CommandEditor<SENDER> commandEditor) {
         this.commandEditorService.registerGlobalEditor(commandEditor);
         return this.getThis();
     }
 
     @Override
-    public B validator(CommandValidator<SENDER> validator) {
-        this.commandValidatorService.registerValidator(validator);
+    public B withValidator(Validator<SENDER> validator) {
+        this.validatorService.registerValidator(validator, ValidatorScope.GLOBAL);
         return this.getThis();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> globalValidator(CommandValidator<SENDER> validator) {
-        this.commandValidatorService.registerGlobalValidator(validator);
+    public LiteCommandsBuilder<SENDER, C, B> withValidator(Validator<SENDER> validator, ValidatorScope scope) {
+        this.validatorService.registerValidator(validator, scope);
         return this;
     }
 
@@ -181,25 +182,25 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     }
 
     @Override
-    public <T> B typeBind(Class<T> on, Bind<T> bind) {
+    public <T> B bindStatic(Class<T> on, Bind<T> bind) {
         this.bindRegistry.bindInstance(on, bind);
         return this.getThis();
     }
 
     @Override
-    public <T> B typeBind(Class<T> on, Supplier<T> bind) {
+    public <T> B bindStatic(Class<T> on, Supplier<T> bind) {
         this.bindRegistry.bindInstance(on, bind);
         return this.getThis();
     }
 
     @Override
-    public B typeBindUnsafe(Class<?> on, Supplier<?> bind) {
+    public B bindStaticUnsafe(Class<?> on, Supplier<?> bind) {
         this.bindRegistry.bindInstanceUnsafe(on, bind);
         return this.getThis();
     }
 
     @Override
-    public <T> B contextualBind(Class<T> on, BindContextual<SENDER, T> bind) {
+    public <T> B bindContext(Class<T> on, BindContextual<SENDER, T> bind) {
         this.bindRegistry.bindContextual(on, bind);
         return this.getThis();
     }
@@ -223,13 +224,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     }
 
     @Override
-    public <E extends LiteCommandsExtension<SENDER, C>> B extension(E extension) {
+    public <E extends LiteCommandsExtension<SENDER>> B withExtension(E extension) {
         extension.extend(this, this);
         return this.getThis();
     }
 
     @Override
-    public <E extends LiteCommandsExtension<SENDER, C>> B extension(E extension, UnaryOperator<E> configuration) {
+    public <E extends LiteCommandsExtension<SENDER>> B withExtension(E extension, UnaryOperator<E> configuration) {
         extension = configuration.apply(extension);
         extension.extend(this, this);
         return this.getThis();
@@ -256,7 +257,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
         CommandManager<SENDER, C> commandManager = new CommandManager<>(
             this.platform,
             this.resultResolver,
-            this.commandValidatorService
+            this.validatorService
         );
 
         List<CommandEditorContext<SENDER>> collectedContexts = this.commandEditorContextRegistry.extractAndMergeContexts();
@@ -308,8 +309,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
 
     @Override
     @ApiStatus.Internal
-    public CommandValidatorService<SENDER> getCommandFilterService() {
-        return this.commandValidatorService;
+    public ValidatorService<SENDER> getCommandFilterService() {
+        return this.validatorService;
     }
 
     @Override

@@ -8,7 +8,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 
-public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements LiteCommandsExtension<SENDER, C> {
+public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SENDER> {
 
     private final AdventureAudienceProvider<SENDER> adventureAudienceProvider;
     private boolean supportsMiniMessage = false;
@@ -24,28 +24,28 @@ public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements L
         this.adventureAudienceProvider = AdventureAudienceProvider.simple();
     }
 
-    public LiteAdventureExtension<SENDER, C> miniMessage(boolean supportsMiniMessage) {
+    public LiteAdventureExtension<SENDER> miniMessage(boolean supportsMiniMessage) {
         this.supportsMiniMessage = supportsMiniMessage;
         return this;
     }
 
-    public LiteAdventureExtension<SENDER, C> legacyColor(boolean supportsLegacyColor) {
+    public LiteAdventureExtension<SENDER> legacyColor(boolean supportsLegacyColor) {
         this.supportsLegacyColor = supportsLegacyColor;
         return this;
     }
 
-    public LiteAdventureExtension<SENDER, C> colorizeArgument(boolean colorizeArgument) {
+    public LiteAdventureExtension<SENDER> colorizeArgument(boolean colorizeArgument) {
         this.colorizeArgument = colorizeArgument;
         return this;
     }
 
-    public LiteAdventureExtension<SENDER, C> serializer(ComponentSerializer<Component, ? extends Component, String> serializer) {
+    public LiteAdventureExtension<SENDER> serializer(ComponentSerializer<Component, ? extends Component, String> serializer) {
         this.componentSerializer = serializer;
         return this;
     }
 
     @Override
-    public void extend(LiteCommandsBuilder<SENDER, C, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
+    public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
         if (componentSerializer == null) {
             componentSerializer = supportsMiniMessage
                 ? AdventureMiniMessageFactory.produce(supportsLegacyColor)
@@ -57,11 +57,10 @@ public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements L
             .argumentParser(Component.class, "raw", new AdventureComponentArgument<>())
             .argumentParser(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
 
-            .contextualBind(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
+            .bindContext(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 
             .resultHandler(Component.class, new AdventureComponentHandler<>(adventureAudienceProvider))
             .resultHandler(String.class, new StringHandler<>(adventureAudienceProvider, componentSerializer)
             );
     }
-
 }

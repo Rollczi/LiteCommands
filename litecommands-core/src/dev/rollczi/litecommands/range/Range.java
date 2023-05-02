@@ -2,13 +2,17 @@ package dev.rollczi.litecommands.range;
 
 public class Range {
 
-    public static final Range ZERO = new Range(0, 0);
+    public static final Range ZERO_POINT = new Range(0, 0);
     public static final Range ONE = new Range(1, 1);
 
     private final int min;
     private final int max;
 
     public Range(int min, int max) {
+        if (max < min) {
+            throw new IllegalArgumentException("Max cannot be less than min");
+        }
+
         this.min = min;
         this.max = max;
     }
@@ -21,19 +25,27 @@ public class Range {
         return max;
     }
 
-    public boolean isExact() {
+    public boolean isPoint() {
         return min == max;
+    }
+
+    public boolean isPointZero() {
+        return min == 0 && max == 0;
     }
 
     public boolean isInRange(int count) {
         return count >= min && count <= max;
     }
 
-    public boolean isAbove(int count) {
+    public boolean isOutOfRange(int count) {
+        return !isInRange(count);
+    }
+
+    public boolean isAboveRange(int count) {
         return count > max;
     }
 
-    public boolean isBelow(int count) {
+    public boolean isBelowRange(int count) {
         return count < min;
     }
 
@@ -46,7 +58,7 @@ public class Range {
     }
 
     public static Range zero() {
-        return ZERO;
+        return ZERO_POINT;
     }
 
     public static Range zeroOrMore() {

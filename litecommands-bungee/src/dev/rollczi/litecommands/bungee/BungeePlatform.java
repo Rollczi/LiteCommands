@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.bungee;
 
+import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
@@ -84,7 +85,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
         }
 
         private Invocation<CommandSender> newInvocation(CommandSender sender, String[] args) {
-            return new Invocation<>(sender, new BungeeSender(sender), this.commandSection.getName(), this.label, arguments);
+            return new Invocation<>(sender, new BungeeSender(sender), this.commandSection.getName(), this.label, InputArguments.raw(args));
         }
 
         @Override

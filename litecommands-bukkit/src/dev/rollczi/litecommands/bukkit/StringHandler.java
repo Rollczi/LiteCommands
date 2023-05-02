@@ -13,7 +13,7 @@ class StringHandler implements CommandExecuteResultHandler<CommandSender, String
 
     @Override
     public void handle(Invocation<CommandSender> invocation, String result) {
-        invocation.getSender().sendMessage(DESERIALIZE_AMPERSAND.apply(result));
+        invocation.sender().sendMessage(DESERIALIZE_AMPERSAND.apply(result));
     }
 
 }

@@ -157,6 +157,11 @@ class CommandEditorContextRootImpl<SENDER> implements CommandEditorContext<SENDE
     }
 
     @Override
+    public CommandEditorContext<SENDER> route() {
+        return this;
+    }
+
+    @Override
     public void meagre(CommandEditorContext<SENDER> context) {
         for (CommandEditorContext<SENDER> child : context.children()) {
             if (children.containsKey(child.name())) {

@@ -6,13 +6,10 @@ import dev.rollczi.litecommands.editor.CommandEditorContext;
 import dev.rollczi.litecommands.editor.CommandEditorExecutorBuilder;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.permission.MissingPermissionValidator;
-import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.TestUtil;
-import dev.rollczi.litecommands.validator.CommandValidatorResult;
-import org.junit.jupiter.api.Assertions;
+import dev.rollczi.litecommands.validator.ValidatorResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +50,7 @@ class MissingPermissionValidatorTest {
         CommandRoute<TestSender> sub = assertPresent(test.getChildren("sub"));
         CommandExecutor<TestSender> executor = sub.getExecutors().get(0);
 
-        CommandValidatorResult result = validator.validate(invocation, sub, executor);
+        ValidatorResult result = validator.validate(invocation, sub, executor);
 
         assertTrue(result.isInvalid());
         assertTrue(result.hasInvalidResult());

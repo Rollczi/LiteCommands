@@ -2,17 +2,17 @@ package dev.rollczi.litecommands.argument;
 
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
 
-public class SuccessfulResult<EXPECTED> {
+public class SuccessfulResult<PARSED> {
 
-    private final ValueToWrap<EXPECTED> valueToWrap;
+    private final ValueToWrap<PARSED> valueToWrap;
     private final int consumedRawArguments;
 
-    private SuccessfulResult(ValueToWrap<EXPECTED> valueToWrap, int consumedRawArguments) {
+    private SuccessfulResult(ValueToWrap<PARSED> valueToWrap, int consumedRawArguments) {
         this.valueToWrap = valueToWrap;
         this.consumedRawArguments = consumedRawArguments;
     }
 
-    public ValueToWrap<EXPECTED> getExpectedProvider() {
+    public ValueToWrap<PARSED> getExpectedProvider() {
         return this.valueToWrap;
     }
 
@@ -20,11 +20,11 @@ public class SuccessfulResult<EXPECTED> {
         return this.consumedRawArguments;
     }
 
-    public static <EXPECTED> SuccessfulResult<EXPECTED> of(ValueToWrap<EXPECTED> parsedArgument, int consumedRawArguments) {
+    public static <PARSED> SuccessfulResult<PARSED> of(ValueToWrap<PARSED> parsedArgument, int consumedRawArguments) {
         return new SuccessfulResult<>(parsedArgument, consumedRawArguments);
     }
 
-    public static <EXPECTED> SuccessfulResult<EXPECTED> optionalArgument(ValueToWrap<EXPECTED> parsedArgument) {
+    public static <PARSED> SuccessfulResult<PARSED> optionalArgument(ValueToWrap<PARSED> parsedArgument) {
         return new SuccessfulResult<>(parsedArgument, 0);
     }
 

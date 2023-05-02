@@ -3,20 +3,20 @@ package dev.rollczi.litecommands.permission;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.validator.CommandValidator;
-import dev.rollczi.litecommands.validator.CommandValidatorResult;
+import dev.rollczi.litecommands.validator.Validator;
+import dev.rollczi.litecommands.validator.ValidatorResult;
 
-public class MissingPermissionValidator<SENDER> implements CommandValidator<SENDER> {
+public class MissingPermissionValidator<SENDER> implements Validator<SENDER> {
 
     @Override
-    public CommandValidatorResult validate(Invocation<SENDER> invocation, CommandRoute<SENDER> command, CommandExecutor<SENDER> executor) {
-        MissingPermissions missingPermissions = MissingPermissions.check(invocation.getPlatformSender(), command, executor);
+    public ValidatorResult validate(Invocation<SENDER> invocation, CommandRoute<SENDER> command, CommandExecutor<SENDER> executor) {
+        MissingPermissions missingPermissions = MissingPermissions.check(invocation.platformSender(), command, executor);
 
         if (missingPermissions.isMissing()) {
-            return CommandValidatorResult.invalid(missingPermissions, false);
+            return ValidatorResult.invalid(missingPermissions, false);
         }
 
-        return CommandValidatorResult.valid();
+        return ValidatorResult.valid();
     }
 
 }

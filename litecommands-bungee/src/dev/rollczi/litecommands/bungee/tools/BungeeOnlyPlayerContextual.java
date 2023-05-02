@@ -23,7 +23,7 @@ public class BungeeOnlyPlayerContextual<MESSAGE> implements BindContextual<Comma
 
     @Override
     public Result<ProxiedPlayer, Object> extract(Invocation<CommandSender> invocation) {
-        return Option.of(invocation.getSender())
+        return Option.of(invocation.sender())
             .is(ProxiedPlayer.class)
             .toResult(onlyPlayerMessage.get());
     }

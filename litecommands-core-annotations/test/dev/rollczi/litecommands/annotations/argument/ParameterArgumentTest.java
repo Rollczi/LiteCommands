@@ -1,7 +1,5 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.argument.Arg;
-import dev.rollczi.litecommands.annotations.argument.ParameterArgument;
 import dev.rollczi.litecommands.wrapper.WrapperFormat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,7 @@ class ParameterArgumentTest {
 
     @Test
     void testGetName() {
-        assertEquals("@Arg String arg0", parameterArgument.getName());
+        assertEquals("arg0", parameterArgument.getName());
     }
 
     @Test
@@ -56,8 +54,8 @@ class ParameterArgumentTest {
         WrapperFormat<String, ?> wrapperFormat = parameterArgument.getWrapperFormat();
 
         assertNotNull(wrapperFormat);
-        assertEquals(String.class, wrapperFormat.getType());
-        assertFalse(wrapperFormat.hasWrapper());
+        assertEquals(String.class, wrapperFormat.getParsedType());
+        assertFalse(wrapperFormat.hasOutType());
     }
 
     @Test

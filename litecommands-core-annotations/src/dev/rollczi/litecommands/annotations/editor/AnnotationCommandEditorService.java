@@ -19,14 +19,14 @@ public class AnnotationCommandEditorService<SENDER> {
         this.editorsByEditorName.put(name, editor);
     }
 
-    public CommandEditorContext<SENDER> edit(Object instance, CommandEditorContext<SENDER> context) {
-        CommandEditor<SENDER> editor = this.editorsByClass.get(instance.getClass());
+    public CommandEditorContext<SENDER> edit(Class<?> type, CommandEditorContext<SENDER> context) {
+        CommandEditor<SENDER> editor = this.editorsByClass.get(type);
 
         if (editor != null) {
             context = editor.edit(context);
         }
 
-        for (Editor editorAnnotation : instance.getClass().getAnnotationsByType(Editor.class)) {
+        for (Editor editorAnnotation : type.getAnnotationsByType(Editor.class)) {
             CommandEditor<SENDER> commandEditor = this.editorsByEditorName.get(editorAnnotation.key());
 
             if (commandEditor != null) {

@@ -35,24 +35,10 @@ public class BindRegistry<SENDER> {
             return result;
         }
 
-        BindContextual<SENDER, T> contextualSupplier = (BindContextual<SENDER, T>) this.contextualBindings.get(clazz);
+        Option<BindContextual<SENDER, ?>> bindContextual = MapUtil.findKeyInstanceOf(clazz, this.contextualBindings);
 
-        if (contextualSupplier != null) {
-            Result<T, Object> extract = contextualSupplier.extract(invocation);
-
-            if (extract.isErr()) {
-                throw new LiteException(extract.getError());
-            }
-
-            return extract;
-        }
-
-        for (Map.Entry<Class<?>, BindContextual<SENDER, ?>> entry : this.contextualBindings.entrySet()) {
-            if (entry.getKey().isAssignableFrom(clazz)) {
-                BindContextual<SENDER, T> bindContextual = (BindContextual<SENDER, T>) entry.getValue();
-
-                return bindContextual.extract(invocation);
-            }
+        if (bindContextual.isPresent()) {
+            return (Result<T, Object>) bindContextual.get().extract(invocation);
         }
 
         return Result.error("Cannot find binding for " + clazz.getName());

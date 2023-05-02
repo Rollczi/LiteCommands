@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.annotations.editor.AnnotationCommandEditorServic
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteAnnotationResolver;
 import dev.rollczi.litecommands.annotations.inject.Injector;
+import dev.rollczi.litecommands.annotations.meta.Meta;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import dev.rollczi.litecommands.annotations.permission.Permissions;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationClassResolver;
@@ -28,7 +29,6 @@ import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
-import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 
 import java.lang.annotation.Annotation;
@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements LiteCommandsExtension<SENDER, C> {
+public class LiteAnnotatedCommmnads<SENDER> implements LiteCommandsExtension<SENDER> {
 
     private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry = new CommandAnnotationRegistry<>();
     private final AnnotationCommandEditorService<SENDER> annotationCommandEditorService = new AnnotationCommandEditorService<>();
@@ -49,64 +49,68 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
     private final List<Processor<SENDER>> beforeProcessor = new ArrayList<>();
     private final List<Processor<SENDER>> afterProcessor = new ArrayList<>();
 
-    public LiteAnnotationsExtension() {
+    private LiteAnnotatedCommmnads() {
         this.commandInstances = new ArrayList<>();
         this.commandClasses = new ArrayList<>();
     }
 
-    protected LiteAnnotationsExtension(Builder commands) {
+    protected LiteAnnotatedCommmnads(Builder commands) {
         this.commandInstances = new ArrayList<>(commands.getCommandsInstances());
         this.commandClasses = new ArrayList<>(commands.getCommandsClasses());
     }
 
-    public LiteAnnotationsExtension<SENDER, C> command(Object... commands) {
+    public static LiteAnnotatedCommmnads.Builder builder() {
+        return new LiteAnnotatedCommmnads.Builder();
+    }
+
+    public LiteAnnotatedCommmnads<SENDER> command(Object... commands) {
         this.commandInstances.addAll(Arrays.asList(commands));
         return this;
     }
 
-    public LiteAnnotationsExtension<SENDER, C> command(Class<?>... commands) {
+    public LiteAnnotatedCommmnads<SENDER> commandFromClass(Class<?>... commands) {
         this.commandClasses.addAll(Arrays.asList(commands));
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationsExtension<SENDER, C> annotation(Class<A> annotation, CommandAnnotationClassResolver<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotatedCommmnads<SENDER> annotation(Class<A> annotation, CommandAnnotationClassResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerResolver(annotation, resolver);
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationsExtension<SENDER, C> annotation(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotatedCommmnads<SENDER> annotation(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerMethodResolver(annotation, resolver);
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationsExtension<SENDER, C> annotation(Class<A> annotation, CommandAnnotationMetaApplicator<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotatedCommmnads<SENDER> annotation(Class<A> annotation, CommandAnnotationMetaApplicator<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerResolver(annotation, resolver);
         this.commandAnnotationRegistry.registerMethodResolver(annotation, resolver);
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationsExtension<SENDER, C> parameterAnnotation(Class<A> annotation, ParameterWithAnnotationResolver<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotatedCommmnads<SENDER> parameterAnnotation(Class<A> annotation, ParameterWithAnnotationResolver<SENDER, A> resolver) {
         this.commandExecutorFactory.registerResolver(annotation, resolver);
         return this;
     }
 
-    public LiteAnnotationsExtension<SENDER, C> parameterWithoutAnnotation(ParameterWithoutAnnotationResolver<SENDER> resolver) {
+    public LiteAnnotatedCommmnads<SENDER> parameterWithoutAnnotation(ParameterWithoutAnnotationResolver<SENDER> resolver) {
         this.commandExecutorFactory.defaultResolver(resolver);
         return this;
     }
 
-    public LiteAnnotationsExtension<SENDER, C> beforeRegister(Processor<SENDER> action) {
+    public LiteAnnotatedCommmnads<SENDER> beforeRegister(Processor<SENDER> action) {
         this.beforeProcessor.add(action);
         return this;
     }
 
-    public LiteAnnotationsExtension<SENDER, C> afterRegister(Processor<SENDER> action) {
+    public LiteAnnotatedCommmnads<SENDER> afterRegister(Processor<SENDER> action) {
         this.afterProcessor.add(action);
         return this;
     }
 
     @Override
-    public void extend(LiteCommandsBuilder<SENDER, C, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
+    public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
         for (Processor<SENDER> action : this.beforeProcessor) {
             action.process(this, builder, pattern);
         }
@@ -132,20 +136,21 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
         }
     }
 
-    public static <SENCER, C extends LiteSettings> LiteAnnotationsExtension<SENCER, C> create() {
+    public static <SENCER> LiteAnnotatedCommmnads<SENCER> create() {
         return create(new Builder());
     }
 
-    public static <SENDER, C extends LiteSettings> LiteAnnotationsExtension<SENDER, C> create(Builder commands) {
-        return new LiteAnnotationsExtension<SENDER, C>(commands).beforeRegister((extension, builder, pattern) -> {
+    private static <SENDER> LiteAnnotatedCommmnads<SENDER> create(Builder commands) {
+        return new LiteAnnotatedCommmnads<SENDER>(commands).beforeRegister((extension, builder, pattern) -> {
             WrappedExpectedService wrappedExpectedService = pattern.getWrappedExpectedContextualService();
             ArgumentParserRegistry<SENDER> argumentParserRegistry = pattern.getArgumentService();
 
-            extension.command()
+            extension.commandFromClass()
                 // class or method
                 .annotation(Route.class, new Route.AnnotationResolver<>())
                 .annotation(RootRoute.class, new RootRoute.AnnotationResolver<>())
 
+                .annotation(Meta.class, new Meta.AnnotationResolver<>())
                 .annotation(Description.class, new DescriptionAnnotationResolver<>())
                 .annotation(Permission.class, new Permission.AnnotationResolver<>())
                 .annotation(Permissions.class, new Permissions.AnnotationResolver<>())
@@ -163,7 +168,7 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
 
     interface Processor<SENDER> {
 
-        void process(LiteAnnotationsExtension<SENDER, ?> extension, LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern);
+        void process(LiteAnnotatedCommmnads<SENDER> extension, LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern);
 
     }
 
@@ -209,8 +214,8 @@ public class LiteAnnotationsExtension<SENDER, C extends LiteSettings> implements
             return Collections.unmodifiableList(commandsClasses);
         }
 
-        public <SENDER, C extends LiteSettings> LiteAnnotationsExtension<SENDER, C> build() {
-            return new LiteAnnotationsExtension<>(this);
+        public <SENDER> LiteAnnotatedCommmnads<SENDER> build() {
+            return new LiteAnnotatedCommmnads<>(this);
         }
 
     }

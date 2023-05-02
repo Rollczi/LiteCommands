@@ -19,9 +19,9 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
 
     @Override
     protected void hook(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
-        SimpleCommand minestomSimpleCommand = this.createCommand(command, invocationHook, suggestionHook);
+        MinestomCommand minestomMinestomCommand = this.createCommand(command, invocationHook, suggestionHook);
 
-        this.commandManager.register(minestomSimpleCommand);
+        this.commandManager.register(minestomMinestomCommand);
     }
 
     @Override
@@ -35,8 +35,8 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
         this.commandManager.unregister(commandToDelete);
     }
 
-    private SimpleCommand createCommand(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
-        return new SimpleCommand(command, invocationHook, suggestionHook);
+    private MinestomCommand createCommand(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
+        return new MinestomCommand(command, invocationHook, suggestionHook);
     }
 
 }

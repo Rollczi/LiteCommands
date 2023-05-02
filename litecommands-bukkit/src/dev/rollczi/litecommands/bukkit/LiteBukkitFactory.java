@@ -22,11 +22,11 @@ public final class LiteBukkitFactory {
         settings.commandsProvider(BukkitCommandsProviderImpl.create(server));
 
         return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings))
-            .typeBind(Server.class, () -> server)
-            .typeBind(BukkitScheduler.class, server::getScheduler)
+            .bindStatic(Server.class, () -> server)
+            .bindStatic(BukkitScheduler.class, server::getScheduler)
 
             .argumentParser(Player.class, new BukkitPlayerArgument<>(server, name -> "Player " + name + " is not online!")) // TODO WIKI GUIDE links
-            .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("This command is only for players!")) //TODO
+            .bindContext(Player.class, new BukkitOnlyPlayerContextual<>("This command is only for players!")) //TODO
             .resultHandler(String.class, new StringHandler())
             ;
     }

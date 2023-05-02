@@ -3,13 +3,13 @@ package dev.rollczi.litecommands.validator;
 import dev.rollczi.litecommands.util.Preconditions;
 import org.jetbrains.annotations.Nullable;
 
-public class CommandValidatorResult {
+public class ValidatorResult {
 
     private final boolean valid;
     private final boolean canBeIgnored;
     private final @Nullable Object invalidResult;
 
-    private CommandValidatorResult(boolean valid, boolean canBeIgnored, @Nullable Object invalidResult) {
+    private ValidatorResult(boolean valid, boolean canBeIgnored, @Nullable Object invalidResult) {
         this.valid = valid;
         this.canBeIgnored = canBeIgnored;
         this.invalidResult = invalidResult;
@@ -34,16 +34,16 @@ public class CommandValidatorResult {
         return invalidResult;
     }
 
-    public static CommandValidatorResult valid() {
-        return new CommandValidatorResult(true, false, null);
+    public static ValidatorResult valid() {
+        return new ValidatorResult(true, false, null);
     }
 
-    public static CommandValidatorResult invalid(boolean canBeIgnored) {
-        return new CommandValidatorResult(false, canBeIgnored, null);
+    public static ValidatorResult invalid(boolean canBeIgnored) {
+        return new ValidatorResult(false, canBeIgnored, null);
     }
 
-    public static CommandValidatorResult invalid(Object invalidResult, boolean canBeIgnored) {
-        return new CommandValidatorResult(false, canBeIgnored, invalidResult);
+    public static ValidatorResult invalid(Object invalidResult, boolean canBeIgnored) {
+        return new ValidatorResult(false, canBeIgnored, invalidResult);
     }
 
 }

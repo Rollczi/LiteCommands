@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.minestom;
 
+import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.PlatformInvocationHook;
@@ -14,13 +15,13 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import java.util.Arrays;
 import java.util.List;
 
-class SimpleCommand extends Command {
+class MinestomCommand extends Command {
 
     private final CommandRoute<CommandSender> command;
     private final PlatformInvocationHook<CommandSender> invocationHook;
     private final PlatformSuggestionHook<CommandSender> suggestionListener;
 
-    SimpleCommand(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionListener) {
+    MinestomCommand(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionListener) {
         super(command.getName(), command.getAliases().toArray(new String[0]));
         this.command = command;
         this.invocationHook = invocationHook;
@@ -54,7 +55,7 @@ class SimpleCommand extends Command {
     }
 
     private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, String... args) {
-        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, arguments);
+        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, InputArguments.raw(args));
     }
 
     private String[] fixArguments(String[] args) {

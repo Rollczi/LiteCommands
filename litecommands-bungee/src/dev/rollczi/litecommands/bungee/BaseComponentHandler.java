@@ -9,7 +9,7 @@ class BaseComponentHandler implements CommandExecuteResultHandler<CommandSender,
 
     @Override
     public void handle(Invocation<CommandSender> invocation, BaseComponent result) {
-        invocation.getSender().sendMessage(result);
+        invocation.sender().sendMessage(result);
     }
 
 }

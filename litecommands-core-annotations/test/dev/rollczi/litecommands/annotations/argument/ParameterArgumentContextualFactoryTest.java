@@ -1,7 +1,5 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.argument.Arg;
-import dev.rollczi.litecommands.annotations.argument.ParameterArgument;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 import dev.rollczi.litecommands.wrapper.implementations.OptionWrappedExpectedFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,17 +44,17 @@ class ParameterArgumentContextualFactoryTest {
         ParameterArgument<?, ?> firstContextual = ParameterArgument.create(wrappedExpectedService, parameters[0], parameters[0].getAnnotation(Arg.class));
         ParameterArgument<Arg, String> parameterArgument = assertInstanceOf(ParameterArgument.class, firstContextual);
 
-        assertEquals("@Arg String arg0", parameterArgument.getName());
-        assertEquals(String.class, parameterArgument.getWrapperFormat().getType());
-        assertFalse(parameterArgument.getWrapperFormat().hasWrapper());
+        assertEquals("arg0", parameterArgument.getName());
+        assertEquals(String.class, parameterArgument.getWrapperFormat().getParsedType());
+        assertFalse(parameterArgument.getWrapperFormat().hasOutType());
         assertEquals(Arg.class, parameterArgument.getAnnotationType());
 
         ParameterArgument<?, ?> secondContextual = ParameterArgument.create(wrappedExpectedService, parameters[1], parameters[1].getAnnotation(Arg.class));
         ParameterArgument<Arg, Integer> parameterArgument2 = assertInstanceOf(ParameterArgument.class, secondContextual);
 
-        assertEquals("@Arg int arg1", parameterArgument2.getName());
-        assertEquals(int.class, parameterArgument2.getWrapperFormat().getType());
-        assertFalse(parameterArgument2.getWrapperFormat().hasWrapper());
+        assertEquals("arg1", parameterArgument2.getName());
+        assertEquals(int.class, parameterArgument2.getWrapperFormat().getParsedType());
+        assertFalse(parameterArgument2.getWrapperFormat().hasOutType());
         assertEquals(Arg.class, parameterArgument2.getAnnotationType());
     }
 

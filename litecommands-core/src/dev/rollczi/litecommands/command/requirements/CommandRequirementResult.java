@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class CommandRequirementResult<OUT> {
+public class CommandRequirementResult<PARSED> {
 
-    private final @Nullable Supplier<Wrapped<OUT>> success;
+    private final @Nullable Supplier<Wrapped<PARSED>> success;
     private final @Nullable FailedReason failedReason;
 
-    private CommandRequirementResult(@Nullable Supplier<Wrapped<OUT>> success, @Nullable FailedReason failedReason) {
+    private CommandRequirementResult(@Nullable Supplier<Wrapped<PARSED>> success, @Nullable FailedReason failedReason) {
         this.success = success;
         this.failedReason = failedReason;
     }
@@ -26,7 +26,7 @@ public class CommandRequirementResult<OUT> {
     }
 
     @NotNull
-    public Wrapped<OUT> getSuccess() {
+    public Wrapped<PARSED> getSuccess() {
         if (success == null) {
             throw new IllegalStateException("Cannot get success when result is failed");
         }

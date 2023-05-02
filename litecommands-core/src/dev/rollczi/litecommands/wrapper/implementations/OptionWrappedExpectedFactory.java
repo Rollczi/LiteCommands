@@ -12,14 +12,14 @@ public class OptionWrappedExpectedFactory implements WrappedExpectedFactory {
 
     @Override
     public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
-        Class<EXPECTED> expectedType = info.getType();
+        Class<EXPECTED> expectedType = info.getParsedType();
 
         return new OptionWrapper<>(expectedType, valueToWrap);
     }
 
     @Override
     public <EXPECTED> Wrapped<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
-        return new OptionWrapper<>(info.getType(), () -> null);
+        return new OptionWrapper<>(info.getParsedType(), () -> null);
     }
 
     @Override

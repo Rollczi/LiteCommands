@@ -14,7 +14,7 @@ public class PermissionMessage implements MissingPermissionsHandler<CommandSourc
 
     @Override
     public void handle(Invocation<CommandSource> invocation, MissingPermissions missingPermissions) {
-        CommandSource commandSource = invocation.getSender();
+        CommandSource commandSource = invocation.sender();
         TagResolver.Single permission = Placeholder.parsed("permission", missingPermissions.asJoinedText());
 
         commandSource.sendMessage(MINI_MESSAGE.deserialize("<red>You don't have permission to use this command! (<permission>)", permission));

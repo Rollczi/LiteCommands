@@ -12,40 +12,41 @@ import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
-import dev.rollczi.litecommands.validator.CommandValidator;
-import dev.rollczi.litecommands.validator.CommandValidatorResult;
+import dev.rollczi.litecommands.validator.Validator;
+import dev.rollczi.litecommands.validator.ValidatorResult;
+import dev.rollczi.litecommands.validator.ValidatorScope;
 import org.junit.jupiter.api.Test;
 
 @LiteTest
 class CustomValidatorTest extends LiteTestSpec {
 
-    static class ValidValidator implements CommandValidator<TestSender> {
+    static class ValidValidator implements Validator<TestSender> {
         @Override
-        public CommandValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
-            return CommandValidatorResult.valid();
+        public ValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+            return ValidatorResult.valid();
         }
     }
 
-    static class InvalidValidator implements CommandValidator<TestSender> {
+    static class InvalidValidator implements Validator<TestSender> {
         @Override
-        public CommandValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
-            return CommandValidatorResult.invalid(false);
+        public ValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+            return ValidatorResult.invalid(false);
         }
     }
 
-    static class InvalidCanBeIgnoredValidator implements CommandValidator<TestSender> {
+    static class InvalidCanBeIgnoredValidator implements Validator<TestSender> {
         @Override
-        public CommandValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
-            return CommandValidatorResult.invalid(true);
+        public ValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+            return ValidatorResult.invalid(true);
         }
     }
 
     @LiteConfigurator
     static LiteConfig configurator() {
         return builder -> builder
-            .validator(new ValidValidator())
-            .validator(new InvalidValidator())
-            .validator(new InvalidCanBeIgnoredValidator());
+            .withValidator(new ValidValidator(), ValidatorScope.MARKED_META)
+            .withValidator(new InvalidValidator(), ValidatorScope.MARKED_META)
+            .withValidator(new InvalidCanBeIgnoredValidator(), ValidatorScope.MARKED_META);
     }
 
     @Route(name = "command")

@@ -4,8 +4,12 @@ import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
 
-public interface CommandRequirement<SENDER, RESULT> {
+public interface CommandRequirement<SENDER, PARSED> {
 
-    <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandRequirementResult<RESULT> check(Invocation<SENDER> invocation, InputArguments<CONTEXT> inputArguments, CONTEXT context);
+    <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRequirementResult<PARSED> check(
+        Invocation<SENDER> invocation,
+        InputArguments<MATCHER> inputArguments,
+        MATCHER matcher
+    );
 
 }

@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.argument.input;
 
 import dev.rollczi.litecommands.util.MapUtil;
-import org.jetbrains.annotations.Nullable;
 import panda.std.Option;
 
 import java.util.HashMap;
@@ -25,6 +24,7 @@ class ArgumentParserSetImpl<SENDER, PARSED> implements ArgumentParserSet<SENDER,
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <INPUT> Optional<ArgumentParser<SENDER, INPUT, PARSED>> getParser(Class<INPUT> inType) {
         return MapUtil.findKeySuperTypeOf(inType, this.parsers)
             .map(senderparsedArgumentParser -> (ArgumentParser<SENDER, INPUT, PARSED>) senderparsedArgumentParser)
@@ -46,7 +46,6 @@ class ArgumentParserSetImpl<SENDER, PARSED> implements ArgumentParserSet<SENDER,
             return Optional.empty();
         }
 
-        @Override
         public Class<PARSED> getParsedType() {
             throw new UnsupportedOperationException();
         }

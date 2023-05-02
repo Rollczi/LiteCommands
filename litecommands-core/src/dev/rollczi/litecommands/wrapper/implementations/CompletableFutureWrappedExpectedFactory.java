@@ -15,7 +15,7 @@ public class CompletableFutureWrappedExpectedFactory implements WrappedExpectedF
         ValueToWrap<EXPECTED> valueToWrap,
         WrapperFormat<EXPECTED, ?> info
     ) {
-        Class<EXPECTED> expectedType = info.getType();
+        Class<EXPECTED> expectedType = info.getParsedType();
 
         return new CompletableFutureWrapper<>(expectedType, valueToWrap);
     }

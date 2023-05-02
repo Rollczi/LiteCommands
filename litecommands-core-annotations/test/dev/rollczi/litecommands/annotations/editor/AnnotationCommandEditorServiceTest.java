@@ -30,7 +30,7 @@ class AnnotationCommandEditorServiceTest {
 
         Command command = new Command();
         CommandEditorContext<TestSender> oldContext = CommandEditorContext.<TestSender>create().name("test");
-        CommandEditorContext<TestSender> context = editorService.edit(command, oldContext);
+        CommandEditorContext<TestSender> context = editorService.edit(command.getClass(), oldContext);
 
         assertEquals("prefix-test", context.name());
     }

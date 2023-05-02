@@ -14,7 +14,7 @@ public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSourc
     @Override
     public void handle(Invocation<CommandSource> invocation, InvalidUsage<CommandSource> result) {
         Schematic schematic = result.getSchematic();
-        CommandSource sender = invocation.getSender();
+        CommandSource sender = invocation.sender();
 
         if (schematic.isOnlyFirst()) {
             sender.sendMessage(MINI_MESSAGE.deserialize("<red>Incorrect usage of command<gray> - " + schematic.first()));

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.rollczi.litecommands"
-version = "2.8.6-SNAPSHOT"
+version = "3.0.0-BETA-pre1"
 
 java {
     withSourcesJar()

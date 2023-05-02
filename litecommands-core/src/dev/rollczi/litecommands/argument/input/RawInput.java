@@ -52,7 +52,7 @@ public class RawInput {
         return this.consumed;
     }
 
-    public static RawInput of(Collection<String> rawArguments) {
+    static RawInput of(Collection<String> rawArguments) {
         return new RawInput(rawArguments);
     }
 
@@ -60,7 +60,7 @@ public class RawInput {
         return new RawInput(Arrays.asList(rawArguments));
     }
 
-    public static RawInput empty() {
+    static RawInput empty() {
         return new RawInput(new ArrayList<>());
     }
 

@@ -25,11 +25,6 @@ class RawInputArguments implements InputArguments<RawInputArguments.RawInputMatc
     }
 
     @Override
-    public String[] asArray() {
-        return this.rawArguments.toArray(new String[0]);
-    }
-
-    @Override
     public List<String> asList() {
         return Collections.unmodifiableList(this.rawArguments);
     }
@@ -57,7 +52,7 @@ class RawInputArguments implements InputArguments<RawInputArguments.RawInputMatc
         @Override
         public <SENDER, PARSED> ArgumentResult<PARSED> matchArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
             ArgumentParser<SENDER, RawInput, PARSED> parser = parserSet.getParser(RawInput.class)
-                .orElseThrow(() -> new ArgumentParseException("No parser for RawInput -> " + argument.getWrapperFormat().getType().getName()));
+                .orElseThrow(() -> new ArgumentParseException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
 
             if (!(parser instanceof Rangeable)) {
                 throw new ArgumentParseException("Parser must be Rangeable");
@@ -80,6 +75,10 @@ class RawInputArguments implements InputArguments<RawInputArguments.RawInputMatc
                 : routePosition + range.getMax();
 
             maxArguments = Math.min(maxArguments, rawArguments.size());
+
+            if (!this.hasNextRoute() && minArguments > 0) {
+                return ArgumentResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
+            }
 
             if (minArguments > rawArguments.size()) {
                 return ArgumentResult.failure(InvalidUsage.Cause.TOO_FEW_ARGUMENTS);

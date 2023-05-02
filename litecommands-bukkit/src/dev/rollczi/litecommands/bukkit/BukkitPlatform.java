@@ -86,7 +86,7 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitSettings> {
         }
 
         private Invocation<CommandSender> newInvocation(CommandSender sender, String alias, String[] args) {
-            return new Invocation<>(sender, new BukkitSender(sender), commandRoute.getName(), alias, InputArguments.rawArguments(args));
+            return new Invocation<>(sender, new BukkitSender(sender), commandRoute.getName(), alias, InputArguments.raw(args));
         }
 
         @Override
