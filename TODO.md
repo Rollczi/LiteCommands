@@ -42,7 +42,7 @@ Modern TODO
 - [ ] @Arg @Regex("[a-zA-Z0-9_]") @Length(min = 3, max = 16) String playerName
 - [x] Return result handler
 - [x] Return result handler remapper
-- [ ] Support JDA XD
+- [x] Support JDA
 - [ ] Support Sponge
 - [x] Support BungeeCord
 - [x] Support Velocity
@@ -50,4 +50,4 @@ Modern TODO
 - [ ] Support Nukkit
 - [x] Support Adventure
 - [x] Support Paper
-- [ ] Add support to provide other types of arguments by platforms
+- [x] Add support to provide other types of arguments by platforms
