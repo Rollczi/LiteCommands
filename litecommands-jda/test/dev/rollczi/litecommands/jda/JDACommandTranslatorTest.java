@@ -18,9 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JDACommandTranslatorTest {
 
+    JDACommandTranslator translator = new JDACommandTranslator()
+        .type(String.class,       OptionType.STRING,      option -> option.getAsString())
+        .type(Integer.class,         OptionType.INTEGER,     option -> option.getAsInt());
+
     @Test
     void test() {
-        JDACommandTranslator translator = JDACommandTranslator.create();
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
         siema.getMeta().put(CommandMeta.DESCRIPTION, "description");
@@ -46,7 +49,6 @@ class JDACommandTranslatorTest {
 
     @Test
     void subcommandsAndGroup() {
-        JDACommandTranslator translator = JDACommandTranslator.create();
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
         siema.getMeta().put(CommandMeta.DESCRIPTION, "description");

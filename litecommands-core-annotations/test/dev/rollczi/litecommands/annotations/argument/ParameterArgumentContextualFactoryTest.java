@@ -44,7 +44,7 @@ class ParameterArgumentContextualFactoryTest {
         ParameterArgument<?, ?> firstContextual = ParameterArgument.create(wrappedExpectedService, parameters[0], parameters[0].getAnnotation(Arg.class));
         ParameterArgument<Arg, String> parameterArgument = assertInstanceOf(ParameterArgument.class, firstContextual);
 
-        assertEquals("@Arg String arg0", parameterArgument.getName());
+        assertEquals("arg0", parameterArgument.getName());
         assertEquals(String.class, parameterArgument.getWrapperFormat().getParsedType());
         assertFalse(parameterArgument.getWrapperFormat().hasOutType());
         assertEquals(Arg.class, parameterArgument.getAnnotationType());
@@ -52,7 +52,7 @@ class ParameterArgumentContextualFactoryTest {
         ParameterArgument<?, ?> secondContextual = ParameterArgument.create(wrappedExpectedService, parameters[1], parameters[1].getAnnotation(Arg.class));
         ParameterArgument<Arg, Integer> parameterArgument2 = assertInstanceOf(ParameterArgument.class, secondContextual);
 
-        assertEquals("@Arg int arg1", parameterArgument2.getName());
+        assertEquals("arg1", parameterArgument2.getName());
         assertEquals(int.class, parameterArgument2.getWrapperFormat().getParsedType());
         assertFalse(parameterArgument2.getWrapperFormat().hasOutType());
         assertEquals(Arg.class, parameterArgument2.getAnnotationType());

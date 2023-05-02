@@ -36,7 +36,7 @@ class ParameterArgumentTest {
 
     @Test
     void testGetName() {
-        assertEquals("@Arg String arg0", parameterArgument.getName());
+        assertEquals("arg0", parameterArgument.getName());
     }
 
     @Test

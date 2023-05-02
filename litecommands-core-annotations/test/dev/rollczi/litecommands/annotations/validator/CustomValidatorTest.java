@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorResult;
+import dev.rollczi.litecommands.validator.ValidatorScope;
 import org.junit.jupiter.api.Test;
 
 @LiteTest
@@ -43,9 +44,9 @@ class CustomValidatorTest extends LiteTestSpec {
     @LiteConfigurator
     static LiteConfig configurator() {
         return builder -> builder
-            .withValidator(new ValidValidator())
-            .withValidator(new InvalidValidator())
-            .withValidator(new InvalidCanBeIgnoredValidator());
+            .withValidator(new ValidValidator(), ValidatorScope.MARKED_META)
+            .withValidator(new InvalidValidator(), ValidatorScope.MARKED_META)
+            .withValidator(new InvalidCanBeIgnoredValidator(), ValidatorScope.MARKED_META);
     }
 
     @Route(name = "command")

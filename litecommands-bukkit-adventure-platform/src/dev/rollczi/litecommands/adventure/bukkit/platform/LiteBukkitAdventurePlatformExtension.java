@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import net.kyori.adventure.platform.AudienceProvider;
 import org.bukkit.command.CommandSender;
 
-public class LiteBukkitAdventurePlatformExtension extends LiteAdventureExtension<CommandSender, LiteBukkitSettings> {
+public class LiteBukkitAdventurePlatformExtension extends LiteAdventureExtension<CommandSender> {
 
     public LiteBukkitAdventurePlatformExtension(AudienceProvider audienceProvider) {
         super(new BukkitAdventurePlatformAudienceProvider(audienceProvider));
