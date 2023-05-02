@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.FailedReason;
-import dev.rollczi.litecommands.argument.input.ArgumentParserSet;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.command.requirements.CommandArgumentRequirement;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
 import dev.rollczi.litecommands.argument.SuccessfulResult;

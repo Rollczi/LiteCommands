@@ -24,7 +24,7 @@ import dev.rollczi.litecommands.annotations.processor.CommandAnnotationRegistry;
 import dev.rollczi.litecommands.annotations.route.RootRoute;
 import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.annotations.validator.Validate;
-import dev.rollczi.litecommands.argument.input.ArgumentParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;

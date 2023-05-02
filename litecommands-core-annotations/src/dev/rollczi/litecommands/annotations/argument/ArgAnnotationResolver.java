@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.annotations.argument;
 import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
 import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.argument.input.ArgumentParserRegistry;
-import dev.rollczi.litecommands.argument.input.ArgumentParserSet;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 
 import java.lang.annotation.Annotation;

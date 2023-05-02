@@ -10,7 +10,7 @@ public abstract class OneAnnotationArgument<SENDER, TYPE> implements MultiAnnota
 
     @Override
     public final ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, Argument<TYPE> argument, RawInput rawInput) {
-        return this.parse(invocation, rawInput.consumeNext(), (ParameterArgument<Arg, TYPE>) argument);
+        return this.parse(invocation, rawInput.next(), (ParameterArgument<Arg, TYPE>) argument);
     }
 
     protected abstract ArgumentResult<TYPE> parse(Invocation<SENDER> invocation, String argument, ParameterArgument<Arg, TYPE> context);

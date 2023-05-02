@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.input;
+package dev.rollczi.litecommands.argument.parser;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
 

@@ -2,9 +2,9 @@ package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.input.ArgumentParser;
-import dev.rollczi.litecommands.argument.input.ArgumentParserSet;
-import dev.rollczi.litecommands.argument.input.ArgumentRawInputParser;
+import dev.rollczi.litecommands.argument.parser.ArgumentParser;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
+import dev.rollczi.litecommands.argument.parser.ArgumentRawInputParser;
 import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.argument.input.RawInput;
@@ -52,7 +52,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
 
                     @Override
                     public ArgumentResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
-                        return parser.apply(invocation, input.consumeNext());
+                        return parser.apply(invocation, input.next());
                     }
                 });
             }

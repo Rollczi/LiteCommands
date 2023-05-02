@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.builder;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.argument.input.ArgumentParser;
-import dev.rollczi.litecommands.argument.input.ArgumentParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ArgumentParser;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.bind.Bind;
 import dev.rollczi.litecommands.bind.BindContextual;
 import dev.rollczi.litecommands.bind.BindRegistry;

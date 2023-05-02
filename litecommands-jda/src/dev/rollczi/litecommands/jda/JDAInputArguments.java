@@ -2,9 +2,9 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.input.ArgumentParseException;
-import dev.rollczi.litecommands.argument.input.ArgumentParser;
-import dev.rollczi.litecommands.argument.input.ArgumentParserSet;
+import dev.rollczi.litecommands.argument.parser.ArgumentParseException;
+import dev.rollczi.litecommands.argument.parser.ArgumentParser;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.invalid.InvalidUsage;

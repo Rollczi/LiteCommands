@@ -10,8 +10,8 @@ import dev.rollczi.litecommands.validator.ValidatorScope;
 import dev.rollczi.litecommands.wrapper.implementations.CompletableFutureWrappedExpectedFactory;
 import dev.rollczi.litecommands.wrapper.implementations.OptionWrappedExpectedFactory;
 import dev.rollczi.litecommands.wrapper.implementations.OptionalWrappedExpectedFactory;
-import dev.rollczi.litecommands.argument.type.baisc.AbstractNumberArgumentResolver;
-import dev.rollczi.litecommands.argument.type.baisc.StringArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.baisc.NumberArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
@@ -41,7 +41,7 @@ public final class LiteCommandsFactory {
 
             .argumentParser(String.class, new StringArgumentResolver<>())
 
-            .argumentParser(Long.class, AbstractNumberArgumentResolver.ofLong())
+            .argumentParser(Long.class, NumberArgumentResolver.ofLong())
             ;
     }
 

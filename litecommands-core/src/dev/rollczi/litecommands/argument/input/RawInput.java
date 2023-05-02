@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class RawInput {
 
@@ -15,12 +16,16 @@ public class RawInput {
         this.rawArgumentsToConsume.addAll(rawArgumentsToConsume);
     }
 
-    public String consumeNext() {
+    public String next() {
+        if (rawArgumentsToConsume.isEmpty()) {
+            throw new NoSuchElementException("No more arguments to consume, consumed: " + consumed);
+        }
+
         consumed++;
         return rawArgumentsToConsume.remove(0);
     }
 
-    public List<String> consumeAll() {
+    public List<String> nextAll() {
         List<String> consumedArguments = new ArrayList<>(rawArgumentsToConsume);
         this.rawArgumentsToConsume.clear();
         this.consumed += consumedArguments.size();
@@ -28,24 +33,16 @@ public class RawInput {
         return consumedArguments;
     }
 
-    public String spyNext() {
+    public String seeNext() {
         return rawArgumentsToConsume.get(0);
     }
 
-    public List<String> spyAll() {
+    public List<String> seeAll() {
         return Collections.unmodifiableList(rawArgumentsToConsume);
     }
 
     public boolean hasNext() {
         return !rawArgumentsToConsume.isEmpty();
-    }
-
-    public boolean hasNoNext() {
-        return rawArgumentsToConsume.isEmpty();
-    }
-
-    public int size() {
-        return rawArgumentsToConsume.size();
     }
 
     int consumedCount() {

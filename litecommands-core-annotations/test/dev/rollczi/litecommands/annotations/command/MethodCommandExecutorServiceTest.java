@@ -6,9 +6,9 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.context.ContextAnnotationResolver;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.argument.input.ArgumentParserRegistry;
-import dev.rollczi.litecommands.argument.type.baisc.AbstractNumberArgumentResolver;
-import dev.rollczi.litecommands.argument.type.baisc.StringArgumentResolver;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
+import dev.rollczi.litecommands.argument.resolver.baisc.NumberArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.requirements.CommandRequirement;
@@ -43,7 +43,7 @@ class MethodCommandExecutorServiceTest {
     static void beforeAll() {
         bindRegistry.bindContextual(Invocation.class, invocation -> Result.ok(invocation)); // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
         resolverRegistry.registerParser(String.class, ArgumentKey.universal(), new StringArgumentResolver<>());
-        resolverRegistry.registerParser(int.class, ArgumentKey.universal(), AbstractNumberArgumentResolver.ofInteger());
+        resolverRegistry.registerParser(int.class, ArgumentKey.universal(), NumberArgumentResolver.ofInteger());
 
         executorFactory.registerResolver(Context.class, new ContextAnnotationResolver<>(bindRegistry, expectedService));
         executorFactory.registerResolver(Arg.class, new ArgAnnotationResolver<>(expectedService, resolverRegistry));

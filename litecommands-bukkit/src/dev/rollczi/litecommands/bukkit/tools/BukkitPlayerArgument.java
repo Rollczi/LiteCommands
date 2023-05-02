@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.bukkit.tools;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.type.OneArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.OneArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;

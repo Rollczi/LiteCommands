@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.builder;
 
-import dev.rollczi.litecommands.argument.input.ArgumentParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
