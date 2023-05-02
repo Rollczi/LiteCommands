@@ -34,12 +34,12 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>core</artifactId>
-    <version>2.8.6</version>
+    <version>2.8.7</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi.litecommands:core:2.8.6'
+implementation 'dev.rollczi.litecommands:core:2.8.7'
 ```
 
 ### First Simple Command
@@ -91,12 +91,12 @@ Add this to your dependencies if you want use ready-made implementation for velo
 <dependency>
     <groupId>dev.rollczi.litecommands</groupId>
     <artifactId>velocity</artifactId>
-    <version>2.8.6</version>
+    <version>2.8.7</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:2.8.6'
+implementation 'dev.rollczi.litecommands:velocity:2.8.7'
 ```
 
 #### Add -parameters to your compiler to use all features of LiteCommands
@@ -132,7 +132,7 @@ tasks.withType<JavaCompile> {
 - [Bukkit](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit)
 - [Bukkit Adventure extension](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit-adventure)
 - [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
-- [MineStom](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-minestom)
+- [Minestom](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-minestom)
 
 #### Other examples:
 
