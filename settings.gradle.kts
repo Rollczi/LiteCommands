@@ -15,7 +15,7 @@ include(":litecommands-bukkit")
 include(":litecommands-bukkit-adventure-platform")
 include(":litecommands-paper", JavaVersion.VERSION_17)
 include(":litecommands-minestom", JavaVersion.VERSION_17)
-include("litecommands-jda")
+include("litecommands-jda", JavaVersion.VERSION_17)
 
 // examples
 include(":examples:bukkit")
