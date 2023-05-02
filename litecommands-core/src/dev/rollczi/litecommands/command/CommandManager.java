@@ -9,8 +9,8 @@ import dev.rollczi.litecommands.invocation.InvocationResult;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.validator.CommandValidatorResult;
-import dev.rollczi.litecommands.validator.CommandValidatorService;
+import dev.rollczi.litecommands.validator.ValidatorResult;
+import dev.rollczi.litecommands.validator.ValidatorService;
 
 public class CommandManager<SENDER, C extends LiteSettings> {
 
@@ -18,17 +18,17 @@ public class CommandManager<SENDER, C extends LiteSettings> {
 
     private final Platform<SENDER, C> platform;
 
-    private final CommandValidatorService<SENDER> commandValidatorService;
+    private final ValidatorService<SENDER> validatorService;
     private final CommandExecuteResultResolver<SENDER> resultResolver;
 
     public CommandManager(
         Platform<SENDER, C> platform,
         CommandExecuteResultResolver<SENDER> resultResolver,
-        CommandValidatorService<SENDER> commandValidatorService
+        ValidatorService<SENDER> validatorService
     ) {
         this.platform = platform;
 
-        this.commandValidatorService = commandValidatorService;
+        this.validatorService = validatorService;
         this.resultResolver = resultResolver;
     }
 
@@ -69,7 +69,7 @@ public class CommandManager<SENDER, C extends LiteSettings> {
             }
 
             // Handle validation
-            CommandValidatorResult validationResult = this.commandValidatorService.validate(invocation, commandRoute, executor);
+            ValidatorResult validationResult = this.validatorService.validate(invocation, commandRoute, executor);
 
             if (validationResult.isInvalid()) {
                 if (validationResult.canBeIgnored()) {

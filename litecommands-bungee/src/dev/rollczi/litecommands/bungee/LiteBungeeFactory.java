@@ -20,8 +20,8 @@ public final class LiteBungeeFactory {
 
     public static LiteCommandsBuilder<CommandSender, LiteBungeeSettings, ?> builder(Plugin plugin, LiteBungeeSettings liteBungeeSettings) {
         return LiteCommandsFactory.builder(CommandSender.class, new BungeePlatform(plugin, liteBungeeSettings))
-            .typeBind(ProxyServer.class, plugin::getProxy)
-            .contextualBind(ProxiedPlayer.class, new BungeeOnlyPlayerContextual<>("Only players can use this command! (Set this message in LiteBungeeFactory)"))
+            .bindStatic(ProxyServer.class, plugin::getProxy)
+            .bindContext(ProxiedPlayer.class, new BungeeOnlyPlayerContextual<>("Only players can use this command! (Set this message in LiteBungeeFactory)"))
 
             .resultHandler(BaseComponent.class, new BaseComponentHandler())
             .resultHandler(String.class, new StringHandler());

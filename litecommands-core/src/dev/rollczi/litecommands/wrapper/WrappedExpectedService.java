@@ -36,11 +36,11 @@ public class WrappedExpectedService {
     }
 
     public WrappedExpectedFactory getWrappedExpectedFactory(WrapperFormat<?, ?> wrapperFormat) {
-        if (!wrapperFormat.hasWrapper()) {
+        if (!wrapperFormat.hasOutType()) {
             return this.defaultFactory;
         }
 
-        WrappedExpectedFactory factory = this.factories.get(wrapperFormat.getWrapperType());
+        WrappedExpectedFactory factory = this.factories.get(wrapperFormat.getOutType());
 
         if (factory == null) {
             factory = this.defaultFactory;

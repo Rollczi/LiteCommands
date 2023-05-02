@@ -14,7 +14,7 @@ class ExampleUnitTest extends LiteTestSpec {
     @LiteConfigurator
     static LiteConfig config() {
         return builder ->
-            builder.editor("route", context -> context.aliases("r"));
+            builder.withEditor("route", context -> context.aliases("r"));
     }
 
     @Route(name = "route")

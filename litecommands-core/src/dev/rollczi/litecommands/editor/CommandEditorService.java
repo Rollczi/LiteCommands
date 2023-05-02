@@ -7,11 +7,11 @@ import java.util.Set;
 
 public class CommandEditorService<SENDER> {
 
-    private final Map<String, CommandEditor<SENDER>> editors = new HashMap<>();
+    private final Map<String, CommandEditor<SENDER>> editorsByCommandName = new HashMap<>();
     private final Set<CommandEditor<SENDER>> globalEditors = new HashSet<>();
 
     public void registerEditor(String name, CommandEditor<SENDER> editor) {
-        this.editors.put(name, editor);
+        this.editorsByCommandName.put(name, editor);
     }
 
     public void registerGlobalEditor(CommandEditor<SENDER> editor) {
@@ -24,7 +24,7 @@ public class CommandEditorService<SENDER> {
         }
 
         for (String name : context.names()) {
-            CommandEditor<SENDER> editor = this.editors.get(name);
+            CommandEditor<SENDER> editor = this.editorsByCommandName.get(name);
 
             if (editor != null) {
                 context = editor.edit(context);

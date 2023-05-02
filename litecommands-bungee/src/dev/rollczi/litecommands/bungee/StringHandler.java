@@ -14,7 +14,7 @@ class StringHandler implements CommandExecuteResultHandler<CommandSender, String
 
     @Override
     public void handle(Invocation<CommandSender> invocation, String result) {
-        invocation.getSender().sendMessage(TextComponent.fromLegacyText(DESERIALIZE_AMPERSAND.apply(result)));
+        invocation.sender().sendMessage(TextComponent.fromLegacyText(DESERIALIZE_AMPERSAND.apply(result)));
     }
 
 }

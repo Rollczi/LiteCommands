@@ -39,7 +39,7 @@ public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Comman
             CommandRequirementResult<?> result = requirement.check(invocation, inputArguments, matcher);
 
             if (!result.isSuccess()) {
-                return CommandExecutorMatchResult.failed(result);
+                return CommandExecutorMatchResult.failed(result.getFailedReason());
             }
 
             results.add(new Match<>(requirement, result));

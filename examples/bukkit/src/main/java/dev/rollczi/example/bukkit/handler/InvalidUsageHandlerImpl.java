@@ -12,7 +12,7 @@ public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSende
 
     @Override
     public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result) {
-        CommandSender sender = invocation.getSender();
+        CommandSender sender = invocation.sender();
         List<String> schematics = result.getSchematic().all();
 
         if (schematics.size() == 1) {

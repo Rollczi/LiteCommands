@@ -25,7 +25,7 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
     public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
         this.check(info);
 
-        return new TypeSafeWrapped<>(info.getType(), this.wrapValue(valueToWrap, info));
+        return new TypeSafeWrapped<>(info.getParsedType(), this.wrapValue(valueToWrap, info));
     }
 
     protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info);
@@ -34,7 +34,7 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
     public <EXPECTED> Wrapped<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
         this.check(info);
 
-        return new TypeSafeWrapped<>(info.getType(), this.emptyValue(info));
+        return new TypeSafeWrapped<>(info.getParsedType(), this.emptyValue(info));
     }
 
     protected abstract <EXPECTED> Supplier<WRAPPER> emptyValue(WrapperFormat<EXPECTED, ?> info);
@@ -47,11 +47,11 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
     protected abstract boolean canCreateEmptyValue();
 
     private void check(WrapperFormat<?, ?> info) {
-        if (!info.hasWrapper()) {
+        if (!info.hasOutType()) {
             throw new IllegalArgumentException("Cannot wrap value without wrapper");
         }
 
-        if (!info.getWrapperType().equals(Optional.class)) {
+        if (!info.getOutType().equals(Optional.class)) {
             throw new IllegalArgumentException("Wrapper type mismatch");
         }
     }

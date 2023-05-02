@@ -15,7 +15,7 @@ import dev.rollczi.example.velocity.command.SendCommand;
 import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteAnnotationsExtension;
+import dev.rollczi.litecommands.annotations.LiteAnnotatedCommmnads;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.velocity.LiteVelocityFactory;
@@ -40,7 +40,7 @@ public class ExamplePlugin {
             .argumentParser(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
 
             // Commands
-            .extension(new LiteAnnotationsExtension.Builder()
+            .withExtension(new LiteAnnotatedCommmnads.Builder()
                 .command(new SendCommand())
                 .build()
             )

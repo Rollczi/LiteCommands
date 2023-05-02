@@ -70,6 +70,9 @@ public interface CommandEditorContext<SENDER> extends CommandMetaHolder {
     CommandEditorContext<SENDER> applyOnRoute(UnaryOperator<CommandEditorContext<SENDER>> apply);
 
     @ApiStatus.Internal
+    CommandEditorContext<SENDER> route();
+
+    @ApiStatus.Internal
     void meagre(CommandEditorContext<SENDER> context);
 
     @ApiStatus.Internal

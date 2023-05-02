@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
 import dev.rollczi.litecommands.editor.CommandEditorService;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.platform.Platform;
-import dev.rollczi.litecommands.validator.CommandValidatorService;
+import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -32,7 +32,7 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends LiteSettings> 
     CommandEditorService<SENDER> getCommandEditorService();
 
     @ApiStatus.Internal
-    CommandValidatorService<SENDER> getCommandFilterService();
+    ValidatorService<SENDER> getCommandFilterService();
 
     @ApiStatus.Internal
     ArgumentParserRegistry<SENDER> getArgumentService();

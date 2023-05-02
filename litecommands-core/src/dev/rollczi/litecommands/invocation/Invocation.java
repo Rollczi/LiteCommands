@@ -10,6 +10,16 @@ public class Invocation<SENDER> {
     private final String command;
     private final String label;
     private final InputArguments<?> arguments;
+    private final InvocationContext context;
+
+    public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, InputArguments<?> arguments, InvocationContext context) {
+        this.handle = handle;
+        this.platformSender = platformSender;
+        this.command = command;
+        this.label = label;
+        this.arguments = arguments;
+        this.context = context;
+    }
 
     public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, InputArguments<?> arguments) {
         this.handle = handle;
@@ -17,13 +27,14 @@ public class Invocation<SENDER> {
         this.command = command;
         this.label = label;
         this.arguments = arguments;
+        this.context = InvocationContext.builder().build();
     }
 
-    public SENDER getSender() {
+    public SENDER sender() {
         return this.handle;
     }
 
-    public PlatformSender getPlatformSender() {
+    public PlatformSender platformSender() {
         return this.platformSender;
     }
 
@@ -37,6 +48,10 @@ public class Invocation<SENDER> {
 
     public InputArguments<?> arguments() {
         return this.arguments;
+    }
+
+    public InvocationContext context() {
+        return context;
     }
 
 }

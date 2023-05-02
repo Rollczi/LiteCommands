@@ -8,7 +8,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 
-public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements LiteCommandsExtension<SENDER, C> {
+public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements LiteCommandsExtension<SENDER> {
 
     private final AdventureAudienceProvider<SENDER> adventureAudienceProvider;
     private boolean supportsMiniMessage = false;
@@ -57,7 +57,7 @@ public class LiteAdventureExtension<SENDER, C extends LiteSettings> implements L
             .argumentParser(Component.class, "raw", new AdventureComponentArgument<>())
             .argumentParser(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
 
-            .contextualBind(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
+            .bindContext(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 
             .resultHandler(Component.class, new AdventureComponentHandler<>(adventureAudienceProvider))
             .resultHandler(String.class, new StringHandler<>(adventureAudienceProvider, componentSerializer)

@@ -27,14 +27,16 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
         executorBuilder.setExecutor(executor);
 
         if (isNotEmpty) {
-            return context.appendChild(CommandEditorContext.<SENDER>create()
+            context.route().appendChild(CommandEditorContext.<SENDER>create()
                 .routeName(annotation.route())
                 .routeAliases(Arrays.asList(annotation.aliases()))
-                .appendExecutor(executorBuilder)
-            );
+                .appendExecutor(executorBuilder));
+
+            return context;
         }
 
-        return context.appendExecutor(executorBuilder);
+        context.route().appendExecutor(executorBuilder);
+        return context;
     }
 
 }

@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.unit;
 
-import dev.rollczi.litecommands.argument.input.RawInputArguments;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -61,7 +60,7 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
         TestSender testSender = new TestSender();
         TestPlatformSender testPlatformSender = new TestPlatformSender();
 
-        InputArguments args = new RawInputArguments(Arrays.asList(arguments));
+        InputArguments<?> args = InputArguments.raw(arguments);
 
         Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, command, command, args);
 
@@ -84,7 +83,7 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
         String label = command.split(" ")[0];
         String[] args = command.substring(label.length()).split(" ");
 
-        InputArguments arguments = new RawInputArguments(Arrays.asList(args));
+        InputArguments<?> arguments = InputArguments.raw(args);
 
         Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, label, label, arguments);
 

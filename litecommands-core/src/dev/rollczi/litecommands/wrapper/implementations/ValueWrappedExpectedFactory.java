@@ -11,7 +11,7 @@ public class ValueWrappedExpectedFactory implements WrappedExpectedFactory {
 
     @Override
     public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
-        Class<EXPECTED> expectedType = info.getType();
+        Class<EXPECTED> expectedType = info.getParsedType();
 
         return new ValueWrapped<>(expectedType, valueToWrap);
     }

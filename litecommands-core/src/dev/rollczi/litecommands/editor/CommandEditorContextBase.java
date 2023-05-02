@@ -269,6 +269,11 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
     }
 
     @Override
+    public CommandEditorContext<SENDER> route() {
+        return this;
+    }
+
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -293,7 +298,7 @@ abstract class CommandEditorContextBase<SENDER> implements CommandEditorContext<
             route.appendExecutor(executor.build());
         }
 
-        for (CommandEditorContext<SENDER> child : this.children.values()) {
+        for (CommandEditorContext<SENDER> child : this.children()) {
             if (!child.buildable()) {
                 continue;
             }

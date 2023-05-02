@@ -7,25 +7,25 @@ import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class NamedTypeMixedArguments implements InputArguments<NamedTypeMixedArguments.TypeMixedMatcher> {
+class NamedTypedInputArguments implements InputArguments<NamedTypedInputArguments.TypeMixedMatcher> {
 
     private final List<String> routes = new ArrayList<>();
-    private final Map<String, Object> namedArguments = new HashMap<>();
+    private final Map<String, Object> namedArguments = new LinkedHashMap<>();
+
+    NamedTypedInputArguments(List<String> routes, Map<String, Object> namedArguments) {
+        this.routes.addAll(routes);
+        this.namedArguments.putAll(namedArguments);
+    }
 
     @Override
     public TypeMixedMatcher createMatcher() {
         return new TypeMixedMatcher();
-    }
-
-    @Override
-    public String[] asArray() {
-        return this.asList().toArray(new String[0]);
     }
 
     @Override
@@ -43,7 +43,7 @@ class NamedTypeMixedArguments implements InputArguments<NamedTypeMixedArguments.
     public class TypeMixedMatcher implements InputArgumentsMatcher<TypeMixedMatcher> {
 
         private int routePosition = 0;
-        private Set<String> consumedArguments = new HashSet<>();
+        private final Set<String> consumedArguments = new HashSet<>();
 
         public TypeMixedMatcher() {}
 
@@ -59,7 +59,7 @@ class NamedTypeMixedArguments implements InputArguments<NamedTypeMixedArguments.
                 return ArgumentResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 
-            Class<PARSED> outType = argument.getWrapperFormat().getType();
+            Class<PARSED> outType = argument.getWrapperFormat().getParsedType();
             consumedArguments.add(argument.getName());
 
             if (outType.isAssignableFrom(input.getClass())) {

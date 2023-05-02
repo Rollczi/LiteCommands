@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.guide.GuideMissingPermission;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.validator.ValidatorScope;
 import dev.rollczi.litecommands.wrapper.implementations.CompletableFutureWrappedExpectedFactory;
 import dev.rollczi.litecommands.wrapper.implementations.OptionWrappedExpectedFactory;
 import dev.rollczi.litecommands.wrapper.implementations.OptionalWrappedExpectedFactory;
@@ -29,13 +30,13 @@ public final class LiteCommandsFactory {
             .registerWrapperFactory(new OptionalWrappedExpectedFactory())
             .registerWrapperFactory(new CompletableFutureWrappedExpectedFactory())
 
-            .contextualBind(senderClass, invocation -> Result.ok(invocation.getSender()))
+            .bindContext(senderClass, invocation -> Result.ok(invocation.sender()))
 
-            .contextualBind(String[].class, invocation -> Result.ok(invocation.arguments().asArray()))
-            .contextualBind(PlatformSender.class, invocation -> Result.ok(invocation.getPlatformSender()))
-            .contextualBind(Invocation.class, invocation -> Result.ok(invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
+            .bindContext(String[].class, invocation -> Result.ok(invocation.arguments().asArray()))
+            .bindContext(PlatformSender.class, invocation -> Result.ok(invocation.platformSender()))
+            .bindContext(Invocation.class, invocation -> Result.ok(invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
-            .globalValidator(new MissingPermissionValidator<>())
+            .withValidator(new MissingPermissionValidator<>(), ValidatorScope.GLOBAL)
             .resultMapper(MissingPermissions.class, new GuideMissingPermission<>())
 
             .argumentParser(String.class, new StringArgumentResolver<>())

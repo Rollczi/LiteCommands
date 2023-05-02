@@ -15,13 +15,13 @@ public interface CommandAnnotationMetaApplicator<SENDER, A extends Annotation> e
 
     @Override
     default CommandEditorContext<SENDER> resolve(Object instance, A annotation, CommandEditorContext<SENDER> context) {
-        apply(instance, annotation, context);
+        this.apply(instance, annotation, context.route());
         return context;
     }
 
     @Override
     default CommandEditorContext<SENDER> resolve(Object instance, Method method, A annotation, CommandEditorContext<SENDER> context, CommandEditorExecutorBuilder<SENDER> executorBuilder) {
-        apply(instance, annotation, executorBuilder);
+        this.apply(instance, annotation, executorBuilder);
         return context;
     }
 

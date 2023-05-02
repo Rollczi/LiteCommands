@@ -10,7 +10,7 @@ public class MissingPermissionsHandlerImpl implements MissingPermissionsHandler<
 
     @Override
     public void handle(Invocation<CommandSender> invocation, MissingPermissions missingPermissions) {
-        invocation.getSender().sendMessage(ChatUtil.color("You don't have permission to use this command! &7(" + missingPermissions.asJoinedText() + ")"));
+        invocation.sender().sendMessage(ChatUtil.color("You don't have permission to use this command! &7(" + missingPermissions.asJoinedText() + ")"));
     }
 
 }

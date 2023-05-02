@@ -12,20 +12,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CommandValidatorService<SENDER> {
+public class ValidatorService<SENDER> {
 
-    private final Map<Class<?>, CommandValidator<SENDER>> commandValidators = new HashMap<>();
-    private final List<CommandValidator<SENDER>> commandGlobalValidators = new ArrayList<>();
+    private final Map<Class<?>, Validator<SENDER>> commandValidators = new HashMap<>();
+    private final List<Validator<SENDER>> commandGlobalValidators = new ArrayList<>();
 
-    public void registerValidator(CommandValidator<SENDER> commandValidator) {
-        this.commandValidators.put(commandValidator.getClass(), commandValidator);
+    public void registerValidator(Validator<SENDER> validator, ValidatorScope scope) {
+        switch (scope) {
+            case GLOBAL:
+                this.commandGlobalValidators.add(validator);
+                break;
+            case MARKED_META:
+                this.commandValidators.put(validator.getClass(), validator);
+                break;
+        }
     }
 
-    public void registerGlobalValidator(CommandValidator<SENDER> commandValidator) {
-        this.commandGlobalValidators.add(commandValidator);
-    }
-
-    public CommandValidatorResult validate(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER> commandExecutor) {
+    public ValidatorResult validate(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER> commandExecutor) {
         boolean invalid = false;
 
         List<Class<?>> validators = CommandRouteUtils.collectFromRootToExecutor(commandRoute, commandExecutor, commandMeta -> commandMeta.get(CommandMeta.VALIDATORS))
@@ -33,8 +36,8 @@ public class CommandValidatorService<SENDER> {
             .flatMap(List::stream)
             .collect(Collectors.toList());
 
-        for (CommandValidator<SENDER> commandValidator : commandGlobalValidators) {
-            CommandValidatorResult result = commandValidator.validate(invocation, commandRoute, commandExecutor);
+        for (Validator<SENDER> validator : commandGlobalValidators) {
+            ValidatorResult result = validator.validate(invocation, commandRoute, commandExecutor);
 
             if (result.isInvalid()) {
                 if (result.canBeIgnored() || result.hasInvalidResult()) {
@@ -46,13 +49,13 @@ public class CommandValidatorService<SENDER> {
         }
 
         for (Class<?> validator : validators) {
-            CommandValidator<SENDER> commandValidator = this.commandValidators.get(validator);
+            Validator<SENDER> liteValidator = this.commandValidators.get(validator);
 
-            if (commandValidator == null) {
+            if (liteValidator == null) {
                 throw new IllegalStateException("Validator " + validator + " not found");
             }
 
-            CommandValidatorResult result = commandValidator.validate(invocation, commandRoute, commandExecutor);
+            ValidatorResult result = liteValidator.validate(invocation, commandRoute, commandExecutor);
 
             if (result.isInvalid()) {
                 if (result.canBeIgnored() || result.hasInvalidResult()) {
@@ -63,7 +66,7 @@ public class CommandValidatorService<SENDER> {
             }
         }
 
-        return invalid ? CommandValidatorResult.invalid(false) : CommandValidatorResult.valid();
+        return invalid ? ValidatorResult.invalid(false) : ValidatorResult.valid();
     }
 
 }

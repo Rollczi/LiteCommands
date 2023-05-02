@@ -17,7 +17,7 @@ public class VelocityOnlyPlayerContextual<MESSAGE> implements BindContextual<Com
 
     @Override
     public Result<Player, Object> extract(Invocation<CommandSource> invocation) {
-        return Option.of(invocation.getSender()).is(Player.class).toResult(onlyPlayerMessage);
+        return Option.of(invocation.sender()).is(Player.class).toResult(onlyPlayerMessage);
     }
 
 }
