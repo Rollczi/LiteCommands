@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.argument.basictype;
 
+import dev.rollczi.litecommands.command.InvalidUsage;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
-import panda.std.Blank;
 import panda.std.Result;
 
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ final class TypeUtils {
     private TypeUtils() {
     }
 
-    static <T> Result<T, Blank> parse(Supplier<T> parse) {
-        return Result.supplyThrowing(NumberFormatException.class, parse::get).mapErrToBlank();
+    static <T> Result<T, InvalidUsage> parse(Supplier<T> parse) {
+        return Result.supplyThrowing(NumberFormatException.class, parse::get).mapErr(error -> InvalidUsage.INSTANCE);
     }
 
     static List<Suggestion> suggestion(Function<String, ?> parse, LiteInvocation invocation, String... suggestions) {

@@ -10,7 +10,7 @@ public class ExecuteResult {
     private final boolean invalid;
     private final Object result;
 
-    public ExecuteResult(FindResult based, boolean success, boolean invalid, Object result) {
+    private ExecuteResult(FindResult based, boolean success, boolean invalid, Object result) {
         this.based = based;
         this.success = success;
         this.invalid = invalid;

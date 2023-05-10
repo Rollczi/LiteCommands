@@ -4,10 +4,10 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentContext;
 import dev.rollczi.litecommands.argument.ParameterHandler;
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
+import dev.rollczi.litecommands.command.InvalidUsage;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.MatchResult;
 import dev.rollczi.litecommands.suggestion.Suggestion;
-import panda.std.Blank;
 import panda.std.Option;
 import panda.std.Result;
 
@@ -47,7 +47,7 @@ public class OptionArgument<SENDER, T> implements Argument<SENDER, Opt>, Paramet
         if (parsed.isErr()) {
             Object error = parsed.getError();
 
-            if (error instanceof Blank && !context.annotation().strict()) {
+            if (error instanceof InvalidUsage && !context.annotation().strict()) {
                 return MatchResult.notMatched();
             }
 

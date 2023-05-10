@@ -48,8 +48,7 @@ class TestRootRouteCommand {
             .assertResult("msg");
 
         RequiredPermissions permissions = this.platform.execute("reply")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertRequiredPermissions();
 
         assertCollection(Collections.singletonList("reply"), permissions.getPermissions());
     }
@@ -57,14 +56,12 @@ class TestRootRouteCommand {
     @Test
     void testCopyMetaToSubCommands() {
         RequiredPermissions single = this.platform.execute("single-permission")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertRequiredPermissions();
 
         assertCollection(Collections.singletonList("parent-permission"), single.getPermissions());
 
         RequiredPermissions merged = this.platform.execute("merged-permissions")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertRequiredPermissions();
 
         assertCollection(Arrays.asList("parent-permission", "child-permission"), merged.getPermissions());
     }

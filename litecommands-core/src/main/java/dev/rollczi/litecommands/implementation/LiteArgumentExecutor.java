@@ -11,7 +11,6 @@ import dev.rollczi.litecommands.command.execute.ArgumentExecutor;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.handle.LiteException;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import panda.std.Blank;
 import panda.std.Option;
 
 import java.lang.annotation.Annotation;
@@ -23,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
+class LiteArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -32,7 +31,7 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
 
     private final CommandMeta meta = CommandMeta.create();
 
-    private LiteArgumentArgumentExecutor(List<AnnotatedParameterImpl<SENDER, ?>> arguments, MethodExecutor<SENDER> executor) {
+    private LiteArgumentExecutor(List<AnnotatedParameterImpl<SENDER, ?>> arguments, MethodExecutor<SENDER> executor) {
         this.executor = executor;
         this.arguments.addAll(arguments);
     }
@@ -85,7 +84,7 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
                         continue;
                     }
 
-                    if (resultNoMatchedResult.isPresent() && (!(resultNoMatchedResult.get() instanceof Blank))) {
+                    if (resultNoMatchedResult.isPresent()) {
                         return currentResult
                                 .withArgument(state)
                                 .invalid(resultNoMatchedResult.get());
@@ -127,8 +126,8 @@ class LiteArgumentArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
         return this.meta;
     }
 
-    static <T> LiteArgumentArgumentExecutor<T> of(List<AnnotatedParameterImpl<T, ?>> arguments, MethodExecutor<T> executor) {
-        return new LiteArgumentArgumentExecutor<>(arguments, executor);
+    static <T> LiteArgumentExecutor<T> of(List<AnnotatedParameterImpl<T, ?>> arguments, MethodExecutor<T> executor) {
+        return new LiteArgumentExecutor<>(arguments, executor);
     }
 
 }

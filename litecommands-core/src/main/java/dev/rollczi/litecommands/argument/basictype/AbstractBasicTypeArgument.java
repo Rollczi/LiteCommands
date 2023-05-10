@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.argument.basictype;
 
 import dev.rollczi.litecommands.argument.simple.OneArgument;
+import dev.rollczi.litecommands.command.InvalidUsage;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
-import panda.std.Blank;
 import panda.std.Result;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public abstract class AbstractBasicTypeArgument<T> implements OneArgument<T> {
     }
 
     @Override
-    public Result<T, Blank> parse(LiteInvocation invocation, String argument) {
+    public Result<T, InvalidUsage> parse(LiteInvocation invocation, String argument) {
         return TypeUtils.parse(() -> this.parser.apply(argument));
     }
 

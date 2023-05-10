@@ -1,13 +1,10 @@
 package dev.rollczi.litecommands.argument.option;
 
-import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
-import dev.rollczi.litecommands.schematic.Schematic;
 import dev.rollczi.litecommands.test.TestFactory;
 import dev.rollczi.litecommands.test.TestPlatform;
 import org.junit.jupiter.api.Test;
-import panda.std.Blank;
 import panda.std.Option;
 
 class OptStrictTest {
@@ -41,7 +38,7 @@ class OptStrictTest {
     @Test
     void testSingleOptStrictFail() {
         platform.execute("command", "text")
-            .assertFail();
+            .assertInvalid();
     }
 
     @Test
