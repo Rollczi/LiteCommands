@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.command.LiteInvocation;
+import dev.rollczi.litecommands.command.execute.ExecuteResult;
 import dev.rollczi.litecommands.command.section.CommandSection;
 import dev.rollczi.litecommands.handle.ExecuteResultHandler;
 import dev.rollczi.litecommands.platform.ExecuteListener;
@@ -65,7 +66,7 @@ class LiteBukkitRegistryPlatform implements RegistryPlatform<CommandSender> {
             LiteInvocation invocation = new LiteInvocation(new BukkitSender(sender), command.getName(), command.getName());
 
             try {
-                this.executeResultHandler.handleResult(sender, invocation, requiredPermissions);
+                this.executeResultHandler.handleResult(sender, invocation, ExecuteResult.invalid(null, requiredPermissions), requiredPermissions);
                 return true;
             } catch (IllegalStateException exception) {
                 return false;

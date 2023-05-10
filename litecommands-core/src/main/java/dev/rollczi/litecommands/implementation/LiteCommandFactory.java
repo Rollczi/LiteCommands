@@ -223,7 +223,7 @@ class LiteCommandFactory<SENDER> implements CommandStateFactory<SENDER> {
             }
         }
 
-        LiteArgumentArgumentExecutor<SENDER> executor = LiteArgumentArgumentExecutor.of(arguments, methodExecutor);
+        LiteArgumentExecutor<SENDER> executor = LiteArgumentExecutor.of(arguments, methodExecutor);
 
         executor.meta().applyCommandMeta(state.getMeta());
 

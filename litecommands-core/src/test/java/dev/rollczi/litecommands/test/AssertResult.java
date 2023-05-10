@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.test;
 
+import dev.rollczi.litecommands.command.InvalidUsage;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
+import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import org.junit.jupiter.api.Assertions;
 
 public class AssertResult {
@@ -24,6 +26,16 @@ public class AssertResult {
     public AssertResult assertInvalid() {
         Assertions.assertTrue(executeResult.isInvalid());
         return this;
+    }
+
+    public InvalidUsage assertInvalidUsage() {
+        return this.assertInvalid()
+            .assertResultIs(InvalidUsage.class);
+    }
+
+    public RequiredPermissions assertRequiredPermissions() {
+        return this.assertInvalid()
+            .assertResultIs(RequiredPermissions.class);
     }
 
     public AssertResult assertResult(Object result) {

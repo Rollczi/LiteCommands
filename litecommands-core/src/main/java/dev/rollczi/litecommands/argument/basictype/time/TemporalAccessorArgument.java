@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.argument.basictype.time;
 
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
+import dev.rollczi.litecommands.command.InvalidUsage;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import panda.std.Result;
@@ -40,9 +41,9 @@ public abstract class TemporalAccessorArgument<T extends TemporalAccessor> imple
     }
 
     @Override
-    public Result<T, ?> parseMultilevel(LiteInvocation invocation, String... arguments) {
+    public Result<T, InvalidUsage> parseMultilevel(LiteInvocation invocation, String... arguments) {
         return this.parseTemporal(String.join(MULTI_LEVEL_ARGUMENT_SEPARATOR, arguments))
-            .mapErrToBlank();
+            .mapErr(error -> InvalidUsage.INSTANCE);
     }
 
     @Override

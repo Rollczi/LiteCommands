@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.argument.basictype.time;
 
 import dev.rollczi.litecommands.argument.simple.MultilevelArgument;
+import dev.rollczi.litecommands.command.InvalidUsage;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.shared.EstimatedTemporalAmountParser;
 import dev.rollczi.litecommands.suggestion.Suggestion;
@@ -26,7 +27,7 @@ public abstract class TemporalAmountArgument<T extends TemporalAmount> implement
     @Override
     public Result<T, ?> parseMultilevel(LiteInvocation invocation, String... arguments) {
         return this.parseTemporal(String.join(MULTI_LEVEL_ARGUMENT_SEPARATOR, arguments))
-            .mapErrToBlank();
+            .mapErr(error -> InvalidUsage.INSTANCE);
     }
 
     @Override

@@ -51,7 +51,7 @@ class IntegerArgumentTest {
     @Test
     void testExecuteOnPlatform() {
         this.testPlatform.execute("command", "int", "1.5")
-            .assertNullResult();
+            .assertInvalidUsage();
 
         this.testPlatform.execute("command", "int", "5")
             .assertResult(5);

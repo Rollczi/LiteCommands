@@ -1,12 +1,13 @@
 package dev.rollczi.litecommands.handle;
 
+import dev.rollczi.litecommands.command.InvalidUsage;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.execute.ExecuteResult;
+import dev.rollczi.litecommands.schematic.Schematic;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.shared.MapUtil;
 import org.jetbrains.annotations.ApiStatus;
-import panda.std.Blank;
 import panda.std.Option;
 
 import java.util.HashMap;
@@ -37,38 +38,49 @@ public class ExecuteResultHandler<SENDER> {
         return this.schematicFormat;
     }
 
-    public void handle(SENDER sender, LiteInvocation invocation, ExecuteResult result) {
-        Object object = result.getResult();
+    public void handle(SENDER sender, LiteInvocation invocation, ExecuteResult executeResult) {
+        this.handle(sender, invocation, executeResult, executeResult.getResult());
+    }
 
+    private void handle(SENDER sender, LiteInvocation invocation, ExecuteResult executeResult, Object object) {
         if (object == null) {
-            if (!result.isFailure()) {
+            if (!executeResult.isFailure()) {
                 return;
             }
 
-            object = this.schematicGenerator.generateSchematic(result.getBased(), this.schematicFormat);
+            Schematic schematic = this.schematicGenerator.generateSchematic(executeResult.getBased(), this.schematicFormat);
+
+            this.handle(sender, invocation, executeResult, schematic);
+            return;
+        }
+
+        if (object instanceof InvalidUsage) {
+            Schematic schematic = this.schematicGenerator.generateSchematic(executeResult.getBased(), this.schematicFormat);
+
+            this.handle(sender, invocation, executeResult, schematic);
+            return;
         }
 
         if (object instanceof CompletableFuture<?>) {
             CompletableFuture<?> future = ((CompletableFuture<?>) object);
 
-            future.whenComplete((obj, ex) -> {
-                if (ex != null) {
-                    ex.printStackTrace();
+            future.whenComplete((obj, throwable) -> {
+                if (throwable != null) {
+                    throwable.printStackTrace();
                     return;
                 }
 
-                this.handleResult(sender, invocation, obj);
+                this.handle(sender, invocation, executeResult, obj);
             });
 
             return;
         }
 
-
-        this.handleResult(sender, invocation, object);
+        this.handleResult(sender, invocation, executeResult, object);
     }
 
     @ApiStatus.Internal
-    public void handleResult(SENDER sender, LiteInvocation invocation, Object object) {
+    public void handleResult(SENDER sender, LiteInvocation invocation, ExecuteResult executeResult, Object object) {
         Class<?> type = object.getClass();
         Option<Handler<SENDER, ?>> handlerOpt = MapUtil.findSuperTypeOf(type, this.handlers);
 
@@ -84,18 +96,11 @@ public class ExecuteResultHandler<SENDER> {
                     throw new RuntimeException("Exception thrown during command execution", (Throwable) object);
                 }
 
-                if (object instanceof Blank) {
-                    return;
-                }
-
                 throw new IllegalStateException("Missing result handler for type " + type);
             }
 
             Object to = this.handleRedirector(forwarding, object);
-            Handler<SENDER, ?> handler = MapUtil.findSuperTypeOf(to.getClass(), this.handlers)
-                .orThrow(() -> new IllegalStateException("Missing result handler for type " + type + " or for redirected type " + to.getClass()));
-
-            this.handleHandler(handler, sender, invocation, to);
+            this.handle(sender, invocation, executeResult, to);
             return;
         }
 

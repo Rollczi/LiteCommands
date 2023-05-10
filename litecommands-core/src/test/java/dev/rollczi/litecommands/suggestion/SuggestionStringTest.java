@@ -19,8 +19,8 @@ class SuggestionStringTest {
     @Test
     void test() {
         
-        platform.suggestAsOp("test", "").assertWith("text");
-        platform.suggestAsOp("test", "t").assertWith("t", "text");
+        platform.suggestAsOp("test", "").assertWith();
+        platform.suggestAsOp("test", "t").assertWith("t");
         platform.suggestAsOp("test", "siema").assertWith("siema");
     }
 

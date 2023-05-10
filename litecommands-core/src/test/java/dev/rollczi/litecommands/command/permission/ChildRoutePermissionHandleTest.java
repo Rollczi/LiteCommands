@@ -36,22 +36,19 @@ class ChildRoutePermissionHandleTest {
     @Test
     void test() {
         RequiredPermissions permissions = platform.execute("main", "info")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertRequiredPermissions();
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.info", permissions.getPermissions().get(0));
 
         permissions = platform.execute("main", "test", "value")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertRequiredPermissions();
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.test", permissions.getPermissions().get(0));
 
         permissions = platform.execute("main", "test", "value", "value2")
-            .assertInvalid()
-            .assertResultIs(RequiredPermissions.class);
+            .assertRequiredPermissions();
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.test.2", permissions.getPermissions().get(0));
