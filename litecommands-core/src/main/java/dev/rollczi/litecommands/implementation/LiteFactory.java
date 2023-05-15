@@ -85,10 +85,6 @@ import java.util.List;
 
 public final class LiteFactory {
 
-    private static final Redirector<Schematic, String> MAP_SCHEMATIC_TO_STRING = schematic -> String.join(System.lineSeparator(), schematic.getSchematics());
-    private static final Redirector<RequiredPermissions, String> MAP_PERMISSIONS_TO_STRING = permissions -> String.join(System.lineSeparator(), permissions.getPermissions());
-
-
     private LiteFactory() {
     }
 
@@ -158,14 +154,11 @@ public final class LiteFactory {
             .argumentMultilevel(MinguoDate.class, new MinguoDateArgument())
             .argumentMultilevel(ThaiBuddhistDate.class, new ThaiBuddhistDateArgument())
 
+            .resultHandler(boolean.class, (sender, invocation, value) -> {})
+            .resultHandler(Boolean.class, (sender, invocation, value) -> {})
 
-            .resultHandler(boolean.class, (sender, invocation, value) -> {
-            })
-            .resultHandler(Boolean.class, (sender, invocation, value) -> {
-            })
-
-            .redirectResult(Schematic.class, String.class, MAP_SCHEMATIC_TO_STRING)
-            .redirectResult(RequiredPermissions.class, String.class, MAP_PERMISSIONS_TO_STRING)
+            .redirectResult(Schematic.class, String.class, schematic -> schematic.join(System.lineSeparator()))
+            .redirectResult(RequiredPermissions.class, String.class, permissions -> permissions.join(System.lineSeparator()))
             .redirectResult(LiteException.class, Object.class, LiteException::getResult)
 
             .contextualBind(LiteInvocation.class, (sender, invocation) -> Result.ok(invocation.toLite()))

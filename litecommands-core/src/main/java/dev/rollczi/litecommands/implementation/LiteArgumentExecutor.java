@@ -21,10 +21,16 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 class LiteArgumentExecutor<SENDER> implements ArgumentExecutor<SENDER> {
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final ThreadFactory threadFactory = Executors.privilegedThreadFactory();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), runnable -> {
+        Thread thread = threadFactory.newThread(runnable);
+        thread.setUncaughtExceptionHandler((current, throwable) -> throwable.printStackTrace());
+        return thread;
+    });
 
     private final MethodExecutor<SENDER> executor;
     private final List<AnnotatedParameterImpl<SENDER, ?>> arguments = new ArrayList<>();

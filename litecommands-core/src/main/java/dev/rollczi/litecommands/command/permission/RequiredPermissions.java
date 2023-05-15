@@ -26,6 +26,10 @@ public class RequiredPermissions {
         return this.permissions.isEmpty();
     }
 
+    public String join(CharSequence separator) {
+        return String.join(separator, permissions);
+    }
+
     public RequiredPermissions with(RequiredPermissions permissions) {
         List<String> perm = new ArrayList<>(this.permissions);
 

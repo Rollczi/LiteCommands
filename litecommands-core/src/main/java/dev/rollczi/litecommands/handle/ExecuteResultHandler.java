@@ -65,12 +65,19 @@ public class ExecuteResultHandler<SENDER> {
             CompletableFuture<?> future = ((CompletableFuture<?>) object);
 
             future.whenComplete((obj, throwable) -> {
-                if (throwable != null) {
-                    throwable.printStackTrace();
-                    return;
-                }
+                try {
+                    if (throwable != null) {
+                        this.handle(sender, invocation, executeResult, throwable);
+                        return;
+                    }
 
-                this.handle(sender, invocation, executeResult, obj);
+                    if (obj != null) {
+                        this.handle(sender, invocation, executeResult, obj);
+                    }
+                }
+                catch (Throwable error) {
+                    error.printStackTrace();
+                }
             });
 
             return;
@@ -93,10 +100,10 @@ public class ExecuteResultHandler<SENDER> {
                 }
 
                 if (object instanceof Throwable) {
-                    throw new RuntimeException("Exception thrown during command execution", (Throwable) object);
+                    throw new LiteCommandsExecutionException("Exception thrown during command execution", (Throwable) object);
                 }
 
-                throw new IllegalStateException("Missing result handler for type " + type);
+                throw new LiteCommandsExecutionException("Missing result handler for type " + type);
             }
 
             Object to = this.handleRedirector(forwarding, object);
