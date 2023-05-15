@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -46,6 +47,7 @@ class AsyncAnnotationTest {
     }
 
     @Test
+    @DisplayName("should execute async method")
     void test() {
         this.platform.execute("command", "async")
             .assertSuccess()
@@ -56,6 +58,8 @@ class AsyncAnnotationTest {
     @DisplayName("should handle thrown exception in async method")
     void testThrowException() {
         AssertResult assertResult = this.platform.execute("command", "async-exception");
+        assertMessage(assertResult, "async-exception");
+
         Object result = assertResult
             .assertSuccess()
             .assertResultIs(CompletableFuture.class)
@@ -64,13 +68,14 @@ class AsyncAnnotationTest {
         LiteException liteException = assertInstanceOf(LiteException.class, result);
 
         assertEquals("async-exception", liteException.getResult());
-        assertResult.assertMessage("async-exception");
     }
 
     @Test
     @DisplayName("should handle thrown throwable in async method")
     void testThrowThrowable() {
         AssertResult assertResult = this.platform.execute("command", "async-throwable");
+        assertMessage(assertResult, "async-throwable");
+
         Object result = assertResult
             .assertSuccess()
             .assertResultIs(CompletableFuture.class)
@@ -79,7 +84,14 @@ class AsyncAnnotationTest {
         Throwable throwable = assertInstanceOf(Throwable.class, result);
 
         assertEquals("async-throwable", throwable.getMessage());
-        assertResult.assertMessage("async-throwable");
+    }
+
+    // .join() is unlocked before calling result handler
+    private void assertMessage(AssertResult assertResult, String message) {
+        await().until(() -> {
+            assertResult.assertMessage(message);
+            return true;
+        });
     }
 
 }
