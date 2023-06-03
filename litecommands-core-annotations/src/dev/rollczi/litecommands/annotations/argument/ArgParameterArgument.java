@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -11,8 +11,8 @@ import java.util.Arrays;
 
 class ArgParameterArgument<EXPECTED> extends ParameterArgument<Arg, EXPECTED> {
 
-    protected ArgParameterArgument(Method method, Parameter parameter, int parameterIndex, Arg annotation, Class<Arg> annotationType, WrapperFormat<EXPECTED, ?> wrapperFormat) {
-        super(method, parameter, parameterIndex, annotation, annotationType, wrapperFormat);
+    protected ArgParameterArgument(Method method, Parameter parameter, int parameterIndex, Arg annotation, Class<Arg> annotationType, WrapFormat<EXPECTED, ?> wrapFormat) {
+        super(method, parameter, parameterIndex, annotation, annotationType, wrapFormat);
     }
 
     @Override
@@ -27,13 +27,13 @@ class ArgParameterArgument<EXPECTED> extends ParameterArgument<Arg, EXPECTED> {
     }
 
     @SuppressWarnings("unchecked")
-    static <A extends Annotation, EXPECTED> ArgParameterArgument<EXPECTED> createArg(WrappedExpectedService wrappedExpectedService, Parameter parameter, Arg annotation) {
+    static <A extends Annotation, EXPECTED> ArgParameterArgument<EXPECTED> createArg(WrapperRegistry wrapperRegistry, Parameter parameter, Arg annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         Class<Arg> annotationType = (Class<Arg>) annotation.annotationType();
-        WrapperFormat<?, ?> wrapperFormat = WrapperParameterUtil.wrapperFormat(wrappedExpectedService, parameter);
+        WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);
 
-        return new ArgParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapperFormat<EXPECTED, ?>) wrapperFormat);
+        return new ArgParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapFormat<EXPECTED, ?>) wrapFormat);
     }
 
 }

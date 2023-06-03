@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.command;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
 import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.wrapper.Wrapped;
+import dev.rollczi.litecommands.wrapper.Wrap;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -36,7 +36,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
             .sorted(Comparator.comparingInt(pair -> pair.getArgument().getParameterIndex()))
             .map(pair -> pair.getResult())
             .map(success -> success.getSuccess())
-            .map(Wrapped::unwrap)
+            .map(Wrap::unwrap)
             .toArray();
 
         return CommandExecutorMatchResult.success(() -> {

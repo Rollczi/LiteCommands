@@ -1,24 +1,24 @@
 package dev.rollczi.litecommands.wrapper.implementations;
 
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class OptionalWrappedExpectedFactory extends AbstractWrappedExpectedFactory<Optional> {
+public class OptionalWrapper extends AbstractWrapper<Optional> {
 
-    public OptionalWrappedExpectedFactory() {
+    public OptionalWrapper() {
         super(Optional.class);
     }
 
     @Override
-    protected <EXPECTED> Supplier<Optional> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
+    protected <EXPECTED> Supplier<Optional> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info) {
         return () -> Optional.ofNullable(valueToWrap.get());
     }
 
     @Override
-    protected <EXPECTED> Supplier<Optional> emptyValue(WrapperFormat<EXPECTED, ?> info) {
+    protected <EXPECTED> Supplier<Optional> emptyValue(WrapFormat<EXPECTED, ?> info) {
         return Optional::empty;
     }
 

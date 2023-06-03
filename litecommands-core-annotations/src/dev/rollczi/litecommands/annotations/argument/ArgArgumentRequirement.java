@@ -12,20 +12,20 @@ import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.lang.reflect.Parameter;
 
 class ArgArgumentRequirement<SENDER, PARSED> implements ParameterCommandRequirement<SENDER, PARSED>, CommandArgumentRequirement<SENDER, PARSED> {
 
     private final ParameterArgument<?, PARSED> argument;
-    private final WrappedExpectedFactory wrappedExpectedFactory;
+    private final Wrapper wrapper;
     private final ArgumentParserSet<SENDER, PARSED> parserSet;
 
-    ArgArgumentRequirement(ParameterArgument<?, PARSED> argument, WrappedExpectedFactory wrappedExpectedFactory, ArgumentParserSet<SENDER, PARSED> parserSet) {
+    ArgArgumentRequirement(ParameterArgument<?, PARSED> argument, Wrapper wrapper, ArgumentParserSet<SENDER, PARSED> parserSet) {
         this.argument = argument;
-        this.wrappedExpectedFactory = wrappedExpectedFactory;
+        this.wrapper = wrapper;
         this.parserSet = parserSet;
     }
 
@@ -36,19 +36,19 @@ class ArgArgumentRequirement<SENDER, PARSED> implements ParameterCommandRequirem
         if (result.isSuccessful()) {
             SuccessfulResult<PARSED> successfulResult = result.getSuccessfulResult();
 
-            return CommandRequirementResult.success(() -> wrappedExpectedFactory.create(successfulResult.getExpectedProvider(), this.getWrapperFormat()));
+            return CommandRequirementResult.success(() -> wrapper.create(successfulResult.getExpectedProvider(), this.getWrapperFormat()));
         }
 
         FailedReason failedReason = result.getFailedReason();
 
-        if (failedReason.getReason() == InvalidUsage.Cause.MISSING_ARGUMENT && wrappedExpectedFactory.canCreateEmpty()) {
-            return CommandRequirementResult.success(() -> wrappedExpectedFactory.createEmpty(this.getWrapperFormat()));
+        if (failedReason.getReason() == InvalidUsage.Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
+            return CommandRequirementResult.success(() -> wrapper.createEmpty(this.getWrapperFormat()));
         }
 
         return CommandRequirementResult.failure(failedReason);
     }
 
-    public WrapperFormat<PARSED, ?> getWrapperFormat() {
+    public WrapFormat<PARSED, ?> getWrapperFormat() {
         return argument.getWrapperFormat();
     }
 
@@ -67,7 +67,7 @@ class ArgArgumentRequirement<SENDER, PARSED> implements ParameterCommandRequirem
 
     @Override
     public boolean isOptional() {
-        return wrappedExpectedFactory.canCreateEmpty();
+        return wrapper.canCreateEmpty();
     }
 
 }

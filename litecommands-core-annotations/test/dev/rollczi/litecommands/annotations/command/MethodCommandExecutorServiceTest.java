@@ -15,7 +15,7 @@ import dev.rollczi.litecommands.command.requirements.CommandRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.unit.TestSender;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import panda.std.Result;
@@ -37,7 +37,7 @@ class MethodCommandExecutorServiceTest {
     static BindRegistry<TestSender> bindRegistry = new BindRegistry<>();
     static ArgumentParserRegistry<TestSender> resolverRegistry = ArgumentParserRegistry.createRegistry();
     static MethodCommandExecutorService<TestSender> executorFactory = new MethodCommandExecutorService<>();
-    static WrappedExpectedService expectedService = new WrappedExpectedService();
+    static WrapperRegistry expectedService = new WrapperRegistry();
 
     @BeforeAll
     static void beforeAll() {

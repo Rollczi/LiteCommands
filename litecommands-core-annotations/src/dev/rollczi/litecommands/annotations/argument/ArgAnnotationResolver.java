@@ -5,24 +5,24 @@ import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResol
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
 public class ArgAnnotationResolver<SENDER> implements ParameterWithAnnotationResolver<SENDER, Arg> {
 
-    private final WrappedExpectedService wrappedExpectedService;
+    private final WrapperRegistry wrapperRegistry;
     private final ArgumentParserRegistry<SENDER> argumentParserRegistry;
 
-    public ArgAnnotationResolver(WrappedExpectedService wrappedExpectedService, ArgumentParserRegistry<SENDER> argumentParserRegistry) {
-        this.wrappedExpectedService = wrappedExpectedService;
+    public ArgAnnotationResolver(WrapperRegistry wrapperRegistry, ArgumentParserRegistry<SENDER> argumentParserRegistry) {
+        this.wrapperRegistry = wrapperRegistry;
         this.argumentParserRegistry = argumentParserRegistry;
     }
 
     @Override
     public ParameterCommandRequirement<SENDER, ?> resolve(Parameter parameter, Arg annotation) {
-        ParameterArgument<Arg, Object> parameterArgument = ArgParameterArgument.createArg(wrappedExpectedService, parameter, annotation);
+        ParameterArgument<Arg, Object> parameterArgument = ArgParameterArgument.createArg(wrapperRegistry, parameter, annotation);
 
         return this.resolve(parameterArgument);
     }
@@ -30,7 +30,7 @@ public class ArgAnnotationResolver<SENDER> implements ParameterWithAnnotationRes
     private <A extends Annotation, PARSED, ARGUMENT extends ParameterArgument<A, PARSED>> ParameterCommandRequirement<SENDER, PARSED> resolve(ARGUMENT argument) {
         ArgumentParserSet<SENDER, PARSED> parserSet = argumentParserRegistry.getParserSet(argument.getWrapperFormat().getParsedType(), ArgumentKey.key(argument.getClass()));
 
-        return new ArgArgumentRequirement<>(argument, wrappedExpectedService.getWrappedExpectedFactory(argument.getWrapperFormat()), parserSet);
+        return new ArgArgumentRequirement<>(argument, wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()), parserSet);
     }
 
 }

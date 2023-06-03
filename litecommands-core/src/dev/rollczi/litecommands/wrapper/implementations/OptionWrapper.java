@@ -1,25 +1,25 @@
 package dev.rollczi.litecommands.wrapper.implementations;
 
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.Wrapped;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.Wrap;
+import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 import panda.std.Option;
 
 import java.util.function.Supplier;
 
-public class OptionWrappedExpectedFactory implements WrappedExpectedFactory {
+public class OptionWrapper implements Wrapper {
 
     @Override
-    public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrap<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info) {
         Class<EXPECTED> expectedType = info.getParsedType();
 
-        return new OptionWrapper<>(expectedType, valueToWrap);
+        return new OptionWrap<>(expectedType, valueToWrap);
     }
 
     @Override
-    public <EXPECTED> Wrapped<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
-        return new OptionWrapper<>(info.getParsedType(), () -> null);
+    public <EXPECTED> Wrap<EXPECTED> createEmpty(WrapFormat<EXPECTED, ?> info) {
+        return new OptionWrap<>(info.getParsedType(), () -> null);
     }
 
     @Override
@@ -32,12 +32,12 @@ public class OptionWrappedExpectedFactory implements WrappedExpectedFactory {
         return Option.class;
     }
 
-    private static class OptionWrapper<EXPECTED> implements Wrapped<EXPECTED> {
+    private static class OptionWrap<EXPECTED> implements Wrap<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<EXPECTED> expectedSupplier;
 
-        public OptionWrapper(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
+        public OptionWrap(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
             this.expectedType = expectedType;
             this.expectedSupplier = expectedSupplier;
         }

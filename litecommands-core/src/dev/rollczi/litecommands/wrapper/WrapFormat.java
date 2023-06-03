@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.wrapper;
 
-public class WrapperFormat<PARSED, OUT> {
+public class WrapFormat<PARSED, OUT> {
 
     private final Class<PARSED> parsedType;
     private final Class<OUT> outType;
 
-    private WrapperFormat(Class<PARSED> parsedType, Class<OUT> outType) {
+    private WrapFormat(Class<PARSED> parsedType, Class<OUT> outType) {
         this.parsedType = parsedType;
         this.outType = outType;
     }
@@ -26,16 +26,16 @@ public class WrapperFormat<PARSED, OUT> {
         return outType;
     }
 
-    public static <PARSED, OUT> WrapperFormat<PARSED, OUT> of(Class<PARSED> type, Class<OUT> toWrapperType) {
+    public static <PARSED, OUT> WrapFormat<PARSED, OUT> of(Class<PARSED> type, Class<OUT> toWrapperType) {
         if (toWrapperType == null) {
             throw new IllegalArgumentException("Wrapper type cannot be null");
         }
 
-        return new WrapperFormat<>(type, toWrapperType);
+        return new WrapFormat<>(type, toWrapperType);
     }
 
-    public static <PARSED> WrapperFormat<PARSED, PARSED> notWrapped(Class<PARSED> type) {
-        return new WrapperFormat<>(type, null);
+    public static <PARSED> WrapFormat<PARSED, PARSED> notWrapped(Class<PARSED> type) {
+        return new WrapFormat<>(type, null);
     }
 
 }

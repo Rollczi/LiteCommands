@@ -1,23 +1,23 @@
 package dev.rollczi.litecommands.wrapper.implementations;
 
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.Wrapped;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
+import dev.rollczi.litecommands.wrapper.Wrap;
+import dev.rollczi.litecommands.wrapper.Wrapper;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class CompletableFutureWrappedExpectedFactory implements WrappedExpectedFactory {
+public class CompletableFutureWrapper implements Wrapper {
 
     @Override
-    public <EXPECTED> Wrapped<EXPECTED> create(
+    public <EXPECTED> Wrap<EXPECTED> create(
         ValueToWrap<EXPECTED> valueToWrap,
-        WrapperFormat<EXPECTED, ?> info
+        WrapFormat<EXPECTED, ?> info
     ) {
         Class<EXPECTED> expectedType = info.getParsedType();
 
-        return new CompletableFutureWrapper<>(expectedType, valueToWrap);
+        return new CompletableFutureWrap<>(expectedType, valueToWrap);
     }
 
     @Override
@@ -25,12 +25,12 @@ public class CompletableFutureWrappedExpectedFactory implements WrappedExpectedF
         return CompletableFuture.class;
     }
 
-    private static class CompletableFutureWrapper<EXPECTED> implements Wrapped<EXPECTED> {
+    private static class CompletableFutureWrap<EXPECTED> implements Wrap<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final CompletableFuture<EXPECTED> completableFuture;
 
-        private CompletableFutureWrapper(Class<EXPECTED> expectedType, Supplier<EXPECTED> completableFuture) {
+        private CompletableFutureWrap(Class<EXPECTED> expectedType, Supplier<EXPECTED> completableFuture) {
             this.expectedType = expectedType;
             this.completableFuture = CompletableFuture.supplyAsync(completableFuture);
         }

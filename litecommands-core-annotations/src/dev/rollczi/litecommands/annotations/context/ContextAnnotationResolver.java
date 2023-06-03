@@ -8,9 +8,9 @@ import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 import panda.std.Result;
 
 import java.lang.reflect.Method;
@@ -20,42 +20,42 @@ import java.util.Arrays;
 public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotationResolver<SENDER, Context> {
 
     private final BindRegistry<SENDER> bindRegistry;
-    private final WrappedExpectedService wrappedExpectedService;
+    private final WrapperRegistry wrapperRegistry;
 
-    public ContextAnnotationResolver(BindRegistry<SENDER> bindRegistry, WrappedExpectedService wrappedExpectedService) {
+    public ContextAnnotationResolver(BindRegistry<SENDER> bindRegistry, WrapperRegistry wrapperRegistry) {
         this.bindRegistry = bindRegistry;
-        this.wrappedExpectedService = wrappedExpectedService;
+        this.wrapperRegistry = wrapperRegistry;
     }
 
     @Override
     public ParameterCommandRequirement<SENDER, ?> resolve(Parameter parameter, Context annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
-        WrapperFormat<?, ?> wrapperFormat = WrapperParameterUtil.wrapperFormat(wrappedExpectedService, parameter);
+        WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);
 
-        return new ContextParameterPreparedArgument<>(parameter, index, wrapperFormat, wrappedExpectedService.getWrappedExpectedFactory(wrapperFormat));
+        return new ContextParameterPreparedArgument<>(parameter, index, wrapFormat, wrapperRegistry.getWrappedExpectedFactory(wrapFormat));
     }
 
     private class ContextParameterPreparedArgument<EXPECTED> implements ParameterCommandRequirement<SENDER, EXPECTED> {
 
         private final Parameter parameter;
         private final int index;
-        private final WrapperFormat<EXPECTED, ?> wrapperFormat;
-        private final WrappedExpectedFactory wrappedExpectedFactory;
+        private final WrapFormat<EXPECTED, ?> wrapFormat;
+        private final Wrapper wrapper;
 
-        private ContextParameterPreparedArgument(Parameter parameter, int index, WrapperFormat<EXPECTED, ?> wrapperFormat, WrappedExpectedFactory wrappedExpectedFactory) {
+        private ContextParameterPreparedArgument(Parameter parameter, int index, WrapFormat<EXPECTED, ?> wrapFormat, Wrapper wrapper) {
             this.parameter = parameter;
             this.index = index;
-            this.wrapperFormat = wrapperFormat;
-            this.wrappedExpectedFactory = wrappedExpectedFactory;
+            this.wrapFormat = wrapFormat;
+            this.wrapper = wrapper;
         }
 
         @Override
         public <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> check(Invocation<SENDER> invocation, InputArguments<CONTEXT> inputArguments, CONTEXT matcher) {
-            Result<EXPECTED, Object> result = bindRegistry.getInstance(wrapperFormat.getParsedType(), invocation);
+            Result<EXPECTED, Object> result = bindRegistry.getInstance(wrapFormat.getParsedType(), invocation);
 
             if (result.isOk()) {
-                return CommandRequirementResult.success(() -> wrappedExpectedFactory.create(result::get, wrapperFormat));
+                return CommandRequirementResult.success(() -> wrapper.create(result::get, wrapFormat));
             }
 
             return CommandRequirementResult.failure(result.getError());

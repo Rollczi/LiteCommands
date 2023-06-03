@@ -1,18 +1,18 @@
 package dev.rollczi.litecommands.wrapper.implementations;
 
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.Wrapped;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
+import dev.rollczi.litecommands.wrapper.Wrap;
+import dev.rollczi.litecommands.wrapper.Wrapper;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
-abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpectedFactory {
+abstract class AbstractWrapper<WRAPPER> implements Wrapper {
 
     private final Class<WRAPPER> wrapperType;
 
-    protected AbstractWrappedExpectedFactory(Class<WRAPPER> wrapperType) {
+    protected AbstractWrapper(Class<WRAPPER> wrapperType) {
         this.wrapperType = wrapperType;
     }
 
@@ -22,22 +22,22 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
     }
 
     @Override
-    public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrap<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info) {
         this.check(info);
 
-        return new TypeSafeWrapped<>(info.getParsedType(), this.wrapValue(valueToWrap, info));
+        return new TypeSafeWrap<>(info.getParsedType(), this.wrapValue(valueToWrap, info));
     }
 
-    protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info);
+    protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info);
 
     @Override
-    public <EXPECTED> Wrapped<EXPECTED> createEmpty(WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrap<EXPECTED> createEmpty(WrapFormat<EXPECTED, ?> info) {
         this.check(info);
 
-        return new TypeSafeWrapped<>(info.getParsedType(), this.emptyValue(info));
+        return new TypeSafeWrap<>(info.getParsedType(), this.emptyValue(info));
     }
 
-    protected abstract <EXPECTED> Supplier<WRAPPER> emptyValue(WrapperFormat<EXPECTED, ?> info);
+    protected abstract <EXPECTED> Supplier<WRAPPER> emptyValue(WrapFormat<EXPECTED, ?> info);
 
     @Override
     public boolean canCreateEmpty() {
@@ -46,7 +46,7 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
 
     protected abstract boolean canCreateEmptyValue();
 
-    private void check(WrapperFormat<?, ?> info) {
+    private void check(WrapFormat<?, ?> info) {
         if (!info.hasOutType()) {
             throw new IllegalArgumentException("Cannot wrap value without wrapper");
         }
@@ -56,12 +56,12 @@ abstract class AbstractWrappedExpectedFactory<WRAPPER> implements WrappedExpecte
         }
     }
 
-    private class TypeSafeWrapped<EXPECTED> implements Wrapped<EXPECTED> {
+    private class TypeSafeWrap<EXPECTED> implements Wrap<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<WRAPPER> wrapperSupplier;
 
-        TypeSafeWrapped(Class<EXPECTED> expectedType, Supplier<WRAPPER> wrapperSupplier) {
+        TypeSafeWrap(Class<EXPECTED> expectedType, Supplier<WRAPPER> wrapperSupplier) {
             this.expectedType = expectedType;
             this.wrapperSupplier = wrapperSupplier;
         }

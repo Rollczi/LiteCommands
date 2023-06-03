@@ -15,10 +15,10 @@ import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
-import dev.rollczi.litecommands.wrapper.Wrapped;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
-import dev.rollczi.litecommands.wrapper.implementations.ValueWrappedExpectedFactory;
+import dev.rollczi.litecommands.wrapper.Wrap;
+import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.wrapper.implementations.ValueWrapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
     }
 
     public <T> TestExecutor<SENDER> withArg(String name, Class<T> type, BiFunction<Invocation<SENDER>, String, ArgumentResult<T>> parser) {
-        requirements.add(new TestArgumentCommandRequirement<>(new TestArgument<>(name, type), new ValueWrappedExpectedFactory(), new ArgumentParserSet<SENDER, T>() {
+        requirements.add(new TestArgumentCommandRequirement<>(new TestArgument<>(name, type), new ValueWrapper(), new ArgumentParserSet<SENDER, T>() {
             @Override
             public <INPUT> Optional<ArgumentParser<SENDER, INPUT, T>> getParser(Class<INPUT> inType) {
                 if (inType != RawInput.class) {
@@ -64,12 +64,12 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
     private class TestArgumentCommandRequirement<PARSED> implements CommandArgumentRequirement<SENDER, PARSED> {
 
         private final Argument<PARSED> argument;
-        private final WrappedExpectedFactory wrappedExpectedFactory;
+        private final Wrapper wrapper;
         private final ArgumentParserSet<SENDER, PARSED> parserSet;
 
-        public TestArgumentCommandRequirement(Argument<PARSED> argument, WrappedExpectedFactory wrappedExpectedFactory, ArgumentParserSet<SENDER, PARSED> parserSet) {
+        public TestArgumentCommandRequirement(Argument<PARSED> argument, Wrapper wrapper, ArgumentParserSet<SENDER, PARSED> parserSet) {
             this.argument = argument;
-            this.wrappedExpectedFactory = wrappedExpectedFactory;
+            this.wrapper = wrapper;
             this.parserSet = parserSet;
         }
 
@@ -80,7 +80,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
 
         @Override
         public boolean isOptional() {
-            return wrappedExpectedFactory.canCreateEmpty();
+            return wrapper.canCreateEmpty();
         }
 
         @Override
@@ -91,7 +91,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
                 return CommandRequirementResult.failure(matchArgument.getFailedReason());
             }
 
-            return CommandRequirementResult.success(() -> new Wrapped<PARSED>() {
+            return CommandRequirementResult.success(() -> new Wrap<PARSED>() {
                 @Override
                 public Object unwrap() {
                     return matchArgument.getSuccessfulResult().getExpectedProvider();
@@ -108,11 +108,11 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
     private static class TestArgument<PARSED> implements Argument<PARSED> {
 
         private final String name;
-        private final WrapperFormat<PARSED, ?> wrapperFormat;
+        private final WrapFormat<PARSED, ?> wrapFormat;
 
         private TestArgument(String name, Class<PARSED> type) {
             this.name = name;
-            this.wrapperFormat = WrapperFormat.notWrapped(type);
+            this.wrapFormat = WrapFormat.notWrapped(type);
         }
 
         @Override
@@ -121,8 +121,8 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
         }
 
         @Override
-        public WrapperFormat<PARSED, ?> getWrapperFormat() {
-            return this.wrapperFormat;
+        public WrapFormat<PARSED, ?> getWrapperFormat() {
+            return this.wrapFormat;
         }
     }
 

@@ -14,7 +14,7 @@ import dev.rollczi.litecommands.editor.CommandEditor;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
+import dev.rollczi.litecommands.wrapper.Wrapper;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -47,7 +47,7 @@ public interface LiteCommandsBuilder<SENDER, C extends LiteSettings, B extends L
 
     <T> LiteCommandsBuilder<SENDER, C, B> bindContext(Class<T> on, BindContextual<SENDER, T> bind);
 
-    LiteCommandsBuilder<SENDER, C, B> registerWrapperFactory(WrappedExpectedFactory factory);
+    LiteCommandsBuilder<SENDER, C, B> registerWrapperFactory(Wrapper factory);
 
     <T> LiteCommandsBuilder<SENDER, C, B> resultHandler(Class<T> resultType, CommandExecuteResultHandler<SENDER, ? extends T> handler);
 

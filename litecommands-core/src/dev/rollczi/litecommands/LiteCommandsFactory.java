@@ -7,9 +7,9 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.validator.ValidatorScope;
-import dev.rollczi.litecommands.wrapper.implementations.CompletableFutureWrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.implementations.OptionWrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.implementations.OptionalWrappedExpectedFactory;
+import dev.rollczi.litecommands.wrapper.implementations.CompletableFutureWrapper;
+import dev.rollczi.litecommands.wrapper.implementations.OptionWrapper;
+import dev.rollczi.litecommands.wrapper.implementations.OptionalWrapper;
 import dev.rollczi.litecommands.argument.resolver.baisc.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.platform.LiteSettings;
@@ -26,9 +26,9 @@ public final class LiteCommandsFactory {
         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform)
             .resultHandler(Throwable.class, (invocation, result) -> result.printStackTrace())
 
-            .registerWrapperFactory(new OptionWrappedExpectedFactory())
-            .registerWrapperFactory(new OptionalWrappedExpectedFactory())
-            .registerWrapperFactory(new CompletableFutureWrappedExpectedFactory())
+            .registerWrapperFactory(new OptionWrapper())
+            .registerWrapperFactory(new OptionalWrapper())
+            .registerWrapperFactory(new CompletableFutureWrapper())
 
             .bindContext(senderClass, invocation -> Result.ok(invocation.sender()))
 

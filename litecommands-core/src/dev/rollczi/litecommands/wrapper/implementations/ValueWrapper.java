@@ -1,19 +1,19 @@
 package dev.rollczi.litecommands.wrapper.implementations;
 
 import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.Wrapped;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.Wrap;
+import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.function.Supplier;
 
-public class ValueWrappedExpectedFactory implements WrappedExpectedFactory {
+public class ValueWrapper implements Wrapper {
 
     @Override
-    public <EXPECTED> Wrapped<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapperFormat<EXPECTED, ?> info) {
+    public <EXPECTED> Wrap<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info) {
         Class<EXPECTED> expectedType = info.getParsedType();
 
-        return new ValueWrapped<>(expectedType, valueToWrap);
+        return new ValueWrap<>(expectedType, valueToWrap);
     }
 
     @Override
@@ -21,12 +21,12 @@ public class ValueWrappedExpectedFactory implements WrappedExpectedFactory {
         return Void.class;
     }
 
-    private static class ValueWrapped<EXPECTED> implements Wrapped<EXPECTED> {
+    private static class ValueWrap<EXPECTED> implements Wrap<EXPECTED> {
 
         private final Class<EXPECTED> expectedType;
         private final Supplier<EXPECTED> expectedSupplier;
 
-        public ValueWrapped(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
+        public ValueWrap(Class<EXPECTED> expectedType, Supplier<EXPECTED> expectedSupplier) {
             this.expectedType = expectedType;
             this.expectedSupplier = expectedSupplier;
         }

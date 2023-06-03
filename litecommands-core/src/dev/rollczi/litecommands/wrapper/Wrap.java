@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.wrapper;
 
-public interface Wrapped<EXPECTED> {
+public interface Wrap<EXPECTED> {
 
     Object unwrap();
 

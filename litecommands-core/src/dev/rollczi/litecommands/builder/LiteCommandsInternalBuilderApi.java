@@ -10,7 +10,7 @@ import dev.rollczi.litecommands.editor.CommandEditorService;
 import dev.rollczi.litecommands.platform.LiteSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -41,7 +41,7 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends LiteSettings> 
     BindRegistry<SENDER> getBindRegistry();
 
     @ApiStatus.Internal
-    WrappedExpectedService getWrappedExpectedContextualService();
+    WrapperRegistry getWrappedExpectedContextualService();
 
     @ApiStatus.Internal
     CommandExecuteResultResolver<SENDER> getResultResolver();

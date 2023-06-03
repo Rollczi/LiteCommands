@@ -27,8 +27,8 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedFactory;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
+import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     protected final ValidatorService<SENDER> validatorService;
     protected final ArgumentParserRegistry<SENDER> argumentParserRegistry;
     protected final BindRegistry<SENDER> bindRegistry;
-    protected final WrappedExpectedService wrappedExpectedService;
+    protected final WrapperRegistry wrapperRegistry;
     protected final CommandExecuteResultResolver<SENDER> resultResolver;
     protected final CommandEditorContextRegistry<SENDER> commandEditorContextRegistry;
 
@@ -68,7 +68,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
             new ValidatorService<>(),
             ArgumentParserRegistry.createRegistry(),
             new BindRegistry<>(),
-            new WrappedExpectedService(),
+            new WrapperRegistry(),
             new CommandExecuteResultResolver<>(),
             new CommandEditorContextRegistry<>()
         );
@@ -106,7 +106,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
         CommandEditorService<SENDER> commandEditorService,
         ValidatorService<SENDER> validatorService, ArgumentParserRegistry<SENDER> argumentParserRegistry,
         BindRegistry<SENDER> bindRegistry,
-        WrappedExpectedService wrappedExpectedService,
+        WrapperRegistry wrapperRegistry,
         CommandExecuteResultResolver<SENDER> resultResolver,
         CommandEditorContextRegistry<SENDER> commandEditorContextRegistry
     ) {
@@ -118,7 +118,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
         this.validatorService = validatorService;
         this.argumentParserRegistry = argumentParserRegistry;
         this.bindRegistry = bindRegistry;
-        this.wrappedExpectedService = wrappedExpectedService;
+        this.wrapperRegistry = wrapperRegistry;
         this.resultResolver = resultResolver;
         this.commandEditorContextRegistry = commandEditorContextRegistry;
     }
@@ -206,8 +206,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
     }
 
     @Override
-    public B registerWrapperFactory(WrappedExpectedFactory factory) {
-        this.wrappedExpectedService.registerFactory(factory);
+    public B registerWrapperFactory(Wrapper factory) {
+        this.wrapperRegistry.registerFactory(factory);
         return this.getThis();
     }
 
@@ -327,8 +327,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends LiteSettings, B extends L
 
     @Override
     @ApiStatus.Internal
-    public WrappedExpectedService getWrappedExpectedContextualService() {
-        return this.wrappedExpectedService;
+    public WrapperRegistry getWrappedExpectedContextualService() {
+        return this.wrapperRegistry;
     }
 
     @Override

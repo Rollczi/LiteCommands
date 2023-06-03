@@ -2,9 +2,8 @@ package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.util.ReflectFormatUtil;
-import dev.rollczi.litecommands.wrapper.WrappedExpectedService;
-import dev.rollczi.litecommands.wrapper.WrapperFormat;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,13 +18,13 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
     private final A annotation;
     private final Class<A> annotationType;
 
-    private final WrapperFormat<EXPECTED, ?> wrapperFormat;
+    private final WrapFormat<EXPECTED, ?> wrapFormat;
 
-    protected ParameterArgument(Method method, Parameter parameter, int parameterIndex, A annotation, Class<A> annotationType, WrapperFormat<EXPECTED, ?> wrapperFormat) {
+    protected ParameterArgument(Method method, Parameter parameter, int parameterIndex, A annotation, Class<A> annotationType, WrapFormat<EXPECTED, ?> wrapFormat) {
         this.method = method;
         this.parameter = parameter;
         this.parameterIndex = parameterIndex;
-        this.wrapperFormat = wrapperFormat;
+        this.wrapFormat = wrapFormat;
         this.annotation = annotation;
         this.annotationType = annotationType;
     }
@@ -51,8 +50,8 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
     }
 
     @Override
-    public WrapperFormat<EXPECTED, ?> getWrapperFormat() {
-        return wrapperFormat;
+    public WrapFormat<EXPECTED, ?> getWrapperFormat() {
+        return wrapFormat;
     }
 
     @Override
@@ -61,13 +60,13 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
     }
 
     @SuppressWarnings("unchecked")
-    public static <A extends Annotation, EXPECTED> ParameterArgument<A, EXPECTED> create(WrappedExpectedService wrappedExpectedService, Parameter parameter, A annotation) {
+    public static <A extends Annotation, EXPECTED> ParameterArgument<A, EXPECTED> create(WrapperRegistry wrapperRegistry, Parameter parameter, A annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         Class<A> annotationType = (Class<A>) annotation.annotationType();
-        WrapperFormat<?, ?> wrapperFormat = WrapperParameterUtil.wrapperFormat(wrappedExpectedService, parameter);
+        WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);
 
-        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapperFormat<EXPECTED, ?>) wrapperFormat);
+        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapFormat<EXPECTED, ?>) wrapFormat);
     }
 
 }
