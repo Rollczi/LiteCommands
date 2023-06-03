@@ -112,8 +112,8 @@ class Main {
                 .translator(new Translator())
             )
 
-            .preprocessor(new Preprocessor())
-            .postprocessor(new Postprocessor())
+            .preProcessor(new Preprocessor())
+            .postProcessor(new Postprocessor())
 
             .build();
 
