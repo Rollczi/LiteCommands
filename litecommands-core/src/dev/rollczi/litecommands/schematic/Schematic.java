@@ -13,6 +13,10 @@ public class Schematic {
         this.schematics.addAll(schematics);
     }
 
+    public String join(CharSequence separator) {
+        return String.join(separator, schematics);
+    }
+
     public boolean isOnlyFirst() {
         return schematics.size() == 1;
     }
