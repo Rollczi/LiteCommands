@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Rangeable;
 
-public interface ArgumentSuggester<SENDER, EXPECTED, ARGUMENT extends Argument<EXPECTED>> extends Rangeable {
+public interface ArgumentSuggester<SENDER, PARSED> extends Rangeable {
 
-    SuggestionResult suggest(Invocation<SENDER> invocation, ARGUMENT argument, SuggestionContext suggestion);
+    SuggestionResult suggest(Invocation<SENDER> invocation, Argument<PARSED> argument, SuggestionContext suggestion);
 
 }

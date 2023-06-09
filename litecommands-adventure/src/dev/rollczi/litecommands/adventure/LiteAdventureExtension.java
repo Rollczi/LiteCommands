@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.adventure;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
-import dev.rollczi.litecommands.platform.LiteSettings;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
@@ -22,6 +21,10 @@ public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SEN
 
     public LiteAdventureExtension() {
         this.adventureAudienceProvider = AdventureAudienceProvider.simple();
+    }
+
+    public static <T> LiteAdventureExtension<T> create() {
+        return new LiteAdventureExtension<>();
     }
 
     public LiteAdventureExtension<SENDER> miniMessage(boolean supportsMiniMessage) {
@@ -53,14 +56,14 @@ public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SEN
         }
 
         builder
-            .argumentParser(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
-            .argumentParser(Component.class, "raw", new AdventureComponentArgument<>())
-            .argumentParser(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
+            .argument(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
+            .argument(Component.class, "raw", new AdventureComponentArgument<>())
+            .argument(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
 
-            .bindContext(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
+            .context(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 
-            .resultHandler(Component.class, new AdventureComponentHandler<>(adventureAudienceProvider))
-            .resultHandler(String.class, new StringHandler<>(adventureAudienceProvider, componentSerializer)
-            );
+            .result(Component.class, new AdventureComponentHandler<>(adventureAudienceProvider))
+            .result(String.class, new StringHandler<>(adventureAudienceProvider, componentSerializer))
+            ;
     }
 }

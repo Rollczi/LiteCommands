@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.annotations.processor;
 
-import dev.rollczi.litecommands.annotations.editor.AnnotationCommandEditorService;
-import dev.rollczi.litecommands.editor.CommandEditorContext;
-import dev.rollczi.litecommands.editor.CommandEditorExecutorBuilder;
-import dev.rollczi.litecommands.editor.CommandEditorService;
+import dev.rollczi.litecommands.annotations.editor.AnnotationEditorService;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
+import dev.rollczi.litecommands.editor.EditorService;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -11,25 +11,25 @@ import java.lang.reflect.Method;
 public class CommandAnnotationProcessor<SENDER> {
 
     private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry;
-    private final AnnotationCommandEditorService<SENDER> annotationCommandEditorRegistry;
-    private final CommandEditorService<SENDER> commandEditorService;
+    private final AnnotationEditorService<SENDER> annotationCommandEditorRegistry;
+    private final EditorService<SENDER> editorService;
 
-    public CommandAnnotationProcessor(CommandAnnotationRegistry<SENDER> commandAnnotationRegistry, AnnotationCommandEditorService<SENDER> annotationCommandEditorRegistry, CommandEditorService<SENDER> commandEditorService) {
+    public CommandAnnotationProcessor(CommandAnnotationRegistry<SENDER> commandAnnotationRegistry, AnnotationEditorService<SENDER> annotationCommandEditorRegistry, EditorService<SENDER> editorService) {
         this.commandAnnotationRegistry = commandAnnotationRegistry;
         this.annotationCommandEditorRegistry = annotationCommandEditorRegistry;
-        this.commandEditorService = commandEditorService;
+        this.editorService = editorService;
     }
 
-    public CommandEditorContext<SENDER> createContext(Object instance) {
+    public CommandBuilder<SENDER> createContext(Object instance) {
         Class<?> type = instance.getClass();
-        CommandEditorContext<SENDER> context = CommandEditorContext.create();
+        CommandBuilder<SENDER> context = CommandBuilder.create();
 
         for (Annotation annotation : type.getAnnotations()) {
             context = this.commandAnnotationRegistry.resolve(instance, annotation, context);
         }
 
         for (Method method : type.getDeclaredMethods()) {
-            CommandEditorExecutorBuilder<SENDER> executorBuilder = new CommandEditorExecutorBuilder<>();
+            CommandBuilderExecutor<SENDER> executorBuilder = new CommandBuilderExecutor<>();
 
             for (Annotation annotation : method.getAnnotations()) {
                 context = this.commandAnnotationRegistry.resolve(instance, method, annotation, context, executorBuilder);
@@ -37,7 +37,7 @@ public class CommandAnnotationProcessor<SENDER> {
         }
 
         context = this.annotationCommandEditorRegistry.edit(instance.getClass(), context);
-        context = this.commandEditorService.edit(context);
+        context = this.editorService.edit(context);
 
         return context;
     }

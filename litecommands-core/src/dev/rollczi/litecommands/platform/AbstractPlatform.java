@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractPlatform<SENDER, C extends LiteSettings> implements Platform<SENDER, C> {
+public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> implements Platform<SENDER, C> {
 
     protected @NotNull C liteConfiguration;
     protected final Map<String, CommandRoute<SENDER>> commandRoutes = new HashMap<>();
@@ -28,7 +28,7 @@ public abstract class AbstractPlatform<SENDER, C extends LiteSettings> implement
 
     @Override
     public final void register(CommandRoute<SENDER> commandRoute, PlatformInvocationHook<SENDER> invocationHook, PlatformSuggestionHook<SENDER> suggestionHook) {
-        for (String name : commandRoute.getAllNames()) {
+        for (String name : commandRoute.names()) {
             if (this.commandRoutes.containsKey(name)) {
                 throw new IllegalArgumentException("Command with name " + name + " already exists");
             }
@@ -36,7 +36,7 @@ public abstract class AbstractPlatform<SENDER, C extends LiteSettings> implement
 
         this.hook(commandRoute, invocationHook, suggestionHook);
 
-        for (String name : commandRoute.getAllNames()) {
+        for (String name : commandRoute.names()) {
             this.commandRoutes.put(name, commandRoute);
         }
     }
@@ -45,7 +45,7 @@ public abstract class AbstractPlatform<SENDER, C extends LiteSettings> implement
     public final void unregister(CommandRoute<SENDER> commandRoute) {
         this.unhook(commandRoute);
 
-        for (String name : commandRoute.getAllNames()) {
+        for (String name : commandRoute.names()) {
             this.commandRoutes.remove(name);
         }
     }

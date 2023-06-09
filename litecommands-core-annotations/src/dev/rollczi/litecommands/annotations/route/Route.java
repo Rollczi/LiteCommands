@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.route;
 
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationClassResolver;
-import dev.rollczi.litecommands.editor.CommandEditorContext;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.util.LiteCommandsUtil;
 
 import java.lang.annotation.ElementType;
@@ -21,7 +21,7 @@ public @interface Route {
     class AnnotationResolver<SENDER> implements CommandAnnotationClassResolver<SENDER, Route> {
 
         @Override
-        public CommandEditorContext<SENDER> resolve(Object instance, Route annotation, CommandEditorContext<SENDER> context) {
+        public CommandBuilder<SENDER> resolve(Object instance, Route annotation, CommandBuilder<SENDER> context) {
             boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
             if (isNotEmpty) {

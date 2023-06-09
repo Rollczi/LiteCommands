@@ -26,7 +26,7 @@ class JDACommandTranslatorTest {
     void test() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
-        siema.getMeta().put(CommandMeta.DESCRIPTION, "description");
+        siema.meta().put(CommandMeta.DESCRIPTION, "description");
         siema.appendExecutor(simpleExecutor());
 
         JDACommandTranslator.JDALiteCommand translated = translator.translate("siema", siema);
@@ -51,7 +51,7 @@ class JDACommandTranslatorTest {
     void subcommandsAndGroup() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
-        siema.getMeta().put(CommandMeta.DESCRIPTION, "description");
+        siema.meta().put(CommandMeta.DESCRIPTION, "description");
 
         CommandRoute<TestSender> sub = CommandRoute.create(siema, "sub", List.of());
         siema.appendChildren(sub);

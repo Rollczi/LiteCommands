@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 public interface MultipleArgumentResolver<SENDER, TYPE> extends
-    ArgumentSuggester<SENDER, TYPE, Argument<TYPE>>,
+    ArgumentSuggester<SENDER, TYPE>,
     ArgumentRawInputParser<SENDER, TYPE> {
 
     @Override

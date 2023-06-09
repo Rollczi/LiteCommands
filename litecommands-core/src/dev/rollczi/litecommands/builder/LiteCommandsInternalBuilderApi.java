@@ -4,17 +4,20 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
-import dev.rollczi.litecommands.command.CommandExecuteResultResolver;
-import dev.rollczi.litecommands.editor.CommandEditorContextRegistry;
-import dev.rollczi.litecommands.editor.CommandEditorService;
-import dev.rollczi.litecommands.platform.LiteSettings;
+import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.result.ResultService;
+import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
+import dev.rollczi.litecommands.editor.EditorService;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.suggestion.SuggestionRegistry;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public interface LiteCommandsInternalBuilderApi<SENDER, C extends LiteSettings> {
+public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettings> {
 
     @ApiStatus.Internal
     Class<SENDER> getSenderClass();
@@ -29,24 +32,33 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends LiteSettings> 
     LiteBuilderPostProcessor<SENDER, C> getPostProcessor();
 
     @ApiStatus.Internal
-    CommandEditorService<SENDER> getCommandEditorService();
+    Scheduler getScheduler();
 
     @ApiStatus.Internal
-    ValidatorService<SENDER> getCommandFilterService();
+    EditorService<SENDER> getEditorService();
 
     @ApiStatus.Internal
-    ArgumentParserRegistry<SENDER> getArgumentService();
+    ValidatorService<SENDER> getValidatorService();
+
+    @ApiStatus.Internal
+    ArgumentParserRegistry<SENDER> getArgumentParserService();
+
+    @ApiStatus.Internal
+    SuggestionRegistry<SENDER> getSuggestionRegistry();
 
     @ApiStatus.Internal
     BindRegistry<SENDER> getBindRegistry();
 
     @ApiStatus.Internal
-    WrapperRegistry getWrappedExpectedContextualService();
+    ContextRegistry<SENDER> getContextRegistry();
 
     @ApiStatus.Internal
-    CommandExecuteResultResolver<SENDER> getResultResolver();
+    WrapperRegistry getWrapperRegistry();
 
     @ApiStatus.Internal
-    CommandEditorContextRegistry<SENDER> getCommandContextRegistry();
+    ResultService<SENDER> getResultService();
+
+    @ApiStatus.Internal
+    CommandBuilderCollector<SENDER> getCommandBuilderCollector();
 
 }

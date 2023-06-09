@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.jda;
 
-import dev.rollczi.litecommands.platform.LiteSettings;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 
-public class LiteJDASettings implements LiteSettings {
+public class LiteJDASettings implements PlatformSettings {
 }

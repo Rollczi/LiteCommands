@@ -108,9 +108,7 @@ public class AssertExecute {
             throw new AssertionError("Failed reason is empty");
         }
 
-        if (!failedReason.getReason().equals(reason)) {
-            throw new AssertionFailedError("Failed reason is not equals", reason, failedReason.getReason());
-        }
+        assertEquals(reason, failedReason.getReason());
 
         return this;
     }

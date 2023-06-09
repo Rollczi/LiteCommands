@@ -1,7 +1,9 @@
 package dev.rollczi.litecommands.annotations.argument;
 
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.input.RawInput;
+import dev.rollczi.litecommands.argument.parser.ArgumentParser;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
@@ -16,16 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OneAnnotationArgumentTest {
 
-    static class TestOneAnnotationArgument extends OneAnnotationArgument<TestSender, String> {
+    static class TestOneAnnotationArgument extends OneAnnotationArgument<TestSender, String, ArgParameterArgument<String>> {
 
         @Override
-        protected ArgumentResult<String> parse(Invocation<TestSender> invocation, String argument, ParameterArgument<Arg, String> context) {
-            return ArgumentResult.success(() -> argument);
+        public ArgumentResult<String> parseTyped(Invocation<TestSender> invocation, ArgParameterArgument<String> argument, RawInput rawInput) {
+            return ArgumentResult.success(() -> rawInput.next());
         }
 
         @Override
-        public SuggestionResult suggest(Invocation<TestSender> invocation, ParameterArgument<Arg, String> argument, SuggestionContext suggestion) {
+        public SuggestionResult suggestTyped(Invocation<TestSender> invocation, ArgParameterArgument<String> argument, SuggestionContext suggestion) {
             return SuggestionResult.of("text");
+        }
+
+        @Override
+        public Class<? extends Argument> getArgumentType() {
+            return ArgParameterArgument.class;
         }
 
     }

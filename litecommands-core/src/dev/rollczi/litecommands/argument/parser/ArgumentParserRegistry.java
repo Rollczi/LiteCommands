@@ -8,8 +8,4 @@ public interface ArgumentParserRegistry<SENDER> {
 
     <PARSED> ArgumentParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parsedClass, ArgumentKey key);
 
-    static <SENDER> ArgumentParserRegistry<SENDER> createRegistry() {
-        return new ArgumentParserRegistryImpl<>();
-    }
-
 }

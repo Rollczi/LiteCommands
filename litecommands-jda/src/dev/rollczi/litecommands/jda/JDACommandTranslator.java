@@ -46,7 +46,7 @@ class JDACommandTranslator {
         String name,
         CommandRoute<SENDER> commandRoute
     ) {
-        CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.getMeta().get(CommandMeta.DESCRIPTION));
+        CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.meta().get(CommandMeta.DESCRIPTION));
         commandData.setGuildOnly(true);
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
@@ -67,7 +67,7 @@ class JDACommandTranslator {
         // group command and subcommands
         for (CommandRoute<SENDER> child : commandRoute.getChildren()) {
             if (!child.getExecutors().isEmpty()) {
-                SubcommandData subcommandData = new SubcommandData(child.getName(), child.getMeta().get(CommandMeta.DESCRIPTION));
+                SubcommandData subcommandData = new SubcommandData(child.getName(), child.meta().get(CommandMeta.DESCRIPTION));
 
                 this.translateExecutor(child, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
@@ -81,14 +81,14 @@ class JDACommandTranslator {
                 continue;
             }
 
-            SubcommandGroupData subcommandGroupData = new SubcommandGroupData(child.getName(), child.getMeta().get(CommandMeta.DESCRIPTION));
+            SubcommandGroupData subcommandGroupData = new SubcommandGroupData(child.getName(), child.meta().get(CommandMeta.DESCRIPTION));
 
             for (CommandRoute<SENDER> childChild : child.getChildren()) {
                 if (childChild.getExecutors().isEmpty()) {
                     continue;
                 }
 
-                SubcommandData subcommandData = new SubcommandData(childChild.getName(), childChild.getMeta().get(CommandMeta.DESCRIPTION));
+                SubcommandData subcommandData = new SubcommandData(childChild.getName(), childChild.meta().get(CommandMeta.DESCRIPTION));
 
                 this.translateExecutor(childChild, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);

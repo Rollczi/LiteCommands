@@ -22,10 +22,6 @@ public class Injector<SENDER> {
         return this.createInstance(type, this.registry::getInstance);
     }
 
-    public <T> T createInstance(Class<T> type, Invocation<SENDER> invocation) {
-        return this.createInstance(type, parameterType -> this.registry.getInstance(parameterType, invocation));
-    }
-
     @SuppressWarnings("unchecked")
     private <T> T createInstance(Class<T> type, Function<Class<?>, Object> instanceProvider) {
         List<Constructor<?>> constructors = Arrays.stream(type.getDeclaredConstructors())

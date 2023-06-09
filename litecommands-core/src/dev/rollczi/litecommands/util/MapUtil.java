@@ -8,7 +8,7 @@ public final class MapUtil {
 
     private MapUtil() {}
 
-    public static <E> Option<E> findKeyInstanceOf(Class<?> type, Map<Class<?>, E> map) {
+    public static <E> Option<E> findByInstanceOf(Class<?> type, Map<Class<?>, E> map) {
         E element = map.get(type);
 
         if (element != null) {
@@ -24,20 +24,44 @@ public final class MapUtil {
         return Option.none();
     }
 
-    public static <E> Option<E> findKeySuperTypeOf(Class<?> type, Map<Class<?>, E> map) {
+    public static <E> Option<E> findBySuperTypeOf(Class<?> type, Map<Class<?>, E> map) {
+        Option<E> option = findKeySuperTypeOf0(type, map);
+
+        if (option.isPresent()) {
+            return option;
+        }
+
+        for (Class<?> anInterface : type.getInterfaces()) {
+            E element = map.get(anInterface);
+
+            if (element != null) {
+                return Option.of(element);
+            }
+        }
+
+        return Option.none();
+    }
+
+    private static <E> Option<E> findKeySuperTypeOf0(Class<?> type, Map<Class<?>, E> map) {
         E element = map.get(type);
 
         if (element != null) {
             return Option.of(element);
         }
 
-        for (Map.Entry<Class<?>, E> entry : map.entrySet()) {
-            if (entry.getKey().isAssignableFrom(type)) {
-                return Option.of(entry.getValue());
+        Class<?> superclass = type.getSuperclass();
+
+        if (superclass != null && superclass != Object.class) {
+            Option<E> option = findBySuperTypeOf(superclass, map);
+
+            if (option.isPresent()) {
+                return option;
             }
         }
 
         return Option.none();
     }
+
+
 
 }

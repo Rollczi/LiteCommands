@@ -36,9 +36,7 @@ public class LiteTestSpec {
             .toArray(Class<?>[]::new);
 
         platform = LiteCommandsTestFactory.startPlatform(builder -> {
-            builder.withExtension(LiteAnnotatedCommmnads.create(), extension -> extension
-                .commandFromClass(commands)
-            );
+            builder.commands(LiteAnnotationCommnads.ofClasses(commands));
 
             return configureLiteTest(builder, type);
         });
@@ -52,7 +50,7 @@ public class LiteTestSpec {
         }
 
         if (annotation.universalHandler()) {
-            builder.resultHandler(Object.class, (invocation, result) -> {});
+            builder.result(Object.class, (invocation, result) -> {});
         }
 
         List<Method> methods = Arrays.stream(type.getDeclaredMethods())

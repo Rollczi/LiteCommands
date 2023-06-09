@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.MetaCollector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +50,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public List<String> getAllNames() {
+    public List<String> names() {
         return Collections.unmodifiableList(new ArrayList<>(this.namesAndAliases));
     }
 
@@ -81,8 +82,13 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public CommandMeta getMeta() {
+    public CommandMeta meta() {
         return this.meta;
+    }
+
+    @Override
+    public MetaCollector metaCollector() {
+        return new CommandRouteMetaCollector(this);
     }
 
     @Override

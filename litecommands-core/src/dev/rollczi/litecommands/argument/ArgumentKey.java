@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class ArgumentKey {
 
-    private static final ArgumentKey DEAFULT_UNIVERSAL = universal("");
+    private static final ArgumentKey DEAFULT_UNIVERSAL = of("");
 
     private final String namespace;
     private final String key;
@@ -18,15 +18,15 @@ public class ArgumentKey {
         return this.key.isEmpty();
     }
 
-    public static ArgumentKey universal(String key) {
-        return ArgumentKey.key(Argument.class, key);
+    public static ArgumentKey of(String key) {
+        return ArgumentKey.typed(Argument.class, key);
     }
 
-    public static ArgumentKey universal() {
+    public static ArgumentKey of() {
         return DEAFULT_UNIVERSAL;
     }
 
-    public static <A extends Argument<?>> ArgumentKey key(Class<A> argumentType, String key) {
+    public static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType, String key) {
         if (key == null) {
             throw new NullPointerException("Key cannot be null");
         }
@@ -38,8 +38,8 @@ public class ArgumentKey {
         return this.namespace.equals(Argument.class.getName());
     }
 
-    public static <A extends Argument<?>> ArgumentKey key(Class<A> argumentType) {
-        return key(argumentType, "");
+    public static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType) {
+        return typed(argumentType, "");
     }
 
     @Override

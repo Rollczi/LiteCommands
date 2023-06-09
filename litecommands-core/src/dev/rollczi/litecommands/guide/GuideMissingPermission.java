@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.guide;
 
-import dev.rollczi.litecommands.command.CommandExecuteResultMapper;
+import dev.rollczi.litecommands.result.ResultMapper;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 
-public class GuideMissingPermission<SENDER> implements CommandExecuteResultMapper<SENDER, MissingPermissions, String> {
+public class GuideMissingPermission<SENDER> implements ResultMapper<SENDER, MissingPermissions, String> {
 
     @Override
     public String map(Invocation<SENDER> invocation, MissingPermissions missingPermissions) {

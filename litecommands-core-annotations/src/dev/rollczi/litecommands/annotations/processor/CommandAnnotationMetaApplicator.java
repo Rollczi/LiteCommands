@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.processor;
 
-import dev.rollczi.litecommands.editor.CommandEditorContext;
-import dev.rollczi.litecommands.editor.CommandEditorExecutorBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.meta.CommandMetaHolder;
 
 import java.lang.annotation.Annotation;
@@ -14,13 +14,13 @@ public interface CommandAnnotationMetaApplicator<SENDER, A extends Annotation> e
     void apply(Object instance, A annotation, CommandMetaHolder metaHolder);
 
     @Override
-    default CommandEditorContext<SENDER> resolve(Object instance, A annotation, CommandEditorContext<SENDER> context) {
+    default CommandBuilder<SENDER> resolve(Object instance, A annotation, CommandBuilder<SENDER> context) {
         this.apply(instance, annotation, context.route());
         return context;
     }
 
     @Override
-    default CommandEditorContext<SENDER> resolve(Object instance, Method method, A annotation, CommandEditorContext<SENDER> context, CommandEditorExecutorBuilder<SENDER> executorBuilder) {
+    default CommandBuilder<SENDER> resolve(Object instance, Method method, A annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
         this.apply(instance, annotation, executorBuilder);
         return context;
     }

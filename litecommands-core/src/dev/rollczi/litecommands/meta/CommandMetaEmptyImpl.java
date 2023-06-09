@@ -29,6 +29,11 @@ class CommandMetaEmptyImpl implements CommandMeta {
     }
 
     @Override
+    public boolean has(CommandKey<?> key) {
+        return false;
+    }
+
+    @Override
     public CommandMeta apply(CommandMeta meta) {
         throw new UnsupportedOperationException();
     }

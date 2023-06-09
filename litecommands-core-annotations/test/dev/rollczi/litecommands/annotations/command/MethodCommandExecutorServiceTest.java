@@ -7,11 +7,13 @@ import dev.rollczi.litecommands.annotations.context.ContextAnnotationResolver;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistryImpl;
 import dev.rollczi.litecommands.argument.resolver.baisc.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.requirements.CommandRequirement;
+import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -34,16 +36,16 @@ class MethodCommandExecutorServiceTest {
         }
     }
 
-    static BindRegistry<TestSender> bindRegistry = new BindRegistry<>();
-    static ArgumentParserRegistry<TestSender> resolverRegistry = ArgumentParserRegistry.createRegistry();
+    static ContextRegistry<TestSender> bindRegistry = new ContextRegistry<>();
+    static ArgumentParserRegistry<TestSender> resolverRegistry = new ArgumentParserRegistryImpl<>();
     static MethodCommandExecutorService<TestSender> executorFactory = new MethodCommandExecutorService<>();
     static WrapperRegistry expectedService = new WrapperRegistry();
 
     @BeforeAll
     static void beforeAll() {
-        bindRegistry.bindContextual(Invocation.class, invocation -> Result.ok(invocation)); // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
-        resolverRegistry.registerParser(String.class, ArgumentKey.universal(), new StringArgumentResolver<>());
-        resolverRegistry.registerParser(int.class, ArgumentKey.universal(), NumberArgumentResolver.ofInteger());
+        bindRegistry.registerProvider(Invocation.class, invocation -> Result.ok(invocation)); // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
+        resolverRegistry.registerParser(String.class, ArgumentKey.of(), new StringArgumentResolver<>());
+        resolverRegistry.registerParser(int.class, ArgumentKey.of(), NumberArgumentResolver.ofInteger());
 
         executorFactory.registerResolver(Context.class, new ContextAnnotationResolver<>(bindRegistry, expectedService));
         executorFactory.registerResolver(Arg.class, new ArgAnnotationResolver<>(expectedService, resolverRegistry));

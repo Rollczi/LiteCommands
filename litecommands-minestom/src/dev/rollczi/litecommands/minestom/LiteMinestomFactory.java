@@ -13,7 +13,7 @@ public final class LiteMinestomFactory {
 
     public static LiteCommandsBuilder<CommandSender, LiteMinestomSettings, ?> builder(Server server, CommandManager commandManager) {
         return LiteCommandsFactory.builder(CommandSender.class, new MinestomPlatform(commandManager))
-            .bindStatic(Server.class, () -> server)
+            .bind(Server.class, () -> server)
             ;
     }
 

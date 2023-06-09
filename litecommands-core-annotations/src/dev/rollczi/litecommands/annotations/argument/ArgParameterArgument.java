@@ -27,7 +27,7 @@ class ArgParameterArgument<EXPECTED> extends ParameterArgument<Arg, EXPECTED> {
     }
 
     @SuppressWarnings("unchecked")
-    static <A extends Annotation, EXPECTED> ArgParameterArgument<EXPECTED> createArg(WrapperRegistry wrapperRegistry, Parameter parameter, Arg annotation) {
+    static <EXPECTED> ArgParameterArgument<EXPECTED> createArg(WrapperRegistry wrapperRegistry, Parameter parameter, Arg annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         Class<Arg> annotationType = (Class<Arg>) annotation.annotationType();

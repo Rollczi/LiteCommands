@@ -14,8 +14,9 @@ public final class LiteCommandsTestFactory {
         TestPlatform testPlatform = new TestPlatform();
         LiteCommandsBuilder<TestSender, TestSettings, ?> builder = LiteCommandsFactory.builder(TestSender.class, testPlatform);
 
-        builder = operator.apply(builder);
-        builder.register();
+        operator.apply(builder)
+            .build()
+            .register();
 
         return testPlatform;
     }

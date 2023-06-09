@@ -14,10 +14,10 @@ public final class LiteVelocityFactory {
 
     public static LiteCommandsBuilder<CommandSource, LiteVelocitySettings, ?> builder(ProxyServer proxy) {
         return LiteCommandsFactory.builder(CommandSource.class, new VelocityPlatform(proxy.getCommandManager(), new LiteVelocitySettings()))
-            .withExtension(new LiteAdventureExtension<>())
+            .extension(new LiteAdventureExtension<>())
 
-            .bindStatic(ProxyServer.class, () -> proxy)
-            .bindStatic(CommandManager.class, proxy::getCommandManager)
+            .bind(ProxyServer.class, () -> proxy)
+            .bind(CommandManager.class, proxy::getCommandManager)
             ;
     }
 

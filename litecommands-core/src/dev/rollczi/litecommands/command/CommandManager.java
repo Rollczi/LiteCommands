@@ -3,33 +3,37 @@ package dev.rollczi.litecommands.command;
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
+import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationResult;
-import dev.rollczi.litecommands.platform.LiteSettings;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.result.ResultService;
+import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.validator.ValidatorResult;
 import dev.rollczi.litecommands.validator.ValidatorService;
 
-public class CommandManager<SENDER, C extends LiteSettings> {
+public class CommandManager<SENDER, C extends PlatformSettings> {
 
     private final CommandRootRouteImpl<SENDER> root = new CommandRootRouteImpl<>();
 
     private final Platform<SENDER, C> platform;
 
     private final ValidatorService<SENDER> validatorService;
-    private final CommandExecuteResultResolver<SENDER> resultResolver;
+    private final ResultService<SENDER> resultResolver;
+    private final Scheduler scheduler;
 
     public CommandManager(
         Platform<SENDER, C> platform,
-        CommandExecuteResultResolver<SENDER> resultResolver,
-        ValidatorService<SENDER> validatorService
+        ResultService<SENDER> resultResolver,
+        ValidatorService<SENDER> validatorService,
+        Scheduler scheduler
     ) {
         this.platform = platform;
-
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
+        this.scheduler = scheduler;
     }
 
     public CommandRoute<SENDER> getRoot() {
@@ -49,7 +53,11 @@ public class CommandManager<SENDER, C extends LiteSettings> {
         this.root.appendToRoot(commandRoute);
     }
 
-    private <MATCHER extends InputArgumentsMatcher<MATCHER>> InvocationResult<SENDER> execute(Invocation<SENDER> invocation, InputArguments<MATCHER> inputArguments, CommandRoute<SENDER> start) {
+    private <MATCHER extends InputArgumentsMatcher<MATCHER>> InvocationResult<SENDER> execute(
+        Invocation<SENDER> invocation,
+        InputArguments<MATCHER> inputArguments,
+        CommandRoute<SENDER> start
+    ) {
         MATCHER matcher = inputArguments.createMatcher();
         CommandRoute<SENDER> commandRoute = this.findRoute(start, inputArguments, matcher);
         FailedReason lastFailedReason = null;
@@ -69,22 +77,15 @@ public class CommandManager<SENDER, C extends LiteSettings> {
             }
 
             // Handle validation
-            ValidatorResult validationResult = this.validatorService.validate(invocation, commandRoute, executor);
+            Flow flow = this.validatorService.validate(invocation, commandRoute, executor);
 
-            if (validationResult.isInvalid()) {
-                if (validationResult.canBeIgnored()) {
-                    if (validationResult.hasInvalidResult()) {
-                        lastFailedReason = FailedReason.of(validationResult.getInvalidResult());
-                    }
+            if (flow.isTerminate()) {
+                return InvocationResult.failed(invocation, flow.failedReason());
+            }
 
-                    continue;
-                }
-
-                if (validationResult.hasInvalidResult()) {
-                    return InvocationResult.failed(invocation, FailedReason.of(validationResult.getInvalidResult()));
-                }
-
-                return InvocationResult.failed(invocation, FailedReason.empty());
+            if (flow.isStopCurrent()) {
+                lastFailedReason = flow.failedReason();
+                continue;
             }
 
             // Execution

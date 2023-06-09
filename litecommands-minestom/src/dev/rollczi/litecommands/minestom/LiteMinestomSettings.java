@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.minestom;
 
-import dev.rollczi.litecommands.platform.LiteSettings;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 
-public class LiteMinestomSettings implements LiteSettings {
+public class LiteMinestomSettings implements PlatformSettings {
 
     private boolean nativePermission = false;
 

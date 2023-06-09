@@ -26,7 +26,7 @@ class ArgumentParserSetImpl<SENDER, PARSED> implements ArgumentParserSet<SENDER,
     @SuppressWarnings("unchecked")
     @Override
     public <INPUT> Optional<ArgumentParser<SENDER, INPUT, PARSED>> getParser(Class<INPUT> inType) {
-        return MapUtil.findKeySuperTypeOf(inType, this.parsers)
+        return MapUtil.findBySuperTypeOf(inType, this.parsers)
             .map(senderparsedArgumentParser -> (ArgumentParser<SENDER, INPUT, PARSED>) senderparsedArgumentParser)
             .orElse(Option.ofOptional(parent.getParser(inType)))
             .toOptional();

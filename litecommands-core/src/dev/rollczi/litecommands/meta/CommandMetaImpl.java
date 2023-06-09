@@ -72,6 +72,11 @@ class CommandMetaImpl implements CommandMeta {
     }
 
     @Override
+    public boolean has(CommandKey<?> key) {
+        return this.meta.containsKey(key);
+    }
+
+    @Override
     public CommandMeta apply(CommandMeta meta) {
         for (CommandKey<?> key : meta.getKeys()) {
             this.meta.put(key, meta.get(key));

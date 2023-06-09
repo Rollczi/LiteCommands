@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.velocity;
 
-import dev.rollczi.litecommands.platform.LiteSettings;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 
-public class LiteVelocitySettings implements LiteSettings {
+public class LiteVelocitySettings implements PlatformSettings {
 
     private boolean nativePermissions = false;
 

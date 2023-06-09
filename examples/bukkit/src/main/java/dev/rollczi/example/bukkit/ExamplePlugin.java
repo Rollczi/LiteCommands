@@ -9,13 +9,11 @@ import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteAnnotatedCommmnads;
-import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
-import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
+import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
+import dev.rollczi.litecommands.annotations.LiteAnnotationCommnads;
+import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
-import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,32 +27,34 @@ public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        LiteBukkitSettings settings = new LiteBukkitSettings()
-            .fallbackPrefix("test")
-            .nativePermissions(false);
-
-
-        this.liteCommands = LiteBukkitFactory.builder(this.getServer(), settings)
-            // Arguments
-            .argumentParser(Location.class, new LocationArgument())
-            .argumentParser(World.class, new WorldArgument(this.getServer()))
-            .argumentParser(GameMode.class, new GameModeArgument())
-            .argumentParser(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cNie ma takiego gracza!"))
-
-            // Contextual Bind
-            .bindContext(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
-
-            // Annotated commands extension
-            .withExtension(new LiteAnnotatedCommmnads.Builder()
-                .command(TeleportCommand.class, KickCommand.class, ConvertCommand.class)
-                .build()
+        this.liteCommands = LiteCommandsBukkit.builder(this.getServer())
+            .platformSettings(settings -> settings
+                .fallbackPrefix("test")
+                .nativePermissions(false)
             )
 
-            // Handlers
-            .resultHandler(MissingPermissions.class, new MissingPermissionsHandlerImpl())
-            .resultHandler(InvalidUsage.class, new InvalidUsageHandlerImpl())
+            .commands(LiteAnnotationCommnads.of(
+                new TeleportCommand(),
+                new KickCommand(),
+                new ConvertCommand()
+            ))
 
-            .register();
+            .argument(Location.class, new LocationArgument())
+            .argument(World.class, new WorldArgument(this.getServer()))
+            .argument(GameMode.class, new GameModeArgument())
+            .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cNie ma takiego gracza!"))
+
+            .context(Player.class, new BukkitOnlyPlayerContextual<>("&cKomenda tylko dla gracza!"))
+
+            .missingPermission(new MissingPermissionsHandlerImpl())
+            .invalidUsage(new InvalidUsageHandlerImpl())
+
+            .extension(new LiteAdventureExtension<>(), extension -> extension
+                .miniMessage(true)
+                .legacyColor(true)
+            )
+
+            .build();
     }
 
     @Override

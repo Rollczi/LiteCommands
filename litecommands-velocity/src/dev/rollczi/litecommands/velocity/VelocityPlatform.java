@@ -41,7 +41,7 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
 
     @Override
     protected void unhook(CommandRoute<CommandSource> commandRoute) {
-        for (String name : commandRoute.getAllNames()) {
+        for (String name : commandRoute.names()) {
             this.commandManager.unregister(name);
         }
     }
@@ -60,7 +60,7 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
 
         @Override
         public boolean hasPermission(Invocation invocation) {
-            boolean isNative = commandSection.getMeta().get(dev.rollczi.litecommands.meta.CommandMeta.NATIVE_PERMISSIONS);
+            boolean isNative = commandSection.meta().get(dev.rollczi.litecommands.meta.CommandMeta.NATIVE_PERMISSIONS);
 
             if (isNative || liteConfiguration.isNativePermissions()) {
                 MissingPermissions missingPermissions = MissingPermissions.check(new VelocitySender(invocation.source()), this.commandSection);

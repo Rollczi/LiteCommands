@@ -1,12 +1,13 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.scope.Scopeable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CommandRoute<SENDER> {
+public interface CommandRoute<SENDER> extends Scopeable {
 
     String getName();
 
@@ -14,7 +15,7 @@ public interface CommandRoute<SENDER> {
 
     List<String> getAliases();
 
-    List<String> getAllNames();
+    List<String> names();
 
     boolean isNameOrAlias(String name);
 
@@ -34,7 +35,7 @@ public interface CommandRoute<SENDER> {
 
     List<CommandExecutor<SENDER>> getExecutors();
 
-    CommandMeta getMeta();
+    CommandMeta meta();
 
     static <SENDER> CommandRoute<SENDER> create(CommandRoute<SENDER> parent, String name, List<String> aliases) {
         return new CommandRouteImpl<>(name, aliases, parent);

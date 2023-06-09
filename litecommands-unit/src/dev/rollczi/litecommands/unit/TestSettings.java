@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.unit;
 
-import dev.rollczi.litecommands.platform.LiteSettings;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 
-public class TestSettings implements LiteSettings {
+public class TestSettings implements PlatformSettings {
 }

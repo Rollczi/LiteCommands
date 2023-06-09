@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
 import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
@@ -19,11 +20,11 @@ import java.util.Arrays;
 
 public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotationResolver<SENDER, Context> {
 
-    private final BindRegistry<SENDER> bindRegistry;
+    private final ContextRegistry<SENDER> contextRegistry;
     private final WrapperRegistry wrapperRegistry;
 
-    public ContextAnnotationResolver(BindRegistry<SENDER> bindRegistry, WrapperRegistry wrapperRegistry) {
-        this.bindRegistry = bindRegistry;
+    public ContextAnnotationResolver(ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry) {
+        this.contextRegistry = contextRegistry;
         this.wrapperRegistry = wrapperRegistry;
     }
 
@@ -52,7 +53,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
 
         @Override
         public <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> check(Invocation<SENDER> invocation, InputArguments<CONTEXT> inputArguments, CONTEXT matcher) {
-            Result<EXPECTED, Object> result = bindRegistry.getInstance(wrapFormat.getParsedType(), invocation);
+            Result<EXPECTED, Object> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.isOk()) {
                 return CommandRequirementResult.success(() -> wrapper.create(result::get, wrapFormat));

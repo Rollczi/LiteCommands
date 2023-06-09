@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.argument.ArgumentKey;
 import java.util.HashMap;
 import java.util.Map;
 
-class ArgumentParserRegistryImpl<SENDER> implements ArgumentParserRegistry<SENDER> {
+public class ArgumentParserRegistryImpl<SENDER> implements ArgumentParserRegistry<SENDER> {
 
     private final Map<Class<?>, BucketByArgument<?>> buckets = new HashMap<>();
 

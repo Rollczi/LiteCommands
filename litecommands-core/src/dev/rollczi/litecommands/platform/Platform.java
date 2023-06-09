@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.platform;
 import dev.rollczi.litecommands.command.CommandRoute;
 import org.jetbrains.annotations.NotNull;
 
-public interface Platform<SENDER, C extends LiteSettings> {
+public interface Platform<SENDER, C extends PlatformSettings> {
 
     void setConfiguration(@NotNull C liteConfiguration);
 

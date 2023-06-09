@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.command;
 
+import dev.rollczi.litecommands.meta.CommandKey;
 import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.MetaCollector;
 import dev.rollczi.litecommands.util.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -33,7 +35,7 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public List<String> getAllNames() {
+    public List<String> names() {
         return Collections.singletonList(this.getName());
     }
 
@@ -75,8 +77,18 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public CommandMeta getMeta() {
-        return CommandMeta.EMPTY_IMMUTABLE;
+    public CommandMeta meta() {
+        return CommandMeta.EMPTY_META;
+    }
+
+    @Override
+    public MetaCollector metaCollector() {
+        return new MetaCollector() {
+            @Override
+            public <T> List<T> collect(CommandKey<T> key) {
+                return Collections.emptyList();
+            }
+        };
     }
 
     @Override

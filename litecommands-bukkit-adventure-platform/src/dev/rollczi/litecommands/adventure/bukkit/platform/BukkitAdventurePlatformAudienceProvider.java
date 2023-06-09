@@ -7,6 +7,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
+import panda.std.Option;
+import panda.std.stream.PandaStream;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class BukkitAdventurePlatformAudienceProvider implements AdventureAudienceProvider<CommandSender> {
 

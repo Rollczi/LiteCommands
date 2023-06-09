@@ -48,8 +48,8 @@ public class MissingPermissions {
         List<String> permissions = new ArrayList<>();
 
         CommandRouteUtils.consumeFromRootToChild(command, route -> {
-            permissions.addAll(route.getMeta().get(CommandMeta.PERMISSIONS));
-            permissions.removeAll(route.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+            permissions.addAll(route.meta().get(CommandMeta.PERMISSIONS));
+            permissions.removeAll(route.meta().get(CommandMeta.PERMISSIONS_EXCLUDED));
         });
 
         permissions.addAll(executor.getMeta().get(CommandMeta.PERMISSIONS));
@@ -62,8 +62,8 @@ public class MissingPermissions {
         List<String> permissions = new ArrayList<>();
 
         CommandRouteUtils.consumeFromRootToChild(command, route -> {
-            permissions.addAll(route.getMeta().get(CommandMeta.PERMISSIONS));
-            permissions.removeAll(route.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+            permissions.addAll(route.meta().get(CommandMeta.PERMISSIONS));
+            permissions.removeAll(route.meta().get(CommandMeta.PERMISSIONS_EXCLUDED));
         });
 
         return check(platformSender, permissions);

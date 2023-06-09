@@ -15,7 +15,7 @@ public class InvocationContext {
 
     @SuppressWarnings("unchecked")
     public <T> Option<T> get(Class<T> type) {
-        return (Option<T>) MapUtil.findKeyInstanceOf(type, context);
+        return (Option<T>) MapUtil.findByInstanceOf(type, context);
     }
 
     public static InvocationContext.Builder builder() {

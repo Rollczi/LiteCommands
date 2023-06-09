@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResol
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.annotation.Annotation;
@@ -28,9 +29,10 @@ public class ArgAnnotationResolver<SENDER> implements ParameterWithAnnotationRes
     }
 
     private <A extends Annotation, PARSED, ARGUMENT extends ParameterArgument<A, PARSED>> ParameterCommandRequirement<SENDER, PARSED> resolve(ARGUMENT argument) {
-        ArgumentParserSet<SENDER, PARSED> parserSet = argumentParserRegistry.getParserSet(argument.getWrapperFormat().getParsedType(), ArgumentKey.key(argument.getClass()));
+        WrapFormat<PARSED, ?> format = argument.getWrapperFormat();
+        ArgumentParserSet<SENDER, PARSED> parserSet = argumentParserRegistry.getParserSet(format.getParsedType(), ArgumentKey.typed(argument.getClass()));
 
-        return new ArgArgumentRequirement<>(argument, wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()), parserSet);
+        return new ArgArgumentRequirement<>(argument, wrapperRegistry.getWrappedExpectedFactory(format), parserSet);
     }
 
 }

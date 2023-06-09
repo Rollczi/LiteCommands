@@ -17,6 +17,7 @@ dependencies {
     // implementation("dev.rollczi.litecommands:core-annotations:2.8.6") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
     implementation(project(":litecommands-core-annotations")) // don't use this line in your build.gradle
+    implementation(project(":litecommands-adventure"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")

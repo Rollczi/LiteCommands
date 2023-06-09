@@ -34,7 +34,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
 
     @Override
     protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
-        for (String name : commandRoute.getAllNames()) {
+        for (String name : commandRoute.names()) {
             BungeeCommand command = new BungeeCommand(commandRoute, name, invocationHook, suggestionHook);
 
             pluginManager.registerCommand(this.plugin, command);
@@ -44,7 +44,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
 
     @Override
     protected void unhook(CommandRoute<CommandSender> commandRoute) {
-        for (String name : commandRoute.getAllNames()) {
+        for (String name : commandRoute.names()) {
             BungeeCommand bungeeCommand = commands.get(name);
 
             if (bungeeCommand != null) {
@@ -90,7 +90,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
 
         @Override
         public boolean hasPermission(CommandSender sender) {
-            boolean isNative = commandSection.getMeta().get(CommandMeta.NATIVE_PERMISSIONS);
+            boolean isNative = commandSection.meta().get(CommandMeta.NATIVE_PERMISSIONS);
 
             if (isNative || liteConfiguration.isNativePermissions()) {
                 MissingPermissions missingPermissions = MissingPermissions.check(new BungeeSender(sender), this.commandSection);

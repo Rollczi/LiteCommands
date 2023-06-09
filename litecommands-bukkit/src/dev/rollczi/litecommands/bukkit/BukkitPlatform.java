@@ -45,7 +45,7 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitSettings> {
 
     @Override
     public void unregister(CommandRoute<CommandSender> commandRoute) {
-        for (String name : commandRoute.getAllNames()) {
+        for (String name : commandRoute.names()) {
             this.settings.commandsProvider().knownCommands().remove(name);
             this.commands.remove(name);
         }

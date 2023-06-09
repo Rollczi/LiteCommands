@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.processor;
 
-import dev.rollczi.litecommands.editor.CommandEditorContext;
-import dev.rollczi.litecommands.editor.CommandEditorExecutorBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -22,7 +22,7 @@ public class CommandAnnotationRegistry<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    public <A extends Annotation> CommandEditorContext<SENDER> resolve(Object instance, A annotation, CommandEditorContext<SENDER> context) {
+    public <A extends Annotation> CommandBuilder<SENDER> resolve(Object instance, A annotation, CommandBuilder<SENDER> context) {
         Class<A> annotationType = (Class<A>) annotation.annotationType();
         CommandAnnotationClassResolver<SENDER, A> resolver = this.getResolver(annotationType);
 
@@ -39,7 +39,7 @@ public class CommandAnnotationRegistry<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    public <A extends Annotation> CommandEditorContext<SENDER> resolve(Object instance, Method method, A annotation, CommandEditorContext<SENDER> context, CommandEditorExecutorBuilder<SENDER> executorBuilder) {
+    public <A extends Annotation> CommandBuilder<SENDER> resolve(Object instance, Method method, A annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
         Class<A> annotationType = (Class<A>) annotation.annotationType();
         CommandAnnotationMethodResolver<SENDER, A> resolver = this.getMethodResolver(annotationType);
 

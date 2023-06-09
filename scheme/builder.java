@@ -12,21 +12,6 @@ class Main {
                 .legacyColors(true)
             )
 
-            .commands(LiteAnnotations.create()
-                .load(
-                    new TestCommand(),
-                    new TestCommand(),
-                    new TestCommand(),
-                    new TestCommand()
-                )
-                .loadClasses(
-                    TestCommand.class,
-                    TestCommand.class,
-                    TestCommand.class
-                )
-                .loadPackage("dev.rollczi.litecommands.test.commands")
-            )
-
             .commands(LiteAnnotations.load(
                 new TestCommand(),
                 new TestCommand(),
@@ -34,56 +19,47 @@ class Main {
                 new TestCommand()
             ))
 
-            .commands(LiteAnnotations.loadClasses(
-                TestCommand.class,
-                TestCommand.class,
-                TestCommand.class
-            ))
+            .suggester("test", new TestSuggester())
+            .suggester(TestCommand.class, new CommandSuggester())
 
-            .commands(LiteAnnotations.loadPackage("dev.rollczi.litecommands.test.commands"))
+            .argument(Player.class, new PlayerArgument())
+            .argument(String.class, new StringArgument())
 
-            .suggesters(suggester -> suggester
-                .suggest("test", new TestSuggester())
-                .suggest(TestCommand.class, new CommandSuggester())
-            )
+            .context(Player.class, new PlayerContext())
+            .context(String.class, new StringContext())
 
-            .arguments(arguments -> arguments
-                .argument(Player.class, new PlayerArgument())
-                .argument(String.class, new StringArgument())
-            )
+            .bind(SomeSrvice.class, () -> new SomeService())
 
-            .contexts(contexts -> contexts
-                .context(Player.class, new PlayerContext())
-                .context(String.class, new StringContext())
-            )
+            .editorGlobal(new GlobalEditor())
+            .editor(Scope.global(), new TestEditor())
+            .editor(Scope.name("name"), new TestEditor())
+            .editor(Scope.type(TestCommand.class), new TestEditor())
+            .editor(Scope.meta("key"), new TestEditor())
 
-            .binds(binds -> binds
-                .bind(SomeSrvice.class, () -> new SomeService())
-            )
+            .validatorGlobal(new GlobalValidator())
+            .validator("test", new TestValidator())
+            .validator(TestCommand.class, new CommandValidator())
 
-            .editor(editor -> editor
-                .editGlobal(new GlobalEditor())
-                .edit("test", new TestEditor())
-                .edit(TestCommand.class, new CommandEditor())
-            )
+            .exception(NumberFormatException.class, new NumberFormatExceptionHandler())
+            .exception(IllegalArgumentException.class, new IllegalArgumentExceptionHandler())
+            .exceptionUnexpected(new UnexpectedExceptionHandler())
 
-            .validator(validator -> validator
-                .validGlobal(new GlobalValidator())
-                .valid("test", new TestValidator())
-                .valid(TestCommand.class, new CommandValidator())
-            )
+            .result(String.class, new StringResultHandler())
+            .result(Integer.class, new IntegerResultHandler())
+            .resultUnexpected(new UnexpectedResultHandler())
+            .exception(IllegalArgumentException.class, new IllegalArgumentExceptionHandler())
+            .exceptionUnexpected(new UnexpectedExceptionHandler())
 
-            .resultHandler(resultHandler -> resultHandler
-                .sucessful(String.class, new StringHandler())
-                .sucessful(Component.class, new ComponentHandler())
-                .failure(Throwable.class, new ThrowableHandler())
-                .failure(InvalidUsage.class, new InvalidUsageHandler())
-                .unexpected(new UnexpectedHandler())
-            )
+            .invalidUsage(new InvalidUsageHandler())
+            .missingPermission(new MissingPermissionHandler())
 
-            .permission(permission -> permission
+            .arguments(new ArgumentsConfig())
+
+            .core(core -> core
+
+            .permissions(permissions -> permissions
                 .validator(new PermissionValidator())
-                .missing(new MissingPermissionHandler())
+                .handler(new MissingPermissionHandler())
             )
 
             .wrappers(wrappers -> wrappers
@@ -95,6 +71,7 @@ class Main {
                 .async(new AsyncScheduler())
                 .sync(new SyncScheduler())
             )
+
 
             .schematic(schematic -> schematic
                 .generator(new SchematicGenerator())
@@ -120,6 +97,12 @@ class Main {
         liteCommands.register();
         liteCommands.unregister();
     }
+}
+
+class UserContext {
+
+    @Argumen
+
 }
 
 @Namespace("test")

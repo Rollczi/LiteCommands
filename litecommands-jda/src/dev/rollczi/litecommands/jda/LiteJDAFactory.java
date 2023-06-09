@@ -38,14 +38,14 @@ public final class LiteJDAFactory {
             ;
 
         return LiteCommandsFactory.builder(User.class, new JDAPlatform(new LiteJDASettings(), jda, translator))
-            .bindStatic(JDA.class, () -> jda)
-            .resultHandler(String.class, new StringHandler())
-            .resultHandler(RestAction.class, new RestActionHandler())
+            .bind(JDA.class, () -> jda)
+            .result(String.class, new StringHandler())
+            .result(RestAction.class, new RestActionHandler())
 
-            .bindContext(Guild.class, invocation -> invocation.context().get(Guild.class).toResult("Guild is not present"))
-            .bindContext(MessageChannelUnion.class, invocation -> invocation.context().get(MessageChannelUnion.class).toResult("Channel is not present"))
-            .bindContext(Member.class, invocation -> invocation.context().get(Member.class).toResult("Member is not present"))
-            .bindContext(SlashCommandInteractionEvent.class, invocation -> invocation.context().get(SlashCommandInteractionEvent.class).toResult("SlashCommandInteractionEvent is not present"))
+            .context(Guild.class, invocation -> invocation.context().get(Guild.class).toResult("Guild is not present"))
+            .context(MessageChannelUnion.class, invocation -> invocation.context().get(MessageChannelUnion.class).toResult("Channel is not present"))
+            .context(Member.class, invocation -> invocation.context().get(Member.class).toResult("Member is not present"))
+            .context(SlashCommandInteractionEvent.class, invocation -> invocation.context().get(SlashCommandInteractionEvent.class).toResult("SlashCommandInteractionEvent is not present"))
 
             ;
     }

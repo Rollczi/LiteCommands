@@ -45,7 +45,7 @@ public final class CommandRouteUtils {
     public static <SENDER, T> List<T> collectFromRootToExecutor(CommandRoute<SENDER> route, CommandExecutor<SENDER> executor, Function<CommandMeta, T> collector) {
         List<T> collected = new ArrayList<>();
 
-        consumeFromRootToChild(route, commandRoute -> collected.add(collector.apply(commandRoute.getMeta())));
+        consumeFromRootToChild(route, commandRoute -> collected.add(collector.apply(commandRoute.meta())));
         collected.add(collector.apply(executor.getMeta()));
 
         return Collections.unmodifiableList(collected);

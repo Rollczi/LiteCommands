@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.annotations.processor;
 
-import dev.rollczi.litecommands.editor.CommandEditorContext;
-import dev.rollczi.litecommands.editor.CommandEditorExecutorBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public interface CommandAnnotationMethodResolver<SENDER, A extends Annotation> {
 
-    CommandEditorContext<SENDER> resolve(Object instance, Method method, A annotation, CommandEditorContext<SENDER> context, CommandEditorExecutorBuilder<SENDER> executorBuilder);
+    CommandBuilder<SENDER> resolve(Object instance, Method method, A annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder);
 
 }

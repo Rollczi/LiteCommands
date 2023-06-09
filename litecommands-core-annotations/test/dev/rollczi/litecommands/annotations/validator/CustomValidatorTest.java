@@ -8,13 +8,12 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.validator.Validator;
-import dev.rollczi.litecommands.validator.ValidatorResult;
-import dev.rollczi.litecommands.validator.ValidatorScope;
 import org.junit.jupiter.api.Test;
 
 @LiteTest
@@ -22,31 +21,31 @@ class CustomValidatorTest extends LiteTestSpec {
 
     static class ValidValidator implements Validator<TestSender> {
         @Override
-        public ValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
-            return ValidatorResult.valid();
+        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+            return Flow.continueFlow();
         }
     }
 
     static class InvalidValidator implements Validator<TestSender> {
         @Override
-        public ValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
-            return ValidatorResult.invalid(false);
+        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+            return Flow.terminateFlow("invalid");
         }
     }
 
     static class InvalidCanBeIgnoredValidator implements Validator<TestSender> {
         @Override
-        public ValidatorResult validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
-            return ValidatorResult.invalid(true);
+        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+            return Flow.stopCurrentFlow("invalid-can-be-ignored");
         }
     }
 
     @LiteConfigurator
     static LiteConfig configurator() {
         return builder -> builder
-            .withValidator(new ValidValidator(), ValidatorScope.MARKED_META)
-            .withValidator(new InvalidValidator(), ValidatorScope.MARKED_META)
-            .withValidator(new InvalidCanBeIgnoredValidator(), ValidatorScope.MARKED_META);
+            .validatorMarked(new ValidValidator())
+            .validatorMarked(new InvalidValidator())
+            .validatorMarked(new InvalidCanBeIgnoredValidator());
     }
 
     @Route(name = "command")
@@ -75,13 +74,13 @@ class CustomValidatorTest extends LiteTestSpec {
     @Test
     void shouldValidateNegativeValidation() {
         platform.execute("command invalid")
-            .assertFailure();
+            .assertFailure("invalid");
     }
 
     @Test
     void shouldValidateNegativeValidationCanBeIgnored() {
         platform.execute("command invalid-can-be-ignored")
-            .assertFailure(InvalidUsage.Cause.UNKNOWN_COMMAND);
+            .assertFailure("invalid-can-be-ignored");
     }
 
     private void shouldValidate(String command, boolean expected) {

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.bungee.tools;
 
-import dev.rollczi.litecommands.bind.BindContextual;
+import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.invocation.Invocation;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -9,7 +9,7 @@ import panda.std.Result;
 
 import java.util.function.Supplier;
 
-public class BungeeOnlyPlayerContextual<MESSAGE> implements BindContextual<CommandSender, ProxiedPlayer> {
+public class BungeeOnlyPlayerContextual<MESSAGE> implements ContextProvider<CommandSender, ProxiedPlayer> {
 
     private final Supplier<MESSAGE> onlyPlayerMessage;
 
@@ -22,7 +22,7 @@ public class BungeeOnlyPlayerContextual<MESSAGE> implements BindContextual<Comma
     }
 
     @Override
-    public Result<ProxiedPlayer, Object> extract(Invocation<CommandSender> invocation) {
+    public Result<ProxiedPlayer, Object> provide(Invocation<CommandSender> invocation) {
         return Option.of(invocation.sender())
             .is(ProxiedPlayer.class)
             .toResult(onlyPlayerMessage.get());
