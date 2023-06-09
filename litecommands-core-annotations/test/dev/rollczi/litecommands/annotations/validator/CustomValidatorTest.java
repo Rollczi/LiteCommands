@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.annotations.validator;
 
-import dev.rollczi.litecommands.annotations.LiteTest;
 import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
@@ -9,14 +8,12 @@ import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.flow.Flow;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.validator.Validator;
 import org.junit.jupiter.api.Test;
 
-@LiteTest
 class CustomValidatorTest extends LiteTestSpec {
 
     static class ValidValidator implements Validator<TestSender> {

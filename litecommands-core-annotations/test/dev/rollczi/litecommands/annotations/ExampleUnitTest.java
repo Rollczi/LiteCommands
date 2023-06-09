@@ -9,7 +9,6 @@ import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
 
-@LiteTest
 class ExampleUnitTest extends LiteTestSpec {
 
     @LiteConfigurator

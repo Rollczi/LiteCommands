@@ -1,13 +1,11 @@
 package dev.rollczi.litecommands.annotations.route;
 
-import dev.rollczi.litecommands.annotations.LiteTest;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.junit.jupiter.api.Test;
 
-@LiteTest
 class RootRouteTest extends LiteTestSpec {
 
     @RootRoute

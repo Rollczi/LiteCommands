@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 public class LiteTestSpec {
 
-    protected static LiteCommands<TestSender> liteCommands;
     protected static TestPlatform platform;
 
     @BeforeAll
@@ -45,11 +44,7 @@ public class LiteTestSpec {
     private static dev.rollczi.litecommands.builder.LiteCommandsBuilder<TestSender, TestSettings, ?> configureLiteTest(dev.rollczi.litecommands.builder.LiteCommandsBuilder<TestSender, TestSettings, ?> builder, Class<?> type) {
         LiteTest annotation = type.getAnnotation(LiteTest.class);
 
-        if (annotation == null) {
-            throw new AssertionError("Test class must be annotated with @LiteTest");
-        }
-
-        if (annotation.universalHandler()) {
+        if (annotation == null || annotation.universalHandler()) {
             builder.result(Object.class, (invocation, result) -> {});
         }
 

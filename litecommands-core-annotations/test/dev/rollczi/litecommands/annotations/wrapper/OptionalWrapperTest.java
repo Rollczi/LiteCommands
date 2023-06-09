@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.annotations.wrapper;
 
-import dev.rollczi.litecommands.annotations.LiteTest;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-@LiteTest
 class OptionalWrapperTest extends LiteTestSpec {
 
     @Route(name = "test")

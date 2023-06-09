@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.annotations.permission;
 
-import dev.rollczi.litecommands.annotations.LiteTest;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@LiteTest
 class ChildRoutePermissionHandleTest extends LiteTestSpec {
 
     @Route(name = "main")

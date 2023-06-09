@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.permission;
 
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.annotations.LiteTest;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.permission.MissingPermissions;
@@ -12,7 +11,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@LiteTest
 class PermissionAnnotationTest extends LiteTestSpec {
 
     @Route(name = "test")
