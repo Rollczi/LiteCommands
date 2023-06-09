@@ -7,11 +7,11 @@ import net.minestom.server.entity.Player;
 import panda.std.Option;
 import panda.std.Result;
 
-public class MinestomOnlyPlayerContextual<MESSAGE> implements ContextProvider<CommandSender, Player> {
+public class MinestomOnlyPlayerContext<MESSAGE> implements ContextProvider<CommandSender, Player> {
 
     private final MESSAGE onlyPlayerMessage;
 
-    public MinestomOnlyPlayerContextual(MESSAGE onlyPlayerMessage) {
+    public MinestomOnlyPlayerContext(MESSAGE onlyPlayerMessage) {
         this.onlyPlayerMessage = onlyPlayerMessage;
     }
 
