@@ -25,6 +25,39 @@ public class RawInput {
         return rawArgumentsToConsume.remove(0);
     }
 
+    public int nextInt() {
+        return Integer.parseInt(next());
+    }
+
+    public double nextDouble() {
+        return Double.parseDouble(next());
+    }
+
+    public float nextFloat() {
+        return Float.parseFloat(next());
+    }
+
+    public long nextLong() {
+        return Long.parseLong(next());
+    }
+
+    public short nextShort() {
+        return Short.parseShort(next());
+    }
+
+    public byte nextByte() {
+        return Byte.parseByte(next());
+    }
+
+    public boolean nextBoolean() {
+        return Boolean.parseBoolean(next());
+    }
+
+    public char nextChar() {
+        return next().charAt(0);
+    }
+
+    @Deprecated
     public List<String> nextAll() {
         List<String> consumedArguments = new ArrayList<>(rawArgumentsToConsume);
         this.rawArgumentsToConsume.clear();
@@ -37,6 +70,7 @@ public class RawInput {
         return rawArgumentsToConsume.get(0);
     }
 
+    @Deprecated
     public List<String> seeAll() {
         return Collections.unmodifiableList(rawArgumentsToConsume);
     }

@@ -8,6 +8,7 @@ import org.opentest4j.AssertionFailedError;
 import panda.std.Option;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class AssertExecute {
 
@@ -90,9 +91,7 @@ public class AssertExecute {
             throw new AssertionError("Failed reason is empty");
         }
 
-        if (!type.isInstance(failedReason.getReason())) {
-            throw new AssertionFailedError("Failed reason is not instance of " + type, type, failedReason.getReason().getClass());
-        }
+        assertInstanceOf(type, failedReason.getReason());
 
         return type.cast(failedReason.getReason());
     }

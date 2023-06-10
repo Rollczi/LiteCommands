@@ -46,19 +46,15 @@ public class ArgumentResult<EXPECTED> {
     }
 
     public static <PARSED> ArgumentResult<PARSED> successMultilevel(ValueToWrap<PARSED> parsed, int consumedRawArguments) {
-        return new ArgumentResult<>(SuccessfulResult.of(parsed, consumedRawArguments), null);
+        return new ArgumentResult<>(SuccessfulResult.of(parsed), null);
     }
 
     public static <PARSED> ArgumentResult<PARSED> success(PARSED parsed) {
-        return new ArgumentResult<>(SuccessfulResult.of(() -> parsed, 1), null);
+        return new ArgumentResult<>(SuccessfulResult.of(() -> parsed), null);
     }
 
     public static <EXPECTED> ArgumentResult<EXPECTED> success(ValueToWrap<EXPECTED> expectedReturn) {
-        return new ArgumentResult<>(SuccessfulResult.of(expectedReturn, 1), null);
-    }
-
-    public static <EXPECTED> ArgumentResult<EXPECTED> successOptional(ValueToWrap<EXPECTED> expectedReturn) {
-        return new ArgumentResult<>(SuccessfulResult.optionalArgument(expectedReturn), null);
+        return new ArgumentResult<>(SuccessfulResult.of(expectedReturn), null);
     }
 
     public static <EXPECTED> ArgumentResult<EXPECTED> failure(FailedReason failedReason) {

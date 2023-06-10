@@ -72,7 +72,7 @@ class RawInputArguments implements InputArguments<RawInputArguments.RawInputMatc
             Range range = parser.getRange();
             int routePosition = this.pivotPosition();
 
-            int minArguments = range.getMin();
+            int minArguments = range.getMin() + this.pivotPosition;
             int maxArguments = range.getMax() == Integer.MAX_VALUE
                 ? rawArguments.size()
                 : routePosition + range.getMax();
