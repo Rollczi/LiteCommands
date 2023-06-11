@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.scope.Scope;
@@ -16,8 +17,8 @@ class ExampleUnitTest extends LiteTestSpec {
             builder.editor(Scope.command("route"), context -> context.aliases("r"));
     }
 
-    @dev.rollczi.litecommands.annotations.command.Command(name = "route")
-    static class Command {
+    @Command(name = "route")
+    static class TestCommand {
 
         @Execute
         String execute(
