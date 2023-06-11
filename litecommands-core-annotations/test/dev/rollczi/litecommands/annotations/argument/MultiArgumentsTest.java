@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.input.RawInput;
@@ -67,7 +67,7 @@ class MultiArgumentsTest extends LiteTestSpec {
         }
     }
 
-    @Route(name = "command")
+    @Command(name = "command")
     static class TestCommand {
         @Execute
         void execute(@Arg String arg0, @Arg String arg1, @Arg Position position) {}

@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.annotations;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ class ExampleUnitTest extends LiteTestSpec {
             builder.editor(Scope.command("route"), context -> context.aliases("r"));
     }
 
-    @Route(name = "route")
+    @dev.rollczi.litecommands.annotations.command.Command(name = "route")
     static class Command {
 
         @Execute

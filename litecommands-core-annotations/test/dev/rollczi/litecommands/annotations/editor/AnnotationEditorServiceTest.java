@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.editor;
 
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,7 @@ class AnnotationEditorServiceTest {
 
     private final static String KEY = "key";
 
-    @Route(name = "test")
+    @dev.rollczi.litecommands.annotations.command.Command(name = "test")
     @Edit(key = KEY)
     static class Command {
 

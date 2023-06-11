@@ -3,15 +3,15 @@ package dev.rollczi.litecommands.annotations.permission;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ChildRoutePermissionHandleTest extends LiteTestSpec {
+class ChildCommandPermissionHandleTest extends LiteTestSpec {
 
-    @Route(name = "main")
+    @Command(name = "main")
     static class MainCommand {
         @Execute
         void execute() {}

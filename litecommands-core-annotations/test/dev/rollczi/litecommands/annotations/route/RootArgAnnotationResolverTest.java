@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.annotations.route;
 
+import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -7,17 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RootArgAnnotationResolverTest {
 
-    RootRoute.AnnotationResolver<?> resolver = new RootRoute.AnnotationResolver<>();
+    RootCommand.AnnotationResolver<?> resolver = new RootCommand.AnnotationResolver<>();
 
-    @RootRoute
+    @RootCommand
     static class Command {}
 
     @Test
     void test() {
         Command command = new Command();
-        RootRoute rootRoute = Command.class.getAnnotation(RootRoute.class);
+        RootCommand rootCommand = Command.class.getAnnotation(RootCommand.class);
 
-        CommandBuilder<?> context = resolver.resolve(command, rootRoute, CommandBuilder.create());
+        CommandBuilder<?> context = resolver.resolve(command, rootCommand, CommandBuilder.create());
 
         assertEquals("", context.name());
     }

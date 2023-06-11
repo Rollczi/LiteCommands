@@ -4,10 +4,10 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.annotations.command.Command;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-@Route(name = "send")
+@Command(name = "send")
 public class SendCommand {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();

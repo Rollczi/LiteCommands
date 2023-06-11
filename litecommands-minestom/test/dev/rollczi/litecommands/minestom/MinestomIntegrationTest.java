@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.minestom;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.minestom.test.RegisterCommand;
 import net.minestom.server.entity.Player;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,7 @@ class MinestomIntegrationTest extends MineStomIntegrationSpec {
     @RegisterCommand
     TestCommand testCommand = new TestCommand();
 
-    @Route(name = "test")
+    @Command(name = "test")
     static class TestCommand {
 
         String response;

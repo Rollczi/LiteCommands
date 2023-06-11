@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.flow.Flow;
@@ -45,7 +45,7 @@ class CustomValidatorTest extends LiteTestSpec {
             .validatorMarked(new InvalidCanBeIgnoredValidator());
     }
 
-    @Route(name = "command")
+    @Command(name = "command")
     @Validate(ValidValidator.class)
     static class TestCommand {
 

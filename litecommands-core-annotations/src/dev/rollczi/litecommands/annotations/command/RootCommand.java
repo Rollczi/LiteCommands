@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.annotations.route;
+package dev.rollczi.litecommands.annotations.command;
 
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationClassResolver;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -10,12 +10,12 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RootRoute {
+public @interface RootCommand {
 
-    class AnnotationResolver<SENDER> implements CommandAnnotationClassResolver<SENDER, RootRoute> {
+    class AnnotationResolver<SENDER> implements CommandAnnotationClassResolver<SENDER, RootCommand> {
 
         @Override
-        public CommandBuilder<SENDER> resolve(Object instance, RootRoute annotation, CommandBuilder<SENDER> context) {
+        public CommandBuilder<SENDER> resolve(Object instance, RootCommand annotation, CommandBuilder<SENDER> context) {
             return CommandBuilder.createRoot();
         }
 

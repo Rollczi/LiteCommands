@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.annotations.route;
+package dev.rollczi.litecommands.annotations.command;
 
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationClassResolver;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -12,16 +12,16 @@ import java.util.Arrays;
 
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Route {
+public @interface Command {
 
     String name();
 
     String[] aliases() default {};
 
-    class AnnotationResolver<SENDER> implements CommandAnnotationClassResolver<SENDER, Route> {
+    class AnnotationResolver<SENDER> implements CommandAnnotationClassResolver<SENDER, Command> {
 
         @Override
-        public CommandBuilder<SENDER> resolve(Object instance, Route annotation, CommandBuilder<SENDER> context) {
+        public CommandBuilder<SENDER> resolve(Object instance, Command annotation, CommandBuilder<SENDER> context) {
             boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
             if (isNotEmpty) {

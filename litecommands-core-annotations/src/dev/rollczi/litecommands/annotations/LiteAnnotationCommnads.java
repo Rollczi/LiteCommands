@@ -21,8 +21,8 @@ import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaAppli
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMethodResolver;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationRegistry;
-import dev.rollczi.litecommands.annotations.route.RootRoute;
-import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.annotations.command.RootCommand;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.validator.Validate;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
@@ -122,8 +122,8 @@ public class LiteAnnotationCommnads<SENDER> implements LiteCommandsProvider<SEND
         ArgumentParserRegistry<SENDER> argumentParserRegistry = builder.getArgumentParserService();
 
         this
-            .annotation(Route.class, new Route.AnnotationResolver<>())
-            .annotation(RootRoute.class, new RootRoute.AnnotationResolver<>())
+            .annotation(Command.class, new Command.AnnotationResolver<>())
+            .annotation(RootCommand.class, new RootCommand.AnnotationResolver<>())
 
             .annotation(Meta.class, new Meta.AnnotationResolver<>())
             .annotation(Description.class, new DescriptionAnnotationResolver<>())

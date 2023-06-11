@@ -4,11 +4,11 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import dev.rollczi.litecommands.annotations.route.Route;
+import dev.rollczi.litecommands.annotations.command.Command;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-@Route(name = "gamemode", aliases = "gm")
+@Command(name = "gamemode", aliases = "gm")
 @Permission("example.gamemode")
 public class GameModeCommand {
 
