@@ -1,12 +1,20 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.platform.PlatformSettings;
+import org.bukkit.Server;
 
 public class LiteBukkitSettings implements PlatformSettings {
 
     private String fallbackPrefix;
     private boolean nativePermission = false;
-    private BukkitCommandsProvider commandsProvider;
+    private BukkitCommandsRegistry commandsRegistry;
+
+    public LiteBukkitSettings() {
+    }
+
+    LiteBukkitSettings(Server server) {
+        this.commandsRegistry = BukkitCommandsRegistryImpl.create(server);
+    }
 
     public LiteBukkitSettings fallbackPrefix(String fallbackPrefix) {
         this.fallbackPrefix = fallbackPrefix;
@@ -18,8 +26,8 @@ public class LiteBukkitSettings implements PlatformSettings {
         return this;
     }
 
-    public LiteBukkitSettings commandsProvider(BukkitCommandsProvider commandsProvider) {
-        this.commandsProvider = commandsProvider;
+    public LiteBukkitSettings commandsRegistry(BukkitCommandsRegistry commandsRegistry) {
+        this.commandsRegistry = commandsRegistry;
         return this;
     }
 
@@ -31,8 +39,8 @@ public class LiteBukkitSettings implements PlatformSettings {
         return this.nativePermission;
     }
 
-    BukkitCommandsProvider commandsProvider() {
-        return this.commandsProvider;
+    BukkitCommandsRegistry commandsRegistry() {
+        return this.commandsRegistry;
     }
 
 }

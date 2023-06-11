@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.command.input.InputMatcher;
 
-public interface InputArgumentsMatcher<SELF extends InputArgumentsMatcher<SELF>> extends InputMatcher {
+public interface ArgumentsInputMatcher<SELF extends ArgumentsInputMatcher<SELF>> extends InputMatcher {
 
     <SENDER, PARSED> ArgumentResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet);
 

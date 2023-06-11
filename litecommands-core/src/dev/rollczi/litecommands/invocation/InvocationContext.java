@@ -31,6 +31,11 @@ public class InvocationContext {
             return this;
         }
 
+        public Builder putUnsafe(Class<?> type, Object value) {
+            context.context.put(type, value);
+            return this;
+        }
+
         public InvocationContext build() {
             return context;
         }

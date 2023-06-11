@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class RawInputArguments implements InputArguments<RawInputArguments.RawInputMatcher> {
+class RawArgumentsInput implements ArgumentsInput<RawArgumentsInput.RawInputMatcher> {
 
     private final List<String> rawArguments;
 
-    public RawInputArguments(List<String> rawArguments) {
+    public RawArgumentsInput(List<String> rawArguments) {
         this.rawArguments = new ArrayList<>(rawArguments);
     }
 
@@ -28,7 +28,7 @@ class RawInputArguments implements InputArguments<RawInputArguments.RawInputMatc
         return Collections.unmodifiableList(this.rawArguments);
     }
 
-    public class RawInputMatcher implements InputArgumentsMatcher<RawInputMatcher> {
+    public class RawInputMatcher implements ArgumentsInputMatcher<RawInputMatcher> {
 
         private final RawInputAnalyzer rawInputAnalyzer = new RawInputAnalyzer(rawArguments);
 

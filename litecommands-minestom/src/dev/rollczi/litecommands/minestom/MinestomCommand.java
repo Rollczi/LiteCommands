@@ -1,7 +1,8 @@
 package dev.rollczi.litecommands.minestom;
 
-import dev.rollczi.litecommands.argument.input.InputArguments;
+import dev.rollczi.litecommands.argument.input.ArgumentsInput;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.input.Input;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -34,29 +35,33 @@ class MinestomCommand extends Command {
             String alias = context.getCommandName();
             String[] args = this.fixArguments(context.get(arguments));
 
-            Invocation<CommandSender> invocation = this.createInvocation(sender, alias, args);
-            Set<Suggestion> suggestions = this.suggestionListener.suggest(invocation, SuggestionInput.raw(args)).getSuggestions();
+            SuggestionInput<?> input = SuggestionInput.raw(args);
+            Invocation<CommandSender> invocation = this.createInvocation(sender, alias, input);
+            Set<Suggestion> suggestions = this.suggestionListener.suggest(invocation, input).getSuggestions();
 
             for (Suggestion suggestion : suggestions) {
-                suggestionCallback.addEntry(new SuggestionEntry(suggestion.from(), Component.empty()));
+                suggestionCallback.addEntry(new SuggestionEntry(suggestion.multilevel(), Component.empty()));
             }
         });
 
         this.addSyntax(((sender, context) -> {
             String alias = context.getCommandName();
             String[] args = this.fixArguments(context.get(arguments));
+            ArgumentsInput<?> raw = ArgumentsInput.raw(args);
 
-            this.invocationHook.execute(this.createInvocation(sender, alias, args), InputArguments.raw(args));
+            this.invocationHook.execute(this.createInvocation(sender, alias, raw), raw);
         }), arguments);
 
         this.setDefaultExecutor(((sender, context) -> {
             String alias = context.getCommandName();
-            this.invocationHook.execute(this.createInvocation(sender, alias), InputArguments.raw());
+            ArgumentsInput<?> raw = ArgumentsInput.raw();
+
+            this.invocationHook.execute(this.createInvocation(sender, alias, raw), raw);
         }));
     }
 
-    private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, String... args) {
-        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, InputArguments.raw(args));
+    private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, Input<?> input) {
+        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, input);
     }
 
     private String[] fixArguments(String[] args) {

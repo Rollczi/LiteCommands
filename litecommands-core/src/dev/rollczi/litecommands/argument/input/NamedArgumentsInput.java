@@ -10,72 +10,65 @@ import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-class NamedTypedInputArguments implements InputArguments<NamedTypedInputArguments.TypeMixedMatcher> {
+class NamedArgumentsInput implements ArgumentsInput<NamedArgumentsInput.NamedInputMatcher> {
 
     private final List<String> routes = new ArrayList<>();
-    private final Map<String, Object> namedArguments = new LinkedHashMap<>();
+    private final Map<String, String> namedArguments = new LinkedHashMap<>();
 
-    NamedTypedInputArguments(List<String> routes, Map<String, Object> namedArguments) {
+    NamedArgumentsInput(List<String> routes, Map<String, String> namedArguments) {
         this.routes.addAll(routes);
         this.namedArguments.putAll(namedArguments);
     }
 
     @Override
-    public TypeMixedMatcher createMatcher() {
-        return new TypeMixedMatcher();
+    public NamedInputMatcher createMatcher() {
+        return new NamedInputMatcher();
     }
 
     @Override
     public List<String> asList() {
         List<String> rawArgs = new ArrayList<>();
 
-        namedArguments.forEach((named, object) -> {
-            rawArgs.add(named);
-            rawArgs.add(object.toString());
+        namedArguments.forEach((name, value) -> {
+            rawArgs.add(name);
+            rawArgs.add(value);
         });
 
         return Collections.unmodifiableList(rawArgs);
     }
 
-    public class TypeMixedMatcher implements InputArgumentsMatcher<TypeMixedMatcher> {
+    public class NamedInputMatcher implements ArgumentsInputMatcher<NamedInputMatcher> {
+
+        private final List<String> consumedArguments = new ArrayList<>();
 
         private int routePosition = 0;
-        private final Set<String> consumedArguments = new HashSet<>();
 
-        public TypeMixedMatcher() {}
+        public NamedInputMatcher() {}
 
-        public TypeMixedMatcher(int routePosition) {
+        public NamedInputMatcher(int routePosition) {
             this.routePosition = routePosition;
         }
 
         @Override
         public <SENDER, PARSED> ArgumentResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
-            Object input = namedArguments.get(argument.getName());
+            String input = namedArguments.get(argument.getName());
 
             if (input == null) {
                 return ArgumentResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 
-            Class<PARSED> outType = argument.getWrapperFormat().getParsedType();
             consumedArguments.add(argument.getName());
-
-            if (outType.isAssignableFrom(input.getClass())) {
-                return ArgumentResult.success((PARSED) input);
-            }
-
             return this.parseInput(invocation, argument, parserSet, input);
         }
 
         @SuppressWarnings("unchecked")
-        private <SENDER, INPUT, OUT> ArgumentResult<OUT> parseInput(Invocation<SENDER> invocation, Argument<OUT> argument, ArgumentParserSet<SENDER, OUT> parserSet, INPUT input) {
+        private <SENDER, INPUT, PARSED> ArgumentResult<PARSED> parseInput(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet, INPUT input) {
             Class<INPUT> inputType = (Class<INPUT>) input.getClass();
-            ArgumentParser<SENDER, INPUT, OUT> parser = parserSet.getParser(inputType)
+            ArgumentParser<SENDER, INPUT, PARSED> parser = parserSet.getParser(inputType)
                 .orElseThrow(() -> new ArgumentParseException("No parser for input type " + inputType.getName()));
 
             return parser.parse(invocation, argument, input);
@@ -97,8 +90,8 @@ class NamedTypedInputArguments implements InputArguments<NamedTypedInputArgument
         }
 
         @Override
-        public TypeMixedMatcher copy() {
-            return new TypeMixedMatcher(routePosition);
+        public NamedInputMatcher copy() {
+            return new NamedInputMatcher(this.routePosition);
         }
 
         @Override

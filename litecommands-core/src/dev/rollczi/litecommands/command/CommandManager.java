@@ -1,10 +1,7 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.FailedReason;
-import dev.rollczi.litecommands.argument.input.InputArguments;
-import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
-import dev.rollczi.litecommands.flow.Flow;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.argument.input.ArgumentsInput;
+import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationResult;
 import dev.rollczi.litecommands.command.input.InputMatcher;
@@ -12,13 +9,10 @@ import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.result.ResultService;
-import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.suggestion.SuggestionService;
 import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
 import dev.rollczi.litecommands.suggestion.input.SuggestionInputMatcher;
-import dev.rollczi.litecommands.validator.ValidatorService;
 
 public class CommandManager<SENDER, C extends PlatformSettings> {
 
@@ -55,8 +49,8 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
         }
 
         @Override
-        public InvocationResult<SENDER> execute(Invocation<SENDER> invocation, InputArguments<?> arguments) {
-            InputArgumentsMatcher matcher = arguments.createMatcher();
+        public InvocationResult<SENDER> execute(Invocation<SENDER> invocation, ArgumentsInput<?> arguments) {
+            ArgumentsInputMatcher matcher = arguments.createMatcher();
             CommandRoute<SENDER> commandRoute = findRoute(this.commandRoute, matcher);
 
             return executeService.execute(invocation, matcher, commandRoute);

@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.requirements.CommandRequirement;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
-import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
+import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 
@@ -31,7 +31,7 @@ public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Comman
     }
 
     @Override
-    public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, MATCHER matcher) {
+    public <MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, MATCHER matcher) {
         List<Match<REQUIREMENT>> results = new ArrayList<>();
 
         for (REQUIREMENT requirement : requirements) {
@@ -44,7 +44,7 @@ public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Comman
             results.add(new Match<>(requirement, result));
         }
 
-        InputArgumentsMatcher.EndResult endResult = matcher.endMatch();
+        ArgumentsInputMatcher.EndResult endResult = matcher.endMatch();
 
         if (!endResult.isSuccessful()) {
             return CommandExecutorMatchResult.failed(endResult.getFailedReason());

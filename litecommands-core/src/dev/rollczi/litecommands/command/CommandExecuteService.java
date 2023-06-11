@@ -1,8 +1,7 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.argument.FailedReason;
-import dev.rollczi.litecommands.argument.input.InputArguments;
-import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
+import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -20,16 +19,16 @@ public class CommandExecuteService<SENDER> {
         this.resultResolver = resultResolver;
     }
 
-    public InvocationResult<SENDER> execute(Invocation<SENDER> invocation, InputArgumentsMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
+    public InvocationResult<SENDER> execute(Invocation<SENDER> invocation, ArgumentsInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         InvocationResult<SENDER> result = execute0(invocation, matcher, commandRoute);
 
         resultResolver.resolveInvocation(result);
         return result;
     }
 
-    private <MATCHER extends InputArgumentsMatcher<MATCHER>> InvocationResult<SENDER> execute0(
+    private <MATCHER extends ArgumentsInputMatcher<MATCHER>> InvocationResult<SENDER> execute0(
         Invocation<SENDER> invocation,
-        InputArgumentsMatcher<MATCHER> matcher,
+        ArgumentsInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
         FailedReason lastFailedReason = null;

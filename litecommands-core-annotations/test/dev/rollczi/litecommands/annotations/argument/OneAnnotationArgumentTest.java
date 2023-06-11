@@ -63,7 +63,7 @@ class OneAnnotationArgumentTest {
             .stream()
             .findFirst()
             .orElseThrow(() -> new AssertionError("Suggestion not found"))
-            .from();
+            .multilevel();
 
         assertEquals("text", suggestion);
     }

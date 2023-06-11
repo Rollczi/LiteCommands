@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.argument.input.InputArguments;
+import dev.rollczi.litecommands.argument.input.ArgumentsInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationResult;
 import dev.rollczi.litecommands.platform.Platform;
@@ -65,14 +65,14 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
         TestSender testSender = new TestSender();
         TestPlatformSender testPlatformSender = new TestPlatformSender();
 
-        InputArguments<?> args = InputArguments.raw(arguments);
+        ArgumentsInput<?> args = ArgumentsInput.raw(arguments);
 
         Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, command, command, args);
 
         for (Map.Entry<CommandRoute<TestSender>, PlatformInvocationListener<TestSender>> entry : this.executeListeners.entrySet()) {
             if (entry.getKey().isNameOrAlias(command)) {
                 PlatformInvocationListener<TestSender> listener = entry.getValue();
-                InvocationResult<TestSender> result = listener.execute(invocation, InputArguments.raw(arguments));
+                InvocationResult<TestSender> result = listener.execute(invocation, ArgumentsInput.raw(arguments));
 
                 return new AssertExecute(result);
             }

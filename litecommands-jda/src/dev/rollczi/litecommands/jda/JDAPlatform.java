@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -15,7 +16,9 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
 
@@ -73,22 +76,36 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             }
 
             PlatformInvocationListener<User> invocationHook = commandRecord.invocationHook();
-            JDAInputArguments arguments = translator.translateArguments(commandRecord.command(), event);
-            Invocation<User> invocation = translator.translate(commandRoute, arguments, event);
+            JDAArgumentsInput arguments = translator.translateArguments(commandRecord.command(), event);
+            Invocation<User> invocation = translator.translateInvocation(commandRoute, arguments, event);
 
             invocationHook.execute(invocation, arguments);
         }
 
         @Override
         public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+            CommandRoute<User> commandRoute = commandRoutes.get(event.getName());
 
-            event.replyChoices(
-                Arrays.asList(
-                    new Command.Choice("user", "???"),
-                    new Command.Choice("Choice 2", "choice2"),
-                    new Command.Choice("Choice 3", "choice3")
-                )
-            ).queue();
+            if (commandRoute == null) {
+                event.replyChoices().queue();
+                return;
+            }
+
+            JDACommandRecord commandRecord = commands.get(commandRoute);
+
+            if (commandRecord == null) {
+                event.replyChoices().queue();
+                throw new IllegalStateException("Command record not found for command: " + commandRoute.getName());
+            }
+
+            JDASuggestionInput arguments = translator.translateSuggestions(event);
+            Invocation<User> invocation = translator.translateInvocation(commandRoute, arguments, event);
+            SuggestionResult result = commandRecord.suggestionHook().suggest(invocation, arguments);
+            List<Command.Choice> choiceList = result.getSuggestions().stream()
+                .map(suggestion -> new Command.Choice("", suggestion.multilevel()))
+                .collect(Collectors.toList());
+
+            event.replyChoices(choiceList).queue();
         }
 
     }

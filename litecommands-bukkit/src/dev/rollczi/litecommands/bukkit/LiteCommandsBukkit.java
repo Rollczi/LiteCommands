@@ -15,12 +15,10 @@ public final class LiteCommandsBukkit {
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Server server) {
-        return builder(server, new LiteBukkitSettings());
+        return builder(server, new LiteBukkitSettings(server));
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Server server, LiteBukkitSettings settings) {
-        settings.commandsProvider(BukkitCommandsProviderImpl.create(server));
-
         return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings))
             .bind(Server.class, () -> server)
             .bind(BukkitScheduler.class, server::getScheduler)

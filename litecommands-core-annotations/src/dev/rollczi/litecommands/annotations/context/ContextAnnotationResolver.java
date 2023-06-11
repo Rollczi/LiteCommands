@@ -3,8 +3,7 @@ package dev.rollczi.litecommands.annotations.context;
 import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
 import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
-import dev.rollczi.litecommands.argument.input.InputArguments;
-import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
+import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -51,7 +50,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         }
 
         @Override
-        public <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> check(Invocation<SENDER> invocation, CONTEXT matcher) {
+        public <CONTEXT extends ArgumentsInputMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> check(Invocation<SENDER> invocation, CONTEXT matcher) {
             Result<EXPECTED, Object> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.isOk()) {

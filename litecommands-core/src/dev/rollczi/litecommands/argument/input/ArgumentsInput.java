@@ -8,22 +8,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public interface InputArguments<MATCHER extends InputArgumentsMatcher<MATCHER>> extends Input<MATCHER> {
+public interface ArgumentsInput<MATCHER extends ArgumentsInputMatcher<MATCHER>> extends Input<MATCHER> {
 
-    static InputArguments.NamedBuilder namedBuilder() {
+    static ArgumentsInput.NamedBuilder namedBuilder() {
         return new NamedBuilder();
     }
 
-    static InputArguments.RawBuilder rawBuilder() {
+    static ArgumentsInput.RawBuilder rawBuilder() {
         return new RawBuilder();
     }
 
-    static InputArguments<?> raw(String... rawArguments) {
-        return new RawInputArguments(Arrays.asList(rawArguments));
+    static ArgumentsInput<?> raw(String... rawArguments) {
+        return new RawArgumentsInput(Arrays.asList(rawArguments));
     }
 
-    static InputArguments<?> raw(List<String> rawArguments) {
-        return new RawInputArguments(rawArguments);
+    static ArgumentsInput<?> raw(List<String> rawArguments) {
+        return new RawArgumentsInput(rawArguments);
     }
 
     class NamedBuilder {
@@ -49,12 +49,12 @@ public interface InputArguments<MATCHER extends InputArgumentsMatcher<MATCHER>> 
             return this;
         }
 
-        public InputArguments<?> build() {
+        public ArgumentsInput<?> build() {
             if (isTyped) {
-                return new NamedTypedInputArguments(routes, typedNamedArguments);
+                return new NamedTypedArgumentsInput(routes, typedNamedArguments);
             }
 
-            return new NamedInputArguments(routes, namedArguments);
+            return new NamedArgumentsInput(routes, namedArguments);
         }
     }
 
@@ -71,8 +71,8 @@ public interface InputArguments<MATCHER extends InputArgumentsMatcher<MATCHER>> 
             return this;
         }
 
-        public InputArguments<?> build() {
-            return new RawInputArguments(routes);
+        public ArgumentsInput<?> build() {
+            return new RawArgumentsInput(routes);
         }
     }
 

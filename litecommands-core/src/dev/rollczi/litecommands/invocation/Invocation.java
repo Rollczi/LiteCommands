@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.invocation;
 
-import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.command.input.Input;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
@@ -13,21 +12,21 @@ public class Invocation<SENDER> {
     private final Input<?> arguments;
     private final InvocationContext context;
 
-    public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, Input<?> arguments, InvocationContext context) {
+    public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, Input<?> input, InvocationContext context) {
         this.handle = handle;
         this.platformSender = platformSender;
         this.command = command;
         this.label = label;
-        this.arguments = arguments;
+        this.arguments = input;
         this.context = context;
     }
 
-    public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, Input<?> arguments) {
+    public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, Input<?> input) {
         this.handle = handle;
         this.platformSender = platformSender;
         this.command = command;
         this.label = label;
-        this.arguments = arguments;
+        this.arguments = input;
         this.context = InvocationContext.builder().build();
     }
 

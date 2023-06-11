@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.jda;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.input.Input;
 import dev.rollczi.litecommands.command.requirements.CommandArgumentRequirement;
 import dev.rollczi.litecommands.command.requirements.CommandRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -13,6 +14,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.CommandAutoCompleteInteraction;
+import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -147,7 +150,7 @@ class JDACommandTranslator {
         void translate(OptionType optionType, JDATypeMapper<?> mapper, String argName, String description, boolean isRequired, boolean autocomplete);
     }
 
-    JDAInputArguments translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
+    JDAArgumentsInput translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
         List<String> routes = Stream.of(interaction.getSubcommandGroup(), interaction.getSubcommandName())
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -155,13 +158,24 @@ class JDACommandTranslator {
         Map<String, OptionMapping> options = interaction.getOptions().stream()
             .collect(Collectors.toMap(OptionMapping::getName, option -> option));
 
-        return new JDAInputArguments(routes, options, command);
+        return new JDAArgumentsInput(routes, options, command);
     }
 
-    Invocation<User> translate(CommandRoute<User> route, JDAInputArguments arguments, SlashCommandInteractionEvent interaction) {
+    JDASuggestionInput translateSuggestions(CommandAutoCompleteInteraction interaction) {
+        List<String> routes = Stream.of(interaction.getSubcommandGroup(), interaction.getSubcommandName())
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        Map<String, OptionMapping> options = interaction.getOptions().stream()
+            .collect(Collectors.toMap(OptionMapping::getName, option -> option));
+
+        return new JDASuggestionInput(routes, options, interaction.getFocusedOption());
+    }
+
+    Invocation<User> translateInvocation(CommandRoute<User> route, Input<?> arguments, CommandInteractionPayload interaction) {
         InvocationContext context = InvocationContext.builder()
-            .put(SlashCommandInteractionEvent.class, interaction)
-            .put(MessageChannelUnion.class, interaction.getChannel())
+            .putUnsafe(interaction.getClass(), interaction)
+            .put(MessageChannelUnion.class, (MessageChannelUnion) interaction.getChannel())
             .put(Guild.class, interaction.getGuild())
             .put(Member.class, interaction.getMember())
             .build();

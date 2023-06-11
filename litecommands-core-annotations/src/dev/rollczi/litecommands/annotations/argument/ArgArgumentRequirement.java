@@ -2,15 +2,13 @@ package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.command.requirements.CommandArgumentRequirement;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
 import dev.rollczi.litecommands.argument.SuccessfulResult;
-import dev.rollczi.litecommands.argument.input.InputArguments;
-import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
+import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.wrapper.Wrapper;
@@ -31,7 +29,7 @@ class ArgArgumentRequirement<SENDER, PARSED> implements ParameterCommandRequirem
     }
 
     @Override
-    public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRequirementResult<PARSED> check(Invocation<SENDER> invocation, MATCHER matcher) {
+    public <MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandRequirementResult<PARSED> check(Invocation<SENDER> invocation, MATCHER matcher) {
         ArgumentResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
 
         if (result.isSuccessful()) {

@@ -26,9 +26,9 @@ public class SuggestionResult {
     }
 
     public SuggestionResult filterBy(Suggestion suggestion) { /// x -> x y z, x y -> y z, x y z -> z
-        String multilevel = suggestion.from();
+        String multilevel = suggestion.multilevel();
         Set<Suggestion> filtered = this.suggestions.stream()
-            .filter(suggestion1 -> suggestion1.from().startsWith(multilevel))
+            .filter(suggestion1 -> suggestion1.multilevel().startsWith(multilevel))
             .map(suggestion1 -> suggestion1.slashLevel(suggestion.lengthMultilevel() - 1))
             .collect(Collectors.toSet());
 
@@ -41,7 +41,7 @@ public class SuggestionResult {
 
     public List<String> asMultiLevelList() {
         return this.suggestions.stream()
-            .map(Suggestion::from)
+            .map(Suggestion::multilevel)
             .collect(Collectors.toList());
     }
 

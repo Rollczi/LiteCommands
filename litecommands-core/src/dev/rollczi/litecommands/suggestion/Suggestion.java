@@ -1,12 +1,9 @@
 package dev.rollczi.litecommands.suggestion;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class Suggestion {
 
@@ -26,7 +23,7 @@ public class Suggestion {
         return this.multiSuggestion.get(this.multiSuggestion.size() - 1);
     }
 
-    public String from() {
+    public String multilevel() {
         return this.suggestion;
     }
 
@@ -88,7 +85,7 @@ public class Suggestion {
 
     @Override
     public String toString() {
-        return this.from();
+        return this.multilevel();
     }
 
 }

@@ -8,22 +8,22 @@ import java.util.Map;
 
 public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> implements Platform<SENDER, C> {
 
-    protected @NotNull C liteConfiguration;
+    protected @NotNull C settings;
     protected final Map<String, CommandRoute<SENDER>> commandRoutes = new HashMap<>();
 
-    protected AbstractPlatform(@NotNull C liteConfiguration) {
-        this.liteConfiguration = liteConfiguration;
+    protected AbstractPlatform(@NotNull C settings) {
+        this.settings = settings;
     }
 
     @Override
     public void setConfiguration(@NotNull C liteConfiguration) {
-        this.liteConfiguration = liteConfiguration;
+        this.settings = liteConfiguration;
     }
 
     @Override
     @NotNull
     public C getConfiguration() {
-        return liteConfiguration;
+        return settings;
     }
 
     @Override

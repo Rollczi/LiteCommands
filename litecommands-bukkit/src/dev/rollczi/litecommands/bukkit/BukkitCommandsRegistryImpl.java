@@ -4,33 +4,24 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
+import org.jetbrains.annotations.NotNull;
 import panda.std.Lazy;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 
-class BukkitCommandsProviderImpl implements BukkitCommandsProvider {
+class BukkitCommandsRegistryImpl implements BukkitCommandsRegistry {
 
     private final Lazy<CommandMap> commandMap;
     private final Lazy<Map<String, Command>> knownCommands;
 
-    private BukkitCommandsProviderImpl(Lazy<CommandMap> commandMap, Lazy<Map<String, Command>> knownCommands) {
+    private BukkitCommandsRegistryImpl(Lazy<CommandMap> commandMap, Lazy<Map<String, Command>> knownCommands) {
         this.commandMap = commandMap;
         this.knownCommands = knownCommands;
     }
 
-    @Override
-    public CommandMap commandMap() {
-        return this.commandMap.get();
-    }
-
-    @Override
-    public Map<String, Command> knownCommands() {
-        return this.knownCommands.get();
-    }
-
     @SuppressWarnings("unchecked")
-    static BukkitCommandsProvider create(Server server) {
+    static BukkitCommandsRegistry create(Server server) {
         Lazy<CommandMap> commandMap = new Lazy<>(() -> {
             try {
                 Field commandMapField = server.getClass().getDeclaredField("commandMap");
@@ -55,7 +46,18 @@ class BukkitCommandsProviderImpl implements BukkitCommandsProvider {
             }
         });
 
-        return new BukkitCommandsProviderImpl(commandMap, knownCommands);
+        return new BukkitCommandsRegistryImpl(commandMap, knownCommands);
+    }
+
+    @Override
+    public boolean register(@NotNull String label, @NotNull String fallbackPrefix, @NotNull Command command) {
+        return this.commandMap.get().register(label, fallbackPrefix, command);
+    }
+
+    @Override
+    public void unregister(@NotNull String label, String fallbackPrefix) {
+        this.knownCommands.get().remove(label);
+        this.knownCommands.get().remove(fallbackPrefix + ":" + label);
     }
 
 }
