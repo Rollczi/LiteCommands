@@ -11,6 +11,6 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.13.0")
 }
 
-configure<Litecommands_publish_gradle.LitePublishExtension> {
+litecommandsPublish {
     artifactId = "litecommands-adventure"
 }
