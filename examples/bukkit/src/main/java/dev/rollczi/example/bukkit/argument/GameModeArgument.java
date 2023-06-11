@@ -35,7 +35,7 @@ public class GameModeArgument extends OneArgumentResolver<CommandSender, GameMod
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<GameMode> argument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<GameMode> argument, SuggestionContext context) {
         return SuggestionResult.of(GAME_MODE_ARGUMENTS.keySet());
     }
 

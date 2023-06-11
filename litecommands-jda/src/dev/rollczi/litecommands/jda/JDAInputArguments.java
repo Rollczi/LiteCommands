@@ -58,7 +58,7 @@ class JDAInputArguments implements InputArguments<JDAInputArguments.JDAInputMatc
         }
 
         @Override
-        public <SENDER, PARSED> ArgumentResult<PARSED> matchArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
+        public <SENDER, PARSED> ArgumentResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
             OptionMapping optionMapping = arguments.get(argument.getName());
 
             if (optionMapping == null) {
@@ -117,7 +117,7 @@ class JDAInputArguments implements InputArguments<JDAInputArguments.JDAInputMatc
         }
 
         @Override
-        public String matchNextRoute() {
+        public String nextRoute() {
             return routes.get(routePosition++);
         }
 

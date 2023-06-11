@@ -79,11 +79,11 @@ public class RawInput {
         return !rawArgumentsToConsume.isEmpty();
     }
 
-    int consumedCount() {
+    public int consumedCount() {
         return this.consumed;
     }
 
-    static RawInput of(Collection<String> rawArguments) {
+    public static RawInput of(Collection<String> rawArguments) {
         return new RawInput(rawArguments);
     }
 

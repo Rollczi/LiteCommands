@@ -8,9 +8,10 @@ import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
-import dev.rollczi.litecommands.platform.PlatformInvocationHook;
-import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
+import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
 import dev.rollczi.litecommands.util.StringUtils;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
 
 
     @Override
-    protected void hook(CommandRoute<CommandSource> commandRoute, PlatformInvocationHook<CommandSource> invocationHook, PlatformSuggestionHook<CommandSource> suggestionHook) {
+    protected void hook(CommandRoute<CommandSource> commandRoute, PlatformInvocationListener<CommandSource> invocationHook, PlatformSuggestionListener<CommandSource> suggestionHook) {
         VelocityCommand velocityCommand = new VelocityCommand(commandRoute, invocationHook, suggestionHook);
 
         CommandMeta meta = commandManager.metaBuilder(commandRoute.getName())
@@ -49,10 +50,10 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
     private class VelocityCommand implements SimpleCommand {
 
         private final CommandRoute<CommandSource> commandSection;
-        private final PlatformInvocationHook<CommandSource> executeListener;
-        private final PlatformSuggestionHook<CommandSource> suggestionListener;
+        private final PlatformInvocationListener<CommandSource> executeListener;
+        private final PlatformSuggestionListener<CommandSource> suggestionListener;
 
-        public VelocityCommand(CommandRoute<CommandSource> command, PlatformInvocationHook<CommandSource> executeListener, PlatformSuggestionHook<CommandSource> suggestionListener) {
+        public VelocityCommand(CommandRoute<CommandSource> command, PlatformInvocationListener<CommandSource> executeListener, PlatformSuggestionListener<CommandSource> suggestionListener) {
             this.commandSection = command;
             this.executeListener = executeListener;
             this.suggestionListener = suggestionListener;
@@ -73,16 +74,13 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
 
         @Override
         public void execute(Invocation invocation) {
-            this.executeListener.execute(this.newInvocation(invocation, false));
+            this.executeListener.execute(this.newInvocation(invocation, false), InputArguments.raw(invocation.arguments()));
         }
 
         @Override
         public List<String> suggest(Invocation invocation) {
-            return this.suggestionListener.suggest(this.newInvocation(invocation, true))
-                .getSuggestions()
-                .stream()
-                .map(Suggestion::multilevel)
-                .collect(Collectors.toList());
+            return this.suggestionListener.suggest(this.newInvocation(invocation, true), SuggestionInput.raw(invocation.arguments()))
+                .asMultiLevelList();
         }
 
         // TODO suggestAsync

@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.requirements.CommandRequirement;
 import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
-import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
@@ -32,11 +31,11 @@ public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Comman
     }
 
     @Override
-    public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, InputArguments<MATCHER> inputArguments, MATCHER matcher) {
+    public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, MATCHER matcher) {
         List<Match<REQUIREMENT>> results = new ArrayList<>();
 
         for (REQUIREMENT requirement : requirements) {
-            CommandRequirementResult<?> result = requirement.check(invocation, inputArguments, matcher);
+            CommandRequirementResult<?> result = requirement.check(invocation, matcher);
 
             if (!result.isSuccess()) {
                 return CommandExecutorMatchResult.failed(result.getFailedReason());

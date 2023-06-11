@@ -4,8 +4,8 @@ package dev.rollczi.litecommands.jda;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
-import dev.rollczi.litecommands.platform.PlatformInvocationHook;
-import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
+import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -25,8 +25,8 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
 
     private record JDACommandRecord(
         JDACommandTranslator.JDALiteCommand command,
-        PlatformInvocationHook<User> invocationHook,
-        PlatformSuggestionHook<User> suggestionHook
+        PlatformInvocationListener<User> invocationHook,
+        PlatformSuggestionListener<User> suggestionHook
     ) {}
 
     JDAPlatform(LiteJDASettings settings, JDA jda, JDACommandTranslator translator) {
@@ -37,7 +37,7 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
     }
 
     @Override
-    protected void hook(CommandRoute<User> commandRoute, PlatformInvocationHook<User> invocationHook, PlatformSuggestionHook<User> suggestionHook) {
+    protected void hook(CommandRoute<User> commandRoute, PlatformInvocationListener<User> invocationHook, PlatformSuggestionListener<User> suggestionHook) {
         JDACommandTranslator.JDALiteCommand translated = translator.translate(commandRoute.getName(), commandRoute);
 
         for (String name : commandRoute.names()) {
@@ -72,14 +72,16 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
                 throw new IllegalStateException("Command record not found for command: " + commandRoute.getName());
             }
 
-            PlatformInvocationHook<User> invocationHook = commandRecord.invocationHook();
-            Invocation<User> invocation = translator.translate(commandRoute, commandRecord.command(), event);
+            PlatformInvocationListener<User> invocationHook = commandRecord.invocationHook();
+            JDAInputArguments arguments = translator.translateArguments(commandRecord.command(), event);
+            Invocation<User> invocation = translator.translate(commandRoute, arguments, event);
 
-            invocationHook.execute(invocation);
+            invocationHook.execute(invocation, arguments);
         }
 
         @Override
         public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+
             event.replyChoices(
                 Arrays.asList(
                     new Command.Choice("user", "???"),

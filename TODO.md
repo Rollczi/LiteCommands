@@ -13,7 +13,7 @@ Modern TODO
 - [ ] Support String and basic types
 - [ ] @Joiner String
 - [ ] @AsyncArg
-- [ ] @Permission
+- [x] @Permission
 - [ ] @Arg @Range(min = 1, max = 10) int
 - [ ] @Flag for booleans
 - [x] @Editor
@@ -23,7 +23,7 @@ Modern TODO
 - [ ] @Arg Map<K, V> // for example key1=value1, key2=value2 // do wyrzucenia chyba
 - [ ] @Suggest
 - [ ] @Literal
-- [ ] @Validate(validator = MyValidator.class)
+- [x] @Validate(validator = MyValidator.class)
 - [ ] @Cooldown - Określa cza s, przez który użytkownik nie może ponownie użyć danej komendy po jej wykonaniu.
 - [ ] @Cooldown(second = 10, bypass = "myplugin.bypass.cooldown", scope = CooldownScope.GLOBAL)
 - [ ] @MaxCalls(second = 10, max = 5)

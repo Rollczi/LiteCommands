@@ -30,7 +30,7 @@ public class RegisteredServerArgument extends OneArgumentResolver<CommandSource,
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<RegisteredServer> argument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<RegisteredServer> argument, SuggestionContext context) {
         return SuggestionStream.of(server.getAllServers())
             .map(registeredServer -> registeredServer.getServerInfo())
             .collect(serverInfo -> serverInfo.getName());

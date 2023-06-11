@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.route.RootRoute;
 import dev.rollczi.litecommands.annotations.route.Route;
 import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;

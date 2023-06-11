@@ -84,8 +84,8 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
         }
 
         @Override
-        public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRequirementResult<PARSED> check(Invocation<SENDER> invocation, InputArguments<MATCHER> inputArguments, MATCHER matcher) {
-            ArgumentResult<PARSED> matchArgument = matcher.matchArgument(invocation, argument, parserSet);
+        public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRequirementResult<PARSED> check(Invocation<SENDER> invocation, MATCHER matcher) {
+            ArgumentResult<PARSED> matchArgument = matcher.nextArgument(invocation, argument, parserSet);
 
             if (matchArgument.isFailed()) {
                 return CommandRequirementResult.failure(matchArgument.getFailedReason());

@@ -31,7 +31,7 @@ public class WorldArgument extends OneArgumentResolver<CommandSender, World> {
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<World> argument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<World> argument, SuggestionContext context) {
         return this.server.getWorlds().stream()
             .map(WorldInfo::getName)
             .collect(SuggestionResult.collector());

@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
@@ -30,8 +31,8 @@ class ArgArgumentRequirement<SENDER, PARSED> implements ParameterCommandRequirem
     }
 
     @Override
-    public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRequirementResult<PARSED> check(Invocation<SENDER> invocation, InputArguments<MATCHER> inputArguments, MATCHER matcher) {
-        ArgumentResult<PARSED> result = matcher.matchArgument(invocation, argument, parserSet);
+    public <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRequirementResult<PARSED> check(Invocation<SENDER> invocation, MATCHER matcher) {
+        ArgumentResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
 
         if (result.isSuccessful()) {
             SuccessfulResult<PARSED> successfulResult = result.getSuccessfulResult();

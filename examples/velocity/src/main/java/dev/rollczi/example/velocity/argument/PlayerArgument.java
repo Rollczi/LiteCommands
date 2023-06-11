@@ -31,7 +31,7 @@ public class PlayerArgument extends OneArgumentResolver<CommandSource, Player> {
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<Player> argument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<Player> argument, SuggestionContext context) {
         return SuggestionStream.of(this.server.getAllPlayers())
             .collect(player -> player.getUsername());
     }

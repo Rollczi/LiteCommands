@@ -20,7 +20,7 @@ public class StringArgumentResolver<SENDER> extends OneArgumentResolver<SENDER, 
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> objectStringArgument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> objectStringArgument, SuggestionContext context) {
         return SuggestionResult.of("text", "");
     }
 

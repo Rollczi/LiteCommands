@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
-import dev.rollczi.litecommands.platform.PlatformInvocationHook;
-import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
+import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
@@ -18,7 +18,7 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
     }
 
     @Override
-    protected void hook(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
+    protected void hook(CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
         MinestomCommand minestomMinestomCommand = this.createCommand(command, invocationHook, suggestionHook);
 
         this.commandManager.register(minestomMinestomCommand);
@@ -35,7 +35,7 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
         this.commandManager.unregister(commandToDelete);
     }
 
-    private MinestomCommand createCommand(CommandRoute<CommandSender> command, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
+    private MinestomCommand createCommand(CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
         return new MinestomCommand(command, invocationHook, suggestionHook);
     }
 

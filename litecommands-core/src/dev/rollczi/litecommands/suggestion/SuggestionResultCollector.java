@@ -17,7 +17,7 @@ public class SuggestionResultCollector implements Collector<String, SuggestionRe
 
     @Override
     public BiConsumer<SuggestionResult, String> accumulator() {
-        return (suggestionResult, raw) -> suggestionResult.with(Suggestion.of(raw));
+        return (suggestionResult, raw) -> suggestionResult.add(Suggestion.of(raw));
     }
 
     @Override
@@ -25,7 +25,7 @@ public class SuggestionResultCollector implements Collector<String, SuggestionRe
         return (first, second) -> {
             SuggestionResult finalResult = SuggestionResult.from(first.getSuggestions());
 
-            finalResult.with(second.getSuggestions());
+            finalResult.addAll(second.getSuggestions());
 
             return finalResult;
         };

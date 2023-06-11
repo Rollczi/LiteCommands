@@ -147,7 +147,7 @@ class JDACommandTranslator {
         void translate(OptionType optionType, JDATypeMapper<?> mapper, String argName, String description, boolean isRequired, boolean autocomplete);
     }
 
-    Invocation<User> translate(CommandRoute<User> route, JDALiteCommand command, SlashCommandInteractionEvent interaction) {
+    JDAInputArguments translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
         List<String> routes = Stream.of(interaction.getSubcommandGroup(), interaction.getSubcommandName())
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -155,8 +155,10 @@ class JDACommandTranslator {
         Map<String, OptionMapping> options = interaction.getOptions().stream()
             .collect(Collectors.toMap(OptionMapping::getName, option -> option));
 
-        JDAInputArguments inputArguments = new JDAInputArguments(routes, options, command);
+        return new JDAInputArguments(routes, options, command);
+    }
 
+    Invocation<User> translate(CommandRoute<User> route, JDAInputArguments arguments, SlashCommandInteractionEvent interaction) {
         InvocationContext context = InvocationContext.builder()
             .put(SlashCommandInteractionEvent.class, interaction)
             .put(MessageChannelUnion.class, interaction.getChannel())
@@ -164,7 +166,14 @@ class JDACommandTranslator {
             .put(Member.class, interaction.getMember())
             .build();
 
-        return new Invocation<>(interaction.getUser(), new JDAPlatformSender(interaction.getUser()), route.getName(), interaction.getName(), inputArguments, context);
+        return new Invocation<>(
+            interaction.getUser(),
+            new JDAPlatformSender(interaction.getUser()),
+            route.getName(),
+            interaction.getName(),
+            arguments,
+            context
+        );
     }
 
     static final class JDALiteCommand {

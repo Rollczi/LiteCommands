@@ -45,8 +45,9 @@ class NamedInputArguments implements InputArguments<NamedInputArguments.NamedMat
 
     public class NamedMatcher implements InputArgumentsMatcher<NamedMatcher> {
 
+        private final List<String> consumedArguments = new ArrayList<>();
+
         private int routePosition = 0;
-        private Set<String> consumedArguments = new HashSet<>();
 
         public NamedMatcher() {}
 
@@ -55,7 +56,7 @@ class NamedInputArguments implements InputArguments<NamedInputArguments.NamedMat
         }
 
         @Override
-        public <SENDER, PARSED> ArgumentResult<PARSED> matchArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
+        public <SENDER, PARSED> ArgumentResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
             String input = namedArguments.get(argument.getName());
 
             if (input == null) {
@@ -86,7 +87,7 @@ class NamedInputArguments implements InputArguments<NamedInputArguments.NamedMat
         }
 
         @Override
-        public String matchNextRoute() {
+        public String nextRoute() {
             return routes.get(routePosition++);
         }
 
@@ -97,8 +98,8 @@ class NamedInputArguments implements InputArguments<NamedInputArguments.NamedMat
 
         @Override
         public EndResult endMatch() {
-            if (consumedArguments.size() != namedArguments.size()) {
-                return EndResult.failed(InvalidUsage.Cause.TOO_FEW_ARGUMENTS);
+            if (consumedArguments.size() < namedArguments.size()) {
+                return EndResult.failed(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
             }
 
             return EndResult.success();

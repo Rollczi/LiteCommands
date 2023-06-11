@@ -5,18 +5,22 @@ import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.command.input.InputMatcher;
 
-public interface InputArgumentsMatcher<C extends InputArgumentsMatcher<C>> {
+public interface InputArgumentsMatcher<SELF extends InputArgumentsMatcher<SELF>> extends InputMatcher {
 
-    <SENDER, PARSED> ArgumentResult<PARSED> matchArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet);
+    <SENDER, PARSED> ArgumentResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet);
 
+    @Override
     boolean hasNextRoute();
 
-    String matchNextRoute();
+    @Override
+    String nextRoute();
 
+    @Override
     String showNextRoute();
 
-    C copy();
+    SELF copy();
 
     EndResult endMatch();
 

@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.argument;
 
+import org.jetbrains.annotations.Nullable;
+
 public class FailedReason {
 
     private final Object reason;
@@ -16,6 +18,10 @@ public class FailedReason {
         }
 
         return this.reason;
+    }
+
+    public @Nullable Object getReasonOr(Object defaultValue) {
+        return this.isEmpty ? defaultValue : this.reason;
     }
 
     public boolean isEmpty() {

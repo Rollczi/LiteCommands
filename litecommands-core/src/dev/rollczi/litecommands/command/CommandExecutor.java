@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.argument.input.InputArgumentsMatcher;
 import dev.rollczi.litecommands.command.requirements.CommandRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -14,6 +13,6 @@ public interface CommandExecutor<SENDER> {
 
     CommandMeta getMeta();
 
-    <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, InputArguments<CONTEXT> inputArguments, CONTEXT context);
+    <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, MATCHER matcher);
 
 }

@@ -34,7 +34,7 @@ public class BukkitPlayerArgument<MESSAGE> extends OneArgumentResolver<CommandSe
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext context) {
         return server.getOnlinePlayers().stream()
             .map(Player::getName)
             .collect(SuggestionResult.collector());

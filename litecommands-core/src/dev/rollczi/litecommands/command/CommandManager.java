@@ -7,11 +7,17 @@ import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationResult;
+import dev.rollczi.litecommands.command.input.InputMatcher;
+import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.result.ResultService;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionService;
+import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.suggestion.input.SuggestionInputMatcher;
 import dev.rollczi.litecommands.validator.ValidatorService;
 
 public class CommandManager<SENDER, C extends PlatformSettings> {
@@ -20,20 +26,13 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
 
     private final Platform<SENDER, C> platform;
 
-    private final ValidatorService<SENDER> validatorService;
-    private final ResultService<SENDER> resultResolver;
-    private final Scheduler scheduler;
+    private final CommandExecuteService<SENDER> executeService;
+    private final SuggestionService<SENDER> suggestionService;
 
-    public CommandManager(
-        Platform<SENDER, C> platform,
-        ResultService<SENDER> resultResolver,
-        ValidatorService<SENDER> validatorService,
-        Scheduler scheduler
-    ) {
+    public CommandManager(Platform<SENDER, C> platform, CommandExecuteService<SENDER> executeService, SuggestionService<SENDER> suggestionService) {
         this.platform = platform;
-        this.validatorService = validatorService;
-        this.resultResolver = resultResolver;
-        this.scheduler = scheduler;
+        this.executeService = executeService;
+        this.suggestionService = suggestionService;
     }
 
     public CommandRoute<SENDER> getRoot() {
@@ -41,81 +40,51 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
     }
 
     public void register(CommandRoute<SENDER> commandRoute) {
-        this.platform.register(commandRoute, invocation -> {
-            InputArguments<?> inputArguments = invocation.arguments();
-            InvocationResult<SENDER> invocationResult = this.execute(invocation, inputArguments, commandRoute);
+        PlatformListener listener = new PlatformListener(commandRoute);
 
-            resultResolver.resolveInvocation(invocationResult);
-
-            return invocationResult;
-        }, invocation -> SuggestionResult.of());
-
+        this.platform.register(commandRoute, listener);
         this.root.appendToRoot(commandRoute);
     }
 
-    private <MATCHER extends InputArgumentsMatcher<MATCHER>> InvocationResult<SENDER> execute(
-        Invocation<SENDER> invocation,
-        InputArguments<MATCHER> inputArguments,
-        CommandRoute<SENDER> start
-    ) {
-        MATCHER matcher = inputArguments.createMatcher();
-        CommandRoute<SENDER> commandRoute = this.findRoute(start, inputArguments, matcher);
-        FailedReason lastFailedReason = null;
+    class PlatformListener implements PlatformInvocationListener<SENDER>, PlatformSuggestionListener<SENDER> {
 
-        for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
-            // Handle matching arguments
-            CommandExecutorMatchResult match = executor.match(invocation, inputArguments, matcher.copy());
+        private final CommandRoute<SENDER> commandRoute;
 
-            if (match.isFailed()) {
-                FailedReason current = match.getFailedReason();
-
-                if (!current.isEmpty()) {
-                    lastFailedReason = current;
-                }
-
-                continue;
-            }
-
-            // Handle validation
-            Flow flow = this.validatorService.validate(invocation, commandRoute, executor);
-
-            if (flow.isTerminate()) {
-                return InvocationResult.failed(invocation, flow.failedReason());
-            }
-
-            if (flow.isStopCurrent()) {
-                lastFailedReason = flow.failedReason();
-                continue;
-            }
-
-            // Execution
-            CommandExecuteResult executeResult = match.executeCommand();
-
-            return InvocationResult.success(invocation, executeResult);
+        PlatformListener(CommandRoute<SENDER> commandRoute) {
+            this.commandRoute = commandRoute;
         }
 
-        // Handle failed
-        if (lastFailedReason != null && !lastFailedReason.isEmpty()) {
-            Object reason = lastFailedReason.getReason();
+        @Override
+        public InvocationResult<SENDER> execute(Invocation<SENDER> invocation, InputArguments<?> arguments) {
+            InputArgumentsMatcher matcher = arguments.createMatcher();
+            CommandRoute<SENDER> commandRoute = findRoute(this.commandRoute, matcher);
 
-            return InvocationResult.failed(invocation, FailedReason.of(reason));
+            return executeService.execute(invocation, matcher, commandRoute);
         }
 
-        return InvocationResult.failed(invocation, FailedReason.of(InvalidUsage.Cause.UNKNOWN_COMMAND));
+
+        @Override
+        public SuggestionResult suggest(Invocation<SENDER> invocation, SuggestionInput<?> suggestion) {
+            SuggestionInputMatcher matcher = suggestion.createMatcher();
+            CommandRoute<SENDER> find = findRoute(this.commandRoute, matcher);
+
+            return suggestionService.suggest(invocation, matcher, find);
+        }
     }
 
-    private <MATCHER extends InputArgumentsMatcher<MATCHER>> CommandRoute<SENDER> findRoute(CommandRoute<SENDER> command, InputArguments<MATCHER> inputArguments, MATCHER matcher) {
+    private CommandRoute<SENDER> findRoute(CommandRoute<SENDER> command, InputMatcher matcher) {
         if (!matcher.hasNextRoute()) {
             return command;
         }
 
+        // TODO Preformace, maybe use map in CommandRouteImpl
         for (CommandRoute<SENDER> child : command.getChildren()) {
             if (!child.isNameOrAlias(matcher.showNextRoute())) {
                 continue;
             }
 
-            matcher.matchNextRoute();
-            return this.findRoute(child, inputArguments, matcher);
+            matcher.nextRoute();
+            return this.findRoute(child, matcher);
         }
 
         return command;

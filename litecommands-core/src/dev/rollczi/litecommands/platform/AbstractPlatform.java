@@ -27,7 +27,7 @@ public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> imple
     }
 
     @Override
-    public final void register(CommandRoute<SENDER> commandRoute, PlatformInvocationHook<SENDER> invocationHook, PlatformSuggestionHook<SENDER> suggestionHook) {
+    public final void register(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook) {
         for (String name : commandRoute.names()) {
             if (this.commandRoutes.containsKey(name)) {
                 throw new IllegalArgumentException("Command with name " + name + " already exists");
@@ -59,7 +59,7 @@ public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> imple
         this.commandRoutes.clear();
     }
 
-    protected abstract void hook(CommandRoute<SENDER> commandRoute, PlatformInvocationHook<SENDER> invocationHook, PlatformSuggestionHook<SENDER> suggestionHook);
+    protected abstract void hook(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook);
 
     protected abstract void unhook(CommandRoute<SENDER> commandRoute);
 

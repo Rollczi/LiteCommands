@@ -6,8 +6,8 @@ import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.resolver.OneArgumentResolver;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.util.Arrays;
@@ -48,13 +48,13 @@ public class NumberArgumentResolver<SENDER, T extends Number> extends OneArgumen
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> context, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context) {
         if (!this.generateSuggestions) {
             return this.suggestions;
         }
 
         try {
-            String input = suggestion.getCurrent();
+            String input = context.getCurrent().lastLevel();
 
             T apply = parser.apply(input);
             double upper = apply.doubleValue() * 10;
@@ -64,7 +64,7 @@ public class NumberArgumentResolver<SENDER, T extends Number> extends OneArgumen
             IntStream.of(0, 1, 5)
                 .mapToObj(i -> i * upper)
                 .map(Object::toString)
-                .forEach(numberText -> result.with(Suggestion.of(numberText)));
+                .forEach(numberText -> result.add(Suggestion.of(numberText)));
 
             return result;
         }

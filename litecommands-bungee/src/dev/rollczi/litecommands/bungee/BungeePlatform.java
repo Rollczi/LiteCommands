@@ -6,9 +6,10 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
-import dev.rollczi.litecommands.platform.PlatformInvocationHook;
-import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
+import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -33,7 +34,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
     }
 
     @Override
-    protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
+    protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
         for (String name : commandRoute.names()) {
             BungeeCommand command = new BungeeCommand(commandRoute, name, invocationHook, suggestionHook);
 
@@ -59,10 +60,10 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
 
         private final CommandRoute<CommandSender> commandSection;
         private final String label;
-        private final PlatformInvocationHook<CommandSender> executeListener;
-        private final PlatformSuggestionHook<CommandSender> suggestionListener;
+        private final PlatformInvocationListener<CommandSender> executeListener;
+        private final PlatformSuggestionListener<CommandSender> suggestionListener;
 
-        public BungeeCommand(CommandRoute<CommandSender> command, String label, PlatformInvocationHook<CommandSender> executeListener, PlatformSuggestionHook<CommandSender> suggestionListener) {
+        public BungeeCommand(CommandRoute<CommandSender> command, String label, PlatformInvocationListener<CommandSender> executeListener, PlatformSuggestionListener<CommandSender> suggestionListener) {
             super(command.getName(), "", command.getAliases().toArray(new String[0]));
             this.commandSection = command;
             this.label = label;
@@ -72,16 +73,13 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
 
         @Override
         public void execute(CommandSender sender, String[] args) {
-            this.executeListener.execute(this.newInvocation(sender, args));
+            this.executeListener.execute(this.newInvocation(sender, args), InputArguments.raw(args));
         }
 
         @Override
         public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-            return this.suggestionListener.suggest(this.newInvocation(sender, args))
-                .getSuggestions()
-                .stream()
-                .map(Suggestion::multilevel)
-                .collect(Collectors.toList());
+            return this.suggestionListener.suggest(this.newInvocation(sender, args), SuggestionInput.raw(args))
+                .asMultiLevelList();
         }
 
         private Invocation<CommandSender> newInvocation(CommandSender sender, String[] args) {

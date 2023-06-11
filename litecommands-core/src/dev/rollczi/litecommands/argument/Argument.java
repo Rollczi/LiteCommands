@@ -8,4 +8,8 @@ public interface Argument<PARSED> {
 
     WrapFormat<PARSED, ?> getWrapperFormat();
 
+    default ArgumentKey toKey() {
+        return ArgumentKey.typed(this.getClass());
+    }
+
 }

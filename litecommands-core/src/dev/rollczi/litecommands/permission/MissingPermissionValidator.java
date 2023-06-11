@@ -5,7 +5,6 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.validator.Validator;
-import dev.rollczi.litecommands.validator.ValidatorResult;
 
 public class MissingPermissionValidator<SENDER> implements Validator<SENDER> {
 

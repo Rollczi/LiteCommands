@@ -30,7 +30,7 @@ public class ArgAnnotationResolver<SENDER> implements ParameterWithAnnotationRes
 
     private <A extends Annotation, PARSED, ARGUMENT extends ParameterArgument<A, PARSED>> ParameterCommandRequirement<SENDER, PARSED> resolve(ARGUMENT argument) {
         WrapFormat<PARSED, ?> format = argument.getWrapperFormat();
-        ArgumentParserSet<SENDER, PARSED> parserSet = argumentParserRegistry.getParserSet(format.getParsedType(), ArgumentKey.typed(argument.getClass()));
+        ArgumentParserSet<SENDER, PARSED> parserSet = argumentParserRegistry.getParserSet(format.getParsedType(), argument.toKey());
 
         return new ArgArgumentRequirement<>(argument, wrapperRegistry.getWrappedExpectedFactory(format), parserSet);
     }

@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistryImpl;
 import dev.rollczi.litecommands.argument.parser.ArgumentTypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.command.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
@@ -23,10 +24,12 @@ import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.suggestion.ArgumentSuggester;
-import dev.rollczi.litecommands.suggestion.ArgumentTypedSuggester;
-import dev.rollczi.litecommands.suggestion.SuggestionRegistry;
-import dev.rollczi.litecommands.suggestion.SuggestionRegistryImpl;
+import dev.rollczi.litecommands.suggestion.Suggester;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionService;
+import dev.rollczi.litecommands.suggestion.TypedSuggester;
+import dev.rollczi.litecommands.suggestion.SuggesterRegistry;
+import dev.rollczi.litecommands.suggestion.SuggesterRegistryImpl;
 import dev.rollczi.litecommands.util.Preconditions;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBase;
@@ -62,7 +65,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final EditorService<SENDER> editorService;
     protected final ValidatorService<SENDER> validatorService;
     protected final ArgumentParserRegistry<SENDER> argumentParserRegistry;
-    protected final SuggestionRegistry<SENDER> suggestionRegistry;
+    protected final SuggesterRegistry<SENDER> suggesterRegistry;
     protected final BindRegistry<SENDER> bindRegistry;
     protected final ContextRegistry<SENDER> contextRegistry;
     protected final WrapperRegistry wrapperRegistry;
@@ -85,7 +88,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             new EditorService<>(),
             new ValidatorService<>(),
             new ArgumentParserRegistryImpl<>(),
-            new SuggestionRegistryImpl<>(),
+            new SuggesterRegistryImpl<>(),
             new BindRegistry<>(),
             new ContextRegistry<>(),
             new WrapperRegistry(),
@@ -110,7 +113,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             pattern.getEditorService(),
             pattern.getValidatorService(),
             pattern.getArgumentParserService(),
-            pattern.getSuggestionRegistry(),
+            pattern.getSuggesterRegistry(),
             pattern.getBindRegistry(),
             pattern.getContextRegistry(),
             pattern.getWrapperRegistry(),
@@ -132,7 +135,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         EditorService<SENDER> editorService,
         ValidatorService<SENDER> validatorService,
         ArgumentParserRegistry<SENDER> argumentParserRegistry,
-        SuggestionRegistry<SENDER> suggestionRegistry,
+        SuggesterRegistry<SENDER> suggesterRegistry,
         BindRegistry<SENDER> bindRegistry,
         ContextRegistry<SENDER> contextRegistry,
         WrapperRegistry wrapperRegistry,
@@ -148,7 +151,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.editorService = editorService;
         this.validatorService = validatorService;
         this.argumentParserRegistry = argumentParserRegistry;
-        this.suggestionRegistry = suggestionRegistry;
+        this.suggesterRegistry = suggesterRegistry;
         this.bindRegistry = bindRegistry;
         this.contextRegistry = contextRegistry;
         this.wrapperRegistry = wrapperRegistry;
@@ -200,35 +203,41 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <T, SUGGESTER extends ArgumentSuggester<SENDER, T>>
+    public <T> LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, SuggestionResult suggestionResult) {
+        this.suggesterRegistry.registerSuggester(type, ArgumentKey.of(), (invocation, argument, context) -> suggestionResult);
+        return this;
+    }
+
+    @Override
+    public <T, SUGGESTER extends Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, SUGGESTER suggester) {
-        this.suggestionRegistry.registerSuggester(type, ArgumentKey.of(), suggester);
+        this.suggesterRegistry.registerSuggester(type, ArgumentKey.of(), suggester);
         return this;
     }
 
     @Override
-    public <T, SUGGESTER extends ArgumentSuggester<SENDER, T>>
+    public <T, SUGGESTER extends Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, String key, SUGGESTER suggester) {
-        this.suggestionRegistry.registerSuggester(type, ArgumentKey.of(key), suggester);
+        this.suggesterRegistry.registerSuggester(type, ArgumentKey.of(key), suggester);
         return this;
     }
 
     @Override
     public <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, ArgumentTypedSuggester<SENDER, T, ARGUMENT> suggester) {
-        this.suggestionRegistry.registerSuggester(type, ArgumentKey.typed(suggester.getArgumentType()), suggester);
+    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, TypedSuggester<SENDER, T, ARGUMENT> suggester) {
+        this.suggesterRegistry.registerSuggester(type, ArgumentKey.typed(suggester.getArgumentType()), suggester);
         return this;
     }
 
     @Override
     public <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, String key, ArgumentTypedSuggester<SENDER, T, ARGUMENT> suggester) {
-        this.suggestionRegistry.registerSuggester(type, ArgumentKey.typed(suggester.getArgumentType(), key), suggester);
+    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, String key, TypedSuggester<SENDER, T, ARGUMENT> suggester) {
+        this.suggesterRegistry.registerSuggester(type, ArgumentKey.typed(suggester.getArgumentType(), key), suggester);
         return this;
     }
 
     @Override
-    public <IN, T, RESOLVER extends ArgumentParser<SENDER, IN, T> & ArgumentSuggester<SENDER, T>>
+    public <IN, T, RESOLVER extends ArgumentParser<SENDER, IN, T> & Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver) {
         this.argumentParser(type, resolver);
         this.argumentSuggester(type, resolver);
@@ -236,7 +245,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <IN, PARSED, RESOLVER extends ArgumentParser<SENDER, IN, PARSED> & ArgumentSuggester<SENDER, PARSED>>
+    public <IN, PARSED, RESOLVER extends ArgumentParser<SENDER, IN, PARSED> & Suggester<SENDER, PARSED>>
     LiteCommandsBuilder<SENDER, C, B> argument(Class<PARSED> type, String key, RESOLVER resolver) {
         this.argumentParser(type, key, resolver);
         this.argumentSuggester(type, key, resolver);
@@ -244,7 +253,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends ArgumentTypedParser<SENDER, IN, T, ARGUMENT> & ArgumentSuggester<SENDER, T>>
+    public <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends ArgumentTypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver) {
         this.argumentParser(type, resolver);
         this.argumentSuggester(type, resolver);
@@ -252,7 +261,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends ArgumentTypedParser<SENDER, IN, T, ARGUMENT> & ArgumentSuggester<SENDER, T>>
+    public <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends ArgumentTypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, String key, RESOLVER resolver) {
         this.argumentParser(type, key, resolver);
         this.argumentSuggester(type, key, resolver);
@@ -390,12 +399,9 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             throw new IllegalStateException("No platform was set");
         }
 
-        CommandManager<SENDER, C> commandManager = new CommandManager<>(
-            this.platform,
-            this.resultService,
-            this.validatorService,
-            this.scheduler
-        );
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService);
+        SuggestionService<SENDER> suggestionService = new SuggestionService<>(argumentParserRegistry, suggesterRegistry, validatorService);
+        CommandManager<SENDER, C> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
         List<CommandBuilder<SENDER>> collectedContexts = this.commandBuilderCollector.collectAndMergeCommands();
 
@@ -470,8 +476,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     @ApiStatus.Internal
-    public SuggestionRegistry<SENDER> getSuggestionRegistry() {
-        return this.suggestionRegistry;
+    public SuggesterRegistry<SENDER> getSuggesterRegistry() {
+        return this.suggesterRegistry;
     }
 
     @Override

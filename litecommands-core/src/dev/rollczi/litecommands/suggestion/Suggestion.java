@@ -5,21 +5,29 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Suggestion {
 
+    private final String suggestion;
     private final List<String> multiSuggestion;
 
-    private Suggestion(List<String> multiSuggestion) {
-        this.multiSuggestion = multiSuggestion;
+    private Suggestion(String suggestion, List<String> multiSuggestions) {
+        this.suggestion = suggestion;
+        this.multiSuggestion = multiSuggestions;
     }
 
     public String firstLevel() {
         return this.multiSuggestion.get(0);
     }
 
-    public String multilevel() {
-        return String.join(" ", this.multiSuggestion);
+    public String lastLevel() {
+        return this.multiSuggestion.get(this.multiSuggestion.size() - 1);
+    }
+
+    public String from() {
+        return this.suggestion;
     }
 
     public List<String> multilevelList() {
@@ -35,69 +43,52 @@ public class Suggestion {
     }
 
     public Suggestion slashLevel(int level) {
+        if (level == 0) {
+            return this;
+        }
+
         if (this.multiSuggestion.isEmpty()) {
             throw new UnsupportedOperationException();
         }
 
-        return Suggestion.multilevel(this.multiSuggestion.subList(level, this.multiSuggestion.size()));
+        return Suggestion.from(this.multiSuggestion.subList(level, this.multiSuggestion.size()));
     }
 
-    public static Suggestion multilevel(List<String> suggestion) {
+    public static Suggestion from(List<String> suggestion) {
         if (suggestion.isEmpty()) {
             throw new IllegalArgumentException("Suggestion cannot be empty");
         }
 
-        return new Suggestion(new ArrayList<>(suggestion));
-    }
-
-    public static Suggestion multilevel(String... suggestion) {
-        return Suggestion.multilevel(Arrays.asList(suggestion));
-    }
-
-    public static List<Suggestion> of(String... suggestions) {
-        return of(Arrays.asList(suggestions));
-    }
-
-    public static List<Suggestion> of(Iterable<String> suggestions) {
-        List<Suggestion> complete = new ArrayList<>();
-
-        for (String suggestion : suggestions) {
-            complete.add(Suggestion.of(suggestion));
-        }
-
-        return complete;
+        return new Suggestion(String.join(" ", suggestion), suggestion);
     }
 
     public static Suggestion of(String suggestion) {
-        return new Suggestion(Collections.singletonList(suggestion));
-    }
+        List<String> collected = new ArrayList<>();
+        Collections.addAll(collected, suggestion.split(" "));
 
-    public static Suggestion empty() {
-        return new Suggestion(Collections.emptyList());
+        if (suggestion.endsWith(" ") && !collected.get(collected.size() - 1).isEmpty()) {
+            collected.add("");
+        }
+
+        return new Suggestion(suggestion, collected);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof Suggestion)) {
-            return false;
-        }
-
-        Suggestion that = (Suggestion) obj;
-        return this.multilevel().equals(that.multilevel());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Suggestion)) return false;
+        Suggestion that = (Suggestion) o;
+        return Objects.equals(suggestion, that.suggestion);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.multilevel());
+        return Objects.hash(suggestion);
     }
 
     @Override
     public String toString() {
-        return this.multilevel();
+        return this.from();
     }
 
 }

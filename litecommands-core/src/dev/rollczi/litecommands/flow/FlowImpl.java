@@ -33,7 +33,7 @@ class FlowImpl implements Flow {
 
     @Override
     public boolean isTerminate() {
-        return status == Status.TERMINATED;
+        return status == Status.TERMINATE;
     }
 
     @Override

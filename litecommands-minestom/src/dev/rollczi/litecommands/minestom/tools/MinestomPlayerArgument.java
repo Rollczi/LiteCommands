@@ -33,7 +33,7 @@ public class MinestomPlayerArgument<MESSAGE> extends OneArgumentResolver<Command
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext context) {
         return SuggestionStream.of(this.connectionManager.getOnlinePlayers())
             .collect(Player::getUsername);
     }

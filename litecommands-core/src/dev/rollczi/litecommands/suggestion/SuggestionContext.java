@@ -1,23 +1,19 @@
 package dev.rollczi.litecommands.suggestion;
 
-import java.util.List;
-
 public class SuggestionContext {
 
-    private final List<String> currentArgumentSuggestions;
-    private final String currentSuggestion;
+    private final Suggestion current;
 
-    public SuggestionContext(List<String> currentArgumentSuggestions, String currentSuggestion) {
-        this.currentArgumentSuggestions = currentArgumentSuggestions;
-        this.currentSuggestion = currentSuggestion;
+    public SuggestionContext(Suggestion current) {
+        this.current = current;
     }
 
-    public String getCurrent() {
-        return currentSuggestion;
+    public SuggestionContext(String single) {
+        this.current = Suggestion.of(single);
     }
 
-    public boolean isCurrentStarting() {
-        return this.currentSuggestion.isEmpty();
+    public Suggestion getCurrent() {
+        return current;
     }
 
 }

@@ -55,7 +55,7 @@ class NamedTypedInputArguments implements InputArguments<NamedTypedInputArgument
         }
 
         @Override
-        public <SENDER, PARSED> ArgumentResult<PARSED> matchArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
+        public <SENDER, PARSED> ArgumentResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ArgumentParserSet<SENDER, PARSED> parserSet) {
             Object input = namedArguments.get(argument.getName());
 
             if (input == null) {
@@ -92,7 +92,7 @@ class NamedTypedInputArguments implements InputArguments<NamedTypedInputArgument
         }
 
         @Override
-        public String matchNextRoute() {
+        public String nextRoute() {
             return routes.get(routePosition++);
         }
 
@@ -103,8 +103,8 @@ class NamedTypedInputArguments implements InputArguments<NamedTypedInputArgument
 
         @Override
         public EndResult endMatch() {
-            if (consumedArguments.size() != namedArguments.size()) {
-                return EndResult.failed(InvalidUsage.Cause.TOO_FEW_ARGUMENTS);
+            if (consumedArguments.size() < namedArguments.size()) {
+                return EndResult.failed(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
             }
 
             return EndResult.success();

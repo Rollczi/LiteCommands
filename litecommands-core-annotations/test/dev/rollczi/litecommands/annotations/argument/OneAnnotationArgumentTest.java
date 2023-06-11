@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.annotations.argument;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.input.RawInput;
-import dev.rollczi.litecommands.argument.parser.ArgumentParser;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
@@ -26,7 +25,7 @@ class OneAnnotationArgumentTest {
         }
 
         @Override
-        public SuggestionResult suggestTyped(Invocation<TestSender> invocation, ArgParameterArgument<String> argument, SuggestionContext suggestion) {
+        public SuggestionResult suggestTyped(Invocation<TestSender> invocation, ArgParameterArgument<String> argument, SuggestionContext context) {
             return SuggestionResult.of("text");
         }
 
@@ -60,7 +59,11 @@ class OneAnnotationArgumentTest {
     @Test
     void testSuggest() {
         SuggestionResult result = argument.suggest(TestUtil.invocation("test"), null, null);
-        String suggestion = result.getSuggestions().get(0).multilevel();
+        String suggestion = result.getSuggestions()
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("Suggestion not found"))
+            .from();
 
         assertEquals("text", suggestion);
     }

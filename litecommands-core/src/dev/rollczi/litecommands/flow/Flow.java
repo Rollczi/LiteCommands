@@ -44,7 +44,7 @@ public interface Flow {
     enum Status {
         CONTINUE,
         STOP_CURRENT,
-        TERMINATED,
+        TERMINATE,
     }
 
     static Flow continueFlow() {
@@ -56,7 +56,7 @@ public interface Flow {
     }
 
     static Flow terminateFlow(Object reason) {
-        return new FlowImpl(Status.TERMINATED, reason);
+        return new FlowImpl(Status.TERMINATE, reason);
     }
 
     static <E> Flow merge(Iterable<E> iterable, FlowMapper<E> mapper) {
@@ -67,7 +67,7 @@ public interface Flow {
 
             switch (flow.status()) {
                 case CONTINUE: continue;
-                case TERMINATED: return flow;
+                case TERMINATE: return flow;
                 case STOP_CURRENT: lastStopped = flow;
             }
         }

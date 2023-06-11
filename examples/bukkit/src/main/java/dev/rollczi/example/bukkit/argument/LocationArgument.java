@@ -34,7 +34,7 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Location> argument, SuggestionContext suggestion) {
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Location> argument, SuggestionContext context) {
         return SuggestionResult.of(
             "100 100 100",
             "5 5 5",

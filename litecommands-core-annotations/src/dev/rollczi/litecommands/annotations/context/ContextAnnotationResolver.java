@@ -51,7 +51,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         }
 
         @Override
-        public <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> check(Invocation<SENDER> invocation, InputArguments<CONTEXT> inputArguments, CONTEXT matcher) {
+        public <CONTEXT extends InputArgumentsMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> check(Invocation<SENDER> invocation, CONTEXT matcher) {
             Result<EXPECTED, Object> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.isOk()) {

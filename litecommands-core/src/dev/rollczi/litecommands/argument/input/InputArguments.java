@@ -1,20 +1,14 @@
 package dev.rollczi.litecommands.argument.input;
 
+import dev.rollczi.litecommands.command.input.Input;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public interface InputArguments<MATCHER extends InputArgumentsMatcher<MATCHER>> {
-
-    MATCHER createMatcher();
-
-    default String[] asArray() {
-        return asList().toArray(new String[0]);
-    }
-
-    List<String> asList();
+public interface InputArguments<MATCHER extends InputArgumentsMatcher<MATCHER>> extends Input<MATCHER> {
 
     static InputArguments.NamedBuilder namedBuilder() {
         return new NamedBuilder();

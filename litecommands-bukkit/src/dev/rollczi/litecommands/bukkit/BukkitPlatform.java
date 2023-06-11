@@ -5,8 +5,9 @@ import dev.rollczi.litecommands.argument.input.InputArguments;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.Platform;
-import dev.rollczi.litecommands.platform.PlatformInvocationHook;
-import dev.rollczi.litecommands.platform.PlatformSuggestionHook;
+import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
+import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,7 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitSettings> {
     }
 
     @Override
-    public void register(CommandRoute<CommandSender> commandRoute, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
+    public void register(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
         BukkitCommand bukkitSimpleCommand = new BukkitCommand(commandRoute, invocationHook, suggestionHook);
 
         this.settings.commandsProvider().commandMap().register(commandRoute.getName(), this.settings.fallbackPrefix(), bukkitSimpleCommand);
@@ -63,11 +64,11 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitSettings> {
     private class BukkitCommand extends org.bukkit.command.Command {
 
         private final CommandRoute<CommandSender> commandRoute;
-        private final PlatformInvocationHook<CommandSender> invocationHook;
-        private final PlatformSuggestionHook<CommandSender> suggestionHook;
+        private final PlatformInvocationListener<CommandSender> invocationHook;
+        private final PlatformSuggestionListener<CommandSender> suggestionHook;
 
 
-        BukkitCommand(CommandRoute<CommandSender> commandRoute, PlatformInvocationHook<CommandSender> invocationHook, PlatformSuggestionHook<CommandSender> suggestionHook) {
+        BukkitCommand(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
             super(commandRoute.getName(), "", "/" + commandRoute.getName(), commandRoute.getAliases());
             this.commandRoute = commandRoute;
             this.invocationHook = invocationHook;
@@ -76,16 +77,17 @@ class BukkitPlatform implements Platform<CommandSender, LiteBukkitSettings> {
 
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-            this.invocationHook.execute(this.newInvocation(sender, alias, args));
+            this.invocationHook.execute(this.invocation(sender, alias, args), InputArguments.raw(args));
             return true;
         }
 
         @Override
         public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-            return this.suggestionHook.suggest(this.newInvocation(sender, alias, args)).asMultiLevelList();
+            return this.suggestionHook.suggest(this.invocation(sender, alias, args), SuggestionInput.raw(args))
+                .asMultiLevelList();
         }
 
-        private Invocation<CommandSender> newInvocation(CommandSender sender, String alias, String[] args) {
+        private Invocation<CommandSender> invocation(CommandSender sender, String alias, String[] args) {
             return new Invocation<>(sender, new BukkitSender(sender), commandRoute.getName(), alias, InputArguments.raw(args));
         }
 

@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.util;
 import panda.std.Option;
 
 import java.util.Map;
+import java.util.Optional;
 
 public final class MapUtil {
 
@@ -24,8 +25,8 @@ public final class MapUtil {
         return Option.none();
     }
 
-    public static <E> Option<E> findBySuperTypeOf(Class<?> type, Map<Class<?>, E> map) {
-        Option<E> option = findKeySuperTypeOf0(type, map);
+    public static <E> Optional<E> findBySuperTypeOf(Class<?> type, Map<Class<?>, E> map) {
+        Optional<E> option = findKeySuperTypeOf0(type, map);
 
         if (option.isPresent()) {
             return option;
@@ -35,31 +36,31 @@ public final class MapUtil {
             E element = map.get(anInterface);
 
             if (element != null) {
-                return Option.of(element);
+                return Optional.of(element);
             }
         }
 
-        return Option.none();
+        return Optional.empty();
     }
 
-    private static <E> Option<E> findKeySuperTypeOf0(Class<?> type, Map<Class<?>, E> map) {
+    private static <E> Optional<E> findKeySuperTypeOf0(Class<?> type, Map<Class<?>, E> map) {
         E element = map.get(type);
 
         if (element != null) {
-            return Option.of(element);
+            return Optional.of(element);
         }
 
         Class<?> superclass = type.getSuperclass();
 
         if (superclass != null && superclass != Object.class) {
-            Option<E> option = findBySuperTypeOf(superclass, map);
+            Optional<E> option = findBySuperTypeOf(superclass, map);
 
             if (option.isPresent()) {
                 return option;
             }
         }
 
-        return Option.none();
+        return Optional.empty();
     }
 
 

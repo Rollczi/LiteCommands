@@ -10,7 +10,12 @@ public interface Platform<SENDER, C extends PlatformSettings> {
     @NotNull
     C getConfiguration();
 
-    void register(CommandRoute<SENDER> commandRoute, PlatformInvocationHook<SENDER> invocationHook, PlatformSuggestionHook<SENDER> suggestionHook);
+    void register(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook);
+
+    default <LISTENER extends PlatformInvocationListener<SENDER> & PlatformSuggestionListener<SENDER>>
+    void register(CommandRoute<SENDER> commandRoute, LISTENER listener) {
+        register(commandRoute, listener, listener);
+    }
 
     void unregister(CommandRoute<SENDER> commandRoute);
 
