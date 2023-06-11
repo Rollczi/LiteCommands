@@ -34,7 +34,7 @@ public class LiteTestSpec {
             .toArray(Class<?>[]::new);
 
         platform = LiteCommandsTestFactory.startPlatform(builder -> {
-            builder.commands(LiteAnnotationCommnads.ofClasses(commands));
+            builder.commands(LiteAnnotationCommands.ofClasses(commands));
 
             return configureLiteTest(builder, type);
         });

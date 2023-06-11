@@ -10,7 +10,7 @@ import dev.rollczi.example.bukkit.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
-import dev.rollczi.litecommands.annotations.LiteAnnotationCommnads;
+import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
@@ -33,7 +33,7 @@ public class ExamplePlugin extends JavaPlugin {
                 .nativePermissions(false)
             )
 
-            .commands(LiteAnnotationCommnads.of(
+            .commands(LiteAnnotationCommands.of(
                 new TeleportCommand(),
                 new KickCommand(),
                 new ConvertCommand()

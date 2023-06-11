@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteAnnotationCommnads;
+import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
 import dev.rollczi.litecommands.minestom.test.RegisterCommand;
 import dev.rollczi.litecommands.minestom.test.TestPlayer;
 import dev.rollczi.litecommands.minestom.tools.MinestomOnlyPlayerContext;
@@ -48,7 +48,7 @@ public class MineStomIntegrationSpec {
         }
 
         liteCommands = LiteMinestomFactory.builder(MinecraftServer.getServer(), MinecraftServer.getCommandManager())
-            .commands(LiteAnnotationCommnads.of(commands.values().toArray()))
+            .commands(LiteAnnotationCommands.of(commands.values().toArray()))
             .context(Player.class, new MinestomOnlyPlayerContext<>(""))
             .build();
     }

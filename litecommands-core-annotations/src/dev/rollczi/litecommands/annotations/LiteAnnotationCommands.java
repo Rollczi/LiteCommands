@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LiteAnnotationCommnads<SENDER> implements LiteCommandsProvider<SENDER> {
+public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SENDER> {
 
     private final CommandAnnotationRegistry<SENDER> commandAnnotationRegistry = new CommandAnnotationRegistry<>();
     private final AnnotationEditorService<SENDER> annotationEditorService = new AnnotationEditorService<>();
@@ -45,75 +45,75 @@ public class LiteAnnotationCommnads<SENDER> implements LiteCommandsProvider<SEND
     private final List<Object> commandInstances;
     private final List<Class<?>> commandClasses;
 
-    private LiteAnnotationCommnads() {
+    private LiteAnnotationCommands() {
         this.commandInstances = new ArrayList<>();
         this.commandClasses = new ArrayList<>();
     }
 
-    public LiteAnnotationCommnads<SENDER> load(Object... commands) {
+    public LiteAnnotationCommands<SENDER> load(Object... commands) {
         this.commandInstances.addAll(Arrays.asList(commands));
         return this;
     }
 
-    public LiteAnnotationCommnads<SENDER> loadClasses(Class<?>... commands) {
+    public LiteAnnotationCommands<SENDER> loadClasses(Class<?>... commands) {
         this.commandClasses.addAll(Arrays.asList(commands));
         return this;
     }
 
-    public LiteAnnotationCommnads<SENDER> loadPackages(String... packageNames) {
+    public LiteAnnotationCommands<SENDER> loadPackages(String... packageNames) {
         // TODO implement
         return this;
     }
 
-    public LiteAnnotationCommnads<SENDER> loadPackages(Package... packages) {
+    public LiteAnnotationCommands<SENDER> loadPackages(Package... packages) {
         // TODO implement
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationCommnads<SENDER> annotation(Class<A> annotation, CommandAnnotationClassResolver<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotationCommands<SENDER> annotation(Class<A> annotation, CommandAnnotationClassResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerResolver(annotation, resolver);
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationCommnads<SENDER> annotation(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotationCommands<SENDER> annotation(Class<A> annotation, CommandAnnotationMethodResolver<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerMethodResolver(annotation, resolver);
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationCommnads<SENDER> annotation(Class<A> annotation, CommandAnnotationMetaApplicator<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotationCommands<SENDER> annotation(Class<A> annotation, CommandAnnotationMetaApplicator<SENDER, A> resolver) {
         this.commandAnnotationRegistry.registerResolver(annotation, resolver);
         this.commandAnnotationRegistry.registerMethodResolver(annotation, resolver);
         return this;
     }
 
-    public <A extends Annotation> LiteAnnotationCommnads<SENDER> parameterAnnotation(Class<A> annotation, ParameterWithAnnotationResolver<SENDER, A> resolver) {
+    public <A extends Annotation> LiteAnnotationCommands<SENDER> parameterAnnotation(Class<A> annotation, ParameterWithAnnotationResolver<SENDER, A> resolver) {
         this.commandExecutorFactory.registerResolver(annotation, resolver);
         return this;
     }
 
-    public LiteAnnotationCommnads<SENDER> parameterWithoutAnnotation(ParameterWithoutAnnotationResolver<SENDER> resolver) {
+    public LiteAnnotationCommands<SENDER> parameterWithoutAnnotation(ParameterWithoutAnnotationResolver<SENDER> resolver) {
         this.commandExecutorFactory.defaultResolver(resolver);
         return this;
     }
 
-    public static <SENDER> LiteAnnotationCommnads<SENDER> create() {
-        return new LiteAnnotationCommnads<>();
+    public static <SENDER> LiteAnnotationCommands<SENDER> create() {
+        return new LiteAnnotationCommands<>();
     }
 
-    public static <SENDER> LiteAnnotationCommnads<SENDER> of(Object... commands) {
-        return new LiteAnnotationCommnads<SENDER>().load(commands);
+    public static <SENDER> LiteAnnotationCommands<SENDER> of(Object... commands) {
+        return new LiteAnnotationCommands<SENDER>().load(commands);
     }
 
-    public static <SENDER> LiteAnnotationCommnads<SENDER> ofClasses(Class<?>... commands) {
-        return new LiteAnnotationCommnads<SENDER>().loadClasses(commands);
+    public static <SENDER> LiteAnnotationCommands<SENDER> ofClasses(Class<?>... commands) {
+        return new LiteAnnotationCommands<SENDER>().loadClasses(commands);
     }
 
-    public static <SENDER> LiteAnnotationCommnads<SENDER> ofPackages(String... packageNames) {
-        return new LiteAnnotationCommnads<SENDER>().loadPackages(packageNames);
+    public static <SENDER> LiteAnnotationCommands<SENDER> ofPackages(String... packageNames) {
+        return new LiteAnnotationCommands<SENDER>().loadPackages(packageNames);
     }
 
-    public static <SENDER> LiteAnnotationCommnads<SENDER> ofPackages(Package... packages) {
-        return new LiteAnnotationCommnads<SENDER>().loadPackages(packages);
+    public static <SENDER> LiteAnnotationCommands<SENDER> ofPackages(Package... packages) {
+        return new LiteAnnotationCommands<SENDER>().loadPackages(packages);
     }
 
     @Override
