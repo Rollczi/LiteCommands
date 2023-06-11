@@ -1,13 +1,14 @@
 name: Publish LiteCommands
 on:
   push:
-    branches: [ 'master', 'v.3.0.0' ]
+    branches: [ master, v.3.0.0 ]
 jobs:
   publish:
     runs-on: ubuntu-latest
     environment: deployment
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -20,7 +21,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Publish with Gradle
-        run: ./gradlew clean build publish --stacktrace
+        run: ./gradlew clean build publish
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}

@@ -1,12 +1,12 @@
 name: "LiteCommands CodeQL"
 
-#on:
-#  push:
-#    branches: [ master ]
-#  pull_request:
-#    branches: [ master ]
-#  schedule:
-#    - cron: '21 8 * * 6'
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '21 8 * * 6'
 
 jobs:
   analyze:
@@ -24,11 +24,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
+
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
