@@ -49,14 +49,14 @@ class CustomValidatorTest extends LiteTestSpec {
     @Validate(ValidValidator.class)
     static class TestCommand {
 
-        @Execute(route = "none")
+        @Execute(name = "none")
         public void none() {}
 
-        @Execute(route = "invalid")
+        @Execute(name = "invalid")
         @Validate(InvalidValidator.class)
         public void invalid() {}
 
-        @Execute(route = "invalid-can-be-ignored")
+        @Execute(name = "invalid-can-be-ignored")
         @Validate(InvalidCanBeIgnoredValidator.class)
         public void invalidCanBeIgnored() {}
 

@@ -71,7 +71,7 @@ class MultiArgumentsTest extends LiteTestSpec {
     static class TestCommand {
         @Execute
         void execute(@Arg String arg0, @Arg String arg1, @Arg Position position) {}
-        @Execute(route = "sub")
+        @Execute(name = "sub")
         void executeSub(@Arg Position position) {}
     }
 

@@ -11,21 +11,21 @@ class RootCommandTest extends LiteTestSpec {
 
     @RootCommand
     static class Command {
-        @Execute(route = "first")
+        @Execute(name = "first")
         public void test() {}
 
-        @Execute(route = "second")
+        @Execute(name = "second")
         public void test2() {}
     }
 
     @RootCommand
     @Permission("test.permission")
     static class Command2 {
-        @Execute(route = "first")
+        @Execute(name = "first")
         @Permission("test.permission.execute")
         public void test(@Arg String test) {}
 
-        @Execute(route = "third")
+        @Execute(name = "third")
         public void test2() {}
     }
 

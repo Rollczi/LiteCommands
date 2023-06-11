@@ -20,7 +20,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
 
     @Override
     public CommandBuilder<SENDER> resolve(Object instance, Method method, Execute annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
-        boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.route(), annotation.aliases());
+        boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
         CommandExecutor<SENDER> executor = this.methodCommandExecutorService.create(instance, method);
 
@@ -28,7 +28,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
 
         if (isNotEmpty) {
             context.route().appendChild(CommandBuilder.<SENDER>create()
-                .routeName(annotation.route())
+                .routeName(annotation.name())
                 .routeAliases(Arrays.asList(annotation.aliases()))
                 .appendExecutor(executorBuilder));
 

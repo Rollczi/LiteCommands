@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Execute {
 
-    String route() default "";
+    String name() default "";
 
     String[] aliases() default {};
 

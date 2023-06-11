@@ -16,15 +16,15 @@ class ChildCommandPermissionHandleTest extends LiteTestSpec {
         @Execute
         void execute() {}
 
-        @Execute(route = "info")
+        @Execute(name = "info")
         @Permission("main.info")
         void info() {}
 
-        @Execute(route = "test")
+        @Execute(name = "test")
         @Permission("main.test")
         void test(@Arg String arg) {}
 
-        @Execute(route = "test")
+        @Execute(name = "test")
         @Permission("main.test.2")
         void test(@Arg String arg, @Arg String arg2) {}
 

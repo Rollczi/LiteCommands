@@ -28,7 +28,7 @@ class ExampleUnitTest extends LiteTestSpec {
             return text + ":" + test;
         }
 
-        @Execute(route = "opt")
+        @Execute(name = "opt")
         String executeOpt(@Arg String text, @Arg Option<String> test) {
             return text + ":" + test.orElseGet("none");
         }
