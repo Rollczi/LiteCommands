@@ -2,7 +2,7 @@
 
 # ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord) [![OSCS Status](https://www.oscs1024.com/platform/badge/Rollczi/LiteCommands.svg?size=small)](https://www.oscs1024.com/project/Rollczi/LiteCommands?ref=badge_small)
 
-#### Command framework for Velocity, Bukkit, Paper, BungeeCord and your other implementations.
+#### Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and your other implementations.
 
 Helpful links:
 
@@ -32,14 +32,14 @@ Framework Core
 ```xml
 
 <dependency>
-    <groupId>dev.rollczi.litecommands</groupId>
-    <artifactId>core</artifactId>
-    <version>2.8.8</version>
+    <groupId>dev.rollczi</groupId>
+    <artifactId>litecommands-core</artifactId>
+    <version>3.0.0-BETA-pre1</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi.litecommands:core:2.8.8'
+implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre1'
 ```
 
 ### First Simple Command
@@ -50,7 +50,7 @@ implementation 'dev.rollczi.litecommands:core:2.8.8'
 
 ```java
 
-@Route(name = "helloworld")
+@Command(name = "helloworld")
 @Permission("dev.rollczi.helloworld")
 public class HelloWorldCommand {
 
@@ -60,13 +60,13 @@ public class HelloWorldCommand {
         sender.sendMessage(String.join(" ", args));
     }
 
-    @Execute(route = "other-solution")
+    @Execute(name = "other-solution")
     @Min(1)
     public void otherSolution(LiteSender sender, @Joiner String text) {
         sender.sendMessage(text);
     }
 
-    @Execute(route = "subcommand")
+    @Execute(name = "subcommand")
     public void subcommand(LiteSender sender, @Arg String text) {
         sender.sendMessage(text);
     }

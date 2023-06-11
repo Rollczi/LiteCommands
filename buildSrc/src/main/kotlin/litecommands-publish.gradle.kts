@@ -16,25 +16,30 @@ publishing {
         mavenLocal()
 
         maven(
-            "panda",
-            "https://repo.panda-lang.org",
-            "MAVEN_USERNAME",
-            "MAVEN_PASSWORD",
-            false
+            name = "panda",
+            url = "https://repo.panda-lang.org",
+            username = "MAVEN_USERNAME",
+            password = "MAVEN_PASSWORD",
+            snapshots = false,
+            beta = false,
         )
 
         maven(
-            "eternalcode",
-            "https://repo.eternalcode.pl",
-            "ETERNAL_CODE_MAVEN_USERNAME",
-            "ETERNAL_CODE_MAVEN_PASSWORD"
+            name = "eternalcode",
+            url = "https://repo.eternalcode.pl",
+            username = "ETERNAL_CODE_MAVEN_USERNAME",
+            password = "ETERNAL_CODE_MAVEN_PASSWORD",
+            snapshots = true,
+            beta = true,
         )
 
         maven(
-            "minecodes",
-            "https://repository.minecodes.pl",
-            "MINE_CODES_MAVEN_USERNAME",
-            "MINE_CODES_MAVEN_PASSWORD",
+            name ="minecodes",
+            url = "https://repository.minecodes.pl",
+            username = "MINE_CODES_MAVEN_USERNAME",
+            password = "MINE_CODES_MAVEN_PASSWORD",
+            snapshots = true,
+            beta = false,
         )
     }
 }
@@ -44,11 +49,18 @@ fun RepositoryHandler.maven(
     url: String,
     username: String,
     password: String,
-    deploySnapshots: Boolean = true
+    snapshots: Boolean = true,
+    beta: Boolean = false
 ) {
     val isSnapshot = version.toString().endsWith("-SNAPSHOT")
 
-    if (isSnapshot && !deploySnapshots) {
+    if (isSnapshot && !snapshots) {
+        return
+    }
+
+    val isBeta = version.toString().contains("-BETA")
+
+    if (isBeta && !beta) {
         return
     }
 
