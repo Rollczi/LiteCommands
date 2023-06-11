@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.command.requirements.CommandRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
 import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.util.Preconditions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -217,13 +218,40 @@ class JDACommandTranslator {
         }
     }
 
-    record JDARoute(String subcommandGroup, String subcommandName, String argumentName) {
+    static class JDARoute {
+
+        private final String subcommandGroup;
+        private final String subcommandName;
+        private final String argumentName;
+
+        JDARoute(String subcommandGroup, String subcommandName, String argumentName) {
+            Preconditions.notNull(subcommandGroup, "subcommandGroup");
+            Preconditions.notNull(subcommandName, "subcommandName");
+            Preconditions.notNull(argumentName, "argumentName");
+
+            this.subcommandGroup = subcommandGroup;
+            this.subcommandName = subcommandName;
+            this.argumentName = argumentName;
+        }
+
         JDARoute(String subcommandName, String argumentName) {
-            this(null, subcommandName, argumentName);
+            this("", subcommandName, argumentName);
         }
 
         JDARoute(String argumentName) {
-            this(null, null, argumentName);
+            this("", "", argumentName);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof JDARoute jdaRoute)) return false;
+            return Objects.equals(subcommandGroup, jdaRoute.subcommandGroup) && Objects.equals(subcommandName, jdaRoute.subcommandName) && Objects.equals(argumentName, jdaRoute.argumentName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(subcommandGroup, subcommandName, argumentName);
         }
     }
 

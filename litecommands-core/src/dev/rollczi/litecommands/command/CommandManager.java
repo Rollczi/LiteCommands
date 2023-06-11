@@ -40,6 +40,10 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
         this.root.appendToRoot(commandRoute);
     }
 
+    public void registerAll() {
+        this.platform.start();
+    }
+
     class PlatformListener implements PlatformInvocationListener<SENDER>, PlatformSuggestionListener<SENDER> {
 
         private final CommandRoute<SENDER> commandRoute;
@@ -87,6 +91,7 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
     public void unregisterAll() {
         this.root.clearChildren();
         this.platform.unregisterAll();
+        this.platform.stop();
     }
 
 }

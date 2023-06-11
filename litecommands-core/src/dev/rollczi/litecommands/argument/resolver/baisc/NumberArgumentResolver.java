@@ -61,7 +61,7 @@ public class NumberArgumentResolver<SENDER, T extends Number> extends OneArgumen
 
             SuggestionResult result = SuggestionResult.from(this.suggestions.getSuggestions());
 
-            IntStream.of(0, 1, 5)
+            IntStream.of(1, 2, 5)
                 .mapToObj(i -> i * upper)
                 .map(Object::toString)
                 .forEach(numberText -> result.add(Suggestion.of(numberText)));

@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.suggestion.Suggester;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import panda.std.Blank;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +51,11 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
         @Override
         public boolean nextRouteIsLast() {
             return rawInputAnalyzer.nextRouteIsLast();
+        }
+
+        @Override
+        public boolean hasNoNextRouteAndArguments() {
+            return !rawInputAnalyzer.hasNextRoute();
         }
 
         @Override

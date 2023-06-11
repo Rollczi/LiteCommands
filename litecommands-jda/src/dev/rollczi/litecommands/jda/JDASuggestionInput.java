@@ -62,6 +62,11 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
             return false; // don't suggest routes
         }
 
+        @Override
+        public boolean hasNoNextRouteAndArguments() {
+            return !hasNextRoute() && arguments.isEmpty();
+        }
+
     }
 
 }

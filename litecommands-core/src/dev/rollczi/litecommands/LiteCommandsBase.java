@@ -17,7 +17,7 @@ public class LiteCommandsBase<SENDER> implements LiteCommands<SENDER> {
 
     @Override
     public void register() {
-        //TDOO: register
+        commandManager.registerAll();
     }
 
     @Override

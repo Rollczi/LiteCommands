@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.input.RawInput;
 import dev.rollczi.litecommands.argument.parser.ArgumentParseException;
 import dev.rollczi.litecommands.argument.parser.ArgumentParser;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
@@ -9,10 +10,9 @@ import dev.rollczi.litecommands.argument.input.ArgumentsInput;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.util.ReflectUtil;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,14 +55,19 @@ class JDAArgumentsInput extends AbstractJDAInput<JDAArgumentsInput.JDAInputMatch
             Object input = command.mapArgument(toRoute(argument.getName()), optionMapping);
 
             if (input == null) {
-                input = optionMapping.getAsString();
+                input = RawInput.of(optionMapping.getAsString().split(" "));
             }
 
-            if (outType.isAssignableFrom(input.getClass())) {
+            if (ReflectUtil.instanceOf(input, outType)) {
                 return ArgumentResult.success((PARSED) input);
             }
 
-            return this.parseInput(invocation, argument, parserSet, input);
+            try {
+                return this.parseInput(invocation, argument, parserSet, input);
+            }
+            catch (ArgumentParseException exception) {
+                return this.parseInput(invocation, argument, parserSet, RawInput.of(optionMapping.getAsString().split(" ")));
+            }
         }
 
         private JDACommandTranslator.JDARoute toRoute(String argumentName) {

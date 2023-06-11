@@ -29,4 +29,6 @@ public interface SuggestionInputMatcher<SELF extends SuggestionInputMatcher<SELF
 
     boolean nextRouteIsLast();
 
+    boolean hasNoNextRouteAndArguments();
+
 }

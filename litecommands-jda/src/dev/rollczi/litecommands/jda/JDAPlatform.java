@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
@@ -13,8 +14,8 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,18 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
     @Override
     protected void unhook(CommandRoute<User> commandRoute) {
         this.commands.remove(commandRoute);
+        this.jda.retrieveCommands().queue(commands -> commands.stream()
+            .filter(command -> commandRoute.names().contains(command.getName()))
+            .forEach(command -> this.jda.deleteCommandById(command.getIdLong()).queue())
+        );
+    }
+
+    @Override
+    public void start() {
+        jda.retrieveCommands().queue(commands -> commands.stream()
+            .filter(command -> !this.commandRoutes.containsKey(command.getName()))
+            .forEach(command -> jda.deleteCommandById(command.getIdLong()).queue())
+        );
     }
 
     class SlashCommandController extends ListenerAdapter {
@@ -102,10 +115,30 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             Invocation<User> invocation = translator.translateInvocation(commandRoute, arguments, event);
             SuggestionResult result = commandRecord.suggestionHook().suggest(invocation, arguments);
             List<Command.Choice> choiceList = result.getSuggestions().stream()
-                .map(suggestion -> new Command.Choice("", suggestion.multilevel()))
+                .filter(suggestion -> !suggestion.multilevel().isEmpty())
+                .map(suggestion -> choice(event.getFocusedOption().getType(), suggestion))
                 .collect(Collectors.toList());
 
             event.replyChoices(choiceList).queue();
+        }
+
+        private Command.Choice choice(OptionType optionType, Suggestion suggestion) {
+            if (optionType == OptionType.INTEGER) {
+                try {
+                    long parsed = Long.parseLong(suggestion.multilevel());
+                    return new Command.Choice(suggestion.multilevel(), parsed);
+                }
+                catch (NumberFormatException e) {
+                    long parsed = (long) Double.parseDouble(suggestion.multilevel());
+                    return new Command.Choice(String.valueOf(parsed), parsed);
+                }
+            }
+
+            if (optionType == OptionType.NUMBER) {
+                return new Command.Choice(suggestion.multilevel(), Double.parseDouble(suggestion.multilevel()));
+            }
+
+            return new Command.Choice(suggestion.multilevel(), suggestion.multilevel());
         }
 
     }

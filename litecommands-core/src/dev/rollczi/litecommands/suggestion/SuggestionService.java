@@ -30,7 +30,7 @@ public class SuggestionService<SENDER> {
         MATCHER matcher,
         CommandRoute<SENDER> commandRoute
     ) {
-        if (!matcher.hasNextRoute()) {
+        if (matcher.hasNoNextRouteAndArguments()) {
             return SuggestionResult.of(commandRoute.names());
         }
 

@@ -39,11 +39,17 @@ public final class LiteCommandsFactory {
 
             .argument(String.class, new StringArgumentResolver<>())
             .argument(Long.class, NumberArgumentResolver.ofLong())
+            .argument(long.class, NumberArgumentResolver.ofLong())
             .argument(Integer.class, NumberArgumentResolver.ofInteger())
+            .argument(int.class, NumberArgumentResolver.ofInteger())
             .argument(Double.class, NumberArgumentResolver.ofDouble())
+            .argument(double.class, NumberArgumentResolver.ofDouble())
             .argument(Float.class, NumberArgumentResolver.ofFloat())
+            .argument(float.class, NumberArgumentResolver.ofFloat())
             .argument(Byte.class, NumberArgumentResolver.ofByte())
+            .argument(byte.class, NumberArgumentResolver.ofByte())
             .argument(Short.class, NumberArgumentResolver.ofShort())
+            .argument(short.class, NumberArgumentResolver.ofShort())
 
             ;
     }
