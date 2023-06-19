@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class CommandRequirementResult<PARSED> {
+public class RequirementResult<PARSED> {
 
     private final @Nullable Supplier<Wrap<PARSED>> success;
     private final @Nullable FailedReason failedReason;
 
-    private CommandRequirementResult(@Nullable Supplier<Wrap<PARSED>> success, @Nullable FailedReason failedReason) {
+    private RequirementResult(@Nullable Supplier<Wrap<PARSED>> success, @Nullable FailedReason failedReason) {
         this.success = success;
         this.failedReason = failedReason;
     }
@@ -43,16 +43,16 @@ public class CommandRequirementResult<PARSED> {
         return failedReason;
     }
 
-    public static <EXPECTED> CommandRequirementResult<EXPECTED> success(Supplier<Wrap<EXPECTED>> wrappedExpected) {
-        return new CommandRequirementResult<>(wrappedExpected, null);
+    public static <EXPECTED> RequirementResult<EXPECTED> success(Supplier<Wrap<EXPECTED>> wrappedExpected) {
+        return new RequirementResult<>(wrappedExpected, null);
     }
 
-    public static <EXPECTED> CommandRequirementResult<EXPECTED> failure(FailedReason failedReason) {
-        return new CommandRequirementResult<>(null, failedReason);
+    public static <EXPECTED> RequirementResult<EXPECTED> failure(FailedReason failedReason) {
+        return new RequirementResult<>(null, failedReason);
     }
 
-    public static <EXPECTED> CommandRequirementResult<EXPECTED> failure(Object failedReason) {
-        return new CommandRequirementResult<>(null, FailedReason.of(failedReason));
+    public static <EXPECTED> RequirementResult<EXPECTED> failure(Object failedReason) {
+        return new RequirementResult<>(null, FailedReason.of(failedReason));
     }
 
 }

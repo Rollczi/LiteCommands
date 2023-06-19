@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
-import dev.rollczi.litecommands.command.requirement.CommandRequirement;
-import dev.rollczi.litecommands.command.requirement.CommandRequirementResult;
+import dev.rollczi.litecommands.command.requirement.Requirement;
+import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.command.requirement.RequirementMatch;
 import dev.rollczi.litecommands.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.flow.Flow;
@@ -104,7 +104,7 @@ public class CommandExecuteService<SENDER> {
         return CommandExecuteResult.failed(InvalidUsage.Cause.UNKNOWN_COMMAND);
     }
 
-    private  <REQUIREMENT extends CommandRequirement<SENDER, ?>, MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandExecutorMatchResult match(
+    private  <REQUIREMENT extends Requirement<SENDER, ?>, MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandExecutorMatchResult match(
         CommandExecutor<SENDER, REQUIREMENT> executor,
         Invocation<SENDER> invocation,
         MATCHER matcher
@@ -112,7 +112,7 @@ public class CommandExecuteService<SENDER> {
         List<RequirementMatch<REQUIREMENT>> results = new ArrayList<>();
 
         for (REQUIREMENT requirement : executor.getRequirements()) {
-            CommandRequirementResult<?> result = requirement.match(invocation, matcher);
+            RequirementResult<?> result = requirement.match(invocation, matcher);
 
             if (!result.isSuccess()) {
                 return CommandExecutorMatchResult.failed(result.getFailedReason());

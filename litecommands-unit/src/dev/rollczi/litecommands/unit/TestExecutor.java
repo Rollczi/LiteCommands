@@ -8,11 +8,11 @@ import dev.rollczi.litecommands.argument.parser.ArgumentRawInputParser;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.argument.input.RawInput;
 import dev.rollczi.litecommands.command.requirement.RequirementMatch;
-import dev.rollczi.litecommands.command.requirement.CommandArgumentRequirement;
-import dev.rollczi.litecommands.command.requirement.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.command.requirement.CommandRequirementResult;
+import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.wrapper.Wrap;
@@ -25,19 +25,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, CommandRequirement<SENDER, ?>> {
+public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requirement<SENDER, ?>> {
 
     public TestExecutor() {
         super(Collections.emptyList());
     }
 
     @Override
-    public CommandExecutorMatchResult match(List<RequirementMatch<CommandRequirement<SENDER, ?>>> results) {
+    public CommandExecutorMatchResult match(List<RequirementMatch<Requirement<SENDER, ?>>> results) {
         return null;
     }
 
     public <T> TestExecutor<SENDER> withArg(String name, Class<T> type, BiFunction<Invocation<SENDER>, String, ArgumentResult<T>> parser) {
-        requirements.add(new TestArgumentCommandRequirement<>(new TestArgument<>(name, type), new ValueWrapper(), new ArgumentParserSet<SENDER, T>() {
+        requirements.add(new TestArgumentRequirement<>(new TestArgument<>(name, type), new ValueWrapper(), new ArgumentParserSet<SENDER, T>() {
             @Override
             public <INPUT> Optional<ArgumentParser<SENDER, INPUT, T>> getParser(Class<INPUT> inType) {
                 if (inType != RawInput.class) {
@@ -61,13 +61,13 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
         return this;
     }
 
-    private class TestArgumentCommandRequirement<PARSED> implements CommandArgumentRequirement<SENDER, PARSED> {
+    private class TestArgumentRequirement<PARSED> implements ArgumentRequirement<SENDER, PARSED> {
 
         private final Argument<PARSED> argument;
         private final Wrapper wrapper;
         private final ArgumentParserSet<SENDER, PARSED> parserSet;
 
-        public TestArgumentCommandRequirement(Argument<PARSED> argument, Wrapper wrapper, ArgumentParserSet<SENDER, PARSED> parserSet) {
+        public TestArgumentRequirement(Argument<PARSED> argument, Wrapper wrapper, ArgumentParserSet<SENDER, PARSED> parserSet) {
             this.argument = argument;
             this.wrapper = wrapper;
             this.parserSet = parserSet;
@@ -84,14 +84,14 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
         }
 
         @Override
-        public <MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandRequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
+        public <MATCHER extends ArgumentsInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
             ArgumentResult<PARSED> matchArgument = matcher.nextArgument(invocation, argument, parserSet);
 
             if (matchArgument.isFailed()) {
-                return CommandRequirementResult.failure(matchArgument.getFailedReason());
+                return RequirementResult.failure(matchArgument.getFailedReason());
             }
 
-            return CommandRequirementResult.success(() -> new Wrap<PARSED>() {
+            return RequirementResult.success(() -> new Wrap<PARSED>() {
                 @Override
                 public Object unwrap() {
                     return matchArgument.getSuccessfulResult().getExpectedProvider();

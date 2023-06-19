@@ -4,6 +4,6 @@ import java.lang.reflect.Parameter;
 
 public interface ParameterWithoutAnnotationResolver<SENDER> {
 
-    ParameterCommandRequirement<SENDER, ?> resolve(Parameter parameter);
+    ParameterRequirement<SENDER, ?> resolve(Parameter parameter);
 
 }

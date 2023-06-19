@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.annotations.context;
 
-import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
+import dev.rollczi.litecommands.annotations.command.ParameterRequirement;
 import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
-import dev.rollczi.litecommands.command.requirement.CommandRequirementResult;
+import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.wrapper.Wrapper;
@@ -27,7 +27,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
     }
 
     @Override
-    public ParameterCommandRequirement<SENDER, ?> resolve(Parameter parameter, Context annotation) {
+    public ParameterRequirement<SENDER, ?> resolve(Parameter parameter, Context annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);
@@ -35,7 +35,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         return new ContextParameterPreparedArgument<>(parameter, index, wrapFormat, wrapperRegistry.getWrappedExpectedFactory(wrapFormat));
     }
 
-    private class ContextParameterPreparedArgument<EXPECTED> implements ParameterCommandRequirement<SENDER, EXPECTED> {
+    private class ContextParameterPreparedArgument<EXPECTED> implements ParameterRequirement<SENDER, EXPECTED> {
 
         private final Parameter parameter;
         private final int index;
@@ -50,14 +50,14 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         }
 
         @Override
-        public <CONTEXT extends ArgumentsInputMatcher<CONTEXT>> CommandRequirementResult<EXPECTED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
+        public <CONTEXT extends ArgumentsInputMatcher<CONTEXT>> RequirementResult<EXPECTED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
             Result<EXPECTED, Object> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.isOk()) {
-                return CommandRequirementResult.success(() -> wrapper.create(result::get, wrapFormat));
+                return RequirementResult.success(() -> wrapper.create(result::get, wrapFormat));
             }
 
-            return CommandRequirementResult.failure(result.getError());
+            return RequirementResult.failure(result.getError());
         }
 
         @Override

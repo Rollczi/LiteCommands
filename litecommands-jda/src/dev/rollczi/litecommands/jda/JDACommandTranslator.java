@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.input.Input;
-import dev.rollczi.litecommands.command.requirement.CommandArgumentRequirement;
-import dev.rollczi.litecommands.command.requirement.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
 import dev.rollczi.litecommands.meta.CommandMeta;
@@ -116,8 +116,8 @@ class JDACommandTranslator {
 
         CommandExecutor<SENDER, ?> executor = executors.get(0);
 
-        for (CommandRequirement<SENDER, ?> requirement : executor.getRequirements()) {
-            if (!(requirement instanceof CommandArgumentRequirement<SENDER, ?> argumentRequirement)) {
+        for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
+            if (!(requirement instanceof ArgumentRequirement<SENDER, ?> argumentRequirement)) {
                 continue;
             }
 

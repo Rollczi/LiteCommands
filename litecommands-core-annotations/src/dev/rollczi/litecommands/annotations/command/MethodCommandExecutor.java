@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
 
-class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, ParameterCommandRequirement<SENDER, ?>> {
+class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, ParameterRequirement<SENDER, ?>> {
 
     private final Method method;
     private final Object instance;
@@ -20,7 +20,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
     MethodCommandExecutor(
         Method method,
         Object instance,
-        List<ParameterCommandRequirement<SENDER, ?>> preparedArguments
+        List<ParameterRequirement<SENDER, ?>> preparedArguments
     ) {
         super(preparedArguments);
         this.method = method;
@@ -29,7 +29,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
     }
 
     @Override
-    public CommandExecutorMatchResult match(List<RequirementMatch<ParameterCommandRequirement<SENDER, ?>>> results) {
+    public CommandExecutorMatchResult match(List<RequirementMatch<ParameterRequirement<SENDER, ?>>> results) {
         if (results.size() != this.method.getParameterCount()) {
             return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved"));
         }

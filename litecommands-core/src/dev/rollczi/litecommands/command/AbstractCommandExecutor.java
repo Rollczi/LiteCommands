@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.command.requirement.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.meta.CommandMeta;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends CommandRequirement<SENDER, ?>> implements CommandExecutor<SENDER, REQUIREMENT> {
+public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Requirement<SENDER, ?>> implements CommandExecutor<SENDER, REQUIREMENT> {
 
     protected final List<REQUIREMENT> requirements = new ArrayList<>();
     protected final CommandMeta meta = CommandMeta.create();

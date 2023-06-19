@@ -6,8 +6,8 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.requirement.CommandArgumentRequirement;
-import dev.rollczi.litecommands.command.requirement.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.input.SuggestionInputMatcher;
@@ -72,12 +72,12 @@ public class SuggestionService<SENDER> {
         MATCHER matcher,
         CommandExecutor<SENDER, ?> executor
     ) {
-        for (CommandRequirement<SENDER, ?> requirement : executor.getRequirements()) {
-            if (!(requirement instanceof CommandArgumentRequirement)) {
+        for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
+            if (!(requirement instanceof ArgumentRequirement)) {
                 continue;
             }
 
-            Flow flow = suggestRequirement(invocation, matcher, (CommandArgumentRequirement<SENDER, ?>) requirement);
+            Flow flow = suggestRequirement(invocation, matcher, (ArgumentRequirement<SENDER, ?>) requirement);
 
             switch (flow.status()) {
                 case CONTINUE: continue;
@@ -101,7 +101,7 @@ public class SuggestionService<SENDER> {
     private <OUT, MATCHER extends SuggestionInputMatcher<MATCHER>> Flow suggestRequirement(
         Invocation<SENDER> invocation,
         MATCHER matcher,
-        CommandArgumentRequirement<SENDER, OUT> requirement
+        ArgumentRequirement<SENDER, OUT> requirement
     ) {
         Argument<?> argument = requirement.getArgument();
 

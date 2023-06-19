@@ -3,9 +3,9 @@ package dev.rollczi.litecommands.command.requirement;
 public class RequirementMatch<REQUIREMENT> {
 
     private final REQUIREMENT requirement;
-    private final CommandRequirementResult<?> result;
+    private final RequirementResult<?> result;
 
-    public RequirementMatch(REQUIREMENT requirement, CommandRequirementResult<?> result) {
+    public RequirementMatch(REQUIREMENT requirement, RequirementResult<?> result) {
         this.requirement = requirement;
         this.result = result;
     }
@@ -14,7 +14,7 @@ public class RequirementMatch<REQUIREMENT> {
         return requirement;
     }
 
-    public CommandRequirementResult<?> getResult() {
+    public RequirementResult<?> getResult() {
         return result;
     }
 

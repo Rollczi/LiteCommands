@@ -1,12 +1,12 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.command.ParameterCommandRequirement;
+import dev.rollczi.litecommands.annotations.command.ParameterRequirement;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentResult;
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
-import dev.rollczi.litecommands.command.requirement.CommandArgumentRequirement;
-import dev.rollczi.litecommands.command.requirement.CommandRequirementResult;
+import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.argument.SuccessfulResult;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
@@ -16,7 +16,7 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.lang.reflect.Parameter;
 
-class ArgArgumentRequirement<SENDER, PARSED> implements ParameterCommandRequirement<SENDER, PARSED>, CommandArgumentRequirement<SENDER, PARSED> {
+class ArgArgumentRequirement<SENDER, PARSED> implements ParameterRequirement<SENDER, PARSED>, ArgumentRequirement<SENDER, PARSED> {
 
     private final ParameterArgument<?, PARSED> argument;
     private final Wrapper wrapper;
@@ -29,22 +29,22 @@ class ArgArgumentRequirement<SENDER, PARSED> implements ParameterCommandRequirem
     }
 
     @Override
-    public <MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandRequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
+    public <MATCHER extends ArgumentsInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
         ArgumentResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
 
         if (result.isSuccessful()) {
             SuccessfulResult<PARSED> successfulResult = result.getSuccessfulResult();
 
-            return CommandRequirementResult.success(() -> wrapper.create(successfulResult.getExpectedProvider(), this.getWrapperFormat()));
+            return RequirementResult.success(() -> wrapper.create(successfulResult.getExpectedProvider(), this.getWrapperFormat()));
         }
 
         FailedReason failedReason = result.getFailedReason();
 
         if (failedReason.getReason() == InvalidUsage.Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
-            return CommandRequirementResult.success(() -> wrapper.createEmpty(this.getWrapperFormat()));
+            return RequirementResult.success(() -> wrapper.createEmpty(this.getWrapperFormat()));
         }
 
-        return CommandRequirementResult.failure(failedReason);
+        return RequirementResult.failure(failedReason);
     }
 
     public WrapFormat<PARSED, ?> getWrapperFormat() {
