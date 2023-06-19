@@ -20,7 +20,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     private final CommandRoute<SENDER> parent;
     private final CommandMeta meta = CommandMeta.create();
 
-    private final List<CommandExecutor<SENDER>> executors = new ArrayList<>();
+    private final List<CommandExecutor<SENDER, ?>> executors = new ArrayList<>();
     private final List<CommandRoute<SENDER>> childRoutes = new ArrayList<>();
 
     CommandRouteImpl(String name, List<String> aliases, CommandRoute<SENDER> parent) {
@@ -77,7 +77,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public List<CommandExecutor<SENDER>> getExecutors() {
+    public List<CommandExecutor<SENDER, ?>> getExecutors() {
         return Collections.unmodifiableList(this.executors);
     }
 
@@ -97,7 +97,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public void appendExecutor(CommandExecutor<SENDER> executor) {
+    public void appendExecutor(CommandExecutor<SENDER, ?> executor) {
         this.executors.add(executor);
     }
 

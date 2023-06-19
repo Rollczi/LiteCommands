@@ -72,7 +72,7 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public List<CommandExecutor<SENDER>> getExecutors() {
+    public List<CommandExecutor<SENDER, ?>> getExecutors() {
         throw new UnsupportedOperationException("Can not get executors from the root route");
     }
 
@@ -97,7 +97,7 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public void appendExecutor(CommandExecutor<SENDER> executor) {
+    public void appendExecutor(CommandExecutor<SENDER, ?> executor) {
         throw new UnsupportedOperationException("Can not append command executor to the root route");
     }
 

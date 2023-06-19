@@ -7,6 +7,6 @@ import dev.rollczi.litecommands.command.CommandRoute;
 
 public interface Validator<SENDER> {
 
-    Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> command, CommandExecutor<SENDER> executor);
+    Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> command, CommandExecutor<SENDER, ?> executor);
 
 }

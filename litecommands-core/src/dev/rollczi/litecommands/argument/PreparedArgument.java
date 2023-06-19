@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
+import dev.rollczi.litecommands.command.requirement.CommandRequirementResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Rangeable;
 

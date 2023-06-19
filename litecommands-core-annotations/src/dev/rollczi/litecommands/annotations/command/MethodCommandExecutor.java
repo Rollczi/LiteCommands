@@ -3,7 +3,10 @@ package dev.rollczi.litecommands.annotations.command;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
 import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
+import dev.rollczi.litecommands.command.requirement.RequirementMatch;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
@@ -26,13 +29,13 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
     }
 
     @Override
-    protected CommandExecutorMatchResult match(List<Match<ParameterCommandRequirement<SENDER, ?>>> results) {
+    public CommandExecutorMatchResult match(List<RequirementMatch<ParameterCommandRequirement<SENDER, ?>>> results) {
         if (results.size() != this.method.getParameterCount()) {
             return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved"));
         }
 
         Object[] objects = results.stream()
-            .sorted(Comparator.comparingInt(pair -> pair.getArgument().getParameterIndex()))
+            .sorted(Comparator.comparingInt(pair -> pair.getRequirement().getParameterIndex()))
             .map(pair -> pair.getResult())
             .map(success -> success.getSuccess())
             .map(wrap -> wrap.unwrap())
@@ -42,10 +45,15 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
             try {
                 this.method.setAccessible(true);
 
-                return CommandExecuteResult.success(this.method.invoke(this.instance, objects), this.returnType);
+                return CommandExecuteResult.success(this.method.invoke(this.instance, objects));
             }
-            catch (Exception exception) {
-                return CommandExecuteResult.failed(exception);
+            catch (IllegalAccessException exception) {
+                throw new LiteCommandsReflectException(this.method, "Cannot access method", exception);
+            }
+            catch (InvocationTargetException exception) {
+                Throwable targetException = exception.getTargetException();
+
+                throw new LiteCommandsReflectException(this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }
         });
     }

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations.util;
 
-import dev.rollczi.litecommands.util.ReflectFormatUtil;
+import dev.rollczi.litecommands.reflect.ReflectFormatUtil;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import panda.std.Option;

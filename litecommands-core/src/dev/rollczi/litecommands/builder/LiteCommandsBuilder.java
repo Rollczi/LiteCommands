@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.editor.Editor;
+import dev.rollczi.litecommands.exception.ExceptionHandler;
 import dev.rollczi.litecommands.result.ResultHandler;
 import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
@@ -164,9 +165,9 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     LiteCommandsBuilder<SENDER, SETTINGS, B> resultUnexpected(ResultHandler<SENDER, Object> handler);
 
     <E extends Throwable>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> exception(Class<E> exceptionType, ResultHandler<SENDER, ? extends E> handler);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> exception(Class<E> exceptionType, ExceptionHandler<SENDER, ? extends E> handler);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> exceptionUnexpected(ResultHandler<SENDER, Throwable> handler);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> exceptionUnexpected(ExceptionHandler<SENDER, Throwable> handler);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> missingPermission(MissingPermissionsHandler<SENDER> handler);
 

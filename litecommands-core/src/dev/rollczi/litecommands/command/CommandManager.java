@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.command;
 import dev.rollczi.litecommands.argument.input.ArgumentsInput;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.invocation.InvocationResult;
 import dev.rollczi.litecommands.command.input.InputMatcher;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
@@ -53,7 +52,7 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
         }
 
         @Override
-        public InvocationResult<SENDER> execute(Invocation<SENDER> invocation, ArgumentsInput<?> arguments) {
+        public CommandExecuteResult execute(Invocation<SENDER> invocation, ArgumentsInput<?> arguments) {
             ArgumentsInputMatcher matcher = arguments.createMatcher();
             CommandRoute<SENDER> commandRoute = findRoute(this.commandRoute, matcher);
 

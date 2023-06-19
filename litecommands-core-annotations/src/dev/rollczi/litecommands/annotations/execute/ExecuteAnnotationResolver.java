@@ -22,7 +22,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
     public CommandBuilder<SENDER> resolve(Object instance, Method method, Execute annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
         boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
-        CommandExecutor<SENDER> executor = this.methodCommandExecutorService.create(instance, method);
+        CommandExecutor<SENDER, ?> executor = this.methodCommandExecutorService.create(instance, method);
 
         executorBuilder.setExecutor(executor);
 

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.command;
 
 import dev.rollczi.litecommands.command.CommandExecutor;
-import dev.rollczi.litecommands.util.ReflectFormatUtil;
+import dev.rollczi.litecommands.reflect.ReflectFormatUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -18,7 +18,7 @@ public class MethodCommandExecutorService<SENDER> {
         throw new IllegalArgumentException("No annotation found for parameter " + ReflectFormatUtil.parameter(parameter));
     };
 
-    public CommandExecutor<SENDER> create(Object instance, Method method) {
+    public CommandExecutor<SENDER, ?> create(Object instance, Method method) {
         List<ParameterCommandRequirement<SENDER, ?>> arguments = this.resolveParameters(method);
 
         return new MethodCommandExecutor<>(method, instance, arguments);

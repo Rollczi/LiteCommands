@@ -31,9 +31,9 @@ public interface CommandRoute<SENDER> extends Scopeable {
 
     Optional<CommandRoute<SENDER>> getChildren(String name);
 
-    void appendExecutor(CommandExecutor<SENDER> executor);
+    void appendExecutor(CommandExecutor<SENDER, ?> executor);
 
-    List<CommandExecutor<SENDER>> getExecutors();
+    List<CommandExecutor<SENDER, ?>> getExecutors();
 
     CommandMeta meta();
 

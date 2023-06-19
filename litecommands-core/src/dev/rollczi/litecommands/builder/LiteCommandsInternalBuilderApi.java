@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.result.ResultService;
 import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
 import dev.rollczi.litecommands.editor.EditorService;
@@ -60,5 +61,8 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
 
     @ApiStatus.Internal
     CommandBuilderCollector<SENDER> getCommandBuilderCollector();
+
+    @ApiStatus.Internal
+    ExceptionHandleService<SENDER> getExceptionHandleService();
 
 }

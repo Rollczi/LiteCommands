@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.util;
+package dev.rollczi.litecommands.reflect;
 
 import java.util.HashMap;
 import java.util.Map;

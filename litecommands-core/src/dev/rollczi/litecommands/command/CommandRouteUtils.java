@@ -42,7 +42,7 @@ public final class CommandRouteUtils {
         }
     }
 
-    public static <SENDER, T> List<T> collectFromRootToExecutor(CommandRoute<SENDER> route, CommandExecutor<SENDER> executor, Function<CommandMeta, T> collector) {
+    public static <SENDER, T> List<T> collectFromRootToExecutor(CommandRoute<SENDER> route, CommandExecutor<SENDER, ?> executor, Function<CommandMeta, T> collector) {
         List<T> collected = new ArrayList<>();
 
         consumeFromRootToChild(route, commandRoute -> collected.add(collector.apply(commandRoute.meta())));

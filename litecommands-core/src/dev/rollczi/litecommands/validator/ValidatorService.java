@@ -36,7 +36,7 @@ public class ValidatorService<SENDER> {
         this.commandValidators.put(scope, validator);
     }
 
-    public Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER> commandExecutor) {
+    public Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
         IterableReferences<Validator<SENDER>> validators = IterableReferences.of(
             () -> commandGlobalValidators,
             () -> fromMeta(commandRoute, commandExecutor),
@@ -46,7 +46,7 @@ public class ValidatorService<SENDER> {
         return Flow.merge(validators, validator -> validator.validate(invocation, commandRoute, commandExecutor));
     }
 
-    private List<Validator<SENDER>> fromMeta(CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER> commandExecutor) {
+    private List<Validator<SENDER>> fromMeta(CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
         List<Validator<SENDER>> validators = new ArrayList<>();
 
         List<Class<?>> validatorsTypes = CommandRouteUtils.collectFromRootToExecutor(commandRoute, commandExecutor, commandMeta -> commandMeta.get(CommandMeta.VALIDATORS))

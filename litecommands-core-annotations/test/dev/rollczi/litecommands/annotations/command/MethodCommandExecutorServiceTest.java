@@ -10,9 +10,8 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistryImpl;
 import dev.rollczi.litecommands.argument.resolver.baisc.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
-import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandExecutor;
-import dev.rollczi.litecommands.command.requirements.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.CommandRequirement;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
@@ -56,9 +55,9 @@ class MethodCommandExecutorServiceTest {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
 
-        CommandExecutor<TestSender> commandExecutor = executorFactory.create(testCommand, method);
+        CommandExecutor<TestSender, ?> commandExecutor = executorFactory.create(testCommand, method);
 
-        List<CommandRequirement<TestSender, ?>> requirements = commandExecutor.getRequirements();
+        List<CommandRequirement<?, ?>> requirements = (List<CommandRequirement<?, ?>>) commandExecutor.getRequirements();
         assertEquals(3, requirements.size());
 
         CommandMeta meta = commandExecutor.getMeta();

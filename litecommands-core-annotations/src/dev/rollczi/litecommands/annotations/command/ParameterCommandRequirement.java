@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations.command;
 
-import dev.rollczi.litecommands.command.requirements.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.CommandRequirement;
 
 import java.lang.reflect.Parameter;
 

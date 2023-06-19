@@ -44,7 +44,7 @@ public class MissingPermissions {
         return missingPermissions.isEmpty();
     }
 
-    public static <SENDER> MissingPermissions check(PlatformSender platformSender, CommandRoute<SENDER> command, CommandExecutor<SENDER> executor) {
+    public static <SENDER> MissingPermissions check(PlatformSender platformSender, CommandRoute<SENDER> command, CommandExecutor<SENDER, ?> executor) {
         List<String> permissions = new ArrayList<>();
 
         CommandRouteUtils.consumeFromRootToChild(command, route -> {

@@ -1,72 +1,63 @@
 package dev.rollczi.litecommands.unit;
 
-import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
-import dev.rollczi.litecommands.invocation.InvocationResult;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.opentest4j.AssertionFailedError;
-import panda.std.Option;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class AssertExecute {
 
-    private final InvocationResult<TestSender> result;
+    private final CommandExecuteResult result;
 
-    public AssertExecute(InvocationResult<TestSender> result) {
+    public AssertExecute(CommandExecuteResult result) {
         this.result = result;
     }
 
     public AssertExecute assertSuccess() {
-        if (!result.isInvoked()) {
-            throw new AssertionError("Command was not invoked. Reason: " + result.getFailedReason());
+        if (result.isThrown()) {
+            throw new AssertionError("Command was thrown", result.getThrowable());
         }
 
-        CommandExecuteResult executeResult = result.getCommandExecuteResult();
-
-        if (!executeResult.isSuccessful()) {
-            throw new AssertionError("Command was not successful executed", executeResult.getException());
+        if (result.isFailed()) {
+            throw new AssertionError("Command was not successful executed" + result.getError());
         }
 
         return this;
     }
 
-    public AssertExecute assertSuccess(Object result) {
-        if (!this.result.isInvoked()) {
-            throw new AssertionError("Command was not invoked. Reason: " + this.result.getFailedReason());
+    public AssertExecute assertSuccess(Object expected) {
+        if (result.isThrown()) {
+            throw new AssertionError("Command was thrown", result.getThrowable());
         }
 
-        CommandExecuteResult executeResult = this.result.getCommandExecuteResult();
-
-        if (!executeResult.isSuccessful()) {
-            throw new AssertionError("Command was not successful executed", executeResult.getException());
+        if (result.isFailed()) {
+            throw new AssertionError("Command was not successful executed" + result.getError());
         }
 
-        Option<Object> option = executeResult.getResult();
+        Object object = result.getResult();
 
-        if (option.isEmpty()) {
+        if (object == null) {
             throw new AssertionError("Command result is empty");
         }
 
-        assertEquals(result, option.get());
+        assertEquals(expected, object);
 
         return this;
     }
 
     public AssertExecute assertThrows(Class<? extends Throwable> exception) {
-        if (!result.isInvoked()) {
-            throw new AssertionError("Command was not invoked. Reason: " + result.getFailedReason());
+        if (result.isFailed()) {
+            throw new AssertionError("Command was not successful executed" + result.getError());
         }
 
-        CommandExecuteResult executeResult = result.getCommandExecuteResult();
-
-        if (executeResult.isSuccessful()) {
-            throw new AssertionError("Command was successful executed");
+        if (result.isSuccessful()) {
+            throw new AssertionError("Command was successful executed with result " + result.getResult());
         }
 
-        if (!executeResult.getException().getClass().equals(exception)) {
-            throw new AssertionFailedError("Command throws different exception", exception, executeResult.getException().getClass());
+        if (!result.getThrowable().getClass().equals(exception)) {
+            throw new AssertionFailedError("Command throws different exception", result.getThrowable());
         }
 
         return this;
@@ -85,15 +76,13 @@ public class AssertExecute {
             throw new AssertionError("Command was not failed.");
         }
 
-        FailedReason failedReason = result.getFailedReason();
+        Object error = result.getError();
 
-        if (failedReason.isEmpty()) {
+        if (error == null) {
             throw new AssertionError("Failed reason is empty");
         }
 
-        assertInstanceOf(type, failedReason.getReason());
-
-        return type.cast(failedReason.getReason());
+        return assertInstanceOf(type, error);
     }
 
     public AssertExecute assertFailure(Object reason) {
@@ -101,13 +90,13 @@ public class AssertExecute {
             throw new AssertionError("Command was not failed.");
         }
 
-        FailedReason failedReason = result.getFailedReason();
+        Object error = result.getError();
 
-        if (failedReason.isEmpty()) {
+        if (error == null) {
             throw new AssertionError("Failed reason is empty");
         }
 
-        assertEquals(reason, failedReason.getReason());
+        assertEquals(reason, error);
 
         return this;
     }

@@ -18,21 +18,21 @@ class CustomValidatorTest extends LiteTestSpec {
 
     static class ValidValidator implements Validator<TestSender> {
         @Override
-        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender, ?> executor) {
             return Flow.continueFlow();
         }
     }
 
     static class InvalidValidator implements Validator<TestSender> {
         @Override
-        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender, ?> executor) {
             return Flow.terminateFlow("invalid");
         }
     }
 
     static class InvalidCanBeIgnoredValidator implements Validator<TestSender> {
         @Override
-        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender> executor) {
+        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender, ?> executor) {
             return Flow.stopCurrentFlow("invalid-can-be-ignored");
         }
     }

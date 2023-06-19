@@ -15,6 +15,8 @@ import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.editor.Editor;
+import dev.rollczi.litecommands.exception.ExceptionHandleService;
+import dev.rollczi.litecommands.exception.ExceptionHandler;
 import dev.rollczi.litecommands.result.ResultHandler;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
@@ -70,6 +72,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final ContextRegistry<SENDER> contextRegistry;
     protected final WrapperRegistry wrapperRegistry;
     protected final ResultService<SENDER> resultService;
+    protected final ExceptionHandleService<SENDER> exceptionHandleService;
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector;
 
     /**
@@ -93,6 +96,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             new ContextRegistry<>(),
             new WrapperRegistry(),
             new ResultService<>(),
+            new ExceptionHandleService<>(),
             new CommandBuilderCollector<>()
         );
     }
@@ -118,6 +122,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             pattern.getContextRegistry(),
             pattern.getWrapperRegistry(),
             pattern.getResultService(),
+            pattern.getExceptionHandleService(),
             pattern.getCommandBuilderCollector()
         );
     }
@@ -140,6 +145,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         ContextRegistry<SENDER> contextRegistry,
         WrapperRegistry wrapperRegistry,
         ResultService<SENDER> resultService,
+        ExceptionHandleService<SENDER> exceptionHandleService,
         CommandBuilderCollector<SENDER> commandBuilderCollector
     ) {
         this.senderClass = senderClass;
@@ -156,6 +162,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.contextRegistry = contextRegistry;
         this.wrapperRegistry = wrapperRegistry;
         this.resultService = resultService;
+        this.exceptionHandleService = exceptionHandleService;
         this.commandBuilderCollector = commandBuilderCollector;
     }
 
@@ -166,7 +173,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
         this.platform.setConfiguration(newConfig);
 
-        return this.getThis();
+        return this;
     }
 
     @Override
@@ -336,13 +343,15 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <E extends Throwable> LiteCommandsBuilder<SENDER, C, B> exception(Class<E> exceptionType, ResultHandler<SENDER, ? extends E> handler) {
-        return null;
+    public <E extends Throwable> LiteCommandsBuilder<SENDER, C, B> exception(Class<E> exceptionType, ExceptionHandler<SENDER, ? extends E> handler) {
+        this.exceptionHandleService.registerHandler(exceptionType, handler);
+        return this;
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> exceptionUnexpected(ResultHandler<SENDER, Throwable> handler) {
-        return null;
+    public LiteCommandsBuilder<SENDER, C, B> exceptionUnexpected(ExceptionHandler<SENDER, Throwable> handler) {
+        this.exceptionHandleService.registerUnexpectedHandler(handler);
+        return this;
     }
 
     @Override
@@ -399,7 +408,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             throw new IllegalStateException("No platform was set");
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService, exceptionHandleService);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(argumentParserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER, C> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
@@ -510,9 +519,9 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         return this.commandBuilderCollector;
     }
 
-    @SuppressWarnings("unchecked")
-    protected B getThis() {
-        return (B) this;
+    @Override
+    public ExceptionHandleService<SENDER> getExceptionHandleService() {
+        return this.exceptionHandleService;
     }
 
 }

@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.input.Input;
-import dev.rollczi.litecommands.command.requirements.CommandArgumentRequirement;
-import dev.rollczi.litecommands.command.requirements.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.CommandArgumentRequirement;
+import dev.rollczi.litecommands.command.requirement.CommandRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
 import dev.rollczi.litecommands.meta.CommandMeta;
@@ -109,12 +109,12 @@ class JDACommandTranslator {
     }
 
     private <SENDER> void translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
-        List<CommandExecutor<SENDER>> executors = route.getExecutors();
+        List<CommandExecutor<SENDER, ?>> executors = route.getExecutors();
         if (executors.size() != 1) {
             throw new IllegalArgumentException("Discrod command cannot have more than one executor in same route");
         }
 
-        CommandExecutor<SENDER> executor = executors.get(0);
+        CommandExecutor<SENDER, ?> executor = executors.get(0);
 
         for (CommandRequirement<SENDER, ?> requirement : executor.getRequirements()) {
             if (!(requirement instanceof CommandArgumentRequirement<SENDER, ?> argumentRequirement)) {

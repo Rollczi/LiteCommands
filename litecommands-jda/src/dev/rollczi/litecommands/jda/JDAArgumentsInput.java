@@ -10,7 +10,7 @@ import dev.rollczi.litecommands.argument.input.ArgumentsInput;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.util.ReflectUtil;
+import dev.rollczi.litecommands.reflect.ReflectUtil;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.HashSet;

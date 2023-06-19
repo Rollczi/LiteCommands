@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.validator.Validator;
 public class MissingPermissionValidator<SENDER> implements Validator<SENDER> {
 
     @Override
-    public Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> command, CommandExecutor<SENDER> executor) {
+    public Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> command, CommandExecutor<SENDER, ?> executor) {
         MissingPermissions missingPermissions = MissingPermissions.check(invocation.platformSender(), command, executor);
 
         if (missingPermissions.isMissing()) {

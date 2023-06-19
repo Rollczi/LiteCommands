@@ -7,11 +7,12 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.argument.parser.ArgumentRawInputParser;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.argument.input.RawInput;
-import dev.rollczi.litecommands.command.requirements.CommandArgumentRequirement;
-import dev.rollczi.litecommands.command.requirements.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.RequirementMatch;
+import dev.rollczi.litecommands.command.requirement.CommandArgumentRequirement;
+import dev.rollczi.litecommands.command.requirement.CommandRequirement;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
+import dev.rollczi.litecommands.command.requirement.CommandRequirementResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.wrapper.Wrap;
@@ -31,7 +32,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
     }
 
     @Override
-    protected CommandExecutorMatchResult match(List<Match<CommandRequirement<SENDER, ?>>> results) {
+    public CommandExecutorMatchResult match(List<RequirementMatch<CommandRequirement<SENDER, ?>>> results) {
         return null;
     }
 
@@ -83,7 +84,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Comman
         }
 
         @Override
-        public <MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandRequirementResult<PARSED> check(Invocation<SENDER> invocation, MATCHER matcher) {
+        public <MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandRequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
             ArgumentResult<PARSED> matchArgument = matcher.nextArgument(invocation, argument, parserSet);
 
             if (matchArgument.isFailed()) {

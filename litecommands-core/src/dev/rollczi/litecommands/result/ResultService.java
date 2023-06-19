@@ -1,10 +1,6 @@
 package dev.rollczi.litecommands.result;
 
-import dev.rollczi.litecommands.argument.FailedReason;
-import dev.rollczi.litecommands.command.CommandExecuteResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.invocation.InvocationResult;
-import panda.std.Option;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,45 +18,8 @@ public class ResultService<SENDER> {
         this.mappers.put(resultType, mapper);
     }
 
-    public void resolveInvocation(InvocationResult<SENDER> invocationResult) {
-        Invocation<SENDER> invocation = invocationResult.getInvocation();
-
-        if (invocationResult.isInvoked()) {
-            this.resolveCommandExecuteResult(invocation, invocationResult.getCommandExecuteResult());
-            return;
-        }
-
-        this.resolveFailedReason(invocation, invocationResult.getFailedReason());
-    }
-
-    public void resolveCommandExecuteResult(Invocation<SENDER> invocation, CommandExecuteResult result) {
-        if (result.isSuccessful()) {
-            Option<Object> resultResult = result.getResult();
-
-            if (resultResult.isPresent()) {
-                this.resolveObject(invocation, resultResult.get());
-            }
-
-            return;
-        }
-
-        Exception exception = result.getException();
-
-        this.resolveException(invocation, exception);
-    }
-
-    public void resolveFailedReason(Invocation<SENDER> invocation, FailedReason failedReason) {
-        if (failedReason.isEmpty()) {
-            return;
-        }
-
-        Object reason = failedReason.getReason();
-
-        this.resolveObject(invocation, reason);
-    }
-
     @SuppressWarnings("unchecked")
-    public <T> void resolveObject(Invocation<SENDER> invocation, T result) {
+    public <T> void resolve(Invocation<SENDER> invocation, T result) {
         Class<T> type = (Class<T>) result.getClass();
         ResultHandler<SENDER, T> handler = this.getHandler(type);
 
@@ -69,18 +28,6 @@ public class ResultService<SENDER> {
         }
 
         handler.handle(invocation, result);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <E extends Exception> void resolveException(Invocation<SENDER> invocation, E exception) {
-        Class<E> exceptionClass = (Class<E>) exception.getClass();
-        ResultHandler<SENDER, E> handler = this.getHandler(exceptionClass);
-
-        if (handler == null) {
-            throw new ResultHandleException("Unhandled exception", exception);
-        }
-
-        handler.handle(invocation, exception);
     }
 
     @SuppressWarnings("unchecked")
@@ -110,7 +57,7 @@ public class ResultService<SENDER> {
             return (invocation, result) -> {
                 Object mapped = mapper.map(invocation, result);
 
-                this.resolveObject(invocation, mapped);
+                this.resolve(invocation, mapped);
             };
         }
 

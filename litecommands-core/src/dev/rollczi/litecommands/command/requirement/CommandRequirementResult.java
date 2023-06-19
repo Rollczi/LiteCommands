@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.requirements;
+package dev.rollczi.litecommands.command.requirement;
 
 import dev.rollczi.litecommands.argument.FailedReason;
 import dev.rollczi.litecommands.wrapper.Wrap;

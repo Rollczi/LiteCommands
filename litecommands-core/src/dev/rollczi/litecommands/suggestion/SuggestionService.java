@@ -6,8 +6,8 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.requirements.CommandArgumentRequirement;
-import dev.rollczi.litecommands.command.requirements.CommandRequirement;
+import dev.rollczi.litecommands.command.requirement.CommandArgumentRequirement;
+import dev.rollczi.litecommands.command.requirement.CommandRequirement;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.input.SuggestionInputMatcher;
@@ -36,7 +36,7 @@ public class SuggestionService<SENDER> {
 
         SuggestionResult all = SuggestionResult.empty();
 
-        for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
+        for (CommandExecutor<SENDER, ?> executor : commandRoute.getExecutors()) {
             Flow flow = this.validatorService.validate(invocation, commandRoute, executor);
 
             if (flow.isTerminate() || flow.isStopCurrent()) {
@@ -70,7 +70,7 @@ public class SuggestionService<SENDER> {
     public <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggestExecutor(
         Invocation<SENDER> invocation,
         MATCHER matcher,
-        CommandExecutor<SENDER> executor
+        CommandExecutor<SENDER, ?> executor
     ) {
         for (CommandRequirement<SENDER, ?> requirement : executor.getRequirements()) {
             if (!(requirement instanceof CommandArgumentRequirement)) {

@@ -1,9 +1,6 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.command.requirements.CommandRequirement;
-import dev.rollczi.litecommands.command.requirements.CommandRequirementResult;
-import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
-import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.command.requirement.CommandRequirement;
 import dev.rollczi.litecommands.meta.CommandMeta;
 
 import java.util.ArrayList;
@@ -11,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends CommandRequirement<SENDER, ?>> implements CommandExecutor<SENDER> {
+public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends CommandRequirement<SENDER, ?>> implements CommandExecutor<SENDER, REQUIREMENT> {
 
     protected final List<REQUIREMENT> requirements = new ArrayList<>();
     protected final CommandMeta meta = CommandMeta.create();
@@ -26,51 +23,8 @@ public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Comman
     }
 
     @Override
-    public List<CommandRequirement<SENDER, ?>> getRequirements() {
+    public List<REQUIREMENT> getRequirements() {
         return Collections.unmodifiableList(requirements);
-    }
-
-    @Override
-    public <MATCHER extends ArgumentsInputMatcher<MATCHER>> CommandExecutorMatchResult match(Invocation<SENDER> invocation, MATCHER matcher) {
-        List<Match<REQUIREMENT>> results = new ArrayList<>();
-
-        for (REQUIREMENT requirement : requirements) {
-            CommandRequirementResult<?> result = requirement.check(invocation, matcher);
-
-            if (!result.isSuccess()) {
-                return CommandExecutorMatchResult.failed(result.getFailedReason());
-            }
-
-            results.add(new Match<>(requirement, result));
-        }
-
-        ArgumentsInputMatcher.EndResult endResult = matcher.endMatch();
-
-        if (!endResult.isSuccessful()) {
-            return CommandExecutorMatchResult.failed(endResult.getFailedReason());
-        }
-
-        return match(results);
-    }
-
-    protected abstract CommandExecutorMatchResult match(List<Match<REQUIREMENT>> results);
-
-    protected static class Match<ARGUMENT> {
-        private final ARGUMENT argument;
-        private final CommandRequirementResult<?> result;
-
-        private Match(ARGUMENT argument, CommandRequirementResult<?> result) {
-            this.argument = argument;
-            this.result = result;
-        }
-
-        public ARGUMENT getArgument() {
-            return argument;
-        }
-
-        public CommandRequirementResult<?> getResult() {
-            return result;
-        }
     }
 
 }
