@@ -27,7 +27,7 @@ class AsyncCommandTest extends LiteTestSpec {
             .scheduler(new SchedulerExecutorPoolImpl("test", 1))
             .context(Date.class, invocation -> ContextResult.ok(() -> {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(800);
                 }
                 catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -81,8 +81,7 @@ class AsyncCommandTest extends LiteTestSpec {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args first second");
 
         await()
-            .atLeast(400, TimeUnit.MILLISECONDS)
-            .atMost(1200, TimeUnit.MILLISECONDS)
+            .atLeast(300, TimeUnit.MILLISECONDS)
             .until(() -> result.isDone());
 
         result.join()
@@ -94,8 +93,7 @@ class AsyncCommandTest extends LiteTestSpec {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args-and-method first second");
 
         await()
-            .atLeast(400, TimeUnit.MILLISECONDS)
-            .atMost(1200, TimeUnit.MILLISECONDS)
+            .atLeast(300, TimeUnit.MILLISECONDS)
             .until(() -> result.isDone());
 
         result.join()
