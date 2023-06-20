@@ -15,16 +15,16 @@ import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher
 
 import java.util.concurrent.CompletableFuture;
 
-public class CommandManager<SENDER, C extends PlatformSettings> {
+public class CommandManager<SENDER> {
 
     private final CommandRootRouteImpl<SENDER> root = new CommandRootRouteImpl<>();
 
-    private final Platform<SENDER, C> platform;
+    private final Platform<SENDER, ?> platform;
 
     private final CommandExecuteService<SENDER> executeService;
     private final SuggestionService<SENDER> suggestionService;
 
-    public CommandManager(Platform<SENDER, C> platform, CommandExecuteService<SENDER> executeService, SuggestionService<SENDER> suggestionService) {
+    public CommandManager(Platform<SENDER, ?> platform, CommandExecuteService<SENDER> executeService, SuggestionService<SENDER> suggestionService) {
         this.platform = platform;
         this.executeService = executeService;
         this.suggestionService = suggestionService;

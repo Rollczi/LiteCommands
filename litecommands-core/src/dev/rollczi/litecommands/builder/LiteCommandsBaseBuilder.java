@@ -328,9 +328,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             throw new IllegalStateException("No platform was set");
         }
 
+        if (this.preProcessor != null) {
+            this.preProcessor.process(this, this);
+        }
+
         CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService, exceptionHandleService, scheduler);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
-        CommandManager<SENDER, C> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
+        CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
         List<CommandBuilder<SENDER>> collectedContexts = this.commandBuilderCollector.collectAndMergeCommands();
 
@@ -342,6 +346,10 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             for (CommandRoute<SENDER> commandRoute : context.build(commandManager.getRoot())) {
                 commandManager.register(commandRoute);
             }
+        }
+
+        if (this.postProcessor != null) {
+            this.postProcessor.process(this, this);
         }
 
         LiteCommandsBase<SENDER> liteCommand = new LiteCommandsBase<>(commandManager);

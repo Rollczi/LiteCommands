@@ -2,6 +2,9 @@ package dev.rollczi.litecommands.argument.parser;
 
 import dev.rollczi.litecommands.util.MapUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +38,15 @@ class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
         return parent.getParser(inType);
     }
 
+    @Override
+    public Collection<Parser<SENDER, ?, PARSED>> getParsers() {
+        ArrayList<Parser<SENDER, ?, PARSED>> list = new ArrayList<>(parsers.values());
+
+        list.addAll(parent.getParsers());
+
+        return Collections.unmodifiableList(list);
+    }
+
     public Class<PARSED> getParsedType() {
         return parsedType;
     }
@@ -47,6 +59,11 @@ class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
         @Override
         public <INPUT> Optional<Parser<SENDER, INPUT, PARSED>> getParser(Class<INPUT> inType) {
             return Optional.empty();
+        }
+
+        @Override
+        public Collection<Parser<SENDER, ?, PARSED>> getParsers() {
+            return Collections.emptyList();
         }
 
         public Class<PARSED> getParsedType() {

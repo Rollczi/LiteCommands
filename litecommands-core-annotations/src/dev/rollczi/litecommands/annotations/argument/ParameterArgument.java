@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,6 +20,8 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
     private final Class<A> annotationType;
 
     private final WrapFormat<EXPECTED, ?> wrapFormat;
+
+    private @Nullable String overrideName;
 
     protected ParameterArgument(Method method, Parameter parameter, int parameterIndex, A annotation, Class<A> annotationType, WrapFormat<EXPECTED, ?> wrapFormat) {
         this.method = method;
@@ -56,7 +59,15 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
 
     @Override
     public String getName() {
+        if (overrideName != null) {
+            return overrideName;
+        }
+
         return this.getParameter().getName();
+    }
+
+    void overrideName(String name) {
+        this.overrideName = name;
     }
 
     @SuppressWarnings("unchecked")

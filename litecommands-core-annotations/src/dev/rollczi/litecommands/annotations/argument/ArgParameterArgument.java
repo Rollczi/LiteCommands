@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;

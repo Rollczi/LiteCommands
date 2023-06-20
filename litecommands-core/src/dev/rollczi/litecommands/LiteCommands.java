@@ -6,7 +6,7 @@ public interface LiteCommands<SENDER> {
 
     String VERSION = "3.0.0-BETA-pre2";
 
-    CommandManager<SENDER, ?> getCommandManager();
+    CommandManager<SENDER> getCommandManager();
 
     void register();
 

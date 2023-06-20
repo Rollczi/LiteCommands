@@ -1,7 +1,10 @@
 package dev.rollczi.litecommands.annotations;
 
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;
 import dev.rollczi.litecommands.unit.TestSettings;
 import dev.rollczi.litecommands.unit.TestPlatform;
@@ -17,6 +20,7 @@ import java.util.stream.Collectors;
 
 public class LiteTestSpec {
 
+    protected static LiteCommands<TestSender> liteCommands;
     protected static TestPlatform platform;
 
     @BeforeAll
@@ -33,11 +37,12 @@ public class LiteTestSpec {
             .filter(declaredClass -> declaredClass.isAnnotationPresent(Command.class) || declaredClass.isAnnotationPresent(RootCommand.class))
             .toArray(Class<?>[]::new);
 
-        platform = LiteCommandsTestFactory.startPlatform(builder -> {
-            builder.commands(LiteAnnotationCommands.ofClasses(commands));
+        platform = new TestPlatform();
 
-            return configureLiteTest(builder, type);
-        });
+        liteCommands = LiteCommandsFactory.builder(TestSender.class, platform)
+            .commands(LiteAnnotationCommands.ofClasses(commands))
+            .preProcessor((builder, pattern) -> configureLiteTest(builder, type))
+            .build(true);
     }
 
     private static dev.rollczi.litecommands.builder.LiteCommandsBuilder<TestSender, TestSettings, ?> configureLiteTest(dev.rollczi.litecommands.builder.LiteCommandsBuilder<TestSender, TestSettings, ?> builder, Class<?> type) {

@@ -21,6 +21,7 @@ import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.std.ValueWrapper;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +60,11 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
                         return parser.apply(invocation, input.next());
                     }
                 });
+            }
+
+            @Override
+            public Collection<Parser<SENDER, ?, T>> getParsers() {
+                return Collections.emptyList();
             }
         }));
 
