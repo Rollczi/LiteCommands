@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParser;
 import dev.rollczi.litecommands.argument.parser.ArgumentTypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.context.ContextProvider;
+import dev.rollczi.litecommands.context.LegacyContextProvider;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;

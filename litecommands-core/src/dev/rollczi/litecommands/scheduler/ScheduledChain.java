@@ -5,14 +5,17 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R> {
 
     private final List<CHAIN> chain = new ArrayList<>();
-    private final Function<T, R> mapper;
+    private final BiFunction<CHAIN, T, R> mapper;
 
-    private ScheduledChain(Collection<CHAIN> chain, Function<T, R> mapper) {
+    private ScheduledChain(Collection<CHAIN> chain, BiFunction<CHAIN, T, R> mapper) {
         this.chain.addAll(chain);
         this.mapper = mapper;
     }
@@ -23,11 +26,11 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
         return collector.collect();
     }
 
-    public static <CHAIN extends ScheduledChainLink<T>, T> Builder<CHAIN, T> builder() {
+    public static <CHAIN extends ScheduledChainLink<? extends T>, T> Builder<CHAIN, T> builder() {
         return new Builder<>();
     }
 
-    public static class Builder<CHAIN extends ScheduledChainLink<T>, T> {
+    public static class Builder<CHAIN extends ScheduledChainLink<? extends T>, T> {
 
         private final List<CHAIN> chain = new ArrayList<>();
 
@@ -42,7 +45,15 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
         }
 
         public <R> ScheduledChain<CHAIN, T, R> build(Function<T, R> mapper) {
+            return new ScheduledChain<>(chain, (chain1, t) -> mapper.apply(t));
+        }
+
+        public <R> ScheduledChain<CHAIN, T, R> build(BiFunction<CHAIN, T, R> mapper) {
             return new ScheduledChain<>(chain, mapper);
+        }
+
+        public ScheduledChain<CHAIN, T, T> build() {
+            return build(t -> t);
         }
 
     }
@@ -59,38 +70,23 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
         }
 
         CompletableFuture<List<R>> collect() {
-            return collect(new CompletableFuture<>());
+            return collect(new ArrayList<>());
         }
 
-        private CompletableFuture<List<R>> collect(CompletableFuture<List<R>> future) {
+        private CompletableFuture<List<R>> collect(List<R> results) {
             if (!chainLinkIterator.hasNext()) {
-                future.complete(results);
-                return future;
+                return completedFuture(results);
             }
 
-            ScheduledChainLink<? extends T> chainLink = chainLinkIterator.next();
+            CHAIN chainLink = chainLinkIterator.next();
 
-            scheduler.schedule(chainLink.type(), () -> {
-                try {
-                    T result = chainLink.call();
+            return scheduler
+                .supply(chainLink.type(), () -> mapper.apply(chainLink, chainLink.call()))
+                .thenCompose(returnValue -> {
+                    results.add(returnValue);
 
-                    results.add(mapper.apply(result));
-                }
-                catch (ScheduledChainException exception) {
-                    if (!chainLink.equals(exception.getLink())) {
-                        future.completeExceptionally(new ScheduledChainException(exception.getCause(), chainLink));
-                    }
-
-                    future.completeExceptionally(exception);
-                }
-                catch (Throwable throwable) {
-                    future.completeExceptionally(new ScheduledChainException(throwable, chainLink));
-                }
-
-                this.collect(future);
-            });
-
-            return future;
+                    return this.collect(results);
+                });
         }
 
     }

@@ -25,9 +25,17 @@ public class SuggestionService<SENDER> {
         this.validatorService = validatorService;
     }
 
-    public <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggest(
+    public SuggestionResult suggest(
         Invocation<SENDER> invocation,
-        MATCHER matcher,
+        SuggestionInputMatcher<?> matcher,
+        CommandRoute<SENDER> commandRoute
+    ) {
+        return this.suggest0(invocation, matcher, commandRoute);
+    }
+
+    private <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggest0(
+        Invocation<SENDER> invocation,
+        SuggestionInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
         if (matcher.hasNoNextRouteAndArguments()) {

@@ -3,7 +3,7 @@ Modern TODO
 - [x] @Route
 - [x] @RootRoute
 - [x] @Execute
-- [ ] @ExecuteAsync vs @Execute(async = true)
+- [x] @Async @Execute
 - [ ] @Timeout(second = 10)
 - [x] @Arg
 - [x] @Arg Option<T>
@@ -12,7 +12,7 @@ Modern TODO
 - [x] @Arg CompletableFuture<User>
 - [ ] Support String and basic types
 - [ ] @Joiner String
-- [ ] @AsyncArg
+- [x] @Async @Arg
 - [x] @Permission
 - [ ] @Arg @Range(min = 1, max = 10) int
 - [ ] @Flag for booleans

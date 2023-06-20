@@ -2,6 +2,7 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.builder.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.scope.Scope;
@@ -28,10 +29,10 @@ public final class LiteCommandsFactory {
             .wrapper(new OptionalWrapper())
             .wrapper(new CompletableFutureWrapper())
 
-            .context(senderClass, invocation -> Result.ok(invocation.sender()))
-            .context(String[].class, invocation -> Result.ok(invocation.arguments().asArray()))
-            .context(PlatformSender.class, invocation -> Result.ok(invocation.platformSender()))
-            .context(Invocation.class, invocation -> Result.ok(invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
+            .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
+            .context(String[].class, invocation -> ContextResult.ok(() -> invocation.arguments().asArray()))
+            .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
+            .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
             .validator(Scope.global(), new MissingPermissionValidator<>())
 

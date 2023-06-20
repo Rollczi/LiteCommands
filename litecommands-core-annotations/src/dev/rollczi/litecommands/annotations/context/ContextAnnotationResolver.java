@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
@@ -51,10 +52,10 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
 
         @Override
         public <CONTEXT extends ArgumentsInputMatcher<CONTEXT>> RequirementResult<EXPECTED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
-            Result<EXPECTED, Object> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
+            ContextResult<EXPECTED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
-            if (result.isOk()) {
-                return RequirementResult.success(() -> wrapper.create(result::get, wrapFormat));
+            if (result.hasResult()) {
+                return RequirementResult.success(() -> wrapper.create(() -> result.getResult(), wrapFormat));
             }
 
             return RequirementResult.failure(result.getError());

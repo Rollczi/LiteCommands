@@ -13,6 +13,8 @@ import dev.rollczi.litecommands.suggestion.SuggestionService;
 import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
 import dev.rollczi.litecommands.suggestion.input.SuggestionInputMatcher;
 
+import java.util.concurrent.CompletableFuture;
+
 public class CommandManager<SENDER, C extends PlatformSettings> {
 
     private final CommandRootRouteImpl<SENDER> root = new CommandRootRouteImpl<>();
@@ -52,17 +54,16 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
         }
 
         @Override
-        public CommandExecuteResult execute(Invocation<SENDER> invocation, ArgumentsInput<?> arguments) {
-            ArgumentsInputMatcher matcher = arguments.createMatcher();
+        public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ArgumentsInput<?> arguments) {
+            ArgumentsInputMatcher<?> matcher = arguments.createMatcher();
             CommandRoute<SENDER> commandRoute = findRoute(this.commandRoute, matcher);
 
             return executeService.execute(invocation, matcher, commandRoute);
         }
 
-
         @Override
         public SuggestionResult suggest(Invocation<SENDER> invocation, SuggestionInput<?> suggestion) {
-            SuggestionInputMatcher matcher = suggestion.createMatcher();
+            SuggestionInputMatcher<?> matcher = suggestion.createMatcher();
             CommandRoute<SENDER> find = findRoute(this.commandRoute, matcher);
 
             return suggestionService.suggest(invocation, matcher, find);

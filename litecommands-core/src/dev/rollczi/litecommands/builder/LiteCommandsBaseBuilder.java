@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.argument.parser.ArgumentTypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.command.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
+import dev.rollczi.litecommands.context.LegacyContextProvider;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
@@ -408,7 +409,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             throw new IllegalStateException("No platform was set");
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService, exceptionHandleService);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService, exceptionHandleService, scheduler);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(argumentParserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER, C> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 

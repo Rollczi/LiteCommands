@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.unit;
 
-import dev.rollczi.litecommands.command.CommandExecuteResult;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.argument.input.ArgumentsInput;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -12,6 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class TestPlatform implements Platform<TestSender, TestSettings> {
 
@@ -48,6 +51,15 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
     }
 
     public AssertExecute execute(String command) {
+        try {
+            return this.executeAsync(command).get(5, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public CompletableFuture<AssertExecute> executeAsync(String command) {
         String label = command.split(" ")[0];
         String[] args = command.length() > label.length()
             ? command.substring(label.length() + 1).split(" ")
@@ -58,10 +70,19 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
             args[args.length - 1] = "";
         }
 
-        return this.execute(label, args);
+        return this.executeAsync(label, args);
     }
 
     public AssertExecute execute(String command, String... arguments) {
+        try {
+            return this.executeAsync(command, arguments).get(5, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public CompletableFuture<AssertExecute> executeAsync(String command, String... arguments) {
         TestSender testSender = new TestSender();
         TestPlatformSender testPlatformSender = new TestPlatformSender();
 
@@ -72,9 +93,9 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
         for (Map.Entry<CommandRoute<TestSender>, PlatformInvocationListener<TestSender>> entry : this.executeListeners.entrySet()) {
             if (entry.getKey().isNameOrAlias(command)) {
                 PlatformInvocationListener<TestSender> listener = entry.getValue();
-                CommandExecuteResult execute = listener.execute(invocation, ArgumentsInput.raw(arguments));
 
-                return new AssertExecute(execute);
+                return listener.execute(invocation, ArgumentsInput.raw(arguments))
+                    .thenApply(result -> new AssertExecute(result));
             }
         }
 

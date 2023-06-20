@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.scheduler;
 
-public enum SchedulerTaskType {
+public enum SchedulerPollType {
     SYNC,
     ASYNC
 }

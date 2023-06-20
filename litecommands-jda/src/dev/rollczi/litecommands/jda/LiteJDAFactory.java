@@ -2,6 +2,8 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.invocation.Invocation;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -46,12 +48,16 @@ public final class LiteJDAFactory {
             .result(String.class, new StringHandler())
             .result(RestAction.class, new RestActionHandler())
 
-            .context(Guild.class, invocation -> invocation.context().get(Guild.class).toResult("Guild is not present"))
-            .context(MessageChannelUnion.class, invocation -> invocation.context().get(MessageChannelUnion.class).toResult("Channel is not present"))
-            .context(Member.class, invocation -> invocation.context().get(Member.class).toResult("Member is not present"))
-            .context(SlashCommandInteractionEvent.class, invocation -> invocation.context().get(SlashCommandInteractionEvent.class).toResult("SlashCommandInteractionEvent is not present"))
-
+            .context(Guild.class, invocation -> from(invocation, Guild.class))
+            .context(MessageChannelUnion.class, invocation -> from(invocation, MessageChannelUnion.class))
+            .context(Member.class, invocation -> from(invocation, Member.class))
+            .context(SlashCommandInteractionEvent.class, invocation -> from(invocation, SlashCommandInteractionEvent.class))
             ;
     }
 
+    private static <T> ContextResult<T> from(Invocation<User> invocation, Class<T> type) {
+        return invocation.context().get(type)
+            .map(t -> ContextResult.ok(() -> t))
+            .orElseGet(() -> ContextResult.error(type.getSimpleName() + " is not present"));
+    }
 }

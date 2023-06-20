@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.annotations.command;
 
+import dev.rollczi.litecommands.annotations.command.requirement.RequirementAnnotation;
 import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.reflect.ReflectFormatUtil;
 
 import java.lang.annotation.Annotation;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MethodCommandExecutorService<SENDER> {
 
@@ -54,21 +57,27 @@ public class MethodCommandExecutorService<SENDER> {
         List<ParameterRequirement<SENDER, ?>> preparedArguments = new ArrayList<>();
 
         for (Annotation annotation : annotations) {
-            preparedArguments.add(this.resolveParameterWithAnnotation(parameter, annotation));
+            Optional<ParameterRequirement<SENDER, ?>> requirementOptional = this.resolveParameterWithAnnotation(parameter, annotation);
+
+            requirementOptional.ifPresent(requirement -> preparedArguments.add(requirement));
         }
 
         return preparedArguments;
     }
 
     @SuppressWarnings("unchecked")
-    private <A extends Annotation> ParameterRequirement<SENDER, ?> resolveParameterWithAnnotation(Parameter parameter, A annotation) {
+    private <A extends Annotation> Optional<ParameterRequirement<SENDER, ?>> resolveParameterWithAnnotation(Parameter parameter, A annotation) {
         ParameterWithAnnotationResolver<SENDER, A> resolver = (ParameterWithAnnotationResolver<SENDER, A>) resolvers.get(annotation.annotationType());
 
         if (resolver == null) {
-            throw new IllegalArgumentException("Can not resolve " + ReflectFormatUtil.parameter(parameter, annotation));
+            if (!annotation.annotationType().isAnnotationPresent(RequirementAnnotation.class)) {
+                return Optional.empty();
+            }
+
+            throw new LiteCommandsReflectException(parameter.getDeclaringExecutable(), parameter, "Can not find resolver for annotation @" + annotation.annotationType().getSimpleName());
         }
 
-        return resolver.resolve(parameter, annotation);
+        return Optional.of(resolver.resolve(parameter, annotation));
     }
 
 }

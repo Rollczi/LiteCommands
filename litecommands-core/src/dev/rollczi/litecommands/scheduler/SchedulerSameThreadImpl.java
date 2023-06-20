@@ -1,15 +1,18 @@
 package dev.rollczi.litecommands.scheduler;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+
 public class SchedulerSameThreadImpl implements Scheduler {
 
     @Override
-    public void sync(Runnable runnable) {
-        runnable.run();
+    public <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
+        return CompletableFuture.completedFuture(supplier.get());
     }
 
     @Override
-    public void async(Runnable runnable) {
-        runnable.run();
+    public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
+        return CompletableFuture.completedFuture(supplier.get());
     }
 
     @Override

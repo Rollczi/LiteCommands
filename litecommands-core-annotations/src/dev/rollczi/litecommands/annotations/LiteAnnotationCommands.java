@@ -2,6 +2,8 @@ package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.ArgAnnotationResolver;
+import dev.rollczi.litecommands.annotations.async.Async;
+import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
 import dev.rollczi.litecommands.annotations.command.MethodCommandExecutorService;
 import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.annotations.command.ParameterWithoutAnnotationResolver;
@@ -127,6 +129,7 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
 
             .annotation(Meta.class, new Meta.AnnotationResolver<>())
             .annotation(Description.class, new DescriptionAnnotationResolver<>())
+            .annotation(Async.class, new AsyncAnnotationResolver<>())
             .annotation(Permission.class, new Permission.AnnotationResolver<>())
             .annotation(Permissions.class, new Permissions.AnnotationResolver<>())
             .annotation(Validate.class, new Validate.AnnotationResolver<>())

@@ -10,7 +10,6 @@ import dev.rollczi.litecommands.suggestion.Suggester;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import panda.std.Blank;
 
 import java.util.Collections;
 import java.util.List;

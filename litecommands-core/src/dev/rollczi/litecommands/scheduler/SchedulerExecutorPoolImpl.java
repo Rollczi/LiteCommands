@@ -1,8 +1,10 @@
 package dev.rollczi.litecommands.scheduler;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class SchedulerExecutorPoolImpl implements Scheduler {
 
@@ -38,24 +40,17 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
     }
 
     @Override
-    public void sync(Runnable runnable) {
+    public <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
         if (isMainThread.get()) {
-            runnable.run();
-            return;
+            return CompletableFuture.completedFuture(supplier.get());
         }
 
-        mainExecutor.submit(() -> {
-            if (!isMainThread.get()) {
-                throw new IllegalStateException("Main thread is not main!");
-            }
-
-            runnable.run();
-        });
+        return CompletableFuture.supplyAsync(supplier, mainExecutor);
     }
 
     @Override
-    public void async(Runnable runnable) {
-        asyncExecutor.submit(runnable);
+    public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
+        return CompletableFuture.supplyAsync(supplier, asyncExecutor);
     }
 
     @Override

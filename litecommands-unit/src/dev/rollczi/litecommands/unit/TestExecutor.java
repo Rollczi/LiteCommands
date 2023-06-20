@@ -7,7 +7,8 @@ import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
 import dev.rollczi.litecommands.argument.parser.ArgumentRawInputParser;
 import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.argument.input.RawInput;
-import dev.rollczi.litecommands.command.requirement.RequirementMatch;
+import dev.rollczi.litecommands.command.CommandExecuteResult;
+import dev.rollczi.litecommands.command.requirement.RequirementSuccessMatch;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
@@ -20,6 +21,7 @@ import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.implementations.ValueWrapper;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +29,16 @@ import java.util.function.BiFunction;
 
 public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requirement<SENDER, ?>> {
 
-    public TestExecutor() {
+    private final Object result;
+
+    public TestExecutor(Object result) {
         super(Collections.emptyList());
+        this.result = result;
     }
 
-    @Override
-    public CommandExecutorMatchResult match(List<RequirementMatch<Requirement<SENDER, ?>>> results) {
-        return null;
+    public TestExecutor() {
+        super(Collections.emptyList());
+        this.result = null;
     }
 
     public <T> TestExecutor<SENDER> withArg(String name, Class<T> type, BiFunction<Invocation<SENDER>, String, ArgumentResult<T>> parser) {
@@ -59,6 +64,11 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         }));
 
         return this;
+    }
+
+    @Override
+    public CommandExecutorMatchResult match(List<RequirementSuccessMatch<SENDER, Requirement<SENDER, ?>, Object>> results) {
+        return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(result));
     }
 
     private class TestArgumentRequirement<PARSED> implements ArgumentRequirement<SENDER, PARSED> {

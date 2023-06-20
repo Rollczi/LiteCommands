@@ -13,8 +13,10 @@ import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,7 +44,7 @@ class MethodCommandExecutorServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        bindRegistry.registerProvider(Invocation.class, invocation -> Result.ok(invocation)); // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
+        bindRegistry.registerProvider(Invocation.class, invocation -> ContextResult.ok(() -> invocation)); // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
         resolverRegistry.registerParser(String.class, ArgumentKey.of(), new StringArgumentResolver<>());
         resolverRegistry.registerParser(int.class, ArgumentKey.of(), NumberArgumentResolver.ofInteger());
 
@@ -69,7 +71,7 @@ class MethodCommandExecutorServiceTest {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
 
-        assertThrows(IllegalArgumentException.class, () -> new MethodCommandExecutorService<>().create(testCommand, method));
+        assertThrows(LiteCommandsReflectException.class, () -> new MethodCommandExecutorService<>().create(testCommand, method));
     }
 
 }

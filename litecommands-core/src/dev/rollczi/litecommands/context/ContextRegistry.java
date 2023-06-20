@@ -17,14 +17,14 @@ public class ContextRegistry<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Result<T, Object> provideContext(Class<T> clazz, Invocation<SENDER> invocation) {
+    public <T> ContextResult<T> provideContext(Class<T> clazz, Invocation<SENDER> invocation) {
         Option<ContextProvider<SENDER, ?>> bindContextual = MapUtil.findByInstanceOf(clazz, this.contextualBindings);
 
         if (bindContextual.isPresent()) {
-            return (Result<T, Object>) bindContextual.get().provide(invocation);
+            return (ContextResult<T>) bindContextual.get().provide(invocation);
         }
 
-        return Result.error("Cannot find binding for " + clazz.getName());
+        return ContextResult.error("Cannot find binding for " + clazz.getName());
     }
 
 }

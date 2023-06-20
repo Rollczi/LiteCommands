@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
+import dev.rollczi.litecommands.scheduler.SchedulerPollType;
 import dev.rollczi.litecommands.validator.Validator;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +14,7 @@ public interface CommandMeta {
     CommandKey<List<String>> PERMISSIONS = CommandKey.of("permissions", CommandMetaType.list(), Collections.emptyList());
     CommandKey<List<String>> PERMISSIONS_EXCLUDED = CommandKey.of("permissions-excluded", CommandMetaType.list(), Collections.emptyList());
     CommandKey<Boolean> NATIVE_PERMISSIONS = CommandKey.of("native-permissions", Boolean.class, false);
-    CommandKey<Boolean> ASYNCHRONOUS = CommandKey.of("asynchronous", Boolean.class, false);
+    CommandKey<SchedulerPollType> POLL_TYPE = CommandKey.of("poll-type", SchedulerPollType.class, SchedulerPollType.SYNC);
     CommandKey<Class> COMMAND_ORIGIN_TYPE = CommandKey.of("command-origin-class", Class.class);
     CommandKey<List<Class<? extends Validator<?>>>> VALIDATORS = CommandKey.of("validators", CommandMetaType.list(), Collections.emptyList());
 
