@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedInputMatcher> {
+class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedParseableInputMatcher> {
 
     private final List<String> routes = new ArrayList<>();
     private final Map<String, String> namedArguments = new LinkedHashMap<>();
@@ -25,8 +25,8 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedInp
     }
 
     @Override
-    public NamedInputMatcher createMatcher() {
-        return new NamedInputMatcher();
+    public NamedParseableInputMatcher createMatcher() {
+        return new NamedParseableInputMatcher();
     }
 
     @Override
@@ -41,15 +41,15 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedInp
         return Collections.unmodifiableList(rawArgs);
     }
 
-    public class NamedInputMatcher implements ParsableInputMatcher<NamedInputMatcher> {
+    public class NamedParseableInputMatcher implements ParsableInputMatcher<NamedParseableInputMatcher> {
 
         private final List<String> consumedArguments = new ArrayList<>();
 
         private int routePosition = 0;
 
-        public NamedInputMatcher() {}
+        public NamedParseableInputMatcher() {}
 
-        public NamedInputMatcher(int routePosition) {
+        public NamedParseableInputMatcher(int routePosition) {
             this.routePosition = routePosition;
         }
 
@@ -90,8 +90,8 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedInp
         }
 
         @Override
-        public NamedInputMatcher copy() {
-            return new NamedInputMatcher(this.routePosition);
+        public NamedParseableInputMatcher copy() {
+            return new NamedParseableInputMatcher(this.routePosition);
         }
 
         @Override

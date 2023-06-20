@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command;
 
+import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.input.InputMatcher;
@@ -54,7 +55,7 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
 
         @Override
         public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInput<?> arguments) {
-            ParseableInput.ParsableInputMatcher<?> matcher = arguments.createMatcher();
+            ParsableInputMatcher<?> matcher = arguments.createMatcher();
             CommandRoute<SENDER> commandRoute = findRoute(this.commandRoute, matcher);
 
             return executeService.execute(invocation, matcher, commandRoute);

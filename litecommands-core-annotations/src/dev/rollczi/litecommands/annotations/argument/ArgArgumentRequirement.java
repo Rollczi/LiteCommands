@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.argument;
 import dev.rollczi.litecommands.annotations.command.ParameterRequirement;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
+import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
@@ -29,7 +29,7 @@ class ArgArgumentRequirement<SENDER, PARSED> implements ParameterRequirement<SEN
     }
 
     @Override
-    public <MATCHER extends ParseableInput.ParsableInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
+    public <MATCHER extends ParsableInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
         ParseResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
 
         if (result.isSuccessful()) {

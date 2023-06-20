@@ -43,7 +43,7 @@ class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInpu
         return Collections.unmodifiableList(rawArgs);
     }
 
-    public class TypeMixedInputMatcher implements ParsableInputMatcher<TypeMixedInputMatcher> {
+    class TypeMixedInputMatcher implements ParsableInputMatcher<TypeMixedInputMatcher> {
 
         private int routePosition = 0;
         private final Set<String> consumedArguments = new HashSet<>();

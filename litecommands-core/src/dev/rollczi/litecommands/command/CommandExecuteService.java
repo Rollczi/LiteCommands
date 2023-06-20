@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
+import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
@@ -39,7 +39,7 @@ public class CommandExecuteService<SENDER> {
         this.scheduler = scheduler;
     }
 
-    public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInput.ParsableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
+    public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParsableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute).thenCompose(executeResult -> scheduler.supplySync(() -> {
             this.handleResult(invocation, executeResult);
 
@@ -64,19 +64,19 @@ public class CommandExecuteService<SENDER> {
         }
     }
 
-    private <MATCHER extends ParseableInput.ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute0(
+    private <MATCHER extends ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute0(
         Invocation<SENDER> invocation,
-        ParseableInput.ParsableInputMatcher<MATCHER> matcher,
+        ParsableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
         return this.execute(commandRoute.getExecutors().iterator(), invocation, matcher, commandRoute, null);
     }
 
 
-    private <MATCHER extends ParseableInput.ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
+    private <MATCHER extends ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
         Iterator<CommandExecutor<SENDER, ?>> executors,
         Invocation<SENDER> invocation,
-        ParseableInput.ParsableInputMatcher<MATCHER> matcher,
+        ParsableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute,
         @Nullable FailedReason last
     ) {
@@ -131,7 +131,7 @@ public class CommandExecuteService<SENDER> {
         }).exceptionally(throwable -> CommandExecuteResult.thrown(throwable));
     }
 
-    private <REQUIREMENT extends Requirement<SENDER, ?>, MATCHER extends ParseableInput.ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecutorMatchResult> match(
+    private <REQUIREMENT extends Requirement<SENDER, ?>, MATCHER extends ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecutorMatchResult> match(
         CommandExecutor<SENDER, REQUIREMENT> executor,
         Invocation<SENDER> invocation,
         MATCHER matcher
@@ -148,7 +148,7 @@ public class CommandExecuteService<SENDER> {
             builder.link(new ScheduledRequirement<>(requirement, result));
         }
 
-        ParseableInput.ParsableInputMatcher.EndResult endResult = matcher.endMatch();
+        ParsableInputMatcher.EndResult endResult = matcher.endMatch();
 
         if (!endResult.isSuccessful()) {
             return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
