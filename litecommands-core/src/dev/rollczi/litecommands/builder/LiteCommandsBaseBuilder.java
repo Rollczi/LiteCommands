@@ -63,108 +63,28 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     protected LiteBuilderPreProcessor<SENDER, C> preProcessor;
     protected LiteBuilderPostProcessor<SENDER, C> postProcessor;
-    protected Scheduler scheduler;
+    protected Scheduler scheduler = new SchedulerSameThreadImpl();
 
-    protected final EditorService<SENDER> editorService;
-    protected final ValidatorService<SENDER> validatorService;
-    protected final ArgumentParserRegistry<SENDER> argumentParserRegistry;
-    protected final SuggesterRegistry<SENDER> suggesterRegistry;
-    protected final BindRegistry<SENDER> bindRegistry;
-    protected final ContextRegistry<SENDER> contextRegistry;
-    protected final WrapperRegistry wrapperRegistry;
-    protected final ResultService<SENDER> resultService;
-    protected final ExceptionHandleService<SENDER> exceptionHandleService;
-    protected final CommandBuilderCollector<SENDER> commandBuilderCollector;
+    protected final EditorService<SENDER> editorService = new EditorService<>();
+    protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
+    protected final ArgumentParserRegistry<SENDER> argumentParserRegistry = new ArgumentParserRegistryImpl<>();
+    protected final SuggesterRegistry<SENDER> suggesterRegistry = new SuggesterRegistryImpl<>();
+    protected final BindRegistry<SENDER> bindRegistry = new BindRegistry<>();
+    protected final ContextRegistry<SENDER> contextRegistry = new ContextRegistry<>();
+    protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
+    protected final ResultService<SENDER> resultService = new ResultService<>();
+    protected final ExceptionHandleService<SENDER> exceptionHandleService = new ExceptionHandleService<>();
+    protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
 
     /**
-     * Simple constructor for api usage
+     * Constructor for {@link LiteCommandsBaseBuilder}
      *
      * @param senderClass class of sender
+     * @param platform platform
      */
     public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
-        this(
-            senderClass,
-            platform,
-            LiteBuilderPreProcessor.empty(),
-            LiteBuilderPostProcessor.empty(),
-            new SchedulerSameThreadImpl(),
-
-            new EditorService<>(),
-            new ValidatorService<>(),
-            new ArgumentParserRegistryImpl<>(),
-            new SuggesterRegistryImpl<>(),
-            new BindRegistry<>(),
-            new ContextRegistry<>(),
-            new WrapperRegistry(),
-            new ResultService<>(),
-            new ExceptionHandleService<>(),
-            new CommandBuilderCollector<>()
-        );
-    }
-
-    /**
-     * Pattern constructor for extensions
-     *
-     * @param pattern pattern to copy
-     */
-    public LiteCommandsBaseBuilder(LiteCommandsInternalBuilderApi<SENDER, C> pattern) {
-        this(
-            pattern.getSenderClass(),
-            pattern.getPlatform(),
-            pattern.getPreProcessor(),
-            pattern.getPostProcessor(),
-            pattern.getScheduler(),
-
-            pattern.getEditorService(),
-            pattern.getValidatorService(),
-            pattern.getArgumentParserService(),
-            pattern.getSuggesterRegistry(),
-            pattern.getBindRegistry(),
-            pattern.getContextRegistry(),
-            pattern.getWrapperRegistry(),
-            pattern.getResultService(),
-            pattern.getExceptionHandleService(),
-            pattern.getCommandBuilderCollector()
-        );
-    }
-
-    /**
-     * Base constructor
-     */
-    protected LiteCommandsBaseBuilder(
-        Class<SENDER> senderClass,
-        Platform<SENDER, C> platform,
-        LiteBuilderPreProcessor<SENDER, C> builderProcessor,
-        LiteBuilderPostProcessor<SENDER, C> postProcessor,
-
-        Scheduler scheduler,
-        EditorService<SENDER> editorService,
-        ValidatorService<SENDER> validatorService,
-        ArgumentParserRegistry<SENDER> argumentParserRegistry,
-        SuggesterRegistry<SENDER> suggesterRegistry,
-        BindRegistry<SENDER> bindRegistry,
-        ContextRegistry<SENDER> contextRegistry,
-        WrapperRegistry wrapperRegistry,
-        ResultService<SENDER> resultService,
-        ExceptionHandleService<SENDER> exceptionHandleService,
-        CommandBuilderCollector<SENDER> commandBuilderCollector
-    ) {
         this.senderClass = senderClass;
         this.platform = platform;
-        this.preProcessor = builderProcessor;
-        this.postProcessor = postProcessor;
-
-        this.scheduler = scheduler;
-        this.editorService = editorService;
-        this.validatorService = validatorService;
-        this.argumentParserRegistry = argumentParserRegistry;
-        this.suggesterRegistry = suggesterRegistry;
-        this.bindRegistry = bindRegistry;
-        this.contextRegistry = contextRegistry;
-        this.wrapperRegistry = wrapperRegistry;
-        this.resultService = resultService;
-        this.exceptionHandleService = exceptionHandleService;
-        this.commandBuilderCollector = commandBuilderCollector;
     }
 
     @Override
