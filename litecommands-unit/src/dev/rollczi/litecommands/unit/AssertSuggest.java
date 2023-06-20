@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.unit;
 
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.Suggestion;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
 
 import java.util.Set;
 

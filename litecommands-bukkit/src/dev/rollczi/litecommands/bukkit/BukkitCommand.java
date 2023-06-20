@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.argument.input.ArgumentsInput;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,7 @@ class BukkitCommand extends org.bukkit.command.Command {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        ArgumentsInput<?> input = ArgumentsInput.raw(args);
+        ParseableInput<?> input = ParseableInput.raw(args);
         PlatformSender platformSender = new BukkitSender(sender);
 
         this.invocationHook.execute(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input);

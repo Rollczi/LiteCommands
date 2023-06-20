@@ -3,15 +3,14 @@ package dev.rollczi.litecommands.annotations.context;
 import dev.rollczi.litecommands.annotations.command.ParameterRequirement;
 import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
-import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
-import panda.std.Result;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -51,7 +50,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
         }
 
         @Override
-        public <CONTEXT extends ArgumentsInputMatcher<CONTEXT>> RequirementResult<EXPECTED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
+        public <CONTEXT extends ParseableInput.ParsableInputMatcher<CONTEXT>> RequirementResult<EXPECTED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
             ContextResult<EXPECTED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.hasResult()) {

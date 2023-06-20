@@ -6,10 +6,10 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.context.ContextAnnotationResolver;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
-import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistryImpl;
-import dev.rollczi.litecommands.argument.resolver.baisc.NumberArgumentResolver;
-import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
+import dev.rollczi.litecommands.argument.resolver.std.NumberArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.std.StringArgumentResolver;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.context.ContextRegistry;
@@ -21,7 +21,6 @@ import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import panda.std.Result;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -38,7 +37,7 @@ class MethodCommandExecutorServiceTest {
     }
 
     static ContextRegistry<TestSender> bindRegistry = new ContextRegistry<>();
-    static ArgumentParserRegistry<TestSender> resolverRegistry = new ArgumentParserRegistryImpl<>();
+    static ParserRegistry<TestSender> resolverRegistry = new ParserRegistryImpl<>();
     static MethodCommandExecutorService<TestSender> executorFactory = new MethodCommandExecutorService<>();
     static WrapperRegistry expectedService = new WrapperRegistry();
 

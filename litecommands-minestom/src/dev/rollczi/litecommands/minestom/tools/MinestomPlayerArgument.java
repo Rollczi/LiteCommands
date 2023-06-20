@@ -1,17 +1,17 @@
 package dev.rollczi.litecommands.minestom.tools;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.resolver.OneArgumentResolver;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.suggestion.SuggestionStream;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionStream;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.ConnectionManager;
 
-public class MinestomPlayerArgument<MESSAGE> extends OneArgumentResolver<CommandSender, Player> {
+public class MinestomPlayerArgument<MESSAGE> extends ArgumentResolver<CommandSender, Player> {
 
     private final ConnectionManager connectionManager;
     private final MESSAGE playerNotFoundMessage;
@@ -22,14 +22,14 @@ public class MinestomPlayerArgument<MESSAGE> extends OneArgumentResolver<Command
     }
 
     @Override
-    protected ArgumentResult<Player> parse(Invocation<CommandSender> invocation, Argument<Player> context, String argument) {
+    protected ParseResult<Player> parse(Invocation<CommandSender> invocation, Argument<Player> context, String argument) {
         Player player = this.connectionManager.getPlayer(argument);
 
         if (player == null) {
-            return ArgumentResult.failure(this.playerNotFoundMessage);
+            return ParseResult.failure(this.playerNotFoundMessage);
         }
 
-        return ArgumentResult.success(player);
+        return ParseResult.success(player);
     }
 
     @Override

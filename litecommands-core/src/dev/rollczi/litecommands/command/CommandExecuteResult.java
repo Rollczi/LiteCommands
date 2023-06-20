@@ -1,9 +1,8 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.FailedReason;
-import dev.rollczi.litecommands.util.Preconditions;
+import dev.rollczi.litecommands.shared.FailedReason;
+import dev.rollczi.litecommands.shared.Preconditions;
 import org.jetbrains.annotations.Nullable;
-import panda.std.Option;
 
 public class CommandExecuteResult {
 

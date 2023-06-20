@@ -6,15 +6,14 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.wrapper.implementations.CompletableFutureWrapper;
-import dev.rollczi.litecommands.wrapper.implementations.OptionWrapper;
-import dev.rollczi.litecommands.wrapper.implementations.OptionalWrapper;
-import dev.rollczi.litecommands.argument.resolver.baisc.NumberArgumentResolver;
-import dev.rollczi.litecommands.argument.resolver.baisc.StringArgumentResolver;
+import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
+import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
+import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
+import dev.rollczi.litecommands.argument.resolver.std.NumberArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.std.StringArgumentResolver;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
-import panda.std.Result;
 
 public final class LiteCommandsFactory {
 

@@ -3,13 +3,13 @@ package dev.rollczi.litecommands.jda;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.input.Input;
+import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
 import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.util.Preconditions;
+import dev.rollczi.litecommands.shared.Preconditions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -151,7 +151,7 @@ class JDACommandTranslator {
         void translate(OptionType optionType, JDATypeMapper<?> mapper, String argName, String description, boolean isRequired, boolean autocomplete);
     }
 
-    JDAArgumentsInput translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
+    JDAParseableInput translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
         List<String> routes = Stream.of(interaction.getSubcommandGroup(), interaction.getSubcommandName())
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -159,7 +159,7 @@ class JDACommandTranslator {
         Map<String, OptionMapping> options = interaction.getOptions().stream()
             .collect(Collectors.toMap(OptionMapping::getName, option -> option));
 
-        return new JDAArgumentsInput(routes, options, command);
+        return new JDAParseableInput(routes, options, command);
     }
 
     JDASuggestionInput translateSuggestions(CommandAutoCompleteInteraction interaction) {

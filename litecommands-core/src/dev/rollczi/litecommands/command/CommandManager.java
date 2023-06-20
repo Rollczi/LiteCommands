@@ -1,17 +1,16 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.input.ArgumentsInput;
-import dev.rollczi.litecommands.argument.input.ArgumentsInputMatcher;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.command.input.InputMatcher;
+import dev.rollczi.litecommands.input.InputMatcher;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.suggestion.SuggestionService;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInputMatcher;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionService;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -54,8 +53,8 @@ public class CommandManager<SENDER, C extends PlatformSettings> {
         }
 
         @Override
-        public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ArgumentsInput<?> arguments) {
-            ArgumentsInputMatcher<?> matcher = arguments.createMatcher();
+        public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInput<?> arguments) {
+            ParseableInput.ParsableInputMatcher<?> matcher = arguments.createMatcher();
             CommandRoute<SENDER> commandRoute = findRoute(this.commandRoute, matcher);
 
             return executeService.execute(invocation, matcher, commandRoute);

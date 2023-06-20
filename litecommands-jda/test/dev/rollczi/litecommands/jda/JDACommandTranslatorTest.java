@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.jda;
 
-import dev.rollczi.litecommands.argument.ArgumentResult;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.unit.TestExecutor;
@@ -106,8 +106,8 @@ class JDACommandTranslatorTest {
 
     private TestExecutor<TestSender> simpleExecutor() {
         return new TestExecutor<TestSender>()
-            .withArg("name", String.class, (invocation, argument) -> ArgumentResult.success(argument))
-            .withArg("age", Integer.class, (invocation, argument) -> ArgumentResult.success(Integer.parseInt(argument)));
+            .withArg("name", String.class, (invocation, argument) -> ParseResult.success(argument))
+            .withArg("age", Integer.class, (invocation, argument) -> ParseResult.success(Integer.parseInt(argument)));
     }
 
 }

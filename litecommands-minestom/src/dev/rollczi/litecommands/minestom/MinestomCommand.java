@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.minestom;
 
-import dev.rollczi.litecommands.argument.input.ArgumentsInput;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.input.Input;
+import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggestion.Suggestion;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
@@ -47,14 +47,14 @@ class MinestomCommand extends Command {
         this.addSyntax(((sender, context) -> {
             String alias = context.getCommandName();
             String[] args = this.fixArguments(context.get(arguments));
-            ArgumentsInput<?> raw = ArgumentsInput.raw(args);
+            ParseableInput<?> raw = ParseableInput.raw(args);
 
             this.invocationHook.execute(this.createInvocation(sender, alias, raw), raw);
         }), arguments);
 
         this.setDefaultExecutor(((sender, context) -> {
             String alias = context.getCommandName();
-            ArgumentsInput<?> raw = ArgumentsInput.raw();
+            ParseableInput<?> raw = ParseableInput.raw();
 
             this.invocationHook.execute(this.createInvocation(sender, alias, raw), raw);
         }));

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.builder;
 
-import dev.rollczi.litecommands.argument.parser.ArgumentParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.editor.EditorService;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.suggestion.SuggesterRegistry;
+import dev.rollczi.litecommands.argument.suggestion.SuggesterRegistry;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
@@ -42,7 +42,7 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
     ValidatorService<SENDER> getValidatorService();
 
     @ApiStatus.Internal
-    ArgumentParserRegistry<SENDER> getArgumentParserService();
+    ParserRegistry<SENDER> getArgumentParserService();
 
     @ApiStatus.Internal
     SuggesterRegistry<SENDER> getSuggesterRegistry();

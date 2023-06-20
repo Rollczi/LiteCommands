@@ -6,8 +6,8 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.Suggestion;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -89,7 +89,7 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             }
 
             PlatformInvocationListener<User> invocationHook = commandRecord.invocationHook();
-            JDAArgumentsInput arguments = translator.translateArguments(commandRecord.command(), event);
+            JDAParseableInput arguments = translator.translateArguments(commandRecord.command(), event);
             Invocation<User> invocation = translator.translateInvocation(commandRoute, arguments, event);
 
             invocationHook.execute(invocation, arguments);

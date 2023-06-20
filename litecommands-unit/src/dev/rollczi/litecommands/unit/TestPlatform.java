@@ -1,12 +1,12 @@
 package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.argument.input.ArgumentsInput;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -86,7 +86,7 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
         TestSender testSender = new TestSender();
         TestPlatformSender testPlatformSender = new TestPlatformSender();
 
-        ArgumentsInput<?> args = ArgumentsInput.raw(arguments);
+        ParseableInput<?> args = ParseableInput.raw(arguments);
 
         Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, command, command, args);
 
@@ -94,7 +94,7 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
             if (entry.getKey().isNameOrAlias(command)) {
                 PlatformInvocationListener<TestSender> listener = entry.getValue();
 
-                return listener.execute(invocation, ArgumentsInput.raw(arguments))
+                return listener.execute(invocation, ParseableInput.raw(arguments))
                     .thenApply(result -> new AssertExecute(result));
             }
         }

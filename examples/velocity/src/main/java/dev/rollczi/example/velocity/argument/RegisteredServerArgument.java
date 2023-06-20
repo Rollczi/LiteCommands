@@ -4,16 +4,16 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.resolver.OneArgumentResolver;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.suggestion.SuggestionStream;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionStream;
 
 import java.util.Optional;
 
-public class RegisteredServerArgument extends OneArgumentResolver<CommandSource, RegisteredServer> {
+public class RegisteredServerArgument extends ArgumentResolver<CommandSource, RegisteredServer> {
 
     private final ProxyServer server;
 
@@ -22,11 +22,11 @@ public class RegisteredServerArgument extends OneArgumentResolver<CommandSource,
     }
 
     @Override
-    protected ArgumentResult<RegisteredServer> parse(Invocation<CommandSource> invocation, Argument<RegisteredServer> context, String argument) {
+    protected ParseResult<RegisteredServer> parse(Invocation<CommandSource> invocation, Argument<RegisteredServer> context, String argument) {
         Optional<RegisteredServer> optionalServer = server.getServer(argument);
 
-        return optionalServer.map(server -> ArgumentResult.success(server))
-            .orElseGet(() -> ArgumentResult.failure("Server " + argument + " not found"));
+        return optionalServer.map(server -> ParseResult.success(server))
+            .orElseGet(() -> ParseResult.failure("Server " + argument + " not found"));
     }
 
     @Override

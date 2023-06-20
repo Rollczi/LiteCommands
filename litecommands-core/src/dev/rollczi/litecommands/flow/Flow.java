@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.flow;
 
-import dev.rollczi.litecommands.argument.FailedReason;
+import dev.rollczi.litecommands.shared.FailedReason;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;

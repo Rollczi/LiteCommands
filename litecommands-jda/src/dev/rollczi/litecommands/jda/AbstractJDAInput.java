@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.jda;
 
-import dev.rollczi.litecommands.command.input.Input;
-import dev.rollczi.litecommands.command.input.InputMatcher;
+import dev.rollczi.litecommands.input.Input;
+import dev.rollczi.litecommands.input.InputMatcher;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract class AbstractJDAInput<MATCHER extends AbstractJDAInput<MATCHER>.Matcher> implements Input<MATCHER> {
+abstract class AbstractJDAInput<MATCHER extends AbstractJDAInput<MATCHER>.AbstractJDAMatcher> implements Input<MATCHER> {
 
     protected final List<String> routes = new ArrayList<>();
     protected final Map<String, OptionMapping> arguments = new HashMap<>();
@@ -30,13 +30,13 @@ abstract class AbstractJDAInput<MATCHER extends AbstractJDAInput<MATCHER>.Matche
         return list;
     }
 
-    abstract class Matcher implements InputMatcher {
+    abstract class AbstractJDAMatcher implements InputMatcher {
 
         protected int routePosition = 0;
 
-        Matcher() {}
+        AbstractJDAMatcher() {}
 
-        Matcher(int routePosition) {
+        AbstractJDAMatcher(int routePosition) {
             this.routePosition = routePosition;
         }
 

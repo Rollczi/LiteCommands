@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.suggestion;
 
+import dev.rollczi.litecommands.argument.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

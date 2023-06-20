@@ -1,11 +1,10 @@
 package dev.rollczi.litecommands.builder;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.parser.ArgumentParser;
-import dev.rollczi.litecommands.argument.parser.ArgumentTypedParser;
+import dev.rollczi.litecommands.argument.parser.Parser;
+import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.context.ContextProvider;
-import dev.rollczi.litecommands.context.LegacyContextProvider;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
@@ -20,9 +19,9 @@ import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.suggestion.Suggester;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.suggestion.TypedSuggester;
+import dev.rollczi.litecommands.argument.suggestion.Suggester;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.TypedSuggester;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
 import dev.rollczi.litecommands.wrapper.Wrapper;
@@ -58,17 +57,17 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      */
     LiteCommandsBuilder<SENDER, SETTINGS, B> commands(LiteCommandsProvider<SENDER> commandsProvider);
 
-    <IN, T, PARSER extends ArgumentParser<SENDER, IN, T>>
+    <IN, T, PARSER extends Parser<SENDER, IN, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, PARSER parser);
 
-    <IN, T, PARSER extends ArgumentParser<SENDER, IN, T>>
+    <IN, T, PARSER extends Parser<SENDER, IN, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, String key, PARSER parser);
 
     <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, ArgumentTypedParser<SENDER, IN, T, ARGUMENT> parser);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, TypedParser<SENDER, IN, T, ARGUMENT> parser);
 
     <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, String key, ArgumentTypedParser<SENDER, IN, T, ARGUMENT> parser);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, String key, TypedParser<SENDER, IN, T, ARGUMENT> parser);
 
     <T>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, SuggestionResult suggestionResult);
@@ -93,7 +92,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @param resolver parser and suggester for given type
      * @return this builder
      */
-    <IN, T, RESOLVER extends ArgumentParser<SENDER, IN, T> & Suggester<SENDER, T>>
+    <IN, T, RESOLVER extends Parser<SENDER, IN, T> & Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, RESOLVER resolver);
 
     /**
@@ -107,7 +106,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @param resolver parser and suggester for given type
      * @return this builder
      */
-    <IN, T, RESOLVER extends ArgumentParser<SENDER, IN, T> & Suggester<SENDER, T>>
+    <IN, T, RESOLVER extends Parser<SENDER, IN, T> & Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, String key, RESOLVER resolver);
 
     /**
@@ -118,7 +117,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @param resolver parser and suggester for given type
      * @return this builder
      */
-    <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends ArgumentTypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
+    <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, RESOLVER resolver);
 
     /**
@@ -132,7 +131,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @param resolver parser and suggester for given type
      * @return this builder
      */
-    <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends ArgumentTypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
+    <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, String key, RESOLVER resolver);
 
     <T>

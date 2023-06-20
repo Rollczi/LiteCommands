@@ -1,15 +1,15 @@
 package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.parser.ArgumentParserSet;
+import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.suggestion.Suggester;
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import dev.rollczi.litecommands.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInputMatcher;
+import dev.rollczi.litecommands.argument.suggestion.Suggester;
+import dev.rollczi.litecommands.argument.suggestion.Suggestion;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -30,7 +30,7 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
         return new JDASuggestionMatcher();
     }
 
-    class JDASuggestionMatcher extends AbstractJDAInput<JDASuggestionMatcher>.Matcher implements SuggestionInputMatcher<JDASuggestionMatcher> {
+    class JDASuggestionMatcher extends AbstractJDAInput<JDASuggestionMatcher>.AbstractJDAMatcher implements SuggestionInputMatcher<JDASuggestionMatcher> {
 
         JDASuggestionMatcher() {}
 
@@ -39,7 +39,7 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
         }
 
         @Override
-        public <SENDER, T> Flow nextArgument(Invocation<SENDER> invocation, Argument<T> argument, ArgumentParserSet<SENDER, T> parserSet, Suggester<SENDER, T> suggesterSet) {
+        public <SENDER, T> Flow nextArgument(Invocation<SENDER> invocation, Argument<T> argument, ParserSet<SENDER, T> parserSet, Suggester<SENDER, T> suggesterSet) {
             if (!argument.getName().equals(currentOption.getName())) {
                 return Flow.continueFlow();
             }

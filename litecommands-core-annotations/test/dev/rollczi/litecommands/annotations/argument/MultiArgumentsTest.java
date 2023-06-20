@@ -6,14 +6,14 @@ import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.input.RawInput;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
-import dev.rollczi.litecommands.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ class MultiArgumentsTest extends LiteTestSpec {
     static class PositionArg<S> implements MultipleArgumentResolver<S, Position> {
 
         @Override
-        public ArgumentResult<Position> parse(Invocation<S> invocation, Argument<Position> argument, RawInput rawInput) {
+        public ParseResult<Position> parse(Invocation<S> invocation, Argument<Position> argument, RawInput rawInput) {
             try {
                 Position position = new Position(
                     rawInput.nextInt(),
@@ -37,10 +37,10 @@ class MultiArgumentsTest extends LiteTestSpec {
                     rawInput.nextInt()
                 );
 
-                return ArgumentResult.success(position);
+                return ParseResult.success(position);
             }
             catch (NumberFormatException exception) {
-                return ArgumentResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT);
+                return ParseResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT);
             }
         }
 

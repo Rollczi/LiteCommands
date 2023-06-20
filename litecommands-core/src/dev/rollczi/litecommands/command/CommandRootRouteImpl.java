@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.command;
 import dev.rollczi.litecommands.meta.CommandKey;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.meta.MetaCollector;
-import dev.rollczi.litecommands.util.StringUtils;
+import dev.rollczi.litecommands.util.StringUtil;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
     @Override
     public String getName() {
-        return StringUtils.EMPTY;
+        return StringUtil.EMPTY;
     }
 
     @Override

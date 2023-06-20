@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.invocation;
 
-import dev.rollczi.litecommands.command.input.Input;
+import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
 public class Invocation<SENDER> {

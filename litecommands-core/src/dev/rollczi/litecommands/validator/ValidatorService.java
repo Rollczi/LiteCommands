@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.CommandRouteUtils;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.util.IterableReferences;
+import dev.rollczi.litecommands.shared.IterableReferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;

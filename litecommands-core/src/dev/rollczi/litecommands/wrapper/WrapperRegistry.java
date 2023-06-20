@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.wrapper;
 
-import dev.rollczi.litecommands.wrapper.implementations.ValueWrapper;
+import dev.rollczi.litecommands.wrapper.std.ValueWrapper;
 import panda.std.Option;
 
 import java.util.HashMap;

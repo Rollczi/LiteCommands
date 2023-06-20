@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.command.builder;
 
 import dev.rollczi.litecommands.meta.MetaCollector;
-import dev.rollczi.litecommands.util.StringUtils;
+import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
 
     @Override
     public String name() {
-        return StringUtils.EMPTY;
+        return StringUtil.EMPTY;
     }
 
     @Override

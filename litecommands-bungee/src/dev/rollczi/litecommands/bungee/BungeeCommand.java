@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.bungee;
 
-import dev.rollczi.litecommands.argument.input.ArgumentsInput;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -33,7 +33,7 @@ class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        ArgumentsInput<?> input = ArgumentsInput.raw(args);
+        ParseableInput<?> input = ParseableInput.raw(args);
         BungeeSender platformSender = new BungeeSender(sender);
         Invocation<CommandSender> invocation = new Invocation<>(sender, platformSender, this.commandSection.getName(), this.label, input);
 

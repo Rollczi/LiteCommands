@@ -1,18 +1,18 @@
 package dev.rollczi.example.bukkit.argument;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentResult;
-import dev.rollczi.litecommands.argument.resolver.OneArgumentResolver;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameModeArgument extends OneArgumentResolver<CommandSender, GameMode> {
+public class GameModeArgument extends ArgumentResolver<CommandSender, GameMode> {
 
     private static final Map<String, GameMode> GAME_MODE_ARGUMENTS = new HashMap<>();
 
@@ -24,14 +24,14 @@ public class GameModeArgument extends OneArgumentResolver<CommandSender, GameMod
     }
 
     @Override
-    protected ArgumentResult<GameMode> parse(Invocation<CommandSender> invocation, Argument<GameMode> context, String argument) {
+    protected ParseResult<GameMode> parse(Invocation<CommandSender> invocation, Argument<GameMode> context, String argument) {
         GameMode gameMode = GAME_MODE_ARGUMENTS.get(argument.toLowerCase());
 
         if (gameMode == null) {
-            return ArgumentResult.failure("Invalid gamemode argument!");
+            return ParseResult.failure("Invalid gamemode argument!");
         }
 
-        return ArgumentResult.success(gameMode);
+        return ParseResult.success(gameMode);
     }
 
     @Override

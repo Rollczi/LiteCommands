@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
-import dev.rollczi.litecommands.wrapper.implementations.OptionWrapper;
+import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;

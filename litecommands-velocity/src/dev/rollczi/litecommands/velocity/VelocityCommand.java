@@ -2,14 +2,14 @@ package dev.rollczi.litecommands.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import dev.rollczi.litecommands.argument.input.ArgumentsInput;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.input.Input;
+import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.input.SuggestionInput;
-import dev.rollczi.litecommands.util.StringUtils;
+import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ class VelocityCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
-        ArgumentsInput<?> raw = ArgumentsInput.raw(invocation.arguments());
+        ParseableInput<?> raw = ParseableInput.raw(invocation.arguments());
 
         this.executeListener.execute(this.newInvocation(invocation, raw, false), raw);
     }
@@ -66,7 +66,7 @@ class VelocityCommand implements SimpleCommand {
         List<String> arguments = new ArrayList<>(Arrays.asList(invocation.arguments()));
 
         if (suggest && arguments.isEmpty()) {
-            arguments.add(StringUtils.EMPTY);
+            arguments.add(StringUtil.EMPTY);
         }
 
         return new dev.rollczi.litecommands.invocation.Invocation<>(

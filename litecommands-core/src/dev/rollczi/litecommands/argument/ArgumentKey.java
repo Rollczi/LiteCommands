@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class ArgumentKey {
 
-    private static final ArgumentKey DEAFULT_UNIVERSAL = of("");
+    private static final ArgumentKey DEFAULT_UNIVERSAL = of("");
 
     private final String namespace;
     private final String key;
@@ -23,7 +23,7 @@ public class ArgumentKey {
     }
 
     public static ArgumentKey of() {
-        return DEAFULT_UNIVERSAL;
+        return DEFAULT_UNIVERSAL;
     }
 
     public static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType, String key) {

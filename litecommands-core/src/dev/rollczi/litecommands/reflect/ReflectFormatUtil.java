@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.reflect;
 
-import dev.rollczi.litecommands.util.ObjectsUtils;
-import dev.rollczi.litecommands.util.StringUtils;
+import dev.rollczi.litecommands.util.ObjectsUtil;
+import dev.rollczi.litecommands.util.StringUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -85,16 +85,16 @@ public final class ReflectFormatUtil {
             .collect(Collectors.joining());
 
         String pickerMessage = String.format(PICKER_MESSAGE, message);
-        String fullPicker = StringUtils.repeat(PICKER_SYMBOL, executableFormat.length()) + pickerMessage;
+        String fullPicker = StringUtil.repeat(PICKER_SYMBOL, executableFormat.length()) + pickerMessage;
 
         if (parameter != null) {
             String parameterFormat = parameter(parameter);
             int currentParameter = executableFormat.indexOf(parameterFormat);
 
             if (currentParameter != -1) {
-                String pickerSymbols = StringUtils.repeat(PICKER_SYMBOL, parameterFormat.length());
+                String pickerSymbols = StringUtil.repeat(PICKER_SYMBOL, parameterFormat.length());
 
-                fullPicker = StringUtils.repeat(" ", currentParameter) + pickerSymbols + pickerMessage;
+                fullPicker = StringUtil.repeat(" ", currentParameter) + pickerSymbols + pickerMessage;
             }
         }
 
@@ -139,7 +139,7 @@ public final class ReflectFormatUtil {
             try {
                 Object value = declaredMethod.invoke(annotation);
 
-                if (value == null || ObjectsUtils.equals(value, declaredMethod.getDefaultValue())) {
+                if (value == null || ObjectsUtil.equals(value, declaredMethod.getDefaultValue())) {
                     continue;
                 }
 

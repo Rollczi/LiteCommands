@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command.requirement;
 
-import dev.rollczi.litecommands.argument.FailedReason;
+import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -27,7 +27,7 @@ public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.liteCommands = LiteCommandsBukkit.builder(this.getServer())
+        this.liteCommands = LiteCommandsBukkit.builder()
             .platformSettings(settings -> settings
                 .fallbackPrefix("test")
                 .nativePermissions(false)
