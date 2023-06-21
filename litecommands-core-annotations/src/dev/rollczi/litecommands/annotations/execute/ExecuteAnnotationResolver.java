@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.annotations.execute;
 
 import dev.rollczi.litecommands.annotations.command.MethodCommandExecutorService;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMethodResolver;
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.util.LiteCommandsUtil;

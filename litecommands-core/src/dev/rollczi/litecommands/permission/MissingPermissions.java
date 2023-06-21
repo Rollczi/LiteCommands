@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.CommandRouteUtils;
 import dev.rollczi.litecommands.meta.CommandMeta;

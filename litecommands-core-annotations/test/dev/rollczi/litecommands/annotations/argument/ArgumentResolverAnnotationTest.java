@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;

@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.Requirement;

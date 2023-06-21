@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command.builder;
 
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.meta.CommandMetaHolder;
 

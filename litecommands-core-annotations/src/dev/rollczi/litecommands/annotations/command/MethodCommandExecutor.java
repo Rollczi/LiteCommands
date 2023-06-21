@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.annotations.command;
 
-import dev.rollczi.litecommands.command.AbstractCommandExecutor;
-import dev.rollczi.litecommands.command.CommandExecuteResult;
-import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
+import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
+import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.command.requirement.RequirementMatch;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 

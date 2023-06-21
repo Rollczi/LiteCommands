@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.unit;
 
-import dev.rollczi.litecommands.command.CommandExecuteResult;
+import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.opentest4j.AssertionFailedError;
 

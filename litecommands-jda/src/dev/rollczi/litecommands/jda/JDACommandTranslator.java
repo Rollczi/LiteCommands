@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;

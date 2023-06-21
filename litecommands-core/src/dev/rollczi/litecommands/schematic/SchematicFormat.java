@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.schematic;
 
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 
 public interface SchematicFormat {

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command;
+package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.meta.CommandMeta;

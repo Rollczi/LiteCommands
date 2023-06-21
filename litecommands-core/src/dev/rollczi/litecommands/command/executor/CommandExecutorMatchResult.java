@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command;
+package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.shared.Preconditions;

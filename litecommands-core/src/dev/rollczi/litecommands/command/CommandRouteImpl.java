@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command;
 
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.meta.MetaCollector;
 

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.command;
 
 import dev.rollczi.litecommands.annotations.command.requirement.RequirementAnnotation;
-import dev.rollczi.litecommands.command.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.reflect.ReflectFormatUtil;
 
