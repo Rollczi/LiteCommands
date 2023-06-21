@@ -21,7 +21,7 @@ class ScheduledChainTest {
             .link(new Argument("6", SchedulerPollType.SYNC))
             .build(text -> text + " -> " + Thread.currentThread().getName());
 
-        List<String> list = scheduledChain.call(scheduler)
+        List<String> list = scheduledChain.collectChain(scheduler)
             .join()
             .getSuccess();
 

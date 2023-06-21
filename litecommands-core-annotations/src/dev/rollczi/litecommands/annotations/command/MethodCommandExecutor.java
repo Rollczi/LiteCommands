@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.command;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
 import dev.rollczi.litecommands.command.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.command.requirement.RequirementSuccessMatch;
+import dev.rollczi.litecommands.command.requirement.RequirementMatch;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +29,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
     }
 
     @Override
-    public CommandExecutorMatchResult match(List<RequirementSuccessMatch<SENDER, ParameterRequirement<SENDER, ?>, Object>> results) {
+    public CommandExecutorMatchResult match(List<RequirementMatch<SENDER, ParameterRequirement<SENDER, ?>, Object>> results) {
         if (results.size() != this.method.getParameterCount()) {
             return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved"));
         }

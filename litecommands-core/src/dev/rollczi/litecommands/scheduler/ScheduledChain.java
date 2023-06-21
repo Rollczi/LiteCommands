@@ -20,7 +20,7 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
         this.mapper = mapper;
     }
 
-    public CompletableFuture<ScheduledChainResult<R>> call(Scheduler scheduler) {
+    public CompletableFuture<ScheduledChainResult<R>> collectChain(Scheduler scheduler) {
         ChainCollector collector = new ChainCollector(scheduler);
 
         return collector.collect();
@@ -88,7 +88,7 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
                         return this.collect(results);
                     }
                     catch (ScheduledChainException exception) {
-                        return completedFuture(ScheduledChainResult.<R>failure(exception));
+                        return completedFuture(ScheduledChainResult.<R>failure(exception.getReason()));
                     }
                 })
                 .thenCompose(completableFuture -> completableFuture);

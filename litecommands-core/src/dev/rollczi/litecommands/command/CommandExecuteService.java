@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.scheduler.ScheduledChainException;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
-import dev.rollczi.litecommands.command.requirement.RequirementSuccessMatch;
+import dev.rollczi.litecommands.command.requirement.RequirementMatch;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
@@ -153,21 +153,16 @@ public class CommandExecuteService<SENDER> {
         }
 
         return builder.build((scheduledRequirement, requirementResult) -> {
-            if (requirementResult.isFailure()) {
-                throw new RequirementChainException(scheduledRequirement, requirementResult.getError());
-            }
+                if (requirementResult.isFailure()) {
+                    throw new ScheduledChainException(requirementResult.getError());
+                }
 
-            return toSuccess(scheduledRequirement.requirement, requirementResult.getSuccess());
-        }).call(scheduler)
+                return toMatch(scheduledRequirement.requirement, requirementResult.getSuccess());
+            })
+            .collectChain(scheduler)
             .thenCompose(result -> {
                 if (result.isFailure()) {
-                    ScheduledChainException exception = result.getFailure();
-
-                    if (!(exception instanceof CommandExecuteService.RequirementChainException)) {
-                        throw exception;
-                    }
-
-                    return completedFuture(CommandExecutorMatchResult.failed(((RequirementChainException) exception).failed));
+                    return completedFuture(CommandExecutorMatchResult.failed(result.getFailure()));
                 }
 
                 ParsableInputMatcher.EndResult endResult = matcher.endMatch();
@@ -180,18 +175,9 @@ public class CommandExecuteService<SENDER> {
             });
     }
 
-    private static class RequirementChainException extends ScheduledChainException {
-        private final Object failed;
-
-        public RequirementChainException(ScheduledChainLink<?> link, Object failed) {
-            super(link);
-            this.failed = failed;
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    private <R extends Requirement<SENDER, ? extends T>, T> RequirementSuccessMatch<SENDER, R, T> toSuccess(R requirement, Wrap<?> wrap) {
-        return new RequirementSuccessMatch<>(requirement, (Wrap<T>) wrap);
+    private <R extends Requirement<SENDER, ? extends T>, T> RequirementMatch<SENDER, R, T> toMatch(R requirement, Wrap<?> wrap) {
+        return new RequirementMatch<>(requirement, (Wrap<T>) wrap);
     }
 
     private class ScheduledRequirement<R extends Requirement<SENDER, ?>> implements ScheduledChainLink<RequirementResult<?>> {

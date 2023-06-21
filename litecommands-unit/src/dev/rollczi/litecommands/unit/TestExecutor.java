@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.argument.parser.RawInputParser;
 import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.command.CommandExecuteResult;
-import dev.rollczi.litecommands.command.requirement.RequirementSuccessMatch;
+import dev.rollczi.litecommands.command.requirement.RequirementMatch;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.AbstractCommandExecutor;
@@ -72,7 +72,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
     }
 
     @Override
-    public CommandExecutorMatchResult match(List<RequirementSuccessMatch<SENDER, Requirement<SENDER, ?>, Object>> results) {
+    public CommandExecutorMatchResult match(List<RequirementMatch<SENDER, Requirement<SENDER, ?>, Object>> results) {
         return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(result));
     }
 

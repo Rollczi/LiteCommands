@@ -5,14 +5,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ScheduledChainResult<E> implements LiteResult<List<E>, ScheduledChainException> {
+public class ScheduledChainResult<E> implements LiteResult<List<E>, Object> {
 
     private final List<E> results;
-    private final @Nullable ScheduledChainException exception;
+    private final @Nullable Object failureReason;
 
-    private ScheduledChainResult(List<E> results, @Nullable ScheduledChainException exception) {
+    private ScheduledChainResult(List<E> results, @Nullable Object failureReason) {
         this.results = results;
-        this.exception = exception;
+        this.failureReason = failureReason;
     }
 
     @Override
@@ -21,26 +21,26 @@ public class ScheduledChainResult<E> implements LiteResult<List<E>, ScheduledCha
     }
 
     @Override
-    public @Nullable ScheduledChainException getFailure() {
-        return exception;
+    public @Nullable Object getFailure() {
+        return failureReason;
     }
 
     @Override
     public boolean isSuccess() {
-        return exception == null;
+        return failureReason == null;
     }
 
     @Override
     public boolean isFailure() {
-        return exception != null;
+        return failureReason != null;
     }
 
     public static <E> ScheduledChainResult<E> success(List<E> results) {
         return new ScheduledChainResult<>(results, null);
     }
 
-    public static <E> ScheduledChainResult<E> failure(ScheduledChainException exception) {
-        return new ScheduledChainResult<>(null, exception);
+    public static <E> ScheduledChainResult<E> failure(Object failureReason) {
+        return new ScheduledChainResult<>(null, failureReason);
     }
 
 }
