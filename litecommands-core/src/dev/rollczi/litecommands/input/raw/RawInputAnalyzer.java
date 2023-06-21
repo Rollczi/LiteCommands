@@ -2,9 +2,9 @@ package dev.rollczi.litecommands.input.raw;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.parser.LiteParseException;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
+import dev.rollczi.litecommands.exception.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.shared.Preconditions;
@@ -72,7 +72,7 @@ public class RawInputAnalyzer {
         ) {
             this.argument = argument;
             this.parser = parserSet.getParser(RawInput.class)
-                .orElseThrow(() -> new LiteParseException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
+                .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
 
             Range range = parser.getRange();
 
