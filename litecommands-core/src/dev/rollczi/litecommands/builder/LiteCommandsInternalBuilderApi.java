@@ -2,11 +2,9 @@ package dev.rollczi.litecommands.builder;
 
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.bind.BindRegistry;
-import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
-import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.context.ContextRegistry;
-import dev.rollczi.litecommands.exception.ExceptionHandleService;
-import dev.rollczi.litecommands.result.ResultService;
+import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
+import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
 import dev.rollczi.litecommands.editor.EditorService;
 import dev.rollczi.litecommands.platform.PlatformSettings;
@@ -25,12 +23,6 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
 
     @ApiStatus.Internal
     Platform<SENDER, C> getPlatform();
-
-    @ApiStatus.Internal
-    LiteBuilderPreProcessor<SENDER, C> getPreProcessor();
-
-    @ApiStatus.Internal
-    LiteBuilderPostProcessor<SENDER, C> getPostProcessor();
 
     @ApiStatus.Internal
     Scheduler getScheduler();
@@ -57,7 +49,7 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
     WrapperRegistry getWrapperRegistry();
 
     @ApiStatus.Internal
-    ResultService<SENDER> getResultService();
+    ResultHandleService<SENDER> getResultService();
 
     @ApiStatus.Internal
     CommandBuilderCollector<SENDER> getCommandBuilderCollector();

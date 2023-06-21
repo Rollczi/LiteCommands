@@ -18,7 +18,7 @@ public class WrapperRegistry {
     public <EXPECTED> Wrap<EXPECTED> wrap(ValueToWrap<EXPECTED> result, WrapFormat<EXPECTED, ?> wrapFormat) {
         Wrapper factory = this.getWrappedExpectedFactory(wrapFormat);
 
-        return factory.create(result, wrapFormat);
+        return factory.create(result.get(), wrapFormat);
     }
 
     public <EXPECTED> Option<Wrap<EXPECTED>> empty(WrapFormat<EXPECTED, ?> wrapFormat) {

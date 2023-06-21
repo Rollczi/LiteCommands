@@ -27,7 +27,7 @@ public class BukkitPlayerArgument<MESSAGE> extends ArgumentResolver<CommandSende
         Player player = server.getPlayer(argument);
 
         if (player != null) {
-            return ParseResult.success(() -> player);
+            return ParseResult.success(player);
         }
 
         return ParseResult.failure(playerNotFoundMessage);

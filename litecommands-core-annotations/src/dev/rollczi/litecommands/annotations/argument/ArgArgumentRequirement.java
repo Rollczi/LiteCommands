@@ -33,15 +33,15 @@ class ArgArgumentRequirement<SENDER, PARSED> implements ParameterRequirement<SEN
         ParseResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
 
         if (result.isSuccessful()) {
-            ValueToWrap<PARSED> successfulResult = result.getSuccessfulResult();
+            PARSED successfulResult = result.getSuccessfulResult();
 
-            return RequirementResult.success(() -> wrapper.create(successfulResult, this.getWrapperFormat()));
+            return RequirementResult.success(wrapper.create(successfulResult, this.getWrapperFormat()));
         }
 
         FailedReason failedReason = result.getFailedReason();
 
         if (failedReason.getReason() == InvalidUsage.Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
-            return RequirementResult.success(() -> wrapper.createEmpty(this.getWrapperFormat()));
+            return RequirementResult.success(wrapper.createEmpty(this.getWrapperFormat()));
         }
 
         return RequirementResult.failure(failedReason);

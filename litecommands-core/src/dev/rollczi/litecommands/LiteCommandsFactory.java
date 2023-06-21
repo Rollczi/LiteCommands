@@ -26,7 +26,9 @@ public final class LiteCommandsFactory {
 
             .wrapper(new OptionWrapper())
             .wrapper(new OptionalWrapper())
-            .wrapper(new CompletableFutureWrapper())
+            .preProcessor((builder, pattern) -> builder
+                .wrapper(new CompletableFutureWrapper(pattern.getScheduler()))
+            )
 
             .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
             .context(String[].class, invocation -> ContextResult.ok(() -> invocation.arguments().asArray()))

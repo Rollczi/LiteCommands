@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.jda;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.exception.LiteCommandsException;
 import dev.rollczi.litecommands.input.raw.RawInput;
-import dev.rollczi.litecommands.argument.parser.LiteParseException;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
@@ -65,7 +65,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
             try {
                 return this.parseInput(invocation, argument, parserSet, input);
             }
-            catch (LiteParseException exception) {
+            catch (LiteJDAParseException exception) {
                 return this.parseInput(invocation, argument, parserSet, RawInput.of(optionMapping.getAsString().split(" ")));
             }
         }
@@ -90,7 +90,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         private <SENDER, INPUT, OUT> ParseResult<OUT> parseInput(Invocation<SENDER> invocation, Argument<OUT> argument, ParserSet<SENDER, OUT> parserSet, INPUT input) {
             Class<INPUT> inputType = (Class<INPUT>) input.getClass();
             Parser<SENDER, INPUT, OUT> parser = parserSet.getParser(inputType)
-                .orElseThrow(() -> new LiteParseException("No parser for input type " + inputType.getName()));
+                .orElseThrow(() -> new LiteJDAParseException("No parser for input type " + inputType.getName()));
 
             return parser.parse(invocation, argument, input);
         }
@@ -107,6 +107,13 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
             }
 
             return EndResult.success();
+        }
+
+    }
+
+    private static class LiteJDAParseException extends LiteCommandsException {
+        public LiteJDAParseException(String message) {
+            super(message);
         }
     }
 

@@ -6,10 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class ParseResult<EXPECTED> {
 
-    private final @Nullable ValueToWrap<EXPECTED> successfulResult;
+    private final @Nullable EXPECTED successfulResult;
     private final @Nullable FailedReason failedResult;
 
-    private ParseResult(@Nullable ValueToWrap<EXPECTED> successfulResult, @Nullable FailedReason failedResult) {
+    private ParseResult(@Nullable EXPECTED successfulResult, @Nullable FailedReason failedResult) {
         if (successfulResult != null && failedResult != null) {
             throw new IllegalArgumentException("Cannot be both successful and failed");
         }
@@ -30,7 +30,7 @@ public class ParseResult<EXPECTED> {
         return this.failedResult != null;
     }
 
-    public ValueToWrap<EXPECTED> getSuccessfulResult() {
+    public EXPECTED getSuccessfulResult() {
         if (this.successfulResult == null) {
             throw new IllegalStateException("Cannot get successful result when it is empty");
         }
@@ -47,11 +47,7 @@ public class ParseResult<EXPECTED> {
     }
 
     public static <PARSED> ParseResult<PARSED> success(PARSED parsed) {
-        return new ParseResult<>(() -> parsed, null);
-    }
-
-    public static <EXPECTED> ParseResult<EXPECTED> success(ValueToWrap<EXPECTED> expectedReturn) {
-        return new ParseResult<>(expectedReturn, null);
+        return new ParseResult<>(parsed, null);
     }
 
     public static <EXPECTED> ParseResult<EXPECTED> failure(FailedReason failedReason) {

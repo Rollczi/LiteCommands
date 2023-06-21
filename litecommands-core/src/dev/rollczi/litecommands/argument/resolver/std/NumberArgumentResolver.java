@@ -36,7 +36,7 @@ public class NumberArgumentResolver<SENDER, T extends Number> extends ArgumentRe
         try {
             T applied = parser.apply(argument);
 
-            return ParseResult.success(() -> applied);
+            return ParseResult.success(applied);
         }
         catch (NumberFormatException e) {
             return ParseResult.failure(this.failedReason(invocation, context, argument));

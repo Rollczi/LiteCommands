@@ -49,7 +49,7 @@ public class AssertExecute {
 
     public AssertExecute assertThrows(Class<? extends Throwable> exception) {
         if (result.isFailed()) {
-            throw new AssertionError("Command was not successful executed" + result.getError());
+            throw new AssertionError("Command was not successful executed " + result.getError());
         }
 
         if (result.isSuccessful()) {
@@ -57,7 +57,7 @@ public class AssertExecute {
         }
 
         if (!result.getThrowable().getClass().equals(exception)) {
-            throw new AssertionFailedError("Command throws different exception", result.getThrowable());
+            throw new AssertionFailedError("Command throws different exception: " + result.getThrowable().getClass().getName());
         }
 
         return this;

@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.bungee;
 
-import dev.rollczi.litecommands.result.ResultHandler;
+import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;

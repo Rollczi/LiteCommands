@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -19,6 +20,10 @@ class BukkitSchedulerImpl implements Scheduler {
 
     @Override
     public <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
+        if (Bukkit.isPrimaryThread()) {
+            return runInCurrentThread(supplier);
+        }
+
         CompletableFuture<T> future = new CompletableFuture<>();
 
         bukkitScheduler.runTask(plugin, () -> {
@@ -35,6 +40,10 @@ class BukkitSchedulerImpl implements Scheduler {
 
     @Override
     public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
+        if (!Bukkit.isPrimaryThread()) {
+            return runInCurrentThread(supplier);
+        }
+
         CompletableFuture<T> future = new CompletableFuture<>();
 
         bukkitScheduler.runTaskAsynchronously(plugin, () -> {
@@ -47,6 +56,18 @@ class BukkitSchedulerImpl implements Scheduler {
         });
 
         return future;
+    }
+
+    private <T> CompletableFuture<T> runInCurrentThread(Supplier<T> supplier) {
+        try {
+            return CompletableFuture.completedFuture(supplier.get());
+        }
+        catch (Throwable throwable) {
+            CompletableFuture<T> future = new CompletableFuture<>();
+
+            future.completeExceptionally(throwable);
+            return future;
+        }
     }
 
     @Override

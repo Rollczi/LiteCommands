@@ -1,17 +1,18 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.scheduler.ScheduledChainException;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.command.requirement.RequirementSuccessMatch;
-import dev.rollczi.litecommands.exception.ExceptionHandleService;
+import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
-import dev.rollczi.litecommands.result.ResultService;
+import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.scheduler.ScheduledChain;
 import dev.rollczi.litecommands.scheduler.ScheduledChainLink;
 import dev.rollczi.litecommands.scheduler.Scheduler;
@@ -22,17 +23,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.function.Supplier;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class CommandExecuteService<SENDER> {
 
     private final ValidatorService<SENDER> validatorService;
-    private final ResultService<SENDER> resultResolver;
+    private final ResultHandleService<SENDER> resultResolver;
     private final ExceptionHandleService<SENDER> exceptionHandleService;
     private final Scheduler scheduler;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.exceptionHandleService = exceptionHandleService;
@@ -90,7 +93,6 @@ public class CommandExecuteService<SENDER> {
         }
 
         CommandExecutor<SENDER, ?> executor = executors.next();
-
         // Handle matching arguments
         return this.match(executor, invocation, matcher.copy()).thenCompose(match -> {
             if (match.isFailed()) {
@@ -128,7 +130,15 @@ public class CommandExecuteService<SENDER> {
                     return CommandExecuteResult.thrown(error);
                 }
             });
-        }).exceptionally(throwable -> CommandExecuteResult.thrown(throwable));
+        }).exceptionally(throwable -> toThrown(throwable));
+    }
+
+    private CommandExecuteResult toThrown(Throwable throwable) {
+        if (throwable instanceof CompletionException) {
+            return CommandExecuteResult.thrown(throwable.getCause());
+        }
+
+        return CommandExecuteResult.thrown(throwable);
     }
 
     private <REQUIREMENT extends Requirement<SENDER, ?>, MATCHER extends ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecutorMatchResult> match(
@@ -136,27 +146,47 @@ public class CommandExecuteService<SENDER> {
         Invocation<SENDER> invocation,
         MATCHER matcher
     ) {
-        ScheduledChain.Builder<ScheduledRequirement<REQUIREMENT>, Wrap<?>> builder = ScheduledChain.builder();
+        ScheduledChain.Builder<ScheduledRequirement<REQUIREMENT>, RequirementResult<?>> builder = ScheduledChain.builder();
 
         for (REQUIREMENT requirement : executor.getRequirements()) {
-            RequirementResult<?> result = requirement.match(invocation, matcher);
+            builder.link(new ScheduledRequirement<>(requirement, invocation, matcher));
+        }
 
-            if (!result.isSuccess()) {
-                return completedFuture(CommandExecutorMatchResult.failed(result.getFailedReason()));
+        return builder.build((scheduledRequirement, requirementResult) -> {
+            if (requirementResult.isFailure()) {
+                throw new RequirementChainException(scheduledRequirement, requirementResult.getError());
             }
 
-            builder.link(new ScheduledRequirement<>(requirement, result));
+            return toSuccess(scheduledRequirement.requirement, requirementResult.getSuccess());
+        }).call(scheduler)
+            .thenCompose(result -> {
+                if (result.isFailure()) {
+                    ScheduledChainException exception = result.getFailure();
+
+                    if (!(exception instanceof CommandExecuteService.RequirementChainException)) {
+                        throw exception;
+                    }
+
+                    return completedFuture(CommandExecutorMatchResult.failed(((RequirementChainException) exception).failed));
+                }
+
+                ParsableInputMatcher.EndResult endResult = matcher.endMatch();
+
+                if (!endResult.isSuccessful()) {
+                    return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
+                }
+
+                return completedFuture(executor.match(result.getSuccess()));
+            });
+    }
+
+    private static class RequirementChainException extends ScheduledChainException {
+        private final Object failed;
+
+        public RequirementChainException(ScheduledChainLink<?> link, Object failed) {
+            super(link);
+            this.failed = failed;
         }
-
-        ParsableInputMatcher.EndResult endResult = matcher.endMatch();
-
-        if (!endResult.isSuccessful()) {
-            return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
-        }
-
-        return builder.build((scheduledRequirement, wrap) -> toSuccess(scheduledRequirement.requirement, wrap))
-            .call(scheduler)
-            .thenApply(wraps -> executor.match(wraps));
     }
 
     @SuppressWarnings("unchecked")
@@ -164,18 +194,18 @@ public class CommandExecuteService<SENDER> {
         return new RequirementSuccessMatch<>(requirement, (Wrap<T>) wrap);
     }
 
-    private class ScheduledRequirement<R extends Requirement<SENDER, ?>> implements ScheduledChainLink<Wrap<?>> {
+    private class ScheduledRequirement<R extends Requirement<SENDER, ?>> implements ScheduledChainLink<RequirementResult<?>> {
         private final R requirement;
-        private final RequirementResult<?> result;
+        private final Supplier<RequirementResult<?>> match;
 
-        public ScheduledRequirement(R requirement, RequirementResult<?> result) {
+        public <MATCHER extends ParsableInputMatcher<MATCHER>> ScheduledRequirement(R requirement, Invocation<SENDER> invocation, MATCHER matcher) {
             this.requirement = requirement;
-            this.result = result;
+            this.match = () -> requirement.match(invocation, matcher);
         }
 
         @Override
-        public Wrap<?> call() {
-            return result.getSuccess();
+        public RequirementResult<?> call() {
+            return match.get();
         }
 
         @Override

@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.wrapper;
 public interface Wrapper {
 
     <EXPECTED> Wrap<EXPECTED> create(
-        ValueToWrap<EXPECTED> valueToWrap,
+        EXPECTED valueToWrap,
         WrapFormat<EXPECTED, ?> info
     );
 

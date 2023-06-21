@@ -54,7 +54,7 @@ public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotatio
             ContextResult<EXPECTED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.hasResult()) {
-                return RequirementResult.success(() -> wrapper.create(() -> result.getResult(), wrapFormat));
+                return RequirementResult.success(wrapper.create(result.getResult(), wrapFormat));
             }
 
             return RequirementResult.failure(result.getError());

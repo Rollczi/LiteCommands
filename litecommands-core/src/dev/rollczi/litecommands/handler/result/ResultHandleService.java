@@ -1,11 +1,12 @@
-package dev.rollczi.litecommands.result;
+package dev.rollczi.litecommands.handler.result;
 
+import dev.rollczi.litecommands.exception.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResultService<SENDER> {
+public class ResultHandleService<SENDER> {
 
     private final Map<Class<?>, ResultHandler<SENDER, ?>> handlers = new HashMap<>();
     private final Map<Class<?>, ResultMapper<SENDER, ?, ?>> mappers = new HashMap<>();
@@ -24,7 +25,7 @@ public class ResultService<SENDER> {
         ResultHandler<SENDER, T> handler = this.getHandler(type);
 
         if (handler == null) {
-            throw new ResultHandleException("Cannot find handler for result type " + type.getName());
+            throw new LiteCommandsException("Cannot find handler for result type " + type.getName());
         }
 
         handler.handle(invocation, result);

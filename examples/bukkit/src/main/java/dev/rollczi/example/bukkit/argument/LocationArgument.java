@@ -26,7 +26,7 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
             double y = Double.parseDouble(rawInput.next());
             double z = Double.parseDouble(rawInput.next());
 
-            return ParseResult.success(() -> new Location(null, x, y, z));
+            return ParseResult.success(new Location(null, x, y, z));
         }
         catch (NumberFormatException exception) {
             return ParseResult.failure("Invalid location");
