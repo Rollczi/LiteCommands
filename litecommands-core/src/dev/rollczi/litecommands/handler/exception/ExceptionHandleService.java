@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.exception;
+package dev.rollczi.litecommands.handler.exception;
 
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.util.MapUtil;

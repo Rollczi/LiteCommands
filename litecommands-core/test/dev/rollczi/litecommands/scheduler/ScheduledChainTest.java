@@ -23,7 +23,7 @@ class ScheduledChainTest {
 
         List<String> list = scheduledChain.call(scheduler)
             .join()
-            .getResults();
+            .getSuccess();
 
         assertEquals(6, list.size());
         assertEquals("1 -> scheduler-test-main", list.get(0));

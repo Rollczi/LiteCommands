@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.guide;
 
-import dev.rollczi.litecommands.result.ResultMapper;
+import dev.rollczi.litecommands.handler.result.ResultMapper;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 

@@ -15,9 +15,9 @@ import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
 import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.editor.Editor;
-import dev.rollczi.litecommands.exception.ExceptionHandleService;
-import dev.rollczi.litecommands.exception.ExceptionHandler;
-import dev.rollczi.litecommands.result.ResultHandler;
+import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
+import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
+import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
 import dev.rollczi.litecommands.permission.MissingPermissions;
@@ -35,7 +35,7 @@ import dev.rollczi.litecommands.argument.suggestion.SuggesterRegistryImpl;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBase;
-import dev.rollczi.litecommands.result.ResultService;
+import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -73,7 +73,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final BindRegistry<SENDER> bindRegistry = new BindRegistry<>();
     protected final ContextRegistry<SENDER> contextRegistry = new ContextRegistry<>();
     protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
-    protected final ResultService<SENDER> resultService = new ResultService<>();
+    protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleService<>();
     protected final ExceptionHandleService<SENDER> exceptionHandleService = new ExceptionHandleService<>();
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
 
@@ -254,13 +254,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <T> LiteCommandsBuilder<SENDER, C, B> result(Class<T> resultType, ResultHandler<SENDER, ? extends T> handler) {
-        this.resultService.registerHandler(resultType, handler);
+        this.resultHandleService.registerHandler(resultType, handler);
         return this;
     }
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> resultUnexpected(ResultHandler<SENDER, Object> handler) {
-        this.resultService.registerHandler(Object.class, handler);
+        this.resultHandleService.registerHandler(Object.class, handler);
         return this;
     }
 
@@ -278,13 +278,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> missingPermission(MissingPermissionsHandler<SENDER> handler) {
-        this.resultService.registerHandler(MissingPermissions.class, handler);
+        this.resultHandleService.registerHandler(MissingPermissions.class, handler);
         return this;
     }
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> invalidUsage(InvalidUsageHandler<SENDER> handler) {
-        this.resultService.registerHandler(InvalidUsage.class, handler);
+        this.resultHandleService.registerHandler(InvalidUsage.class, handler);
         return this;
     }
 
@@ -334,7 +334,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService, exceptionHandleService, scheduler);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
@@ -429,8 +429,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     @ApiStatus.Internal
-    public ResultService<SENDER> getResultService() {
-        return this.resultService;
+    public ResultHandleService<SENDER> getResultService() {
+        return this.resultHandleService;
     }
 
     @Override

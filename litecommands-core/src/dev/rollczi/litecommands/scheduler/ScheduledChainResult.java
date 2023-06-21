@@ -1,10 +1,11 @@
 package dev.rollczi.litecommands.scheduler;
 
+import dev.rollczi.litecommands.shared.LiteResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ScheduledChainResult<E> {
+public class ScheduledChainResult<E> implements LiteResult<List<E>, ScheduledChainException> {
 
     private final List<E> results;
     private final @Nullable ScheduledChainException exception;
@@ -14,18 +15,22 @@ public class ScheduledChainResult<E> {
         this.exception = exception;
     }
 
-    public List<E> getResults() {
+    @Override
+    public List<E> getSuccess() {
         return results;
     }
 
-    public @Nullable ScheduledChainException getException() {
+    @Override
+    public @Nullable ScheduledChainException getFailure() {
         return exception;
     }
 
+    @Override
     public boolean isSuccess() {
         return exception == null;
     }
 
+    @Override
     public boolean isFailure() {
         return exception != null;
     }

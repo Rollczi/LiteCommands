@@ -6,13 +6,13 @@ import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.command.requirement.RequirementSuccessMatch;
-import dev.rollczi.litecommands.exception.ExceptionHandleService;
+import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.CommandMeta;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
-import dev.rollczi.litecommands.result.ResultService;
+import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.scheduler.ScheduledChain;
 import dev.rollczi.litecommands.scheduler.ScheduledChainLink;
 import dev.rollczi.litecommands.scheduler.Scheduler;
@@ -31,11 +31,11 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 public class CommandExecuteService<SENDER> {
 
     private final ValidatorService<SENDER> validatorService;
-    private final ResultService<SENDER> resultResolver;
+    private final ResultHandleService<SENDER> resultResolver;
     private final ExceptionHandleService<SENDER> exceptionHandleService;
     private final Scheduler scheduler;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.exceptionHandleService = exceptionHandleService;
@@ -161,7 +161,7 @@ public class CommandExecuteService<SENDER> {
         }).call(scheduler)
             .thenCompose(result -> {
                 if (result.isFailure()) {
-                    ScheduledChainException exception = result.getException();
+                    ScheduledChainException exception = result.getFailure();
 
                     if (!(exception instanceof CommandExecuteService.RequirementChainException)) {
                         throw exception;
@@ -176,7 +176,7 @@ public class CommandExecuteService<SENDER> {
                     return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
                 }
 
-                return completedFuture(executor.match(result.getResults()));
+                return completedFuture(executor.match(result.getSuccess()));
             });
     }
 

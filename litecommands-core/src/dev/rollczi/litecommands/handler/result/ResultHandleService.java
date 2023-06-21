@@ -1,11 +1,11 @@
-package dev.rollczi.litecommands.result;
+package dev.rollczi.litecommands.handler.result;
 
 import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResultService<SENDER> {
+public class ResultHandleService<SENDER> {
 
     private final Map<Class<?>, ResultHandler<SENDER, ?>> handlers = new HashMap<>();
     private final Map<Class<?>, ResultMapper<SENDER, ?, ?>> mappers = new HashMap<>();

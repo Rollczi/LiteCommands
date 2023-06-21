@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.adventure;
 
-import dev.rollczi.litecommands.result.ResultHandler;
+import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;

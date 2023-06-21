@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.result.ResultHandler;
+import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
 
 public interface MissingPermissionsHandler<SENDER> extends ResultHandler<SENDER, MissingPermissions> {

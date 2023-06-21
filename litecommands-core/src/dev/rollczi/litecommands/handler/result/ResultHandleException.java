@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.result;
+package dev.rollczi.litecommands.handler.result;
 
 public class ResultHandleException extends RuntimeException {
 
