@@ -55,6 +55,7 @@ class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInpu
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet) {
             Object input = namedArguments.get(argument.getName());
 

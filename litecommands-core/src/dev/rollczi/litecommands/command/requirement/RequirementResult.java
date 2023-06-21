@@ -5,24 +5,22 @@ import dev.rollczi.litecommands.wrapper.Wrap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
-
 public class RequirementResult<PARSED> {
 
-    private final @Nullable Supplier<Wrap<PARSED>> success;
-    private final @Nullable FailedReason failedReason;
+    private final @Nullable Wrap<PARSED> success;
+    private final @Nullable Object error;
 
-    private RequirementResult(@Nullable Supplier<Wrap<PARSED>> success, @Nullable FailedReason failedReason) {
+    private RequirementResult(@Nullable Wrap<PARSED> success, @Nullable Object error) {
         this.success = success;
-        this.failedReason = failedReason;
+        this.error = error;
     }
 
     public boolean isSuccess() {
         return success != null;
     }
 
-    public boolean isFailed() {
-        return failedReason != null;
+    public boolean isFailure() {
+        return error != null;
     }
 
     @NotNull
@@ -31,28 +29,28 @@ public class RequirementResult<PARSED> {
             throw new IllegalStateException("Cannot get success when result is failed");
         }
 
-        return success.get();
+        return success;
     }
 
     @NotNull
-    public FailedReason getFailedReason() {
-        if (failedReason == null) {
+    public Object getError() {
+        if (error == null) {
             throw new IllegalStateException("Cannot get failed reason when result is success");
         }
 
-        return failedReason;
+        return error;
     }
 
-    public static <EXPECTED> RequirementResult<EXPECTED> success(Supplier<Wrap<EXPECTED>> wrappedExpected) {
+    public static <EXPECTED> RequirementResult<EXPECTED> success(Wrap<EXPECTED> wrappedExpected) {
         return new RequirementResult<>(wrappedExpected, null);
     }
 
     public static <EXPECTED> RequirementResult<EXPECTED> failure(FailedReason failedReason) {
-        return new RequirementResult<>(null, failedReason);
+        return new RequirementResult<>(null, failedReason.getReasonOr(null));
     }
 
     public static <EXPECTED> RequirementResult<EXPECTED> failure(Object failedReason) {
-        return new RequirementResult<>(null, FailedReason.of(failedReason));
+        return new RequirementResult<>(null, failedReason);
     }
 
 }

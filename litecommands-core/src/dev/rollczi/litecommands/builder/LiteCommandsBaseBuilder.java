@@ -49,7 +49,9 @@ import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -60,8 +62,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final Class<SENDER> senderClass;
     protected final Platform<SENDER, C> platform;
 
-    protected LiteBuilderPreProcessor<SENDER, C> preProcessor;
-    protected LiteBuilderPostProcessor<SENDER, C> postProcessor;
+    protected final Set<LiteBuilderPreProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
+    protected final Set<LiteBuilderPostProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
     protected Scheduler scheduler = new SchedulerSameThreadImpl();
 
     protected final EditorService<SENDER> editorService = new EditorService<>();
@@ -294,13 +296,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> preProcessor(LiteBuilderPreProcessor<SENDER, C> preProcessor) {
-        this.preProcessor = preProcessor;
+        this.preProcessors.add(preProcessor);
         return this;
     }
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> postProcessor(LiteBuilderPostProcessor<SENDER, C> postProcessor) {
-        this.postProcessor = postProcessor;
+        this.postProcessors.add(postProcessor);
         return this;
     }
 
@@ -328,8 +330,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             throw new IllegalStateException("No platform was set");
         }
 
-        if (this.preProcessor != null) {
-            this.preProcessor.process(this, this);
+        for (LiteBuilderPreProcessor<SENDER, C> processor : preProcessors) {
+            processor.process(this, this);
         }
 
         CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultService, exceptionHandleService, scheduler);
@@ -348,8 +350,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             }
         }
 
-        if (this.postProcessor != null) {
-            this.postProcessor.process(this, this);
+        for (LiteBuilderPostProcessor<SENDER, C> processor : postProcessors) {
+            processor.process(this, this);
         }
 
         LiteCommandsBase<SENDER> liteCommand = new LiteCommandsBase<>(commandManager);
@@ -375,16 +377,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public Platform<SENDER, C> getPlatform() {
         return this.platform;
-    }
-
-    @Override
-    public LiteBuilderPreProcessor<SENDER, C> getPreProcessor() {
-        return this.preProcessor;
-    }
-
-    @Override
-    public LiteBuilderPostProcessor<SENDER, C> getPostProcessor() {
-        return this.postProcessor;
     }
 
     @Override

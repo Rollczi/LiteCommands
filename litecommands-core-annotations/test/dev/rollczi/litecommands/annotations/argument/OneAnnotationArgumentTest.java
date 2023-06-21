@@ -21,7 +21,7 @@ class OneAnnotationArgumentTest {
 
         @Override
         public ParseResult<String> parseTyped(Invocation<TestSender> invocation, ArgParameterArgument<String> argument, RawInput rawInput) {
-            return ParseResult.success(() -> rawInput.next());
+            return ParseResult.success(rawInput.next());
         }
 
         @Override
@@ -51,7 +51,7 @@ class OneAnnotationArgumentTest {
     @Test
     void testParse() {
         ParseResult<String> parseResult = argument.parse(TestUtil.invocation("test"), null, RawInput.of("test"));
-        String value = parseResult.getSuccessfulResult().get();
+        String value = parseResult.getSuccessfulResult();
 
         assertEquals("test", value);
     }

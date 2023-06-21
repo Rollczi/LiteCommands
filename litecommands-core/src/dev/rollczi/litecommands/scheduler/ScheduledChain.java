@@ -20,7 +20,7 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
         this.mapper = mapper;
     }
 
-    public CompletableFuture<List<R>> call(Scheduler scheduler) {
+    public CompletableFuture<ScheduledChainResult<R>> call(Scheduler scheduler) {
         ChainCollector collector = new ChainCollector(scheduler);
 
         return collector.collect();
@@ -61,7 +61,6 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
     private class ChainCollector {
 
         private final Iterator<CHAIN> chainLinkIterator;
-        private final List<R> results = new ArrayList<>();
         private final Scheduler scheduler;
 
         ChainCollector(Scheduler scheduler) {
@@ -69,24 +68,30 @@ public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R>
             this.chainLinkIterator = chain.iterator();
         }
 
-        CompletableFuture<List<R>> collect() {
+        CompletableFuture<ScheduledChainResult<R>> collect() {
             return collect(new ArrayList<>());
         }
 
-        private CompletableFuture<List<R>> collect(List<R> results) {
+        private CompletableFuture<ScheduledChainResult<R>> collect(List<R> results) {
             if (!chainLinkIterator.hasNext()) {
-                return completedFuture(results);
+                return completedFuture(ScheduledChainResult.success(results));
             }
 
             CHAIN chainLink = chainLinkIterator.next();
 
             return scheduler
-                .supply(chainLink.type(), () -> mapper.apply(chainLink, chainLink.call()))
-                .thenCompose(returnValue -> {
-                    results.add(returnValue);
+                .supply(chainLink.type(), () -> {
+                    try {
+                        R returnValue = mapper.apply(chainLink, chainLink.call());
+                        results.add(returnValue);
 
-                    return this.collect(results);
-                });
+                        return this.collect(results);
+                    }
+                    catch (ScheduledChainException exception) {
+                        return completedFuture(ScheduledChainResult.<R>failure(exception));
+                    }
+                })
+                .thenCompose(completableFuture -> completableFuture);
         }
 
     }

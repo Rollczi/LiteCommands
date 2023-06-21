@@ -11,7 +11,7 @@ public class StringArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Str
 
     @Override
     protected ParseResult<String> parse(Invocation<SENDER> invocation, Argument<String> context, String argument) {
-        return ParseResult.success(() -> argument);
+        return ParseResult.success(argument);
     }
 
     @Override

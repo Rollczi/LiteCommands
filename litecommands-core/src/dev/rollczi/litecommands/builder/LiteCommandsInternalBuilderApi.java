@@ -27,12 +27,6 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
     Platform<SENDER, C> getPlatform();
 
     @ApiStatus.Internal
-    LiteBuilderPreProcessor<SENDER, C> getPreProcessor();
-
-    @ApiStatus.Internal
-    LiteBuilderPostProcessor<SENDER, C> getPostProcessor();
-
-    @ApiStatus.Internal
     Scheduler getScheduler();
 
     @ApiStatus.Internal

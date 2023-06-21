@@ -22,36 +22,31 @@ abstract class AbstractWrapper<WRAPPER> implements Wrapper {
     }
 
     @Override
-    public <EXPECTED> Wrap<EXPECTED> create(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info) {
+    public final <EXPECTED> Wrap<EXPECTED> create(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
         this.check(info);
 
         return new TypeSafeWrap<>(info.getParsedType(), this.wrapValue(valueToWrap, info));
     }
 
-    protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info);
+    protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info);
 
     @Override
-    public <EXPECTED> Wrap<EXPECTED> createEmpty(WrapFormat<EXPECTED, ?> info) {
+    public final <EXPECTED> Wrap<EXPECTED> createEmpty(WrapFormat<EXPECTED, ?> info) {
         this.check(info);
 
         return new TypeSafeWrap<>(info.getParsedType(), this.emptyValue(info));
     }
 
-    protected abstract <EXPECTED> Supplier<WRAPPER> emptyValue(WrapFormat<EXPECTED, ?> info);
-
-    @Override
-    public boolean canCreateEmpty() {
-        return this.canCreateEmptyValue();
+    protected <EXPECTED> Supplier<WRAPPER> emptyValue(WrapFormat<EXPECTED, ?> info) {
+        throw new UnsupportedOperationException("Cannot create empty value for " + wrapperType);
     }
 
-    protected abstract boolean canCreateEmptyValue();
-
     private void check(WrapFormat<?, ?> info) {
-        if (!info.hasOutType()) {
-            throw new IllegalArgumentException("Cannot wrap value without wrapper");
+        if (wrapperType == Object.class && !info.hasOutType()) {
+            return;
         }
-
-        if (!info.getOutType().equals(Optional.class)) {
+        
+        if (!info.hasOutType() || !info.getOutType().equals(wrapperType)) {
             throw new IllegalArgumentException("Wrapper type mismatch");
         }
     }

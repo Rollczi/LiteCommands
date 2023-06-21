@@ -42,6 +42,7 @@ public class LiteTestSpec {
         liteCommands = LiteCommandsFactory.builder(TestSender.class, platform)
             .commands(LiteAnnotationCommands.ofClasses(commands))
             .preProcessor((builder, pattern) -> configureLiteTest(builder, type))
+            .exceptionUnexpected((invocation, exception) -> {})
             .build(true);
     }
 

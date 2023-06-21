@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@SuppressWarnings("rawtypes")
 public class OptionalWrapper extends AbstractWrapper<Optional> {
 
     public OptionalWrapper() {
@@ -13,8 +14,8 @@ public class OptionalWrapper extends AbstractWrapper<Optional> {
     }
 
     @Override
-    protected <EXPECTED> Supplier<Optional> wrapValue(ValueToWrap<EXPECTED> valueToWrap, WrapFormat<EXPECTED, ?> info) {
-        return () -> Optional.ofNullable(valueToWrap.get());
+    protected <EXPECTED> Supplier<Optional> wrapValue(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
+        return () -> Optional.ofNullable(valueToWrap);
     }
 
     @Override
@@ -23,7 +24,7 @@ public class OptionalWrapper extends AbstractWrapper<Optional> {
     }
 
     @Override
-    protected boolean canCreateEmptyValue() {
+    public boolean canCreateEmpty() {
         return true;
     }
 

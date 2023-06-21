@@ -106,7 +106,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
                 return RequirementResult.failure(matchArgument.getFailedReason());
             }
 
-            return RequirementResult.success(() -> new Wrap<PARSED>() {
+            return RequirementResult.success(new Wrap<PARSED>() {
                 @Override
                 public Object unwrap() {
                     return matchArgument.getSuccessfulResult();

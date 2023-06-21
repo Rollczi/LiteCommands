@@ -22,7 +22,8 @@ class ScheduledChainTest {
             .build(text -> text + " -> " + Thread.currentThread().getName());
 
         List<String> list = scheduledChain.call(scheduler)
-            .join();
+            .join()
+            .getResults();
 
         assertEquals(6, list.size());
         assertEquals("1 -> scheduler-test-main", list.get(0));

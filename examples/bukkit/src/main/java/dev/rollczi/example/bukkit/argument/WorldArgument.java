@@ -27,7 +27,7 @@ public class WorldArgument extends ArgumentResolver<CommandSender, World> {
             return ParseResult.failure("World '" + argument + "' not exists");
         }
 
-        return ParseResult.success(() -> world);
+        return ParseResult.success(world);
     }
 
     @Override
