@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.permission;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.CommandRouteUtils;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
 import java.util.ArrayList;
@@ -48,12 +48,12 @@ public class MissingPermissions {
         List<String> permissions = new ArrayList<>();
 
         CommandRouteUtils.consumeFromRootToChild(command, route -> {
-            permissions.addAll(route.meta().get(CommandMeta.PERMISSIONS));
-            permissions.removeAll(route.meta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+            permissions.addAll(route.meta().get(Meta.PERMISSIONS));
+            permissions.removeAll(route.meta().get(Meta.PERMISSIONS_EXCLUDED));
         });
 
-        permissions.addAll(executor.getMeta().get(CommandMeta.PERMISSIONS));
-        permissions.removeAll(executor.getMeta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+        permissions.addAll(executor.getMeta().get(Meta.PERMISSIONS));
+        permissions.removeAll(executor.getMeta().get(Meta.PERMISSIONS_EXCLUDED));
 
         return check(platformSender, permissions);
     }
@@ -62,8 +62,8 @@ public class MissingPermissions {
         List<String> permissions = new ArrayList<>();
 
         CommandRouteUtils.consumeFromRootToChild(command, route -> {
-            permissions.addAll(route.meta().get(CommandMeta.PERMISSIONS));
-            permissions.removeAll(route.meta().get(CommandMeta.PERMISSIONS_EXCLUDED));
+            permissions.addAll(route.meta().get(Meta.PERMISSIONS));
+            permissions.removeAll(route.meta().get(Meta.PERMISSIONS_EXCLUDED));
         });
 
         return check(platformSender, permissions);

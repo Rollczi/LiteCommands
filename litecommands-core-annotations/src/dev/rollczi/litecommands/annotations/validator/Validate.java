@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.annotations.validator;
 
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaApplicator;
-import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.meta.CommandMetaHolder;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.validator.Validator;
 
 import java.lang.annotation.ElementType;
@@ -19,8 +19,8 @@ public @interface Validate {
     class AnnotationResolver<SENDER> implements CommandAnnotationMetaApplicator<SENDER, Validate> {
 
         @Override
-        public void apply(Object instance, Validate annotation, CommandMetaHolder metaHolder) {
-            metaHolder.editMeta(meta -> meta.listEditor(CommandMeta.VALIDATORS)
+        public void apply(Object instance, Validate annotation, MetaHolder metaHolder) {
+            metaHolder.editMeta(meta -> meta.listEditor(Meta.VALIDATORS)
                 .addAll(annotation.value())
                 .apply());
         }

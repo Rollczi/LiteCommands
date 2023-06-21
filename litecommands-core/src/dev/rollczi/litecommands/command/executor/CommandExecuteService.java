@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.scheduler.ScheduledChain;
@@ -118,7 +118,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             // Execution
-            SchedulerPollType type = executor.getMeta().get(CommandMeta.POLL_TYPE);
+            SchedulerPollType type = executor.getMeta().get(Meta.POLL_TYPE);
 
             return scheduler.supply(type, () -> {
                 try {

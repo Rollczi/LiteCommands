@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.command.builder;
 
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaCollector;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     protected final Map<String, CommandBuilder<SENDER>> children = new HashMap<>();
     protected final List<CommandBuilderExecutor<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
-    protected CommandMeta meta = CommandMeta.create();
+    protected Meta meta = Meta.create();
 
     protected CommandBuilderDummyPrefix<SENDER> dummyPrefix;
 
@@ -175,19 +175,24 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public CommandBuilder<SENDER> applyMeta(UnaryOperator<CommandMeta> operator) {
+    public CommandBuilder<SENDER> applyMeta(UnaryOperator<Meta> operator) {
         this.meta = operator.apply(this.meta);
         return this;
     }
 
     @Override
-    public CommandMeta meta() {
+    public Meta meta() {
         return this.meta;
     }
 
     @Override
     public MetaCollector metaCollector() {
         return new CommandBuilderMetaCollector(this);
+    }
+
+    @Override
+    public void editMeta(Consumer<Meta> operator) {
+        operator.accept(this.meta);
     }
 
     @Override
@@ -348,11 +353,6 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
             this.appendChild(childToMeagre);
         }
 
-    }
-
-    @Override
-    public void editMeta(Consumer<CommandMeta> operator) {
-        operator.accept(this.meta);
     }
 
 }

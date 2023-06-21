@@ -15,7 +15,7 @@ import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
@@ -61,7 +61,7 @@ class MethodCommandExecutorServiceTest {
         List<Requirement<?, ?>> requirements = (List<Requirement<?, ?>>) commandExecutor.getRequirements();
         assertEquals(3, requirements.size());
 
-        CommandMeta meta = commandExecutor.getMeta();
+        Meta meta = commandExecutor.getMeta();
         assertEquals(0, meta.getKeys().size());
     }
 

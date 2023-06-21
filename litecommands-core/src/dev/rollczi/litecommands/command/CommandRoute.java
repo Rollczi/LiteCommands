@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scope.Scopeable;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public interface CommandRoute<SENDER> extends Scopeable {
 
     List<CommandExecutor<SENDER, ?>> getExecutors();
 
-    CommandMeta meta();
+    Meta meta();
 
     static <SENDER> CommandRoute<SENDER> create(CommandRoute<SENDER> parent, String name, List<String> aliases) {
         return new CommandRouteImpl<>(name, aliases, parent);

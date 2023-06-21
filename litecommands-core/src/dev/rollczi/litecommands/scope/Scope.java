@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.scope;
 
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 
 @FunctionalInterface
 public interface Scope {
@@ -17,13 +17,13 @@ public interface Scope {
 
     static Scope command(Class<?> type) {
         return scopeable -> {
-            CommandMeta meta = scopeable.meta();
+            Meta meta = scopeable.meta();
 
-            if (!meta.has(CommandMeta.COMMAND_ORIGIN_TYPE)) {
+            if (!meta.has(Meta.COMMAND_ORIGIN_TYPE)) {
                 return false;
             }
 
-            return meta.get(CommandMeta.COMMAND_ORIGIN_TYPE).equals(type);
+            return meta.get(Meta.COMMAND_ORIGIN_TYPE).equals(type);
         };
     }
 

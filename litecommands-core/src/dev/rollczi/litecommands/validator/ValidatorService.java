@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.CommandRouteUtils;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.shared.IterableReferences;
 
@@ -49,7 +49,7 @@ public class ValidatorService<SENDER> {
     private List<Validator<SENDER>> fromMeta(CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
         List<Validator<SENDER>> validators = new ArrayList<>();
 
-        List<Class<?>> validatorsTypes = CommandRouteUtils.collectFromRootToExecutor(commandRoute, commandExecutor, commandMeta -> commandMeta.get(CommandMeta.VALIDATORS))
+        List<Class<?>> validatorsTypes = CommandRouteUtils.collectFromRootToExecutor(commandRoute, commandExecutor, commandMeta -> commandMeta.get(Meta.VALIDATORS))
             .stream()
             .flatMap(List::stream)
             .collect(Collectors.toList());

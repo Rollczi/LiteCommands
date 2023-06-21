@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.TestUtil;
@@ -34,17 +34,17 @@ class MissingPermissionValidatorTest {
 
         CommandRoute<TestSender> test = assertSingle(CommandBuilder.<TestSender>create()
             .name("test")
-            .applyMeta(meta -> meta.listEditor(CommandMeta.PERMISSIONS)
+            .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS)
                 .add("permission.test")
                 .apply()
             )
             .appendChild("sub", childContext -> {
                 CommandBuilderExecutor<TestSender> builder = new CommandBuilderExecutor<TestSender>(new TestExecutor<>())
-                    .applyMeta(meta -> meta.listEditor(CommandMeta.PERMISSIONS).add("permission.sub.execute").apply())
-                    .applyMeta(meta -> meta.listEditor(CommandMeta.PERMISSIONS_EXCLUDED).add("permission.sub.toexclude").apply());
+                    .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply())
+                    .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS_EXCLUDED).add("permission.sub.toexclude").apply());
 
                 return childContext
-                    .applyMeta(meta -> meta.put(CommandMeta.PERMISSIONS, Arrays.asList("permission.sub", "permission.sub.toexclude")))
+                    .applyMeta(meta -> meta.put(Meta.PERMISSIONS, Arrays.asList("permission.sub", "permission.sub.toexclude")))
                     .appendExecutor(builder);
             }));
 

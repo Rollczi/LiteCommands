@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public final class CommandRouteUtils {
         }
     }
 
-    public static <SENDER, T> List<T> collectFromRootToExecutor(CommandRoute<SENDER> route, CommandExecutor<SENDER, ?> executor, Function<CommandMeta, T> collector) {
+    public static <SENDER, T> List<T> collectFromRootToExecutor(CommandRoute<SENDER> route, CommandExecutor<SENDER, ?> executor, Function<Meta, T> collector) {
         List<T> collected = new ArrayList<>();
 
         consumeFromRootToChild(route, commandRoute -> collected.add(collector.apply(commandRoute.meta())));

@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -26,7 +26,7 @@ class JDACommandTranslatorTest {
     void test() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
-        siema.meta().put(CommandMeta.DESCRIPTION, "description");
+        siema.meta().put(Meta.DESCRIPTION, "description");
         siema.appendExecutor(simpleExecutor());
 
         JDACommandTranslator.JDALiteCommand translated = translator.translate("siema", siema);
@@ -51,7 +51,7 @@ class JDACommandTranslatorTest {
     void subcommandsAndGroup() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
-        siema.meta().put(CommandMeta.DESCRIPTION, "description");
+        siema.meta().put(Meta.DESCRIPTION, "description");
 
         CommandRoute<TestSender> sub = CommandRoute.create(siema, "sub", List.of());
         siema.appendChildren(sub);

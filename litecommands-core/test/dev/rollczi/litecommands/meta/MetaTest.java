@@ -1,8 +1,5 @@
 package dev.rollczi.litecommands.meta;
 
-import dev.rollczi.litecommands.meta.CommandKey;
-import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.meta.CommandMetaType;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CommandMetaTest {
+class MetaTest {
 
     @Test
     void testSetAndGet() {
-        CommandMeta meta = CommandMeta.create();
-        CommandKey<String> key = CommandKey.of("test", String.class);
+        Meta meta = Meta.create();
+        MetaKey<String> key = MetaKey.of("test", String.class);
         assertThrows(NoSuchElementException.class, () -> meta.get(key));
 
         meta.put(key, "value");
@@ -29,8 +26,8 @@ class CommandMetaTest {
 
     @Test
     void testClear() {
-        CommandMeta meta = CommandMeta.create();
-        CommandKey<String> key = CommandKey.of("test", String.class, "def");
+        Meta meta = Meta.create();
+        MetaKey<String> key = MetaKey.of("test", String.class, "def");
 
         meta.put(key, "value");
         assertEquals("value", meta.get(key));
@@ -40,24 +37,24 @@ class CommandMetaTest {
 
     @Test
     void testGetDefaultValue() {
-        CommandMeta meta = CommandMeta.create();
-        String text = meta.get(CommandKey.of("test", String.class, "default"));
+        Meta meta = Meta.create();
+        String text = meta.get(MetaKey.of("test", String.class, "default"));
 
         assertEquals("default", text);
     }
 
     @Test
     void testList() {
-        CommandMeta meta = CommandMeta.create();
+        Meta meta = Meta.create();
         ArrayList<String> test = new ArrayList<>();
         test.add("first");
 
-        meta.put(CommandMeta.PERMISSIONS, test);
-        meta.listEditor(CommandMeta.PERMISSIONS)
+        meta.put(Meta.PERMISSIONS, test);
+        meta.listEditor(Meta.PERMISSIONS)
             .add("second")
             .apply();
 
-        List<String> list = meta.get(CommandMeta.PERMISSIONS);
+        List<String> list = meta.get(Meta.PERMISSIONS);
 
         assertEquals(2, list.size());
         assertEquals("first", list.get(0));
@@ -66,8 +63,8 @@ class CommandMetaTest {
 
     @Test
     void testSet() {
-        CommandMeta meta = CommandMeta.create();
-        CommandKey<Set<String>> key = CommandKey.of("test", CommandMetaType.set(), new HashSet<>());
+        Meta meta = Meta.create();
+        MetaKey<Set<String>> key = MetaKey.of("test", MetaType.set(), new HashSet<>());
 
         Set<String> set = meta.get(key);
         assertEquals(0, set.size());

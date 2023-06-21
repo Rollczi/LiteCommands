@@ -6,45 +6,45 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
-class CommandMetaEmptyImpl implements CommandMeta {
+class MetaEmptyImpl implements Meta {
 
     @Override
-    public <T> @NotNull T get(CommandKey<T> key) {
+    public <T> @NotNull T get(MetaKey<T> key) {
         throw new NoSuchElementException();
     }
 
     @Override
-    public <T> CommandMeta put(CommandKey<T> key, T value) {
+    public <T> Meta put(MetaKey<T> key, T value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T> CommandMeta remove(CommandKey<T> key) {
+    public <T> Meta remove(MetaKey<T> key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CommandMeta clear() {
+    public Meta clear() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean has(CommandKey<?> key) {
+    public boolean has(MetaKey<?> key) {
         return false;
     }
 
     @Override
-    public CommandMeta apply(CommandMeta meta) {
+    public Meta apply(Meta meta) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CommandMeta copy() {
+    public Meta copy() {
         return this;
     }
 
     @Override
-    public Collection<CommandKey<?>> getKeys() {
+    public Collection<MetaKey<?>> getKeys() {
         return Collections.emptyList();
     }
 

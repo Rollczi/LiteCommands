@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public interface CommandMetaType<T> {
+public interface MetaType<T> {
 
     T cast(Object value);
 
@@ -17,23 +17,23 @@ public interface CommandMetaType<T> {
         return value;
     }
 
-    static <E> CommandMetaType<List<E>> list() {
-        return new CommandMetaTypeList<>();
+    static <E> MetaType<List<E>> list() {
+        return new MetaTypeList<>();
     }
 
-    static <E> CommandMetaType<Set<E>> set() {
-        return new CommandMetaTypeSet<>();
+    static <E> MetaType<Set<E>> set() {
+        return new MetaTypeSet<>();
     }
 
-    static <T> CommandMetaType<T> of(Class<T> type) {
-        return new CommandMetaTypeImpl<>(type);
+    static <T> MetaType<T> of(Class<T> type) {
+        return new MetaTypeImpl<>(type);
     }
 
-    class CommandMetaTypeImpl<T> implements CommandMetaType<T> {
+    class MetaTypeImpl<T> implements MetaType<T> {
 
         private final Class<T> type;
 
-        public CommandMetaTypeImpl(Class<T> type) {
+        public MetaTypeImpl(Class<T> type) {
             this.type = type;
         }
 
@@ -44,7 +44,7 @@ public interface CommandMetaType<T> {
 
     }
 
-    class CommandMetaTypeList<T> implements CommandMetaType<List<T>> {
+    class MetaTypeList<T> implements MetaType<List<T>> {
 
         @Override
         @SuppressWarnings("unchecked")
@@ -64,7 +64,7 @@ public interface CommandMetaType<T> {
 
     }
 
-    class CommandMetaTypeSet<T> implements CommandMetaType<Set<T>> {
+    class MetaTypeSet<T> implements MetaType<Set<T>> {
 
         @Override
         @SuppressWarnings("unchecked")

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaCollector;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     private final List<String> aliases;
     private final Set<String> namesAndAliases;
     private final CommandRoute<SENDER> parent;
-    private final CommandMeta meta = CommandMeta.create();
+    private final Meta meta = Meta.create();
 
     private final List<CommandExecutor<SENDER, ?>> executors = new ArrayList<>();
     private final List<CommandRoute<SENDER>> childRoutes = new ArrayList<>();
@@ -83,7 +83,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public CommandMeta meta() {
+    public Meta meta() {
         return this.meta;
     }
 

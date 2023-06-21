@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command.builder;
 
-import dev.rollczi.litecommands.meta.CommandKey;
+import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.meta.MetaCollector;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class CommandBuilderMetaCollector implements MetaCollector {
     }
 
     @Override
-    public <T> List<T> collect(CommandKey<T> key) {
+    public <T> List<T> collect(MetaKey<T> key) {
         List<T> collected = new ArrayList<>();
 
         CommandBuilder current = this.contextBase;

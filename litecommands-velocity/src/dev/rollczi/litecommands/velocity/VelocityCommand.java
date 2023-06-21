@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.SimpleCommand;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -36,7 +37,7 @@ class VelocityCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        boolean isNative = commandSection.meta().get(dev.rollczi.litecommands.meta.CommandMeta.NATIVE_PERMISSIONS);
+        boolean isNative = commandSection.meta().get(Meta.NATIVE_PERMISSIONS);
 
         if (isNative || settings.isNativePermissions()) {
             MissingPermissions missingPermissions = MissingPermissions.check(new VelocitySender(invocation.source()), this.commandSection);

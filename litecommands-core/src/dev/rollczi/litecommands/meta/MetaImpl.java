@@ -13,26 +13,26 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Supplier;
 
-class CommandMetaImpl implements CommandMeta {
+class MetaImpl implements Meta {
 
-    private final Map<CommandKey<?>, Object> meta = new HashMap<>();
+    private final Map<MetaKey<?>, Object> meta = new HashMap<>();
 
-    public <T> CommandMeta put(CommandKey<T> key, T value) {
+    public <T> Meta put(MetaKey<T> key, T value) {
         this.meta.put(key, key.getType().in(value));
         return this;
     }
 
-    public <E> CommandMeta appendToList(CommandKey<List<E>> key, E element) {
+    public <E> Meta appendToList(MetaKey<List<E>> key, E element) {
         this.addToCollection(key, element, ArrayList::new);
         return this;
     }
 
-    public <E> CommandMeta appendToSet(CommandKey<Set<E>> key, E element) {
+    public <E> Meta appendToSet(MetaKey<Set<E>> key, E element) {
         this.addToCollection(key, element, HashSet::new);
         return this;
     }
 
-    private <E, C extends Collection<E>> void addToCollection(CommandKey<C> key, E element, Supplier<C> newCollection) {
+    private <E, C extends Collection<E>> void addToCollection(MetaKey<C> key, E element, Supplier<C> newCollection) {
         Object objList = this.meta.getOrDefault(key, key.getDefaultValue());
 
         C collection = objList == null
@@ -44,14 +44,14 @@ class CommandMetaImpl implements CommandMeta {
         this.meta.put(key, collection);
     }
 
-    public <T> CommandMeta remove(CommandKey<T> key) {
+    public <T> Meta remove(MetaKey<T> key) {
         this.meta.remove(key);
         return this;
     }
 
-    public <T> @NotNull T get(CommandKey<T> key) {
+    public <T> @NotNull T get(MetaKey<T> key) {
         Object value = this.meta.get(key);
-        CommandMetaType<T> type = key.getType();
+        MetaType<T> type = key.getType();
 
         if (value != null) {
             return type.out(type.cast(value));
@@ -65,20 +65,20 @@ class CommandMetaImpl implements CommandMeta {
     }
 
     @Override
-    public CommandMeta clear() {
+    public Meta clear() {
         this.meta.clear();
 
         return this;
     }
 
     @Override
-    public boolean has(CommandKey<?> key) {
+    public boolean has(MetaKey<?> key) {
         return this.meta.containsKey(key);
     }
 
     @Override
-    public CommandMeta apply(CommandMeta meta) {
-        for (CommandKey<?> key : meta.getKeys()) {
+    public Meta apply(Meta meta) {
+        for (MetaKey<?> key : meta.getKeys()) {
             this.meta.put(key, meta.get(key));
         }
 
@@ -86,24 +86,24 @@ class CommandMetaImpl implements CommandMeta {
     }
 
     @Override
-    public CommandMeta copy() {
-        CommandMetaImpl copy = new CommandMetaImpl();
+    public Meta copy() {
+        MetaImpl copy = new MetaImpl();
 
-        for (CommandKey<?> key : this.meta.keySet()) {
+        for (MetaKey<?> key : this.meta.keySet()) {
             copy.meta.put(key, this.getOut(key));
         }
 
         return copy;
     }
 
-    private <T> T getOut(CommandKey<T> key) {
-        CommandMetaType<T> type = key.getType();
+    private <T> T getOut(MetaKey<T> key) {
+        MetaType<T> type = key.getType();
 
         return type.out(type.cast(this.meta.get(key)));
     }
 
     @Override
-    public Collection<CommandKey<?>> getKeys() {
+    public Collection<MetaKey<?>> getKeys() {
         return Collections.unmodifiableSet(this.meta.keySet());
     }
 

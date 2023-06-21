@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.command.builder;
 
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.meta.CommandMetaHolder;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.scope.Scopeable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-public interface CommandBuilder<SENDER> extends Scopeable, CommandMetaHolder {
+public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
 
     @NotNull
     CommandBuilder<SENDER> name(String name);
@@ -59,10 +59,10 @@ public interface CommandBuilder<SENDER> extends Scopeable, CommandMetaHolder {
 
     Collection<CommandBuilderExecutor<SENDER>> executors();
 
-    CommandBuilder<SENDER> applyMeta(UnaryOperator<CommandMeta> operator);
+    CommandBuilder<SENDER> applyMeta(UnaryOperator<Meta> operator);
 
     @Override
-    CommandMeta meta();
+    Meta meta();
 
     @ApiStatus.Internal
     CommandBuilder<SENDER> routeName(String name);

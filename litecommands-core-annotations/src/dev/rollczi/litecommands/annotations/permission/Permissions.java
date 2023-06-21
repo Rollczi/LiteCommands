@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.annotations.permission;
 
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaApplicator;
-import dev.rollczi.litecommands.meta.CommandMeta;
-import dev.rollczi.litecommands.meta.CommandMetaHolder;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -18,10 +18,10 @@ public @interface Permissions {
     class AnnotationResolver<SENDER> implements CommandAnnotationMetaApplicator<SENDER, Permissions> {
 
         @Override
-        public void apply(Object instance, Permissions annotation, CommandMetaHolder metaHolder) {
+        public void apply(Object instance, Permissions annotation, MetaHolder metaHolder) {
             metaHolder.editMeta(meta -> {
                 for (Permission permissionAnnotation : annotation.value()) {
-                    meta.listEditor(CommandMeta.PERMISSIONS)
+                    meta.listEditor(Meta.PERMISSIONS)
                         .addAll(permissionAnnotation.value())
                         .apply();
                 }

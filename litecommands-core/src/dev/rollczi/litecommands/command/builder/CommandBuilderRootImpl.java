@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.command.builder;
 import dev.rollczi.litecommands.meta.MetaCollector;
 import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
 
     private final Map<String, CommandBuilder<SENDER>> children = new HashMap<>();
-    private final CommandMeta meta = CommandMeta.create();
-    private final Map<String, CommandMeta> childrenMeta = new HashMap<>();
+    private final Meta meta = Meta.create();
+    private final Map<String, Meta> childrenMeta = new HashMap<>();
 
     @Override
     public @NotNull CommandBuilder<SENDER> name(String name) {
@@ -134,12 +134,12 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public CommandBuilder<SENDER> applyMeta(UnaryOperator<CommandMeta> operator) {
+    public CommandBuilder<SENDER> applyMeta(UnaryOperator<Meta> operator) {
         throw new UnsupportedOperationException("Cannot apply meta to root command");
     }
 
     @Override
-    public CommandMeta meta() {
+    public Meta meta() {
         return meta;
     }
 
@@ -216,7 +216,7 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public void editMeta(Consumer<CommandMeta> operator) {
+    public void editMeta(Consumer<Meta> operator) {
         operator.accept(meta);
     }
 

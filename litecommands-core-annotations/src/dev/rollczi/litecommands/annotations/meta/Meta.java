@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.annotations.meta;
 
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaApplicator;
-import dev.rollczi.litecommands.meta.CommandKey;
-import dev.rollczi.litecommands.meta.CommandMetaHolder;
+import dev.rollczi.litecommands.meta.MetaKey;
+import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,8 +19,8 @@ public @interface Meta {
 
     class AnnotationResolver<SENDER> implements CommandAnnotationMetaApplicator<SENDER, Meta> {
         @Override
-        public void apply(Object instance, Meta annotation, CommandMetaHolder metaHolder) {
-            metaHolder.editMeta(meta -> meta.put(CommandKey.of(annotation.key(), String.class), annotation.value()));
+        public void apply(Object instance, Meta annotation, MetaHolder metaHolder) {
+            metaHolder.editMeta(meta -> meta.put(MetaKey.of(annotation.key(), String.class), annotation.value()));
         }
     }
 

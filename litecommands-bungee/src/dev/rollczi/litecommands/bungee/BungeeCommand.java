@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.bungee;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.CommandMeta;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -52,7 +52,7 @@ class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public boolean hasPermission(CommandSender sender) {
-        boolean isNative = commandSection.meta().get(CommandMeta.NATIVE_PERMISSIONS);
+        boolean isNative = commandSection.meta().get(Meta.NATIVE_PERMISSIONS);
 
         if (isNative || settings.isNativePermissions()) {
             MissingPermissions missingPermissions = MissingPermissions.check(new BungeeSender(sender), this.commandSection);
