@@ -15,7 +15,6 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
 
     private final Method method;
     private final Object instance;
-    private final Class<?> returnType;
 
     MethodCommandExecutor(
         Method method,
@@ -25,7 +24,6 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
         super(preparedArguments);
         this.method = method;
         this.instance = instance;
-        this.returnType = method.getReturnType();
     }
 
     @Override

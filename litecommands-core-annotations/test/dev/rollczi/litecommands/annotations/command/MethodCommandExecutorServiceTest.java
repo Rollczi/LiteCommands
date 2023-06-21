@@ -61,7 +61,7 @@ class MethodCommandExecutorServiceTest {
         List<Requirement<?, ?>> requirements = (List<Requirement<?, ?>>) commandExecutor.getRequirements();
         assertEquals(3, requirements.size());
 
-        Meta meta = commandExecutor.getMeta();
+        Meta meta = commandExecutor.meta();
         assertEquals(0, meta.getKeys().size());
     }
 

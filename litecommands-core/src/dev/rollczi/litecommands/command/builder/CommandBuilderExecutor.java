@@ -34,7 +34,7 @@ public class CommandBuilderExecutor<SENDER> implements MetaHolder {
     }
 
     public CommandExecutor<SENDER, ?> build() {
-        this.executor.getMeta().apply(this.meta);
+        this.executor.meta().apply(this.meta);
 
         return this.executor;
     }

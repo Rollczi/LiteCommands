@@ -52,8 +52,8 @@ public class MissingPermissions {
             permissions.removeAll(route.meta().get(Meta.PERMISSIONS_EXCLUDED));
         });
 
-        permissions.addAll(executor.getMeta().get(Meta.PERMISSIONS));
-        permissions.removeAll(executor.getMeta().get(Meta.PERMISSIONS_EXCLUDED));
+        permissions.addAll(executor.meta().get(Meta.PERMISSIONS));
+        permissions.removeAll(executor.meta().get(Meta.PERMISSIONS_EXCLUDED));
 
         return check(platformSender, permissions);
     }

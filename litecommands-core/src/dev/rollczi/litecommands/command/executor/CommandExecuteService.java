@@ -118,7 +118,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             // Execution
-            SchedulerPollType type = executor.getMeta().get(Meta.POLL_TYPE);
+            SchedulerPollType type = executor.meta().get(Meta.POLL_TYPE);
 
             return scheduler.supply(type, () -> {
                 try {
