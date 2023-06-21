@@ -33,7 +33,19 @@ class ReflectFormatUtilTest {
     }
 
     @Test
-    void test() throws NoSuchMethodException {
+    void testClass() {
+        String message = ReflectFormatUtil.classPick(TestClass.class, "Can't create instance of class");
+
+        assertMultiLine(message,
+            "@Cmd(value = \"test\")",
+            "static class TestClass {",
+            "             ^^^^^^^^^ -> Can't create instance of class",
+            "}"
+        );
+    }
+
+    @Test
+    void testExecuteable() throws NoSuchMethodException {
         Method method = TestClass.class.getMethod("testMethod", String.class, int.class);
         Parameter parameter = method.getParameters()[0];
 

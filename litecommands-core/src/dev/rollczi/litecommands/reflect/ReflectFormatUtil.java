@@ -18,6 +18,13 @@ import java.util.stream.Collectors;
 public final class ReflectFormatUtil {
 
     private static final String TAB = "    ";
+
+    private static final String[] CLASS_PICK = {
+        "%s {", // class name
+        "%s", // picker
+        "}",
+    };
+
     private static final String[] EXECUTABLE_PICK = {
         "%s {", // class name
         "    %s", // executable annotation
@@ -69,6 +76,21 @@ public final class ReflectFormatUtil {
 
     static String executablePick(Executable executable, String message) {
         return executablePick(executable, null, message);
+    }
+
+    static String classPick(Class<?> clazz, String message) {
+        String className = fullClass(clazz);
+        String classAnnotations = Arrays.stream(clazz.getAnnotations())
+            .map(annotation ->  annotation(annotation) + "\n")
+            .collect(Collectors.joining());
+        String finalClassName = classAnnotations + className;
+
+        int nameLength = singleClass(clazz).length();
+
+        String pickerMessage = String.format(PICKER_MESSAGE, message);
+        String fullPicker = StringUtil.repeat(" ", className.length() - nameLength) + StringUtil.repeat(PICKER_SYMBOL, nameLength) + pickerMessage;
+
+        return String.format(String.join("\n", CLASS_PICK), finalClassName, fullPicker);
     }
 
     static String executablePick(Executable executable, Parameter parameter, String message) {

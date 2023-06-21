@@ -1,13 +1,14 @@
 package dev.rollczi.litecommands.annotations.inject;
 
 import dev.rollczi.litecommands.bind.BindRegistry;
-import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.exception.LiteCommandsException;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Injector<SENDER> {
@@ -18,36 +19,33 @@ public class Injector<SENDER> {
         this.registry = registry;
     }
 
-    public <T> T createInstance(Class<T> type) {
-        return this.createInstance(type, this.registry::getInstance);
-    }
-
     @SuppressWarnings("unchecked")
-    private <T> T createInstance(Class<T> type, Function<Class<?>, Object> instanceProvider) {
+    public <T> T createInstance(Class<T> type) {
         List<Constructor<?>> constructors = Arrays.stream(type.getDeclaredConstructors())
             .filter(constructor -> constructor.isAnnotationPresent(Inject.class) || constructor.getParameterCount() == 0)
             .sorted((o1, o2) -> Integer.compare(o2.getParameterCount(), o1.getParameterCount()))
             .collect(Collectors.toList());
 
         if (constructors.isEmpty()) {
-            throw new IllegalStateException("No constructor with @Inject annotation for " + type.getName());
+            throw new LiteCommandsReflectException(type, "Missing constructor with @Inject annotation or without parameters");
         }
 
-        List<InjectorException> exceptions = new ArrayList<>();
+        List<LiteCommandsReflectException> exceptions = new ArrayList<>();
 
         for (Constructor<?> constructor : constructors) {
             Object[] parameters = new Object[constructor.getParameterCount()];
 
             for (int i = 0; i < constructor.getParameterCount(); i++) {
-                Class<?> parameterType = constructor.getParameterTypes()[i];
-                Object parameter = instanceProvider.apply(parameterType);
+                Parameter parameter = constructor.getParameters()[i];
+                Class<?> parameterType = parameter.getType();
+                Object valueToInject = this.registry.getInstance(parameterType);
 
-                if (parameter == null) {
-                    exceptions.add(new InjectorException("Cannot inject parameter " + parameterType.getName() + " for " + type.getName()));
+                if (valueToInject == null) {
+                    exceptions.add(new LiteCommandsReflectException(constructor, parameter, "Cannot inject parameter " + parameterType.getName()));
                     continue;
                 }
 
-                parameters[i] = parameter;
+                parameters[i] = valueToInject;
             }
 
             try {
@@ -55,12 +53,12 @@ public class Injector<SENDER> {
 
                 return (T) constructor.newInstance(parameters);
             }
-            catch (Exception e) {
-                exceptions.add(new InjectorException("Cannot create instance of " + type.getName(), e));
+            catch (Exception exception) {
+                exceptions.add(new LiteCommandsReflectException(constructor, "Cannot create invoke construcotr", exception));
             }
         }
 
-        throw new InjectorException("Constructor not found for " + type.getName(), exceptions);
+        throw new LiteCommandsException("Cannot create instance of " + type.getName(), exceptions);
     }
 
 }

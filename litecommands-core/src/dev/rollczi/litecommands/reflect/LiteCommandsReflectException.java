@@ -11,6 +11,10 @@ public class LiteCommandsReflectException extends LiteCommandsException {
     private static final String NEW_LINE = System.lineSeparator();
     private static final String SEPARATOR = "------------------------------------------------------------------------------------";
 
+    public LiteCommandsReflectException(Class<?> clazz, String message) {
+        super(buildClassMessage(clazz, message));
+    }
+
     public LiteCommandsReflectException(Executable executable, String message) {
         this(executable, null, message, null);
     }
@@ -24,10 +28,20 @@ public class LiteCommandsReflectException extends LiteCommandsException {
     }
 
     public LiteCommandsReflectException(Executable executable, Parameter parameter, String message, Throwable cause) {
-        super(buildMessage(executable, parameter, message), cause);
+        super(buildExecutableMessage(executable, parameter, message), cause);
     }
 
-    private static String buildMessage(Executable executable, Parameter parameter, String message) {
+    private static String buildClassMessage(Class<?> clazz, String message) {
+        return NEW_LINE + SEPARATOR +
+            NEW_LINE + " LiteCommands: " + LiteCommands.VERSION +
+            NEW_LINE + " error: " +  message +
+            NEW_LINE + " file: " + fileName(clazz) +
+            NEW_LINE + SEPARATOR +
+            NEW_LINE + ReflectFormatUtil.classPick(clazz, message) +
+            NEW_LINE + SEPARATOR;
+    }
+
+    private static String buildExecutableMessage(Executable executable, Parameter parameter, String message) {
         return NEW_LINE + SEPARATOR +
             NEW_LINE + " LiteCommands: " + LiteCommands.VERSION +
             NEW_LINE + " error: " +  message +

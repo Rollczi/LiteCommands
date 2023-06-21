@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.exception;
 
+import java.util.List;
+
 public class LiteCommandsException extends RuntimeException {
 
     public LiteCommandsException() {
@@ -15,6 +17,11 @@ public class LiteCommandsException extends RuntimeException {
 
     public LiteCommandsException(Throwable cause) {
         super(cause);
+    }
+
+    public LiteCommandsException(String message, List<? extends Throwable> exceptions) {
+        super(message + " (" + exceptions.size() + " exceptions)");
+        exceptions.forEach(exception -> addSuppressed(exception));
     }
 
 }
