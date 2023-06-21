@@ -44,6 +44,7 @@ Modern TODO
 - [x] Support JDA
 - [ ] Support Sponge
 - [x] Support BungeeCord
+- [ ] Support Waterfall
 - [x] Support Velocity
 - [x] Support Bukkit
 - [ ] Support Nukkit
