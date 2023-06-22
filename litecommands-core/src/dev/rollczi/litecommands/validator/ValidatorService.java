@@ -33,7 +33,7 @@ public class ValidatorService<SENDER> {
         this.commandValidators.put(scope, validator);
     }
 
-    /* Kinda shitty, but I don't know how to do it better without losing performance */
+    /* Kinda shitty, but I don't know how to do it better without losing performance https://github.com/Rollczi/LiteCommands/commit/3ac889d82e3e4d39fea27eee91cf5b01adacb412 */
     public Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
         Flow lastStopped = null;
 
