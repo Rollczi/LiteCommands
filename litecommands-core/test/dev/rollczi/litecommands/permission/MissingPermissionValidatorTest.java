@@ -39,16 +39,15 @@ class MissingPermissionValidatorTest {
                 .apply()
             )
             .appendChild("sub", childContext -> {
-                CommandBuilderExecutor<TestSender> builder = new CommandBuilderExecutor<TestSender>(new TestExecutor<>())
-                    .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply())
-                    .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS_EXCLUDED).add("permission.sub.toexclude").apply());
+                CommandBuilderExecutor<TestSender> builder = new CommandBuilderExecutor<TestSender>(childContext, (parent) -> new TestExecutor<>(parent))
+                    .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply());
 
                 return childContext
                     .applyMeta(meta -> meta.put(Meta.PERMISSIONS, Arrays.asList("permission.sub", "permission.sub.toexclude")))
                     .appendExecutor(builder);
             }));
 
-        CommandRoute<TestSender> sub = assertPresent(test.getChildren("sub"));
+        CommandRoute<TestSender> sub = assertPresent(test.getChild("sub"));
         CommandExecutor<TestSender, ?> executor = sub.getExecutors().get(0);
 
         Flow result = validator.validate(invocation, sub, executor);

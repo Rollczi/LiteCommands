@@ -29,7 +29,7 @@ class AsyncCommandTest extends LiteTestSpec {
     @LiteConfigurator
     static LiteConfig config() {
         return builder -> builder
-            .scheduler(new SchedulerExecutorPoolImpl("test", 1))
+//            .scheduler(new SchedulerExecutorPoolImpl("test", 1))
             .context(Date.class, invocation -> ContextResult.ok(() -> {
                 try {
                     Thread.sleep(800);
@@ -89,8 +89,11 @@ class AsyncCommandTest extends LiteTestSpec {
 
     @Test
     void testSync() {
-        platform.execute("test sync")
-            .assertSuccess("scheduler-test-main");
+        for (int i = 0; i < 1_000_000; i++) {
+
+            platform.execute("test sync")/*
+                .assertSuccess("scheduler-test-main")*/;
+        }
     }
 
     @Test

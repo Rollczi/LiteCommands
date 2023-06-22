@@ -4,16 +4,16 @@ import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.CommandRouteUtils;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.shared.IterableReferences;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ValidatorService<SENDER> {
 
@@ -38,50 +38,53 @@ public class ValidatorService<SENDER> {
 
     public Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
         IterableReferences<Validator<SENDER>> validators = IterableReferences.of(
-            () -> commandGlobalValidators,
-            () -> fromMeta(commandRoute, commandExecutor),
-            () -> fromScope(commandRoute)
+            commandGlobalValidators,
+            new IterableMeta(commandExecutor),
+            new IterableScope(commandRoute)
         );
 
         return Flow.merge(validators, validator -> validator.validate(invocation, commandRoute, commandExecutor));
     }
 
-    private List<Validator<SENDER>> fromMeta(CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
-        List<Validator<SENDER>> validators = new ArrayList<>();
+    private class IterableMeta implements Iterable<Validator<SENDER>> {
+        private final CommandExecutor<SENDER, ?> commandExecutor;
 
-        List<Class<?>> validatorsTypes = CommandRouteUtils.collectFromRootToExecutor(commandRoute, commandExecutor, commandMeta -> commandMeta.get(Meta.VALIDATORS))
-            .stream()
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-
-        for (Class<?> validatorType : validatorsTypes) {
-            Validator<SENDER> validator = validatorsByClass.get(validatorType);
-
-            if (validator == null) {
-                throw new IllegalStateException("Validator " + validatorType + " not found");
-            }
-
-            validators.add(validator);
+        private IterableMeta(CommandExecutor<SENDER, ?> commandExecutor) {
+            this.commandExecutor = commandExecutor;
         }
 
-        return validators;
+        @Override
+        public @NotNull Iterator<Validator<SENDER>> iterator() {
+            return commandExecutor.metaCollector().collect(Meta.VALIDATORS)
+                .stream()
+                .flatMap(List::stream)
+                .map(validatorType -> {
+                    Validator<SENDER> validator = validatorsByClass.get(validatorType);
+
+                    if (validator == null) {
+                        throw new IllegalStateException("Validator " + validatorType + " not found");
+                    }
+
+                    return validator;
+                })
+                .iterator();
+        }
     }
 
-    private List<Validator<SENDER>> fromScope(CommandRoute<SENDER> commandRoute) {
-        List<Validator<SENDER>> validators = new ArrayList<>();
+    public class IterableScope implements Iterable<Validator<SENDER>> {
+        private final CommandRoute<SENDER> commandRoute;
 
-        for (Map.Entry<Scope, Validator<SENDER>> entry : commandValidators.entrySet()) {
-            Scope scope = entry.getKey();
-            Validator<SENDER> validator = entry.getValue();
-
-            if (!scope.isApplicable(commandRoute)) {
-                continue;
-            }
-
-            validators.add(validator);
+        private IterableScope(CommandRoute<SENDER> commandRoute) {
+            this.commandRoute = commandRoute;
         }
 
-        return validators;
+        @Override
+        public @NotNull Iterator<Validator<SENDER>> iterator() {
+            return commandValidators.entrySet().stream()
+                .filter(entry -> entry.getKey().isApplicable(commandRoute))
+                .map(entry -> entry.getValue())
+                .iterator();
+        }
     }
 
 

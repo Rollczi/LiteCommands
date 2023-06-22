@@ -1,21 +1,25 @@
 package dev.rollczi.litecommands.command.executor;
 
+import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaCollector;
+import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
 
 public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Requirement<SENDER, ?>> implements CommandExecutor<SENDER, REQUIREMENT> {
 
+    protected final CommandRoute<SENDER> parent;
     protected final List<REQUIREMENT> requirements = new ArrayList<>();
     protected final Meta meta = Meta.create();
 
-    protected AbstractCommandExecutor(Collection<? extends REQUIREMENT> requirements) {
+    protected AbstractCommandExecutor(CommandRoute<SENDER> parent, Collection<? extends REQUIREMENT> requirements) {
+        this.parent = parent;
         this.requirements.addAll(requirements);
     }
 
@@ -25,13 +29,13 @@ public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Requir
     }
 
     @Override
-    public void editMeta(Consumer<Meta> operator) {
-        operator.accept(meta);
+    public MetaHolder parentMeta() {
+        return parent;
     }
 
     @Override
-    public MetaCollector metaCollector() {
-        return MetaCollector.of(meta);
+    public CommandRoute<SENDER> getParent() {
+        return parent;
     }
 
     @Override

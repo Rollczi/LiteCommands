@@ -10,7 +10,7 @@ public class AsyncAnnotationResolver<SENDER> implements CommandAnnotationMetaApp
 
     @Override
     public void apply(Object instance, Async annotation, MetaHolder metaHolder) {
-        metaHolder.editMeta(commandMeta -> commandMeta.put(Meta.POLL_TYPE, SchedulerPollType.ASYNC));
+        metaHolder.meta().put(Meta.POLL_TYPE, SchedulerPollType.ASYNC);
     }
 
 }

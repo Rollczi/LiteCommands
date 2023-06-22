@@ -20,9 +20,9 @@ public @interface Validate {
 
         @Override
         public void apply(Object instance, Validate annotation, MetaHolder metaHolder) {
-            metaHolder.editMeta(meta -> meta.listEditor(Meta.VALIDATORS)
+            metaHolder.meta().listEditor(Meta.VALIDATORS)
                 .addAll(annotation.value())
-                .apply());
+                .apply();
         }
 
     }

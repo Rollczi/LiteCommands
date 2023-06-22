@@ -55,7 +55,7 @@ class ArgumentResolverAnnotationTest extends LiteTestSpec {
     @DisplayName("Should return correct argument names")
     void test() {
         CommandManager<TestSender> commandManager = liteCommands.getCommandManager();
-        CommandRoute<TestSender> testChild = commandManager.getRoot().getChildren("test")
+        CommandRoute<TestSender> testChild = commandManager.getRoot().getChild("test")
             .orElseThrow(() -> new RuntimeException("Command not found"));
 
         CommandExecutor<TestSender, ?> executor = testChild.getExecutors()

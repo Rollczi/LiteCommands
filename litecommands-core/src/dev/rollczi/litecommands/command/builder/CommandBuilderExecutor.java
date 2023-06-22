@@ -1,27 +1,31 @@
 package dev.rollczi.litecommands.command.builder;
 
+import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutorFactory;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.meta.MetaCollector;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 public class CommandBuilderExecutor<SENDER> implements MetaHolder {
 
-    private CommandExecutor<SENDER, ?> executor;
+    private final MetaHolder parent;
+    private CommandExecutorFactory<SENDER> executorFactory;
     private Meta meta = Meta.create();
 
-    public CommandBuilderExecutor() {
+    public CommandBuilderExecutor(MetaHolder parent) {
+        this.parent = parent;
     }
 
-    public CommandBuilderExecutor(CommandExecutor<SENDER, ?> executor) {
-        this.executor = executor;
+    public CommandBuilderExecutor(MetaHolder parent, CommandExecutorFactory<SENDER> executorFactory) {
+        this.parent = parent;
+        this.executorFactory = executorFactory;
     }
 
-    public void setExecutor(CommandExecutor<SENDER, ?> executor) {
-        this.executor = executor;
+    public void setExecutorFactory(CommandExecutorFactory<SENDER> factory) {
+        this.executorFactory = factory;
     }
 
     public CommandBuilderExecutor<SENDER> applyMeta(UnaryOperator<Meta> operator) {
@@ -30,18 +34,14 @@ public class CommandBuilderExecutor<SENDER> implements MetaHolder {
     }
 
     public boolean buildable() {
-        return this.executor != null;
+        return this.executorFactory != null;
     }
 
-    public CommandExecutor<SENDER, ?> build() {
-        this.executor.meta().apply(this.meta);
+    public CommandExecutor<SENDER, ?> build(CommandRoute<SENDER> parent) {
+        CommandExecutor<SENDER, ?> executor = this.executorFactory.create(parent);
+        executor.meta().apply(this.meta);
 
-        return this.executor;
-    }
-
-    @Override
-    public void editMeta(Consumer<Meta> operator) {
-        operator.accept(this.meta);
+        return executor;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class CommandBuilderExecutor<SENDER> implements MetaHolder {
     }
 
     @Override
-    public MetaCollector metaCollector() {
-        return MetaCollector.of(meta);
+    public @Nullable MetaHolder parentMeta() {
+        return null;
     }
 
 }

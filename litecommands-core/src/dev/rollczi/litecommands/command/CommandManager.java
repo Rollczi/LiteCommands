@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.argument.suggestion.SuggestionService;
 import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
 import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class CommandManager<SENDER> {
@@ -76,14 +77,11 @@ public class CommandManager<SENDER> {
             return command;
         }
 
-        // TODO Preformace, maybe use map in CommandRouteImpl
-        for (CommandRoute<SENDER> child : command.getChildren()) {
-            if (!child.isNameOrAlias(matcher.showNextRoute())) {
-                continue;
-            }
+        Optional<CommandRoute<SENDER>> child = command.getChild(matcher.showNextRoute());
 
+        if (child.isPresent()) {
             matcher.nextRoute();
-            return this.findRoute(child, matcher);
+            return this.findRoute(child.get(), matcher);
         }
 
         return command;

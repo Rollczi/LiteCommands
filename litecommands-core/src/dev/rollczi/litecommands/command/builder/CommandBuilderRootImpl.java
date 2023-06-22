@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.command.builder;
 
 import dev.rollczi.litecommands.meta.MetaCollector;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
@@ -13,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -144,8 +144,8 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public MetaCollector metaCollector() {
-        return new CommandBuilderMetaCollector(this);
+    public @Nullable MetaHolder parentMeta() {
+        return null;
     }
 
     @Override
@@ -213,11 +213,6 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
             .flatMap(Collection::stream)
             .peek(route -> route.meta().apply(this.childrenMeta.getOrDefault(route.getName(), this.meta)))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public void editMeta(Consumer<Meta> operator) {
-        operator.accept(meta);
     }
 
 }
