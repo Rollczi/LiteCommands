@@ -306,7 +306,7 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
                 continue;
             }
 
-            route.appendExecutor(executor.build(parent));
+            route.appendExecutor(executor.build(route));
         }
 
         for (CommandBuilder<SENDER> child : this.children()) {

@@ -59,25 +59,4 @@ public interface Flow {
         return new FlowImpl(Status.TERMINATE, reason);
     }
 
-    static <E> Flow merge(Iterable<E> iterable, FlowMapper<E> mapper) {
-        Flow lastStopped = null;
-
-        for (E element : iterable) {
-            Flow flow = mapper.map(element);
-
-            switch (flow.status()) {
-                case CONTINUE: continue;
-                case TERMINATE: return flow;
-                case STOP_CURRENT: lastStopped = flow;
-            }
-        }
-
-        if (lastStopped != null) {
-            return lastStopped;
-        }
-
-        return Flow.continueFlow();
-    }
-
-
 }

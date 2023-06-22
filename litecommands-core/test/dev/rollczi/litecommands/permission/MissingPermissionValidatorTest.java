@@ -43,7 +43,7 @@ class MissingPermissionValidatorTest {
                     .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply());
 
                 return childContext
-                    .applyMeta(meta -> meta.put(Meta.PERMISSIONS, Arrays.asList("permission.sub", "permission.sub.toexclude")))
+                    .applyMeta(meta -> meta.put(Meta.PERMISSIONS, Arrays.asList("permission.sub")))
                     .appendExecutor(builder);
             }));
 

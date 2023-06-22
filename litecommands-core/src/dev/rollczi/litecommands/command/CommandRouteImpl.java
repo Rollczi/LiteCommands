@@ -24,6 +24,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     private final Set<String> namesAndAliases;
     private final CommandRoute<SENDER> parent;
     private final Meta meta = Meta.create();
+    private final MetaCollector metaCollector = MetaCollector.of(this);
 
     private final List<CommandExecutor<SENDER, ?>> executors = new ArrayList<>();
     private final List<CommandRoute<SENDER>> childRoutes = new ArrayList<>();
@@ -92,7 +93,12 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
     @Override
     public @Nullable MetaHolder parentMeta() {
-        return null;
+        return parent;
+    }
+
+    @Override
+    public MetaCollector metaCollector() {
+        return this.metaCollector;
     }
 
     @Override
