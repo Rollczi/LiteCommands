@@ -44,11 +44,13 @@ public class CommandExecuteService<SENDER> {
     }
 
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParsableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
-        return execute0(invocation, matcher, commandRoute).thenCompose(executeResult -> scheduler.supplySync(() -> {
-            this.handleResult(invocation, executeResult);
+        return execute0(invocation, matcher, commandRoute)
+            .thenCompose(executeResult -> scheduler.supplySync(() -> {
+                this.handleResult(invocation, executeResult);
 
-            return executeResult;
-        }));
+                return executeResult;
+            }))
+            .exceptionally(new LastExceptionHandler<>(exceptionHandleService, invocation));
     }
 
     private void handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
@@ -123,11 +125,9 @@ public class CommandExecuteService<SENDER> {
             return scheduler.supply(type, () -> {
                 try {
                     return match.executeCommand();
-                }
-                catch (LiteCommandsReflectException exception) {
+                } catch (LiteCommandsReflectException exception) {
                     return CommandExecuteResult.thrown(exception.getCause());
-                }
-                catch (Throwable error) {
+                } catch (Throwable error) {
                     return CommandExecuteResult.thrown(error);
                 }
             });
