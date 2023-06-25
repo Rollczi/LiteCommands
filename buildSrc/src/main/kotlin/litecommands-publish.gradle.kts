@@ -39,7 +39,7 @@ publishing {
             username = "MINE_CODES_MAVEN_USERNAME",
             password = "MINE_CODES_MAVEN_PASSWORD",
             snapshots = true,
-            beta = false,
+            beta = true,
         )
     }
 }
