@@ -74,7 +74,7 @@ public class RawInputAnalyzer {
             this.parser = parserSet.getParser(RawInput.class)
                 .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
 
-            Range range = parser.getRange();
+            Range range = parser.getRange(argument);
 
             this.minArguments = range.getMin() + pivotPosition;
             this.maxArguments = calculateMaxArguments(rawArguments, range, pivotPosition);

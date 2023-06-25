@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.adventure;
 
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
@@ -57,8 +58,8 @@ public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SEN
 
         builder
             .argument(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
-            .argument(Component.class, "raw", new AdventureComponentArgument<>())
-            .argument(Component.class, "color", new AdventureColoredComponentArgument<>(componentSerializer))
+            .argument(Component.class, ArgumentKey.of("raw"), new AdventureComponentArgument<>())
+            .argument(Component.class, ArgumentKey.of("color"), new AdventureColoredComponentArgument<>(componentSerializer))
 
             .context(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 

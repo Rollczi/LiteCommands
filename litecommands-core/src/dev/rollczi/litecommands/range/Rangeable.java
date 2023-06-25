@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.range;
 
-public interface Rangeable {
+public interface Rangeable<CONTEXT> {
 
-    Range getRange();
+    Range getRange(CONTEXT context);
 
 }

@@ -89,7 +89,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> platformSettings(PlatformSettingsConfigurator<C> configurator) {
+    public LiteCommandsBuilder<SENDER, C, B> settings(PlatformSettingsConfigurator<C> configurator) {
         C newConfig = configurator.apply(this.platform.getConfiguration());
         Preconditions.notNull(newConfig, "configuration");
 
@@ -112,8 +112,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <IN, PARSED, PARSER extends Parser<SENDER, IN, PARSED>>
-    LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, String key, PARSER parser) {
-        this.parserRegistry.registerParser(type, ArgumentKey.of(key), parser);
+    LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, ArgumentKey key, PARSER parser) {
+        this.parserRegistry.registerParser(type, key, parser);
         return this;
     }
 
@@ -126,14 +126,20 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<T> type, String key, TypedParser<SENDER, IN, T, ARGUMENT> parser) {
-        this.parserRegistry.registerParser(type, ArgumentKey.typed(parser.getArgumentType(), key), parser);
+    LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<T> type, ArgumentKey key, TypedParser<SENDER, IN, T, ARGUMENT> parser) {
+        this.parserRegistry.registerParser(type, key.withNamespace(parser.getArgumentType()), parser);
         return this;
     }
 
     @Override
     public <T> LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, SuggestionResult suggestionResult) {
         this.suggesterRegistry.registerSuggester(type, ArgumentKey.of(), (invocation, argument, context) -> suggestionResult);
+        return this;
+    }
+
+    @Override
+    public <T> LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestionResult) {
+        this.suggesterRegistry.registerSuggester(type, key, (invocation, argument, context) -> suggestionResult);
         return this;
     }
 
@@ -146,8 +152,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <T, SUGGESTER extends Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, String key, SUGGESTER suggester) {
-        this.suggesterRegistry.registerSuggester(type, ArgumentKey.of(key), suggester);
+    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, ArgumentKey key, SUGGESTER suggester) {
+        this.suggesterRegistry.registerSuggester(type, key, suggester);
         return this;
     }
 
@@ -160,8 +166,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, String key, TypedSuggester<SENDER, T, ARGUMENT> suggester) {
-        this.suggesterRegistry.registerSuggester(type, ArgumentKey.typed(suggester.getArgumentType(), key), suggester);
+    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, ArgumentKey key, TypedSuggester<SENDER, T, ARGUMENT> suggester) {
+        this.suggesterRegistry.registerSuggester(type, key.withNamespace(suggester.getArgumentType()), suggester);
         return this;
     }
 
@@ -175,7 +181,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <IN, PARSED, RESOLVER extends Parser<SENDER, IN, PARSED> & Suggester<SENDER, PARSED>>
-    LiteCommandsBuilder<SENDER, C, B> argument(Class<PARSED> type, String key, RESOLVER resolver) {
+    LiteCommandsBuilder<SENDER, C, B> argument(Class<PARSED> type, ArgumentKey key, RESOLVER resolver) {
         this.argumentParser(type, key, resolver);
         this.argumentSuggester(type, key, resolver);
         return this;
@@ -191,7 +197,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, String key, RESOLVER resolver) {
+    LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, ArgumentKey key, RESOLVER resolver) {
         this.argumentParser(type, key, resolver);
         this.argumentSuggester(type, key, resolver);
         return this;

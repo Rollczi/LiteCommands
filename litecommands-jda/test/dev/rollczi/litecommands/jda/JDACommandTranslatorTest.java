@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JDACommandTranslatorTest {
 
-    JDACommandTranslator translator = new JDACommandTranslator()
+    final JDACommandTranslator translator = new JDACommandTranslator()
         .type(String.class,       OptionType.STRING,      option -> option.getAsString())
         .type(Integer.class,         OptionType.INTEGER,     option -> option.getAsInt());
 

@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.argument.parser;
 
 import dev.rollczi.litecommands.shared.FailedReason;
-import dev.rollczi.litecommands.wrapper.ValueToWrap;
 import org.jetbrains.annotations.Nullable;
 
 public class ParseResult<EXPECTED> {

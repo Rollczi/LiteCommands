@@ -117,7 +117,7 @@ class JDACommandTranslator {
         CommandExecutor<SENDER, ?> executor = executors.get(0);
 
         for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
-            if (!(requirement instanceof ArgumentRequirement<SENDER, ?> argumentRequirement)) {
+            if (!(requirement instanceof ArgumentRequirement argumentRequirement)) {
                 continue;
             }
 

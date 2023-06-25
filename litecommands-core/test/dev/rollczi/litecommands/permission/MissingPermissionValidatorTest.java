@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MissingPermissionValidatorTest {
 
-    MissingPermissionValidator<TestSender> validator = new MissingPermissionValidator<>();
+    final MissingPermissionValidator<TestSender> validator = new MissingPermissionValidator<>();
 
     @Test
     @DisplayName("should scan all permissions from root to executor and check if sender has them")

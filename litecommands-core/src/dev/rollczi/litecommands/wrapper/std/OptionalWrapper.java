@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.wrapper.std;
 
-import dev.rollczi.litecommands.wrapper.ValueToWrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.Optional;

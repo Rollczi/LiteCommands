@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RootArgAnnotationResolverTest {
 
-    RootCommand.AnnotationResolver<?> resolver = new RootCommand.AnnotationResolver<>();
+    final RootCommand.AnnotationResolver<?> resolver = new RootCommand.AnnotationResolver<>();
 
     @RootCommand
     static class Command {}

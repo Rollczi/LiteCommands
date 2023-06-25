@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.context;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.util.MapUtil;
 import panda.std.Option;
-import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;

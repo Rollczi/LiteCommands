@@ -1,5 +1,6 @@
-package dev.rollczi.litecommands.annotations.command;
+package dev.rollczi.litecommands.annotations.command.executor;
 
+import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;

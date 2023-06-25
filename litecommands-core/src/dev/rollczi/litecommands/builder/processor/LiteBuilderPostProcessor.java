@@ -9,8 +9,4 @@ public interface LiteBuilderPostProcessor<SENDER, SETTINGS extends PlatformSetti
 
     void process(LiteCommandsBuilder<SENDER, SETTINGS, ?> builder, LiteCommandsInternalBuilderApi<SENDER, SETTINGS> pattern);
 
-    static <SENDER, SETTINGS extends PlatformSettings> LiteBuilderPostProcessor<SENDER, SETTINGS> empty() {
-        return (builder, pattern) -> {};
-    }
-
 }

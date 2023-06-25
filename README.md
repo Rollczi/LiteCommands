@@ -84,7 +84,7 @@ this.liteCommands=LiteVelocityFactory.builder(proxy)
 
 ### Velocity Extension Dependencies (Maven or Gradle)
 
-Add this to your dependencies if you want use ready-made implementation for velocity.
+Add this to your dependencies if you want to use ready-made implementation for velocity.
 
 ```xml
 

@@ -24,8 +24,8 @@ public class FailedReason {
         return this.isEmpty ? defaultValue : this.reason;
     }
 
-    public boolean isEmpty() {
-        return this.isEmpty;
+    public boolean hasResult() {
+        return !this.isEmpty;
     }
 
     public static FailedReason of(Object reason) {

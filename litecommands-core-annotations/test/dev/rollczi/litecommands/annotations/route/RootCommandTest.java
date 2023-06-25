@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.route;
 
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;

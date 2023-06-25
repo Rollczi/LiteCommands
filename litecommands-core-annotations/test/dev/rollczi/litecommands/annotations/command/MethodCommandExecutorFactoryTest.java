@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.annotations.command;
 
-import dev.rollczi.litecommands.annotations.argument.Arg;
-import dev.rollczi.litecommands.annotations.argument.ArgAnnotationResolver;
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
+import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.annotations.context.Context;
-import dev.rollczi.litecommands.annotations.context.ContextAnnotationResolver;
+import dev.rollczi.litecommands.annotations.context.ContextParameterRequirementFactory;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
@@ -28,18 +28,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class MethodCommandExecutorServiceTest {
+class MethodCommandExecutorFactoryTest {
 
+    @SuppressWarnings("unused")
     static class TestCommand {
         @Execute
         void execute(@Context Invocation<TestSender> invocation, @Arg String text, @Arg int test) {
         }
     }
 
-    static ContextRegistry<TestSender> bindRegistry = new ContextRegistry<>();
-    static ParserRegistry<TestSender> resolverRegistry = new ParserRegistryImpl<>();
-    static MethodCommandExecutorService<TestSender> executorFactory = new MethodCommandExecutorService<>();
-    static WrapperRegistry expectedService = new WrapperRegistry();
+    static final ContextRegistry<TestSender> bindRegistry = new ContextRegistry<>();
+    static final ParserRegistry<TestSender> resolverRegistry = new ParserRegistryImpl<>();
+    static final MethodCommandExecutorFactory<TestSender> executorFactory = new MethodCommandExecutorFactory<>();
+    static final WrapperRegistry expectedService = new WrapperRegistry();
 
     @BeforeAll
     static void beforeAll() {
@@ -47,11 +48,12 @@ class MethodCommandExecutorServiceTest {
         resolverRegistry.registerParser(String.class, ArgumentKey.of(), new StringArgumentResolver<>());
         resolverRegistry.registerParser(int.class, ArgumentKey.of(), NumberArgumentResolver.ofInteger());
 
-        executorFactory.registerResolver(Context.class, new ContextAnnotationResolver<>(bindRegistry, expectedService));
-        executorFactory.registerResolver(Arg.class, new ArgAnnotationResolver<>(expectedService, resolverRegistry));
+        executorFactory.registerResolver(Context.class, new ContextParameterRequirementFactory<>(bindRegistry, expectedService));
+        executorFactory.registerResolver(Arg.class, new Arg.Factory<>(expectedService, resolverRegistry));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testCreateMethodOfExecuteFactory() {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
@@ -70,7 +72,7 @@ class MethodCommandExecutorServiceTest {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
 
-        assertThrows(LiteCommandsReflectException.class, () -> new MethodCommandExecutorService<>().create(testCommand, method));
+        assertThrows(LiteCommandsReflectException.class, () -> new MethodCommandExecutorFactory<>().create(testCommand, method));
     }
 
 }

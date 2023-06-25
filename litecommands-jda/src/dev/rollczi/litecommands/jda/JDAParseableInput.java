@@ -42,6 +42,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet) {
             OptionMapping optionMapping = arguments.get(argument.getName());
 

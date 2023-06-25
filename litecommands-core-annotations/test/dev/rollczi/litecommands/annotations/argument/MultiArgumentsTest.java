@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.annotations.argument;
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.argument.Argument;
@@ -45,20 +46,20 @@ class MultiArgumentsTest extends LiteTestSpec {
         }
 
         @Override
-        public Range getRange() {
-            return Range.of(3);
+        public SuggestionResult suggest(Invocation<S> invocation, Argument<Position> argument, SuggestionContext context) {
+            return SuggestionResult.of("1 2 3", "4 5 6", "7 8 9");
         }
 
         @Override
-        public SuggestionResult suggest(Invocation<S> invocation, Argument<Position> argument, SuggestionContext context) {
-            return SuggestionResult.of("1 2 3", "4 5 6", "7 8 9");
+        public Range getRange(Argument<Position> positionArgument) {
+            return Range.of(3);
         }
     }
 
     static class Position {
-       int x;
-       int y;
-       int z;
+       final int x;
+       final int y;
+       final int z;
 
         public Position(int x, int y, int z) {
             this.x = x;

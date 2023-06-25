@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 
+@SuppressWarnings("rawtypes")
 class RestActionHandler implements ResultHandler<User, RestAction> {
 
     @Override

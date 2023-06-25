@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.meta.MetaCollector;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public class CommandBuilderMetaCollector implements MetaCollector {
 
     private final CommandBuilder contextBase;

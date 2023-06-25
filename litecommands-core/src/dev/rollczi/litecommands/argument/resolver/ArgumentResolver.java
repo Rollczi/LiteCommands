@@ -27,7 +27,7 @@ public abstract class ArgumentResolver<SENDER, TYPE> implements MultipleArgument
     }
 
     @Override
-    public final Range getRange() {
+    public final Range getRange(Argument<TYPE> argument) {
         return Range.ONE;
     }
 

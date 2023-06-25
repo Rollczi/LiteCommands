@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Rangeable;
 
-public interface Parser<SENDER, INPUT, PARSED> extends Rangeable {
+public interface Parser<SENDER, INPUT, PARSED> extends Rangeable<Argument<PARSED>> {
 
     ParseResult<PARSED> parse(Invocation<SENDER> invocation, Argument<PARSED> argument, INPUT input);
 

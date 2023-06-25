@@ -75,6 +75,7 @@ public class SuggestionService<SENDER> {
         return all;
     }
 
+    @SuppressWarnings("unchecked")
     public <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggestExecutor(
         Invocation<SENDER> invocation,
         MATCHER matcher,

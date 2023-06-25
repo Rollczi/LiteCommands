@@ -76,11 +76,7 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
             return true;
         }
 
-        if (this.aliases.contains(name)) {
-            return true;
-        }
-
-        return false;
+        return this.aliases.contains(name);
     }
 
     @Override

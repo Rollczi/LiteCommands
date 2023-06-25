@@ -82,6 +82,7 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     @ApiStatus.Internal
     boolean isEnabled();
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     @ApiStatus.Internal
     boolean buildable();
 

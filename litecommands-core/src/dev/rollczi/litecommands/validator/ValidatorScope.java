@@ -31,6 +31,7 @@ public class ValidatorScope implements Scope {
         return false;
     }
 
+    @SuppressWarnings("rawtypes")
     public static Scope of(Class<? extends Validator> type) {
         return new ValidatorScope(type);
     }

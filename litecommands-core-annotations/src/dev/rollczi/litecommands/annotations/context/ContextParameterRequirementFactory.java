@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.context;
 
-import dev.rollczi.litecommands.annotations.command.ParameterRequirement;
-import dev.rollczi.litecommands.annotations.command.ParameterWithAnnotationResolver;
+import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
+import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirementFactory;
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
@@ -16,18 +16,18 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
-public class ContextAnnotationResolver<SENDER> implements ParameterWithAnnotationResolver<SENDER, Context> {
+public class ContextParameterRequirementFactory<SENDER> implements ParameterRequirementFactory<SENDER, Context> {
 
     private final ContextRegistry<SENDER> contextRegistry;
     private final WrapperRegistry wrapperRegistry;
 
-    public ContextAnnotationResolver(ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry) {
+    public ContextParameterRequirementFactory(ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry) {
         this.contextRegistry = contextRegistry;
         this.wrapperRegistry = wrapperRegistry;
     }
 
     @Override
-    public ParameterRequirement<SENDER, ?> resolve(Parameter parameter, Context annotation) {
+    public ParameterRequirement<SENDER, ?> create(Parameter parameter, Context annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);

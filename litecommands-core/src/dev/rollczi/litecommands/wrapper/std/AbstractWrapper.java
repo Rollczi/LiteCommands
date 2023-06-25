@@ -1,11 +1,9 @@
 package dev.rollczi.litecommands.wrapper.std;
 
 import dev.rollczi.litecommands.wrapper.WrapFormat;
-import dev.rollczi.litecommands.wrapper.ValueToWrap;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 abstract class AbstractWrapper<WRAPPER> implements Wrapper {

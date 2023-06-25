@@ -1,6 +1,7 @@
-package dev.rollczi.litecommands.annotations.argument;
+package dev.rollczi.litecommands.annotations.argument.arg;
 
-import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.annotations.argument.AnnotationArgumentResolver;
+import dev.rollczi.litecommands.annotations.argument.arg.ArgArgument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -15,32 +16,36 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class OneAnnotationArgumentTest {
+class AnnotationArgumentResolverTest {
 
-    static class TestOneAnnotationArgument extends OneAnnotationArgument<TestSender, String, ArgParameterArgument<String>> {
+    static class TestAnnotationArgumentResolver extends AnnotationArgumentResolver<TestSender, String, ArgArgument<String>> {
+
+        TestAnnotationArgumentResolver() {
+            super(ArgArgument.class);
+        }
 
         @Override
-        public ParseResult<String> parseTyped(Invocation<TestSender> invocation, ArgParameterArgument<String> argument, RawInput rawInput) {
+        public ParseResult<String> parseTyped(Invocation<TestSender> invocation, ArgArgument<String> argument, RawInput rawInput) {
             return ParseResult.success(rawInput.next());
         }
 
         @Override
-        public SuggestionResult suggestTyped(Invocation<TestSender> invocation, ArgParameterArgument<String> argument, SuggestionContext context) {
-            return SuggestionResult.of("text");
+        public Range getTypedRange(ArgArgument<String> argument) {
+            return Range.ONE;
         }
 
         @Override
-        public Class<? extends Argument> getArgumentType() {
-            return ArgParameterArgument.class;
+        public SuggestionResult suggestTyped(Invocation<TestSender> invocation, ArgArgument<String> argument, SuggestionContext context) {
+            return SuggestionResult.of("text");
         }
 
     }
 
-    private final TestOneAnnotationArgument argument = new TestOneAnnotationArgument();
+    private final TestAnnotationArgumentResolver argument = new TestAnnotationArgumentResolver();
 
     @Test
     void testRange() {
-        Range range = argument.getRange();
+        Range range = argument.getRange(null);
 
         assertEquals(Range.ONE, range);
         assertFalse(range.isInRange(0));

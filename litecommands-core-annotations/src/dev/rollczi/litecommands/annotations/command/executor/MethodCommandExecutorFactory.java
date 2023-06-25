@@ -1,5 +1,8 @@
-package dev.rollczi.litecommands.annotations.command;
+package dev.rollczi.litecommands.annotations.command.executor;
 
+import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
+import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirementFactory;
+import dev.rollczi.litecommands.annotations.command.requirement.NotAnnotatedParameterRequirementFactory;
 import dev.rollczi.litecommands.annotations.command.requirement.RequirementAnnotation;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
@@ -14,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class MethodCommandExecutorService<SENDER> {
+public class MethodCommandExecutorFactory<SENDER> {
 
-    private final Map<Class<?>, ParameterWithAnnotationResolver<SENDER, ?>> resolvers = new java.util.HashMap<>();
-    private ParameterWithoutAnnotationResolver<SENDER> defaultResolver = parameter -> {
+    private final Map<Class<?>, ParameterRequirementFactory<SENDER, ?>> resolvers = new java.util.HashMap<>();
+    private NotAnnotatedParameterRequirementFactory<SENDER> defaultResolver = parameter -> {
         throw new IllegalArgumentException("No annotation found for parameter " + ReflectFormatUtil.parameter(parameter));
     };
 
@@ -27,11 +30,11 @@ public class MethodCommandExecutorService<SENDER> {
         return new MethodCommandExecutor<>(method, instance, arguments);
     }
 
-    public <A extends Annotation> void registerResolver(Class<A> type, ParameterWithAnnotationResolver<SENDER, A> annotationResolver) {
+    public <A extends Annotation> void registerResolver(Class<A> type, ParameterRequirementFactory<SENDER, A> annotationResolver) {
         resolvers.put(type, annotationResolver);
     }
 
-    public void defaultResolver(ParameterWithoutAnnotationResolver<SENDER> defaultResolver) {
+    public void defaultResolver(NotAnnotatedParameterRequirementFactory<SENDER> defaultResolver) {
         this.defaultResolver = defaultResolver;
     }
 
@@ -49,7 +52,7 @@ public class MethodCommandExecutorService<SENDER> {
         Annotation[] annotations = parameter.getAnnotations();
 
         if (annotations.length == 0) {
-            ParameterRequirement<SENDER, ?> argument = defaultResolver.resolve(parameter);
+            ParameterRequirement<SENDER, ?> argument = defaultResolver.create(parameter);
 
             return Collections.singletonList(argument);
         }
@@ -67,7 +70,7 @@ public class MethodCommandExecutorService<SENDER> {
 
     @SuppressWarnings("unchecked")
     private <A extends Annotation> Optional<ParameterRequirement<SENDER, ?>> resolveParameterWithAnnotation(Parameter parameter, A annotation) {
-        ParameterWithAnnotationResolver<SENDER, A> resolver = (ParameterWithAnnotationResolver<SENDER, A>) resolvers.get(annotation.annotationType());
+        ParameterRequirementFactory<SENDER, A> resolver = (ParameterRequirementFactory<SENDER, A>) resolvers.get(annotation.annotationType());
 
         if (resolver == null) {
             if (!annotation.annotationType().isAnnotationPresent(RequirementAnnotation.class)) {
@@ -77,7 +80,7 @@ public class MethodCommandExecutorService<SENDER> {
             throw new LiteCommandsReflectException(parameter.getDeclaringExecutable(), parameter, "Can not find resolver for annotation @" + annotation.annotationType().getSimpleName());
         }
 
-        return Optional.of(resolver.resolve(parameter, annotation));
+        return Optional.of(resolver.create(parameter, annotation));
     }
 
 }

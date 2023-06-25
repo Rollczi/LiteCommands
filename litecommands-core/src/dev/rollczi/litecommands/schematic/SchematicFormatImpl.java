@@ -12,10 +12,6 @@ class SchematicFormatImpl implements SchematicFormat {
 
     @Override
     public String format(CommandExecutor<?, ?> executor) {
-//        for (PreparedArgument<?, ?> argument : executor.getArguments()) {
-//            // TODO
-//        }
-
         return "null";
     }
 

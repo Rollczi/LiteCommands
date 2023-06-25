@@ -41,6 +41,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         this.result = null;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> TestExecutor<SENDER> withArg(String name, Class<T> type, BiFunction<Invocation<SENDER>, String, ParseResult<T>> parser) {
         requirements.add(new TestArgumentRequirement<>(new TestArgument<>(name, type), new ValueWrapper(), new ParserSet<SENDER, T>() {
             @Override
@@ -49,17 +50,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
                     return Optional.empty();
                 }
 
-                return Optional.of((Parser<SENDER, INPUT, T>) new RawInputParser<SENDER, T>() {
-                    @Override
-                    public Range getRange() {
-                        return Range.of(1);
-                    }
-
-                    @Override
-                    public ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
-                        return parser.apply(invocation, input.next());
-                    }
-                });
+                return Optional.of((Parser<SENDER, INPUT, T>) new SimpleRawInputParser<>(parser));
             }
 
             @Override
@@ -141,4 +132,21 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         }
     }
 
+    private class SimpleRawInputParser<T> implements RawInputParser<SENDER, T> {
+        private final BiFunction<Invocation<SENDER>, String, ParseResult<T>> parser;
+
+        public SimpleRawInputParser(BiFunction<Invocation<SENDER>, String, ParseResult<T>> parser) {
+            this.parser = parser;
+        }
+
+        @Override
+        public Range getRange(Argument<T> argument) {
+            return Range.of(1);
+        }
+
+        @Override
+        public ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
+            return parser.apply(invocation, input.next());
+        }
+    }
 }

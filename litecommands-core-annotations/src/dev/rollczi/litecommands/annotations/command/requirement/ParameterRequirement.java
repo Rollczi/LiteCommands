@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.annotations.command;
+package dev.rollczi.litecommands.annotations.command.requirement;
 
 import dev.rollczi.litecommands.annotations.async.Async;
 import dev.rollczi.litecommands.command.requirement.Requirement;

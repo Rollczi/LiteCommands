@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.annotations.argument;
 
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,12 +27,9 @@ class ParameterArgumentTest {
         Parameter parameter = method.getParameters()[0];
 
         parameterArgument = new ParameterArgument<>(
-            method,
+            new WrapperRegistry(),
             parameter,
-            0,
-            parameter.getAnnotation(Arg.class),
-            Arg.class,
-            WrapFormat.notWrapped(String.class)
+            parameter.getAnnotation(Arg.class)
         );
     }
 

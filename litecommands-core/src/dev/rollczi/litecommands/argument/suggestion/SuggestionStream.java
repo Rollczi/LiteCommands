@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.argument.suggestion;
 
+import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

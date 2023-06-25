@@ -29,12 +29,6 @@ public interface Flow {
 
     boolean hasReason();
 
-    <T> T flow(
-        Supplier<T> continueFlow,
-        Function<Object, T> stopCurrentFlow,
-        Function<Object, T> terminateFlow
-    );
-
     /**
      * Flow status
      * CONTINUE - continue current flow

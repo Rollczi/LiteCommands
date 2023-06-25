@@ -16,15 +16,15 @@ public class CommandExecuteResult {
         this.error = error;
     }
 
-    public Object getResult() {
+    public @Nullable Object getResult() {
         return this.result;
     }
 
-    public Throwable getThrowable() {
+    public @Nullable Throwable getThrowable() {
         return this.throwable;
     }
 
-    public Object getError() {
+    public @Nullable Object getError() {
         return error;
     }
 

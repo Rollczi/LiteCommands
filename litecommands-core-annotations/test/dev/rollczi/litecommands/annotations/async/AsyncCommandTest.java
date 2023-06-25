@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.async;
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.argument.ArgumentResolverInfo;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;

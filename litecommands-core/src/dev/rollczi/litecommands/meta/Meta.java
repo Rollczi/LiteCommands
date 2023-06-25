@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public interface Meta {
 
     MetaKey<String> DESCRIPTION = MetaKey.of("description", String.class, "none");

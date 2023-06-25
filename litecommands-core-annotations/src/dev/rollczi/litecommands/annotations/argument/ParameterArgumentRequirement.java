@@ -1,28 +1,27 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.command.ParameterRequirement;
+import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
-import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
+import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.wrapper.ValueToWrap;
-import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.wrapper.Wrapper;
 
 import java.lang.reflect.Parameter;
 
-class ArgArgumentRequirement<SENDER, PARSED> implements ParameterRequirement<SENDER, PARSED>, ArgumentRequirement<SENDER, PARSED> {
+public class ParameterArgumentRequirement<SENDER, PARSED> implements ParameterRequirement<SENDER, PARSED>, ArgumentRequirement<SENDER, PARSED> {
 
     private final ParameterArgument<?, PARSED> argument;
     private final Wrapper wrapper;
     private final ParserSet<SENDER, PARSED> parserSet;
 
-    ArgArgumentRequirement(ParameterArgument<?, PARSED> argument, Wrapper wrapper, ParserSet<SENDER, PARSED> parserSet) {
+    ParameterArgumentRequirement(ParameterArgument<?, PARSED> argument, Wrapper wrapper, ParserSet<SENDER, PARSED> parserSet) {
         this.argument = argument;
         this.wrapper = wrapper;
         this.parserSet = parserSet;

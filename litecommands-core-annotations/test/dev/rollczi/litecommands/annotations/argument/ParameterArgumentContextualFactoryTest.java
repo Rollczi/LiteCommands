@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.annotations.argument;
 
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
+import dev.rollczi.litecommands.annotations.argument.arg.ArgArgument;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,9 +13,7 @@ import java.lang.reflect.Parameter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ParameterArgumentContextualFactoryTest {
 
@@ -41,26 +41,24 @@ class ParameterArgumentContextualFactoryTest {
 
         assertEquals(2, parameters.length);
 
-        ParameterArgument<?, ?> firstContextual = ParameterArgument.create(wrapperRegistry, parameters[0], parameters[0].getAnnotation(Arg.class));
-        ParameterArgument<Arg, String> parameterArgument = assertInstanceOf(ParameterArgument.class, firstContextual);
+        ParameterArgument<?, ?> argument1 = new ArgArgument<>(wrapperRegistry, parameters[0], parameters[0].getAnnotation(Arg.class));
 
-        assertEquals("arg0", parameterArgument.getName());
-        assertEquals(String.class, parameterArgument.getWrapperFormat().getParsedType());
-        assertFalse(parameterArgument.getWrapperFormat().hasOutType());
-        assertEquals(Arg.class, parameterArgument.getAnnotationType());
+        assertEquals("arg0", argument1.getName());
+        assertEquals(String.class, argument1.getWrapperFormat().getParsedType());
+        assertFalse(argument1.getWrapperFormat().hasOutType());
+        assertEquals(Arg.class, argument1.getAnnotationType());
 
-        ParameterArgument<?, ?> secondContextual = ParameterArgument.create(wrapperRegistry, parameters[1], parameters[1].getAnnotation(Arg.class));
-        ParameterArgument<Arg, Integer> parameterArgument2 = assertInstanceOf(ParameterArgument.class, secondContextual);
+        ParameterArgument<?, ?> argument2 = new ArgArgument<>(wrapperRegistry, parameters[1], parameters[1].getAnnotation(Arg.class));
 
-        assertEquals("arg1", parameterArgument2.getName());
-        assertEquals(int.class, parameterArgument2.getWrapperFormat().getParsedType());
-        assertFalse(parameterArgument2.getWrapperFormat().hasOutType());
-        assertEquals(Arg.class, parameterArgument2.getAnnotationType());
+        assertEquals("arg1", argument2.getName());
+        assertEquals(int.class, argument2.getWrapperFormat().getParsedType());
+        assertFalse(argument2.getWrapperFormat().hasOutType());
+        assertEquals(Arg.class, argument2.getAnnotationType());
     }
 
     @Test
     void testCreateInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> ParameterArgument.create(wrapperRegistry, invalidParameter, invalidParameter.getAnnotation(Arg.class)));
+        assertThrows(IllegalArgumentException.class, () -> new ParameterArgument<>(wrapperRegistry, invalidParameter, invalidParameter.getAnnotation(Arg.class)));
     }
 
 }

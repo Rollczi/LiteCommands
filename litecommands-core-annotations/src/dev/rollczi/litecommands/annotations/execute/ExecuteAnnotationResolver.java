@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations.execute;
 
-import dev.rollczi.litecommands.annotations.command.MethodCommandExecutorService;
+import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMethodResolver;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -12,17 +12,17 @@ import java.util.Arrays;
 
 public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMethodResolver<SENDER, Execute> {
 
-    private final MethodCommandExecutorService<SENDER> methodCommandExecutorService;
+    private final MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory;
 
-    public ExecuteAnnotationResolver(MethodCommandExecutorService<SENDER> methodCommandExecutorService) {
-        this.methodCommandExecutorService = methodCommandExecutorService;
+    public ExecuteAnnotationResolver(MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory) {
+        this.methodCommandExecutorFactory = methodCommandExecutorFactory;
     }
 
     @Override
     public CommandBuilder<SENDER> resolve(Object instance, Method method, Execute annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
         boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
-        CommandExecutor<SENDER, ?> executor = this.methodCommandExecutorService.create(instance, method);
+        CommandExecutor<SENDER, ?> executor = this.methodCommandExecutorFactory.create(instance, method);
 
         executorBuilder.setExecutor(executor);
 

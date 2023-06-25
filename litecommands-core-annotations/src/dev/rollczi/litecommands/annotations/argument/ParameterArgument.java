@@ -23,11 +23,17 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
 
     private @Nullable String overrideName;
 
-    protected ParameterArgument(Method method, Parameter parameter, int parameterIndex, A annotation, Class<A> annotationType, WrapFormat<EXPECTED, ?> wrapFormat) {
+    @SuppressWarnings("unchecked")
+    protected ParameterArgument(WrapperRegistry wrapperRegistry, Parameter parameter, A annotation) {
+        Method method = (Method) parameter.getDeclaringExecutable();
+        int index = Arrays.asList(method.getParameters()).indexOf(parameter);
+        Class<A> annotationType = (Class<A>) annotation.annotationType();
+        WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);
+
         this.method = method;
         this.parameter = parameter;
-        this.parameterIndex = parameterIndex;
-        this.wrapFormat = wrapFormat;
+        this.parameterIndex = index;
+        this.wrapFormat = (WrapFormat<EXPECTED, ?>) wrapFormat;
         this.annotation = annotation;
         this.annotationType = annotationType;
     }
@@ -68,16 +74,6 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
 
     void overrideName(String name) {
         this.overrideName = name;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <A extends Annotation, EXPECTED> ParameterArgument<A, EXPECTED> create(WrapperRegistry wrapperRegistry, Parameter parameter, A annotation) {
-        Method method = (Method) parameter.getDeclaringExecutable();
-        int index = Arrays.asList(method.getParameters()).indexOf(parameter);
-        Class<A> annotationType = (Class<A>) annotation.annotationType();
-        WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);
-
-        return new ParameterArgument<>(method, parameter, index, annotation, annotationType, (WrapFormat<EXPECTED, ?>) wrapFormat);
     }
 
 }

@@ -19,6 +19,7 @@ public class GameModeArgument extends ArgumentResolver<CommandSender, GameMode> 
     static {
         for (GameMode value : GameMode.values()) {
             GAME_MODE_ARGUMENTS.put(value.name().toLowerCase(), value);
+            //noinspection deprecation
             GAME_MODE_ARGUMENTS.put(String.valueOf(value.getValue()), value);
         }
     }

@@ -86,7 +86,7 @@ public class CommandExecuteService<SENDER> {
     ) {
         // Handle failed
         if (!executors.hasNext()) {
-            if (last != null && !last.isEmpty()) {
+            if (last != null && last.hasResult()) {
                 return completedFuture(CommandExecuteResult.failed(last.getReason()));
             }
 
@@ -99,7 +99,7 @@ public class CommandExecuteService<SENDER> {
             if (match.isFailed()) {
                 FailedReason current = match.getFailedReason();
 
-                if (!current.isEmpty()) {
+                if (current.hasResult()) {
                     return this.execute(executors, invocation, matcher, commandRoute, current);
                 }
 

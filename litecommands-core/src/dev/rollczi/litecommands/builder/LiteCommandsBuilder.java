@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.builder;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
@@ -37,6 +38,7 @@ import java.util.function.UnaryOperator;
  * @param <SETTINGS> type of platform settings
  * @param <B> self type for builder
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, B extends LiteCommandsBuilder<SENDER, SETTINGS, B>> {
 
     /**
@@ -46,7 +48,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @param configurator configurator for platform settings
      * @return this builder
      */
-    LiteCommandsBuilder<SENDER, SETTINGS, B> platformSettings(PlatformSettingsConfigurator<SETTINGS> configurator);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> settings(PlatformSettingsConfigurator<SETTINGS> configurator);
 
     /**
      * Register commands from given provider.
@@ -61,28 +63,31 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, PARSER parser);
 
     <IN, T, PARSER extends Parser<SENDER, IN, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, String key, PARSER parser);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, ArgumentKey key, PARSER parser);
 
     <IN, T, ARGUMENT extends Argument<T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, TypedParser<SENDER, IN, T, ARGUMENT> parser);
 
     <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, String key, TypedParser<SENDER, IN, T, ARGUMENT> parser);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, ArgumentKey key, TypedParser<SENDER, IN, T, ARGUMENT> parser);
 
     <T>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, SuggestionResult suggestionResult);
+
+    <T>
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestionResult);
 
     <T, SUGGESTER extends Suggester<SENDER, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, SUGGESTER suggester);
 
     <T, SUGGESTER extends Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, String key, SUGGESTER suggester);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, ArgumentKey key, SUGGESTER suggester);
 
     <T, ARGUMENT extends Argument<T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, TypedSuggester<SENDER, T, ARGUMENT> suggester);
 
     <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, String key, TypedSuggester<SENDER, T, ARGUMENT> suggester);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, ArgumentKey key, TypedSuggester<SENDER, T, ARGUMENT> suggester);
 
     /**
      * [Argument Parser and Suggester]
@@ -107,7 +112,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @return this builder
      */
     <IN, T, RESOLVER extends Parser<SENDER, IN, T> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, String key, RESOLVER resolver);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, ArgumentKey key, RESOLVER resolver);
 
     /**
      * [Typed Argument Parser and Suggester]
@@ -132,7 +137,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @return this builder
      */
     <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, String key, RESOLVER resolver);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, ArgumentKey key, RESOLVER resolver);
 
     <T>
     LiteCommandsBuilder<SENDER, SETTINGS, B> context(Class<T> on, ContextProvider<SENDER, T> bind);

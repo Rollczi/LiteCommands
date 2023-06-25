@@ -15,6 +15,10 @@ public class ContextResult<T> {
     }
 
     public @Nullable T getResult() {
+        if (result == null) {
+            throw new IllegalStateException();
+        }
+
         return result.get();
     }
 

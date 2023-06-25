@@ -48,12 +48,7 @@ class FlowImpl implements Flow {
 
     @Override
     public boolean hasReason() {
-        return !failedReason.isEmpty();
-    }
-
-    @Override
-    public <T> T flow(Supplier<T> continueFlow, Function<Object, T> stopCurrentFlow, Function<Object, T> terminateFlow) {
-        return null;
+        return failedReason.hasResult();
     }
 
 }

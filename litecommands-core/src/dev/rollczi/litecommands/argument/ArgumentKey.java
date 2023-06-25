@@ -18,6 +18,14 @@ public class ArgumentKey {
         return this.key.isEmpty();
     }
 
+    public ArgumentKey withKey(String key) {
+        return new ArgumentKey(this.namespace, key);
+    }
+
+    public  <A extends Argument<?>>  ArgumentKey withNamespace(Class<A> argumentType) {
+        return new ArgumentKey(argumentType.getName(), this.key);
+    }
+
     public static ArgumentKey of(String key) {
         return ArgumentKey.typed(Argument.class, key);
     }

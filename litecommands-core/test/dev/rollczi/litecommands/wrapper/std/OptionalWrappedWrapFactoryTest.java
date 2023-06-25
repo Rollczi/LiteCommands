@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OptionalWrappedWrapFactoryTest {
 
-    OptionalWrapper optionalFactory = new OptionalWrapper();
+    final OptionalWrapper optionalFactory = new OptionalWrapper();
 
     @Test
     void wrap() {
