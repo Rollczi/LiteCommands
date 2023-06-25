@@ -1,5 +1,6 @@
-package dev.rollczi.litecommands.annotations.argument;
+package dev.rollczi.litecommands.annotations.argument.arg;
 
+import dev.rollczi.litecommands.annotations.argument.ParameterArgument;
 import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.argument.arg.ArgArgument;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;

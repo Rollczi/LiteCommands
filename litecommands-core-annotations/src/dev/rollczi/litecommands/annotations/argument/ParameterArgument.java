@@ -24,7 +24,7 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
     private @Nullable String overrideName;
 
     @SuppressWarnings("unchecked")
-    protected ParameterArgument(WrapperRegistry wrapperRegistry, Parameter parameter, A annotation) {
+    public ParameterArgument(WrapperRegistry wrapperRegistry, Parameter parameter, A annotation) {
         Method method = (Method) parameter.getDeclaringExecutable();
         int index = Arrays.asList(method.getParameters()).indexOf(parameter);
         Class<A> annotationType = (Class<A>) annotation.annotationType();
