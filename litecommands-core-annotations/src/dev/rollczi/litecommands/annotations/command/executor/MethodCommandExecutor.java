@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations.command.executor;
 
 import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
+import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
@@ -18,11 +19,12 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
     private final Object instance;
 
     MethodCommandExecutor(
+        CommandRoute<SENDER> parent,
         Method method,
         Object instance,
         List<ParameterRequirement<SENDER, ?>> preparedArguments
     ) {
-        super(preparedArguments);
+        super(parent, preparedArguments);
         this.method = method;
         this.instance = instance;
     }
@@ -33,11 +35,11 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
             return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved"));
         }
 
-        Object[] objects = results.stream()
-            .sorted(Comparator.comparingInt(pair -> pair.getRequirement().getParameterIndex()))
-            .map(successMatch -> successMatch.getResult())
-            .map(wrap -> wrap.unwrap())
-            .toArray();
+        Object[] objects = new Object[results.size()];
+
+        for (RequirementMatch<SENDER, ParameterRequirement<SENDER, ?>, Object> result : results) {
+            objects[result.getRequirement().getParameterIndex()] = result.getResult().unwrap();
+        }
 
         return CommandExecutorMatchResult.success(() -> {
             try {

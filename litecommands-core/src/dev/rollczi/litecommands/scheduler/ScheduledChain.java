@@ -12,11 +12,11 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class ScheduledChain<CHAIN extends ScheduledChainLink<? extends T>, T, R> {
 
-    private final List<CHAIN> chain = new ArrayList<>();
+    private final Collection<CHAIN> chain;
     private final BiFunction<CHAIN, T, R> mapper;
 
     private ScheduledChain(Collection<CHAIN> chain, BiFunction<CHAIN, T, R> mapper) {
-        this.chain.addAll(chain);
+        this.chain = chain;
         this.mapper = mapper;
     }
 

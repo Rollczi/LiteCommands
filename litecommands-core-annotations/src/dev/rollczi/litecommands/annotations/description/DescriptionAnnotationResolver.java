@@ -8,7 +8,7 @@ public class DescriptionAnnotationResolver<SENDER> implements CommandAnnotationM
 
     @Override
     public void apply(Object instance, Description annotation, MetaHolder metaHolder) {
-        metaHolder.editMeta(commandMeta -> commandMeta.put(Meta.DESCRIPTION, annotation.value()));
+        metaHolder.meta().put(Meta.DESCRIPTION, annotation.value());
     }
 
 }

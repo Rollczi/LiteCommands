@@ -19,13 +19,13 @@ public @interface Permissions {
 
         @Override
         public void apply(Object instance, Permissions annotation, MetaHolder metaHolder) {
-            metaHolder.editMeta(meta -> {
-                for (Permission permissionAnnotation : annotation.value()) {
-                    meta.listEditor(Meta.PERMISSIONS)
-                        .addAll(permissionAnnotation.value())
-                        .apply();
-                }
-            });
+            Meta meta = metaHolder.meta();
+
+            for (Permission permissionAnnotation : annotation.value()) {
+                meta.listEditor(Meta.PERMISSIONS)
+                    .addAll(permissionAnnotation.value())
+                    .apply();
+            }
         }
 
     }

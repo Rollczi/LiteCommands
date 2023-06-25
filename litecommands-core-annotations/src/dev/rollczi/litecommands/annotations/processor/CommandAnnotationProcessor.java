@@ -29,7 +29,7 @@ public class CommandAnnotationProcessor<SENDER> {
         }
 
         for (Method method : type.getDeclaredMethods()) {
-            CommandBuilderExecutor<SENDER> executorBuilder = new CommandBuilderExecutor<>();
+            CommandBuilderExecutor<SENDER> executorBuilder = new CommandBuilderExecutor<>(context);
 
             for (Annotation annotation : method.getAnnotations()) {
                 context = this.commandAnnotationRegistry.resolve(instance, method, annotation, context, executorBuilder);

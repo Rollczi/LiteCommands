@@ -20,7 +20,7 @@ public @interface Meta {
     class AnnotationResolver<SENDER> implements CommandAnnotationMetaApplicator<SENDER, Meta> {
         @Override
         public void apply(Object instance, Meta annotation, MetaHolder metaHolder) {
-            metaHolder.editMeta(meta -> meta.put(MetaKey.of(annotation.key(), String.class), annotation.value()));
+            metaHolder.meta().put(MetaKey.of(annotation.key(), String.class), annotation.value());
         }
     }
 

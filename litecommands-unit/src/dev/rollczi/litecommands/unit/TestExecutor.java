@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.RawInputParser;
 import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.requirement.RequirementMatch;
@@ -31,13 +32,13 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
 
     private final Object result;
 
-    public TestExecutor(Object result) {
-        super(Collections.emptyList());
+    public TestExecutor(CommandRoute<SENDER> parent, Object result) {
+        super(parent, Collections.emptyList());
         this.result = result;
     }
 
-    public TestExecutor() {
-        super(Collections.emptyList());
+    public TestExecutor(CommandRoute<SENDER> parent) {
+        super(parent, Collections.emptyList());
         this.result = null;
     }
 

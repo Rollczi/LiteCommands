@@ -9,9 +9,9 @@ import java.util.function.Supplier;
 
 public class IterableReferences<E> implements Iterable<E> {
 
-    private final List<Supplier<Iterable<E>>> collections;
+    private final List<Iterable<E>> collections;
 
-    private IterableReferences(List<Supplier<Iterable<E>>> collections) {
+    private IterableReferences(List<Iterable<E>> collections) {
         this.collections = collections;
     }
 
@@ -22,13 +22,13 @@ public class IterableReferences<E> implements Iterable<E> {
     }
 
     @SafeVarargs
-    public static <E> IterableReferences<E> of(Supplier<Iterable<E>>... collections) {
+    public static <E> IterableReferences<E> of(Iterable<E>... collections) {
         return new IterableReferences<>(Arrays.asList(collections));
     }
 
     private class MergedIterator implements Iterator<E> {
 
-        private final Iterator<Supplier<Iterable<E>>> collectionIterator;
+        private final Iterator<Iterable<E>> collectionIterator;
 
         private Iterator<E> currentIterator;
 
@@ -43,7 +43,7 @@ public class IterableReferences<E> implements Iterable<E> {
             }
 
             while (collectionIterator.hasNext()) {
-                currentIterator = collectionIterator.next().get().iterator();
+                currentIterator = collectionIterator.next().iterator();
 
                 if (currentIterator.hasNext()) {
                     return true;

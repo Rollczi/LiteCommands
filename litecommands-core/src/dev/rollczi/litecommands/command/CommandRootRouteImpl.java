@@ -1,11 +1,13 @@
 package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaCollector;
 import dev.rollczi.litecommands.util.StringUtil;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +58,7 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public Optional<CommandRoute<SENDER>> getChildren(String name) {
+    public Optional<CommandRoute<SENDER>> getChild(String name) {
         CommandRoute<SENDER> route = this.children.get(name);
 
         if (route != null) {
@@ -83,13 +85,8 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public MetaCollector metaCollector() {
-        return new MetaCollector() {
-            @Override
-            public <T> List<T> collect(MetaKey<T> key) {
-                return Collections.emptyList();
-            }
-        };
+    public @Nullable MetaHolder parentMeta() {
+        return null;
     }
 
     @Override

@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.executor.CommandExecutorFactory;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -27,7 +28,7 @@ class JDACommandTranslatorTest {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
         siema.meta().put(Meta.DESCRIPTION, "description");
-        siema.appendExecutor(simpleExecutor());
+        siema.appendExecutor(simpleExecutor(siema));
 
         JDACommandTranslator.JDALiteCommand translated = translator.translate("siema", siema);
         SlashCommandData slashCommandData = translated.jdaCommandData();
@@ -55,11 +56,11 @@ class JDACommandTranslatorTest {
 
         CommandRoute<TestSender> sub = CommandRoute.create(siema, "sub", List.of());
         siema.appendChildren(sub);
-        sub.appendExecutor(simpleExecutor());
+        sub.appendExecutor(simpleExecutor(sub));
 
         CommandRoute<TestSender> subOfSub = CommandRoute.create(siema, "subofsub", List.of());
         sub.appendChildren(subOfSub);
-        subOfSub.appendExecutor(simpleExecutor());
+        subOfSub.appendExecutor(simpleExecutor(sub));
 
         JDACommandTranslator.JDALiteCommand translated = translator.translate("siema", siema);
         SlashCommandData slashCommandData = translated.jdaCommandData();
@@ -104,8 +105,8 @@ class JDACommandTranslatorTest {
 
     }
 
-    private TestExecutor<TestSender> simpleExecutor() {
-        return new TestExecutor<TestSender>()
+    private TestExecutor<TestSender> simpleExecutor(CommandRoute<TestSender> test) {
+        return new TestExecutor<>(test)
             .withArg("name", String.class, (invocation, argument) -> ParseResult.success(argument))
             .withArg("age", Integer.class, (invocation, argument) -> ParseResult.success(Integer.parseInt(argument)));
     }

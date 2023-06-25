@@ -3,11 +3,15 @@ package dev.rollczi.litecommands.command;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaCollector;
+import dev.rollczi.litecommands.meta.MetaHolder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -20,9 +24,11 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     private final Set<String> namesAndAliases;
     private final CommandRoute<SENDER> parent;
     private final Meta meta = Meta.create();
+    private final MetaCollector metaCollector = MetaCollector.of(this);
 
     private final List<CommandExecutor<SENDER, ?>> executors = new ArrayList<>();
     private final List<CommandRoute<SENDER>> childRoutes = new ArrayList<>();
+    private final Map<String, CommandRoute<SENDER>> childrenByName = new HashMap<>();
 
     CommandRouteImpl(String name, List<String> aliases, CommandRoute<SENDER> parent) {
         this.name = name;
@@ -71,10 +77,8 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public Optional<CommandRoute<SENDER>> getChildren(String name) {
-        return this.childRoutes.stream()
-            .filter(route -> route.isNameOrAlias(name))
-            .findFirst();
+    public Optional<CommandRoute<SENDER>> getChild(String name) {
+        return Optional.ofNullable(this.childrenByName.get(name));
     }
 
     @Override
@@ -88,13 +92,27 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
+    public @Nullable MetaHolder parentMeta() {
+        return parent;
+    }
+
+    @Override
     public MetaCollector metaCollector() {
-        return new CommandRouteMetaCollector(this);
+        return this.metaCollector;
     }
 
     @Override
     public void appendChildren(CommandRoute<SENDER> children) {
+        for (String name : children.names()) {
+            if (this.childrenByName.containsKey(name)) {
+                throw new IllegalArgumentException("Route with name or alias '" + name + "' already exists!");
+            }
+        }
+
         this.childRoutes.add(children);
+        for (String name : children.names()) {
+            this.childrenByName.put(name, children);
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.argument.resolver.std.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.std.StringArgumentResolver;
+import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.context.ContextRegistry;
@@ -58,7 +59,7 @@ class MethodCommandExecutorFactoryTest {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
 
-        CommandExecutor<TestSender, ?> commandExecutor = executorFactory.create(testCommand, method);
+        CommandExecutor<TestSender, ?> commandExecutor = executorFactory.create(CommandRoute.createRoot(), testCommand, method);
 
         List<Requirement<?, ?>> requirements = (List<Requirement<?, ?>>) commandExecutor.getRequirements();
         assertEquals(3, requirements.size());
@@ -72,7 +73,7 @@ class MethodCommandExecutorFactoryTest {
         TestCommand testCommand = new TestCommand();
         Method method = testCommand.getClass().getDeclaredMethods()[0];
 
-        assertThrows(LiteCommandsReflectException.class, () -> new MethodCommandExecutorFactory<>().create(testCommand, method));
+        assertThrows(LiteCommandsReflectException.class, () -> new MethodCommandExecutorFactory<>().create(CommandRoute.createRoot(), testCommand, method));
     }
 
 }

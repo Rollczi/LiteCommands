@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.annotations.execute;
 
 import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMethodResolver;
-import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.util.LiteCommandsUtil;
@@ -22,9 +21,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
     public CommandBuilder<SENDER> resolve(Object instance, Method method, Execute annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
         boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
-        CommandExecutor<SENDER, ?> executor = this.methodCommandExecutorFactory.create(instance, method);
-
-        executorBuilder.setExecutor(executor);
+        executorBuilder.setExecutorFactory(parent -> this.methodCommandExecutorFactory.create(parent, instance, method));
 
         if (isNotEmpty) {
             context.route().appendChild(CommandBuilder.<SENDER>create()

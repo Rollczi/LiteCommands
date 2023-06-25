@@ -90,7 +90,7 @@ class AsyncCommandTest extends LiteTestSpec {
     @Test
     void testSync() {
         platform.execute("test sync")
-            .assertSuccess("scheduler-test-main");
+                .assertSuccess("scheduler-test-main");
     }
 
     @Test

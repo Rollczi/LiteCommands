@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CommandRoute<SENDER> extends Scopeable {
+public interface CommandRoute<SENDER> extends Scopeable, CommandNode<SENDER> {
 
     String getName();
 
@@ -30,7 +30,7 @@ public interface CommandRoute<SENDER> extends Scopeable {
 
     List<CommandRoute<SENDER>> getChildren();
 
-    Optional<CommandRoute<SENDER>> getChildren(String name);
+    Optional<CommandRoute<SENDER>> getChild(String name);
 
     void appendExecutor(CommandExecutor<SENDER, ?> executor);
 

@@ -4,16 +4,13 @@ import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.CommandRouteUtils;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.shared.IterableReferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ValidatorService<SENDER> {
 
@@ -36,53 +33,57 @@ public class ValidatorService<SENDER> {
         this.commandValidators.put(scope, validator);
     }
 
+    /* Kinda shitty, but I don't know how to do it better without losing performance https://github.com/Rollczi/LiteCommands/commit/3ac889d82e3e4d39fea27eee91cf5b01adacb412 */
     public Flow validate(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
-        IterableReferences<Validator<SENDER>> validators = IterableReferences.of(
-            () -> commandGlobalValidators,
-            () -> fromMeta(commandRoute, commandExecutor),
-            () -> fromScope(commandRoute)
-        );
+        Flow lastStopped = null;
 
-        return Flow.merge(validators, validator -> validator.validate(invocation, commandRoute, commandExecutor));
-    }
+        for (Validator<SENDER> validator : commandGlobalValidators) {
+            Flow flow = validator.validate(invocation, commandRoute, commandExecutor);
 
-    private List<Validator<SENDER>> fromMeta(CommandRoute<SENDER> commandRoute, CommandExecutor<SENDER, ?> commandExecutor) {
-        List<Validator<SENDER>> validators = new ArrayList<>();
-
-        List<Class<?>> validatorsTypes = CommandRouteUtils.collectFromRootToExecutor(commandRoute, commandExecutor, commandMeta -> commandMeta.get(Meta.VALIDATORS))
-            .stream()
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-
-        for (Class<?> validatorType : validatorsTypes) {
-            Validator<SENDER> validator = validatorsByClass.get(validatorType);
-
-            if (validator == null) {
-                throw new IllegalStateException("Validator " + validatorType + " not found");
+            switch (flow.status()) {
+                case CONTINUE: continue;
+                case TERMINATE: return flow;
+                case STOP_CURRENT: lastStopped = flow;
             }
-
-            validators.add(validator);
         }
 
-        return validators;
-    }
+        for (List<Class<? extends Validator<?>>> validators : commandExecutor.metaCollector().iterable(Meta.VALIDATORS)) {
+            for (Class<? extends Validator<?>> validatorType : validators) {
+                Validator<SENDER> validator = validatorsByClass.get(validatorType);
 
-    private List<Validator<SENDER>> fromScope(CommandRoute<SENDER> commandRoute) {
-        List<Validator<SENDER>> validators = new ArrayList<>();
+                if (validator == null) {
+                    throw new IllegalStateException("Validator " + validatorType + " not found");
+                }
+
+                Flow flow = validator.validate(invocation, commandRoute, commandExecutor);
+
+                switch (flow.status()) {
+                    case CONTINUE: continue;
+                    case TERMINATE: return flow;
+                    case STOP_CURRENT: lastStopped = flow;
+                }
+            }
+        }
 
         for (Map.Entry<Scope, Validator<SENDER>> entry : commandValidators.entrySet()) {
-            Scope scope = entry.getKey();
-            Validator<SENDER> validator = entry.getValue();
-
-            if (!scope.isApplicable(commandRoute)) {
+            if (!entry.getKey().isApplicable(commandRoute)) {
                 continue;
             }
 
-            validators.add(validator);
+            Flow flow = entry.getValue().validate(invocation, commandRoute, commandExecutor);
+
+            switch (flow.status()) {
+                case CONTINUE: continue;
+                case TERMINATE: return flow;
+                case STOP_CURRENT: lastStopped = flow;
+            }
         }
 
-        return validators;
-    }
+        if (lastStopped != null) {
+            return lastStopped;
+        }
 
+        return Flow.continueFlow();
+    }
 
 }

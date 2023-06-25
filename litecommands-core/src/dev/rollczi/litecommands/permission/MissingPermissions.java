@@ -4,11 +4,13 @@ import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.CommandRouteUtils;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MissingPermissions {
 
@@ -44,41 +46,31 @@ public class MissingPermissions {
         return missingPermissions.isEmpty();
     }
 
-    public static <SENDER> MissingPermissions check(PlatformSender platformSender, CommandRoute<SENDER> command, CommandExecutor<SENDER, ?> executor) {
-        List<String> permissions = new ArrayList<>();
-
-        CommandRouteUtils.consumeFromRootToChild(command, route -> {
-            permissions.addAll(route.meta().get(Meta.PERMISSIONS));
-            permissions.removeAll(route.meta().get(Meta.PERMISSIONS_EXCLUDED));
-        });
-
-        permissions.addAll(executor.meta().get(Meta.PERMISSIONS));
-        permissions.removeAll(executor.meta().get(Meta.PERMISSIONS_EXCLUDED));
-
-        return check(platformSender, permissions);
-    }
-
-    public static <SENDER> MissingPermissions check(PlatformSender platformSender, CommandRoute<SENDER> command) {
-        List<String> permissions = new ArrayList<>();
-
-        CommandRouteUtils.consumeFromRootToChild(command, route -> {
-            permissions.addAll(route.meta().get(Meta.PERMISSIONS));
-            permissions.removeAll(route.meta().get(Meta.PERMISSIONS_EXCLUDED));
-        });
-
-        return check(platformSender, permissions);
-    }
-
-    public static MissingPermissions check(PlatformSender platformSender, List<String> permissions) {
+    public static MissingPermissions check(PlatformSender platformSender, MetaHolder metaHolder) {
+        List<String> collected = new ArrayList<>();
         List<String> missingPermissions = new ArrayList<>();
+        MetaHolder current = metaHolder;
 
-        for (String permission : permissions) {
-            if (!platformSender.hasPermission(permission)) {
-                missingPermissions.add(permission);
+        while (current != null) {
+            if (!current.meta().has(Meta.PERMISSIONS)) {
+                current = current.parentMeta();
+                continue;
             }
+
+            List<String> permissions = current.meta().get(Meta.PERMISSIONS);
+
+            for (String permission : permissions) {
+                collected.add(permission);
+
+                if (!platformSender.hasPermission(permission)) {
+                    missingPermissions.add(permission);
+                }
+            }
+
+            current = current.parentMeta();
         }
 
-        return new MissingPermissions(permissions, missingPermissions);
+        return new MissingPermissions(collected, missingPermissions);
     }
 
 }

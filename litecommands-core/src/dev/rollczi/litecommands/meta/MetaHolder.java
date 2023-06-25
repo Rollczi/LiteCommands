@@ -1,13 +1,15 @@
 package dev.rollczi.litecommands.meta;
 
-import java.util.function.Consumer;
-
+import org.jetbrains.annotations.Nullable;
 public interface MetaHolder {
-
-    void editMeta(Consumer<Meta> operator);
 
     Meta meta();
 
-    MetaCollector metaCollector();
+    @Nullable
+    MetaHolder parentMeta();
+
+    default MetaCollector metaCollector() {
+        return MetaCollector.of(this);
+    }
 
 }

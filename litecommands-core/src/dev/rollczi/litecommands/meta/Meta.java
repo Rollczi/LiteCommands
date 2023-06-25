@@ -13,7 +13,6 @@ public interface Meta {
 
     MetaKey<String> DESCRIPTION = MetaKey.of("description", String.class, "none");
     MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
-    MetaKey<List<String>> PERMISSIONS_EXCLUDED = MetaKey.of("permissions-excluded", MetaType.list(), Collections.emptyList());
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPollType> POLL_TYPE = MetaKey.of("poll-type", SchedulerPollType.class, SchedulerPollType.SYNC);
     MetaKey<Class> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", Class.class);
