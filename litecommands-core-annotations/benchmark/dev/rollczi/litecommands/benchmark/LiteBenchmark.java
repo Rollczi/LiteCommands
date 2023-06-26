@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.benchmark;
 
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
-import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.unit.AssertExecute;

@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
-import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.argument.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;

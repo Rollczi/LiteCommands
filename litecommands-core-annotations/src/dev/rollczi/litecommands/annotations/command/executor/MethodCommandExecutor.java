@@ -10,7 +10,6 @@ import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Comparator;
 import java.util.List;
 
 class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, ParameterRequirement<SENDER, ?>> {
@@ -45,7 +44,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Para
             try {
                 this.method.setAccessible(true);
 
-                return CommandExecuteResult.success(this.method.invoke(this.instance, objects));
+                return CommandExecuteResult.success(this, this.method.invoke(this.instance, objects));
             }
             catch (IllegalAccessException exception) {
                 throw new LiteCommandsReflectException(this.method, "Cannot access method", exception);

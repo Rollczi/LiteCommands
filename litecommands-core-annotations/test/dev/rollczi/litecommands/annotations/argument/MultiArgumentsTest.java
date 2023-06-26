@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -20,12 +19,9 @@ import org.junit.jupiter.api.Test;
 
 class MultiArgumentsTest extends LiteTestSpec {
 
-    @LiteConfigurator
-    static LiteConfig configure() {
-        return builder -> builder
+    static LiteConfig config = builder -> builder
             .argumentSuggester(String.class, SuggestionResult.of("suggestion"))
             .argument(Position.class, new PositionArg<>());
-    }
 
     static class PositionArg<S> implements MultipleArgumentResolver<S, Position> {
 

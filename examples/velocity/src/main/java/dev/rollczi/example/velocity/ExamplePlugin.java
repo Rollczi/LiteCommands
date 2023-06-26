@@ -16,9 +16,13 @@ import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
+import dev.rollczi.litecommands.annotations.argument.join.Join;
+import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.velocity.LiteVelocityFactory;
+import dev.rollczi.litecommands.velocity.tools.VelocityOnlyPlayerContextual;
 
 @Plugin(id = "example-plugin", name = "ExamplePlugin", version = "1.0.0", authors = { "Rollczi" }, url = "https://rollczi.dev/")
 public class ExamplePlugin {
@@ -35,18 +39,34 @@ public class ExamplePlugin {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         this.liteCommands = LiteVelocityFactory.builder(this.proxyServer)
-            // Arguments
-            .argumentParser(Player.class, new PlayerArgument(this.proxyServer))
-            .argumentParser(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
+            // configure velocity settings
+            .settings(settings -> settings
+                .nativePermissions(false) // enable/disable velocity native permissions
+            )
 
             // Commands
             .commands(LiteAnnotationCommands.of(
                 new SendCommand()
             ))
 
-            // Handlers
-            .result(MissingPermissions.class, new PermissionMessage())
-            .result(InvalidUsage.class, new InvalidUsageHandlerImpl())
+            // Arguments @Arg
+            .argument(Player.class, new PlayerArgument(this.proxyServer))
+            .argument(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
+
+            // Suggestions, if you want you can override default argument suggesters
+            .argumentSuggester(String.class, SuggestionResult.of("name", "argument"))
+            .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
+            .argumentSuggester(String.class, Join.ARGUMENT_KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+
+            // Context resolvers @Context
+            .context(Player.class, new VelocityOnlyPlayerContextual<>("&cOnly player can execute this command!"))
+
+            // Handlers for missing permissions and invalid usage
+            .missingPermission(new PermissionMessage())
+            .invalidUsage(new InvalidUsageHandlerImpl())
+
+            // Schematic generator is used to generate schematic for command, for example when you run invalid command.
+            .schematicGenerator(SchematicFormat.angleBrackets())
 
             .build();
     }

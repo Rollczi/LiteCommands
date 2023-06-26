@@ -1,7 +1,13 @@
 package dev.rollczi.litecommands.schematic;
 
-public class SchematicGenerator {
+import dev.rollczi.litecommands.validator.ValidatorService;
 
-    private SchematicFormat format;
+public interface SchematicGenerator<SENDER> {
+
+    Schematic generate(SchematicInput<SENDER> schematicInput);
+
+    static <SENDER> SchematicGenerator<SENDER> from(SchematicFormat format, ValidatorService<SENDER> validatorService) {
+        return new SchematicGeneratorSimpleImpl<>(format, validatorService);
+    }
 
 }

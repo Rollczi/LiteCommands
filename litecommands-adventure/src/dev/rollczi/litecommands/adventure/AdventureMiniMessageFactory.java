@@ -7,7 +7,7 @@ final class AdventureMiniMessageFactory {
     private AdventureMiniMessageFactory() {
     }
 
-    static MiniMessage produce(boolean supportLegacy) {
+    static MiniMessage create(boolean supportLegacy) {
         if (!supportLegacy) {
             return MiniMessage.miniMessage();
         }

@@ -16,6 +16,8 @@ import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,40 +32,45 @@ public class ExamplePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.liteCommands = LiteCommandsBukkit.builder()
-            // configure litecommands
+            // configure bukkit platform
             .settings(settings -> settings
-                .fallbackPrefix("my-plugin")
+                .fallbackPrefix("my-plugin") // fallback prefix - used by bukkit to identify command
+                .nativePermissions(false) // enable/disable bukkit permissions system
             )
 
-            // register commands
+            // Commands
             .commands(LiteAnnotationCommands.of(
                 new TeleportCommand(),
                 new KickCommand(),
                 new ConvertCommand()
             ))
 
-            // register custom argument
+            // Arguments @Arg
             .argument(Location.class, new LocationArgument())
             .argument(World.class, new WorldArgument(this.getServer()))
             .argument(GameMode.class, new GameModeArgument())
             .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cPlayer not found!"))
 
-            // override default argument suggester
+            // Suggestions, if you want you can override default argument suggesters
             .argumentSuggester(String.class, SuggestionResult.of("name", "argument"))
             .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
             .argumentSuggester(String.class, Join.ARGUMENT_KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
-            // register context
+            // Context resolver for @Context Player
             .context(Player.class, new BukkitOnlyPlayerContextual<>("&cOnly player can execute this command!"))
 
-            // register handlers for missing permissions and invalid usage
+            // Handlers for missing permissions and invalid usage
             .missingPermission(new MissingPermissionsHandlerImpl())
             .invalidUsage(new InvalidUsageHandlerImpl())
 
-            // register additional Adventure features
+            // Schematic generator is used to generate schematic for command, for example when you run invalid command.
+            .schematicGenerator(SchematicFormat.angleBrackets())
+
+            // register additional Kyori Adventure features for rgb, hex, gradient, click, hover, etc.
+            // more: https://docs.advntr.dev/minimessage/format.html
             .extension(new LiteAdventureExtension<>(), extension -> extension
-                .miniMessage(true)
-                .legacyColor(true)
+                .miniMessage(true) // enable mini message format (<red>, <gradient:red:blue>, <#ff0000>, etc.)
+                .legacyColor(true) // enable legacy color format (&c, &a, etc.)
             )
 
             .build();
@@ -71,6 +78,7 @@ public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // unregister all commands from bukkit
         this.liteCommands.unregister();
     }
 

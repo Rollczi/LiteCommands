@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.async;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.argument.ArgumentResolverInfo;
@@ -26,9 +25,7 @@ import static org.awaitility.Awaitility.await;
 
 class AsyncCommandTest extends LiteTestSpec {
 
-    @LiteConfigurator
-    static LiteConfig config() {
-        return builder -> builder
+    static LiteConfig config = builder -> builder
             .scheduler(new SchedulerExecutorPoolImpl("test", 1))
             .context(Date.class, invocation -> ContextResult.ok(() -> {
                 try {
@@ -41,7 +38,6 @@ class AsyncCommandTest extends LiteTestSpec {
                 return new Date();
             }))
             .argument(SomeClass.class, new ThrowingArgumentResolver());
-    }
 
     static class SomeClass {}
 

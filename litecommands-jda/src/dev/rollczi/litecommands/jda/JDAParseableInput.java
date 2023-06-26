@@ -104,7 +104,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         @Override
         public EndResult endMatch() {
             if (consumedArguments.size() != arguments.size()) {
-                return EndResult.failed(InvalidUsage.Cause.TOO_FEW_ARGUMENTS);
+                return EndResult.failed(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 
             return EndResult.success();

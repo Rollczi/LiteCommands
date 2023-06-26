@@ -26,7 +26,7 @@ class JoinArgumentResolver<SENDER> extends AnnotationArgumentResolver<SENDER, St
         List<String> values = new ArrayList<>();
 
         if (!rawInput.hasNext()) {
-            return ParseResult.failure(InvalidUsage.Cause.TOO_FEW_ARGUMENTS);
+            return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
         }
 
         while (limit > 0 && rawInput.hasNext()) {

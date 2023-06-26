@@ -10,7 +10,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.requirement.RequirementMatch;
-import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.argument.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
@@ -42,6 +42,10 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         this.result = null;
     }
 
+    public TestExecutor<SENDER> withStringArg(String name) {
+        return withArg(name, String.class, (invocation, input) -> ParseResult.success(input));
+    }
+
     @SuppressWarnings("unchecked")
     public <T> TestExecutor<SENDER> withArg(String name, Class<T> type, BiFunction<Invocation<SENDER>, String, ParseResult<T>> parser) {
         requirements.add(new TestArgumentRequirement<>(new TestArgument<>(name, type), new ValueWrapper(), new ParserSet<SENDER, T>() {
@@ -65,7 +69,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
 
     @Override
     public CommandExecutorMatchResult match(List<RequirementMatch<SENDER, Requirement<SENDER, ?>, Object>> results) {
-        return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(result));
+        return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(this, result));
     }
 
     private class TestArgumentRequirement<PARSED> implements ArgumentRequirement<SENDER, PARSED> {
@@ -81,7 +85,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         }
 
         @Override
-        public Argument<?> getArgument() {
+        public Argument<PARSED> getArgument() {
             return this.argument;
         }
 

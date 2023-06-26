@@ -4,11 +4,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
-class PlainComponentSerializer implements ComponentSerializer<Component, Component, String> {
+class PlainComponentSerializerFactory implements ComponentSerializer<Component, Component, String> {
 
     private final boolean supportLegacy;
 
-    private PlainComponentSerializer(boolean supportLegacy) {
+    private PlainComponentSerializerFactory(boolean supportLegacy) {
         this.supportLegacy = supportLegacy;
     }
 
@@ -22,8 +22,8 @@ class PlainComponentSerializer implements ComponentSerializer<Component, Compone
         throw new UnsupportedOperationException("This serializer is only for deserialization");
     }
 
-    static PlainComponentSerializer plain(boolean supportLegacy) {
-        return new PlainComponentSerializer(supportLegacy);
+    static PlainComponentSerializerFactory create(boolean supportLegacy) {
+        return new PlainComponentSerializerFactory(supportLegacy);
     }
 
 }

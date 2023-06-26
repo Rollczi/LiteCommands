@@ -19,6 +19,8 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.argument.suggestion.Suggester;
 import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
@@ -179,6 +181,10 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     LiteCommandsBuilder<SENDER, SETTINGS, B> invalidUsage(InvalidUsageHandler<SENDER> handler);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> wrapper(Wrapper wrapper);
+
+    LiteCommandsBuilder<SENDER, SETTINGS, B> schematicGenerator(SchematicGenerator<SENDER> schematicGenerator);
+
+    LiteCommandsBuilder<SENDER, SETTINGS, B> schematicGenerator(SchematicFormat format);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> preProcessor(LiteBuilderPreProcessor<SENDER, SETTINGS> preProcessor);
 

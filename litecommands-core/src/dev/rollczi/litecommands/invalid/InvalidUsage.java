@@ -5,18 +5,14 @@ import dev.rollczi.litecommands.schematic.Schematic;
 
 public class InvalidUsage<SENDER> {
 
-    private Cause cause;
-    private CommandRoute<SENDER> route;
-    private Schematic schematic;
+    private final Cause cause;
+    private final CommandRoute<SENDER> lastRoute;
+    private final Schematic schematic;
 
-    public enum Cause {
-
-        UNKNOWN_COMMAND,
-        TOO_MANY_ARGUMENTS,
-        TOO_FEW_ARGUMENTS,
-        INVALID_ARGUMENT,
-        MISSING_ARGUMENT,
-
+    public InvalidUsage(Cause cause, CommandRoute<SENDER> lastRoute, Schematic schematic) {
+        this.cause = cause;
+        this.lastRoute = lastRoute;
+        this.schematic = schematic;
     }
 
     public Cause getCause() {
@@ -25,6 +21,18 @@ public class InvalidUsage<SENDER> {
 
     public Schematic getSchematic() {
         return schematic;
+    }
+
+    public CommandRoute<SENDER> getLastCommand() {
+        return lastRoute;
+    }
+
+    public enum Cause {
+        UNKNOWN_COMMAND,
+        INVALID_ARGUMENT,
+        MISSING_ARGUMENT,
+        MISSING_PART_OF_ARGUMENT,
+        TOO_MANY_ARGUMENTS
     }
 
 }

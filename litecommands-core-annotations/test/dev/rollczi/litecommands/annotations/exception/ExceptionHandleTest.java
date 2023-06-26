@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.exception;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -17,12 +16,9 @@ class ExceptionHandleTest extends LiteTestSpec {
 
     private static final Set<String> exceptions = new HashSet<>();
 
-    @LiteConfigurator
-    static LiteConfig configure() {
-        return builder -> builder
+    static LiteConfig config = builder -> builder
             .exception(IllegalArgumentException.class, (invocation, exception) -> exceptions.add("IllegalArgumentException"))
             .exception(RuntimeException.class, (invocation, exception) -> exceptions.add("RuntimeException"));
-    }
 
     @Command(name = "test")
     static class TestCommand {

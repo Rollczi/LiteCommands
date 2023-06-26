@@ -11,11 +11,8 @@ import panda.std.Option;
 
 class ExampleUnitTest extends LiteTestSpec {
 
-    @LiteConfigurator
-    static LiteConfig config() {
-        return builder ->
+    static LiteConfig config = builder ->
             builder.editor(Scope.command("route"), context -> context.aliases("r"));
-    }
 
     @Command(name = "route")
     static class TestCommand {

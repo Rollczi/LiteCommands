@@ -11,8 +11,8 @@ import net.kyori.adventure.text.serializer.ComponentSerializer;
 public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SENDER> {
 
     private final AdventureAudienceProvider<SENDER> adventureAudienceProvider;
-    private boolean supportsMiniMessage = false;
-    private boolean supportsLegacyColor = false;
+    private boolean supportsMiniMessage = true;
+    private boolean supportsLegacyColor = true;
     private ComponentSerializer<Component, ? extends Component, String> componentSerializer;
     private boolean colorizeArgument = false;
 
@@ -52,8 +52,8 @@ public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SEN
     public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
         if (componentSerializer == null) {
             componentSerializer = supportsMiniMessage
-                ? AdventureMiniMessageFactory.produce(supportsLegacyColor)
-                : PlainComponentSerializer.plain(supportsLegacyColor);
+                ? AdventureMiniMessageFactory.create(supportsLegacyColor)
+                : PlainComponentSerializerFactory.create(supportsLegacyColor);
         }
 
         builder

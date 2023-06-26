@@ -2,7 +2,11 @@ package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.invalid.InvalidUsage.Cause;
 import dev.rollczi.litecommands.scheduler.ScheduledChainException;
+import dev.rollczi.litecommands.schematic.Schematic;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
+import dev.rollczi.litecommands.schematic.SchematicInput;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
@@ -22,7 +26,7 @@ import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Supplier;
@@ -35,25 +39,27 @@ public class CommandExecuteService<SENDER> {
     private final ResultHandleService<SENDER> resultResolver;
     private final ExceptionHandleService<SENDER> exceptionHandleService;
     private final Scheduler scheduler;
+    private final SchematicGenerator<SENDER> schematicGenerator;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.exceptionHandleService = exceptionHandleService;
         this.scheduler = scheduler;
+        this.schematicGenerator = schematicGenerator;
     }
 
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParsableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute)
             .thenCompose(executeResult -> scheduler.supplySync(() -> {
-                this.handleResult(invocation, executeResult);
+                this.handleResult(invocation, commandRoute, executeResult);
 
                 return executeResult;
             }))
             .exceptionally(new LastExceptionHandler<>(exceptionHandleService, invocation));
     }
 
-    private void handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
+    private void handleResult(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult) {
         Throwable throwable = executeResult.getThrowable();
         if (throwable != null) {
             exceptionHandleService.resolve(invocation, throwable);
@@ -61,13 +67,26 @@ public class CommandExecuteService<SENDER> {
 
         Object result = executeResult.getResult();
         if (result != null) {
-            resultResolver.resolve(invocation, result);
+            resultResolver.resolve(invocation, this.mapResult(result, commandRoute, executeResult, invocation));
         }
 
         Object error = executeResult.getError();
         if (error != null) {
-            resultResolver.resolve(invocation, error);
+            resultResolver.resolve(invocation, this.mapResult(error, commandRoute, executeResult, invocation));
         }
+    }
+
+    @SuppressWarnings("unchecked") // TODO Support mapping of result in result resolver
+    private Object mapResult(Object error, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
+        if (error instanceof Cause) {
+            Cause cause = (Cause) error;
+            @Nullable CommandExecutor<SENDER, ?> executor = (CommandExecutor<SENDER, ?>) executeResult.getExecutor();
+            Schematic schematic = schematicGenerator.generate(new SchematicInput<>(commandRoute, executor, invocation));
+
+            return new InvalidUsage<>(cause, commandRoute, schematic);
+        }
+
+        return error;
     }
 
     private <MATCHER extends ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute0(
@@ -75,12 +94,11 @@ public class CommandExecuteService<SENDER> {
         ParsableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
-        return this.execute(commandRoute.getExecutors().iterator(), invocation, matcher, commandRoute, null);
+        return this.execute(commandRoute.getExecutors().listIterator(), invocation, matcher, commandRoute, null);
     }
 
-
     private <MATCHER extends ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
-        Iterator<CommandExecutor<SENDER, ?>> executors,
+        ListIterator<CommandExecutor<SENDER, ?>> executors,
         Invocation<SENDER> invocation,
         ParsableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute,
@@ -88,11 +106,13 @@ public class CommandExecuteService<SENDER> {
     ) {
         // Handle failed
         if (!executors.hasNext()) {
+            CommandExecutor<SENDER, ?> executor = executors.hasPrevious() ? executors.previous() : null;
+
             if (last != null && last.hasResult()) {
-                return completedFuture(CommandExecuteResult.failed(last.getReason()));
+                return completedFuture(CommandExecuteResult.failed(executor, last));
             }
 
-            return completedFuture(CommandExecuteResult.failed(InvalidUsage.Cause.UNKNOWN_COMMAND));
+            return completedFuture(CommandExecuteResult.failed(executor, InvalidUsage.Cause.UNKNOWN_COMMAND));
         }
 
         CommandExecutor<SENDER, ?> executor = executors.next();
@@ -112,7 +132,7 @@ public class CommandExecuteService<SENDER> {
             Flow flow = this.validatorService.validate(invocation, commandRoute, executor);
 
             if (flow.isTerminate()) {
-                return completedFuture(CommandExecuteResult.failed(flow.getReason()));
+                return completedFuture(CommandExecuteResult.failed(executor, flow.getReason()));
             }
 
             if (flow.isStopCurrent()) {
@@ -126,20 +146,20 @@ public class CommandExecuteService<SENDER> {
                 try {
                     return match.executeCommand();
                 } catch (LiteCommandsReflectException exception) {
-                    return CommandExecuteResult.thrown(exception.getCause());
+                    return CommandExecuteResult.thrown(executor, exception.getCause());
                 } catch (Throwable error) {
-                    return CommandExecuteResult.thrown(error);
+                    return CommandExecuteResult.thrown(executor, error);
                 }
             });
-        }).exceptionally(throwable -> toThrown(throwable));
+        }).exceptionally(throwable -> toThrown(executor, throwable));
     }
 
-    private CommandExecuteResult toThrown(Throwable throwable) {
+    private CommandExecuteResult toThrown(CommandExecutor<SENDER, ?> executor, Throwable throwable) {
         if (throwable instanceof CompletionException) {
-            return CommandExecuteResult.thrown(throwable.getCause());
+            return CommandExecuteResult.thrown(executor, throwable.getCause());
         }
 
-        return CommandExecuteResult.thrown(throwable);
+        return CommandExecuteResult.thrown(executor, throwable);
     }
 
     private <REQUIREMENT extends Requirement<SENDER, ?>, MATCHER extends ParsableInputMatcher<MATCHER>> CompletableFuture<CommandExecutorMatchResult> match(

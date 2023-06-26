@@ -25,6 +25,8 @@ import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.argument.suggestion.Suggester;
 import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
@@ -64,7 +66,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     protected final Set<LiteBuilderPreProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
     protected final Set<LiteBuilderPostProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
-    protected Scheduler scheduler = new SchedulerSameThreadImpl();
 
     protected final EditorService<SENDER> editorService = new EditorService<>();
     protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
@@ -76,6 +77,9 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleService<>();
     protected final ExceptionHandleService<SENDER> exceptionHandleService = new ExceptionHandleService<>();
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
+
+    protected Scheduler scheduler = new SchedulerSameThreadImpl();
+    protected SchematicGenerator<SENDER> schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService);
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -301,6 +305,18 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    public LiteCommandsBuilder<SENDER, C, B> schematicGenerator(SchematicGenerator<SENDER> schematicGenerator) {
+        this.schematicGenerator = schematicGenerator;
+        return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER, C, B> schematicGenerator(SchematicFormat format) {
+        this.schematicGenerator = SchematicGenerator.from(format, validatorService);
+        return this;
+    }
+
+    @Override
     public LiteCommandsBuilder<SENDER, C, B> preProcessor(LiteBuilderPreProcessor<SENDER, C> preProcessor) {
         this.preProcessors.add(preProcessor);
         return this;
@@ -340,7 +356,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler, schematicGenerator);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 

@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -51,26 +52,20 @@ public class LiteTestSpec {
             builder.result(Object.class, (invocation, result) -> {});
         }
 
-        List<Method> methods = Arrays.stream(type.getDeclaredMethods())
-            .filter(method -> method.isAnnotationPresent(LiteConfigurator.class))
-            .collect(Collectors.toList());
+        for (Field field : type.getDeclaredFields()) {
+            if (field.getType() != LiteConfig.class) {
+                continue;
+            }
 
-        for (Method method : methods) {
             try {
-                method.setAccessible(true);
-                Object result = method.invoke(null);
-
-                if (!(result instanceof LiteConfig)) {
-                    throw new AssertionError("@LiteTestConfig must return TestConfigurator");
-                }
-
+                field.setAccessible(true);
+                Object result = field.get(null);
                 LiteConfig configurator = (LiteConfig) result;
 
                 builder = configurator.configure(builder);
-
             }
-            catch (Exception e) {
-                throw new AssertionError("Cannot invoke method", e);
+            catch (Exception exception) {
+                throw new AssertionError("Cannot invoke method", exception);
             }
         }
 

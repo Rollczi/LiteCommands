@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.wrapper.Wrapper;
@@ -35,14 +36,14 @@ public class ContextParameterRequirementFactory<SENDER> implements ParameterRequ
         return new ContextParameterPreparedArgument<>(parameter, index, wrapFormat, wrapperRegistry.getWrappedExpectedFactory(wrapFormat));
     }
 
-    private class ContextParameterPreparedArgument<EXPECTED> implements ParameterRequirement<SENDER, EXPECTED> {
+    private class ContextParameterPreparedArgument<PARSED> implements ContextRequirement<SENDER, PARSED>, ParameterRequirement<SENDER, PARSED> {
 
         private final Parameter parameter;
         private final int index;
-        private final WrapFormat<EXPECTED, ?> wrapFormat;
+        private final WrapFormat<PARSED, ?> wrapFormat;
         private final Wrapper wrapper;
 
-        private ContextParameterPreparedArgument(Parameter parameter, int index, WrapFormat<EXPECTED, ?> wrapFormat, Wrapper wrapper) {
+        private ContextParameterPreparedArgument(Parameter parameter, int index, WrapFormat<PARSED, ?> wrapFormat, Wrapper wrapper) {
             this.parameter = parameter;
             this.index = index;
             this.wrapFormat = wrapFormat;
@@ -50,8 +51,8 @@ public class ContextParameterRequirementFactory<SENDER> implements ParameterRequ
         }
 
         @Override
-        public <CONTEXT extends ParsableInputMatcher<CONTEXT>> RequirementResult<EXPECTED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
-            ContextResult<EXPECTED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
+        public <CONTEXT extends ParsableInputMatcher<CONTEXT>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
+            ContextResult<PARSED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.hasResult()) {
                 return RequirementResult.success(wrapper.create(result.getResult(), wrapFormat));

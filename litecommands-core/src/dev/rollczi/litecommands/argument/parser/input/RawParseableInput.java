@@ -48,7 +48,7 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
             }
 
             if (context.isMissingPartOfArgument()) {
-                return ParseResult.failure(InvalidUsage.Cause.TOO_FEW_ARGUMENTS);
+                return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
             }
 
             return context.parseArgument(invocation);

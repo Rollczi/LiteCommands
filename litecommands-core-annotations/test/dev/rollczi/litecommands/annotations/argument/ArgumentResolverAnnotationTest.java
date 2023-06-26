@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteConfigurator;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
@@ -13,7 +12,7 @@ import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.argument.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -28,12 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class ArgumentResolverAnnotationTest extends LiteTestSpec {
 
-    @LiteConfigurator
-    static LiteConfig config() {
-        return builder -> builder
+    static LiteConfig config = builder -> builder
             .argumentSuggester(String.class, SuggestionResult.of("suggestion"))
             .argument(Date.class, new DateArgumentResolver());
-    }
 
 
     @ArgumentResolverInfo(name = "custom")

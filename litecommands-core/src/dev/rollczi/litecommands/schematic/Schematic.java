@@ -9,7 +9,7 @@ public class Schematic {
 
     private final List<String> schematics = new ArrayList<>();
 
-    Schematic(Collection<String> schematics) {
+    public Schematic(Collection<String> schematics) {
         this.schematics.addAll(schematics);
     }
 
