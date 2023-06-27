@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;

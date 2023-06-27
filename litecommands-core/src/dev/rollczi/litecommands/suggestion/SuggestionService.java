@@ -1,8 +1,10 @@
-package dev.rollczi.litecommands.argument.suggestion;
+package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher;
-import dev.rollczi.litecommands.shared.FailedReason;
+import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputMatcher;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
@@ -75,39 +77,32 @@ public class SuggestionService<SENDER> {
         return all;
     }
 
-    @SuppressWarnings("unchecked")
     public <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggestExecutor(
         Invocation<SENDER> invocation,
         MATCHER matcher,
         CommandExecutor<SENDER, ?> executor
     ) {
+        SuggestionResult collector = SuggestionResult.empty();
+
         for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
             if (!(requirement instanceof ArgumentRequirement)) {
                 continue;
             }
 
-            Flow flow = suggestRequirement(invocation, matcher, (ArgumentRequirement<SENDER, ?>) requirement);
+            SuggestionInputResult result = suggestRequirement(invocation, matcher, (ArgumentRequirement<SENDER, ?>) requirement);
+            collector.addAll(result.getResult());
 
-            switch (flow.status()) {
+            switch (result.getCause()) {
                 case CONTINUE: continue;
-                case TERMINATE: return SuggestionResult.empty();
-                case STOP_CURRENT: {
-                    FailedReason failedReason = flow.failedReason();
-                    Object reason = failedReason.getReasonOr(null);
-
-                    if (reason instanceof SuggestionResult) {
-                        return (SuggestionResult) reason;
-                    }
-
-                    return SuggestionResult.empty();
-                }
+                case END: return collector;
+                case FAIL: return SuggestionResult.empty();
             }
         }
 
-        return SuggestionResult.empty();
+        return collector;
     }
 
-    private <OUT, MATCHER extends SuggestionInputMatcher<MATCHER>> Flow suggestRequirement(
+    private <OUT, MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionInputResult suggestRequirement(
         Invocation<SENDER> invocation,
         MATCHER matcher,
         ArgumentRequirement<SENDER, OUT> requirement
@@ -117,7 +112,7 @@ public class SuggestionService<SENDER> {
         return suggestArgument(invocation, matcher, argument);
     }
 
-    private <PARSED, MATCHER extends SuggestionInputMatcher<MATCHER>> Flow suggestArgument(
+    private <PARSED, MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionInputResult suggestArgument(
         Invocation<SENDER> invocation,
         MATCHER matcher,
         Argument<PARSED> argument
@@ -126,7 +121,14 @@ public class SuggestionService<SENDER> {
         ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(parsedType, argument.toKey());
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.toKey());
 
-        return matcher.nextArgument(invocation, argument, parserSet, suggester);
+        boolean nextOptional = matcher.isNextOptional(argument, parserSet);
+        SuggestionInputResult result = matcher.nextArgument(invocation, argument, parserSet, suggester);
+
+        if (result.isEnd() && nextOptional) {
+            return SuggestionInputResult.continueWith(result);
+        }
+
+        return result;
     }
 
 }

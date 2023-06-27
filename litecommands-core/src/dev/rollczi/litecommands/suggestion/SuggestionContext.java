@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.suggestion;
+package dev.rollczi.litecommands.suggestion;
 
 public class SuggestionContext {
 

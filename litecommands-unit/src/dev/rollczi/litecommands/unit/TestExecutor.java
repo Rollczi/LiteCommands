@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.RawInputParser;
-import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
@@ -95,7 +95,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         }
 
         @Override
-        public <MATCHER extends ParsableInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
+        public <MATCHER extends ParseableInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
             ParseResult<PARSED> matchArgument = matcher.nextArgument(invocation, argument, parserSet);
 
             if (matchArgument.isFailed()) {

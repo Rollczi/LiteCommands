@@ -6,6 +6,7 @@ public interface ArgumentRequirement<SENDER, PARSED> extends Requirement<SENDER,
 
     Argument<PARSED> getArgument();
 
+    @Deprecated
     boolean isOptional();
 
 }

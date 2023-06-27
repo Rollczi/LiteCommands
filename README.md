@@ -34,12 +34,12 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>litecommands-core</artifactId>
-    <version>3.0.0-BETA-pre6</version>
+    <version>3.0.0-BETA-pre7</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre6'
+implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre7'
 ```
 
 ### First Simple Command

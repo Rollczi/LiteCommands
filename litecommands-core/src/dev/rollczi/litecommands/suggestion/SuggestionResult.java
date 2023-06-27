@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.suggestion;
+package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.shared.IterableMutableArray;
 
@@ -23,6 +23,10 @@ public class SuggestionResult {
 
     public void add(Suggestion suggestion) {
         this.suggestions.add(suggestion);
+    }
+
+    public void addAll(SuggestionResult result) {
+        this.suggestions.addAll(result.suggestions);
     }
 
     public SuggestionResult filterBy(Suggestion suggestion) { /// x -> x y z, x y -> y z, x y z -> z

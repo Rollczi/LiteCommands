@@ -6,9 +6,9 @@ import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.suggestion.Suggestion;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.util.Arrays;
 import java.util.List;

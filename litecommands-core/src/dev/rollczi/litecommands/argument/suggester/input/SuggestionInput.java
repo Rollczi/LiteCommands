@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.suggestion.input;
+package dev.rollczi.litecommands.argument.suggester.input;
 
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.shared.Preconditions;

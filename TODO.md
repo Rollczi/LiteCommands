@@ -15,7 +15,7 @@ Modern TODO
 - [x] @Async @Arg
 - [x] @Permission
 - [ ] @Arg @Range(min = 1, max = 10) int
-- [ ] @Flag for booleans
+- [x] @Flag for booleans
 - [x] @Editor
 - [ ] @Arg Enum
 - [ ] @Arg List<String> // for example text, text, text

@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public interface ParseableInput<MATCHER extends ParsableInputMatcher<MATCHER>> extends Input<MATCHER> {
+public interface ParseableInput<MATCHER extends ParseableInputMatcher<MATCHER>> extends Input<MATCHER> {
 
     static ParseableInput.NamedBuilder namedBuilder() {
         return new NamedBuilder();

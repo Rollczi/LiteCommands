@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.annotations.argument.join;
 
 import dev.rollczi.litecommands.annotations.argument.AnnotationArgumentResolver;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -43,7 +43,7 @@ class JoinArgumentResolver<SENDER> extends AnnotationArgumentResolver<SENDER, St
 
     @Override
     public SuggestionResult suggestTyped(Invocation<SENDER> invocation, JoinArgument<String> argument, SuggestionContext context) {
-        return SuggestionResult.of("Example text");
+        return SuggestionResult.of("Simple text...");
     }
 
 

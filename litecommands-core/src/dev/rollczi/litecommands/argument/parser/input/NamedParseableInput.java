@@ -41,7 +41,7 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
         return Collections.unmodifiableList(rawArgs);
     }
 
-    public class NamedParseableInputMatcher implements ParsableInputMatcher<NamedParseableInputMatcher> {
+    public class NamedParseableInputMatcher implements ParseableInputMatcher<NamedParseableInputMatcher> {
 
         private final List<String> consumedArguments = new ArrayList<>();
 

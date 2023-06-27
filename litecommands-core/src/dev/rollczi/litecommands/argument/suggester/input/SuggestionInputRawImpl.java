@@ -1,15 +1,14 @@
-package dev.rollczi.litecommands.argument.suggestion.input;
+package dev.rollczi.litecommands.argument.suggester.input;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.suggestion.Suggester;
-import dev.rollczi.litecommands.argument.suggestion.Suggestion;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.input.raw.RawInputAnalyzer;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +67,12 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
         }
 
         @Override
-        public <SENDER, T> Flow nextArgument(
+        public <SENDER, T> boolean isNextOptional(Argument<T> argument, ParserSet<SENDER, T> parserSet) {
+            return rawInputAnalyzer.isNextOptional(parserSet, argument);
+        }
+
+        @Override
+        public <SENDER, T> SuggestionInputResult nextArgument(
             Invocation<SENDER> invocation,
             Argument<T> argument,
             ParserSet<SENDER, T> parserSet,
@@ -82,7 +86,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
                     .filterBy(current);
 
-                return Flow.stopCurrentFlow(result);
+                return SuggestionInputResult.endWith(result);
             }
 
             if (context.isMissingPartOfArgument() || context.isLastRawArgument()) {
@@ -91,16 +95,16 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
                     .filterBy(current);
 
-                return Flow.stopCurrentFlow(result);
+                return SuggestionInputResult.endWith(result);
             }
 
             ParseResult<T> result = context.parseArgument(invocation);
 
             if (result.isFailed()) {
-                return Flow.terminateFlow(result);
+                return SuggestionInputResult.fail();
             }
 
-            return Flow.continueFlow();
+            return SuggestionInputResult.continueWithout();
         }
 
         @Override

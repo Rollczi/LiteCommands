@@ -29,7 +29,7 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
         return Collections.unmodifiableList(this.rawArguments);
     }
 
-    public class RawInputMatcher implements ParsableInputMatcher<RawInputMatcher> {
+    public class RawInputMatcher implements ParseableInputMatcher<RawInputMatcher> {
 
         private final RawInputAnalyzer rawInputAnalyzer = new RawInputAnalyzer(rawArguments);
 

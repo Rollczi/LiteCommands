@@ -1,9 +1,7 @@
-package dev.rollczi.litecommands.annotations.argument.arg;
+package dev.rollczi.litecommands.annotations.argument.flag;
 
-import dev.rollczi.litecommands.annotations.argument.ParameterArgumentRequirementFactory;
 import dev.rollczi.litecommands.annotations.command.requirement.RequirementAnnotation;
-import dev.rollczi.litecommands.argument.parser.ParserRegistry;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import dev.rollczi.litecommands.argument.ArgumentKey;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,8 +11,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @RequirementAnnotation
-public @interface Arg {
+public @interface Flag {
 
-    String value() default "";
+    String value();
+
+    ArgumentKey ARGUMENT_KEY = ArgumentKey.typed(FlagArgument.class);
 
 }

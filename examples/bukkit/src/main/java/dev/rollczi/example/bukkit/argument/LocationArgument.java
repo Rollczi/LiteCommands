@@ -7,8 +7,8 @@ import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 

@@ -12,8 +12,8 @@ import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -124,33 +124,33 @@ class MultiArgumentsTest extends LiteTestSpec {
     @DisplayName("Should suggest main command")
     void testSuggestMain() {
         platform.suggest("command")
-            .assertSuggested("command");
+            .assertSuggest("command");
     }
 
     @Test
     @DisplayName("Should suggest argument and sub command")
     void testSuggestNext() {
         platform.suggest("command ")
-            .assertSuggested("sub", "suggestion");
+            .assertSuggest("sub", "suggestion");
 
         platform.suggest("command s")
-            .assertSuggested("sub", "suggestion");
+            .assertSuggest("sub", "suggestion");
 
         platform.suggest("command sug")
-            .assertSuggested("suggestion");
+            .assertSuggest("suggestion");
     }
 
     @Test
     @DisplayName("Should suggest multiple arguments")
     void testSuggestMultiple() {
         platform.suggest("command arg0 arg1 ")
-            .assertSuggested("1 2 3", "4 5 6", "7 8 9");
+            .assertSuggest("1 2 3", "4 5 6", "7 8 9");
 
         platform.suggest("command arg0 arg1 1 ")
-            .assertSuggested("2 3");
+            .assertSuggest("2 3");
 
         platform.suggest("command arg0 arg1 1 2 ")
-            .assertSuggested("3");
+            .assertSuggest("3");
     }
 
 }

@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.ArrayList;

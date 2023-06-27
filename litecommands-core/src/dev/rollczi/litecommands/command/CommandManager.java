@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command;
 
-import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
@@ -9,10 +9,10 @@ import dev.rollczi.litecommands.input.InputMatcher;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionService;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionService;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputMatcher;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -57,7 +57,7 @@ public class CommandManager<SENDER> {
 
         @Override
         public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInput<?> arguments) {
-            ParsableInputMatcher<?> matcher = arguments.createMatcher();
+            ParseableInputMatcher<?> matcher = arguments.createMatcher();
             CommandRoute<SENDER> commandRoute = findRoute(this.commandRoute, matcher);
 
             return executeService.execute(invocation, matcher, commandRoute);

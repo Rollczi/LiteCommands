@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations.command;
 
 import dev.rollczi.litecommands.annotations.argument.arg.Arg;
+import dev.rollczi.litecommands.annotations.argument.arg.ArgArgumentFactory;
 import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.context.ContextParameterRequirementFactory;
@@ -50,7 +51,7 @@ class MethodCommandExecutorFactoryTest {
         resolverRegistry.registerParser(int.class, ArgumentKey.of(), NumberArgumentResolver.ofInteger());
 
         executorFactory.registerResolver(Context.class, new ContextParameterRequirementFactory<>(bindRegistry, expectedService));
-        executorFactory.registerResolver(Arg.class, new Arg.Factory<>(expectedService, resolverRegistry));
+        executorFactory.registerResolver(Arg.class, new ArgArgumentFactory<>(expectedService, resolverRegistry));
     }
 
     @Test

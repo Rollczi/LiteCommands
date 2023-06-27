@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequire
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.argument.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
@@ -27,7 +27,7 @@ public class ParameterArgumentRequirement<SENDER, PARSED> implements ParameterRe
     }
 
     @Override
-    public <MATCHER extends ParsableInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
+    public <MATCHER extends ParseableInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
         ParseResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
 
         if (result.isSuccessful()) {

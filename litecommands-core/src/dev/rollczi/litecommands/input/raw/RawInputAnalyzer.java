@@ -59,6 +59,13 @@ public class RawInputAnalyzer {
         return pivotPosition == rawArguments.size() - 1;
     }
 
+    public <SENDER, T> boolean isNextOptional(ParserSet<SENDER, T> parserSet, Argument<T> argument) {
+        return parserSet.getParser(RawInput.class)
+            .map(parser -> parser.getRange(argument))
+            .map(range -> range.getMin() == 0)
+            .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
+    }
+
     public class Context<SENDER, T> {
 
         private final Parser<SENDER, RawInput, T> parser;
@@ -99,7 +106,7 @@ public class RawInputAnalyzer {
         }
 
         public boolean isMissingFullArgument() {
-            return !hasNextRoute() && minArguments > 0;
+            return !hasNextRoute() && minArguments > rawArguments.size();
         }
 
         public boolean isMissingPartOfArgument() {

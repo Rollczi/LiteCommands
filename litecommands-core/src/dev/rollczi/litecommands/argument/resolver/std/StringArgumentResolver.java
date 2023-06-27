@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 public class StringArgumentResolver<SENDER> extends ArgumentResolver<SENDER, String> {
 
@@ -21,7 +21,7 @@ public class StringArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Str
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> objectStringArgument, SuggestionContext context) {
-        return SuggestionResult.of("text", "");
+        return SuggestionResult.of("text");
     }
 
 

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.annotations.join;
+package dev.rollczi.litecommands.annotations.argument.join;
 
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.join.Join;

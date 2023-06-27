@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;

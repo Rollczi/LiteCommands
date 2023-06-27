@@ -1,7 +1,9 @@
-package dev.rollczi.litecommands.argument.suggestion;
+package dev.rollczi.litecommands.argument.suggester;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 class SuggesterNoneImpl<SENDER, T> implements Suggester<SENDER, T> {
 

@@ -28,12 +28,12 @@ import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.argument.suggestion.Suggester;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionService;
-import dev.rollczi.litecommands.argument.suggestion.TypedSuggester;
-import dev.rollczi.litecommands.argument.suggestion.SuggesterRegistry;
-import dev.rollczi.litecommands.argument.suggestion.SuggesterRegistryImpl;
+import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionService;
+import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistryImpl;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBase;
@@ -421,7 +421,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     @ApiStatus.Internal
-    public ParserRegistry<SENDER> getArgumentParserService() {
+    public ParserRegistry<SENDER> getParserRegistry() {
         return this.parserRegistry;
     }
 

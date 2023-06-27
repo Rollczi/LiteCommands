@@ -1,13 +1,12 @@
 package dev.rollczi.litecommands.annotations.argument.arg;
 
 import dev.rollczi.litecommands.annotations.argument.AnnotationArgumentResolver;
-import dev.rollczi.litecommands.annotations.argument.arg.ArgArgument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.TestUtil;
 import org.junit.jupiter.api.Test;

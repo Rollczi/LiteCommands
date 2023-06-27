@@ -17,11 +17,11 @@ public class AssertExecute {
 
     public AssertExecute assertSuccess() {
         if (result.isThrown()) {
-            throw new AssertionError("Command was thrown", result.getThrowable());
+            throw new AssertionError("Command was thrown ", result.getThrowable());
         }
 
         if (result.isFailed()) {
-            throw new AssertionError("Command was not successful executed" + result.getError());
+            throw new AssertionError("Command was not successful executed " + result.getError());
         }
 
         return this;
@@ -33,7 +33,7 @@ public class AssertExecute {
         }
 
         if (result.isFailed()) {
-            throw new AssertionError("Command was not successful executed" + result.getError());
+            throw new AssertionError("Command was not successful executed " + result.getError());
         }
 
         Object object = result.getResult();

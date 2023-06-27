@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.exception.LiteCommandsException;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.parser.Parser;
@@ -32,7 +32,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         return new JDAInputMatcher();
     }
 
-    class JDAInputMatcher extends AbstractJDAInput<JDAInputMatcher>.AbstractJDAMatcher implements ParsableInputMatcher<JDAInputMatcher> {
+    class JDAInputMatcher extends AbstractJDAInput<JDAInputMatcher>.AbstractJDAMatcher implements ParseableInputMatcher<JDAInputMatcher> {
         private final Set<String> consumedArguments = new HashSet<>();
 
         JDAInputMatcher() {}

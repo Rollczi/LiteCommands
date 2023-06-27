@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.argument;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
-import dev.rollczi.litecommands.argument.suggestion.TypedSuggester;
+import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
 
 @SuppressWarnings("rawtypes")
 public abstract class AnnotationArgumentResolver<SENDER, TYPE, ARG extends Argument<TYPE>> implements

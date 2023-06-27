@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.suggestion;
+package dev.rollczi.litecommands.suggestion;
 
 import java.util.Collections;
 import java.util.Set;

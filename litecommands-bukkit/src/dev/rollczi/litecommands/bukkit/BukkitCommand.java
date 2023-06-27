@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

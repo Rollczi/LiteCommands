@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.context;
 import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
 import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirementFactory;
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
-import dev.rollczi.litecommands.argument.parser.input.ParsableInputMatcher;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.context.ContextRequirement;
@@ -51,7 +51,7 @@ public class ContextParameterRequirementFactory<SENDER> implements ParameterRequ
         }
 
         @Override
-        public <CONTEXT extends ParsableInputMatcher<CONTEXT>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
+        public <CONTEXT extends ParseableInputMatcher<CONTEXT>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
             ContextResult<PARSED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
 
             if (result.hasResult()) {

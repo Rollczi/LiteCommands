@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.input.InputMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.shared.FailedReason;
 
-public interface ParsableInputMatcher<SELF extends ParsableInputMatcher<SELF>> extends InputMatcher {
+public interface ParseableInputMatcher<SELF extends ParseableInputMatcher<SELF>> extends InputMatcher {
 
     <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet);
 

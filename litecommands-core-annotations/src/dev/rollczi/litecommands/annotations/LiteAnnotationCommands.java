@@ -1,6 +1,10 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.argument.arg.Arg;
+import dev.rollczi.litecommands.annotations.argument.arg.ArgArgumentFactory;
+import dev.rollczi.litecommands.annotations.argument.flag.Flag;
+import dev.rollczi.litecommands.annotations.argument.flag.FlagArgumentConfigurator;
+import dev.rollczi.litecommands.annotations.argument.join.JoinArgumentConfigurator;
 import dev.rollczi.litecommands.annotations.async.Async;
 import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
 import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
@@ -27,9 +31,11 @@ import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.validator.Validate;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.LiteCommandsProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.annotation.Annotation;
@@ -122,12 +128,16 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
     @Override
     public List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
         WrapperRegistry wrapperRegistry = builder.getWrapperRegistry();
-        ParserRegistry<SENDER> parserRegistry = builder.getArgumentParserService();
+        ContextRegistry<SENDER> contextRegistry = builder.getContextRegistry();
+        ParserRegistry<SENDER> parserRegistry = builder.getParserRegistry();
+        SuggesterRegistry<SENDER> suggesterRegistry = builder.getSuggesterRegistry();
 
         this
+            // class
             .annotation(Command.class, new Command.AnnotationResolver<>())
             .annotation(RootCommand.class, new RootCommand.AnnotationResolver<>())
 
+            // meta
             .annotation(Meta.class, new Meta.AnnotationResolver<>())
             .annotation(Description.class, new DescriptionAnnotationResolver<>())
             .annotation(Async.class, new AsyncAnnotationResolver<>())
@@ -139,11 +149,10 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
             .annotation(Execute.class, new ExecuteAnnotationResolver<>(this.commandExecutorFactory))
 
             // argument
-            .parameterAnnotation(Arg.class, new Arg.Factory<>(wrapperRegistry, parserRegistry))
-            .parameterAnnotation(Join.class, new Join.Factory<>(wrapperRegistry, parserRegistry))
-            .parameterAnnotation(Context.class, new ContextParameterRequirementFactory<>(builder.getContextRegistry(), wrapperRegistry));
-
-
+            .parameterAnnotation(Arg.class, new ArgArgumentFactory<>(wrapperRegistry, parserRegistry))
+            .parameterAnnotation(Join.class, new JoinArgumentConfigurator<>(wrapperRegistry, parserRegistry, suggesterRegistry))
+            .parameterAnnotation(Flag.class, new FlagArgumentConfigurator<>(wrapperRegistry, parserRegistry, suggesterRegistry))
+            .parameterAnnotation(Context.class, new ContextParameterRequirementFactory<>(contextRegistry, wrapperRegistry));
 
         CommandAnnotationProcessor<SENDER> processor = new CommandAnnotationProcessor<>(this.commandAnnotationRegistry, this.annotationEditorService, builder.getEditorService());
         Injector<SENDER> injector = new Injector<>(builder.getBindRegistry());

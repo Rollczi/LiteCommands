@@ -2,14 +2,14 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.flow.Flow;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.argument.suggestion.Suggester;
-import dev.rollczi.litecommands.argument.suggestion.Suggestion;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInput;
-import dev.rollczi.litecommands.argument.suggestion.input.SuggestionInputMatcher;
+import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputMatcher;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -39,9 +39,14 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
         }
 
         @Override
-        public <SENDER, T> Flow nextArgument(Invocation<SENDER> invocation, Argument<T> argument, ParserSet<SENDER, T> parserSet, Suggester<SENDER, T> suggesterSet) {
+        public <SENDER, T> boolean isNextOptional(Argument<T> argument, ParserSet<SENDER, T> parserSet) {
+            return false;
+        }
+
+        @Override
+        public <SENDER, T> SuggestionInputResult nextArgument(Invocation<SENDER> invocation, Argument<T> argument, ParserSet<SENDER, T> parserSet, Suggester<SENDER, T> suggesterSet) {
             if (!argument.getName().equals(currentOption.getName())) {
-                return Flow.continueFlow();
+                return SuggestionInputResult.continueWithout();
             }
 
             String current = currentOption.getValue();
@@ -49,7 +54,7 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
             SuggestionContext context = new SuggestionContext(suggestion);
             SuggestionResult result = suggesterSet.suggest(invocation, argument, context);
 
-            return Flow.stopCurrentFlow(result);
+            return SuggestionInputResult.endWith(result);
         }
 
         @Override
