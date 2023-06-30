@@ -24,11 +24,11 @@ public class TeleportCommand {
         location.setWorld(world.orElseGet(sender.getWorld()));
         sender.teleport(location);
     }
-/*TODO add @Name
+
     @Execute
     @Permission("dev.rollczi.teleport.other")
-    public void teleportOther(@Arg @Name("target") Player target, @Arg @Name("to") Player to) {
+    public void teleportOther(@Arg("target") Player target, @Arg("to") Player to) {
         target.teleport(to.getLocation());
-    }*/
+    }
 
 }

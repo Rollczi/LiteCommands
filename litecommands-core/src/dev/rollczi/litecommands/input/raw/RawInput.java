@@ -2,18 +2,17 @@ package dev.rollczi.litecommands.input.raw;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class RawInput {
 
-    private final List<String> rawArgumentsToConsume = new ArrayList<>();
+    private final List<String> rawArgumentsToConsume;
     private int consumed = 0;
 
-    private RawInput(Collection<String> rawArgumentsToConsume) {
-        this.rawArgumentsToConsume.addAll(rawArgumentsToConsume);
+    private RawInput(List<String> rawArgumentsToConsume) {
+        this.rawArgumentsToConsume = rawArgumentsToConsume;
     }
 
     public String next() {
@@ -83,8 +82,8 @@ public class RawInput {
         return this.consumed;
     }
 
-    public static RawInput of(Collection<String> rawArguments) {
-        return new RawInput(rawArguments);
+    public static RawInput of(List<String> rawArguments) {
+        return new RawInput(new ArrayList<>(rawArguments));
     }
 
     public static RawInput of(String... rawArguments) {
@@ -92,7 +91,7 @@ public class RawInput {
     }
 
     static RawInput empty() {
-        return new RawInput(new ArrayList<>());
+        return new RawInput(Collections.emptyList());
     }
 
 }
