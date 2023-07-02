@@ -87,7 +87,7 @@ public class RawInput {
     }
 
     public static RawInput of(String... rawArguments) {
-        return new RawInput(Arrays.asList(rawArguments));
+        return new RawInput(new ArrayList<>(Arrays.asList(rawArguments)));
     }
 
     static RawInput empty() {
