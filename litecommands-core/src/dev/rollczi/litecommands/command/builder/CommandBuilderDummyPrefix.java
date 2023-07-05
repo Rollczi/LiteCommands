@@ -59,8 +59,8 @@ class CommandBuilderDummyPrefix<SENDER> extends CommandBuilderBase<SENDER> imple
     }
 
     @Override
-    public CommandBuilder<SENDER> route() {
-        return this.children.route();
+    public CommandBuilder<SENDER> getRealRoute() {
+        return this.children.getRealRoute();
     }
 
 }

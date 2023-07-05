@@ -2,32 +2,37 @@ package dev.rollczi.litecommands.annotations.permission;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.annotations.argument.arg.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MissingPermissionHandlerTest extends LiteTestSpec {
 
-    static AtomicBoolean called = new AtomicBoolean(false);
+    static AtomicBoolean missingPermissionHandler = new AtomicBoolean(false);
     static AtomicBoolean throwHandled = new AtomicBoolean(false);
+    static AtomicBoolean invalidHandler = new AtomicBoolean(false);
 
     static LiteConfig config = builder -> builder
-            .missingPermission((invocation, missingPermissions) -> {
-                if (missingPermissions.getPermissions().contains("test.permission.throw")) {
-                    throw new RuntimeException("Missing permission");
-                }
+        .missingPermission((invocation, missingPermissions) -> {
+            if (missingPermissions.getPermissions().contains("test.permission.throw")) {
+                throw new RuntimeException("Missing permission");
+            }
 
-                called.set(true);
-            })
+            missingPermissionHandler.set(true);
+        })
+        .invalidUsage((invocation, command) -> invalidHandler.set(true))
             .exception(RuntimeException.class, (invocation, exception) -> throwHandled.set(true));
 
-    @Command(name = "test")
+    @Command(name = "test sub")
     @Permission("test.permission")
-    static class CommandTest {
+    static class MultilevelCommandTest {
 
         @Execute
         void execute() {}
@@ -38,20 +43,55 @@ class MissingPermissionHandlerTest extends LiteTestSpec {
 
     }
 
+    @Command(name = "single")
+    @Permission("test.permission")
+    static class TestCommand {
+
+        @Execute
+        void execute(@Arg int x) {}
+
+        @Execute(name = "test")
+        void executeTest(@Arg int y) {}
+
+    }
+
+    @BeforeEach
+    void setUp() {
+        missingPermissionHandler.set(false);
+        throwHandled.set(false);
+        invalidHandler.set(false);
+    }
+
     @Test
     void test() {
-        platform.execute("test")
+        platform.execute("test sub")
             .assertMissingPermission("test.permission");
 
-        assertTrue(called.get());
+        assertTrue(missingPermissionHandler.get());
     }
 
     @Test
     void testThrow() {
-        platform.execute("test throwException")
+        platform.execute("test sub throwException")
             .assertThrows(RuntimeException.class);
 
         assertTrue(throwHandled.get());
+    }
+
+    @Test
+    void testInvalidHandler() {
+        platform.execute("test")
+            .assertMissingPermission("test.permission");
+
+        assertFalse(invalidHandler.get());
+    }
+
+    @Test
+    void testSingle() {
+        platform.execute("single")
+            .assertMissingPermission("test.permission");
+
+        assertTrue(missingPermissionHandler.get());
     }
 
 }

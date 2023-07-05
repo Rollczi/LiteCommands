@@ -106,6 +106,13 @@ public class CommandExecuteService<SENDER> {
     ) {
         // Handle failed
         if (!executors.hasNext()) {
+            // Route valid
+            Flow validate = validatorService.validate(invocation, commandRoute);
+            if (validate.isTerminate() || validate.isStopCurrent()) {
+                return completedFuture(CommandExecuteResult.failed(null, validate.getReason()));
+            }
+
+            // continue handle failed
             CommandExecutor<SENDER, ?> executor = executors.hasPrevious() ? executors.previous() : null;
 
             if (last != null && last.hasResult()) {
@@ -129,7 +136,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             // Handle validation
-            Flow flow = this.validatorService.validate(invocation, commandRoute, executor);
+            Flow flow = this.validatorService.validate(invocation, executor);
 
             if (flow.isTerminate()) {
                 return completedFuture(CommandExecuteResult.failed(executor, flow.getReason()));

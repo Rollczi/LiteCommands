@@ -74,7 +74,7 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     CommandBuilder<SENDER> applyOnRoute(UnaryOperator<CommandBuilder<SENDER>> apply);
 
     @ApiStatus.Internal
-    CommandBuilder<SENDER> route();
+    CommandBuilder<SENDER> getRealRoute();
 
     @ApiStatus.Internal
     void meagre(CommandBuilder<SENDER> context);

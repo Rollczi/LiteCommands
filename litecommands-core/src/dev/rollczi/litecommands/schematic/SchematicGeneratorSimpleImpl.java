@@ -50,7 +50,7 @@ class SchematicGeneratorSimpleImpl<SENDER> implements SchematicGenerator<SENDER>
             .flatMap(subRoute -> generateRoute(base + subRoute.getName() + SEPARATOR, invocation, subRoute));
 
         Stream<String> executors = route.getExecutors().stream()
-            .filter(executor -> validatorService.validate(invocation, route, executor).isContinue())
+            .filter(executor -> validatorService.validate(invocation, executor).isContinue())
             .map(executor -> base + generateExecutor(executor));
 
         return Stream.concat(executors, children);

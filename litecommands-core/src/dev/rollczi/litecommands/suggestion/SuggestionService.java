@@ -47,7 +47,7 @@ public class SuggestionService<SENDER> {
         SuggestionResult all = SuggestionResult.empty();
 
         for (CommandExecutor<SENDER, ?> executor : commandRoute.getExecutors()) {
-            Flow flow = this.validatorService.validate(invocation, commandRoute, executor);
+            Flow flow = this.validatorService.validate(invocation, executor);
 
             if (flow.isTerminate() || flow.isStopCurrent()) {
                 continue;

@@ -164,7 +164,7 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public CommandBuilder<SENDER> route() {
+    public CommandBuilder<SENDER> getRealRoute() {
         return this;
     }
 

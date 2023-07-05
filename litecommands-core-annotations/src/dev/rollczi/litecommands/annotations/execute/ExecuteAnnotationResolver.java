@@ -24,7 +24,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
         executorBuilder.setExecutorFactory(parent -> this.methodCommandExecutorFactory.create(parent, instance, method));
 
         if (isNotEmpty) {
-            context.route().appendChild(CommandBuilder.<SENDER>create()
+            context.getRealRoute().appendChild(CommandBuilder.<SENDER>create()
                 .routeName(annotation.name())
                 .routeAliases(Arrays.asList(annotation.aliases()))
                 .appendExecutor(executorBuilder));
@@ -32,7 +32,7 @@ public class ExecuteAnnotationResolver<SENDER> implements CommandAnnotationMetho
             return context;
         }
 
-        context.route().appendExecutor(executorBuilder);
+        context.getRealRoute().appendExecutor(executorBuilder);
         return context;
     }
 

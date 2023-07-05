@@ -15,7 +15,7 @@ public interface CommandAnnotationMetaApplicator<SENDER, A extends Annotation> e
 
     @Override
     default CommandBuilder<SENDER> resolve(Object instance, A annotation, CommandBuilder<SENDER> context) {
-        this.apply(instance, annotation, context.route());
+        this.apply(instance, annotation, context);
         return context;
     }
 

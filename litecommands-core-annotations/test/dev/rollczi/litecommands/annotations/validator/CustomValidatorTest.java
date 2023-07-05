@@ -4,10 +4,9 @@ import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.command.Command;
-import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.validator.Validator;
@@ -17,21 +16,21 @@ class CustomValidatorTest extends LiteTestSpec {
 
     static class ValidValidator implements Validator<TestSender> {
         @Override
-        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender, ?> executor) {
+        public Flow validate(Invocation<TestSender> invocation, MetaHolder metaHolder) {
             return Flow.continueFlow();
         }
     }
 
     static class InvalidValidator implements Validator<TestSender> {
         @Override
-        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender, ?> executor) {
+        public Flow validate(Invocation<TestSender> invocation, MetaHolder metaHolder) {
             return Flow.terminateFlow("invalid");
         }
     }
 
     static class InvalidCanBeIgnoredValidator implements Validator<TestSender> {
         @Override
-        public Flow validate(Invocation<TestSender> invocation, CommandRoute<TestSender> command, CommandExecutor<TestSender, ?> executor) {
+        public Flow validate(Invocation<TestSender> invocation, MetaHolder metaHolder) {
             return Flow.stopCurrentFlow("invalid-can-be-ignored");
         }
     }
