@@ -9,7 +9,7 @@ include(":litecommands-unit")
 include(":litecommands-adventure")
 
 // platforms
-include(":litecommands-velocity", JavaVersion.VERSION_17)
+include(":litecommands-velocity", JavaVersion.VERSION_11)
 include(":litecommands-bungee")
 include(":litecommands-bukkit")
 include(":litecommands-bukkit-adventure-platform")
@@ -19,7 +19,7 @@ include("litecommands-jda", JavaVersion.VERSION_17)
 
 // examples
 include(":examples:bukkit")
-include(":examples:velocity", JavaVersion.VERSION_17)
+include(":examples:velocity", JavaVersion.VERSION_11)
 
 fun include(projectPath: String, version: JavaVersion) {
     if (!JavaVersion.current().isCompatibleWith(version)) {
