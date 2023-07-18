@@ -14,3 +14,9 @@ dependencies {
 litecommandsPublish {
     artifactId = "litecommands-velocity"
 }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
