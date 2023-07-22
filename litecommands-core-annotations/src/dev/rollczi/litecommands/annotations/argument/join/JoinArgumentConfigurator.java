@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 public class JoinArgumentConfigurator<SENDER> extends ParameterArgumentRequirementFactory<Join, SENDER> {
 
     public JoinArgumentConfigurator(WrapperRegistry wrapperRegistry, ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry) {
-        super(wrapperRegistry, parserRegistry, JoinArgument::new);
+        super(wrapperRegistry, parserRegistry, (wrapperRegistry1, parameter, annotation) -> new JoinArgument<>(wrapperRegistry1, parameter, annotation));
         parserRegistry.registerParser(String.class, Join.ARGUMENT_KEY, new JoinArgumentResolver<>());
         suggesterRegistry.registerSuggester(String.class, Join.ARGUMENT_KEY, new JoinArgumentResolver<>());
     }

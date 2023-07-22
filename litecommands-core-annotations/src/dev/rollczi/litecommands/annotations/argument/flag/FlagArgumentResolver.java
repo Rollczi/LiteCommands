@@ -8,14 +8,14 @@ import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 
-class FlagArgumentResolver<SENDER> extends AnnotationArgumentResolver<SENDER, Boolean, FlagArgument<Boolean>> {
+class FlagArgumentResolver<SENDER> extends AnnotationArgumentResolver<SENDER, Boolean, FlagArgument> {
 
     public FlagArgumentResolver() {
         super(FlagArgument.class);
     }
 
     @Override
-    public ParseResult<Boolean> parseTyped(Invocation<SENDER> invocation, FlagArgument<Boolean> argument, RawInput rawInput) {
+    public ParseResult<Boolean> parseTyped(Invocation<SENDER> invocation, FlagArgument argument, RawInput rawInput) {
         Flag flag = argument.getAnnotation();
         String key = flag.value();
 
@@ -32,12 +32,12 @@ class FlagArgumentResolver<SENDER> extends AnnotationArgumentResolver<SENDER, Bo
     }
 
     @Override
-    public Range getTypedRange(FlagArgument<Boolean> argument) {
+    public Range getTypedRange(FlagArgument argument) {
         return Range.range(0, 1);
     }
 
     @Override
-    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, FlagArgument<Boolean> argument, SuggestionContext context) {
+    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, FlagArgument argument, SuggestionContext context) {
         return SuggestionResult.of(argument.getAnnotation().value());
     }
 

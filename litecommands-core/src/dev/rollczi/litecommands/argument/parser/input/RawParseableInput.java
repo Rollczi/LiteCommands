@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatcher> {
 
@@ -44,7 +45,11 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
             RawInputAnalyzer.Context<SENDER, PARSED> context = rawInputAnalyzer.toContext(argument, parserSet);
 
             if (context.isMissingFullArgument()) {
-                return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
+                Optional<PARSED> optional = argument.defaultValue();
+
+                return optional
+                    .map(ParseResult::success)
+                    .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT));
             }
 
             if (context.isMissingPartOfArgument()) {

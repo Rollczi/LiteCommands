@@ -124,7 +124,7 @@ class JDACommandTranslator {
             Argument<?> argument = argumentRequirement.getArgument();
             String argumentName = argument.getName();
             String description = /*argument.getDescription();*/ "test"; //TODO: Add description to Argument
-            boolean isRequired = !argumentRequirement.isOptional();
+            boolean isRequired = !argumentRequirement.isWrapperOptional();
 
             Class<?> parsedType = argument.getWrapperFormat().getParsedType();
             if (jdaSupportedTypes.containsKey(parsedType)) {

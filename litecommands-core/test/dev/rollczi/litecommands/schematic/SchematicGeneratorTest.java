@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.scope.Scope;
@@ -12,7 +11,6 @@ import dev.rollczi.litecommands.validator.ValidatorService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,10 +36,6 @@ class SchematicGeneratorTest {
         CommandRoute subTestCommand = CommandRoute.create(testCommand, "subtest", Collections.emptyList());
         testCommand.appendChildren(subTestCommand);
 
-        // test subtest2
-        CommandRoute subTest2Command = CommandRoute.create(testCommand, "subtest2", Collections.emptyList());
-        testCommand.appendChildren(subTest2Command);
-
         // test subtest <first>
         TestExecutor executorSubTest = new TestExecutor<>(subTestCommand)
             .withStringArg("first");
@@ -54,6 +48,10 @@ class SchematicGeneratorTest {
         executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singletonList("test.permission"));
         subTestCommand.appendExecutor(executorSubTest2);
 
+        // test subtest2
+        CommandRoute subTest2Command = CommandRoute.create(testCommand, "subtest2", Collections.emptyList());
+        testCommand.appendChildren(subTest2Command);
+
         // test subtest2 <test>
         TestExecutor executorSubTest2_1 = new TestExecutor<>(subTest2Command)
             .withStringArg("first");
@@ -65,10 +63,24 @@ class SchematicGeneratorTest {
             .withStringArg("second");
         subTest2Command.appendExecutor(executorSubTest2_2);
 
+        // test one two
+        CommandRoute oneCommand = CommandRoute.create(testCommand, "one", Collections.emptyList());
+        testCommand.appendChildren(oneCommand);
+
+        CommandRoute twoCommand = CommandRoute.create(oneCommand, "two", Collections.emptyList());
+        oneCommand.appendChildren(twoCommand);
+
+        // test one two <first>
+
+        TestExecutor executorMulti = new TestExecutor<>(twoCommand)
+            .withStringArg("first");
+        twoCommand.appendExecutor(executorMulti);
+
         assertSchematic(testCommand, null,
             "/test subtest <first>",
             "/test subtest2 <first>",
-            "/test subtest2 <first> <second>"
+            "/test subtest2 <first> <second>",
+            "/test one two <first>"
         );
 
         assertSchematic(subTestCommand, null,
@@ -87,7 +99,25 @@ class SchematicGeneratorTest {
         assertSchematic(subTest2Command, executorSubTest2_1,
             "/test subtest2 <first>"
         );
+
+        assertSchematic(subTest2Command, executorSubTest2_2,
+            "/test subtest2 <first> <second>"
+        );
+
+        assertSchematic(oneCommand, null,
+            "/test one two <first>"
+        );
+
+        assertSchematic(twoCommand, null,
+            "/test one two <first>"
+        );
+
+        assertSchematic(twoCommand, executorMulti,
+            "/test one two <first>"
+        );
     }
+
+
 
     private void assertSchematic(CommandRoute<?> commandRoute, CommandExecutor<?, ?> executor, String... expected) {
         Schematic schematic = schematicGenerator.generate(new SchematicInput(commandRoute, executor, TestUtil.invocation("")));

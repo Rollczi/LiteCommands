@@ -1,14 +1,18 @@
 package dev.rollczi.litecommands.annotations.route;
 
 import dev.rollczi.litecommands.annotations.command.RootCommand;
+import dev.rollczi.litecommands.annotations.command.RootCommandAnnotationProcessor;
+import dev.rollczi.litecommands.annotations.processor.AnnotationInvoker;
+import dev.rollczi.litecommands.annotations.processor.AnnotationProcessor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("unchecked rawtypes")
 class RootArgAnnotationResolverTest {
 
-    final RootCommand.AnnotationResolver<?> resolver = new RootCommand.AnnotationResolver<>();
+    final RootCommandAnnotationProcessor<?> resolver = new RootCommandAnnotationProcessor<>();
 
     @RootCommand
     static class Command {}
@@ -18,9 +22,23 @@ class RootArgAnnotationResolverTest {
         Command command = new Command();
         RootCommand rootCommand = Command.class.getAnnotation(RootCommand.class);
 
-        CommandBuilder<?> context = resolver.resolve(command, rootCommand, CommandBuilder.create());
+        AnnotationInvoker invoker = resolver.process(new AnnotationInvoker() {
 
-        assertEquals("", context.name());
+            CommandBuilder builder = CommandBuilder.create();
+
+            @Override
+            public CommandBuilder getResult() {
+                return builder;
+            }
+
+            @Override
+            public AnnotationInvoker onAnnotatedClass(Class annotationType, AnnotationProcessor.ClassListener listener) {
+                builder = listener.call(command, rootCommand, builder);
+                return this;
+            }
+        });
+
+        assertEquals("", invoker.getResult().name());
     }
 
 }

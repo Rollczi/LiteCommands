@@ -31,7 +31,7 @@ class ChildCommandPermissionHandleTest extends LiteTestSpec {
     }
     @Test
     void testSinglePermission() {
-        MissingPermissions permissions = platform.execute("main", "info")
+        MissingPermissions permissions = platform.execute("main info")
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
@@ -40,13 +40,13 @@ class ChildCommandPermissionHandleTest extends LiteTestSpec {
 
     @Test
     void testPermissionInSameRoute() {
-        MissingPermissions permissions = platform.execute("main", "test", "value")
+        MissingPermissions permissions = platform.execute("main test value")
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
         assertEquals("main.test", permissions.getPermissions().get(0));
 
-        permissions = platform.execute("main", "test", "value", "value2")
+        permissions = platform.execute("main test value value2")
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());

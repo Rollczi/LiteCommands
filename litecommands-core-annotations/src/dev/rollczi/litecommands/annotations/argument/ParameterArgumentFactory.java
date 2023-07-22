@@ -6,5 +6,5 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
 public interface ParameterArgumentFactory<A extends Annotation> {
-    <PARSED> ParameterArgument<A, PARSED> create(WrapperRegistry wrapperRegistry, Parameter parameter, A annotation);
+    ParameterArgument<A, ?> create(WrapperRegistry wrapperRegistry, Parameter parameter, A annotation);
 }

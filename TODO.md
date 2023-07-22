@@ -63,7 +63,7 @@ class ReportCommand {
         this.reportService = reportService;
     }
 
-    @Command("create")
+    @Execute("create")
     @Cooldown(seconds = 5, bypass = "myplugin.bypass.cooldown")
     void report(
             @Arg User user, 
@@ -77,22 +77,27 @@ class ReportCommand {
         }
     }
     
-    @Command("list")
+    @Execute("list")
     void list(@Arg @Range(min = 1, max = 10) int page) {
         // ...
     }
 
-    @Command("remove")
+    @Execute("remove")
     void remove(@Async @Arg("to-remove") Report report) {
         reportService.remove(id);
     }
     
-    @Parser("to-remove")
-    Restult<Report> parseReport(String input) {
-        return this.reportService.getReport(input);
+    @ArgParser("to-remove")
+    ParseResult<Report> parseReport(String x) {
+     
     }
 
-    @Suggest("to-remove")
+    @ArgParser(value = "to-remove", range = 2)
+    ParseResult<Report> parseReport(String x, String y) {
+
+    }
+
+    @ArgSuggester("to-remove")
     SuggestResult suggestId() {
         return this.reportService.getReports().stream()
             .map(Report::getId)

@@ -68,7 +68,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
 
         @Override
         public <SENDER, T> boolean isNextOptional(Argument<T> argument, ParserSet<SENDER, T> parserSet) {
-            return rawInputAnalyzer.isNextOptional(parserSet, argument);
+            return rawInputAnalyzer.isNextOptional(parserSet, argument) || argument.hasDefaultValue();
         }
 
         @Override

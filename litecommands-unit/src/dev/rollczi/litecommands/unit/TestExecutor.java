@@ -90,7 +90,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         }
 
         @Override
-        public boolean isOptional() {
+        public boolean isWrapperOptional() {
             return wrapper.canCreateEmpty();
         }
 

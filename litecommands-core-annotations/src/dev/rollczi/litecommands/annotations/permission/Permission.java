@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.annotations.permission;
 
-import dev.rollczi.litecommands.annotations.processor.CommandAnnotationMetaApplicator;
+import dev.rollczi.litecommands.annotations.processor.AnnotationInvoker;
+import dev.rollczi.litecommands.annotations.processor.AnnotationProcessor;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
@@ -17,15 +17,16 @@ public @interface Permission {
 
     String[] value();
 
-    class AnnotationResolver<SENDER> implements CommandAnnotationMetaApplicator<SENDER, Permission> {
+    class AnnotationResolver<SENDER> implements AnnotationProcessor<SENDER> {
 
         @Override
-        public void apply(Object instance, Permission annotation, MetaHolder metaHolder) {
-            metaHolder.meta().listEditor(Meta.PERMISSIONS)
-                .addAll(annotation.value())
-                .apply();
+        public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
+            return invoker.onAnnotatedMetaHolder(Permission.class, (instance, annotation, metaHolder) -> {
+                metaHolder.meta().listEditor(Meta.PERMISSIONS)
+                    .addAll(annotation.value())
+                    .apply();
+            });
         }
-
     }
-
 }
+

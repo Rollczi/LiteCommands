@@ -32,7 +32,7 @@ class InvalidHandlerTest extends LiteTestSpec {
     @Test
     void test() {
         platform.execute("test a")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         InvalidUsage<TestSender> usage = invalidUsage.get();
 

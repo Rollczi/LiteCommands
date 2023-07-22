@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import org.jetbrains.annotations.NotNull;
@@ -51,8 +52,12 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
     }
 
     public AssertExecute execute(String command) {
+        return this.execute(new TestPlatformSender(), command);
+    }
+
+    public AssertExecute execute(PlatformSender sender, String command) {
         try {
-            return this.executeAsync(command).get(5, TimeUnit.SECONDS);
+            return this.executeAsync(sender, command).get(5, TimeUnit.SECONDS);
         }
         catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(e);
@@ -60,6 +65,10 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
     }
 
     public CompletableFuture<AssertExecute> executeAsync(String command) {
+        return this.executeAsync(new TestPlatformSender(), command);
+    }
+
+    public CompletableFuture<AssertExecute> executeAsync(PlatformSender sender, String command) {
         String label = command.split(" ")[0];
         String[] args = command.length() > label.length()
             ? command.substring(label.length() + 1).split(" ")
@@ -70,25 +79,15 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
             args[args.length - 1] = "";
         }
 
-        return this.executeAsync(label, args);
+        return this.executeAsync(sender, label, args);
     }
 
-    public AssertExecute execute(String command, String... arguments) {
-        try {
-            return this.executeAsync(command, arguments).get(5, TimeUnit.SECONDS);
-        }
-        catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public CompletableFuture<AssertExecute> executeAsync(String command, String... arguments) {
+    private CompletableFuture<AssertExecute> executeAsync(PlatformSender sender, String command, String... arguments) {
         TestSender testSender = new TestSender();
-        TestPlatformSender testPlatformSender = new TestPlatformSender();
 
         ParseableInput<?> args = ParseableInput.raw(arguments);
 
-        Invocation<TestSender> invocation = new Invocation<>(testSender, testPlatformSender, command, command, args);
+        Invocation<TestSender> invocation = new Invocation<>(testSender, sender, command, command, args);
 
         for (Map.Entry<CommandRoute<TestSender>, PlatformInvocationListener<TestSender>> entry : this.executeListeners.entrySet()) {
             if (entry.getKey().isNameOrAlias(command)) {

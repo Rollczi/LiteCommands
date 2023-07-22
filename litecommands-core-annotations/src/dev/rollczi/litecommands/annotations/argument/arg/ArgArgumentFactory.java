@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 public class ArgArgumentFactory<SENDER> extends ParameterArgumentRequirementFactory<Arg, SENDER> {
 
     public ArgArgumentFactory(WrapperRegistry wrapperRegistry, ParserRegistry<SENDER> parserRegistry) {
-        super(wrapperRegistry, parserRegistry, ArgArgument::new);
+        super(wrapperRegistry, parserRegistry, (wrapperRegistry1, parameter, annotation) -> new ArgArgument<>(wrapperRegistry1, parameter, annotation));
     }
 
 }

@@ -29,7 +29,7 @@ public class SuggestionResult {
         this.suggestions.addAll(result.suggestions);
     }
 
-    public SuggestionResult filterBy(Suggestion suggestion) { /// x -> x y z, x y -> y z, x y z -> z
+    public SuggestionResult filterBy(Suggestion suggestion) {
         String multilevel = suggestion.multilevel();
         Set<Suggestion> filtered = this.suggestions.stream()
             .filter(suggestion1 -> suggestion1.multilevel().startsWith(multilevel))

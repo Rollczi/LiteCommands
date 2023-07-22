@@ -59,7 +59,7 @@ public class ParameterArgumentRequirement<SENDER, PARSED> implements ParameterRe
     }
 
     @Override
-    public boolean isOptional() {
+    public boolean isWrapperOptional() {
         return wrapper.canCreateEmpty();
     }
 

@@ -86,38 +86,38 @@ class MultiArgumentsTest extends LiteTestSpec {
     @DisplayName("Should fail because of incorrect arguments count")
     void testIncorrect() {
         platform.execute("command")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command arg0")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command arg0 arg1")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command arg0 arg1 1")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command arg0 arg1 1 2")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command sub")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command sub 1")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command sub 1 2")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
     }
 
     @Test
     @DisplayName("Should fail because of incorrect input")
     void testIncorrectInput() {
         platform.execute("command arg0 arg1 1 2 a")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
 
         platform.execute("command sub 1 2 a")
-            .assertFailedAs(InvalidUsage.Cause.class);
+            .assertFailedAs(InvalidUsage.class);
     }
 
     @Test

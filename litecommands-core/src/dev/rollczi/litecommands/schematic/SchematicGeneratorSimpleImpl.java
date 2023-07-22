@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.schematic;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.argument.ArgumentRequirement;
-import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.validator.ValidatorService;
 
@@ -60,7 +59,7 @@ class SchematicGeneratorSimpleImpl<SENDER> implements SchematicGenerator<SENDER>
         return executor.getRequirements().stream()
             .filter(requirement -> requirement instanceof ArgumentRequirement)
             .map(requirement -> (ArgumentRequirement<?, ?>) requirement)
-            .map(requirement -> String.format(requirement.isOptional() ? format.optionalArgumentFormat() : format.argumentFormat(), requirement.getArgument().getName()))
+            .map(requirement -> String.format(requirement.isWrapperOptional() || requirement.getArgument().hasDefaultValue() ? format.optionalArgumentFormat() : format.argumentFormat(), requirement.getArgument().getName()))
             .collect(Collectors.joining(SEPARATOR));
     }
 

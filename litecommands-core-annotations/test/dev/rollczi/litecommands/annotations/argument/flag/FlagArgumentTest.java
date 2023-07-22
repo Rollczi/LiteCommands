@@ -8,6 +8,8 @@ import dev.rollczi.litecommands.invalid.InvalidUsage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 class FlagArgumentTest extends LiteTestSpec {
 
     @Command(name = "test")
@@ -43,8 +45,11 @@ class FlagArgumentTest extends LiteTestSpec {
     @Test
     @DisplayName("Should not parse invalid flag argument")
     void testParseInvalidFlagArgument() {
-        platform.execute("test -b value")
-            .assertFailure(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
+        InvalidUsage invalidUsage = platform.execute("test -b value")
+            .assertFailedAs(InvalidUsage.class);
+
+        assertThat(invalidUsage.getCause())
+            .isEqualByComparingTo(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
     }
 
     @Test

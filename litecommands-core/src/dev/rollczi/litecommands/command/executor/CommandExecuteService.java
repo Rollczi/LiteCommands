@@ -51,15 +51,16 @@ public class CommandExecuteService<SENDER> {
 
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute)
+            .thenApply(commandExecuteResult -> mapResult(commandRoute, commandExecuteResult, invocation))
             .thenCompose(executeResult -> scheduler.supplySync(() -> {
-                this.handleResult(invocation, commandRoute, executeResult);
+                this.handleResult(invocation, executeResult);
 
                 return executeResult;
             }))
             .exceptionally(new LastExceptionHandler<>(exceptionHandleService, invocation));
     }
 
-    private void handleResult(Invocation<SENDER> invocation, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult) {
+    private void handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
         Throwable throwable = executeResult.getThrowable();
         if (throwable != null) {
             exceptionHandleService.resolve(invocation, throwable);
@@ -67,16 +68,36 @@ public class CommandExecuteService<SENDER> {
 
         Object result = executeResult.getResult();
         if (result != null) {
-            resultResolver.resolve(invocation, this.mapResult(result, commandRoute, executeResult, invocation));
+            resultResolver.resolve(invocation, result);
         }
 
         Object error = executeResult.getError();
         if (error != null) {
-            resultResolver.resolve(invocation, this.mapResult(error, commandRoute, executeResult, invocation));
+            resultResolver.resolve(invocation, error);
         }
     }
 
     @SuppressWarnings("unchecked") // TODO Support mapping of result in result resolver
+    private CommandExecuteResult mapResult(CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
+        Throwable throwable = executeResult.getThrowable();
+        if (throwable != null) {
+            return executeResult;
+        }
+
+        Object result = executeResult.getResult();
+        if (result != null) {
+            return CommandExecuteResult.success(executeResult.getExecutor(), mapResult(result, commandRoute, executeResult, invocation));
+        }
+
+        Object error = executeResult.getError();
+        if (error != null) {
+            return CommandExecuteResult.failed(executeResult.getExecutor(), mapResult(error, commandRoute, executeResult, invocation));
+        }
+
+        return executeResult;
+    }
+
+    @SuppressWarnings("unchecked")
     private Object mapResult(Object error, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
         if (error instanceof Cause) {
             Cause cause = (Cause) error;

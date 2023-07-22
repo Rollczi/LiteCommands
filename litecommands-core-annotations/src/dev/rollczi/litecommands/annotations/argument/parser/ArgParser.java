@@ -1,16 +1,16 @@
-package dev.rollczi.litecommands.annotations.command;
+package dev.rollczi.litecommands.annotations.argument.parser;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Command {
+public @interface ArgParser {
 
-    String name();
+    String value();
 
-    String[] aliases() default {};
+    int range() default 1;
 
 }
