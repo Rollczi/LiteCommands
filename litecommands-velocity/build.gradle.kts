@@ -1,5 +1,6 @@
 plugins {
-    `litecommands-java-17`
+    `litecommands-java`
+    `litecommands-java-11`
     `litecommands-repositories`
     `litecommands-publish`
 }
@@ -13,10 +14,4 @@ dependencies {
 
 litecommandsPublish {
     artifactId = "litecommands-velocity"
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
 }
