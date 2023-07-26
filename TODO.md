@@ -52,6 +52,11 @@ Modern TODO
 - [x] Support Paper
 - [x] Add support to provide other types of arguments by platforms
 
+
+
+
+This is not a command example.  They're just concepts!
+
 ```java
 @Command("report")
 @Permission("myplugin.report")
