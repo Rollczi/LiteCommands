@@ -9,8 +9,8 @@ plugins {
 dependencies {
     api(project(":litecommands-core"))
     testImplementation(project(":litecommands-core-annotations"))
-    compileOnly("com.github.Minestom.Minestom:Minestom:-SNAPSHOT")
-    testImplementation("com.github.Minestom.Minestom:Minestom:-SNAPSHOT")
+    compileOnly("com.github.Minestom:Minestom:c5047b8037")
+    testImplementation("com.github.Minestom:Minestom:c5047b8037")
 }
 
 litecommandsPublish {

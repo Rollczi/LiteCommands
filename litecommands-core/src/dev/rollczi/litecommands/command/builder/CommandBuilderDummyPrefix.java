@@ -2,11 +2,13 @@ package dev.rollczi.litecommands.command.builder;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+@Deprecated //TODO Remove this implementation and replace with "current context of route"
 class CommandBuilderDummyPrefix<SENDER> extends CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
 
     protected CommandBuilder<SENDER> children;
@@ -25,7 +27,10 @@ class CommandBuilderDummyPrefix<SENDER> extends CommandBuilderBase<SENDER> imple
 
     @Override
     public Collection<CommandBuilder<SENDER>> children() {
-        return Collections.singletonList(this.children);
+        List<CommandBuilder<SENDER>> children = new ArrayList<>(super.children());
+        children.add(this.children);
+
+        return Collections.unmodifiableCollection(children);
     }
 
     @Override
