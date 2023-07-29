@@ -44,6 +44,10 @@ public final class UniformSuggestionStack extends SuggestionStack {
 
     @Override
     public UniformSuggestionStack with(Collection<Suggestion> suggestions) {
+        if (this.suggestions.isEmpty()) {
+            return UniformSuggestionStack.of(suggestions);
+        }
+
         for (Suggestion suggestion : suggestions) {
             if (suggestion.lengthMultilevel() != this.multilevelLength) {
                 throw new IllegalArgumentException("length of multi-level suggestions must be same!");

@@ -9,11 +9,16 @@ import org.junit.jupiter.api.Test;
 
 class SuggestionStringTest {
 
-    TestPlatform platform = TestFactory.withCommands(Command.class);
+    TestPlatform platform = TestFactory.withCommands(Command.class, CommandStatic.class);
 
     @Route(name = "test")
     private static class Command {
         @Execute void test(@Arg String arg) {}
+    }
+
+    @Route(name = "testStatic")
+    private static class CommandStatic {
+        @Execute void test(@Arg @Suggest("static") String arg) {}
     }
 
     @Test
@@ -22,6 +27,9 @@ class SuggestionStringTest {
         platform.suggestAsOp("test", "").assertWith();
         platform.suggestAsOp("test", "t").assertWith("t");
         platform.suggestAsOp("test", "siema").assertWith("siema");
+
+        platform.suggestAsOp("testStatic", "").assertWith("static");
+        platform.suggestAsOp("testStatic", "s").assertWith("s", "static");
     }
 
 }
