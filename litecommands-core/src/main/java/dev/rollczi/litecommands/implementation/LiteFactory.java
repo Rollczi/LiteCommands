@@ -39,7 +39,7 @@ import dev.rollczi.litecommands.argument.enumeration.EnumArgument;
 import dev.rollczi.litecommands.argument.flag.Flag;
 import dev.rollczi.litecommands.argument.flag.FlagArgument;
 import dev.rollczi.litecommands.argument.joiner.Joiner;
-import dev.rollczi.litecommands.argument.joiner.JoinerArgument;
+import dev.rollczi.litecommands.argument.joiner.StringJoinerArgument;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.amount.Between;
 import dev.rollczi.litecommands.command.amount.Max;
@@ -54,7 +54,6 @@ import dev.rollczi.litecommands.command.root.RootRoute;
 import dev.rollczi.litecommands.command.route.Route;
 import dev.rollczi.litecommands.command.section.Section;
 import dev.rollczi.litecommands.handle.LiteException;
-import dev.rollczi.litecommands.handle.Redirector;
 import dev.rollczi.litecommands.platform.LiteSender;
 import dev.rollczi.litecommands.schematic.Schematic;
 import panda.std.Result;
@@ -107,7 +106,7 @@ public final class LiteFactory {
             })
             .argument(Flag.class, boolean.class, new FlagArgument<>())
             .argument(Flag.class, Boolean.class, new FlagArgument<>())
-            .argument(Joiner.class, String.class, new JoinerArgument<>())
+            .argument(Joiner.class, String.class, new StringJoinerArgument<>())
             .argument(Block.class, Object.class, new BlockArgument<>())
             .argument(Arg.class, Enum.class, new EnumArgument<>())
 
