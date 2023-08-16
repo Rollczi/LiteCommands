@@ -7,8 +7,15 @@ import dev.rollczi.litecommands.command.MatchResult;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
-public class JoinerArgument<SENDER> implements Argument<SENDER, Joiner> {
+public class JoinerArgument<SENDER, RESULT> implements Argument<SENDER, Joiner> {
+
+    private final Function<String, RESULT> resultMapper;
+
+    protected JoinerArgument(Function<String, RESULT> resultMapper) {
+        this.resultMapper = resultMapper;
+    }
 
     @Override
     public MatchResult match(LiteInvocation invocation, ArgumentContext<Joiner> context) {
@@ -28,7 +35,7 @@ public class JoinerArgument<SENDER> implements Argument<SENDER, Joiner> {
             return MatchResult.notMatched();
         }
 
-        return MatchResult.matched(String.join(joiner.delimiter(), toJoin), toCut);
+        return MatchResult.matched(resultMapper.apply(String.join(joiner.delimiter(), toJoin)), toCut);
     }
 
 }
