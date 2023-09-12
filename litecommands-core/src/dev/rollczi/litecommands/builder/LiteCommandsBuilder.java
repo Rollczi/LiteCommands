@@ -156,8 +156,8 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> scheduler(Scheduler scheduler);
 
-    <T>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey key, Message<T> message);
+    <T, CONTEXT>
+    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> editorGlobal(Editor<SENDER> editor);
 

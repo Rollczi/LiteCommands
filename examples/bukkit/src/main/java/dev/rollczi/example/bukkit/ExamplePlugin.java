@@ -1,6 +1,7 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
@@ -42,8 +43,10 @@ public class ExamplePlugin extends JavaPlugin {
                 new ConvertCommand()
             ))
 
+            // change default messages
+            .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> "&cInvalid location format: &7" + input)
+
             // Arguments @Arg
-            .argument(Location.class, new LocationArgument(messageRegistry))
             .argument(GameMode.class, new GameModeArgument())
             .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cPlayer not found!"))
 
