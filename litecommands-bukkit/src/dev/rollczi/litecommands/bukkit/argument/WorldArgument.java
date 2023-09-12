@@ -1,9 +1,12 @@
-package dev.rollczi.example.bukkit.argument;
+package dev.rollczi.litecommands.bukkit.argument;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
+import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
+import dev.rollczi.litecommands.exception.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.Server;
@@ -11,12 +14,16 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.generator.WorldInfo;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class WorldArgument extends ArgumentResolver<CommandSender, World> {
 
     private final Server server;
+    private final MessageRegistry messageRegistry;
 
-    public WorldArgument(Server server) {
+    public WorldArgument(Server server, MessageRegistry messageRegistry) {
         this.server = server;
+        this.messageRegistry = messageRegistry;
     }
 
     @Override
@@ -24,7 +31,7 @@ public class WorldArgument extends ArgumentResolver<CommandSender, World> {
         World world = server.getWorld(argument);
 
         if (world == null) {
-            return ParseResult.failure("World '" + argument + "' not exists");
+            return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.WORLD_NOT_EXIST, argument));
         }
 
         return ParseResult.success(world);
@@ -33,8 +40,19 @@ public class WorldArgument extends ArgumentResolver<CommandSender, World> {
     @Override
     public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<World> argument, SuggestionContext context) {
         return this.server.getWorlds().stream()
-            .map(WorldInfo::getName)
+            .map(world -> this.getWorldName(world))
             .collect(SuggestionResult.collector());
+    }
+
+    // in some minecraft versions, the world name is not in the world info class
+    private String getWorldName(World world) {
+        Class<?> worldClass = world.getClass();
+        try {
+            return (String) worldClass.getMethod("getName").invoke(world);
+        }
+        catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException exception) {
+            throw new LiteCommandsException(exception);
+        }
     }
 
 }

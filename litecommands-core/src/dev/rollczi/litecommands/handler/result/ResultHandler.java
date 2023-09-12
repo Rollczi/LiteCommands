@@ -4,6 +4,6 @@ import dev.rollczi.litecommands.invocation.Invocation;
 
 public interface ResultHandler<SENDER, T> {
 
-    void handle(Invocation<SENDER> invocation, T result);
+    void handle(Invocation<SENDER> invocation, T result, ResultHandlerChain<SENDER> chain);
 
 }

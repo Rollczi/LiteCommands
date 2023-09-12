@@ -1,18 +1,22 @@
 package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.opentest4j.AssertionFailedError;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class AssertExecute {
 
     private final CommandExecuteResult result;
+    private final Invocation<TestSender> invocation;
 
-    public AssertExecute(CommandExecuteResult result) {
+    public AssertExecute(CommandExecuteResult result, Invocation<TestSender> invocation) {
         this.result = result;
+        this.invocation = invocation;
     }
 
     public AssertExecute assertSuccess() {
@@ -112,6 +116,12 @@ public class AssertExecute {
             }
         }
 
+        return this;
+    }
+
+    public AssertExecute assertMessage(String message) {
+        assertThat(invocation.sender().getMessages())
+            .contains(message);
         return this;
     }
 

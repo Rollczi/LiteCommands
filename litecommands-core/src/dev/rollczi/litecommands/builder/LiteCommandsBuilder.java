@@ -14,6 +14,8 @@ import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
+import dev.rollczi.litecommands.message.Message;
+import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
@@ -153,6 +155,9 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     LiteCommandsBuilder<SENDER, SETTINGS, B> bindUnsafe(Class<?> on, Supplier<?> bind);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> scheduler(Scheduler scheduler);
+
+    <T>
+    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey key, Message<T> message);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> editorGlobal(Editor<SENDER> editor);
 

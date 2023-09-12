@@ -3,8 +3,10 @@ package dev.rollczi.litecommands;
 import dev.rollczi.litecommands.builder.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
+import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
@@ -22,12 +24,13 @@ public final class LiteCommandsFactory {
 
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform)
-            .result(Throwable.class, (invocation, result) -> result.printStackTrace())
+            .result(Throwable.class, (invocation, result, chain) -> result.printStackTrace())
 
             .wrapper(new OptionWrapper())
             .wrapper(new OptionalWrapper())
             .preProcessor((builder, pattern) -> builder
                 .wrapper(new CompletableFutureWrapper(pattern.getScheduler()))
+                .result(MissingPermissions.class, new MissingPermissionResultHandler<>(pattern.getMessageRegistry()))
             )
 
             .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
@@ -37,7 +40,6 @@ public final class LiteCommandsFactory {
 
             .validator(Scope.global(), new MissingPermissionValidator<>())
 
-//            .resultMapper(MissingPermissions.class, new GuideMissingPermission<>()) TODO: Fix this
 
             .argument(String.class, new StringArgumentResolver<>())
             .argument(Long.class, NumberArgumentResolver.ofLong())

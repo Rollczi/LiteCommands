@@ -94,7 +94,7 @@ public class TestPlatform implements Platform<TestSender, TestSettings> {
                 PlatformInvocationListener<TestSender> listener = entry.getValue();
 
                 return listener.execute(invocation, ParseableInput.raw(arguments))
-                    .thenApply(result -> new AssertExecute(result));
+                    .thenApply(result -> new AssertExecute(result, invocation));
             }
         }
 

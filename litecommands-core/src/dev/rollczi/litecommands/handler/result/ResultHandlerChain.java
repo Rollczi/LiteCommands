@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.handler.result;
 
 import dev.rollczi.litecommands.invocation.Invocation;
 
-public interface ResultMapper<SENDER, FROM, TO> {
+public interface ResultHandlerChain<SENDER> {
 
-    TO map(Invocation<SENDER> invocation, FROM from);
+    <T> void resolve(Invocation<SENDER> invocation, T result);
 
 }

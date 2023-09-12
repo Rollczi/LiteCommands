@@ -17,9 +17,13 @@ import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
+import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
+import dev.rollczi.litecommands.message.Message;
+import dev.rollczi.litecommands.message.MessageKey;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
@@ -37,7 +41,6 @@ import dev.rollczi.litecommands.argument.suggester.SuggesterRegistryImpl;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBase;
-import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -74,9 +77,10 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final BindRegistry<SENDER> bindRegistry = new BindRegistry<>();
     protected final ContextRegistry<SENDER> contextRegistry = new ContextRegistry<>();
     protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
-    protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleService<>();
+    protected final ResultHandleService<SENDER> resultHandleService = ResultHandleService.create();
     protected final ExceptionHandleService<SENDER> exceptionHandleService = new ExceptionHandleService<>();
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
+    protected final MessageRegistry messageRegistry = new MessageRegistry();
 
     protected Scheduler scheduler = new SchedulerSameThreadImpl();
     protected SchematicGenerator<SENDER> schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService);
@@ -235,6 +239,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     public LiteCommandsBuilder<SENDER, C, B> scheduler(Scheduler scheduler) {
         this.scheduler.shutdown();
         this.scheduler = scheduler;
+        return this;
+    }
+
+    @Override
+    public <T> LiteCommandsBuilder<SENDER, C, B> message(MessageKey key, Message<T> message) {
+        this.messageRegistry.register(key, message);
         return this;
     }
 
@@ -462,8 +472,15 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    @ApiStatus.Internal
     public ExceptionHandleService<SENDER> getExceptionHandleService() {
         return this.exceptionHandleService;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public MessageRegistry getMessageRegistry() {
+        return this.messageRegistry;
     }
 
 }

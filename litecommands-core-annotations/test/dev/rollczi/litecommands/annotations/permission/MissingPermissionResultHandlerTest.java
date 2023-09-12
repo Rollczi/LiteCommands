@@ -13,21 +13,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MissingPermissionHandlerTest extends LiteTestSpec {
+class MissingPermissionResultHandlerTest extends LiteTestSpec {
 
     static AtomicBoolean missingPermissionHandler = new AtomicBoolean(false);
     static AtomicBoolean throwHandled = new AtomicBoolean(false);
     static AtomicBoolean invalidHandler = new AtomicBoolean(false);
 
     static LiteConfig config = builder -> builder
-        .missingPermission((invocation, missingPermissions) -> {
+        .missingPermission((invocation, missingPermissions, chain) -> {
             if (missingPermissions.getPermissions().contains("test.permission.throw")) {
                 throw new RuntimeException("Missing permission");
             }
 
             missingPermissionHandler.set(true);
         })
-        .invalidUsage((invocation, command) -> invalidHandler.set(true))
+        .invalidUsage((invocation, command, chain) -> invalidHandler.set(true))
             .exception(RuntimeException.class, (invocation, exception) -> throwHandled.set(true));
 
     @Command(name = "test sub")

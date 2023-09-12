@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
 import dev.rollczi.litecommands.editor.EditorService;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.scheduler.Scheduler;
@@ -56,5 +57,8 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
 
     @ApiStatus.Internal
     ExceptionHandleService<SENDER> getExceptionHandleService();
+
+    @ApiStatus.Internal
+    MessageRegistry getMessageRegistry();
 
 }

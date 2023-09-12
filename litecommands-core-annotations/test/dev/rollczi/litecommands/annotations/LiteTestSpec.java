@@ -11,11 +11,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class LiteTestSpec {
 
@@ -49,7 +46,7 @@ public class LiteTestSpec {
         LiteTest annotation = type.getAnnotation(LiteTest.class);
 
         if (annotation == null || annotation.universalHandler()) {
-            builder.result(Object.class, (invocation, result) -> {});
+            builder.result(Object.class, (invocation, result, chain) -> {});
         }
 
         for (Field field : type.getDeclaredFields()) {

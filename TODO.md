@@ -185,8 +185,8 @@ class GamemodeCommand {
 class VanishCommand {
 
     @Command
-    void vanish(@Sender Player sender, @Arg Option<Boolean> vanish) {
-        // ...
+    String vanish(@Sender Player sender, @Arg Option<Boolean> vanish) {
+        return "Vanish is now " + (vanish.orElseGet(() -> !sender.isInvisible()));
     }
 
 }

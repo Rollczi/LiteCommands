@@ -1,6 +1,7 @@
 package dev.rollczi.example.velocity.handler;
 
 import com.velocitypowered.api.command.CommandSource;
+import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -12,7 +13,7 @@ public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSourc
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     @Override
-    public void handle(Invocation<CommandSource> invocation, InvalidUsage<CommandSource> result) {
+    public void handle(Invocation<CommandSource> invocation, InvalidUsage<CommandSource> result, ResultHandlerChain<CommandSource> chain) {
         Schematic schematic = result.getSchematic();
         CommandSource sender = invocation.sender();
 

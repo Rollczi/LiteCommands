@@ -15,6 +15,10 @@ public class RawInput {
         this.rawArgumentsToConsume = rawArgumentsToConsume;
     }
 
+    public boolean hasNext() {
+        return !rawArgumentsToConsume.isEmpty();
+    }
+
     public String next() {
         if (rawArgumentsToConsume.isEmpty()) {
             throw new NoSuchElementException("No more arguments to consume, consumed: " + consumed);
@@ -22,6 +26,21 @@ public class RawInput {
 
         consumed++;
         return rawArgumentsToConsume.remove(0);
+    }
+
+    public List<String> next(int count) {
+        if (count > rawArgumentsToConsume.size()) {
+            throw new IllegalArgumentException("Cannot consume next " + count + " arguments, only " + rawArgumentsToConsume.size() + " left");
+        }
+
+        consumed += count;
+        List<String> consumedArguments = rawArgumentsToConsume.subList(0, count);
+        rawArgumentsToConsume.removeAll(consumedArguments);
+        return consumedArguments;
+    }
+
+    public List<String> nextAll() {
+        return next(rawArgumentsToConsume.size());
     }
 
     public int nextInt() {
@@ -56,29 +75,27 @@ public class RawInput {
         return next().charAt(0);
     }
 
-    @Deprecated
-    public List<String> nextAll() {
-        List<String> consumedArguments = new ArrayList<>(rawArgumentsToConsume);
-        this.rawArgumentsToConsume.clear();
-        this.consumed += consumedArguments.size();
-
-        return consumedArguments;
-    }
-
     public String seeNext() {
+        if (rawArgumentsToConsume.isEmpty()) {
+            throw new NoSuchElementException("No more arguments to consume, consumed: " + consumed);
+        }
+
         return rawArgumentsToConsume.get(0);
     }
 
-    @Deprecated
+    public List<String> seeNext(int count) {
+        if (count > rawArgumentsToConsume.size()) {
+            throw new IllegalArgumentException("Cannot see next " + count + " arguments, only " + rawArgumentsToConsume.size() + " left");
+        }
+
+        return rawArgumentsToConsume.subList(0, count);
+    }
+
     public List<String> seeAll() {
-        return Collections.unmodifiableList(rawArgumentsToConsume);
+        return seeNext(rawArgumentsToConsume.size());
     }
 
-    public boolean hasNext() {
-        return !rawArgumentsToConsume.isEmpty();
-    }
-
-    public int consumedCount() {
+    int consumedCount() {
         return this.consumed;
     }
 

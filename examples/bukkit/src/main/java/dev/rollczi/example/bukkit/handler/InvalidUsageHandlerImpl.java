@@ -1,6 +1,7 @@
 package dev.rollczi.example.bukkit.handler;
 
 import dev.rollczi.example.bukkit.util.ChatUtil;
+import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -11,7 +12,7 @@ import java.util.List;
 public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSender> {
 
     @Override
-    public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result) {
+    public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result, ResultHandlerChain<CommandSender> chain) {
         CommandSender sender = invocation.sender();
         List<String> schematics = result.getSchematic().all();
 

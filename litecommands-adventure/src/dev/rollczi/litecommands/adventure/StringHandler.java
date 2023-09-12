@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.adventure;
 
 import dev.rollczi.litecommands.handler.result.ResultHandler;
+import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invocation.Invocation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
@@ -16,7 +17,7 @@ class StringHandler<SENDER> implements ResultHandler<SENDER, String> {
     }
 
     @Override
-    public void handle(Invocation<SENDER> invocation, String result) {
+    public void handle(Invocation<SENDER> invocation, String result, ResultHandlerChain<SENDER> chain) {
         this.adventureAudienceProvider.sender(invocation.sender()).sendMessage(this.kyoriComponentSerializer.deserialize(result));
     }
 

@@ -1,6 +1,7 @@
 package dev.rollczi.example.velocity.handler;
 
 import com.velocitypowered.api.command.CommandSource;
+import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
@@ -13,7 +14,7 @@ public class PermissionMessage implements MissingPermissionsHandler<CommandSourc
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     @Override
-    public void handle(Invocation<CommandSource> invocation, MissingPermissions missingPermissions) {
+    public void handle(Invocation<CommandSource> invocation, MissingPermissions missingPermissions, ResultHandlerChain<CommandSource> chain) {
         CommandSource commandSource = invocation.sender();
         TagResolver.Single permission = Placeholder.parsed("permission", missingPermissions.asJoinedText());
 
