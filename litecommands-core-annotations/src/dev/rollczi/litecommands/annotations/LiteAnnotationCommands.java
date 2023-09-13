@@ -130,7 +130,7 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
             .annotationProcessor(new Validate.AnnotationResolver<>())
 
             // method
-            .annotationProcessor(new ExecuteAnnotationResolver<>(this.commandExecutorFactory))
+            .annotationProcessor(new ExecuteAnnotationResolver<>())
 
             // argument
             .parameterAnnotation(Arg.class, new ArgArgumentFactory<>(wrapperRegistry, parserRegistry))
@@ -138,7 +138,7 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
             .parameterAnnotation(Flag.class, new FlagArgumentConfigurator<>(wrapperRegistry, parserRegistry, suggesterRegistry))
             .parameterAnnotation(Context.class, new ContextParameterRequirementFactory<>(contextRegistry, wrapperRegistry));
 
-        AnnotationsProcessor<SENDER> processor = new AnnotationsProcessor<>(this.annotationEditorService, builder.getEditorService(), annotationProcessors);
+        AnnotationsProcessor<SENDER> processor = new AnnotationsProcessor<>(this.annotationEditorService, builder.getEditorService(), annotationProcessors, commandExecutorFactory);
         Injector<SENDER> injector = new Injector<>(builder.getBindRegistry());
         List<Object> instances = new ArrayList<>(this.commandInstances);
 

@@ -27,14 +27,14 @@ class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onAnnotatedParameter(Class<A> annotationType, AnnotationProcessor.ParameterListener<SENDER, A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> onRequirement(Class<A> annotationType, AnnotationProcessor.RequirementListener<SENDER, A> listener) {
         A parameterAnnotation = parameter.getAnnotation(annotationType);
 
         if (parameterAnnotation == null) {
             return this;
         }
 
-        commandBuilder = listener.call(instance, method, parameter, parameterAnnotation, commandBuilder, executorBuilder);
+        commandBuilder = listener.call(parameterAnnotation, commandBuilder, executorBuilder);
         return this;
     }
 

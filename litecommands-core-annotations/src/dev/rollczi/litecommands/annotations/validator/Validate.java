@@ -20,7 +20,7 @@ public @interface Validate {
 
         @Override
         public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-            return invoker.onAnnotatedMetaHolder(Validate.class, (instance, annotation, metaHolder) -> {
+            return invoker.on(Validate.class, (annotation, metaHolder) -> {
                 metaHolder.meta().listEditor(Meta.VALIDATORS)
                     .addAll(annotation.value())
                     .apply();

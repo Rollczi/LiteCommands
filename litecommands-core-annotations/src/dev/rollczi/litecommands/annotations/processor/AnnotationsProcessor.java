@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.annotations.processor;
 
+import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.annotations.editor.AnnotationEditorService;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
@@ -15,8 +16,10 @@ public class AnnotationsProcessor<SENDER> {
     private final List<AnnotationProcessor<SENDER>> annotationProcessors = new ArrayList<>();
     private final AnnotationEditorService<SENDER> annotationCommandEditorRegistry;
     private final EditorService<SENDER> editorService;
+    private final MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory;
 
-    public AnnotationsProcessor(AnnotationEditorService<SENDER> annotationCommandEditorRegistry, EditorService<SENDER> editorService, List<AnnotationProcessor<SENDER>> annotationProcessors) {
+    public AnnotationsProcessor(AnnotationEditorService<SENDER> annotationCommandEditorRegistry, EditorService<SENDER> editorService, List<AnnotationProcessor<SENDER>> annotationProcessors, MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory) {
+        this.methodCommandExecutorFactory = methodCommandExecutorFactory;
         this.annotationProcessors.addAll(annotationProcessors);
         this.annotationCommandEditorRegistry = annotationCommandEditorRegistry;
         this.editorService = editorService;
@@ -36,7 +39,7 @@ public class AnnotationsProcessor<SENDER> {
 
         for (Method method : type.getDeclaredMethods()) {
             CommandBuilderExecutor<SENDER> executorBuilder = new CommandBuilderExecutor<>(context);
-            AnnotationInvoker<SENDER> methodInvoker = new MethodInvoker<>(type, instance, method, context, executorBuilder);
+            AnnotationInvoker<SENDER> methodInvoker = new MethodInvoker<>(type, instance, method, context, executorBuilder, methodCommandExecutorFactory);
 
             for (AnnotationProcessor<SENDER> processor : annotationProcessors) {
                 methodInvoker = processor.process(methodInvoker);

@@ -5,34 +5,32 @@ import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.meta.MetaHolder;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 public interface AnnotationProcessor<SENDER> {
 
     AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker);
 
-    interface MetaHolderListener<A extends Annotation> {
+    interface Listener<A extends Annotation> {
 
-        void call(Object instance, A annotation, MetaHolder metaHolder);
-
-    }
-
-    interface ClassListener<SENDER, A extends Annotation> {
-
-        CommandBuilder<SENDER> call(Object instance, A annotation, CommandBuilder<SENDER> builder);
+        void call(A annotation, MetaHolder metaHolder);
 
     }
 
-    interface MethodListener<SENDER, A extends Annotation> {
+    interface StructureListener<SENDER, A extends Annotation> {
 
-        CommandBuilder<SENDER> call(Object instance, Method method, A annotation, CommandBuilder<SENDER> builder, CommandBuilderExecutor<SENDER> executorBuilder);
+        CommandBuilder<SENDER> call(A annotation, CommandBuilder<SENDER> builder);
 
     }
 
-    interface ParameterListener<SENDER, A extends Annotation> {
+    interface StructureExecutorListener<SENDER, A extends Annotation> {
 
-        CommandBuilder<SENDER> call(Object instance, Method method, Parameter parameter, A annotation, CommandBuilder<SENDER> builder, CommandBuilderExecutor<SENDER> executorBuilder);
+        CommandBuilder<SENDER> call(A annotation, CommandBuilder<SENDER> builder, CommandBuilderExecutor<SENDER> executorBuilder);
+
+    }
+
+    interface RequirementListener<SENDER, A extends Annotation> {
+
+        CommandBuilder<SENDER> call(A annotation, CommandBuilder<SENDER> builder, CommandBuilderExecutor<SENDER> executorBuilder);
 
     }
 

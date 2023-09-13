@@ -51,7 +51,7 @@ public class CommandBuilderExecutor<SENDER> implements MetaHolder {
 
     @Override
     public @Nullable MetaHolder parentMeta() {
-        return null;
+        return this.parent;
     }
 
 }

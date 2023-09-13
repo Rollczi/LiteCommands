@@ -17,26 +17,26 @@ class ClassInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onAnnotatedMetaHolder(Class<A> annotationType, AnnotationProcessor.MetaHolderListener<A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
         A annotation = type.getAnnotation(annotationType);
 
         if (annotation == null) {
             return this;
         }
 
-        listener.call(instance, annotation, commandBuilder);
+        listener.call(annotation, commandBuilder);
         return this;
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onAnnotatedClass(Class<A> annotationType, AnnotationProcessor.ClassListener<SENDER, A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> onStructure(Class<A> annotationType, AnnotationProcessor.StructureListener<SENDER, A> listener) {
         A annotation = type.getAnnotation(annotationType);
 
         if (annotation == null) {
             return this;
         }
 
-        commandBuilder = listener.call(instance, annotation, commandBuilder);
+        commandBuilder = listener.call(annotation, commandBuilder);
         return this;
     }
 

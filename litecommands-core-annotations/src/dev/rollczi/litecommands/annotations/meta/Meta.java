@@ -21,7 +21,7 @@ public @interface Meta {
 
         @Override
         public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-            return invoker.onAnnotatedMetaHolder(Meta.class, (instance, annotation, metaHolder) -> {
+            return invoker.on(Meta.class, (annotation, metaHolder) -> {
                 metaHolder.meta().put(MetaKey.of(annotation.key(), String.class), annotation.value());
             });
         }

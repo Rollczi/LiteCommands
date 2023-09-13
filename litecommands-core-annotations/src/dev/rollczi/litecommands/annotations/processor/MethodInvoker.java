@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.annotations.processor;
 
+import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 
@@ -13,36 +14,39 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     private final Method method;
     private CommandBuilder<SENDER> commandBuilder;
     private final CommandBuilderExecutor<SENDER> executorBuilder;
+    private final MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory;
 
-    public MethodInvoker(Class<?> type, Object instance, Method method, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder) {
+    public MethodInvoker(Class<?> type, Object instance, Method method, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder, MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory) {
         this.type = type;
         this.instance = instance;
         this.method = method;
         this.commandBuilder = commandBuilder;
         this.executorBuilder = executorBuilder;
+        this.methodCommandExecutorFactory = methodCommandExecutorFactory;
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onAnnotatedMetaHolder(Class<A> annotationType, AnnotationProcessor.MetaHolderListener<A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
         A annotation = method.getAnnotation(annotationType);
 
         if (annotation == null) {
             return this;
         }
 
-        listener.call(instance, annotation, executorBuilder);
+        listener.call(annotation, executorBuilder);
         return this;
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onAnnotatedMethod(Class<A> annotationType, AnnotationProcessor.MethodListener<SENDER, A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> onExecutorStructure(Class<A> annotationType, AnnotationProcessor.StructureExecutorListener<SENDER, A> listener) {
         A methodAnnotation = method.getAnnotation(annotationType);
 
         if (methodAnnotation == null) {
             return this;
         }
 
-        commandBuilder = listener.call(instance, method, methodAnnotation, commandBuilder, executorBuilder);
+        executorBuilder.setExecutorFactory(parent -> this.methodCommandExecutorFactory.create(parent, instance, method));
+        commandBuilder = listener.call(methodAnnotation, commandBuilder, executorBuilder);
         return this;
     }
 

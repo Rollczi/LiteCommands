@@ -21,7 +21,7 @@ public @interface Permission {
 
         @Override
         public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-            return invoker.onAnnotatedMetaHolder(Permission.class, (instance, annotation, metaHolder) -> {
+            return invoker.on(Permission.class, (annotation, metaHolder) -> {
                 metaHolder.meta().listEditor(Meta.PERMISSIONS)
                     .addAll(annotation.value())
                     .apply();

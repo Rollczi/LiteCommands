@@ -19,7 +19,7 @@ public @interface Permissions {
 
         @Override
         public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-            return invoker.onAnnotatedMetaHolder(Permissions.class, (instance, annotation, metaHolder) -> {
+            return invoker.on(Permissions.class, (annotation, metaHolder) -> {
                 Meta meta = metaHolder.meta();
 
                 for (Permission permissionAnnotation : annotation.value()) {

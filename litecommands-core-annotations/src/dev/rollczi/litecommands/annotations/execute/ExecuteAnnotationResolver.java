@@ -1,32 +1,22 @@
 package dev.rollczi.litecommands.annotations.execute;
 
-import dev.rollczi.litecommands.annotations.command.executor.MethodCommandExecutorFactory;
 import dev.rollczi.litecommands.annotations.processor.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.processor.AnnotationProcessor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.util.LiteCommandsUtil;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class ExecuteAnnotationResolver<SENDER> implements AnnotationProcessor<SENDER> {
 
-    private final MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory;
-
-    public ExecuteAnnotationResolver(MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory) {
-        this.methodCommandExecutorFactory = methodCommandExecutorFactory;
-    }
-
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.onAnnotatedMethod(Execute.class, (instance, method, annotation, builder, executorBuilder) -> resolve(instance, method, annotation, builder, executorBuilder));
+        return invoker.onExecutorStructure(Execute.class, (annotation, builder, executorBuilder) -> resolve(annotation, builder, executorBuilder));
     }
 
-    private CommandBuilder<SENDER> resolve(Object instance, Method method, Execute annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
+    private CommandBuilder<SENDER> resolve(Execute annotation, CommandBuilder<SENDER> context, CommandBuilderExecutor<SENDER> executorBuilder) {
         boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
-
-        executorBuilder.setExecutorFactory(parent -> this.methodCommandExecutorFactory.create(parent, instance, method));
 
         if (isNotEmpty) {
             context.getRealRoute().appendChild(CommandBuilder.<SENDER>create()

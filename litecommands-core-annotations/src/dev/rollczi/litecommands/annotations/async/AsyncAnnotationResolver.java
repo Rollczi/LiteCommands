@@ -10,7 +10,7 @@ public class AsyncAnnotationResolver<SENDER> implements AnnotationProcessor<SEND
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.onAnnotatedMetaHolder(Async.class, (instance, annotation, metaHolder) -> {
+        return invoker.on(Async.class, (annotation, metaHolder) -> {
             metaHolder.meta().put(Meta.POLL_TYPE, SchedulerPollType.ASYNC);
 
         });

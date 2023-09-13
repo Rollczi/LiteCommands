@@ -10,7 +10,7 @@ public class CommandAnnotationProcessor<SENDER> implements AnnotationProcessor<S
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.onAnnotatedClass(Command.class, (instance, annotation, builder) -> {
+        return invoker.onStructure(Command.class, (annotation, builder) -> {
             boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
             if (isNotEmpty) {

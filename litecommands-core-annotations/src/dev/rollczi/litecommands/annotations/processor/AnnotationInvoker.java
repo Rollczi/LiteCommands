@@ -7,22 +7,22 @@ import java.lang.annotation.Annotation;
 public interface AnnotationInvoker<SENDER> {
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onAnnotatedMetaHolder(Class<A> annotationType, AnnotationProcessor.MetaHolderListener<A> listener) {
+    AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
         return this;
     }
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onAnnotatedClass(Class<A> annotationType, AnnotationProcessor.ClassListener<SENDER, A> listener) {
+    AnnotationInvoker<SENDER> onStructure(Class<A> annotationType, AnnotationProcessor.StructureListener<SENDER, A> listener) {
         return this;
     }
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onAnnotatedMethod(Class<A> annotationType, AnnotationProcessor.MethodListener<SENDER, A> listener) {
+    AnnotationInvoker<SENDER> onExecutorStructure(Class<A> annotationType, AnnotationProcessor.StructureExecutorListener<SENDER, A> listener) {
         return this;
     }
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onAnnotatedParameter(Class<A> annotationType, AnnotationProcessor.ParameterListener<SENDER, A> listener) {
+    AnnotationInvoker<SENDER> onRequirement(Class<A> annotationType, AnnotationProcessor.RequirementListener<SENDER, A> listener) {
         return this;
     }
 
