@@ -243,7 +243,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <T> LiteCommandsBuilder<SENDER, C, B> message(MessageKey key, Message<T> message) {
+    public <T, CONTEXT> LiteCommandsBuilder<SENDER, C, B> message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message) {
         this.messageRegistry.register(key, message);
         return this;
     }

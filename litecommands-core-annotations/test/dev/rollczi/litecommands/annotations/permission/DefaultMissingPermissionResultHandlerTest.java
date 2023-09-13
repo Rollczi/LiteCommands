@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DefaultMissingPermissionResultHandlerTest extends LiteTestSpec {
 
     static LiteConfig config = builder -> builder
-        .message(LiteMessages.MISSING_PERMISSIONS, Message.parsed("missing permissions {permissions}"))
+        .message(LiteMessages.MISSING_PERMISSIONS, Message.of(missingPermissions -> "missing permissions " + missingPermissions.asJoinedText(", ")))
         .result(String.class, (invocation, result, chain) -> invocation.sender().sendMessage(result));
 
     @Command(name = "test")
