@@ -9,15 +9,13 @@ import java.lang.reflect.Method;
 
 class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER> {
 
-    private final Class<?> type;
     private final Object instance;
     private final Method method;
     private CommandBuilder<SENDER> commandBuilder;
     private final CommandBuilderExecutor<SENDER> executorBuilder;
     private final MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory;
 
-    public MethodInvoker(Class<?> type, Object instance, Method method, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder, MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory) {
-        this.type = type;
+    public MethodInvoker(Object instance, Method method, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder, MethodCommandExecutorFactory<SENDER> methodCommandExecutorFactory) {
         this.instance = instance;
         this.method = method;
         this.commandBuilder = commandBuilder;

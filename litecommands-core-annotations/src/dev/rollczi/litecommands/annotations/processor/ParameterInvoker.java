@@ -10,15 +10,13 @@ import java.lang.reflect.Parameter;
 
 class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
 
-    private final Class<?> type;
     private final Object instance;
     private final Method method;
     private final Parameter parameter;
     private CommandBuilder<SENDER> commandBuilder;
     private final CommandBuilderExecutor<SENDER> executorBuilder;
 
-    public ParameterInvoker(Class<?> type, Object instance, Method method, Parameter parameter, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder) {
-        this.type = type;
+    public ParameterInvoker(Object instance, Method method, Parameter parameter, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder) {
         this.instance = instance;
         this.method = method;
         this.parameter = parameter;

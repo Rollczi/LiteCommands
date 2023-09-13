@@ -29,7 +29,7 @@ public class AnnotationsProcessor<SENDER> {
         Class<?> type = instance.getClass();
         CommandBuilder<SENDER> context = CommandBuilder.create();
 
-        AnnotationInvoker<SENDER> classInvoker = new ClassInvoker<>(type, instance, context);
+        AnnotationInvoker<SENDER> classInvoker = new ClassInvoker<>(type, context);
 
         for (AnnotationProcessor<SENDER> processor : annotationProcessors) {
             classInvoker = processor.process(classInvoker);
@@ -39,7 +39,7 @@ public class AnnotationsProcessor<SENDER> {
 
         for (Method method : type.getDeclaredMethods()) {
             CommandBuilderExecutor<SENDER> executorBuilder = new CommandBuilderExecutor<>(context);
-            AnnotationInvoker<SENDER> methodInvoker = new MethodInvoker<>(type, instance, method, context, executorBuilder, methodCommandExecutorFactory);
+            AnnotationInvoker<SENDER> methodInvoker = new MethodInvoker<>(instance, method, context, executorBuilder, methodCommandExecutorFactory);
 
             for (AnnotationProcessor<SENDER> processor : annotationProcessors) {
                 methodInvoker = processor.process(methodInvoker);
@@ -48,7 +48,7 @@ public class AnnotationsProcessor<SENDER> {
             context = methodInvoker.getResult();
 
             for (Parameter parameter : method.getParameters()) {
-                AnnotationInvoker<SENDER> parameterInvoker = new ParameterInvoker<>(type, instance, method, parameter, context, executorBuilder);
+                AnnotationInvoker<SENDER> parameterInvoker = new ParameterInvoker<>(instance, method, parameter, context, executorBuilder);
 
                 for (AnnotationProcessor<SENDER> processor : annotationProcessors) {
                     parameterInvoker = processor.process(parameterInvoker);

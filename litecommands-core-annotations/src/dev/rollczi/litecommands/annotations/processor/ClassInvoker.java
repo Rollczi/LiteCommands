@@ -7,12 +7,10 @@ import java.lang.annotation.Annotation;
 class ClassInvoker<SENDER> implements AnnotationInvoker<SENDER> {
 
     private final Class<?> type;
-    private final Object instance;
     private CommandBuilder<SENDER> commandBuilder;
 
-    public ClassInvoker(Class<?> type, Object instance, CommandBuilder<SENDER> commandBuilder) {
+    public ClassInvoker(Class<?> type, CommandBuilder<SENDER> commandBuilder) {
         this.type = type;
-        this.instance = instance;
         this.commandBuilder = commandBuilder;
     }
 
