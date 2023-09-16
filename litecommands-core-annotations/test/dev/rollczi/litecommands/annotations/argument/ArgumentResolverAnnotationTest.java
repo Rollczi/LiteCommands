@@ -66,7 +66,7 @@ class ArgumentResolverAnnotationTest extends LiteTestSpec {
         ArgumentRequirement third = assertInstanceOf(ArgumentRequirement.class, requirements.get(2));
 
         assertEquals("arg0", first.getArgument().getName());
-        assertEquals("custom", second.getArgument().getName());
+        assertEquals("arg1", second.getArgument().getName()); //  @ArgumentResolverInfo deprecated
         assertEquals("other", third.getArgument().getName());
     }
 

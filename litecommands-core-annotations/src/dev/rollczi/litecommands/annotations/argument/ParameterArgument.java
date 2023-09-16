@@ -69,7 +69,7 @@ public class ParameterArgument<A extends Annotation, EXPECTED> implements Argume
             return overrideName;
         }
 
-        return this.getParameter().getName();
+        return this.parameter.getName();
     }
 
     void overrideName(String name) {

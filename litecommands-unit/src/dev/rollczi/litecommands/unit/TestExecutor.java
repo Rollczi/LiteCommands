@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.RawInputParser;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.requirement.RequirementsResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.requirement.RequirementMatch;
@@ -16,11 +17,14 @@ import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.std.ValueWrapper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -68,8 +72,8 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
     }
 
     @Override
-    public CommandExecutorMatchResult match(List<RequirementMatch<SENDER, Requirement<SENDER, ?>, Object>> results) {
-        return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(this, result));
+    public CommandExecutorMatchResult match(RequirementsResult<SENDER> requirementsResult) {
+        return CommandExecutorMatchResult.success(() -> CommandExecuteResult.success(this, this.result));
     }
 
     private class TestArgumentRequirement<PARSED> implements ArgumentRequirement<SENDER, PARSED> {
@@ -77,6 +81,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         private final Argument<PARSED> argument;
         private final Wrapper wrapper;
         private final ParserSet<SENDER, PARSED> parserSet;
+        private final Meta meta = Meta.create();
 
         public TestArgumentRequirement(Argument<PARSED> argument, Wrapper wrapper, ParserSet<SENDER, PARSED> parserSet) {
             this.argument = argument;
@@ -92,6 +97,11 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         @Override
         public boolean isWrapperOptional() {
             return wrapper.canCreateEmpty();
+        }
+
+        @Override
+        public String getName() {
+            return argument.getName();
         }
 
         @Override
@@ -113,6 +123,16 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
                     return argument.getWrapperFormat().getParsedType();
                 }
             });
+        }
+
+        @Override
+        public Meta meta() {
+            return meta;
+        }
+
+        @Override
+        public @Nullable MetaHolder parentMeta() {
+            return null;
         }
     }
 

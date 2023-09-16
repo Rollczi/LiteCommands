@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.annotations.command.executor;
 
-import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
 import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirementFactory;
 import dev.rollczi.litecommands.annotations.command.requirement.NotAnnotatedParameterRequirementFactory;
 import dev.rollczi.litecommands.annotations.command.requirement.RequirementAnnotation;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.reflect.ReflectFormatUtil;
 
@@ -13,7 +13,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,9 +25,9 @@ public class MethodCommandExecutorFactory<SENDER> {
     };
 
     public CommandExecutor<SENDER, ?> create(CommandRoute<SENDER> parent, Object instance, Method method) {
-        List<ParameterRequirement<SENDER, ?>> arguments = this.resolveParameters(method);
+        MethodDefinition<SENDER> definition = this.createDefinition(method);
 
-        return new MethodCommandExecutor<>(parent, method, instance, arguments);
+        return new MethodCommandExecutor<>(parent, method, instance, definition);
     }
 
     public <A extends Annotation> void registerResolver(Class<A> type, ParameterRequirementFactory<SENDER, A> annotationResolver) {
@@ -39,38 +38,37 @@ public class MethodCommandExecutorFactory<SENDER> {
         this.defaultResolver = defaultResolver;
     }
 
-    private List<ParameterRequirement<SENDER, ?>> resolveParameters(Method method) {
-        List<ParameterRequirement<SENDER, ?>> preparedArguments = new ArrayList<>();
+    private MethodDefinition<SENDER> createDefinition(Method method) {
+        MethodDefinition<SENDER> definition = new MethodDefinition<>();
 
+        int index = 0;
         for (Parameter parameter : method.getParameters()) {
-            preparedArguments.addAll(this.resolveParameter(parameter));
+            definition.putRequirement(index++, this.resolveParameter(parameter));
         }
 
-        return preparedArguments;
+        return definition;
     }
 
-    private List<ParameterRequirement<SENDER, ?>> resolveParameter(Parameter parameter) {
+    private Requirement<SENDER, ?> resolveParameter(Parameter parameter) {
         Annotation[] annotations = parameter.getAnnotations();
 
         if (annotations.length == 0) {
-            ParameterRequirement<SENDER, ?> argument = defaultResolver.create(parameter);
-
-            return Collections.singletonList(argument);
+            return defaultResolver.create(parameter);
         }
-
-        List<ParameterRequirement<SENDER, ?>> preparedArguments = new ArrayList<>();
 
         for (Annotation annotation : annotations) {
-            Optional<ParameterRequirement<SENDER, ?>> requirementOptional = this.resolveParameterWithAnnotation(parameter, annotation);
+            Optional<Requirement<SENDER, ?>> requirementOptional = this.resolveParameterWithAnnotation(parameter, annotation);
 
-            requirementOptional.ifPresent(requirement -> preparedArguments.add(requirement));
+            if (requirementOptional.isPresent()) {
+                return requirementOptional.get();
+            }
         }
 
-        return preparedArguments;
+        throw new LiteCommandsReflectException(parameter.getDeclaringExecutable(), parameter, "Can not find resolver for parameter " + ReflectFormatUtil.parameter(parameter));
     }
 
     @SuppressWarnings("unchecked")
-    private <A extends Annotation> Optional<ParameterRequirement<SENDER, ?>> resolveParameterWithAnnotation(Parameter parameter, A annotation) {
+    private <A extends Annotation> Optional<Requirement<SENDER, ?>> resolveParameterWithAnnotation(Parameter parameter, A annotation) {
         ParameterRequirementFactory<SENDER, A> resolver = (ParameterRequirementFactory<SENDER, A>) resolvers.get(annotation.annotationType());
 
         if (resolver == null) {

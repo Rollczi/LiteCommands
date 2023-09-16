@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.requirement.RequirementsResult;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.invalid.InvalidUsage.Cause;
 import dev.rollczi.litecommands.scheduler.ScheduledChainException;
@@ -220,7 +221,13 @@ public class CommandExecuteService<SENDER> {
                     return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
                 }
 
-                return completedFuture(executor.match(result.getSuccess()));
+                RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder();
+
+                for (RequirementMatch<SENDER, REQUIREMENT, Object> success : result.getSuccess()) {
+                    restulrBuilder.add(success.getRequirement().getName(), success);
+                }
+
+                return completedFuture(executor.match(restulrBuilder.build()));
             });
     }
 
@@ -245,7 +252,7 @@ public class CommandExecuteService<SENDER> {
 
         @Override
         public SchedulerPollType type() {
-            return requirement.pollType();
+            return requirement.meta().get(Meta.POLL_TYPE);
         }
     }
 

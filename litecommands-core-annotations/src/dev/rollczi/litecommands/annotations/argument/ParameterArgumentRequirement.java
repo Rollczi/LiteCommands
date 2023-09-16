@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
@@ -9,21 +8,28 @@ import dev.rollczi.litecommands.argument.ArgumentRequirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.invalid.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.wrapper.Wrapper;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Parameter;
+public class ParameterArgumentRequirement<SENDER, PARSED> implements ArgumentRequirement<SENDER, PARSED> {
 
-public class ParameterArgumentRequirement<SENDER, PARSED> implements ParameterRequirement<SENDER, PARSED>, ArgumentRequirement<SENDER, PARSED> {
-
-    private final ParameterArgument<?, PARSED> argument;
+    private final Argument<PARSED> argument;
     private final Wrapper wrapper;
     private final ParserSet<SENDER, PARSED> parserSet;
+    private final Meta meta = Meta.create();
 
-    ParameterArgumentRequirement(ParameterArgument<?, PARSED> argument, Wrapper wrapper, ParserSet<SENDER, PARSED> parserSet) {
+    ParameterArgumentRequirement(Argument<PARSED> argument, Wrapper wrapper, ParserSet<SENDER, PARSED> parserSet) {
         this.argument = argument;
         this.wrapper = wrapper;
         this.parserSet = parserSet;
+    }
+
+    @Override
+    public String getName() {
+        return argument.getName();
     }
 
     @Override
@@ -45,14 +51,6 @@ public class ParameterArgumentRequirement<SENDER, PARSED> implements ParameterRe
         return RequirementResult.failure(failedReason);
     }
 
-    public Parameter getParameter() {
-        return argument.getParameter();
-    }
-
-    public int getParameterIndex() {
-        return argument.getParameterIndex();
-    }
-
     @Override
     public Argument<PARSED> getArgument() {
         return argument;
@@ -61,6 +59,16 @@ public class ParameterArgumentRequirement<SENDER, PARSED> implements ParameterRe
     @Override
     public boolean isWrapperOptional() {
         return wrapper.canCreateEmpty();
+    }
+
+    @Override
+    public Meta meta() {
+        return this.meta;
+    }
+
+    @Override
+    public @Nullable MetaHolder parentMeta() {
+        return null;
     }
 
 }

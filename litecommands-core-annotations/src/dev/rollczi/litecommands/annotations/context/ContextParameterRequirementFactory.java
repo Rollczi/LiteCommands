@@ -1,21 +1,22 @@
 package dev.rollczi.litecommands.annotations.context;
 
-import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirement;
 import dev.rollczi.litecommands.annotations.command.requirement.ParameterRequirementFactory;
 import dev.rollczi.litecommands.annotations.util.WrapperParameterUtil;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
+import dev.rollczi.litecommands.command.requirement.Requirement;
 import dev.rollczi.litecommands.command.requirement.RequirementResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
 
 public class ContextParameterRequirementFactory<SENDER> implements ParameterRequirementFactory<SENDER, Context> {
 
@@ -28,26 +29,28 @@ public class ContextParameterRequirementFactory<SENDER> implements ParameterRequ
     }
 
     @Override
-    public ParameterRequirement<SENDER, ?> create(Parameter parameter, Context annotation) {
-        Method method = (Method) parameter.getDeclaringExecutable();
-        int index = Arrays.asList(method.getParameters()).indexOf(parameter);
+    public Requirement<SENDER, ?> create(Parameter parameter, Context annotation) {
         WrapFormat<?, ?> wrapFormat = WrapperParameterUtil.wrapperFormat(wrapperRegistry, parameter);
 
-        return new ContextParameterPreparedArgument<>(parameter, index, wrapFormat, wrapperRegistry.getWrappedExpectedFactory(wrapFormat));
+        return new ContextParameterPreparedArgument<>(parameter.getName(), wrapFormat, wrapperRegistry.getWrappedExpectedFactory(wrapFormat));
     }
 
-    private class ContextParameterPreparedArgument<PARSED> implements ContextRequirement<SENDER, PARSED>, ParameterRequirement<SENDER, PARSED> {
+    private class ContextParameterPreparedArgument<PARSED> implements ContextRequirement<SENDER, PARSED> {
 
-        private final Parameter parameter;
-        private final int index;
+        private final String name;
         private final WrapFormat<PARSED, ?> wrapFormat;
         private final Wrapper wrapper;
+        private final Meta meta = Meta.create();
 
-        private ContextParameterPreparedArgument(Parameter parameter, int index, WrapFormat<PARSED, ?> wrapFormat, Wrapper wrapper) {
-            this.parameter = parameter;
-            this.index = index;
+        private ContextParameterPreparedArgument(String name, WrapFormat<PARSED, ?> wrapFormat, Wrapper wrapper) {
+            this.name = name;
             this.wrapFormat = wrapFormat;
             this.wrapper = wrapper;
+        }
+
+        @Override
+        public String getName() {
+            return this.name;
         }
 
         @Override
@@ -62,15 +65,14 @@ public class ContextParameterRequirementFactory<SENDER> implements ParameterRequ
         }
 
         @Override
-        public Parameter getParameter() {
-            return parameter;
+        public Meta meta() {
+            return meta;
         }
 
         @Override
-        public int getParameterIndex() {
-            return index;
+        public @Nullable MetaHolder parentMeta() {
+            return null;
         }
-
     }
 
 }
