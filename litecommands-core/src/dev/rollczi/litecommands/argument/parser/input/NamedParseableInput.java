@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.exception.LiteCommandsException;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.LiteCommandsException;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.ArrayList;

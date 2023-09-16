@@ -39,7 +39,7 @@ class MissingPermissionValidatorTest {
                 .apply()
             )
             .appendChild("sub", childContext -> {
-                CommandBuilderExecutor<TestSender> builder = new CommandBuilderExecutor<TestSender>(childContext, (parent) -> new TestExecutor<>(parent))
+                CommandBuilderExecutor<TestSender> builder = new CommandBuilderExecutor<TestSender>(childContext, (parent, requirementList) -> new TestExecutor<>(parent))
                     .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply());
 
                 return childContext

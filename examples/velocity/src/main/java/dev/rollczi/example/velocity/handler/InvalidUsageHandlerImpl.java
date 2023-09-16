@@ -2,8 +2,8 @@ package dev.rollczi.example.velocity.handler;
 
 import com.velocitypowered.api.command.CommandSource;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
-import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.schematic.Schematic;
 import net.kyori.adventure.text.minimessage.MiniMessage;

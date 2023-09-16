@@ -7,28 +7,29 @@ import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.RawInputParser;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.requirement.RequirementsResult;
+import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
-import dev.rollczi.litecommands.command.requirement.RequirementMatch;
-import dev.rollczi.litecommands.argument.ArgumentRequirement;
-import dev.rollczi.litecommands.command.requirement.Requirement;
+import dev.rollczi.litecommands.requirement.ArgumentRequirement;
+import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.command.requirement.RequirementResult;
+import dev.rollczi.litecommands.requirement.RequirementResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.annotation.AnnotationHolder;
+import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.std.ValueWrapper;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -105,6 +106,11 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         }
 
         @Override
+        public AnnotationHolder<?, PARSED, ?> getAnnotationHolder() {
+            return argument.getAnnotationHolder();
+        }
+
+        @Override
         public <MATCHER extends ParseableInputMatcher<MATCHER>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, MATCHER matcher) {
             ParseResult<PARSED> matchArgument = matcher.nextArgument(invocation, argument, parserSet);
 
@@ -154,6 +160,23 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
         @Override
         public WrapFormat<PARSED, ?> getWrapperFormat() {
             return this.wrapFormat;
+        }
+
+        @Override
+        public AnnotationHolder<?, PARSED, ?> getAnnotationHolder() {
+            Arg arg = new Arg() {
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return Arg.class;
+                }
+
+                @Override
+                public String value() {
+                    return name;
+                }
+            };
+
+            return AnnotationHolder.of(arg, wrapFormat, () -> name);
         }
     }
 

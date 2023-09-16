@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.reflect;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.exception.LiteCommandsException;
+import dev.rollczi.litecommands.LiteCommandsException;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;

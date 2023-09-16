@@ -2,14 +2,14 @@ package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.annotations.argument.arg.Arg;
-import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.command.Command;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class BindRegistry<SENDER> {
+public class BindRegistry {
 
     private final Map<Class<?>, Supplier<?>> instanceBindings = new HashMap<>();
 

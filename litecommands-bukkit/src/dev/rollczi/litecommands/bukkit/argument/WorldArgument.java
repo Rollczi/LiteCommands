@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
-import dev.rollczi.litecommands.exception.LiteCommandsException;
+import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
@@ -12,7 +12,6 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.generator.WorldInfo;
 
 import java.lang.reflect.InvocationTargetException;
 

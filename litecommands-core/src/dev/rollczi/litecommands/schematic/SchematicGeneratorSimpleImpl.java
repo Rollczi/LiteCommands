@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.argument.ArgumentRequirement;
+import dev.rollczi.litecommands.requirement.ArgumentRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.validator.ValidatorService;
 

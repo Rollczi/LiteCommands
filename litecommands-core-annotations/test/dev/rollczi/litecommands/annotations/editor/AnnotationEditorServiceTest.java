@@ -1,7 +1,10 @@
 package dev.rollczi.litecommands.annotations.editor;
 
-import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.command.Command;
+import dev.rollczi.litecommands.command.executor.Execute;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.editor.AnnotationEditorService;
+import dev.rollczi.litecommands.editor.Edit;
 import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 
@@ -11,9 +14,9 @@ class AnnotationEditorServiceTest {
 
     private final static String KEY = "key";
 
-    @dev.rollczi.litecommands.annotations.command.Command(name = "test")
+    @Command(name = "test")
     @Edit(key = KEY)
-    static class Command {
+    static class TestCommand {
 
         @Execute
         void execute() {}
@@ -25,7 +28,7 @@ class AnnotationEditorServiceTest {
         AnnotationEditorService<TestSender> editorService = new AnnotationEditorService<>();
         editorService.registerEditorKey(KEY, (context) -> context.name("prefix-" + context.name()));
 
-        Command command = new Command();
+        TestCommand command = new TestCommand();
         CommandBuilder<TestSender> oldContext = CommandBuilder.<TestSender>create().name("test");
         CommandBuilder<TestSender> context = editorService.edit(command.getClass(), oldContext);
 

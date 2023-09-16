@@ -2,8 +2,8 @@ package dev.rollczi.example.bukkit.handler;
 
 import dev.rollczi.example.bukkit.util.ChatUtil;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
-import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
 import org.bukkit.command.CommandSender;
 

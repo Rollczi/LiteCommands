@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.annotations.schematic;
 
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.annotations.argument.arg.Arg;
-import dev.rollczi.litecommands.annotations.argument.flag.Flag;
-import dev.rollczi.litecommands.annotations.async.Async;
-import dev.rollczi.litecommands.annotations.command.Command;
-import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.permission.Permission;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.flag.Flag;
+import dev.rollczi.litecommands.async.Async;
+import dev.rollczi.litecommands.command.Command;
+import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.permission.Permission;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.unit.TestPlatformSender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

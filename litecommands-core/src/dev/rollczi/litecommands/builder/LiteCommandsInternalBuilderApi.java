@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.editor.EditorService;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.annotation.processor.AnnotationProcessorService;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.validator.ValidatorService;
@@ -41,7 +42,7 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
     SuggesterRegistry<SENDER> getSuggesterRegistry();
 
     @ApiStatus.Internal
-    BindRegistry<SENDER> getBindRegistry();
+    BindRegistry getBindRegistry();
 
     @ApiStatus.Internal
     ContextRegistry<SENDER> getContextRegistry();
@@ -61,4 +62,6 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
     @ApiStatus.Internal
     MessageRegistry getMessageRegistry();
 
+    @ApiStatus.Internal
+    AnnotationProcessorService<SENDER> getAnnotationProcessorRegistry();
 }

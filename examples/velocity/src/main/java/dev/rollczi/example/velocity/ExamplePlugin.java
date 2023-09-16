@@ -16,7 +16,7 @@ import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
-import dev.rollczi.litecommands.annotations.argument.join.Join;
+import dev.rollczi.litecommands.join.Join;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.velocity.LiteVelocityFactory;

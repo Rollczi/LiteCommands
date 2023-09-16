@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.minestom;
 
-import dev.rollczi.litecommands.annotations.argument.arg.Arg;
-import dev.rollczi.litecommands.annotations.context.Context;
-import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.context.Context;
+import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.command.Command;
 import dev.rollczi.litecommands.minestom.test.RegisterCommand;
 import net.minestom.server.entity.Player;
 import org.junit.jupiter.api.DisplayName;

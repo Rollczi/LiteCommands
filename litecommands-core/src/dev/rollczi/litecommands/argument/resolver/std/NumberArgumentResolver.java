@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.shared.FailedReason;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.Suggestion;

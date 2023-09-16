@@ -261,3 +261,97 @@ class Main {
 }
 
 ```
+
+DSL
+
+```java
+import java.util.Optional;
+
+@Command(name = "ban", aliases = "ban-alias")
+@Permission("example.ban")
+public class BanCommand {
+    
+    @Execute
+    public void ban(
+            @Context CommandSender sender,
+            @Arg User user,
+            @Flag("-s") boolean silent,
+            @Join(separator = ", ", limit = 5) String reason
+    ) {
+        // ...
+    }
+
+}
+
+public class BanCommand extends LiteCommand {
+
+    private final static LiteArg<CommandSender> SENDER = LiteArg.of("sender", CommandSender.class);
+    private final static LiteArg<User> USER = LiteArg.of("user", User.class);
+    private final static LiteFlag SILENT = LiteFlag.of("-s");
+    private final static LiteJoin REASON = LiteJoin.of("reason", ", ", 5);
+
+    BanCommand() {
+        super("ban", "ban-alias");
+        this.permissions("example.ban")
+            .context(SENDER)
+            .arguments(USER, SILENT, REASON);
+    }
+
+    @Override
+    public void execute(CommandContext context) {
+        CommandSender sender = context.get(SENDER);
+        User user = context.get(USER);
+        boolean silent = context.get(SILENT);
+        String reason = context.get(REASON);
+        
+        // ...
+    }
+
+}
+
+public class BanCommand extends LiteCommand {
+
+    BanCommand() {
+        super("ban", "ban-alias");
+        this.permissions("example.ban")
+            .context("sender", CommandSender.class)
+            .argument("user", User.class)
+            .flag("-s")
+            .join("reason", ", ", 5);
+    }
+
+    @Override
+    public void execute(CommandContext context) {
+        CommandSender sender = context.get("sender");
+        User user = context.getArg("user");
+        boolean silent = context.getFlag("-s");
+        String reason = context.getJoin("reason");
+
+        // ...
+    }
+
+}
+
+class Main {
+    public static void main(String[] args) {
+Command banCommand = new Command("ban")
+    .aliases("ban-alias")
+    .permission("example.ban")
+    .context("sender", CommandSender.class)
+    .argument("user", User.class)
+    .flag("-s")
+    .join("reason", ", ", 5)
+    .executor((context) -> {
+        CommandSender sender = context.get("sender");
+        User user = context.getArg("user");
+        boolean silent = context.getFlag("-s");
+        String reason = context.getJoin("reason");
+
+        // ...
+    });
+        
+    }
+}
+
+
+```

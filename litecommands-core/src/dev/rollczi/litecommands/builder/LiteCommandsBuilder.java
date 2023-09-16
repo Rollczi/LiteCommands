@@ -5,21 +5,21 @@ import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.builder.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
-import dev.rollczi.litecommands.builder.processor.LiteBuilderPostProcessor;
-import dev.rollczi.litecommands.builder.processor.LiteBuilderPreProcessor;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
-import dev.rollczi.litecommands.invalid.InvalidUsageHandler;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import dev.rollczi.litecommands.message.Message;
 import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
+import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
@@ -191,9 +191,13 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> schematicGenerator(SchematicFormat format);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> preProcessor(LiteBuilderPreProcessor<SENDER, SETTINGS> preProcessor);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> annotationProcessor(AnnotationProcessor<SENDER> annotationProcessor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> postProcessor(LiteBuilderPostProcessor<SENDER, SETTINGS> postProcessor);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> selfProcessor(LiteBuilderProcessor<SENDER, SETTINGS> processor);
+
+    LiteCommandsBuilder<SENDER, SETTINGS, B> preProcessor(LiteBuilderProcessor<SENDER, SETTINGS> preProcessor);
+
+    LiteCommandsBuilder<SENDER, SETTINGS, B> postProcessor(LiteBuilderProcessor<SENDER, SETTINGS> postProcessor);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> extension(LiteCommandsExtension<SENDER> extension);
 

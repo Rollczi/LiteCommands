@@ -3,9 +3,7 @@ package dev.rollczi.litecommands.flow;
 import dev.rollczi.litecommands.shared.FailedReason;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
+@Deprecated //TODO is used without context of current flow, replace with e.g for Validation domain with ValidatorResult
 public interface Flow {
 
     Status status();

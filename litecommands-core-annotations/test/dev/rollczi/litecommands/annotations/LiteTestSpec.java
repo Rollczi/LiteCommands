@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.annotations.command.RootCommand;
-import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.command.RootCommand;
+import dev.rollczi.litecommands.command.Command;
 import dev.rollczi.litecommands.unit.TestSettings;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;

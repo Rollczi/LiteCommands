@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.benchmark;
 
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
-import dev.rollczi.litecommands.annotations.argument.arg.Arg;
-import dev.rollczi.litecommands.annotations.command.Command;
-import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.argument.Arg;
+import dev.rollczi.litecommands.command.Command;
+import dev.rollczi.litecommands.command.executor.Execute;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;
 import dev.rollczi.litecommands.unit.TestPlatform;

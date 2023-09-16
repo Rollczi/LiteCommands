@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.handler.result;
 
-import dev.rollczi.litecommands.exception.LiteCommandsException;
+import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.HashMap;

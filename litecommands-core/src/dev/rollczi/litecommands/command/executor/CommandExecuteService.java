@@ -2,23 +2,23 @@ package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.requirement.RequirementsResult;
+import dev.rollczi.litecommands.requirement.RequirementsResult;
+import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
-import dev.rollczi.litecommands.invalid.InvalidUsage.Cause;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
 import dev.rollczi.litecommands.scheduler.ScheduledChainException;
 import dev.rollczi.litecommands.schematic.Schematic;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SchematicInput;
 import dev.rollczi.litecommands.shared.FailedReason;
-import dev.rollczi.litecommands.command.requirement.Requirement;
-import dev.rollczi.litecommands.command.requirement.RequirementResult;
-import dev.rollczi.litecommands.command.requirement.RequirementMatch;
+import dev.rollczi.litecommands.requirement.Requirement;
+import dev.rollczi.litecommands.requirement.RequirementResult;
+import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.flow.Flow;
-import dev.rollczi.litecommands.invalid.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.scheduler.ScheduledChain;
 import dev.rollczi.litecommands.scheduler.ScheduledChainLink;
 import dev.rollczi.litecommands.scheduler.Scheduler;
@@ -174,7 +174,7 @@ public class CommandExecuteService<SENDER> {
             return scheduler.supply(type, () -> {
                 try {
                     return match.executeCommand();
-                } catch (LiteCommandsReflectException exception) {
+                } catch (LiteCommandsException exception) {
                     return CommandExecuteResult.thrown(executor, exception.getCause());
                 } catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);

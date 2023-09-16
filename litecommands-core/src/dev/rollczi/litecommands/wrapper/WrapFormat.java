@@ -18,6 +18,10 @@ public class WrapFormat<PARSED, OUT> {
         return outType != null;
     }
 
+    public Class<?> getOutTypeOrParsed() {
+        return outType != null ? outType : parsedType;
+    }
+
     public Class<OUT> getOutType() {
         if (outType == null) {
             throw new IllegalStateException("Wrapper type is not defined");

@@ -61,7 +61,7 @@ public class AssertExecute {
         }
 
         if (!result.getThrowable().getClass().equals(exception)) {
-            throw new AssertionFailedError("Command throws different exception: " + result.getThrowable().getClass().getName());
+            throw new AssertionFailedError("Command throws different exception: " + result.getThrowable().getClass().getName(), result.getThrowable());
         }
 
         return this;
