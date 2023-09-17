@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command.executor;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,5 +25,30 @@ public @interface Execute {
      * Represents the aliases of the command.
      */
     String[] aliases() default {};
+
+    class Mock implements Execute {
+        private final String name;
+        private final String[] aliases;
+
+        public Mock(String name, String[] aliases) {
+            this.name = name;
+            this.aliases = aliases;
+        }
+
+        @Override
+        public String name() {
+            return name;
+        }
+
+        @Override
+        public String[] aliases() {
+            return aliases;
+        }
+
+        @Override
+        public Class<? extends Annotation> annotationType() {
+            return Execute.class;
+        }
+    }
 
 }

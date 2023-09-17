@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.wrapper;
 
-public interface Wrap<EXPECTED> {
+public interface Wrap<PARSED> {
 
     Object unwrap();
 
-    Class<EXPECTED> getExpectedType();
+    Class<PARSED> getParsedType();
 
 }

@@ -125,7 +125,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requir
                 }
 
                 @Override
-                public Class<PARSED> getExpectedType() {
+                public Class<PARSED> getParsedType() {
                     return argument.getWrapperFormat().getParsedType();
                 }
             });

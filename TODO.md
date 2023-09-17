@@ -262,7 +262,7 @@ class Main {
 
 ```
 
-DSL
+Programmatic
 
 ```java
 import java.util.Optional;

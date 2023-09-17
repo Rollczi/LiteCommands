@@ -28,5 +28,25 @@ public @interface Permission {
             });
         }
     }
+
+    class Mock implements Permission {
+
+        private final String[] value;
+
+        public Mock(String[] value) {
+            this.value = value;
+        }
+
+        @Override
+        public String[] value() {
+            return value;
+        }
+
+        @Override
+        public Class<? extends Permission> annotationType() {
+            return Permission.class;
+        }
+    }
+
 }
 

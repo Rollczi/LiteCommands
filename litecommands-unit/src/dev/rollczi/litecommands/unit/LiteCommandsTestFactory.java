@@ -15,6 +15,8 @@ public final class LiteCommandsTestFactory {
         LiteCommandsBuilder<TestSender, TestSettings, ?> builder = LiteCommandsFactory.builder(TestSender.class, testPlatform);
 
         operator.apply(builder)
+            .result(String.class, (invocation, result, chain) -> invocation.sender().sendMessage(result))
+            .invalidUsage((invocation, result, chain) -> {})
             .build()
             .register();
 

@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,6 +72,10 @@ public class MissingPermissions {
         }
 
         return new MissingPermissions(collected, missingPermissions);
+    }
+
+    public static MissingPermissions missing(String... permissions) {
+        return new MissingPermissions(Arrays.asList(permissions), Arrays.asList(permissions));
     }
 
 }

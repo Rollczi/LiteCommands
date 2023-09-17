@@ -221,7 +221,7 @@ public class CommandExecuteService<SENDER> {
                     return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
                 }
 
-                RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder();
+                RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
 
                 for (RequirementMatch<SENDER, REQUIREMENT, Object> success : result.getSuccess()) {
                     restulrBuilder.add(success.getRequirement().getName(), success);

@@ -10,6 +10,8 @@ import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
+import dev.rollczi.litecommands.programmatic.LiteCommand;
+import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.join.Join;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
@@ -39,6 +41,16 @@ public class ExamplePlugin extends JavaPlugin {
                 new TeleportCommand(),
                 new KickCommand(),
                 new ConvertCommand()
+            ))
+            .commands(LiteCommandsProgrammatic.of(
+
+                new LiteCommand<CommandSender>("ban")
+                    .permission("example.ban")
+                    .argument("player", Player.class)
+                    .onExecute(context -> {
+                        Player player = context.argument("player", Player.class);
+                        player.kickPlayer("You have been banned!");
+                    })
             ))
 
             // change default messages

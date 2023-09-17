@@ -17,7 +17,7 @@ public class MessageRegistry {
         Message<?, CONTEXT> message = (Message<?, CONTEXT>) messages.get(key);
 
         if (message == null) {
-            return Optional.of(key.getDefaultMessage());
+            return Optional.of(key.getDefaultMessage(context));
         }
 
         return Optional.of(message.get(context));

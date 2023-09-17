@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations;
 
-public class InstanceSource {
+class InstanceSource {
 
     private final Object instance;
 

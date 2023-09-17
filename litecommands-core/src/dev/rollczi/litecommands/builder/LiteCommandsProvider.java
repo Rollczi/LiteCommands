@@ -9,7 +9,7 @@ public interface LiteCommandsProvider<SENDER> {
 
     List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder);
 
-    default CommandBuilderProvider<SENDER> toRealProvider(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
+    default CommandBuilderProvider<SENDER> toInternalProvider(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
         return () -> LiteCommandsProvider.this.provide(builder);
     }
 

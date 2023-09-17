@@ -25,8 +25,8 @@ public class MessageKey<CONTEXT> {
         return name;
     }
 
-    public Object getDefaultMessage() {
-        return defaultMessage;
+    public Object getDefaultMessage(CONTEXT context) {
+        return defaultMessage.apply(context);
     }
 
     public static <CONTEXT> MessageKey<CONTEXT> of(String name, Object defaultMessage) {

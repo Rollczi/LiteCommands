@@ -110,7 +110,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> commands(LiteCommandsProvider<SENDER> commandsProvider) {
-        this.commandBuilderCollector.add(commandsProvider.toRealProvider(this));
+        this.commandBuilderCollector.add(commandsProvider.toInternalProvider(this));
         return this;
     }
 

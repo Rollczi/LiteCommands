@@ -1,8 +1,9 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.annotation.AnnotationHolder;
 
-public interface ArgumentFactory<A> {
+import java.lang.annotation.Annotation;
+
+public interface ArgumentFactory<A extends Annotation> {
     <T> Argument<T> create(AnnotationHolder<A, T, ?> holder);
 }

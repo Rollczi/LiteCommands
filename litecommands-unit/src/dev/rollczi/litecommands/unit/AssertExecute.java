@@ -107,14 +107,8 @@ public class AssertExecute {
 
     public AssertExecute assertMissingPermission(String... permissions) {
         MissingPermissions missingPermissions = assertFailedAs(MissingPermissions.class);
-
-        assertEquals(permissions.length, missingPermissions.getPermissions().size(), "Missing permissions size is not equals");
-
-        for (String permission : permissions) {
-            if (!missingPermissions.getPermissions().contains(permission)) {
-                throw new AssertionFailedError("Missing permissions does not contains " + permission);
-            }
-        }
+        assertThat(missingPermissions.getPermissions().toArray(new String[0]))
+            .containsOnlyOnce(permissions);
 
         return this;
     }

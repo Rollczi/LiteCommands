@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.Execute;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,4 +29,30 @@ public @interface Command {
      */
     String[] aliases() default {};
 
+    class Mock implements Command {
+
+        private final String name;
+        private final String[] aliases;
+
+        public Mock(String name, String[] aliases) {
+            this.name = name;
+            this.aliases = aliases;
+        }
+
+        @Override
+        public String name() {
+            return this.name;
+        }
+
+        @Override
+        public String[] aliases() {
+            return this.aliases;
+        }
+
+        @Override
+        public Class<? extends Annotation> annotationType() {
+            return Command.class;
+        }
+
+    }
 }

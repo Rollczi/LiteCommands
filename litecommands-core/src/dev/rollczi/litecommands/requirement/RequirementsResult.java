@@ -1,13 +1,17 @@
 package dev.rollczi.litecommands.requirement;
 
+import dev.rollczi.litecommands.invocation.Invocation;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class RequirementsResult<SENDER> {
 
+    private final Invocation<SENDER> invocation;
     private final Map<String, RequirementMatch<SENDER, ?, ?>> matches;
 
-    private RequirementsResult(Map<String, RequirementMatch<SENDER, ?, ?>> matches) {
+    private RequirementsResult(Invocation<SENDER> invocation, Map<String, RequirementMatch<SENDER, ?, ?>> matches) {
+        this.invocation = invocation;
         this.matches = matches;
     }
 
@@ -19,13 +23,22 @@ public class RequirementsResult<SENDER> {
         return matches.get(name);
     }
 
-    public static <SENDER> Builder<SENDER> builder() {
-        return new Builder<>();
+    public Invocation<SENDER> getInvocation() {
+        return invocation;
+    }
+
+    public static <SENDER> Builder<SENDER> builder(Invocation<SENDER> invocation) {
+        return new Builder<>(invocation);
     }
 
     public static class Builder<SENDER> {
 
+        private final Invocation<SENDER> invocation;
         private final Map<String, RequirementMatch<SENDER, ?, ?>> matches = new HashMap<>();
+
+        public Builder(Invocation<SENDER> invocation) {
+            this.invocation = invocation;
+        }
 
         public Builder<SENDER> add(String name, RequirementMatch<SENDER, ?, ?> match) {
             if (matches.containsKey(name)) {
@@ -37,7 +50,7 @@ public class RequirementsResult<SENDER> {
         }
 
         public RequirementsResult<SENDER> build() {
-            return new RequirementsResult<>(matches);
+            return new RequirementsResult<>(invocation, matches);
         }
 
     }

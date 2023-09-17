@@ -35,6 +35,12 @@ public class TestPlatformSender implements PlatformSender {
             .build();
     }
 
+    public static PlatformSender permitted(String... permissions) {
+        return builder()
+            .permissions(permissions)
+            .build();
+    }
+
     public static class Builder {
 
         private final TestPlatformSender sender = new TestPlatformSender();

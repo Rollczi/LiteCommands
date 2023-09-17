@@ -4,19 +4,19 @@ import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.annotation.processor.AnnotationInvoker;
 import dev.rollczi.litecommands.annotation.processor.AnnotationProcessorService;
-import dev.rollczi.litecommands.annotation.processor.AnnotationInvokerProvider;
+import dev.rollczi.litecommands.annotation.processor.SourceProcessor;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-public class InstanceAnnotationInvokerProvider<SENDER> implements AnnotationInvokerProvider<SENDER, InstanceSource> {
+class InstanceSourceProcessor<SENDER> implements SourceProcessor<SENDER, InstanceSource> {
 
     private final AnnotationProcessorService<SENDER> annotationProcessorService;
     private final WrapperRegistry wrapperRegistry;
 
-    public InstanceAnnotationInvokerProvider(
+    public InstanceSourceProcessor(
         AnnotationProcessorService<SENDER> annotationProcessorService,
         WrapperRegistry wrapperRegistry
     ) {

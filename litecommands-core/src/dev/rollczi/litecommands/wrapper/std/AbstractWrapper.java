@@ -49,13 +49,13 @@ abstract class AbstractWrapper<WRAPPER> implements Wrapper {
         }
     }
 
-    private class TypeSafeWrap<EXPECTED> implements Wrap<EXPECTED> {
+    private class TypeSafeWrap<PARSED> implements Wrap<PARSED> {
 
-        private final Class<EXPECTED> expectedType;
+        private final Class<PARSED> parsedType;
         private final Supplier<WRAPPER> wrapperSupplier;
 
-        TypeSafeWrap(Class<EXPECTED> expectedType, Supplier<WRAPPER> wrapperSupplier) {
-            this.expectedType = expectedType;
+        TypeSafeWrap(Class<PARSED> parsedType, Supplier<WRAPPER> wrapperSupplier) {
+            this.parsedType = parsedType;
             this.wrapperSupplier = wrapperSupplier;
         }
 
@@ -65,8 +65,8 @@ abstract class AbstractWrapper<WRAPPER> implements Wrapper {
         }
 
         @Override
-        public Class<EXPECTED> getExpectedType() {
-            return expectedType;
+        public Class<PARSED> getParsedType() {
+            return parsedType;
         }
 
     }

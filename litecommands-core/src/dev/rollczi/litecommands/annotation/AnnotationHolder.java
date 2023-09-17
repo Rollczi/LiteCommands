@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
-public interface AnnotationHolder<A, PARSED, OUT> {
+public interface AnnotationHolder<A extends Annotation, PARSED, OUT> {
 
     A getAnnotation();
 
