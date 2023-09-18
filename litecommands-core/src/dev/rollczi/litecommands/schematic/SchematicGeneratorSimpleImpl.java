@@ -32,7 +32,7 @@ class SchematicGeneratorSimpleImpl<SENDER> implements SchematicGenerator<SENDER>
     }
 
     private Stream<String> generateRaw(SchematicInput<SENDER> schematicInput) {
-        CommandExecutor<SENDER, ?> executor = schematicInput.getExecutor();
+        CommandExecutor<SENDER> executor = schematicInput.getExecutor();
         String base = schematicInput.collectRoutes().stream()
             .map(route -> String.format(format.commandFormat(), route.getName()) + SEPARATOR)
             .collect(Collectors.joining());
@@ -55,7 +55,7 @@ class SchematicGeneratorSimpleImpl<SENDER> implements SchematicGenerator<SENDER>
         return Stream.concat(executors, children);
     }
 
-    private String generateExecutor(CommandExecutor<SENDER, ?> executor) {
+    private String generateExecutor(CommandExecutor<SENDER> executor) {
         return executor.getRequirements().stream()
             .filter(requirement -> requirement instanceof ArgumentRequirement)
             .map(requirement -> (ArgumentRequirement<?, ?>) requirement)

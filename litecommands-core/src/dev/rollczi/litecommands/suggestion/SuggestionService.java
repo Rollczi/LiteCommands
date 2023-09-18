@@ -46,7 +46,7 @@ public class SuggestionService<SENDER> {
 
         SuggestionResult all = SuggestionResult.empty();
 
-        for (CommandExecutor<SENDER, ?> executor : commandRoute.getExecutors()) {
+        for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
             Flow flow = this.validatorService.validate(invocation, executor);
 
             if (flow.isTerminate() || flow.isStopCurrent()) {
@@ -80,7 +80,7 @@ public class SuggestionService<SENDER> {
     public <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggestExecutor(
         Invocation<SENDER> invocation,
         MATCHER matcher,
-        CommandExecutor<SENDER, ?> executor
+        CommandExecutor<SENDER> executor
     ) {
         SuggestionResult collector = SuggestionResult.empty();
 

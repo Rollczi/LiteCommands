@@ -48,7 +48,7 @@ class MissingPermissionValidatorTest {
             }));
 
         CommandRoute<TestSender> sub = assertPresent(test.getChild("sub"));
-        CommandExecutor<TestSender, ?> executor = sub.getExecutors().get(0);
+        CommandExecutor<TestSender> executor = sub.getExecutors().get(0);
 
         Flow result = validator.validate(invocation, executor);
 

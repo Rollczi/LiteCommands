@@ -12,10 +12,10 @@ import java.util.List;
 public class SchematicInput<SENDER> {
 
     private final CommandRoute<SENDER> lastRoute;
-    private final @Nullable CommandExecutor<SENDER, ?> executor;
+    private final @Nullable CommandExecutor<SENDER> executor;
     private final Invocation<SENDER> invocation;
 
-    public SchematicInput(CommandRoute<SENDER> lastRoute, @Nullable CommandExecutor<SENDER, ?> executor, Invocation<SENDER> invocation) {
+    public SchematicInput(CommandRoute<SENDER> lastRoute, @Nullable CommandExecutor<SENDER> executor, Invocation<SENDER> invocation) {
         this.lastRoute = lastRoute;
         this.executor = executor;
         this.invocation = invocation;
@@ -29,7 +29,7 @@ public class SchematicInput<SENDER> {
         return lastRoute;
     }
 
-    public @Nullable CommandExecutor<SENDER, ?> getExecutor() {
+    public @Nullable CommandExecutor<SENDER> getExecutor() {
         return executor;
     }
 

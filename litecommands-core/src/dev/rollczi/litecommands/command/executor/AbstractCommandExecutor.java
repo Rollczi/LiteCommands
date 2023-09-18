@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Requirement<SENDER, ?>> implements CommandExecutor<SENDER, REQUIREMENT> {
+public abstract class AbstractCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
 
     protected final CommandRoute<SENDER> parent;
-    protected final List<REQUIREMENT> requirements = new ArrayList<>();
+    protected final List<Requirement<SENDER, ?>> requirements = new ArrayList<>();
     protected final Meta meta = Meta.create();
 
-    protected AbstractCommandExecutor(CommandRoute<SENDER> parent, Collection<? extends REQUIREMENT> requirements) {
+    protected AbstractCommandExecutor(CommandRoute<SENDER> parent, Collection<? extends Requirement<SENDER, ?>> requirements) {
         this.parent = parent;
         this.requirements.addAll(requirements);
     }
@@ -37,7 +37,7 @@ public abstract class AbstractCommandExecutor<SENDER, REQUIREMENT extends Requir
     }
 
     @Override
-    public List<REQUIREMENT> getRequirements() {
+    public List<Requirement<SENDER, ?>> getRequirements() {
         return Collections.unmodifiableList(requirements);
     }
 

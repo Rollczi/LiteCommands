@@ -102,7 +102,7 @@ public class CommandExecuteService<SENDER> {
     private Object mapResult(Object error, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
         if (error instanceof Cause) {
             Cause cause = (Cause) error;
-            @Nullable CommandExecutor<SENDER, ?> executor = (CommandExecutor<SENDER, ?>) executeResult.getExecutor();
+            @Nullable CommandExecutor<SENDER> executor = (CommandExecutor<SENDER>) executeResult.getExecutor();
             Schematic schematic = schematicGenerator.generate(new SchematicInput<>(commandRoute, executor, invocation));
 
             return new InvalidUsage<>(cause, commandRoute, schematic);
@@ -120,7 +120,7 @@ public class CommandExecuteService<SENDER> {
     }
 
     private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
-        ListIterator<CommandExecutor<SENDER, ?>> executors,
+        ListIterator<CommandExecutor<SENDER>> executors,
         Invocation<SENDER> invocation,
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute,
@@ -135,7 +135,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             // continue handle failed
-            CommandExecutor<SENDER, ?> executor = executors.hasPrevious() ? executors.previous() : null;
+            CommandExecutor<SENDER> executor = executors.hasPrevious() ? executors.previous() : null;
 
             if (last != null && last.hasResult()) {
                 return completedFuture(CommandExecuteResult.failed(executor, last));
@@ -144,7 +144,7 @@ public class CommandExecuteService<SENDER> {
             return completedFuture(CommandExecuteResult.failed(executor, InvalidUsage.Cause.UNKNOWN_COMMAND));
         }
 
-        CommandExecutor<SENDER, ?> executor = executors.next();
+        CommandExecutor<SENDER> executor = executors.next();
         // Handle matching arguments
         return this.match(executor, invocation, matcher.copy()).thenCompose(match -> {
             if (match.isFailed()) {
@@ -183,7 +183,7 @@ public class CommandExecuteService<SENDER> {
         }).exceptionally(throwable -> toThrown(executor, throwable));
     }
 
-    private CommandExecuteResult toThrown(CommandExecutor<SENDER, ?> executor, Throwable throwable) {
+    private CommandExecuteResult toThrown(CommandExecutor<SENDER> executor, Throwable throwable) {
         if (throwable instanceof CompletionException) {
             return CommandExecuteResult.thrown(executor, throwable.getCause());
         }
@@ -191,15 +191,15 @@ public class CommandExecuteService<SENDER> {
         return CommandExecuteResult.thrown(executor, throwable);
     }
 
-    private <REQUIREMENT extends Requirement<SENDER, ?>, MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecutorMatchResult> match(
-        CommandExecutor<SENDER, REQUIREMENT> executor,
+    private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecutorMatchResult> match(
+        CommandExecutor<SENDER> executor,
         Invocation<SENDER> invocation,
         MATCHER matcher
     ) {
-        ScheduledChain.Builder<ScheduledRequirement<REQUIREMENT>, RequirementResult<?>> builder = ScheduledChain.builder();
+        ScheduledChain.Builder<ScheduledRequirement, RequirementResult<?>> builder = ScheduledChain.builder();
 
-        for (REQUIREMENT requirement : executor.getRequirements()) {
-            builder.link(new ScheduledRequirement<>(requirement, invocation, matcher));
+        for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
+            builder.link(new ScheduledRequirement(requirement, invocation, matcher));
         }
 
         return builder.build((scheduledRequirement, requirementResult) -> {
@@ -223,7 +223,7 @@ public class CommandExecuteService<SENDER> {
 
                 RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
 
-                for (RequirementMatch<SENDER, REQUIREMENT, Object> success : result.getSuccess()) {
+                for (RequirementMatch<SENDER, ? extends Requirement<SENDER, ?>, ?> success : result.getSuccess()) {
                     restulrBuilder.add(success.getRequirement().getName(), success);
                 }
 
@@ -236,11 +236,11 @@ public class CommandExecuteService<SENDER> {
         return new RequirementMatch<>(requirement, (Wrap<T>) wrap);
     }
 
-    private class ScheduledRequirement<R extends Requirement<SENDER, ?>> implements ScheduledChainLink<RequirementResult<?>> {
-        private final R requirement;
+    private class ScheduledRequirement implements ScheduledChainLink<RequirementResult<?>> {
+        private final Requirement<SENDER, ?> requirement;
         private final Supplier<RequirementResult<?>> match;
 
-        public <MATCHER extends ParseableInputMatcher<MATCHER>> ScheduledRequirement(R requirement, Invocation<SENDER> invocation, MATCHER matcher) {
+        public <MATCHER extends ParseableInputMatcher<MATCHER>> ScheduledRequirement(Requirement<SENDER, ?> requirement, Invocation<SENDER> invocation, MATCHER matcher) {
             this.requirement = requirement;
             this.match = () -> requirement.match(invocation, matcher);
         }

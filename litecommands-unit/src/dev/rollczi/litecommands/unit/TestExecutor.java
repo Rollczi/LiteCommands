@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requirement<SENDER, ?>> {
+public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
     private final Object result;
 

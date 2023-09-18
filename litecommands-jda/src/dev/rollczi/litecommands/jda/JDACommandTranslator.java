@@ -109,12 +109,12 @@ class JDACommandTranslator {
     }
 
     private <SENDER> void translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
-        List<CommandExecutor<SENDER, ?>> executors = route.getExecutors();
+        List<CommandExecutor<SENDER>> executors = route.getExecutors();
         if (executors.size() != 1) {
             throw new IllegalArgumentException("Discrod command cannot have more than one executor in same route");
         }
 
-        CommandExecutor<SENDER, ?> executor = executors.get(0);
+        CommandExecutor<SENDER> executor = executors.get(0);
 
         for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
             if (!(requirement instanceof ArgumentRequirement argumentRequirement)) {

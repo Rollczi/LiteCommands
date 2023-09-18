@@ -119,7 +119,7 @@ class SchematicGeneratorTest {
 
 
 
-    private void assertSchematic(CommandRoute<?> commandRoute, CommandExecutor<?, ?> executor, String... expected) {
+    private void assertSchematic(CommandRoute<?> commandRoute, CommandExecutor<?> executor, String... expected) {
         Schematic schematic = schematicGenerator.generate(new SchematicInput(commandRoute, executor, TestUtil.invocation("")));
         List<String> schematicLines = schematic.all();
         assertEquals(expected.length, schematicLines.size());

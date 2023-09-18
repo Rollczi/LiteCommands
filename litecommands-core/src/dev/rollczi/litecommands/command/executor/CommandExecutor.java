@@ -9,9 +9,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public interface CommandExecutor<SENDER, REQUIREMENT extends Requirement<SENDER, ?>> extends Scopeable, CommandNode<SENDER> {
+public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER> {
 
-    List<REQUIREMENT> getRequirements();
+    @Deprecated
+    List<Requirement<SENDER, ?>> getRequirements();
 
     CommandExecutorMatchResult match(RequirementsResult<SENDER> result);
 

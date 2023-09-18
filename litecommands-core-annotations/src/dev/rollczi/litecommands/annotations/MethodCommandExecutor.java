@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER, Requirement<SENDER, ?>> {
+class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
     private final Method method;
     private final Object instance;

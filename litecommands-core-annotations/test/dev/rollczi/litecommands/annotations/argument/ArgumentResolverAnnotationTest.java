@@ -41,7 +41,7 @@ class ArgumentResolverAnnotationTest extends LiteTestSpec {
         CommandRoute<TestSender> testChild = commandManager.getRoot().getChild("test")
             .orElseThrow(() -> new RuntimeException("Command not found"));
 
-        CommandExecutor<TestSender, ?> executor = testChild.getExecutors()
+        CommandExecutor<TestSender> executor = testChild.getExecutors()
             .stream().findFirst()
             .orElseThrow(() -> new RuntimeException("Executor not found"));
 

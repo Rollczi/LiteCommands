@@ -13,14 +13,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-class ProgrammaticCommandExecutor<SENDER, R extends Requirement<SENDER, ?>> implements CommandExecutor<SENDER, R> {
+class ProgrammaticCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
 
     private final CommandRoute<SENDER> parent;
-    private final List<R> requirements;
+    private final List<Requirement<SENDER, ?>> requirements;
     private final LiteCommand<SENDER> liteCommand;
     private final Meta meta = Meta.create();
 
-    public ProgrammaticCommandExecutor(CommandRoute<SENDER> parent, List<R> requirements, LiteCommand<SENDER> liteCommand) {
+    public ProgrammaticCommandExecutor(CommandRoute<SENDER> parent, List<Requirement<SENDER, ?>> requirements, LiteCommand<SENDER> liteCommand) {
         this.parent = parent;
         this.requirements = requirements;
         this.liteCommand = liteCommand;
@@ -32,7 +32,7 @@ class ProgrammaticCommandExecutor<SENDER, R extends Requirement<SENDER, ?>> impl
     }
 
     @Override
-    public List<R> getRequirements() {
+    public List<Requirement<SENDER, ?>> getRequirements() {
         return Collections.unmodifiableList(this.requirements);
     }
 

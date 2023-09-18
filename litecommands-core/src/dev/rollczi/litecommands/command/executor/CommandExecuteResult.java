@@ -6,12 +6,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class CommandExecuteResult {
 
-    private final CommandExecutor<?, ?> executor;
+    private final CommandExecutor<?> executor;
     private final @Nullable Object result;
     private final @Nullable Throwable throwable;
     private final @Nullable Object error;
 
-    private CommandExecuteResult(CommandExecutor<?, ?> executor, @Nullable Object result, @Nullable Throwable throwable, @Nullable Object error) {
+    private CommandExecuteResult(CommandExecutor<?> executor, @Nullable Object result, @Nullable Throwable throwable, @Nullable Object error) {
         this.executor = executor;
         this.result = result;
         this.throwable = throwable;
@@ -30,7 +30,7 @@ public class CommandExecuteResult {
         return error;
     }
 
-    public @Nullable CommandExecutor<?, ?> getExecutor() {
+    public @Nullable CommandExecutor<?> getExecutor() {
         return executor;
     }
 
@@ -46,23 +46,23 @@ public class CommandExecuteResult {
         return this.throwable != null;
     }
 
-    public static CommandExecuteResult success(CommandExecutor<?, ?> executor, Object result) {
+    public static CommandExecuteResult success(CommandExecutor<?> executor, Object result) {
         return new CommandExecuteResult(executor, result, null, null);
     }
 
-    public static CommandExecuteResult thrown(CommandExecutor<?, ?> executor, Throwable exception) {
+    public static CommandExecuteResult thrown(CommandExecutor<?> executor, Throwable exception) {
         Preconditions.notNull(exception, "exception cannot be null");
 
         return new CommandExecuteResult(executor, null, exception, null);
     }
 
-    public static CommandExecuteResult failed(CommandExecutor<?, ?> executor, Object error) {
+    public static CommandExecuteResult failed(CommandExecutor<?> executor, Object error) {
         Preconditions.notNull(error, "failed cannot be null");
 
         return new CommandExecuteResult(executor, null, null, error);
     }
 
-    public static CommandExecuteResult failed(CommandExecutor<?, ?> executor, FailedReason failedReason) {
+    public static CommandExecuteResult failed(CommandExecutor<?> executor, FailedReason failedReason) {
         Preconditions.notNull(failedReason, "failed cannot be null");
 
         return new CommandExecuteResult(executor, null, null, failedReason.getReasonOr(null));

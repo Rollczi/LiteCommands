@@ -43,8 +43,8 @@ public class CommandBuilderExecutor<SENDER> implements MetaHolder {
         return this.executorFactory != null;
     }
 
-    public CommandExecutor<SENDER, ?> build(CommandRoute<SENDER> parent) {
-        CommandExecutor<SENDER, ?> executor = this.executorFactory.create(parent, Collections.unmodifiableList(this.requirements));
+    public CommandExecutor<SENDER> build(CommandRoute<SENDER> parent) {
+        CommandExecutor<SENDER> executor = this.executorFactory.create(parent, Collections.unmodifiableList(this.requirements));
         executor.meta().apply(this.meta);
 
         return executor;

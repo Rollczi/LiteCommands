@@ -8,6 +8,6 @@ import java.util.List;
 @FunctionalInterface
 public interface CommandExecutorFactory<SENDER> {
 
-    CommandExecutor<SENDER, ?> create(CommandRoute<SENDER> parent, List<Requirement<SENDER, ?>> requirements);
+    CommandExecutor<SENDER> create(CommandRoute<SENDER> parent, List<Requirement<SENDER, ?>> requirements);
 
 }
