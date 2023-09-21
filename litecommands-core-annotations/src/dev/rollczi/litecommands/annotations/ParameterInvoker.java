@@ -1,52 +1,63 @@
-
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.annotation.AnnotationHolder;
 import dev.rollczi.litecommands.annotation.processor.AnnotationInvoker;
 import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
-class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
+public class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
 
     private final WrapperRegistry wrapperRegistry;
+    private final CommandBuilder<SENDER> commandBuilder;
     private final Parameter parameter;
-    private CommandBuilder<SENDER> commandBuilder;
-    private final CommandBuilderExecutor<SENDER> executorBuilder;
+    private final Requirement<?> requirement;
 
-    public ParameterInvoker(WrapperRegistry wrapperRegistry, Parameter parameter, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder) {
+    public ParameterInvoker(WrapperRegistry wrapperRegistry, CommandBuilder<SENDER> commandBuilder, Parameter parameter, Requirement<?> requirement) {
         this.wrapperRegistry = wrapperRegistry;
-        this.parameter = parameter;
         this.commandBuilder = commandBuilder;
-        this.executorBuilder = executorBuilder;
+        this.parameter = parameter;
+        this.requirement = requirement;
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onRequirement(Class<A> annotationType, AnnotationProcessor.RequirementListener<SENDER, A> listener) {
-        A parameterAnnotation = parameter.getAnnotation(annotationType);
+    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
+        A annotation = parameter.getAnnotation(annotationType);
 
-        if (parameterAnnotation == null) {
+        if (annotation == null) {
             return this;
         }
 
-        commandBuilder = listener.call(createHolder(parameterAnnotation, parameter), commandBuilder, executorBuilder);
+        listener.call(annotation, requirement);
         return this;
     }
 
     @Override
-    public CommandBuilder<SENDER> getResult() {
-        return commandBuilder;
+    public <A extends Annotation> AnnotationInvoker<SENDER> onRequirementMeta(Class<A> annotationType, AnnotationProcessor.RequirementMetaListener<SENDER, A> listener) {
+        A annotation = parameter.getAnnotation(annotationType);
+
+        if (annotation == null) {
+            return this;
+        }
+
+        listener.call(createHolder(annotation, parameter), commandBuilder, requirement);
+        return this;
     }
 
     private <A extends Annotation> AnnotationHolder<A, ?, ?> createHolder(A annotation, Parameter parameter) {
         WrapFormat<?, ?> format = MethodParameterUtil.wrapperFormat(wrapperRegistry, parameter);
 
         return AnnotationHolder.of(annotation, format, () -> parameter.getName());
+    }
+
+    @Override
+    public CommandBuilder<SENDER> getResult() {
+        return commandBuilder;
     }
 
 }

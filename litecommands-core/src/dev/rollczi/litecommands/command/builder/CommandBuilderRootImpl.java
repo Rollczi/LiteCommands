@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command.builder;
 
-import dev.rollczi.litecommands.meta.MetaCollector;
+import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.command.CommandRoute;
@@ -124,12 +124,12 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public @NotNull CommandBuilder<SENDER> appendExecutor(CommandBuilderExecutor<SENDER> executor) {
+    public CommandBuilder<SENDER> appendExecutor(CommandExecutorProvider<SENDER> executor) {
         throw new UnsupportedOperationException("Cannot append executor to root command");
     }
 
     @Override
-    public List<CommandBuilderExecutor<SENDER>> executors() {
+    public Collection<CommandExecutorProvider<SENDER>> executors() {
         throw new UnsupportedOperationException("Cannot get executors from root command");
     }
 

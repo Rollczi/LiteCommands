@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.permission;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
@@ -38,14 +37,9 @@ class MissingPermissionValidatorTest {
                 .add("permission.test")
                 .apply()
             )
-            .appendChild("sub", childContext -> {
-                CommandBuilderExecutor<TestSender> builder = new CommandBuilderExecutor<TestSender>(childContext, (parent, requirementList) -> new TestExecutor<>(parent))
-                    .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply());
-
-                return childContext
-                    .applyMeta(meta -> meta.put(Meta.PERMISSIONS, Arrays.asList("permission.sub")))
-                    .appendExecutor(builder);
-            }));
+            .appendChild("sub", childContext -> childContext
+                .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub").apply())
+                .appendExecutor(parent -> new TestExecutor<>(parent).onMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply()))));
 
         CommandRoute<TestSender> sub = assertPresent(test.getChild("sub"));
         CommandExecutor<TestSender> executor = sub.getExecutors().get(0);

@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.command.builder;
 
+import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.meta.MetaCollector;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     protected @Nullable String name;
     protected final List<String> aliases = new ArrayList<>();
     protected final Map<String, CommandBuilder<SENDER>> children = new HashMap<>();
-    protected final List<CommandBuilderExecutor<SENDER>> executors = new ArrayList<>();
+    protected final List<CommandExecutorProvider<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
 
@@ -160,13 +160,13 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public @NotNull CommandBuilder<SENDER> appendExecutor(CommandBuilderExecutor<SENDER> executor) {
+    public @NotNull CommandBuilder<SENDER> appendExecutor(CommandExecutorProvider<SENDER> executor) {
         this.executors.add(executor);
         return this;
     }
 
     @Override
-    public Collection<CommandBuilderExecutor<SENDER>> executors() {
+    public Collection<CommandExecutorProvider<SENDER>> executors() {
         return Collections.unmodifiableCollection(this.executors);
     }
 
@@ -297,12 +297,8 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
 
         route.meta().apply(this.meta);
 
-        for (CommandBuilderExecutor<SENDER> executor : this.executors) {
-            if (!executor.buildable()) {
-                continue;
-            }
-
-            route.appendExecutor(executor.build(route));
+        for (CommandExecutorProvider<SENDER> executor : this.executors) {
+            route.appendExecutor(executor.provide(route));
         }
 
         for (CommandBuilder<SENDER> child : this.children()) {
@@ -322,7 +318,7 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     public void meagre(CommandBuilder<SENDER> context) {
         this.aliases.addAll(context.aliases());
 
-        for (CommandBuilderExecutor<SENDER> executor : context.executors()) {
+        for (CommandExecutorProvider<SENDER> executor : context.executors()) {
             this.appendExecutor(executor);
         }
 

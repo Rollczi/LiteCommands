@@ -1,25 +1,40 @@
 package dev.rollczi.litecommands.annotations;
 
+import dev.rollczi.litecommands.annotation.AnnotationHolder;
+import dev.rollczi.litecommands.annotation.processor.AnnotationProcessorService;
+import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.command.builder.CommandBuilderExecutor;
 import dev.rollczi.litecommands.annotation.processor.AnnotationInvoker;
 import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.requirement.Requirement;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Optional;
 
-class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER> {
+class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
-    private final Object instance;
+    private final AnnotationProcessorService<SENDER> annotationProcessorService;
+    private final WrapperRegistry wrapperRegistry;
     private final Method method;
     private CommandBuilder<SENDER> commandBuilder;
-    private final CommandBuilderExecutor<SENDER> executorBuilder;
+    private final MethodDefinition methodDefinition;
+    private final CommandExecutorProvider<SENDER> executorProvider;
+    private final Meta meta = Meta.create();
 
-    public MethodInvoker(Object instance, Method method, CommandBuilder<SENDER> commandBuilder, CommandBuilderExecutor<SENDER> executorBuilder) {
-        this.instance = instance;
+    public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, WrapperRegistry wrapperRegistry, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
+        this.annotationProcessorService = annotationProcessorService;
+        this.wrapperRegistry = wrapperRegistry;
         this.method = method;
         this.commandBuilder = commandBuilder;
-        this.executorBuilder = executorBuilder;
+        this.methodDefinition = new MethodDefinition(method);
+        this.executorProvider = parent -> new MethodCommandExecutor<>(parent, method, instance, methodDefinition, meta);
     }
 
     @Override
@@ -30,7 +45,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER> {
             return this;
         }
 
-        listener.call(annotation, executorBuilder);
+        listener.call(annotation, this);
         return this;
     }
 
@@ -42,13 +57,30 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER> {
             return this;
         }
 
-        executorBuilder.setExecutorFactory((parent, requirements) -> {
-            MethodDefinition<SENDER> definition = MethodDefinition.createDefinition(method, requirements);
+        commandBuilder = listener.call(methodAnnotation, commandBuilder, executorProvider);
+        return this;
+    }
 
-            return new MethodCommandExecutor<>(parent,  method, instance, definition);
-        });
+    @Override
+    public <A extends Annotation> AnnotationInvoker<SENDER> onRequirement(Class<A> annotationType, AnnotationProcessor.RequirementListener<SENDER, A> listener) {
+        for (int index = 0; index < method.getParameterCount(); index++) {
+            Parameter parameter = method.getParameters()[index];
+            A parameterAnnotation = parameter.getAnnotation(annotationType);
 
-        commandBuilder = listener.call(methodAnnotation, commandBuilder, executorBuilder);
+            if (parameterAnnotation == null) {
+                continue;
+            }
+
+            Optional<Requirement<?>> requirementOptional = listener.call(createHolder(parameterAnnotation, parameter), commandBuilder);
+
+            if (requirementOptional.isPresent()) {
+                Requirement<?> requirement = requirementOptional.get();
+
+                methodDefinition.putRequirement(index, requirement);
+                annotationProcessorService.process(new ParameterInvoker<>(wrapperRegistry, commandBuilder, parameter, requirement));
+            }
+        }
+
         return this;
     }
 
@@ -57,5 +89,20 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER> {
         return commandBuilder;
     }
 
+    private <A extends Annotation> AnnotationHolder<A, ?, ?> createHolder(A annotation, Parameter parameter) {
+        WrapFormat<?, ?> format = MethodParameterUtil.wrapperFormat(wrapperRegistry, parameter);
+
+        return AnnotationHolder.of(annotation, format, () -> parameter.getName());
+    }
+
+    @Override
+    public Meta meta() {
+        return meta;
+    }
+
+    @Override
+    public @Nullable MetaHolder parentMeta() {
+        return commandBuilder;
+    }
 
 }

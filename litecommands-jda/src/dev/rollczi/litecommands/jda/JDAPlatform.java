@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
 
     private final JDA jda;
-    private final JDACommandTranslator translator;
     private final Map<CommandRoute<User>, JDACommandRecord> commands = new HashMap<>();
 
     private record JDACommandRecord(
@@ -33,16 +32,15 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
         PlatformSuggestionListener<User> suggestionHook
     ) {}
 
-    JDAPlatform(LiteJDASettings settings, JDA jda, JDACommandTranslator translator) {
+    JDAPlatform(LiteJDASettings settings, JDA jda) {
         super(settings);
         this.jda = jda;
-        this.translator = translator;
         this.jda.addEventListener(new SlashCommandController());
     }
 
     @Override
     protected void hook(CommandRoute<User> commandRoute, PlatformInvocationListener<User> invocationHook, PlatformSuggestionListener<User> suggestionHook) {
-        JDACommandTranslator.JDALiteCommand translated = translator.translate(commandRoute.getName(), commandRoute);
+        JDACommandTranslator.JDALiteCommand translated = settings.translator().translate(commandRoute.getName(), commandRoute);
 
         for (String name : commandRoute.names()) {
             this.jda.upsertCommand(translated.jdaCommandData().setName(name))
@@ -89,8 +87,8 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             }
 
             PlatformInvocationListener<User> invocationHook = commandRecord.invocationHook();
-            JDAParseableInput arguments = translator.translateArguments(commandRecord.command(), event);
-            Invocation<User> invocation = translator.translateInvocation(commandRoute, arguments, event);
+            JDAParseableInput arguments = settings.translator().translateArguments(commandRecord.command(), event);
+            Invocation<User> invocation = settings.translator().translateInvocation(commandRoute, arguments, event);
 
             invocationHook.execute(invocation, arguments);
         }
@@ -111,8 +109,8 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
                 throw new IllegalStateException("Command record not found for command: " + commandRoute.getName());
             }
 
-            JDASuggestionInput arguments = translator.translateSuggestions(event);
-            Invocation<User> invocation = translator.translateInvocation(commandRoute, arguments, event);
+            JDASuggestionInput arguments = settings.translator().translateSuggestions(event);
+            Invocation<User> invocation = settings.translator().translateInvocation(commandRoute, arguments, event);
             SuggestionResult result = commandRecord.suggestionHook().suggest(invocation, arguments);
             List<Command.Choice> choiceList = result.getSuggestions().stream()
                 .filter(suggestion -> !suggestion.multilevel().isEmpty())

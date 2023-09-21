@@ -21,7 +21,7 @@ public class ProgrammaticApiTest {
 
     TestPlatform testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder.commands(LiteCommandsProgrammatic.of(
         new LiteCommand<TestSender>("ban")
-            .permission(PERMISSION)
+            .permissions(PERMISSION)
             .argument("player", String.class)
             .onExecute(context -> {
                 TestSender sender = context.invocation().sender();

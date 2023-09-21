@@ -1,35 +1,41 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.annotation.AnnotationHolder;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.Annotation;
+import java.util.function.Supplier;
 
-public class SimpleArgument<A extends Annotation, PARSED> implements Argument<PARSED> {
+public class SimpleArgument<T> implements Argument<T> {
 
-    private final AnnotationHolder<A, PARSED, ?> holder;
+    private final Supplier<String> name;
+    private final WrapFormat<T, ?> wrapperFormat;
+    private final Meta meta = Meta.create();
 
-    public SimpleArgument(AnnotationHolder<A, PARSED, ?> holder) {
-        this.holder = holder;
-    }
-
-    public A getAnnotation() {
-        return holder.getAnnotation();
-    }
-
-    @Override
-    public AnnotationHolder<?, PARSED, ?> getAnnotationHolder() {
-        return holder;
-    }
-
-    @Override
-    public WrapFormat<PARSED, ?> getWrapperFormat() {
-        return holder.getFormat();
+    public SimpleArgument(Supplier<String> name, WrapFormat<T, ?> wrapperFormat) {
+        this.name = name;
+        this.wrapperFormat = wrapperFormat;
     }
 
     @Override
     public String getName() {
-        return this.holder.getName();
+        return name.get();
+    }
+
+    @Override
+    public WrapFormat<T, ?> getWrapperFormat() {
+        return this.wrapperFormat;
+    }
+
+    @Override
+    public Meta meta() {
+        return meta;
+    }
+
+    @Override
+    public @Nullable MetaHolder parentMeta() {
+        return null;
     }
 
 }

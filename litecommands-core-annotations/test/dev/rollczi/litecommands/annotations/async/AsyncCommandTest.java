@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.Command;
 import dev.rollczi.litecommands.async.Async;
 import dev.rollczi.litecommands.context.Context;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
@@ -26,28 +26,34 @@ import static org.awaitility.Awaitility.await;
 class AsyncCommandTest extends LiteTestSpec {
 
     static LiteConfig config = builder -> builder
-            .scheduler(new SchedulerExecutorPoolImpl("test", 1))
-            .context(Date.class, invocation -> ContextResult.ok(() -> {
-                try {
-                    Thread.sleep(800);
-                }
-                catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+        .scheduler(new SchedulerExecutorPoolImpl("test", 1))
+        .context(Date.class, invocation -> ContextResult.ok(() -> {
+            try {
+                Thread.sleep(800);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
-                return new Date();
-            }))
-            .argument(SomeClass.class, new ThrowingArgumentResolver());
+            return new Date();
+        }))
+        .argumentParser(String.class, new StringArgumentResolver())
+        .argument(SomeClass.class, new ThrowingArgumentResolver());
 
-    static class SomeClass {}
+    static class SomeClass {
+    }
 
     static class ThrowingArgumentResolver extends ArgumentResolver<TestSender, SomeClass> {
-
         @Override
         protected ParseResult<SomeClass> parse(Invocation<TestSender> invocation, Argument<SomeClass> context, String argument) {
             throw new IllegalArgumentException();
         }
+    }
 
+    static class StringArgumentResolver extends ArgumentResolver<TestSender, String> {
+        @Override
+        protected ParseResult<String> parse(Invocation<TestSender> invocation, Argument<String> context, String argument) {
+            return ParseResult.success(Thread.currentThread().getName());
+        }
     }
 
     @Command(name = "test")
@@ -66,13 +72,13 @@ class AsyncCommandTest extends LiteTestSpec {
 
         @Execute(name = "async-args")
         public String testAsyncArgs(@Context Date date, @Arg String first, @Async @Arg String second) {
-            return Thread.currentThread().getName();
+            return Thread.currentThread().getName() + " args [first=" + first + ", second=" + second + "]";
         }
 
         @Async
         @Execute(name = "async-args-and-method")
-        public String testAsyncArgs2(@Context Date date, @Arg String first, @Async @Arg String second) {
-            return Thread.currentThread().getName();
+        public String testAsyncArgs2(@Context Date date,  @Async @Arg String first, @Arg String second) {
+            return Thread.currentThread().getName() + " args [first=" + first + ", second=" + second + "]";
         }
 
         @Execute(name = "async-args-and-method-throwing")
@@ -85,7 +91,7 @@ class AsyncCommandTest extends LiteTestSpec {
     @Test
     void testSync() {
         platform.execute("test sync")
-                .assertSuccess("scheduler-test-main");
+            .assertSuccess("scheduler-test-main");
     }
 
     @Test
@@ -103,7 +109,7 @@ class AsyncCommandTest extends LiteTestSpec {
             .until(() -> result.isDone());
 
         result.join()
-            .assertSuccess("scheduler-test-main");
+            .assertSuccess("scheduler-test-main args [first=scheduler-test-main, second=scheduler-test-async-0]");
     }
 
     @Test
@@ -115,7 +121,7 @@ class AsyncCommandTest extends LiteTestSpec {
             .until(() -> result.isDone());
 
         result.join()
-            .assertSuccess("scheduler-test-async-0");
+            .assertSuccess("scheduler-test-async-0 args [first=scheduler-test-async-0, second=scheduler-test-main]");
     }
 
     @Test

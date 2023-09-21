@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.annotations.validator;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.command.Command;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;

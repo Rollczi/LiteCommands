@@ -17,16 +17,21 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
 
     private final List<Object> commandInstances;
     private final List<Class<?>> commandClasses;
+    private final AnnotationProcessorService<SENDER> annotationProcessorService;
 
-    private LiteAnnotationCommands() {
+    private LiteAnnotationCommands(AnnotationProcessorService<SENDER> annotationProcessorService) {
+        this.annotationProcessorService = annotationProcessorService;
         this.commandInstances = new ArrayList<>();
         this.commandClasses = new ArrayList<>();
+    }
+
+    private LiteAnnotationCommands() {
+        this(AnnotationProcessorService.defaultService());
     }
 
     @Override
     public List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
         WrapperRegistry wrapperRegistry = builder.getWrapperRegistry();
-        AnnotationProcessorService<SENDER> annotationProcessorService = builder.getAnnotationProcessorRegistry();
 
         InstanceSourceProcessor<SENDER> processor = new InstanceSourceProcessor<>(annotationProcessorService, wrapperRegistry);
         Injector<SENDER> injector = new Injector<>(builder.getBindRegistry());
@@ -55,14 +60,6 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
         return this;
     }
 
-    public LiteAnnotationCommands<SENDER> loadPackages(String... packageNames) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public LiteAnnotationCommands<SENDER> loadPackages(Package... packages) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
     public static <SENDER> LiteAnnotationCommands<SENDER> create() {
         return new LiteAnnotationCommands<>();
     }
@@ -73,14 +70,6 @@ public class LiteAnnotationCommands<SENDER> implements LiteCommandsProvider<SEND
 
     public static <SENDER> LiteAnnotationCommands<SENDER> ofClasses(Class<?>... commands) {
         return new LiteAnnotationCommands<SENDER>().loadClasses(commands);
-    }
-
-    public static <SENDER> LiteAnnotationCommands<SENDER> ofPackages(String... packageNames) {
-        return new LiteAnnotationCommands<SENDER>().loadPackages(packageNames);
-    }
-
-    public static <SENDER> LiteAnnotationCommands<SENDER> ofPackages(Package... packages) {
-        return new LiteAnnotationCommands<SENDER>().loadPackages(packages);
     }
 
 }

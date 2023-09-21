@@ -1,120 +1,97 @@
 package dev.rollczi.litecommands.programmatic;
 
-import dev.rollczi.litecommands.annotation.AnnotationHolder;
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.Command;
-import dev.rollczi.litecommands.command.executor.Execute;
-import dev.rollczi.litecommands.context.Context;
-import dev.rollczi.litecommands.flag.Flag;
-import dev.rollczi.litecommands.join.Join;
-import dev.rollczi.litecommands.permission.Permission;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.SimpleArgument;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.LiteContext;
+import dev.rollczi.litecommands.flag.FlagArgument;
+import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaKey;
+import dev.rollczi.litecommands.requirement.ContextRequirement;
+import dev.rollczi.litecommands.scheduler.SchedulerPollType;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.Annotation;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class LiteCommand<SENDER> {
 
-    private final Map<Class<? extends Annotation>, Annotation> annotations = new HashMap<>();
-    private final Map<String, AnnotationHolder<?, ?, ?>> requirements = new HashMap<>();
-    private Consumer<LiteContext<SENDER>> executor = command -> {};
+    protected final String name;
+    protected final List<String> aliases;
+    protected final Meta meta = Meta.create();
+
+    protected Consumer<LiteContext<SENDER>> executor = liteContext -> {};
+    protected final List<Argument<?>> arguments = new ArrayList<>();
+    protected final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
+
+    protected final List<LiteCommand<SENDER>> subCommands = new ArrayList<>();
+
+    public LiteCommand(String name, List<String> aliases) {
+        this.name = name;
+        this.aliases = aliases;
+    }
 
     public LiteCommand(String name) {
-        this.name(name);
-        this.putExecutor();
+        this(name, Collections.emptyList());
     }
 
     public LiteCommand(String name, String... aliases) {
-        this.name(name);
-        this.aliases(aliases);
-        this.putExecutor();
+        this(name, Arrays.asList(aliases));
     }
 
-    @Nullable
-    @SuppressWarnings("unchecked")
-    <A extends Annotation> A getAnnotation(Class<A> annotationType) {
-        return (A) annotations.get(annotationType);
-    }
-
-    @SuppressWarnings("unchecked")
-    <A extends Annotation> List<? extends AnnotationHolder<A, ?, ?>> getRequirements(Class<A> annotationType) {
-        return requirements.values().stream()
-            .filter(holder -> holder.getAnnotation().annotationType().equals(annotationType))
-            .map(holder -> (AnnotationHolder<A, ?, ?>) holder)
-            .toList();
-    }
-
-    Set<String> getRequirements() {
-        return requirements.keySet();
-    }
-
-    private LiteCommand<SENDER> putAnnotation(Annotation annotation) {
-        annotations.put(annotation.annotationType(), annotation);
+    public LiteCommand<SENDER> argument(String name, Class<?> type) {
+        this.arguments.add(new SimpleArgument<>(() -> name, WrapFormat.notWrapped(type)));
         return this;
     }
 
-    public LiteCommand<SENDER> name(String name) {
-        Command.Mock command = getAnnotation(Command.Mock.class);
-        String[] aliases = new String[0];
-
-        if (command != null) {
-            aliases = command.aliases();
-        }
-
-        return this.putAnnotation(new Command.Mock(name, aliases));
+    public LiteCommand<SENDER> argument(Argument<?> argument) {
+        this.arguments.add(argument);
+        return this;
     }
 
-    public LiteCommand<SENDER> aliases(String... aliases) {
-        Command.Mock command = getAnnotation(Command.Mock.class);
-        String name = "";
-
-        if (command != null) {
-            name = command.name();
-        }
-
-        return this.putAnnotation(new Command.Mock(name, aliases));
-    }
-
-    private LiteCommand<SENDER> putExecutor() {
-        return this.putAnnotation(new Execute.Mock("", new String[0]));
-    }
-
-    public LiteCommand<SENDER> permission(String... permissions) {
-        return this.putAnnotation(new Permission.Mock(permissions));
-    }
-
-    public <T> LiteCommand<SENDER> argument(String name, Class<T> type) {
-        return this.argument(name, WrapFormat.notWrapped(type));
-    }
-
-    public <T> LiteCommand<SENDER> argumentOptional(String name, Class<T> type) {
-        return this.argument(name, WrapFormat.of(type, Optional.class));
-    }
-
-    public <T, OUT> LiteCommand<SENDER> argument(String name, WrapFormat<T, OUT> wrapFormat) {
-        return this.requirement(new Arg.Mock(name), name, wrapFormat);
+    public LiteCommand<SENDER> argumentOptional(String name, Class<?> type) {
+        this.arguments.add(new SimpleArgument<>(() -> name, WrapFormat.of(type, Optional.class)));
+        return this;
     }
 
     public LiteCommand<SENDER> argumentFlag(String name) {
-        return this.requirement(new Flag.Mock(name), name, WrapFormat.notWrapped(Boolean.class));
+        this.arguments.add(new FlagArgument(() -> name, WrapFormat.notWrapped(boolean.class)));
+        return this;
     }
 
     public LiteCommand<SENDER> argumentJoin(String name) {
-        return this.requirement(new Join.Mock(" ", Integer.MAX_VALUE), name, WrapFormat.notWrapped(String.class));
+        this.arguments.add(new JoinArgument<>(() -> name, WrapFormat.notWrapped(String.class)));
+        return this;
     }
 
     public LiteCommand<SENDER> argumentJoin(String name, String separator, int limit) {
-        return this.requirement(new Join.Mock(separator, limit), name, WrapFormat.notWrapped(String.class));
+        this.arguments.add(new JoinArgument<>(() -> name, WrapFormat.notWrapped(String.class), separator, limit));
+        return this;
     }
 
     public LiteCommand<SENDER> context(String name, Class<?> type) {
-        return this.requirement(new Context.Mock(), name, WrapFormat.notWrapped(type));
+        this.contextRequirements.add(ContextRequirement.of(() -> name, type));
+        return this;
+    }
+
+    public LiteCommand<SENDER> permissions(String... permissions) {
+        this.meta.listEditor(Meta.PERMISSIONS).addAll(permissions).apply();
+        return this;
+    }
+
+    public LiteCommand<SENDER> async() {
+        return this.meta(Meta.POLL_TYPE, SchedulerPollType.ASYNC);
+    }
+
+    public <T> LiteCommand<SENDER> meta(MetaKey<T> key, T value) {
+        this.meta.put(key, value);
+        return this;
     }
 
     public LiteCommand<SENDER> onExecute(Consumer<LiteContext<SENDER>> executor) {
@@ -122,15 +99,33 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
-    private <A extends Annotation, T, OUT> LiteCommand<SENDER> requirement(A annotation, String name, WrapFormat<T, OUT> wrapFormat) {
-        AnnotationHolder<A, T, OUT> holder = AnnotationHolder.of(annotation, wrapFormat, () -> name);
-
-        this.requirements.put(name, holder);
-        return this.putAnnotation(annotation);
-    }
-
     protected void execute(LiteContext<SENDER> liteContext) {
         this.executor.accept(liteContext);
+    }
+
+    @SafeVarargs
+    public final LiteCommand<SENDER> subCommands(LiteCommand<SENDER>... subCommands) {
+        this.subCommands.addAll(Arrays.asList(subCommands));
+        return this;
+    }
+
+    CommandBuilder<SENDER> toRoute() {
+        CommandBuilder<SENDER> builder = CommandBuilder.<SENDER>create()
+            .routeName(name)
+            .routeAliases(aliases)
+            .applyMeta(meta -> meta.apply(this.meta))
+            .appendExecutor(root -> CommandExecutor.builder(root)
+                .executor(liteContext -> execute(liteContext))
+                .arguments(arguments)
+                .contextRequirements(contextRequirements)
+                .build()
+            );
+
+        for (LiteCommand<SENDER> subCommand : subCommands) {
+            builder.appendChild(subCommand.toRoute());
+        }
+
+        return builder;
     }
 
 }

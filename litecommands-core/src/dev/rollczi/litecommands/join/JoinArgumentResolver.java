@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.join;
 
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.resolver.AnnotationArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.range.Range;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JoinArgumentResolver<SENDER> extends AnnotationArgumentResolver<SENDER, String, JoinArgument<String>> {
+public class JoinArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER, String, JoinArgument<String>> {
 
     public JoinArgumentResolver() {
         super(JoinArgument.class);
@@ -20,9 +20,7 @@ public class JoinArgumentResolver<SENDER> extends AnnotationArgumentResolver<SEN
 
     @Override
     public ParseResult<String> parseTyped(Invocation<SENDER> invocation, JoinArgument<String> argument, RawInput rawInput) {
-        Join join = argument.getAnnotation();
-
-        int limit = join.limit();
+        int limit = argument.getLimit();
         List<String> values = new ArrayList<>();
 
         if (!rawInput.hasNext()) {
@@ -33,18 +31,17 @@ public class JoinArgumentResolver<SENDER> extends AnnotationArgumentResolver<SEN
             values.add(rawInput.next());
         }
 
-        return ParseResult.success(String.join(join.separator(), values));
+        return ParseResult.success(String.join(argument.getSeparator(), values));
     }
 
     @Override
     public Range getTypedRange(JoinArgument<String> argument) {
-        return Range.range(1, argument.getAnnotation().limit());
+        return Range.range(1, argument.getLimit());
     }
 
     @Override
     public SuggestionResult suggestTyped(Invocation<SENDER> invocation, JoinArgument<String> argument, SuggestionContext context) {
         return SuggestionResult.of("Simple text...");
     }
-
 
 }

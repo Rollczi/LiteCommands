@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.flag.Flag;
 import dev.rollczi.litecommands.async.Async;
 import dev.rollczi.litecommands.command.Command;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.permission.Permission;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.unit.TestPlatformSender;

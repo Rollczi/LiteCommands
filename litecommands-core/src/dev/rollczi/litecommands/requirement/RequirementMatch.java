@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.requirement;
 
 import dev.rollczi.litecommands.wrapper.Wrap;
 
-public class RequirementMatch<SENDER, REQUIREMENT extends Requirement<SENDER, ? extends T>, T> {
+public class RequirementMatch<REQUIREMENT extends Requirement<? extends T>, T> {
 
     private final REQUIREMENT requirement;
     private final Wrap<T> result;

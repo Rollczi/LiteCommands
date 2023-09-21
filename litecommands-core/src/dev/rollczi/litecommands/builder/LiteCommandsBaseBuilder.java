@@ -26,8 +26,6 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessorService;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -82,10 +80,9 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
     protected final MessageRegistry messageRegistry = new MessageRegistry();
     protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
-    protected final AnnotationProcessorService<SENDER> annotationProcessorService = new AnnotationProcessorService<>();
 
     protected Scheduler scheduler = new SchedulerSameThreadImpl();
-    protected SchematicGenerator<SENDER> schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService);
+    protected SchematicGenerator<SENDER> schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -318,19 +315,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> schematicGenerator(SchematicFormat format) {
-        this.schematicGenerator = SchematicGenerator.from(format, validatorService);
+        this.schematicGenerator = SchematicGenerator.from(format, validatorService, wrapperRegistry);
         return this;
     }
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> wrapper(Wrapper wrapper) {
         this.wrapperRegistry.registerFactory(wrapper);
-        return this;
-    }
-
-    @Override
-    public LiteCommandsBuilder<SENDER, C, B> annotationProcessor(AnnotationProcessor<SENDER> annotationProcessor) {
-        this.annotationProcessorService.register(annotationProcessor);
         return this;
     }
 
@@ -380,7 +371,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler, schematicGenerator);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
@@ -495,12 +486,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public WrapperRegistry getWrapperRegistry() {
         return this.wrapperRegistry;
-    }
-
-    @Override
-    @ApiStatus.Internal
-    public AnnotationProcessorService<SENDER> getAnnotationProcessorRegistry() {
-        return this.annotationProcessorService;
     }
 
 }

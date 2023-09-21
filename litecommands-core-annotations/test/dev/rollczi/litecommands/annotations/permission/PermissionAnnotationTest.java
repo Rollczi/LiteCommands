@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.permission;
 
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.Permission;
 import org.junit.jupiter.api.Test;

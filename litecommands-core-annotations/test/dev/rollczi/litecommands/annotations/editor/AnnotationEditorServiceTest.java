@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.annotations.editor;
 
 import dev.rollczi.litecommands.command.Command;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.editor.AnnotationEditorService;
-import dev.rollczi.litecommands.editor.Edit;
+import dev.rollczi.litecommands.edit.AnnotationEditorService;
+import dev.rollczi.litecommands.edit.Edit;
 import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 

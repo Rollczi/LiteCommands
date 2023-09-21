@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.annotations.wrapper;
 
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.command.Command;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,11 @@
 package dev.rollczi.litecommands.schematic;
 
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.requirement.ArgumentRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.validator.ValidatorService;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,10 +17,12 @@ class SchematicGeneratorSimpleImpl<SENDER> implements SchematicGenerator<SENDER>
 
     private final SchematicFormat format;
     private final ValidatorService<SENDER> validatorService;
+    private final WrapperRegistry wrapperRegistry;
 
-    public SchematicGeneratorSimpleImpl(SchematicFormat format, ValidatorService<SENDER> validatorService) {
+    public SchematicGeneratorSimpleImpl(SchematicFormat format, ValidatorService<SENDER> validatorService, WrapperRegistry wrapperRegistry) {
         this.format = format;
         this.validatorService = validatorService;
+        this.wrapperRegistry = wrapperRegistry;
     }
 
     @Override
@@ -56,11 +59,13 @@ class SchematicGeneratorSimpleImpl<SENDER> implements SchematicGenerator<SENDER>
     }
 
     private String generateExecutor(CommandExecutor<SENDER> executor) {
-        return executor.getRequirements().stream()
-            .filter(requirement -> requirement instanceof ArgumentRequirement)
-            .map(requirement -> (ArgumentRequirement<?, ?>) requirement)
-            .map(requirement -> String.format(requirement.isWrapperOptional() || requirement.getArgument().hasDefaultValue() ? format.optionalArgumentFormat() : format.argumentFormat(), requirement.getArgument().getName()))
+        return executor.getArguments().stream()
+            .map(argument -> String.format(this.isOptional(argument) ? format.optionalArgumentFormat() : format.argumentFormat(), argument.getName()))
             .collect(Collectors.joining(SEPARATOR));
+    }
+
+    private boolean isOptional(Argument<?> argument) {
+        return wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty() || argument.hasDefaultValue();
     }
 
 }

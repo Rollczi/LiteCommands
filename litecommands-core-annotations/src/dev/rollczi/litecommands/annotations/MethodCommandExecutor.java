@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
@@ -16,18 +17,20 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
     private final Method method;
     private final Object instance;
-    private final MethodDefinition<SENDER> definition;
+    private final MethodDefinition definition;
 
     MethodCommandExecutor(
         CommandRoute<SENDER> parent,
         Method method,
         Object instance,
-        MethodDefinition<SENDER> definition
+        MethodDefinition definition,
+        Meta meta
     ) {
-        super(parent, definition.getRequirements());
+        super(parent, definition.getArguments(), definition.getContextRequirements());
         this.method = method;
         this.instance = instance;
         this.definition = definition;
+        this.meta.apply(meta);
     }
 
     @Override
@@ -35,14 +38,14 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
         Object[] objects = new Object[method.getParameterCount()];
 
         for (int parameterIndex = 0; parameterIndex < method.getParameterCount(); parameterIndex++) {
-            Requirement<SENDER, ?> requirement = definition.getRequirement(parameterIndex);
+            Requirement<?> requirement = definition.getRequirement(parameterIndex);
             String name = requirement.getName();
 
             if (!results.has(name)) {
                 return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved, missing " + name));
             }
 
-            RequirementMatch<SENDER, ?, ?> requirementMatch = results.get(name);
+            RequirementMatch<?, ?> requirementMatch = results.get(name);
             Object unwrapped = requirementMatch.getResult().unwrap();
 
             objects[parameterIndex] = unwrapped;

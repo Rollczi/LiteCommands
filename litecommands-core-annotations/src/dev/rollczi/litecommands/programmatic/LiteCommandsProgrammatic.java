@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.programmatic;
 
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessorService;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.LiteCommandsProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilderProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,19 +19,6 @@ public class LiteCommandsProgrammatic<SENDER> implements LiteCommandsProvider<SE
         this.commands.addAll(commands);
     }
 
-    @Override
-    public List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
-        builder.getWrapperRegistry();
-        AnnotationProcessorService<SENDER> annotationProcessorService = builder.getAnnotationProcessorRegistry();
-
-        ProgrammaticSourceProcessor<SENDER> processor = new ProgrammaticSourceProcessor<>(annotationProcessorService);
-
-        return commands.stream()
-            .map(liteCommand -> processor.processBuilder(liteCommand))
-            .map(senderCommandBuilder -> builder.getEditorService().edit(senderCommandBuilder))
-            .collect(Collectors.toList());
-    }
-
     @SafeVarargs
     public static <SENDER> LiteCommandsProgrammatic<SENDER> of(LiteCommand<SENDER>... commands) {
         return new LiteCommandsProgrammatic<>(Arrays.asList(commands));
@@ -39,6 +26,13 @@ public class LiteCommandsProgrammatic<SENDER> implements LiteCommandsProvider<SE
 
     public static <SENDER> LiteCommandsProgrammatic<SENDER> of(Collection<LiteCommand<SENDER>> commands) {
         return new LiteCommandsProgrammatic<>(commands);
+    }
+
+    @Override
+    public List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
+        return commands.stream()
+            .map(liteCommand -> liteCommand.toRoute())
+            .collect(Collectors.toList());
     }
 
 }

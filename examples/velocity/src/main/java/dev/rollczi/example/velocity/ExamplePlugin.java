@@ -17,6 +17,7 @@ import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
 import dev.rollczi.litecommands.join.Join;
+import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.velocity.LiteVelocityFactory;
@@ -54,7 +55,7 @@ public class ExamplePlugin {
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggester(String.class, SuggestionResult.of("name", "argument"))
             .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggester(String.class, Join.ARGUMENT_KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             // Context resolvers @Context
             .context(Player.class, new VelocityOnlyPlayerContextual<>("&cOnly player can execute this command!"))

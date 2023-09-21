@@ -15,11 +15,6 @@ public class StringArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Str
     }
 
     @Override
-    protected boolean canParse(Invocation<SENDER> invocation, Argument<String> context, String argument) {
-        return true;
-    }
-
-    @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> objectStringArgument, SuggestionContext context) {
         return SuggestionResult.of("text");
     }

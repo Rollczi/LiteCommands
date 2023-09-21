@@ -19,7 +19,6 @@ import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
@@ -190,8 +189,6 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     LiteCommandsBuilder<SENDER, SETTINGS, B> schematicGenerator(SchematicGenerator<SENDER> schematicGenerator);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> schematicGenerator(SchematicFormat format);
-
-    LiteCommandsBuilder<SENDER, SETTINGS, B> annotationProcessor(AnnotationProcessor<SENDER> annotationProcessor);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> selfProcessor(LiteBuilderProcessor<SENDER, SETTINGS> processor);
 

@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.context;
 import dev.rollczi.litecommands.invocation.Invocation;
 import panda.std.Result;
 
+@Deprecated
 public interface LegacyContextProvider<SENDER, T> extends ContextProvider<SENDER, T> {
 
     Result<T, Object> provideLegacy(Invocation<SENDER> invocation);

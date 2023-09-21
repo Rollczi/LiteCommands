@@ -10,6 +10,7 @@ import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
+import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.join.Join;
@@ -43,9 +44,8 @@ public class ExamplePlugin extends JavaPlugin {
                 new ConvertCommand()
             ))
             .commands(LiteCommandsProgrammatic.of(
-
                 new LiteCommand<CommandSender>("ban")
-                    .permission("example.ban")
+                    .permissions("example.ban")
                     .argument("player", Player.class)
                     .onExecute(context -> {
                         Player player = context.argument("player", Player.class);
@@ -63,7 +63,7 @@ public class ExamplePlugin extends JavaPlugin {
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggester(String.class, SuggestionResult.of("name", "argument"))
             .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggester(String.class, Join.ARGUMENT_KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             // Context resolver for @Context Player
             .context(Player.class, new BukkitOnlyPlayerContextual<>("&cOnly player can execute this command!"))

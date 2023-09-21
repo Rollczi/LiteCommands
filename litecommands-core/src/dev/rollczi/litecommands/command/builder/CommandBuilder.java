@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command.builder;
 
+import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
@@ -54,10 +55,9 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
 
     Optional<CommandBuilder<SENDER>> getChild(String test);
 
-    @NotNull
-    CommandBuilder<SENDER> appendExecutor(CommandBuilderExecutor<SENDER> executor);
+    CommandBuilder<SENDER> appendExecutor(CommandExecutorProvider<SENDER> executor);
 
-    Collection<CommandBuilderExecutor<SENDER>> executors();
+    Collection<CommandExecutorProvider<SENDER>> executors();
 
     CommandBuilder<SENDER> applyMeta(UnaryOperator<Meta> operator);
 

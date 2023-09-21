@@ -1,14 +1,14 @@
 package dev.rollczi.litecommands.flag;
 
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.resolver.AnnotationArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 
-public class FlagArgumentResolver<SENDER> extends AnnotationArgumentResolver<SENDER, Boolean, FlagArgument> {
+public class FlagArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER, Boolean, FlagArgument> {
 
     public FlagArgumentResolver() {
         super(FlagArgument.class);
@@ -16,8 +16,7 @@ public class FlagArgumentResolver<SENDER> extends AnnotationArgumentResolver<SEN
 
     @Override
     public ParseResult<Boolean> parseTyped(Invocation<SENDER> invocation, FlagArgument argument, RawInput rawInput) {
-        Flag flag = argument.getAnnotation();
-        String key = flag.value();
+        String key = argument.getName();
 
         if (!rawInput.hasNext()) {
             return ParseResult.success(false);
@@ -38,7 +37,7 @@ public class FlagArgumentResolver<SENDER> extends AnnotationArgumentResolver<SEN
 
     @Override
     public SuggestionResult suggestTyped(Invocation<SENDER> invocation, FlagArgument argument, SuggestionContext context) {
-        return SuggestionResult.of(argument.getAnnotation().value());
+        return SuggestionResult.of(argument.getName());
     }
 
 }

@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.context.Context;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.command.Command;
 import dev.rollczi.litecommands.minestom.test.RegisterCommand;
 import net.minestom.server.entity.Player;

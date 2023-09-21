@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.argument.join;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.join.Join;
 import dev.rollczi.litecommands.command.Command;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import org.junit.jupiter.api.Test;
 
 class JoinArgumentTest extends LiteTestSpec {

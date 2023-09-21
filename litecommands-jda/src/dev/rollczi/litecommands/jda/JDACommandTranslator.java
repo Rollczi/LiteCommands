@@ -4,12 +4,11 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
-import dev.rollczi.litecommands.requirement.ArgumentRequirement;
-import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.shared.Preconditions;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -33,8 +32,14 @@ import java.util.stream.Stream;
 
 class JDACommandTranslator {
 
+    private final WrapperRegistry wrapperRegistry;
+
     private final Map<Class<?>, JDAType<?>> jdaSupportedTypes = new HashMap<>();
     private final Map<Class<?>, JDATypeOverlay<?>> jdaTypeOverlays = new HashMap<>();
+
+    JDACommandTranslator(WrapperRegistry wrapperRegistry) {
+        this.wrapperRegistry = wrapperRegistry;
+    }
 
     <T> JDACommandTranslator type(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {
         jdaSupportedTypes.put(type, new JDAType<>(type, optionType, mapper));
@@ -116,15 +121,10 @@ class JDACommandTranslator {
 
         CommandExecutor<SENDER> executor = executors.get(0);
 
-        for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
-            if (!(requirement instanceof ArgumentRequirement argumentRequirement)) {
-                continue;
-            }
-
-            Argument<?> argument = argumentRequirement.getArgument();
+        for (Argument<?> argument : executor.getArguments()) {
             String argumentName = argument.getName();
             String description = /*argument.getDescription();*/ "test"; //TODO: Add description to Argument
-            boolean isRequired = !argumentRequirement.isWrapperOptional();
+            boolean isRequired = !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
 
             Class<?> parsedType = argument.getWrapperFormat().getParsedType();
             if (jdaSupportedTypes.containsKey(parsedType)) {

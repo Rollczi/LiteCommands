@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.Command;
 import dev.rollczi.litecommands.context.Context;
-import dev.rollczi.litecommands.command.executor.Execute;
+import dev.rollczi.litecommands.execute.Execute;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;

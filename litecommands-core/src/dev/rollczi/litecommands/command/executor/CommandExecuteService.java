@@ -1,7 +1,15 @@
 package dev.rollczi.litecommands.command.executor;
 
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.requirement.ContextRequirement;
+import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
@@ -11,7 +19,6 @@ import dev.rollczi.litecommands.schematic.Schematic;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SchematicInput;
 import dev.rollczi.litecommands.shared.FailedReason;
-import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementResult;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
@@ -25,6 +32,9 @@ import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPollType;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.Wrap;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.wrapper.Wrapper;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ListIterator;
@@ -41,13 +51,19 @@ public class CommandExecuteService<SENDER> {
     private final ExceptionHandleService<SENDER> exceptionHandleService;
     private final Scheduler scheduler;
     private final SchematicGenerator<SENDER> schematicGenerator;
+    private final ParserRegistry<SENDER> parserRegistry;
+    private final ContextRegistry<SENDER> contextRegistry;
+    private final WrapperRegistry wrapperRegistry;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.exceptionHandleService = exceptionHandleService;
         this.scheduler = scheduler;
         this.schematicGenerator = schematicGenerator;
+        this.parserRegistry = parserRegistry;
+        this.contextRegistry = contextRegistry;
+        this.wrapperRegistry = wrapperRegistry;
     }
 
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
@@ -196,10 +212,14 @@ public class CommandExecuteService<SENDER> {
         Invocation<SENDER> invocation,
         MATCHER matcher
     ) {
-        ScheduledChain.Builder<ScheduledRequirement, RequirementResult<?>> builder = ScheduledChain.builder();
+        ScheduledChain.Builder<ScheduledRequirement<?>, RequirementResult<?>> builder = ScheduledChain.builder();
 
-        for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
-            builder.link(new ScheduledRequirement(requirement, invocation, matcher));
+        for (Argument<?> argument : executor.getArguments()) {
+            builder.link(new ScheduledRequirement<>(argument, () -> matchArgument(argument, invocation, matcher)));
+        }
+
+        for (ContextRequirement<?> contextRequirement : executor.getContextRequirements()) {
+            builder.link(new ScheduledRequirement<>(contextRequirement, () -> matchContext(contextRequirement, invocation)));
         }
 
         return builder.build((scheduledRequirement, requirementResult) -> {
@@ -223,7 +243,7 @@ public class CommandExecuteService<SENDER> {
 
                 RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
 
-                for (RequirementMatch<SENDER, ? extends Requirement<SENDER, ?>, ?> success : result.getSuccess()) {
+                for (RequirementMatch<? extends Requirement<?>, ?> success : result.getSuccess()) {
                     restulrBuilder.add(success.getRequirement().getName(), success);
                 }
 
@@ -232,17 +252,18 @@ public class CommandExecuteService<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    private <R extends Requirement<SENDER, ? extends T>, T> RequirementMatch<SENDER, R, T> toMatch(R requirement, Wrap<?> wrap) {
+    private <R extends Requirement<? extends T>, T> RequirementMatch<R, T> toMatch(R requirement, Wrap<?> wrap) {
         return new RequirementMatch<>(requirement, (Wrap<T>) wrap);
     }
 
-    private class ScheduledRequirement implements ScheduledChainLink<RequirementResult<?>> {
-        private final Requirement<SENDER, ?> requirement;
+    private static class ScheduledRequirement<T> implements ScheduledChainLink<RequirementResult<?>> {
+
+        private final Requirement<T> requirement;
         private final Supplier<RequirementResult<?>> match;
 
-        public <MATCHER extends ParseableInputMatcher<MATCHER>> ScheduledRequirement(Requirement<SENDER, ?> requirement, Invocation<SENDER> invocation, MATCHER matcher) {
+        public ScheduledRequirement(Requirement<T> requirement, Supplier<RequirementResult<?>> match) {
             this.requirement = requirement;
-            this.match = () -> requirement.match(invocation, matcher);
+            this.match = match;
         }
 
         @Override
@@ -254,6 +275,40 @@ public class CommandExecuteService<SENDER> {
         public SchedulerPollType type() {
             return requirement.meta().get(Meta.POLL_TYPE);
         }
+    }
+
+    private <PARSED, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementResult<PARSED> matchArgument(Argument<PARSED> argument, Invocation<SENDER> invocation, MATCHER matcher) {
+        WrapFormat<PARSED, ?> wrapFormat = argument.getWrapperFormat();
+        ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(wrapFormat.getParsedType(), argument.toKey());
+        ParseResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
+        Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapFormat);
+
+        if (result.isSuccessful()) {
+            PARSED successfulResult = result.getSuccessfulResult();
+
+            return RequirementResult.success(wrapper.create(successfulResult, wrapFormat));
+        }
+
+        FailedReason failedReason = result.getFailedReason();
+
+        if (failedReason.getReason() == InvalidUsage.Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
+            return RequirementResult.success(wrapper.createEmpty(wrapFormat));
+        }
+
+        return RequirementResult.failure(failedReason);
+    }
+
+
+    private <PARSED> RequirementResult<PARSED> matchContext(ContextRequirement<PARSED> contextRequirement, Invocation<SENDER> invocation) {
+        WrapFormat<PARSED, ?> wrapFormat = contextRequirement.getWrapperFormat();
+        ContextResult<PARSED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
+        Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapFormat);
+
+        if (result.hasResult()) {
+            return RequirementResult.success(wrapper.create(result.getResult(), wrapFormat));
+        }
+
+        return RequirementResult.failure(result.getError());
     }
 
 }

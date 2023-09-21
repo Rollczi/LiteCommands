@@ -8,9 +8,9 @@ import java.util.Map;
 public class RequirementsResult<SENDER> {
 
     private final Invocation<SENDER> invocation;
-    private final Map<String, RequirementMatch<SENDER, ?, ?>> matches;
+    private final Map<String, RequirementMatch<?, ?>> matches;
 
-    private RequirementsResult(Invocation<SENDER> invocation, Map<String, RequirementMatch<SENDER, ?, ?>> matches) {
+    private RequirementsResult(Invocation<SENDER> invocation, Map<String, RequirementMatch<?, ?>> matches) {
         this.invocation = invocation;
         this.matches = matches;
     }
@@ -19,7 +19,7 @@ public class RequirementsResult<SENDER> {
         return matches.containsKey(name);
     }
 
-    public RequirementMatch<SENDER, ?, ?> get(String name) {
+    public RequirementMatch<?, ?> get(String name) {
         return matches.get(name);
     }
 
@@ -34,13 +34,13 @@ public class RequirementsResult<SENDER> {
     public static class Builder<SENDER> {
 
         private final Invocation<SENDER> invocation;
-        private final Map<String, RequirementMatch<SENDER, ?, ?>> matches = new HashMap<>();
+        private final Map<String, RequirementMatch<?, ?>> matches = new HashMap<>();
 
         public Builder(Invocation<SENDER> invocation) {
             this.invocation = invocation;
         }
 
-        public Builder<SENDER> add(String name, RequirementMatch<SENDER, ?, ?> match) {
+        public Builder<SENDER> add(String name, RequirementMatch<?, ?> match) {
             if (matches.containsKey(name)) {
                 throw new IllegalArgumentException("Requirement match with name '" + name + "' already exists");
             }

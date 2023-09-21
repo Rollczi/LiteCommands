@@ -9,8 +9,6 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.requirement.ArgumentRequirement;
-import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.validator.ValidatorService;
@@ -84,12 +82,8 @@ public class SuggestionService<SENDER> {
     ) {
         SuggestionResult collector = SuggestionResult.empty();
 
-        for (Requirement<SENDER, ?> requirement : executor.getRequirements()) {
-            if (!(requirement instanceof ArgumentRequirement)) {
-                continue;
-            }
-
-            SuggestionInputResult result = suggestRequirement(invocation, matcher, (ArgumentRequirement<SENDER, ?>) requirement);
+        for (Argument<?> argument : executor.getArguments()) {
+            SuggestionInputResult result = suggestArgument(invocation, matcher, argument);
             collector.addAll(result.getResult());
 
             switch (result.getCause()) {
@@ -100,16 +94,6 @@ public class SuggestionService<SENDER> {
         }
 
         return collector;
-    }
-
-    private <OUT, MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionInputResult suggestRequirement(
-        Invocation<SENDER> invocation,
-        MATCHER matcher,
-        ArgumentRequirement<SENDER, OUT> requirement
-    ) {
-        Argument<?> argument = requirement.getArgument();
-
-        return suggestArgument(invocation, matcher, argument);
     }
 
     private <PARSED, MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionInputResult suggestArgument(

@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -23,27 +24,10 @@ public final class LiteJDAFactory {
     }
 
     public static LiteCommandsBuilder<User, LiteJDASettings, ?> builder(JDA jda) {
-        JDACommandTranslator translator = new JDACommandTranslator()
-            .type(String.class,       OptionType.STRING,      option -> option.getAsString())
-            .type(Long.class,         OptionType.INTEGER,     option -> option.getAsLong())
-            .type(long.class,         OptionType.INTEGER,     option -> option.getAsLong())
-            .type(Integer.class,      OptionType.INTEGER,     option -> option.getAsInt())
-            .type(int.class,          OptionType.INTEGER,     option -> option.getAsInt())
-            .type(Boolean.class,      OptionType.BOOLEAN,     option -> option.getAsBoolean())
-            .type(boolean.class,      OptionType.BOOLEAN,     option -> option.getAsBoolean())
-            .type(User.class,         OptionType.USER,        option -> option.getAsUser())
-            .type(double.class,       OptionType.NUMBER,      option -> option.getAsDouble())
-            .type(Attachment.class,   OptionType.ATTACHMENT,  option -> option.getAsAttachment())
-            .type(Role.class,         OptionType.ROLE,        option -> option.getAsRole())
-            .type(IMentionable.class, OptionType.MENTIONABLE, option -> option.getAsMentionable())
-            .type(Channel.class,      OptionType.CHANNEL,     option -> option.getAsChannel())
+        JDAPlatform platform = new JDAPlatform(new LiteJDASettings(), jda);
 
-            .typeOverlay(Float.class,  OptionType.NUMBER, option -> option.getAsString())
-            .typeOverlay(float.class,  OptionType.NUMBER, option -> option.getAsString())
-            .typeOverlay(Member.class, OptionType.USER,   option -> option.getAsString()) // TODO: Add raw member parer
-            ;
-
-        return LiteCommandsFactory.builder(User.class, new JDAPlatform(new LiteJDASettings(), jda, translator))
+        return LiteCommandsFactory.builder(User.class, platform).selfProcessor((builder, pattern) -> builder
+            .settings(settings -> settings.translator(createTranslator(pattern.getWrapperRegistry())))
             .bind(JDA.class, () -> jda)
             .result(String.class, new StringHandler())
             .result(RestAction.class, new RestActionHandler())
@@ -52,6 +36,28 @@ public final class LiteJDAFactory {
             .context(MessageChannelUnion.class, invocation -> from(invocation, MessageChannelUnion.class))
             .context(Member.class, invocation -> from(invocation, Member.class))
             .context(SlashCommandInteractionEvent.class, invocation -> from(invocation, SlashCommandInteractionEvent.class))
+        );
+    }
+
+    private static JDACommandTranslator createTranslator(WrapperRegistry wrapperRegistry) {
+        return new JDACommandTranslator(wrapperRegistry)
+            .type(String.class, OptionType.STRING, option -> option.getAsString())
+            .type(Long.class, OptionType.INTEGER, option -> option.getAsLong())
+            .type(long.class, OptionType.INTEGER, option -> option.getAsLong())
+            .type(Integer.class, OptionType.INTEGER, option -> option.getAsInt())
+            .type(int.class, OptionType.INTEGER, option -> option.getAsInt())
+            .type(Boolean.class, OptionType.BOOLEAN, option -> option.getAsBoolean())
+            .type(boolean.class, OptionType.BOOLEAN, option -> option.getAsBoolean())
+            .type(User.class, OptionType.USER, option -> option.getAsUser())
+            .type(double.class, OptionType.NUMBER, option -> option.getAsDouble())
+            .type(Attachment.class, OptionType.ATTACHMENT, option -> option.getAsAttachment())
+            .type(Role.class, OptionType.ROLE, option -> option.getAsRole())
+            .type(IMentionable.class, OptionType.MENTIONABLE, option -> option.getAsMentionable())
+            .type(Channel.class, OptionType.CHANNEL, option -> option.getAsChannel())
+
+            .typeOverlay(Float.class, OptionType.NUMBER, option -> option.getAsString())
+            .typeOverlay(float.class, OptionType.NUMBER, option -> option.getAsString())
+            .typeOverlay(Member.class, OptionType.USER, option -> option.getAsString()) // TODO: Add raw member parer
             ;
     }
 

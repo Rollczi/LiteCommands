@@ -1,51 +1,32 @@
 package dev.rollczi.litecommands.requirement;
 
-import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
-import dev.rollczi.litecommands.context.ContextRegistry;
-import dev.rollczi.litecommands.context.ContextResult;
-import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import dev.rollczi.litecommands.annotation.AnnotationHolder;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
-import dev.rollczi.litecommands.wrapper.Wrapper;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.Annotation;
+import java.util.function.Supplier;
 
-class ContextRequirementImpl<SENDER, PARSED, A extends Annotation> implements ContextRequirement<SENDER, PARSED> {
+class ContextRequirementImpl<T> implements ContextRequirement<T> {
 
-    private final ContextRegistry<SENDER> contextRegistry;
-    private final AnnotationHolder<A, PARSED, ?> holder;
-    private final Wrapper wrapper;
+    private final Supplier<String> name;
+    private final WrapFormat<T, ?> format;
     private final Meta meta = Meta.create();
 
-    ContextRequirementImpl(ContextRegistry<SENDER> contextRegistry, AnnotationHolder<A, PARSED, ?> holder, Wrapper wrapper) {
-        this.contextRegistry = contextRegistry;
-        this.holder = holder;
-        this.wrapper = wrapper;
+    ContextRequirementImpl(Supplier<String> name, WrapFormat<T, ?> format) {
+        this.name = name;
+        this.format = format;
     }
+
 
     @Override
     public String getName() {
-        return this.holder.getName();
+        return name.get();
     }
 
     @Override
-    public AnnotationHolder<?, PARSED, ?> getAnnotationHolder() {
-        return holder;
-    }
-
-    @Override
-    public <CONTEXT extends ParseableInputMatcher<CONTEXT>> RequirementResult<PARSED> match(Invocation<SENDER> invocation, CONTEXT matcher) {
-        WrapFormat<PARSED, ?> wrapFormat = holder.getFormat();
-        ContextResult<PARSED> result = contextRegistry.provideContext(wrapFormat.getParsedType(), invocation);
-
-        if (result.hasResult()) {
-            return RequirementResult.success(wrapper.create(result.getResult(), wrapFormat));
-        }
-
-        return RequirementResult.failure(result.getError());
+    public WrapFormat<T, ?> getWrapperFormat() {
+        return format;
     }
 
     @Override
@@ -57,4 +38,5 @@ class ContextRequirementImpl<SENDER, PARSED, A extends Annotation> implements Co
     public @Nullable MetaHolder parentMeta() {
         return null;
     }
+
 }
