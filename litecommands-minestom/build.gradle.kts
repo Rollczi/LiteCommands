@@ -7,8 +7,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":litecommands-core"))
-    testImplementation(project(":litecommands-core-annotations"))
+    api(project(":litecommands-framework"))
+    testImplementation(project(":litecommands-annotation"))
     compileOnly("com.github.Minestom:Minestom:2cdb3911b0")
     testImplementation("com.github.Minestom:Minestom:2cdb3911b0")
 }

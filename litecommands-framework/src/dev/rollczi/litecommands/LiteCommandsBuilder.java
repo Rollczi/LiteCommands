@@ -1,14 +1,14 @@
-package dev.rollczi.litecommands.builder;
+package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
-import dev.rollczi.litecommands.builder.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.builder.LiteCommandsProvider;
+import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.context.ContextProvider;
-import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
-import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.extension.LiteCommandsExtension;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
@@ -35,7 +35,7 @@ import java.util.function.UnaryOperator;
 
 /**
  * Builder for {@link LiteCommands}.
- * Use {@link dev.rollczi.litecommands.LiteCommandsFactory#builder(Class, Platform)} to create new instance of builder.
+ * Use {@link LiteCommandsFactory#builder(Class, Platform)} to create new instance of builder.
  *
  * @param <SENDER> type of sender
  * @param <SETTINGS> type of platform settings

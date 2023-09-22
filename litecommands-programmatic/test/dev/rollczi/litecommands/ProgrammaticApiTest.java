@@ -1,7 +1,5 @@
-package dev.rollczi.litecommands.annotations.dsl;
+package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.programmatic.LiteCommand;
-import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.platform.PlatformSender;

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":litecommands-core"))
+    api(project(":litecommands-framework"))
 
     compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
 }

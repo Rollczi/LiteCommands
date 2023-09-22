@@ -1,6 +1,8 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.litecommands.LiteCommand;
+import dev.rollczi.litecommands.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
@@ -11,9 +13,6 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
 import dev.rollczi.litecommands.join.JoinArgument;
-import dev.rollczi.litecommands.programmatic.LiteCommand;
-import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
-import dev.rollczi.litecommands.join.Join;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;

@@ -7,10 +7,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":litecommands-core"))
+    api(project(":litecommands-framework"))
 
     compileOnly("net.dv8tion:JDA:5.0.0-beta.6")
-    testImplementation(project(":litecommands-core-annotations"))
+    testImplementation(project(":litecommands-annotation"))
     testImplementation("net.dv8tion:JDA:5.0.0-beta.6")
 }
 

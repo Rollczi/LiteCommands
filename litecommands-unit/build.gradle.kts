@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":litecommands-core"))
+    api(project(":litecommands-framework"))
     api("org.junit.jupiter:junit-jupiter-api:5.9.2")
     api("org.junit.jupiter:junit-jupiter-params:5.9.2")
     api("org.assertj:assertj-core:3.24.2")

@@ -1,6 +1,6 @@
-package dev.rollczi.litecommands.builder.extension;
+package dev.rollczi.litecommands.extension;
 
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 
 public interface LiteCommandsExtension<SENDER> {

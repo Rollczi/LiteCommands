@@ -48,6 +48,10 @@ open class TestImplementation {
 val extension = extensions.create<TestImplementation>("litecommandsUnit")
 
 afterEvaluate {
+    extension.projects().forEach { currentProject ->
+        evaluationDependsOn(currentProject.path)
+    }
+
     dependencies {
         extension.projects().forEach {
             testImplementation(it.sourceSets.test.get().output)

@@ -2,10 +2,12 @@ rootProject.name = "LiteCommands"
 
 // core
 include(":litecommands-core")
-include(":litecommands-core-annotations")
+include(":litecommands-annotation")
+include(":litecommands-programmatic")
+include(":litecommands-framework")
 include(":litecommands-unit")
 
-// adventure
+// extensions
 include(":litecommands-adventure")
 
 // platforms

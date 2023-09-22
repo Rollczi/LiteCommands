@@ -4,12 +4,12 @@ plugins {
     `litecommands-java-unit-test`
     `litecommands-repositories`
     `litecommands-publish`
-    `litecommands-java-benchmark`
 }
 
 dependencies {
     api(project(":litecommands-core"))
-    jmhImplementation(project(":litecommands-unit"))
+    api(project(":litecommands-annotation"))
+    api(project(":litecommands-programmatic"))
 }
 
 litecommandsUnit {
@@ -17,5 +17,5 @@ litecommandsUnit {
 }
 
 litecommandsPublish {
-    artifactId = "litecommands-core-annotations"
+    artifactId = "litecommands-programmatic"
 }

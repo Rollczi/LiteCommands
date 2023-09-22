@@ -5,7 +5,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 
 public final class LiteVelocityFactory {
 

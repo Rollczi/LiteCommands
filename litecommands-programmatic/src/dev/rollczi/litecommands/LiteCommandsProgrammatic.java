@@ -1,9 +1,8 @@
-package dev.rollczi.litecommands.programmatic;
+package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.LiteCommandsProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.command.builder.CommandBuilderProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;

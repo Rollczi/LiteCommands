@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.adventure;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
-import dev.rollczi.litecommands.builder.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.extension.LiteCommandsExtension;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;

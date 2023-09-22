@@ -1,6 +1,6 @@
-package dev.rollczi.litecommands.builder.processor;
+package dev.rollczi.litecommands.processor;
 
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 

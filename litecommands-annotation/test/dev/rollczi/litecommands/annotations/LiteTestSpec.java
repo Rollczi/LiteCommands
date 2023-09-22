@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.command.RootCommand;
 import dev.rollczi.litecommands.command.Command;
@@ -42,7 +43,7 @@ public class LiteTestSpec {
             .build(true);
     }
 
-    private static dev.rollczi.litecommands.builder.LiteCommandsBuilder<TestSender, TestSettings, ?> configureLiteTest(dev.rollczi.litecommands.builder.LiteCommandsBuilder<TestSender, TestSettings, ?> builder, Class<?> type) {
+    private static LiteCommandsBuilder<TestSender, TestSettings, ?> configureLiteTest(LiteCommandsBuilder<TestSender, TestSettings, ?> builder, Class<?> type) {
         LiteTest annotation = type.getAnnotation(LiteTest.class);
 
         if (annotation == null || annotation.universalHandler()) {
