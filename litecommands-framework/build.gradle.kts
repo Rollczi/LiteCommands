@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     api(project(":litecommands-core"))
-    api(project(":litecommands-annotation"))
+    api(project(":litecommands-annotations"))
     api(project(":litecommands-programmatic"))
 }
 

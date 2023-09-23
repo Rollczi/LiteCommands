@@ -17,5 +17,5 @@ litecommandsUnit {
 }
 
 litecommandsPublish {
-    artifactId = "litecommands-annotation"
+    artifactId = "litecommands-annotations"
 }
