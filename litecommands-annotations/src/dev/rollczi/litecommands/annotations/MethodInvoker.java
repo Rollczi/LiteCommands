@@ -1,11 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.annotation.AnnotationHolder;
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessorService;
 import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.annotation.processor.AnnotationInvoker;
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.requirement.Requirement;

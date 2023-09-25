@@ -2,10 +2,9 @@ package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.command.Command;
-import dev.rollczi.litecommands.execute.Execute;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandManager;

@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.annotations;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.command.RootCommand;
-import dev.rollczi.litecommands.command.Command;
+import dev.rollczi.litecommands.annotations.command.RootCommand;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.unit.TestSettings;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -37,7 +37,7 @@ public class LiteTestSpec {
         platform = new TestPlatform();
 
         liteCommands = LiteCommandsFactory.builder(TestSender.class, platform)
-            .commands(LiteAnnotationCommands.ofClasses(commands))
+            .commands(LiteCommandsAnnotations.ofClasses(commands))
             .preProcessor((builder, pattern) -> configureLiteTest(builder, type))
             .exceptionUnexpected((invocation, exception) -> {})
             .build(true);

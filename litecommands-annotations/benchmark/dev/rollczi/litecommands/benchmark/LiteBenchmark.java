@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.benchmark;
 
-import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.Command;
-import dev.rollczi.litecommands.execute.Execute;
+import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;
 import dev.rollczi.litecommands.unit.TestPlatform;
@@ -30,7 +30,7 @@ public class LiteBenchmark {
     @Setup
     public void setUp() {
         testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder
-            .commands(LiteAnnotationCommands.of(
+            .commands(LiteCommandsAnnotations.of(
                 new TestCommand()
             ))
         );

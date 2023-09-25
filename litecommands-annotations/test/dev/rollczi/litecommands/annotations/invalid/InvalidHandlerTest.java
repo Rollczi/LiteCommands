@@ -2,9 +2,9 @@ package dev.rollczi.litecommands.annotations.invalid;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.Command;
-import dev.rollczi.litecommands.execute.Execute;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;

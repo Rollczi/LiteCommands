@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.annotations.route;
 
-import dev.rollczi.litecommands.command.RootCommand;
-import dev.rollczi.litecommands.command.RootCommandAnnotationProcessor;
-import dev.rollczi.litecommands.annotation.processor.AnnotationInvoker;
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
+import dev.rollczi.litecommands.annotations.command.RootCommand;
+import dev.rollczi.litecommands.annotations.command.RootCommandAnnotationProcessor;
+import dev.rollczi.litecommands.annotations.AnnotationInvoker;
+import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,10 @@
 package dev.rollczi.example.bukkit.command;
 
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.context.Context;
-import dev.rollczi.litecommands.execute.Execute;
-import dev.rollczi.litecommands.permission.Permission;
-import dev.rollczi.litecommands.command.Command;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.context.Context;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
+import dev.rollczi.litecommands.annotations.command.Command;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 

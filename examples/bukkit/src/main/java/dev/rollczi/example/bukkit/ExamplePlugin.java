@@ -11,7 +11,7 @@ import dev.rollczi.example.bukkit.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
-import dev.rollczi.litecommands.annotations.LiteAnnotationCommands;
+import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
@@ -37,7 +37,7 @@ public class ExamplePlugin extends JavaPlugin {
             )
 
             // Commands
-            .commands(LiteAnnotationCommands.of(
+            .commands(LiteCommandsAnnotations.of(
                 new TeleportCommand(),
                 new KickCommand(),
                 new ConvertCommand()

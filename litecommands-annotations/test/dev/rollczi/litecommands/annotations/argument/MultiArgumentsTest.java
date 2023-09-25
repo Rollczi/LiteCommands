@@ -2,9 +2,8 @@ package dev.rollczi.litecommands.annotations.argument;
 
 import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.execute.Execute;
-import dev.rollczi.litecommands.command.Command;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.input.raw.RawInput;

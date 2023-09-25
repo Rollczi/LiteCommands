@@ -1,8 +1,5 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.annotation.AnnotationHolder;
-import dev.rollczi.litecommands.annotation.processor.AnnotationInvoker;
-import dev.rollczi.litecommands.annotation.processor.AnnotationProcessor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
@@ -11,14 +8,14 @@ import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
-public class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
+class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
 
     private final WrapperRegistry wrapperRegistry;
     private final CommandBuilder<SENDER> commandBuilder;
     private final Parameter parameter;
     private final Requirement<?> requirement;
 
-    public ParameterInvoker(WrapperRegistry wrapperRegistry, CommandBuilder<SENDER> commandBuilder, Parameter parameter, Requirement<?> requirement) {
+    ParameterInvoker(WrapperRegistry wrapperRegistry, CommandBuilder<SENDER> commandBuilder, Parameter parameter, Requirement<?> requirement) {
         this.wrapperRegistry = wrapperRegistry;
         this.commandBuilder = commandBuilder;
         this.parameter = parameter;
