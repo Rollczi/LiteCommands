@@ -5,25 +5,24 @@ import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.schematic.Schematic;
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
-
-public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSender> {
+public class ExampleInvalidUsageHandler implements InvalidUsageHandler<CommandSender> {
 
     @Override
     public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result, ResultHandlerChain<CommandSender> chain) {
         CommandSender sender = invocation.sender();
-        List<String> schematics = result.getSchematic().all();
+        Schematic schematic = result.getSchematic();
 
-        if (schematics.size() == 1) {
-            sender.sendMessage(ChatUtil.color("&cNie poprawne użycie komendy &8>> &7" + schematics.get(0)));
+        if (schematic.isOnlyFirst()) {
+            sender.sendMessage(ChatUtil.color("&cInvalid usage of command! &7(" + schematic.first() + ")"));
             return;
         }
 
-        sender.sendMessage(ChatUtil.color("&cNie poprawne użycie komendy!"));
-        for (String sch : schematics) {
-            sender.sendMessage(ChatUtil.color("&8 >> &7" + sch));
+        sender.sendMessage(ChatUtil.color("&cInvalid usage of command!"));
+        for (String scheme : schematic.all()) {
+            sender.sendMessage(ChatUtil.color("&8 - &7" + scheme));
         }
     }
 

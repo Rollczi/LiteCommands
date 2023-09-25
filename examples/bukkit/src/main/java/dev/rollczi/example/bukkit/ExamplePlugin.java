@@ -1,14 +1,15 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.example.bukkit.command.GameModeCommand;
 import dev.rollczi.litecommands.LiteCommand;
 import dev.rollczi.litecommands.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
-import dev.rollczi.example.bukkit.handler.InvalidUsageHandlerImpl;
-import dev.rollczi.example.bukkit.handler.MissingPermissionsHandlerImpl;
+import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
+import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
@@ -40,6 +41,7 @@ public class ExamplePlugin extends JavaPlugin {
             .commands(LiteCommandsAnnotations.of(
                 new TeleportCommand(),
                 new KickCommand(),
+                new GameModeCommand(),
                 new ConvertCommand()
             ))
             .commands(LiteCommandsProgrammatic.of(
@@ -68,8 +70,8 @@ public class ExamplePlugin extends JavaPlugin {
             .context(Player.class, new BukkitOnlyPlayerContextual<>("&cOnly player can execute this command!"))
 
             // Handlers for missing permissions and invalid usage
-            .missingPermission(new MissingPermissionsHandlerImpl())
-            .invalidUsage(new InvalidUsageHandlerImpl())
+            .missingPermission(new ExampleMissingPermissionsHandler())
+            .invalidUsage(new ExampleInvalidUsageHandler())
 
             // Schematic generator is used to generate schematic for command, for example when you run invalid command.
             .schematicGenerator(SchematicFormat.angleBrackets())
