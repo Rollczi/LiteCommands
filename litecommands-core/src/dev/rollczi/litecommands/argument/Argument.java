@@ -19,12 +19,12 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
         return defaultValue().isPresent();
     }
 
-    default ArgumentKey toKey() {
+    default ArgumentKey getKey() {
         return ArgumentKey.typed(this.getClass(), this.getName());
     }
 
     static <T> Argument<T> of(String name, WrapFormat<T, ?> format) {
-        return new SimpleArgument<>(() -> name, format);
+        return new SimpleArgument<>(name, format);
     }
 
 }

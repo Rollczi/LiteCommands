@@ -48,7 +48,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argument(String name, Class<?> type) {
-        this.arguments.add(new SimpleArgument<>(() -> name, WrapFormat.notWrapped(type)));
+        this.arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type)));
         return this;
     }
 
@@ -58,22 +58,22 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argumentOptional(String name, Class<?> type) {
-        this.arguments.add(new SimpleArgument<>(() -> name, WrapFormat.of(type, Optional.class)));
+        this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
         return this;
     }
 
     public LiteCommand<SENDER> argumentFlag(String name) {
-        this.arguments.add(new FlagArgument(() -> name, WrapFormat.notWrapped(boolean.class)));
+        this.arguments.add(new FlagArgument(name, WrapFormat.notWrapped(boolean.class)));
         return this;
     }
 
     public LiteCommand<SENDER> argumentJoin(String name) {
-        this.arguments.add(new JoinArgument<>(() -> name, WrapFormat.notWrapped(String.class)));
+        this.arguments.add(new JoinArgument<>(name, WrapFormat.notWrapped(String.class)));
         return this;
     }
 
     public LiteCommand<SENDER> argumentJoin(String name, String separator, int limit) {
-        this.arguments.add(new JoinArgument<>(() -> name, WrapFormat.notWrapped(String.class), separator, limit));
+        this.arguments.add(new JoinArgument<>(name, WrapFormat.notWrapped(String.class), separator, limit));
         return this;
     }
 

@@ -11,8 +11,8 @@ public class FlagArgument extends SimpleArgument<Boolean> {
 
     public static final ArgumentKey KEY = ArgumentKey.typed(FlagArgument.class);
 
-    public FlagArgument(Supplier<String> stringSupplier, WrapFormat<Boolean, ?> parsedType) {
-        super(stringSupplier, parsedType);
+    public FlagArgument(String name, WrapFormat<Boolean, ?> parsedType) {
+        super(name, parsedType);
     }
 
     @Override

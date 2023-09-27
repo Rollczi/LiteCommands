@@ -288,7 +288,7 @@ public class CommandExecuteService<SENDER> {
 
     private <PARSED, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementResult<PARSED> matchArgument(Argument<PARSED> argument, Invocation<SENDER> invocation, MATCHER matcher) {
         WrapFormat<PARSED, ?> wrapFormat = argument.getWrapperFormat();
-        ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(wrapFormat.getParsedType(), argument.toKey());
+        ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(wrapFormat.getParsedType(), argument.getKey());
         ParseResult<PARSED> result = matcher.nextArgument(invocation, argument, parserSet);
         Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapFormat);
 

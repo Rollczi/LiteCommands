@@ -34,7 +34,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     }
 
     public <T> TestExecutor<SENDER> withArg(String name, Class<T> type, BiFunction<Invocation<SENDER>, String, ParseResult<T>> parser) {
-        arguments.add(new SimpleArgument<>(() -> name, WrapFormat.notWrapped(type)));
+        arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type)));
         return this;
     }
 

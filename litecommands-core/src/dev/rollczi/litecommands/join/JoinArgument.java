@@ -16,13 +16,13 @@ public class JoinArgument<EXPECTED> extends SimpleArgument<EXPECTED> {
     private final String separator;
     private final int limit;
 
-    public JoinArgument(Supplier<String> name, WrapFormat<EXPECTED, ?> wrapperFormat, String separator, int limit) {
+    public JoinArgument(String name, WrapFormat<EXPECTED, ?> wrapperFormat, String separator, int limit) {
         super(name, wrapperFormat);
         this.separator = separator;
         this.limit = limit;
     }
 
-    public JoinArgument(Supplier<String> name, WrapFormat<EXPECTED, ?> wrapperFormat) {
+    public JoinArgument(String name, WrapFormat<EXPECTED, ?> wrapperFormat) {
         this(name, wrapperFormat, DEFAULT_SEPARATOR, DEFAULT_LIMIT);
     }
 

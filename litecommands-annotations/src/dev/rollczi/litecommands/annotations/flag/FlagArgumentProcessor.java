@@ -25,7 +25,7 @@ public class FlagArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, 
         AnnotationHolder<Flag, Boolean, ?> flagHolder = (AnnotationHolder<Flag, Boolean, ?>) holder;
         Flag flag = holder.getAnnotation();
 
-        return (Argument<T>) new FlagArgument(() -> flag.value(), flagHolder.getFormat());
+        return (Argument<T>) new FlagArgument(flag.value(), flagHolder.getFormat());
     }
 
 }

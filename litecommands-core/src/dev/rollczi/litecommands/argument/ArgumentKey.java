@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class ArgumentKey {
 
+    public static final String UNIVERSAL_NAMESPACE = Argument.class.getName();
+
     private static final ArgumentKey DEFAULT_UNIVERSAL = of("");
 
     private final String namespace;
@@ -14,6 +16,14 @@ public class ArgumentKey {
         this.key = key;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
     boolean isDefault() {
         return this.key.isEmpty();
     }
@@ -22,16 +32,9 @@ public class ArgumentKey {
         return new ArgumentKey(this.namespace, key);
     }
 
-    public ArgumentKey withUniversalKey() {
-        return withKey("");
-    }
 
     public <A extends Argument<?>> ArgumentKey withNamespace(Class<A> argumentType) {
         return new ArgumentKey(argumentType.getName(), this.key);
-    }
-
-    public ArgumentKey withUniversalNamespace() {
-        return withNamespace(Argument.class);
     }
 
     public static ArgumentKey of(String key) {
@@ -51,7 +54,7 @@ public class ArgumentKey {
     }
 
     public boolean isUniversal() {
-        return this.namespace.equals(Argument.class.getName());
+        return this.namespace.equals(UNIVERSAL_NAMESPACE);
     }
 
     public static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType) {

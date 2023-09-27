@@ -15,14 +15,12 @@ public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, A
     public <T> Argument<T> create(AnnotationHolder<Arg, T, ?> holder) {
         Arg annotation = holder.getAnnotation();
 
-        return new SimpleArgument<>(() -> {
-            String name = annotation.value();
+        String name = annotation.value();
 
-            if (!name.isEmpty()) {
-                return name;
-            }
+        if (name.isEmpty()) {
+            name = holder.getName();
+        }
 
-            return holder.getName();
-        }, holder.getFormat());
+        return new SimpleArgument<>(name, holder.getFormat());
     }
 }

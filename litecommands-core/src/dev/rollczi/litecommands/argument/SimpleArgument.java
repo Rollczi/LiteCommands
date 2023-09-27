@@ -9,18 +9,25 @@ import java.util.function.Supplier;
 
 public class SimpleArgument<T> implements Argument<T> {
 
-    private final Supplier<String> name;
+    private final String name;
     private final WrapFormat<T, ?> wrapperFormat;
     private final Meta meta = Meta.create();
+    private final ArgumentKey key;
 
-    public SimpleArgument(Supplier<String> name, WrapFormat<T, ?> wrapperFormat) {
+    public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat) {
         this.name = name;
         this.wrapperFormat = wrapperFormat;
+        this.key = ArgumentKey.typed(this.getClass(), this.getName());
+    }
+
+    @Deprecated
+    public SimpleArgument(Supplier<String> name, WrapFormat<T, ?> wrapperFormat) {
+        this(name.get(), wrapperFormat);
     }
 
     @Override
     public String getName() {
-        return name.get();
+        return name;
     }
 
     @Override
@@ -31,6 +38,11 @@ public class SimpleArgument<T> implements Argument<T> {
     @Override
     public Meta meta() {
         return meta;
+    }
+
+    @Override
+    public ArgumentKey getKey() {
+        return key;
     }
 
     @Override
