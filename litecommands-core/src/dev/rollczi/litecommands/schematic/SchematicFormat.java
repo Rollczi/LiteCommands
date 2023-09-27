@@ -4,14 +4,12 @@ public class SchematicFormat {
 
     private final String prefix;
     private final String suffix;
-    private final String commandFormat;
     private final String argumentFormat;
     private final String optionalArgumentFormat;
 
-    SchematicFormat(String prefix, String suffix, String commandFormat, String argumentFormat, String optionalArgumentFormat) {
+    SchematicFormat(String prefix, String suffix, String argumentFormat, String optionalArgumentFormat) {
         this.prefix = prefix;
         this.suffix = suffix;
-        this.commandFormat = commandFormat;
         this.argumentFormat = argumentFormat;
         this.optionalArgumentFormat = optionalArgumentFormat;
     }
@@ -24,10 +22,6 @@ public class SchematicFormat {
         return suffix;
     }
 
-    public String commandFormat() {
-        return commandFormat;
-    }
-
     public String argumentFormat() {
         return argumentFormat;
     }
@@ -37,19 +31,19 @@ public class SchematicFormat {
     }
 
     public static SchematicFormat of(String prefix, String suffix, String commandFormat, String argumentFormat, String optionalArgumentFormat) {
-        return new SchematicFormat(prefix, suffix, commandFormat, argumentFormat, optionalArgumentFormat);
+        return new SchematicFormat(prefix, suffix, argumentFormat, optionalArgumentFormat);
     }
 
     public static SchematicFormat angleBrackets() {
-        return new SchematicFormat("/", "", "%s", "<%s>", "[%s]");
+        return new SchematicFormat("/", "", "<%s>", "[%s]");
     }
 
     public static SchematicFormat squareBrackets() {
-        return new SchematicFormat("/", "", "%s", "[%s]", "<%s>");
+        return new SchematicFormat("/", "", "[%s]", "<%s>");
     }
 
     public static SchematicFormat parentheses() {
-        return new SchematicFormat("/", "", "%s", "(%s)", "(%s)");
+        return new SchematicFormat("/", "", "(%s)", "(%s)");
     }
 
     public static Builder builder() {
@@ -60,7 +54,6 @@ public class SchematicFormat {
 
         private String prefix = "/";
         private String suffix = "";
-        private String command = "%s";
         private String argument = "<%s>";
         private String optionalArgument = "[%s]";
 
@@ -71,11 +64,6 @@ public class SchematicFormat {
 
         public Builder suffix(String suffix) {
             this.suffix = suffix;
-            return this;
-        }
-
-        public Builder command(String command) {
-            this.command = command;
             return this;
         }
 
@@ -90,7 +78,7 @@ public class SchematicFormat {
         }
 
         public SchematicFormat build() {
-            return new SchematicFormat(prefix, suffix, command, argument, optionalArgument);
+            return new SchematicFormat(prefix, suffix, argument, optionalArgument);
         }
 
     }
