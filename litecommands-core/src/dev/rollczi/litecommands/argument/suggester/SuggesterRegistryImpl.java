@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.argument.suggester;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
 
     private class BucketByArgument<PARSED> {
 
-        private Suggester<SENDER, PARSED> universalBucket;
+        private Suggester<SENDER, PARSED> universalTypedBucket;
         private final Map<ArgumentKey, Suggester<SENDER, PARSED>> buckets = new HashMap<>();
 
         private BucketByArgument() {
@@ -47,7 +48,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
 
         void registerParser(ArgumentKey key, Suggester<SENDER, PARSED> parser) {
             if (key.isUniversal()) {
-                this.universalBucket = parser;
+                this.universalTypedBucket = parser;
                 return;
             }
 
@@ -61,7 +62,13 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
                 return suggester;
             }
 
-            return universalBucket;
+            Suggester<SENDER, PARSED> universalNamedBucket = buckets.get(key.withKey(StringUtil.EMPTY));
+
+            if (universalNamedBucket != null) {
+                return universalNamedBucket;
+            }
+
+            return universalTypedBucket;
         }
 
     }

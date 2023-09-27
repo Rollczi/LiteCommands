@@ -22,8 +22,16 @@ public class ArgumentKey {
         return new ArgumentKey(this.namespace, key);
     }
 
-    public  <A extends Argument<?>>  ArgumentKey withNamespace(Class<A> argumentType) {
+    public ArgumentKey withUniversalKey() {
+        return withKey("");
+    }
+
+    public <A extends Argument<?>> ArgumentKey withNamespace(Class<A> argumentType) {
         return new ArgumentKey(argumentType.getName(), this.key);
+    }
+
+    public ArgumentKey withUniversalNamespace() {
+        return withNamespace(Argument.class);
     }
 
     public static ArgumentKey of(String key) {

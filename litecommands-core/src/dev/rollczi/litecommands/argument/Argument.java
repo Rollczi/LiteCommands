@@ -20,7 +20,7 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
     }
 
     default ArgumentKey toKey() {
-        return ArgumentKey.typed(this.getClass());
+        return ArgumentKey.typed(this.getClass(), this.getName());
     }
 
     static <T> Argument<T> of(String name, WrapFormat<T, ?> format) {

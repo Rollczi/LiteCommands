@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands;
+package dev.rollczi.litecommands.programmatic;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.SimpleArgument;

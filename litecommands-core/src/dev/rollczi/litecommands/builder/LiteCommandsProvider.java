@@ -5,7 +5,6 @@ import dev.rollczi.litecommands.command.builder.CommandBuilderProvider;
 
 import java.util.List;
 
-@Deprecated
 public interface LiteCommandsProvider<SENDER> {
 
     List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder);

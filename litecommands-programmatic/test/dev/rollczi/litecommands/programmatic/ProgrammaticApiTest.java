@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands;
+package dev.rollczi.litecommands.programmatic;
 
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.message.LiteMessages;

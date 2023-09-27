@@ -3,6 +3,8 @@ package dev.rollczi.litecommands.argument.parser;
 import dev.rollczi.litecommands.shared.FailedReason;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class ParseResult<EXPECTED> {
 
     private final @Nullable EXPECTED successfulResult;
@@ -61,4 +63,24 @@ public class ParseResult<EXPECTED> {
         return new ParseResult<>(null, FailedReason.empty());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ParseResult<?> that = (ParseResult<?>) o;
+        return Objects.equals(successfulResult, that.successfulResult) && Objects.equals(failedResult, that.failedResult);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(successfulResult, failedResult);
+    }
+
+    @Override
+    public String toString() {
+        return "ParseResult{" +
+            "successfulResult=" + successfulResult +
+            ", failedResult=" + failedResult +
+            '}';
+    }
 }
