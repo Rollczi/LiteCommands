@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.join.JoinArgument;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
@@ -11,8 +12,8 @@ import net.kyori.adventure.text.serializer.ComponentSerializer;
 public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SENDER> {
 
     private final AdventureAudienceProvider<SENDER> adventureAudienceProvider;
-    private boolean supportsMiniMessage = true;
-    private boolean supportsLegacyColor = true;
+    private boolean supportsMiniMessage = false;
+    private boolean supportsLegacyColor = false;
     private ComponentSerializer<Component, ? extends Component, String> componentSerializer;
     private boolean colorizeArgument = false;
 
@@ -56,15 +57,25 @@ public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SEN
                 : PlainComponentSerializerFactory.create(supportsLegacyColor);
         }
 
+        AdventureColoredComponentArgument<SENDER> colored = new AdventureColoredComponentArgument<>(componentSerializer);
+        AdventureComponentArgument<SENDER> raw = new AdventureComponentArgument<>();
+        AdventureJoinComponentResolver<SENDER> joinColor = AdventureJoinComponentResolver.colored(componentSerializer);
+        AdventureJoinComponentResolver<SENDER> joinRaw = AdventureJoinComponentResolver.raw();
+
         builder
-            .argument(Component.class, colorizeArgument ? new AdventureColoredComponentArgument<>(componentSerializer) : new AdventureComponentArgument<>())
-            .argument(Component.class, ArgumentKey.of("raw"), new AdventureComponentArgument<>())
-            .argument(Component.class, ArgumentKey.of("color"), new AdventureColoredComponentArgument<>(componentSerializer))
+            .argument(Component.class, colorizeArgument ? colored : raw)
+            .argument(Component.class, ArgumentKey.of("raw"), raw)
+            .argument(Component.class, ArgumentKey.of("color"), colored)
+
+            .argument(Component.class, JoinArgument.KEY, colorizeArgument ? joinColor : joinRaw)
+            .argument(Component.class, JoinArgument.KEY.withKey("raw"), joinRaw)
+            .argument(Component.class, JoinArgument.KEY.withKey("color"), joinColor)
 
             .context(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 
             .result(Component.class, new AdventureComponentHandler<>(adventureAudienceProvider))
             .result(String.class, new StringHandler<>(adventureAudienceProvider, componentSerializer))
+            .bind(ComponentSerializer.class, () -> componentSerializer)
             ;
     }
 }

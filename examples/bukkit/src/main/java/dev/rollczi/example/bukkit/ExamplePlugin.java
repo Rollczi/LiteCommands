@@ -11,13 +11,12 @@ import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
-import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
-import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
+import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
+import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -59,15 +58,14 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Arguments @Arg
             .argument(GameMode.class, new GameModeArgument())
-            .argument(Player.class, new BukkitPlayerArgument<>(this.getServer(), text -> "&cPlayer not found!"))
 
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggester(String.class, SuggestionResult.of("name", "argument"))
             .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
             .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
-            // Context resolver for @Context Player
-            .context(Player.class, new BukkitOnlyPlayerContextual<>("&cOnly player can execute this command!"))
+            .message(LiteBukkitMessages.PLAYER_ONLY, "&cOnly player can execute this command!")
+            .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> "&cPlayer &7" + input + " &cnot found!")
 
             // Handlers for missing permissions and invalid usage
             .missingPermission(new ExampleMissingPermissionsHandler())
@@ -75,13 +73,6 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Schematic generator is used to generate schematic for command, for example when you run invalid command.
             .schematicGenerator(SchematicFormat.angleBrackets())
-
-            // register additional Kyori Adventure features for rgb, hex, gradient, click, hover, etc.
-            // more: https://docs.advntr.dev/minimessage/format.html
-            .extension(new LiteAdventureExtension<>(), extension -> extension
-                .miniMessage(true) // enable mini message format (<red>, <gradient:red:blue>, <#ff0000>, etc.)
-                .legacyColor(true) // enable legacy color format (&c, &a, etc.)
-            )
 
             .build();
     }

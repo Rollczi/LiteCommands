@@ -1,25 +1,25 @@
-package dev.rollczi.litecommands.bukkit.tools;
+package dev.rollczi.litecommands.bukkit.argument;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
+import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.function.Function;
-
-public class BukkitPlayerArgument<MESSAGE> extends ArgumentResolver<CommandSender, Player> {
+public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
 
     private final Server server;
-    private final Function<String, MESSAGE> playerNotFoundMessage;
+    private final MessageRegistry messageRegistry;
 
-    public BukkitPlayerArgument(Server server, Function<String, MESSAGE> playerNotFoundMessage) {
+    public PlayerArgument(Server server, MessageRegistry messageRegistry) {
         this.server = server;
-        this.playerNotFoundMessage = playerNotFoundMessage;
+        this.messageRegistry = messageRegistry;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BukkitPlayerArgument<MESSAGE> extends ArgumentResolver<CommandSende
             return ParseResult.success(player);
         }
 
-        return ParseResult.failure(playerNotFoundMessage);
+        return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.PLAYER_NOT_FOUND, argument));
     }
 
     @Override

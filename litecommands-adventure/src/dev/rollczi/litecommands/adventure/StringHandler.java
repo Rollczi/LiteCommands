@@ -18,7 +18,7 @@ class StringHandler<SENDER> implements ResultHandler<SENDER, String> {
 
     @Override
     public void handle(Invocation<SENDER> invocation, String result, ResultHandlerChain<SENDER> chain) {
-        this.adventureAudienceProvider.sender(invocation.sender()).sendMessage(this.kyoriComponentSerializer.deserialize(result));
+        this.adventureAudienceProvider.sender(invocation).sendMessage(this.kyoriComponentSerializer.deserialize(result));
     }
 
 }

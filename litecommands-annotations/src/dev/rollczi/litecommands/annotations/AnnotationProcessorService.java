@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.argument.ArgArgumentProcessor;
 import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
+import dev.rollczi.litecommands.annotations.bind.BindRequirementProcessor;
 import dev.rollczi.litecommands.annotations.command.CommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.command.RootCommandAnnotationProcessor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -49,7 +50,8 @@ public class AnnotationProcessorService<SENDER> {
             .register(new FlagArgumentProcessor<>())
             .register(new ArgArgumentProcessor<>())
             .register(new JoinArgumentProcessor<>())
-            .register(new ContextRequirementProcessor<>());
+            .register(new ContextRequirementProcessor<>())
+            .register(new BindRequirementProcessor<>());
     }
 
 }

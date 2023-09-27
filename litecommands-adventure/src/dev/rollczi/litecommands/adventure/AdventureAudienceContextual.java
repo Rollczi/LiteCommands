@@ -1,11 +1,13 @@
 package dev.rollczi.litecommands.adventure;
 
+import dev.rollczi.litecommands.context.ContextProvider;
+import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.context.LegacyContextProvider;
 import dev.rollczi.litecommands.invocation.Invocation;
 import net.kyori.adventure.audience.Audience;
 import panda.std.Result;
 
-class AdventureAudienceContextual<SENDER> implements LegacyContextProvider<SENDER, Audience> {
+class AdventureAudienceContextual<SENDER> implements ContextProvider<SENDER, Audience> {
 
     private final AdventureAudienceProvider<SENDER> adventureAudienceProvider;
 
@@ -14,9 +16,8 @@ class AdventureAudienceContextual<SENDER> implements LegacyContextProvider<SENDE
     }
 
     @Override
-    public Result<Audience, Object> provideLegacy(Invocation<SENDER> invocation) {
-        return Result.supplyThrowing(IllegalArgumentException.class, () -> this.adventureAudienceProvider.sender(invocation.sender()))
-            .mapErr(Throwable::getMessage);
+    public ContextResult<Audience> provide(Invocation<SENDER> invocation) {
+        return ContextResult.ok(() -> this.adventureAudienceProvider.sender(invocation));
     }
 
 }

@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 
@@ -14,6 +15,7 @@ public class CommandExecutorBuilder<SENDER> {
     private final CommandRoute<SENDER> parent;
     private final List<Argument<?>> arguments = new ArrayList<>();
     private final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
+    private final List<BindRequirement<?>> bindRequirements = new ArrayList<>();
     private Consumer<LiteContext<SENDER>> executor;
 
     public CommandExecutorBuilder(CommandRoute<SENDER> parent) {
@@ -44,13 +46,18 @@ public class CommandExecutorBuilder<SENDER> {
         return this;
     }
 
+    public CommandExecutorBuilder<SENDER> bindRequirements(List<BindRequirement<?>> bindRequirements) {
+        this.bindRequirements.addAll(bindRequirements);
+        return this;
+    }
+
     public CommandExecutorBuilder<SENDER> executor(Consumer<LiteContext<SENDER>> executor) {
         this.executor = executor;
         return this;
     }
 
     public CommandExecutor<SENDER> build() {
-        return new SimpleCommandExecutor<>(parent, executor, arguments, contextRequirements);
+        return new SimpleCommandExecutor<>(parent, executor, arguments, contextRequirements, bindRequirements);
     }
 
     private static class SimpleCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
@@ -59,8 +66,8 @@ public class CommandExecutorBuilder<SENDER> {
         private final List<ContextRequirement<?>> contextRequirements;
         private final Consumer<LiteContext<SENDER>> executor;
 
-        private SimpleCommandExecutor(CommandRoute<SENDER> parent, Consumer<LiteContext<SENDER>> executor, List<Argument<?>> arguments, List<ContextRequirement<?>> contextRequirements) {
-            super(parent, arguments, contextRequirements);
+        private SimpleCommandExecutor(CommandRoute<SENDER> parent, Consumer<LiteContext<SENDER>> executor, List<Argument<?>> arguments, List<ContextRequirement<?>> contextRequirements, List<BindRequirement<?>> bindRequirements) {
+            super(parent, arguments, contextRequirements, bindRequirements);
             this.arguments = arguments;
             this.contextRequirements = contextRequirements;
             this.executor = executor;

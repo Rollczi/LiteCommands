@@ -31,7 +31,7 @@ class BukkitCommand extends org.bukkit.command.Command {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         ParseableInput<?> input = ParseableInput.raw(args);
-        PlatformSender platformSender = new BukkitSender(sender);
+        PlatformSender platformSender = new BukkitPlatformSender(sender);
 
         this.invocationHook.execute(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input);
         return true;
@@ -40,7 +40,7 @@ class BukkitCommand extends org.bukkit.command.Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         SuggestionInput<?> input = SuggestionInput.raw(args);
-        PlatformSender platformSender = new BukkitSender(sender);
+        PlatformSender platformSender = new BukkitPlatformSender(sender);
 
         return this.suggestionHook.suggest(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input)
             .asMultiLevelList();
@@ -52,7 +52,7 @@ class BukkitCommand extends org.bukkit.command.Command {
             return super.testPermissionSilent(target);
         }
 
-        MissingPermissions check = MissingPermissions.check(new BukkitSender(target), commandRoute);
+        MissingPermissions check = MissingPermissions.check(new BukkitPlatformSender(target), commandRoute);
 
         return check.isPermitted();
     }

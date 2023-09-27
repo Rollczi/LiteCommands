@@ -20,12 +20,12 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     private final Object result;
 
     public TestExecutor(CommandRoute<SENDER> parent, Object result) {
-        super(parent, Collections.emptyList(), Collections.emptyList());
+        super(parent, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         this.result = result;
     }
 
     public TestExecutor(CommandRoute<SENDER> parent) {
-        super(parent, Collections.emptyList(), Collections.emptyList());
+        super(parent, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         this.result = null;
     }
 

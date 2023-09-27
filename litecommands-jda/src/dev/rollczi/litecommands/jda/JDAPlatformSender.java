@@ -1,9 +1,11 @@
 package dev.rollczi.litecommands.jda;
 
+import dev.rollczi.litecommands.identifier.Identifier;
+import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import net.dv8tion.jda.api.entities.User;
 
-class JDAPlatformSender implements PlatformSender {
+class JDAPlatformSender extends AbstractPlatformSender {
 
     private final User user;
 
@@ -14,6 +16,11 @@ class JDAPlatformSender implements PlatformSender {
     @Override
     public String getName() {
         return user.getName();
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return Identifier.of(user.getId(), user.getIdLong());
     }
 
     @Override

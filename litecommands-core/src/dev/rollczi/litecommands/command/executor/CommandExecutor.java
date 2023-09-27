@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.command.executor;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandNode;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.scope.Scopeable;
@@ -17,6 +18,8 @@ public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER> 
 
     List<ContextRequirement<?>> getContextRequirements();
 
+    List<BindRequirement<?>> getBindRequirements();
+
     CommandExecutorMatchResult match(RequirementsResult<SENDER> result);
 
     @Override
@@ -27,5 +30,4 @@ public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER> 
     static <SENDER> CommandExecutorBuilder<SENDER> builder(CommandRoute<SENDER> parent) {
         return new CommandExecutorBuilder<>(parent);
     }
-
 }

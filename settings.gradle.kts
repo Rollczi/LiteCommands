@@ -9,18 +9,18 @@ include(":litecommands-unit")
 
 // extensions
 include(":litecommands-adventure")
+include(":litecommands-adventure-platform")
 
 // platforms
 include(":litecommands-velocity", JavaVersion.VERSION_11)
 include(":litecommands-bungee")
 include(":litecommands-bukkit")
-include(":litecommands-bukkit-adventure-platform")
-include(":litecommands-paper", JavaVersion.VERSION_17)
 include(":litecommands-minestom", JavaVersion.VERSION_17)
 include("litecommands-jda", JavaVersion.VERSION_17)
 
 // examples
 include(":examples:bukkit")
+include(":examples:bukkit-adventure-platform")
 include(":examples:velocity", JavaVersion.VERSION_11)
 
 fun include(projectPath: String, version: JavaVersion) {

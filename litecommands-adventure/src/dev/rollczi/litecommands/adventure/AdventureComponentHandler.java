@@ -15,7 +15,7 @@ class AdventureComponentHandler<SENDER> implements ResultHandler<SENDER, Compone
 
     @Override
     public void handle(Invocation<SENDER> invocation, Component result, ResultHandlerChain<SENDER> chain) {
-        this.adventureAudienceProvider.sender(invocation.sender()).sendMessage(result);
+        this.adventureAudienceProvider.sender(invocation).sendMessage(result);
     }
 
 }

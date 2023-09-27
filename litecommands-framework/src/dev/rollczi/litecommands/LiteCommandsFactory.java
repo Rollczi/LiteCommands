@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
 import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.MissingPermissions;
@@ -51,7 +52,7 @@ public final class LiteCommandsFactory {
                 .argument(Short.class, NumberArgumentResolver.ofShort())
                 .argument(short.class, NumberArgumentResolver.ofShort())
 
-                .argument(String.class, JoinArgument.KEY, new JoinArgumentResolver<>())
+                .argument(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
                 .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
 

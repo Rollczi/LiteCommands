@@ -158,6 +158,9 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     <T, CONTEXT>
     LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message);
 
+    <T, CONTEXT>
+    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, T message);
+
     LiteCommandsBuilder<SENDER, SETTINGS, B> editorGlobal(Editor<SENDER> editor);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> editor(Scope scope, Editor<SENDER> editor);

@@ -26,7 +26,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
         MethodDefinition definition,
         Meta meta
     ) {
-        super(parent, definition.getArguments(), definition.getContextRequirements());
+        super(parent, definition.getArguments(), definition.getContextRequirements(), definition.getBindRequirements());
         this.method = method;
         this.instance = instance;
         this.definition = definition;

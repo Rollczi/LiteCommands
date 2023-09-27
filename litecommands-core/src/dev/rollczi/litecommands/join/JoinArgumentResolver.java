@@ -12,14 +12,14 @@ import dev.rollczi.litecommands.range.Range;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JoinArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER, String, JoinArgument<String>> {
+public abstract class JoinArgumentResolver<SENDER, T> extends TypedArgumentResolver<SENDER, T, JoinArgument<T>> {
 
     public JoinArgumentResolver() {
         super(JoinArgument.class);
     }
 
     @Override
-    public ParseResult<String> parseTyped(Invocation<SENDER> invocation, JoinArgument<String> argument, RawInput rawInput) {
+    public ParseResult<T> parseTyped(Invocation<SENDER> invocation, JoinArgument<T> argument, RawInput rawInput) {
         int limit = argument.getLimit();
         List<String> values = new ArrayList<>();
 
@@ -29,19 +29,22 @@ public class JoinArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER, 
 
         while (limit > 0 && rawInput.hasNext()) {
             values.add(rawInput.next());
+            limit--;
         }
 
-        return ParseResult.success(String.join(argument.getSeparator(), values));
+        return ParseResult.success(this.join(argument, values));
     }
 
+    protected abstract T join(JoinArgument<T> argument, List<String> values);
+
     @Override
-    public Range getTypedRange(JoinArgument<String> argument) {
+    public Range getTypedRange(JoinArgument<T> argument) {
         return Range.range(1, argument.getLimit());
     }
 
     @Override
-    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, JoinArgument<String> argument, SuggestionContext context) {
-        return SuggestionResult.of("Simple text...");
+    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, JoinArgument<T> argument, SuggestionContext context) {
+        return SuggestionResult.of("text...");
     }
 
 }

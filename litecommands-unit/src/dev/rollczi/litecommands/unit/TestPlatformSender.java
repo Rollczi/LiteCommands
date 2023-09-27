@@ -1,12 +1,15 @@
 package dev.rollczi.litecommands.unit;
 
+import dev.rollczi.litecommands.identifier.Identifier;
+import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
-public class TestPlatformSender implements PlatformSender {
+public class TestPlatformSender extends AbstractPlatformSender {
 
     private final List<String> permissions = new ArrayList<>();
     private boolean permittedAll = false;
@@ -14,6 +17,11 @@ public class TestPlatformSender implements PlatformSender {
     @Override
     public String getName() {
         return "TestSender";
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return Identifier.of(UUID.nameUUIDFromBytes(this.getName().getBytes()));
     }
 
     @Override

@@ -248,6 +248,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    public <T, CONTEXT> LiteCommandsBuilder<SENDER, C, B> message(MessageKey<CONTEXT> key, T message) {
+        this.messageRegistry.register(key, context -> message);
+        return this;
+    }
+
+    @Override
     public LiteCommandsBuilder<SENDER, C, B> editorGlobal(Editor<SENDER> editor) {
         this.editorService.editorGlobal(editor);
         return this;
@@ -371,7 +377,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 

@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
+import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPollType;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
@@ -29,6 +30,7 @@ public class LiteCommand<SENDER> {
     protected Consumer<LiteContext<SENDER>> executor = liteContext -> {};
     protected final List<Argument<?>> arguments = new ArrayList<>();
     protected final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
+    protected final List<BindRequirement<?>> bindRequirements = new ArrayList<>();
 
     protected final List<LiteCommand<SENDER>> subCommands = new ArrayList<>();
 
@@ -80,6 +82,11 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
+    public LiteCommand<SENDER> bind(String name, Class<?> type) {
+        this.bindRequirements.add(BindRequirement.of(() -> name, type));
+        return this;
+    }
+
     public LiteCommand<SENDER> permissions(String... permissions) {
         this.meta.listEditor(Meta.PERMISSIONS).addAll(permissions).apply();
         return this;
@@ -118,6 +125,7 @@ public class LiteCommand<SENDER> {
                 .executor(liteContext -> execute(liteContext))
                 .arguments(arguments)
                 .contextRequirements(contextRequirements)
+                .bindRequirements(bindRequirements)
                 .build()
             );
 

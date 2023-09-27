@@ -5,9 +5,11 @@ import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
+import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
@@ -36,6 +38,7 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.Nullable;
+import panda.std.Result;
 
 import java.util.ListIterator;
 import java.util.concurrent.CompletableFuture;
@@ -54,8 +57,9 @@ public class CommandExecuteService<SENDER> {
     private final ParserRegistry<SENDER> parserRegistry;
     private final ContextRegistry<SENDER> contextRegistry;
     private final WrapperRegistry wrapperRegistry;
+    private final BindRegistry bindRegistry;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.exceptionHandleService = exceptionHandleService;
@@ -64,6 +68,7 @@ public class CommandExecuteService<SENDER> {
         this.parserRegistry = parserRegistry;
         this.contextRegistry = contextRegistry;
         this.wrapperRegistry = wrapperRegistry;
+        this.bindRegistry = bindRegistry;
     }
 
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
@@ -222,6 +227,10 @@ public class CommandExecuteService<SENDER> {
             builder.link(new ScheduledRequirement<>(contextRequirement, () -> matchContext(contextRequirement, invocation)));
         }
 
+        for (BindRequirement<?> bindRequirement : executor.getBindRequirements()) {
+            builder.link(new ScheduledRequirement<>(bindRequirement, () -> matchBind(bindRequirement, invocation)));
+        }
+
         return builder.build((scheduledRequirement, requirementResult) -> {
                 if (requirementResult.isFailure()) {
                     throw new ScheduledChainException(requirementResult.getError());
@@ -309,6 +318,18 @@ public class CommandExecuteService<SENDER> {
         }
 
         return RequirementResult.failure(result.getError());
+    }
+
+    private <PARSED> RequirementResult<?> matchBind(BindRequirement<PARSED> bindRequirement, Invocation<SENDER> invocation) {
+        WrapFormat<PARSED, ?> wrapFormat = bindRequirement.getWrapperFormat();
+        Result<PARSED, Object> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
+        Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapFormat);
+
+        if (instance.isOk()) {
+            return RequirementResult.success(wrapper.create(instance.get(), wrapFormat));
+        }
+
+        return RequirementResult.failure(instance.getError());
     }
 
 }

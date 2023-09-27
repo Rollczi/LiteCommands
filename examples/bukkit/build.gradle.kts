@@ -14,10 +14,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
 
     // implementation("dev.rollczi.litecommands:bukkit:2.8.6") // <-- uncomment in your project
-    // implementation("dev.rollczi.litecommands:framework:2.8.6") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
-    implementation(project(":litecommands-framework")) // don't use this line in your build.gradle
-    implementation(project(":litecommands-adventure"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")

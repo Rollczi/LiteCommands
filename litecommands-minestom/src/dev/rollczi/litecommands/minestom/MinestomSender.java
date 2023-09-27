@@ -1,11 +1,14 @@
 package dev.rollczi.litecommands.minestom;
 
+import dev.rollczi.litecommands.identifier.Identifier;
+import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
+import net.minestom.server.command.ServerSender;
 import net.minestom.server.entity.Player;
 
-class MinestomSender implements PlatformSender {
+class MinestomSender extends AbstractPlatformSender {
 
     private final CommandSender handle;
 
@@ -14,9 +17,18 @@ class MinestomSender implements PlatformSender {
     }
 
     @Override
+    public boolean hasPermission(String permission) {
+        return this.handle.hasPermission(permission);
+    }
+
+    @Override
     public String getName() {
         if (this.handle instanceof ConsoleSender) {
             return "CONSOLE";
+        }
+
+        if (this.handle instanceof ServerSender) {
+            return "SERVER*";
         }
 
         if (this.handle instanceof Player player) {
@@ -27,8 +39,12 @@ class MinestomSender implements PlatformSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return this.handle.hasPermission(permission);
+    public Identifier getIdentifier() {
+        if (this.handle instanceof Player player) {
+            return Identifier.of(player.getUuid());
+        }
+
+        return Identifier.CONSOLE;
     }
 
 }

@@ -2,9 +2,12 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
-import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
-import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
+import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
+import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
+import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,23 +24,31 @@ public final class LiteCommandsBukkit {
         return builder(JavaPlugin.getProvidingPlugin(LiteCommandsBukkit.class), Bukkit.getServer());
     }
 
+    public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin) {
+        return builder(plugin, Bukkit.getServer());
+    }
+
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin, Server server) {
         return builder(plugin, server, new LiteBukkitSettings(server));
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin, Server server, LiteBukkitSettings settings) {
-        return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings))
-            .bind(Server.class, () -> server)
-            .bind(BukkitScheduler.class, () -> server.getScheduler())
-            .scheduler(new BukkitSchedulerImpl(server.getScheduler(), plugin))
+        return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings)).selfProcessor((builder, pattern) -> {
+            MessageRegistry messageRegistry = pattern.getMessageRegistry();
 
-            .argument(Player.class, new BukkitPlayerArgument<>(server, name -> "Player " + name + " is not online!")) // TODO WIKI GUIDE links
+            builder
+                .bind(Server.class, () -> server)
+                .bind(BukkitScheduler.class, () -> server.getScheduler())
 
-            .context(Player.class, new BukkitOnlyPlayerContextual<>("This command is only for players!")) //TODO
+                .scheduler(new BukkitSchedulerImpl(server.getScheduler(), plugin))
 
-            .result(String.class, new StringHandler())
+                .argument(Location.class, new LocationArgument(messageRegistry))
+                .argument(Player.class, new PlayerArgument(server, messageRegistry))
 
-            ;
+                .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
+
+                .result(String.class, new StringHandler());
+        });
     }
 
 }
