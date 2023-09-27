@@ -17,5 +17,5 @@ litecommandsUnit {
 }
 
 litecommandsPublish {
-    artifactId = "litecommands-programmatic"
+    artifactId = "litecommands-framework"
 }
