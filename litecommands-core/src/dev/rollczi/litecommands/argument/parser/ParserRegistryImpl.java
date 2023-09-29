@@ -24,7 +24,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
     @SuppressWarnings("unchecked")
     public <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parserType, ArgumentKey key) {
         BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) buckets.computeIfAbsent(parserType, k -> new BucketByArgument<>());
-        ParserSetImpl<SENDER, PARSED> parserSet = bucket.getParserSet(parserType, key);
+        ParserSetImpl<SENDER, PARSED> parserSet = bucket.getParserSet(key);
 
         if (parserSet == null) {
             return new ParserSetImpl<>(parserType);
@@ -52,14 +52,14 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         @Override
-        ParserSetImpl<SENDER, PARSED> getParserSet(Class<PARSED> parsedType, ArgumentKey key) {
-            ParserSetImpl<SENDER, PARSED> bucket = super.getParserSet(parsedType, key);
+        ParserSetImpl<SENDER, PARSED> getParserSet(ArgumentKey key) {
+            ParserSetImpl<SENDER, PARSED> bucket = super.getParserSet(key);
 
             if (bucket != null) {
                 return bucket;
             }
 
-            return universalTypedBucket.getParserSet(parsedType, key);
+            return universalTypedBucket.getParserSet( key);
         }
 
     }
@@ -79,7 +79,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
             bucket.registerParser(parser);
         }
 
-        ParserSetImpl<SENDER, PARSED> getParserSet(Class<PARSED> parsedType, ArgumentKey key) {
+        ParserSetImpl<SENDER, PARSED> getParserSet(ArgumentKey key) {
             String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
             ParserSetImpl<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);
 

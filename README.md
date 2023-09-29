@@ -34,40 +34,34 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>litecommands-core</artifactId>
-    <version>3.0.0-BETA-pre14</version>
+    <version>3.0.0-BETA-pre15</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre14'
+implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre15'
 ```
 
 ### First Simple Command
 
-`/helloworld <text...>`  
-`/helloworld other-solution <text...>`  
-`/helloworld subcommand <text>`
+`/hello-world <name> <amount>`  
+`/hello-world message <text...>`  
 
 ```java
 
-@Command(name = "helloworld")
+@Command(name = "hello-world")
 @Permission("dev.rollczi.helloworld")
 public class HelloWorldCommand {
 
     @Execute
-    @Min(1)
-    public void command(LiteSender sender, @Args String[] args) {
-        sender.sendMessage(String.join(" ", args));
+    public void command(@Context CommandSender sender, @Arg String name, @Arg int amount) {
+        for (int i = 0; i < amount; i++) {
+            sender.sendMessage("Hello " + name);
+        }
     }
-
-    @Execute(name = "other-solution")
-    @Min(1)
-    public void otherSolution(LiteSender sender, @Joiner String text) {
-        sender.sendMessage(text);
-    }
-
-    @Execute(name = "subcommand")
-    public void subcommand(LiteSender sender, @Arg String text) {
+    
+    @Execute(name = "message")
+    public void subcommand(@Context CommandSender sender, @Join String text) {
         sender.sendMessage(text);
     }
 
@@ -89,14 +83,14 @@ Add this to your dependencies if you want to use ready-made implementation for v
 ```xml
 
 <dependency>
-    <groupId>dev.rollczi.litecommands</groupId>
-    <artifactId>velocity</artifactId>
-    <version>2.8.8</version>
+    <groupId>dev.rollczi</groupId>
+    <artifactId>litecommands-velocity</artifactId>
+    <version>3.0.0-BETA-pre15</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:2.8.8'
+implementation 'dev.rollczi:litecommands-velocity:3.0.0-BETA-pre15'
 ```
 
 #### Add -parameters to your compiler to use all features of LiteCommands

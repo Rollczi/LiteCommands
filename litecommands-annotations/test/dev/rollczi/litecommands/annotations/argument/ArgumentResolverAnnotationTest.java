@@ -1,11 +1,9 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.command.CommandRoute;
@@ -19,9 +17,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ArgumentResolverAnnotationTest extends LiteTestSpec {
-
-    static LiteConfig config = builder -> builder
-            .argumentSuggester(String.class, SuggestionResult.of("suggestion"));
 
     @Command(name = "test")
     static class TestCommand {
@@ -49,7 +44,7 @@ class ArgumentResolverAnnotationTest extends LiteTestSpec {
         Argument<?> third = requirements.get(2);
 
         assertEquals("arg0", first.getName());
-        assertEquals("arg1", second.getName()); //  @ArgumentResolverInfo deprecated
+        assertEquals("arg1", second.getName());
         assertEquals("other", third.getName());
     }
 

@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.argument.suggester;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.shared.BiHashMap;
+import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.HashMap;
@@ -17,7 +19,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
     public <T> void registerSuggester(Class<T> type, ArgumentKey key, Suggester<SENDER, T> suggester) {
         BucketByArgument<T> bucket = (BucketByArgument<T>) buckets.computeIfAbsent(type, k -> new BucketByArgument<>());
 
-        bucket.registerParser(key, suggester);
+        bucket.registerSuggester(type, key, suggester);
     }
 
     @Override
@@ -38,39 +40,60 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
         return suggester;
     }
 
-    private class BucketByArgument<PARSED> {
+    private class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
 
-        private Suggester<SENDER, PARSED> universalTypedBucket;
-        private final Map<ArgumentKey, Suggester<SENDER, PARSED>> buckets = new HashMap<>();
+        private final BucketByArgumentUniversal<PARSED> universalTypedBucket = new BucketByArgumentUniversal<>(true);
 
         private BucketByArgument() {
+            super(false);
         }
 
-        void registerParser(ArgumentKey key, Suggester<SENDER, PARSED> parser) {
+        @Override
+        void registerSuggester(Class<PARSED> parsedType, ArgumentKey key, Suggester<SENDER, PARSED> parser) {
             if (key.isUniversal()) {
-                this.universalTypedBucket = parser;
+                this.universalTypedBucket.registerSuggester(parsedType, key, parser);
                 return;
             }
 
-            buckets.put(key, parser);
+            super.registerSuggester(parsedType, key, parser);
+        }
+
+        @Override
+        Suggester<SENDER, PARSED> getSuggester(ArgumentKey key) {
+            Suggester<SENDER, PARSED> bucket = super.getSuggester(key);
+
+            if (bucket != null) {
+                return bucket;
+            }
+
+            return universalTypedBucket.getSuggester(key);
+        }
+
+    }
+
+    private class BucketByArgumentUniversal<PARSED> {
+
+        private final BiMap<String, String, Suggester<SENDER, PARSED>> buckets = new BiHashMap<>();
+        private final boolean ignoreNamespace;
+
+        private BucketByArgumentUniversal(boolean ignoreNamespace) {
+            this.ignoreNamespace = ignoreNamespace;
+        }
+
+        void registerSuggester(Class<PARSED> parsedType, ArgumentKey key, Suggester<SENDER, PARSED> parser) {
+            buckets.put(key.getKey(), key.getNamespace(), parser);
         }
 
         Suggester<SENDER, PARSED> getSuggester(ArgumentKey key) {
-            Suggester<SENDER, PARSED> suggester = buckets.get(key);
+            String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
+            Suggester<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);
 
-            if (suggester != null) {
-                return suggester;
+            if (bucket != null) {
+                return bucket;
             }
 
-            Suggester<SENDER, PARSED> universalNamedBucket = buckets.get(key.withKey(StringUtil.EMPTY));
-
-            if (universalNamedBucket != null) {
-                return universalNamedBucket;
-            }
-
-            return universalTypedBucket;
+            return buckets.get(StringUtil.EMPTY, namespace);
         }
-
     }
 
 }

@@ -15,11 +15,10 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @State(Scope.Benchmark)
@@ -53,18 +52,34 @@ public class LiteBenchmark {
         testPlatform.execute("test sub first second");
     }
 
+    public static void main(String[] args) {
+        LiteBenchmark benchmark = new LiteBenchmark();
+        benchmark.setUp();
+
+        Instant start = Instant.now();
+
+        for (int i = 0; i < 1_000_000; i++) {
+            benchmark.executeCommand();
+        }
+
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+
+        System.out.println("Duration: " + (duration.toMillis() / 1000.0) + "s");
+    }
+
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
     public AssertExecute executeSubCommand() {
         return testPlatform.execute("test sub first second");
     }
 
-    public static void main(String[] args) throws RunnerException {
-        Options options = new OptionsBuilder()
-            .include(LiteBenchmark.class.getSimpleName())
-            .build();
-
-        new Runner(options).run();
-    }
+//    public static void main(String[] args) throws RunnerException {
+//        Options options = new OptionsBuilder()
+//            .include(LiteBenchmark.class.getSimpleName())
+//            .build();
+//
+//        new Runner(options).run();
+//    }
 
 }
