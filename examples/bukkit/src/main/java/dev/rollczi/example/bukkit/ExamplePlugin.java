@@ -3,6 +3,7 @@ package dev.rollczi.example.bukkit;
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
 import dev.rollczi.example.bukkit.command.ChatGptCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
+import dev.rollczi.litecommands.bukkit.paper.PaperAsyncTabComplete;
 import dev.rollczi.litecommands.chatgpt.LiteChatGptExtension;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
@@ -23,12 +24,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
+
 public class ExamplePlugin extends JavaPlugin {
 
     private LiteCommands<CommandSender> liteCommands;
 
     @Override
     public void onEnable() {
+        PaperAsyncTabComplete paperAsyncTabComplete = new PaperAsyncTabComplete(this);
+        if (!paperAsyncTabComplete.canRegister()) {
+            throw new IllegalStateException();
+        }
+
+        paperAsyncTabComplete.registerListener((sender, alias, args) -> {
+            return List.of();
+        });
+
         this.liteCommands = LiteCommandsBukkit.builder()
             // configure bukkit platform
             .settings(settings -> settings
