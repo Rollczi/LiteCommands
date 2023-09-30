@@ -2,6 +2,8 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.resolver.std.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.std.StringArgumentResolver;
+import dev.rollczi.litecommands.builder.LiteCommandsBaseBuilder;
+import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -14,7 +16,6 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.flag.FlagArgumentResolver;
-import dev.rollczi.litecommands.join.JoinArgumentResolver;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
@@ -52,7 +53,7 @@ public final class LiteCommandsFactory {
                 .argument(Short.class, NumberArgumentResolver.ofShort())
                 .argument(short.class, NumberArgumentResolver.ofShort())
 
-                .argument(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
+                .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
                 .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
 

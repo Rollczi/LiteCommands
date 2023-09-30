@@ -1,14 +1,14 @@
-package dev.rollczi.litecommands;
+package dev.rollczi.litecommands.builder;
 
+import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
-import dev.rollczi.litecommands.builder.LiteCommandsProvider;
-import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.builder.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.context.ContextProvider;
-import dev.rollczi.litecommands.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.builder.extension.LiteExtension;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
@@ -199,9 +199,9 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> postProcessor(LiteBuilderProcessor<SENDER, SETTINGS> postProcessor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(LiteCommandsExtension<SENDER> extension);
+    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(LiteExtension<SENDER> extension);
 
-    <E extends LiteCommandsExtension<SENDER>>
+    <E extends LiteExtension<SENDER>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> extension(E extension, UnaryOperator<E> configuration);
 
     LiteCommands<SENDER> build();

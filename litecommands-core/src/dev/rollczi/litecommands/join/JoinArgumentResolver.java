@@ -1,7 +1,10 @@
 package dev.rollczi.litecommands.join;
 
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
+import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
@@ -12,10 +15,16 @@ import dev.rollczi.litecommands.range.Range;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class JoinArgumentResolver<SENDER, T> extends TypedArgumentResolver<SENDER, T, JoinArgument<T>> {
+public abstract class JoinArgumentResolver<SENDER, T> implements TypedParser<SENDER, RawInput, T, JoinArgument<T>> {
 
-    public JoinArgumentResolver() {
-        super(JoinArgument.class);
+    @Override
+    public Class<? extends Argument> getArgumentType() {
+        return JoinArgument.class;
+    }
+
+    @Override
+    public Class<RawInput> getInputType() {
+        return RawInput.class;
     }
 
     @Override
@@ -40,11 +49,6 @@ public abstract class JoinArgumentResolver<SENDER, T> extends TypedArgumentResol
     @Override
     public Range getTypedRange(JoinArgument<T> argument) {
         return Range.range(1, argument.getLimit());
-    }
-
-    @Override
-    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, JoinArgument<T> argument, SuggestionContext context) {
-        return SuggestionResult.of("text...");
     }
 
 }

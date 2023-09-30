@@ -70,8 +70,9 @@ public class RawInputAnalyzer {
 
         private final Parser<SENDER, RawInput, T> parser;
         private final Argument<T> argument;
-        private final int minArguments;
-        private final int maxArguments;
+        private final int argumentMaxCount;
+        private final int realArgumentMaxCount;
+        private final boolean potentialLastArgument;
 
         public Context(
             Argument<T> argument,
@@ -83,12 +84,13 @@ public class RawInputAnalyzer {
 
             Range range = parser.getRange(argument);
 
-            this.minArguments = range.getMin() + pivotPosition;
-            this.maxArguments = calculateMaxArguments(rawArguments, range, pivotPosition);
+            this.argumentMaxCount = range.getMin() + pivotPosition;
+            this.realArgumentMaxCount = calculateMaxArguments(rawArguments, range, pivotPosition);
+            this.potentialLastArgument = this.realArgumentMaxCount < range.getMax() + pivotPosition;
         }
 
         public ParseResult<T> parseArgument(Invocation<SENDER> invocation) {
-            List<String> arguments = rawArguments.subList(pivotPosition, maxArguments);
+            List<String> arguments = rawArguments.subList(pivotPosition, realArgumentMaxCount);
             RawInput input = RawInput.of(arguments);
             ParseResult<T> parsed = parser.parse(invocation, argument, input);
 
@@ -98,7 +100,7 @@ public class RawInputAnalyzer {
         }
 
         public boolean isLastRawArgument() {
-            return pivotPosition == rawArguments.size() - 1 || minArguments == rawArguments.size();
+            return pivotPosition == rawArguments.size() - 1 || argumentMaxCount == rawArguments.size();
         }
 
         public boolean isParsedLast() {
@@ -106,11 +108,15 @@ public class RawInputAnalyzer {
         }
 
         public boolean isMissingFullArgument() {
-            return !hasNextRoute() && minArguments > rawArguments.size();
+            return !hasNextRoute() && argumentMaxCount > rawArguments.size();
         }
 
         public boolean isMissingPartOfArgument() {
-            return minArguments > rawArguments.size();
+            return argumentMaxCount > rawArguments.size();
+        }
+
+        public boolean isPotentialLastArgument() {
+            return potentialLastArgument;
         }
 
         public List<String> getAllNotConsumedArguments() {

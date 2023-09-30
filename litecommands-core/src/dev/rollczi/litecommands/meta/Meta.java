@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.scheduler.SchedulerPollType;
 import dev.rollczi.litecommands.validator.Validator;
 import org.jetbrains.annotations.NotNull;
@@ -15,12 +16,15 @@ public interface Meta {
     MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPollType> POLL_TYPE = MetaKey.of("poll-type", SchedulerPollType.class, SchedulerPollType.SYNC);
+    MetaKey<String> ARGUMENT_KEY = MetaKey.of("argument-key", String.class);
     MetaKey<Class> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", Class.class);
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
 
     Meta EMPTY_META = new MetaEmptyImpl();
 
     @NotNull <T> T get(MetaKey<T> key);
+
+    @NotNull <T> T get(MetaKey<T> key, T defaultValue);
 
     <T> Meta put(MetaKey<T> key, T value);
 

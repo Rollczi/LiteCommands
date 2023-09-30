@@ -139,6 +139,17 @@ class RootBanCommand {
 ```java
 @Command("teleport")
 class TeleportCommand {
+    
+    @Execute("gpt")
+    void teleport(@Arg @ChatGpt String text) {
+        // ...
+    }
+    
+}
+
+```java
+@Command("teleport")
+class TeleportCommand {
 
     @Command("here")
     void teleportHere(

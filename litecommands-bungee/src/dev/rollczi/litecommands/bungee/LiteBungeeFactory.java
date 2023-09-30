@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.bungee.tools.BungeeOnlyPlayerContextual;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;

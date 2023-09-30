@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.argument;
 
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
@@ -20,7 +21,11 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
     }
 
     default ArgumentKey getKey() {
-        return ArgumentKey.typed(this.getClass(), this.getName());
+        return ArgumentKey.typed(this.getClass(), this.getKeyName());
+    }
+
+    default String getKeyName() {
+        return this.meta().get(Meta.ARGUMENT_KEY, this.getName());
     }
 
     static <T> Argument<T> of(String name, WrapFormat<T, ?> format) {

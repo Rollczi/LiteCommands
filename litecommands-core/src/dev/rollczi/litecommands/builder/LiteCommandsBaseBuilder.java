@@ -1,5 +1,7 @@
-package dev.rollczi.litecommands;
+package dev.rollczi.litecommands.builder;
 
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.LiteCommandsBase;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
@@ -7,13 +9,12 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
-import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
-import dev.rollczi.litecommands.builder.LiteCommandsProvider;
-import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.builder.extension.LiteCommandsProviderExtension;
+import dev.rollczi.litecommands.builder.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.bind.BindRegistry;
-import dev.rollczi.litecommands.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.builder.extension.LiteExtension;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
@@ -53,6 +54,7 @@ import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +70,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     protected final Set<LiteBuilderProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
     protected final Set<LiteBuilderProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
+
+    protected final List<LiteExtension<SENDER>> extensions = new ArrayList<>();
 
     protected final EditorService<SENDER> editorService = new EditorService<>();
     protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
@@ -107,8 +111,21 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> commands(LiteCommandsProvider<SENDER> commandsProvider) {
+        this.applyExtensionsOnProvider(commandsProvider);
         this.commandBuilderCollector.add(commandsProvider.toInternalProvider(this));
         return this;
+    }
+
+    private void applyExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
+        for (LiteExtension<SENDER> extension : extensions) {
+            if (!(extension instanceof LiteCommandsProviderExtension)) {
+                continue;
+            }
+
+            LiteCommandsProviderExtension<SENDER> commandsProviderExtension = (LiteCommandsProviderExtension<SENDER>) extension;
+
+            commandsProviderExtension.extendCommandsProvider(this, this, commandsProvider);
+        }
     }
 
     @Override
@@ -350,15 +367,15 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> extension(LiteCommandsExtension<SENDER> extension) {
-        extension.extend(this, this);
-        return this;
+    public LiteCommandsBuilder<SENDER, C, B> extension(LiteExtension<SENDER> extension) {
+        return this.extension(extension, UnaryOperator.identity());
     }
 
     @Override
-    public <E extends LiteCommandsExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration) {
+    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration) {
         extension = configuration.apply(extension);
         extension.extend(this, this);
+        extensions.add(extension);
         return this;
     }
 

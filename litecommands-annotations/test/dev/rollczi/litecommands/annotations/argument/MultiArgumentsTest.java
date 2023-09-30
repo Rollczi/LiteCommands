@@ -148,8 +148,17 @@ class MultiArgumentsTest extends LiteTestSpec {
         platform.suggest("command arg0 arg1 1 ")
             .assertSuggest("2 3");
 
+
         platform.suggest("command arg0 arg1 1 2 ")
             .assertSuggest("3");
+    }
+
+    @Test
+    @DisplayName("Should suggest multiple arguments")
+    void testSuggestMultiple2() {
+
+        platform.suggest("command arg0 arg1 1 2")
+            .assertSuggest("2 3");
     }
 
 }

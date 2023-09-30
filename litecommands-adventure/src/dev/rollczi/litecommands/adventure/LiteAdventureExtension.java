@@ -1,15 +1,15 @@
 package dev.rollczi.litecommands.adventure;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
-import dev.rollczi.litecommands.extension.LiteCommandsExtension;
+import dev.rollczi.litecommands.builder.extension.LiteExtension;
 import dev.rollczi.litecommands.join.JoinArgument;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 
-public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SENDER> {
+public class LiteAdventureExtension<SENDER> implements LiteExtension<SENDER> {
 
     private final AdventureAudienceProvider<SENDER> adventureAudienceProvider;
     private boolean supportsMiniMessage = false;
@@ -67,9 +67,9 @@ public class LiteAdventureExtension<SENDER> implements LiteCommandsExtension<SEN
             .argument(Component.class, ArgumentKey.of("raw"), raw)
             .argument(Component.class, ArgumentKey.of("color"), colored)
 
-            .argument(Component.class, JoinArgument.KEY, colorizeArgument ? joinColor : joinRaw)
-            .argument(Component.class, JoinArgument.KEY.withKey("raw"), joinRaw)
-            .argument(Component.class, JoinArgument.KEY.withKey("color"), joinColor)
+            .argumentParser(Component.class, JoinArgument.KEY, colorizeArgument ? joinColor : joinRaw)
+            .argumentParser(Component.class, JoinArgument.KEY.withKey("raw"), joinRaw)
+            .argumentParser(Component.class, JoinArgument.KEY.withKey("color"), joinColor)
 
             .context(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 

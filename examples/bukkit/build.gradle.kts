@@ -1,8 +1,13 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.0.0"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+    id("xyz.jpenilla.run-paper") version "2.2.0"
 }
+
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -15,6 +20,7 @@ dependencies {
 
     // implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre15") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
+    implementation(project(":litecommands-chat-gpt")) // don't use this line in your build.gradle
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
@@ -30,11 +36,8 @@ bukkit {
     version = "${project.version}"
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.withType<ShadowJar> {
     archiveFileName.set("ExamplePlugin v${project.version}.jar")
-
-    mergeServiceFiles()
-    minimize()
 
     relocate("panda", "dev.rollczi.example.bukkit.libs.org.panda")
     relocate("org.panda_lang", "dev.rollczi.example.bukkit.libs.org.panda")
@@ -43,7 +46,6 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
 
 sourceSets {
     main {
-        resources.setSrcDirs(emptyList<String>())
     }
     test {
         java.setSrcDirs(emptyList<String>())
@@ -51,3 +53,8 @@ sourceSets {
     }
 }
 
+tasks {
+    runServer {
+        minecraftVersion("1.20.2")
+    }
+}

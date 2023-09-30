@@ -14,6 +14,11 @@ class MetaEmptyImpl implements Meta {
     }
 
     @Override
+    public <T> @NotNull T get(MetaKey<T> key, T defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
     public <T> Meta put(MetaKey<T> key, T value) {
         throw new UnsupportedOperationException();
     }

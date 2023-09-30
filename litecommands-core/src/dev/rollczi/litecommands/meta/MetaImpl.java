@@ -64,6 +64,15 @@ class MetaImpl implements Meta {
         throw new NoSuchElementException();
     }
 
+    public <T> @NotNull T get(MetaKey<T> key, T defaultValue) {
+        try {
+            return this.get(key);
+        }
+        catch (NoSuchElementException ignored) {
+            return defaultValue;
+        }
+    }
+
     @Override
     public Meta clear() {
         this.meta.clear();

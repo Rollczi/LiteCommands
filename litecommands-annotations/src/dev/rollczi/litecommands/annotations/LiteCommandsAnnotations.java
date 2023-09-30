@@ -28,6 +28,10 @@ public class LiteCommandsAnnotations<SENDER> implements LiteCommandsProvider<SEN
         this(AnnotationProcessorService.defaultService());
     }
 
+    public AnnotationProcessorService<SENDER> getAnnotationProcessorService() {
+        return annotationProcessorService;
+    }
+
     @Override
     public List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
         WrapperRegistry wrapperRegistry = builder.getWrapperRegistry();

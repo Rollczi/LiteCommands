@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.argument.ArgArgumentProcessor;
+import dev.rollczi.litecommands.annotations.argument.KeyAnnotationResolver;
 import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
 import dev.rollczi.litecommands.annotations.bind.BindRequirementProcessor;
 import dev.rollczi.litecommands.annotations.command.CommandAnnotationProcessor;
@@ -49,6 +50,7 @@ public class AnnotationProcessorService<SENDER> {
             .register(new ExecuteAnnotationResolver<>())
             .register(new FlagArgumentProcessor<>())
             .register(new ArgArgumentProcessor<>())
+            .register(new KeyAnnotationResolver<>())
             .register(new JoinArgumentProcessor<>())
             .register(new ContextRequirementProcessor<>())
             .register(new BindRequirementProcessor<>());

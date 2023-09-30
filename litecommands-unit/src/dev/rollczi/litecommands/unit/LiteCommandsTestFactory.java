@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 
 import java.util.function.UnaryOperator;
 

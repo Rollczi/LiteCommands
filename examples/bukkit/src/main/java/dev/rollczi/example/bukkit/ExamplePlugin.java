@@ -1,7 +1,9 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.example.bukkit.command.ChatGptCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
+import dev.rollczi.litecommands.chatgpt.LiteChatGptExtension;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
@@ -34,12 +36,11 @@ public class ExamplePlugin extends JavaPlugin {
                 .nativePermissions(false) // enable/disable bukkit permissions system
             )
 
+            .extension(new LiteChatGptExtension<>())
+
             // Commands
             .commands(LiteCommandsAnnotations.of(
-                new TeleportCommand(),
-                new KickCommand(),
-                new GameModeCommand(),
-                new ConvertCommand()
+                new ChatGptCommand()
             ))
             .commands(LiteCommandsProgrammatic.of(
                 new LiteCommand<CommandSender>("ban")
