@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -18,8 +19,7 @@ class BukkitSchedulerImpl implements Scheduler {
         this.plugin = plugin;
     }
 
-    @Override
-    public <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
+    private <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
         if (Bukkit.isPrimaryThread()) {
             return runInCurrentThread(supplier);
         }
@@ -38,8 +38,7 @@ class BukkitSchedulerImpl implements Scheduler {
         return future;
     }
 
-    @Override
-    public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
+    private <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
         if (!Bukkit.isPrimaryThread()) {
             return runInCurrentThread(supplier);
         }
@@ -68,6 +67,21 @@ class BukkitSchedulerImpl implements Scheduler {
             future.completeExceptionally(throwable);
             return future;
         }
+    }
+
+    @Override
+    public <T> CompletableFuture<T> supply(SchedulerPoll type, Supplier<T> supplier) {
+        SchedulerPoll resolved = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
+
+        if (resolved == SchedulerPoll.MAIN) {
+            return supplySync(supplier);
+        }
+
+        if (resolved == SchedulerPoll.ASYNCHRONOUS) {
+            return supplyAsync(supplier);
+        }
+
+        return supplySync(supplier);
     }
 
     @Override

@@ -6,12 +6,7 @@ import java.util.function.Supplier;
 public class SchedulerSameThreadImpl implements Scheduler {
 
     @Override
-    public <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
-        return CompletableFuture.completedFuture(supplier.get());
-    }
-
-    @Override
-    public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
+    public <T> CompletableFuture<T> supply(SchedulerPoll type, Supplier<T> supplier) {
         return CompletableFuture.completedFuture(supplier.get());
     }
 

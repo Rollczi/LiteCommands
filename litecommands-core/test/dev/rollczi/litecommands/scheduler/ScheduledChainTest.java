@@ -13,12 +13,12 @@ class ScheduledChainTest {
         Scheduler scheduler = new SchedulerExecutorPoolImpl("test", 4);
 
         ScheduledChain<Argument, String, String> scheduledChain = ScheduledChain.<Argument, String>builder()
-            .link(new Argument("1", SchedulerPollType.SYNC))
-            .link(new Argument("2", SchedulerPollType.SYNC))
-            .link(new Argument("3", SchedulerPollType.ASYNC))
-            .link(new Argument("4", SchedulerPollType.SYNC))
-            .link(new Argument("5", SchedulerPollType.ASYNC))
-            .link(new Argument("6", SchedulerPollType.SYNC))
+            .link(new Argument("1", SchedulerPoll.MAIN))
+            .link(new Argument("2", SchedulerPoll.MAIN))
+            .link(new Argument("3", SchedulerPoll.ASYNCHRONOUS))
+            .link(new Argument("4", SchedulerPoll.MAIN))
+            .link(new Argument("5", SchedulerPoll.ASYNCHRONOUS))
+            .link(new Argument("6", SchedulerPoll.MAIN))
             .build(text -> text + " -> " + Thread.currentThread().getName());
 
         List<String> list = scheduledChain.collectChain(scheduler)
@@ -37,9 +37,9 @@ class ScheduledChainTest {
     static class Argument implements ScheduledChainLink<String> {
 
         private final String value;
-        private final SchedulerPollType type;
+        private final SchedulerPoll type;
 
-        Argument(String value, SchedulerPollType type) {
+        Argument(String value, SchedulerPoll type) {
             this.value = value;
             this.type = type;
         }
@@ -50,7 +50,7 @@ class ScheduledChainTest {
         }
 
         @Override
-        public SchedulerPollType type() {
+        public SchedulerPoll type() {
             return type;
         }
     }

@@ -41,7 +41,7 @@ tasks.withType<ShadowJar> {
 
     relocate("panda", "dev.rollczi.example.bukkit.libs.org.panda")
     relocate("org.panda_lang", "dev.rollczi.example.bukkit.libs.org.panda")
-    relocate("dev.rollczi.litecommands", "dev.rollczi.example.bukkit.libs.dev.rollczi")
+//    relocate("dev.rollczi.litecommands", "dev.rollczi.example.bukkit.libs.dev.rollczi")
 }
 
 sourceSets {

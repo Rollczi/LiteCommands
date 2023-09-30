@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.wrapper.std;
 
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 
@@ -19,7 +20,7 @@ public class CompletableFutureWrapper extends AbstractWrapper<CompletableFuture>
 
     @Override
     protected <EXPECTED> Supplier<CompletableFuture> wrapValue(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
-        return () -> scheduler.supplyAsync(() -> valueToWrap);
+        return () -> scheduler.supply(SchedulerPoll.ASYNCHRONOUS, () -> valueToWrap);
     }
 
 }

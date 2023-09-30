@@ -39,8 +39,7 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         });
     }
 
-    @Override
-    public <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
+    private <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
         if (isMainThread.get()) {
             return CompletableFuture.completedFuture(supplier.get());
         }
@@ -48,9 +47,22 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         return CompletableFuture.supplyAsync(supplier, mainExecutor);
     }
 
-    @Override
-    public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
+    private <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
         return CompletableFuture.supplyAsync(supplier, asyncExecutor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> supply(SchedulerPoll type, Supplier<T> supplier) {
+        SchedulerPoll resolve = type.resolve();
+
+        if (resolve == SchedulerPoll.MAIN) {
+            return supplySync(supplier);
+        }
+        else if (resolve == SchedulerPoll.ASYNCHRONOUS) {
+            return supplyAsync(supplier);
+        }
+
+        throw new IllegalStateException("Cannot resolve the thread type");
     }
 
     @Override

@@ -31,7 +31,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scheduler.ScheduledChain;
 import dev.rollczi.litecommands.scheduler.ScheduledChainLink;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPollType;
+import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
@@ -74,7 +74,7 @@ public class CommandExecuteService<SENDER> {
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute)
             .thenApply(commandExecuteResult -> mapResult(commandRoute, commandExecuteResult, invocation))
-            .thenCompose(executeResult -> scheduler.supplySync(() -> {
+            .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> {
                 this.handleResult(invocation, executeResult);
 
                 return executeResult;
@@ -190,7 +190,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             // Execution
-            SchedulerPollType type = executor.meta().get(Meta.POLL_TYPE);
+            SchedulerPoll type = executor.meta().get(Meta.POLL_TYPE);
 
             return scheduler.supply(type, () -> {
                 try {
@@ -281,7 +281,7 @@ public class CommandExecuteService<SENDER> {
         }
 
         @Override
-        public SchedulerPollType type() {
+        public SchedulerPoll type() {
             return requirement.meta().get(Meta.POLL_TYPE);
         }
     }

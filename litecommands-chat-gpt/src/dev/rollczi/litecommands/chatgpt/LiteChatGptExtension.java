@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.chatgpt;
 
 import dev.rollczi.litecommands.annotations.AnnotationProcessorService;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
-import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
 import dev.rollczi.litecommands.builder.LiteCommandsProvider;
@@ -15,10 +14,10 @@ public class LiteChatGptExtension<SENDER> implements LiteCommandsProviderExtensi
 
     @Override
     public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
-        ChatGptClient chatGptClient = new ChatGptClient("", ChatGptModel.GPT_4, 1.0);
+        ChatGptClient chatGptClient = new ChatGptClient("w", ChatGptModel.GPT_4, 1.0);
 
         builder
-            .argument(String.class, JoinArgument.KEY.withKey(ChatGpt.ARGUMENT_KEY), new ChatGptStringSuggester<>(chatGptClient));
+            .argument(String.class, JoinArgument.KEY.withKey(ChatGpt.ARGUMENT_KEY), new ChatGptStringSuggester<>(chatGptClient, pattern.getScheduler()));
     }
 
     @Override

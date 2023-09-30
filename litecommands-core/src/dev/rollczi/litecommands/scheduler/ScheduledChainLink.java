@@ -15,6 +15,6 @@ public interface ScheduledChainLink<T> {
      */
     T call();
 
-    SchedulerPollType type();
+    SchedulerPoll type();
 
 }

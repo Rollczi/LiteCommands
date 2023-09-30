@@ -64,7 +64,7 @@ public class Main {
     public static class TestGptCommand {
 
         @Execute
-        void execute(@Join @ChatGpt("ban reason") String message) {
+        void execute(@Join @ChatGpt String message) {
             System.out.println(message);
         }
 
