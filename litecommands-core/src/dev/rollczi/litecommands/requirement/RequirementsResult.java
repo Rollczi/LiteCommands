@@ -42,7 +42,7 @@ public class RequirementsResult<SENDER> {
 
         public Builder<SENDER> add(String name, RequirementMatch<?, ?> match) {
             if (matches.containsKey(name)) {
-                throw new IllegalArgumentException("Requirement match with name '" + name + "' already exists");
+                throw new IllegalArgumentException("Duplicate requirements name: " + name);
             }
 
             matches.put(name, match);

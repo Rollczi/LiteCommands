@@ -17,12 +17,12 @@ class FlagArgumentTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute
-        String test(@Flag("-a") boolean flagA, @Arg String test) {
+        String test(@Flag("-a") boolean flagA, @Arg("test") String test) {
             return flagA + " " + test;
         }
 
         @Execute(name = "last")
-        String test(@Arg String test, @Flag("-a") boolean flagA) {
+        String test(@Arg("test") String test, @Flag("-a") boolean flagA) {
             return flagA + " " + test;
         }
 
@@ -57,7 +57,7 @@ class FlagArgumentTest extends LiteTestSpec {
     @DisplayName("Should suggest flag argument")
     void testSuggestFlagArgument() {
         platform.suggest("test ")
-            .assertSuggest("-a", "text", "last");
+            .assertSuggest("-a", "<test>", "last");
     }
 
     @Test
