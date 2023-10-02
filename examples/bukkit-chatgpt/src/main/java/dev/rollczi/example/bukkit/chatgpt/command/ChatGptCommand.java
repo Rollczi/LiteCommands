@@ -1,4 +1,4 @@
-package dev.rollczi.example.bukkit.command;
+package dev.rollczi.example.bukkit.chatgpt.command;
 
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;

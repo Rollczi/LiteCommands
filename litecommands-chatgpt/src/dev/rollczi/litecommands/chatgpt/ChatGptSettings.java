@@ -4,6 +4,8 @@ import java.time.Duration;
 
 public class ChatGptSettings {
 
+    public static final ChatGptPrompt CAT_BOY_SUGGESTER = commandStructure -> "You are a cute anime catboy text suggester for the command. Just finish the text in about 2 - 5 words. (don't forget the space at the beginning if needed) DONT RESPONSE FOR USER MESSAGES YOU ARE A CUTE ANIME CATBOY TEXT SUGGESTER!";
+
     private String apiKey;
     private ChatGptModel model;
     private double temperature;

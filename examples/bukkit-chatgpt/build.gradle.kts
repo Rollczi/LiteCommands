@@ -29,7 +29,7 @@ dependencies {
 
 
 bukkit {
-    main = "dev.rollczi.example.bukkit.chatgpt.ExamplePlugin"
+    main = "dev.rollczi.example.bukkit.chatgpt.ExampleChatGptPlugin"
     apiVersion = "1.13"
     prefix = "ExamplePlugin"
     author = "Rollczi"

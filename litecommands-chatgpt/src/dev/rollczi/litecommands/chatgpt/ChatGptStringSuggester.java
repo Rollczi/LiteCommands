@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.suggestion.Suggestion;
@@ -14,33 +15,35 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
-public class ChatGptStringSuggester<SENDER> implements Suggester<SENDER, String> {
+public class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> implements Suggester<SENDER, String> {
 
     private final Scheduler scheduler;
     private final ChatGptClient chatGptClient;
     private final ChatGptSettings settings;
 
     private final Map<String, NavigableMap<String, String>> suggestions = new HashMap<>();
-    private final Cache<Identifier, Instant> lastRequestPerPlayer;
+    private final Cache<Identifier, UUID> lastRequestPerPlayer;
 
     ChatGptStringSuggester(Scheduler scheduler, ChatGptClient chatGptClient, ChatGptSettings settings) {
         this.scheduler = scheduler;
         this.chatGptClient = chatGptClient;
         this.settings = settings;
         this.lastRequestPerPlayer = Caffeine.newBuilder()
-            .expireAfterWrite(settings.cooldown())
+            .expireAfterWrite(settings.cooldown().plus(100, ChronoUnit.MILLIS))
             .build();
     }
 
@@ -60,14 +63,14 @@ public class ChatGptStringSuggester<SENDER> implements Suggester<SENDER, String>
         Identifier identifier = invocation.platformSender().getIdentifier();
         String commandStructure = this.showStructure(invocation, context);
 
-        this.markGenerateRequest(identifier); // mark request to prevent spamming
+        UUID signed = this.sign(identifier);
+        Logger logger = Logger.getLogger("test");
 
         CompletableFuture<SuggestionResult> future = scheduler.supplyLater(SchedulerPoll.SUGGESTER, settings.cooldown(), () -> {
-            if (!this.canGenerate(identifier)) {
-                return null;
+            if (!this.checkSignature(identifier, signed)) {
+                return suggestionResult;
             }
 
-            this.markGenerateRequest(identifier);
             String suggestion = this.generateNewSuggestion(commandStructure, topic, firstPart);
 
             navigableSuggestions.put(firstPart, suggestion);
@@ -86,14 +89,17 @@ public class ChatGptStringSuggester<SENDER> implements Suggester<SENDER, String>
         }
     }
 
-    private synchronized boolean canGenerate(Identifier identifier) {
-        Instant perPlayerUnlockMoment = lastRequestPerPlayer.getIfPresent(identifier);
+    private synchronized boolean checkSignature(Identifier identifier, UUID uuid) {
+        UUID lastUuid = lastRequestPerPlayer.getIfPresent(identifier);
 
-        return perPlayerUnlockMoment == null || Instant.now().isAfter(perPlayerUnlockMoment);
+        return lastUuid != null && lastUuid.equals(uuid);
     }
 
-    private synchronized void markGenerateRequest(Identifier identifier) {
-        lastRequestPerPlayer.put(identifier, Instant.now().plus(settings.cooldown()));
+    private synchronized UUID sign(Identifier identifier) {
+        UUID uuid = UUID.randomUUID();
+        lastRequestPerPlayer.put(identifier, uuid);
+
+        return uuid;
     }
 
     private String generateNewSuggestion(String commandStructure, String topic, String firstPart) {

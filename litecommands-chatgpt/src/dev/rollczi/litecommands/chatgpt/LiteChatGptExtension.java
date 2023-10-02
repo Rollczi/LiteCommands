@@ -40,7 +40,7 @@ public class LiteChatGptExtension<SENDER> implements LiteCommandsProviderExtensi
         ChatGptStringSuggester<SENDER> suggester = new ChatGptStringSuggester<>(pattern.getScheduler(), chatGptClient, settings);
 
         builder
-            .argumentSuggester(String.class, JoinArgument.KEY.withKey(ARGUMENT_KEY), suggester);
+            .argument(String.class, JoinArgument.KEY.withKey(ARGUMENT_KEY), suggester);
     }
 
     @Override
