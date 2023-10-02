@@ -35,7 +35,7 @@ import java.util.function.UnaryOperator;
 
 /**
  * Builder for {@link LiteCommands}.
- * Use {@link LiteCommandsFactory#builder(Class, Platform)} to create new instance of builder.
+ * Use {@link dev.rollczi.litecommands.LiteCommandsFactory#builder(Class, Platform)} to create new instance of builder.
  *
  * @param <SENDER> type of sender
  * @param <SETTINGS> type of platform settings
