@@ -4,6 +4,7 @@ package dev.rollczi.litecommands.bukkit.argument;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
+import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -38,7 +39,7 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
 
     @Override
     public ParseResult<Location> parse(Invocation<CommandSender> invocation, Argument<Location> argument, RawInput rawInput) {
-        String input = String.join(" ", rawInput.seeNext(LocationAxis.SIZE));
+        String input = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(LocationAxis.SIZE));
 
         try {
             double x = parseAxis(invocation, rawInput.next(), LocationAxis.X);
@@ -91,23 +92,21 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
         Player player = (Player) sender;
         Location location = player.getLocation();
 
-        List<String> titulusSuggestion = suggestionsWithoutLast(current);
+        List<String> currentSuggestion = suggestionsWithoutLast(current);
         List<String> dynamicSuggestion = suggestionsWithoutLast(current);
 
-        if (dynamicSuggestion.size() == LocationAxis.SIZE) {
+        if (currentSuggestion.size() == LocationAxis.SIZE) {
+            currentSuggestion.remove(LocationAxis.SIZE - 1);
             dynamicSuggestion.remove(LocationAxis.SIZE - 1);
-
-            dynamicSuggestion.add(String.format(Locale.US, CORDINATE_FORMAT, LocationAxis.Z.getValue(location)));
-            result.add(Suggestion.from(dynamicSuggestion));
         }
 
-        for (int axisIndex = titulusSuggestion.size(); axisIndex < LocationAxis.SIZE; axisIndex++) {
+        for (int axisIndex = currentSuggestion.size(); axisIndex < LocationAxis.SIZE; axisIndex++) {
             LocationAxis axis = LocationAxis.at(axisIndex);
 
-            titulusSuggestion.add(CURRENT_LOCATION);
+            currentSuggestion.add(CURRENT_LOCATION);
             dynamicSuggestion.add(String.format(Locale.US, CORDINATE_FORMAT, axis.getValue(location)));
 
-            result.add(Suggestion.from(titulusSuggestion));
+            result.add(Suggestion.from(currentSuggestion));
             result.add(Suggestion.from(dynamicSuggestion));
         }
 
