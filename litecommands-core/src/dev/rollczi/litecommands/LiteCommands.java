@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.command.CommandManager;
 
 public interface LiteCommands<SENDER> {
 
-    String VERSION = "3.0.0-BETA-pre15";
+    String VERSION = "3.0.0-BETA-pre16";
 
     CommandManager<SENDER> getCommandManager();
 
