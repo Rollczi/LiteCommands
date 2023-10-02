@@ -1,13 +1,25 @@
 package dev.rollczi.litecommands.scheduler;
 
+import panda.std.function.ThrowingSupplier;
+
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 public class SchedulerSameThreadImpl implements Scheduler {
 
+
     @Override
-    public <T> CompletableFuture<T> supply(SchedulerPoll type, Supplier<T> supplier) {
-        return CompletableFuture.completedFuture(supplier.get());
+    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+        CompletableFuture<T> future = new CompletableFuture<>();
+
+        try {
+            future.complete(supplier.get());
+        }
+        catch (Throwable throwable) {
+            future.completeExceptionally(throwable);
+        }
+
+        return future;
     }
 
     @Override

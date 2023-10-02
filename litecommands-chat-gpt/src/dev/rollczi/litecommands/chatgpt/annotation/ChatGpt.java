@@ -11,4 +11,6 @@ public @interface ChatGpt {
 
     String ARGUMENT_KEY = "chat-gpt";
 
+    String topic() default "";
+
 }

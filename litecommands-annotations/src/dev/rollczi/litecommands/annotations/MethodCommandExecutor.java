@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
-import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -58,12 +58,12 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
                 return CommandExecuteResult.success(this, this.method.invoke(this.instance, objects));
             }
             catch (IllegalAccessException exception) {
-                throw new LiteCommandsReflectException(this.method, "Cannot access method", exception);
+                throw new LiteCommandsReflectInvocationException(this.method, "Cannot access method", exception);
             }
             catch (InvocationTargetException exception) {
                 Throwable targetException = exception.getTargetException();
 
-                throw new LiteCommandsReflectException(this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
+                throw new LiteCommandsReflectInvocationException(this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }
         });
     }

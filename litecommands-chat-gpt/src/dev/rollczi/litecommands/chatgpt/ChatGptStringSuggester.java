@@ -1,88 +1,148 @@
 package dev.rollczi.litecommands.chatgpt;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.identifier.Identifier;
+import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
-import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
-/**
-* @param <SENDER>
- */
-class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> implements Suggester<SENDER, String> {
+public class ChatGptStringSuggester<SENDER> implements Suggester<SENDER, String> {
 
-    private final Logger logger = Logger.getLogger("ChatGptStringSuggester");
-    private final ChatGptClient chatGptClient;
+    private static final Logger LOGGER = Logger.getLogger(ChatGptStringSuggester.class.getName());
+    public static final MetaKey<String> TOPIC = MetaKey.of("chat-gpt-topic", String.class, "");
+
     private final Scheduler scheduler;
+    private final ChatGptClient chatGptClient;
+    private final ChatGptSettings settings;
 
-    private final NavigableMap<String, String> suggestions = new TreeMap<>();
-    private final Map<Identifier, Instant> lastRequestPerPlayer = new HashMap<>();
+    private final Map<String, NavigableMap<String, String>> suggestions = new HashMap<>();
+    private final Cache<Identifier, Instant> lastRequestPerPlayer;
 
-    public ChatGptStringSuggester(ChatGptClient chatGptClient, Scheduler scheduler) {
-        this.chatGptClient = chatGptClient;
+    ChatGptStringSuggester(Scheduler scheduler, ChatGptClient chatGptClient, ChatGptSettings settings) {
         this.scheduler = scheduler;
+        this.chatGptClient = chatGptClient;
+        this.settings = settings;
+        this.lastRequestPerPlayer = Caffeine.newBuilder()
+            .expireAfterWrite(settings.cooldown())
+            .build();
     }
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
         String firstPart = context.getCurrent().multilevel();
+        String topic = argument.meta().get(TOPIC);
 
-        if (firstPart.length() < 4 || firstPart.length() > 64 || !firstPart.endsWith(" ")) {
-            return SuggestionResult.of(firstPart);
+        NavigableMap<String, String> navigableSuggestions = this.suggestions.computeIfAbsent(topic, key -> new TreeMap<>());
+        Collection<String> suggestions = navigableSuggestions.subMap(firstPart, firstPart + Character.MAX_VALUE).values();
+
+        if (!settings.shouldGenerate(firstPart)) {
+            return SuggestionResult.of(suggestions);
         }
 
-        Collection<String> suggestions = this.suggestions.subMap(firstPart, firstPart + Character.MAX_VALUE).values();
         SuggestionResult suggestionResult = SuggestionResult.of(suggestions);
-
         Identifier identifier = invocation.platformSender().getIdentifier();
-        Instant perPlayerUnlockMoment = lastRequestPerPlayer.get(identifier);
+        String commandStructure = this.showStructure(invocation, context);
 
-        lastRequestPerPlayer.put(identifier, Instant.now().plus(Duration.ofMillis(500)));
+        this.markGenerateRequest(identifier); // mark request to prevent spamming
 
-        if (perPlayerUnlockMoment != null && Instant.now().isBefore(perPlayerUnlockMoment)) {
-            logger.log(Level.INFO, "Player " + identifier + " is trying to spam the server. Suggestion will be delayed by 500ms.");
-            return suggestionResult;
-        }
-
-        this.generateNewSuggestion(firstPart);
-        logger.log(Level.INFO, "Player " + identifier + " requested a new suggestion. It will be generated in the background.");
-        return suggestionResult;
-    }
-
-    private void generateNewSuggestion(String firstPart) {
-        scheduler.run(SchedulerPoll.ASYNCHRONOUS, () -> {
-            logger.log(Level.INFO, "Generating new suggestion for: " + firstPart);
-            String lastPart = chatGptClient.chat("You are a text suggester. Just finish the text in about 2 - 5 words. (don't forget the space at the beginning if needed)", "'" + firstPart + "'");
-
-            if (lastPart.startsWith("'") && lastPart.endsWith("'")) {
-                lastPart = lastPart.substring(1, lastPart.length() - 1);
+        CompletableFuture<SuggestionResult> future = scheduler.supplyLater(SchedulerPoll.SUGGESTER, settings.cooldown(), () -> {
+            if (!this.canGenerate(identifier)) {
+                return null;
             }
 
-            String result = firstPart + lastPart;
+            this.markGenerateRequest(identifier);
+            String suggestion = this.generateNewSuggestion(commandStructure, topic, firstPart);
 
-            logger.log(Level.INFO, "Generated new suggestion: " + result);
-            scheduler.run(SchedulerPoll.MAIN, () -> suggestions.put(firstPart, result));
+            navigableSuggestions.put(firstPart, suggestion);
+            suggestionResult.add(Suggestion.of(suggestion));
+            return suggestionResult;
         });
+
+        try {
+            return future.get(10, TimeUnit.SECONDS);
+        }
+        catch (ExecutionException exception) {
+            return suggestionResult;
+        }
+        catch (InterruptedException | TimeoutException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
-    @Override
-    public Range getRange(Argument<String> stringArgument) {
-        return super.getRange(stringArgument);
+    private synchronized boolean canGenerate(Identifier identifier) {
+        Instant perPlayerUnlockMoment = lastRequestPerPlayer.getIfPresent(identifier);
+
+        return perPlayerUnlockMoment == null || Instant.now().isAfter(perPlayerUnlockMoment);
     }
+
+    private synchronized void markGenerateRequest(Identifier identifier) {
+        lastRequestPerPlayer.put(identifier, Instant.now().plus(settings.cooldown()));
+    }
+
+    private String generateNewSuggestion(String commandStructure, String topic, String firstPart) {
+        String prompt = settings.prompt(commandStructure, topic);
+        String lastPart = chatGptClient.chat(prompt, "'" + firstPart + "'");
+
+        Logger.getLogger("LiteCommands").info("Generated suggestion: " + lastPart);
+
+        if (lastPart.startsWith("'")) {
+            lastPart = lastPart.substring(1);
+        }
+
+        if (lastPart.endsWith("'")) {
+            lastPart = lastPart.substring(0, lastPart.length() - 1);
+        }
+
+        if (firstPart.endsWith(" ") && lastPart.startsWith(" ")) {
+            lastPart = lastPart.substring(1);
+        }
+
+        return firstPart + lastPart;
+    }
+
+    private String showStructure(Invocation<SENDER> invocation, SuggestionContext context) {
+        String label = invocation.label();
+        List<String> args = invocation.arguments().asList();
+
+        int exclude = context.getCurrent().lengthMultilevel();
+
+        if (args.size() < exclude) {
+            throw new IllegalStateException("Input arguments are less than exclude: " + exclude);
+        }
+
+        StringBuilder builder = new StringBuilder()
+            .append(RawCommand.COMMAND_SLASH)
+            .append(label);
+
+        for (int i = 0; i < args.size() - exclude; i++) {
+            builder
+                .append(RawCommand.COMMAND_SEPARATOR)
+                .append(args.get(i));
+        }
+
+        return builder.toString();
+    }
+
+
 }

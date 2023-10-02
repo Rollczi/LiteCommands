@@ -24,14 +24,10 @@ class ChatGptClient {
     private final Gson gson = new Gson();
     private final OkHttpClient client = new OkHttpClient();
 
-    private final String apiKey;
-    private final ChatGptModel chatGptModel;
-    private final double chatTemperature;
+    private final ChatGptSettings settings;
 
-    public ChatGptClient(String apiKey, ChatGptModel chatGptModel, double chatTemperature) {
-        this.apiKey = apiKey;
-        this.chatGptModel = chatGptModel;
-        this.chatTemperature = chatTemperature;
+    public ChatGptClient(ChatGptSettings settings) {
+        this.settings = settings;
     }
 
     public String chat(String message) {
@@ -46,7 +42,7 @@ class ChatGptClient {
         Request request = new Request.Builder()
             .url(CHAT_GPT_URL)
             .header("Content-Type", "application/json")
-            .header("Authorization", "Bearer " + apiKey)
+            .header("Authorization", "Bearer " + settings.apiKey())
             .post(RequestBody.create(gson.toJson(new ChatGptRequest(messages)), MediaType.get("application/json")))
             .build();
 
@@ -55,17 +51,24 @@ class ChatGptClient {
             String rawBody = responseBody == null ? null : responseBody.string();
 
             if (response.code() == 429 && rawBody != null) {
-                ErrorResponse errorResponse = gson.fromJson(rawBody, ErrorResponse.class);
+                ErrorBody errorBody = gson.fromJson(rawBody, ErrorBody.class);
 
-                if (errorResponse.code.equals("rate_limit_exceeded")) {
+                if ("rate_limit_exceeded".equals(errorBody.error.code)) {
                     LOGGER.warning("OpenAI API rate limit exceeded!");
                     return StringUtil.EMPTY;
                 }
             }
 
+            if (response.code() == 401 && rawBody != null) {
+                ErrorBody errorBody = gson.fromJson(rawBody, ErrorBody.class);
+
+                if ("invalid_api_key".equals(errorBody.error.code)) {
+                    LOGGER.warning("OpenAI API key is invalid!");
+                    return StringUtil.EMPTY;
+                }
+            }
+
             if (response.code() != 200) {
-
-
                 throw new LiteCommandsException("OpenAI API returned code " + response.code() + " with message: " + rawBody);
             }
 
@@ -87,6 +90,14 @@ class ChatGptClient {
             return choices.get(0).getMessage().getContent();
         } catch (IOException exception) {
             throw new LiteCommandsException(exception);
+        }
+    }
+
+    private class ErrorBody {
+        private final ErrorResponse error;
+
+        public ErrorBody(ErrorResponse error) {
+            this.error = error;
         }
     }
 
@@ -112,9 +123,9 @@ class ChatGptClient {
         private final double temperature;
 
         public ChatGptRequest(ChatGptMessage... messages) {
-            this.model = chatGptModel.getName();
+            this.model = settings.model().getName();
             this.messages.addAll(Arrays.asList(messages));
-            this.temperature = chatTemperature;
+            this.temperature = settings.temperature();
         }
 
     }

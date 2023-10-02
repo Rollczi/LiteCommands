@@ -1,10 +1,8 @@
 package dev.rollczi.litecommands.scheduler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,12 +31,32 @@ public class SchedulerPoll {
      */
     public static final SchedulerPoll EXECUTOR = new SchedulerPoll("executor", MAIN);
 
+    /**
+     * The suggester thread - used for generating suggestions
+     * If not specified, the async thread will be used
+     */
+    public static final SchedulerPoll SUGGESTER = new SchedulerPoll("suggester", ASYNCHRONOUS);
+
     private final String name;
     private final Set<SchedulerPoll> replaceable = new HashSet<>();
+    private final boolean logging; //TODO logger level
 
     private SchedulerPoll(String name, SchedulerPoll... replaceable) {
+        this(name, false, replaceable);
+    }
+
+    private SchedulerPoll(String name, boolean logging, SchedulerPoll... replaceable) {
         this.name = name;
         this.replaceable.addAll(Arrays.asList(replaceable));
+        this.logging = logging;
+    }
+
+    public boolean isLogging() {
+        return logging;
+    }
+
+    public SchedulerPoll logging() {
+        return new SchedulerPoll(name, true, replaceable.toArray(new SchedulerPoll[0]));
     }
 
     public SchedulerPoll resolve(SchedulerPoll... available) {
@@ -74,5 +92,13 @@ public class SchedulerPoll {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "SchedulerPoll{" +
+            "name='" + name + '\'' +
+            ", logging=" + logging +
+            '}';
     }
 }

@@ -42,6 +42,8 @@ public final class LiteCommandsBukkit {
 
                 .scheduler(new BukkitSchedulerImpl(server.getScheduler(), plugin))
 
+                .settings(bukkitSettings -> bukkitSettings.tabCompleter(TabComplete.create(pattern.getScheduler(), plugin)))
+
                 .argument(Location.class, new LocationArgument(messageRegistry))
                 .argument(Player.class, new PlayerArgument(server, messageRegistry))
 

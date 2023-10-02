@@ -86,7 +86,13 @@ public class RawInputAnalyzer {
 
             this.argumentMaxCount = range.getMin() + pivotPosition;
             this.realArgumentMaxCount = calculateMaxArguments(rawArguments, range, pivotPosition);
-            this.potentialLastArgument = this.realArgumentMaxCount < range.getMax() + pivotPosition;
+            int potentialMax = range.getMax() + pivotPosition;
+
+            if (potentialMax < 0) { // because Integer.MAX_VALUE + x = Integer.MIN_VALUE (x > 0)
+                potentialMax = Integer.MAX_VALUE;
+            }
+
+            this.potentialLastArgument = this.realArgumentMaxCount < potentialMax;
         }
 
         public ParseResult<T> parseArgument(Invocation<SENDER> invocation) {

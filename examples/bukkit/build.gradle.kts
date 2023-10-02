@@ -55,6 +55,6 @@ sourceSets {
 
 tasks {
     runServer {
-        minecraftVersion("1.20.2")
+        minecraftVersion("1.11.2")
     }
 }

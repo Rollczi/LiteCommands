@@ -1,5 +1,8 @@
 package dev.rollczi.litecommands.scheduler;
 
+import panda.std.function.ThrowingSupplier;
+
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,26 +42,55 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         });
     }
 
-    private <T> CompletableFuture<T> supplySync(Supplier<T> supplier) {
+    private <T> CompletableFuture<T> supplySync(ThrowingSupplier<T, Throwable> supplier) {
+        CompletableFuture<T> future = new CompletableFuture<>();
+
         if (isMainThread.get()) {
-            return CompletableFuture.completedFuture(supplier.get());
+            try {
+                future.complete(supplier.get());
+            }
+            catch (Throwable throwable) {
+                future.completeExceptionally(throwable);
+            }
+
+        }
+        else {
+            mainExecutor.submit(() -> {
+                try {
+                    future.complete(supplier.get());
+                }
+                catch (Throwable throwable) {
+                    future.completeExceptionally(throwable);
+                }
+            });
         }
 
-        return CompletableFuture.supplyAsync(supplier, mainExecutor);
+        return future;
     }
 
-    private <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
-        return CompletableFuture.supplyAsync(supplier, asyncExecutor);
+    private <T> CompletableFuture<T> supplyAsync(ThrowingSupplier<T, Throwable> supplier) {
+        CompletableFuture<T> future = new CompletableFuture<>();
+
+        asyncExecutor.submit(() -> {
+            try {
+                future.complete(supplier.get());
+            }
+            catch (Throwable throwable) {
+                future.completeExceptionally(throwable);
+            }
+        });
+
+        return future;
     }
 
     @Override
-    public <T> CompletableFuture<T> supply(SchedulerPoll type, Supplier<T> supplier) {
-        SchedulerPoll resolve = type.resolve();
+    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+        SchedulerPoll resolve = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
 
-        if (resolve == SchedulerPoll.MAIN) {
+        if (resolve.equals(SchedulerPoll.MAIN)) {
             return supplySync(supplier);
         }
-        else if (resolve == SchedulerPoll.ASYNCHRONOUS) {
+        else if (resolve.equals(SchedulerPoll.ASYNCHRONOUS)) {
             return supplyAsync(supplier);
         }
 

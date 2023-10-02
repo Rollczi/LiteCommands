@@ -8,17 +8,27 @@ import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
-class BukkitCommand extends org.bukkit.command.Command {
+public class BukkitCommand extends Command {
+
+    private static final Logger LOGGER = Logger.getLogger(BukkitCommand.class.getName());
 
     private final LiteBukkitSettings settings;
     private final CommandRoute<CommandSender> commandRoute;
     private final PlatformInvocationListener<CommandSender> invocationHook;
     private final PlatformSuggestionListener<CommandSender> suggestionHook;
+    private boolean syncTabComplete = false;
 
     BukkitCommand(LiteBukkitSettings settings, CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
         super(commandRoute.getName(), "", "/" + commandRoute.getName(), commandRoute.getAliases());
@@ -26,6 +36,10 @@ class BukkitCommand extends org.bukkit.command.Command {
         this.commandRoute = commandRoute;
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
+    }
+
+    public void setSyncTabComplete(boolean syncTabComplete) {
+        this.syncTabComplete = syncTabComplete;
     }
 
     @Override
@@ -39,11 +53,34 @@ class BukkitCommand extends org.bukkit.command.Command {
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        if (this.syncTabComplete) {
+            CompletableFuture<List<String>> future = this.suggest(sender, alias, args);
+
+            try {
+                future.get(0, TimeUnit.MILLISECONDS);
+            }
+            catch (TimeoutException exception) {
+                if (settings.syncSuggestionWarning()) {
+                    LOGGER.warning("Asynchronous tab completions are not supported on current server version.");
+                    LOGGER.warning("Use server 1.12+ Paper version or install ProtocolLib plugin.");
+                }
+
+                return Collections.emptyList();
+            }
+            catch (InterruptedException | ExecutionException exception) {
+                throw new RuntimeException(exception);
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
+    public CompletableFuture<List<String>> suggest(CommandSender sender, String alias, String[] args) {
         SuggestionInput<?> input = SuggestionInput.raw(args);
         PlatformSender platformSender = new BukkitPlatformSender(sender);
 
-        return this.suggestionHook.suggest(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input)
-            .asMultiLevelList();
+        return CompletableFuture.completedFuture(this.suggestionHook.suggest(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input)
+            .asMultiLevelList());
     }
 
     @Override

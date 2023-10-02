@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.Requirement;
@@ -64,7 +64,7 @@ class MethodDefinition {
         Parameter parameter = method.getParameters()[parameterIndex];
 
         if (!typeOrParsed.isAssignableFrom(parameter.getType())) {
-            throw new LiteCommandsReflectException(method, parameter, "Parameter type is not assignable from " + typeOrParsed.getSimpleName());
+            throw new LiteCommandsReflectInvocationException(method, parameter, "Parameter type is not assignable from " + typeOrParsed.getSimpleName());
         }
 
         if (requirement instanceof Argument) {
