@@ -72,6 +72,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final Set<LiteBuilderProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
 
     protected final List<LiteExtension<SENDER>> extensions = new ArrayList<>();
+    protected final List<LiteCommandsProviderExtension<SENDER>> commandsProviderExtensions = new ArrayList<>();
 
     protected final EditorService<SENDER> editorService = new EditorService<>();
     protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
@@ -111,21 +112,23 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> commands(LiteCommandsProvider<SENDER> commandsProvider) {
-        this.applyExtensionsOnProvider(commandsProvider);
+        this.preProcessExtensionsOnProvider(commandsProvider);
         this.commandBuilderCollector.add(commandsProvider.toInternalProvider(this));
         return this;
     }
 
-    private void applyExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
-        for (LiteExtension<SENDER> extension : extensions) {
-            if (!(extension instanceof LiteCommandsProviderExtension)) {
-                continue;
+    /**
+     * Pre-process extensions on provider before executing {@link CommandBuilderCollector#collectAndMergeCommands()}
+     * Kinda magic, but it works.
+     *
+     * @param commandsProvider provider of commands.
+     */
+    private void preProcessExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
+        this.preProcessor((builder, pattern) -> {
+            for (LiteCommandsProviderExtension<SENDER> extension : commandsProviderExtensions) {
+                extension.extendCommandsProvider(this, this, commandsProvider);
             }
-
-            LiteCommandsProviderExtension<SENDER> commandsProviderExtension = (LiteCommandsProviderExtension<SENDER>) extension;
-
-            commandsProviderExtension.extendCommandsProvider(this, this, commandsProvider);
-        }
+        });
     }
 
     @Override
@@ -372,10 +375,16 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration) {
         extension = configuration.apply(extension);
         extension.extend(this, this);
         extensions.add(extension);
+
+        if (extension instanceof LiteCommandsProviderExtension) {
+            commandsProviderExtensions.add((LiteCommandsProviderExtension<SENDER>) extension);
+        }
+
         return this;
     }
 

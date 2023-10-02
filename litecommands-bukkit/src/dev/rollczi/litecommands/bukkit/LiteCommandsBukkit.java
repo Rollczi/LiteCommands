@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
 import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -21,15 +22,22 @@ public final class LiteCommandsBukkit {
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder() {
-        return builder(JavaPlugin.getProvidingPlugin(LiteCommandsBukkit.class), Bukkit.getServer());
+        return builder(StringUtil.EMPTY);
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin) {
-        return builder(plugin, Bukkit.getServer());
+    public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(String fallbackPrefix) {
+        return builder(fallbackPrefix, JavaPlugin.getProvidingPlugin(LiteCommandsBukkit.class), Bukkit.getServer());
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin, Server server) {
-        return builder(plugin, server, new LiteBukkitSettings(server));
+    public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(String fallbackPrefix, Plugin plugin) {
+        return builder(fallbackPrefix, plugin, Bukkit.getServer());
+    }
+
+    public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(String fallbackPrefix, Plugin plugin, Server server) {
+        LiteBukkitSettings settings = new LiteBukkitSettings(server)
+            .fallbackPrefix(fallbackPrefix);
+
+        return builder(plugin, server, settings);
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin, Server server, LiteBukkitSettings settings) {

@@ -19,7 +19,9 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
 
     // implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre15") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-chatgpt:3.0.0-BETA-pre15") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
+    implementation(project(":litecommands-chatgpt")) // don't use this line in your build.gradle
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
@@ -27,7 +29,7 @@ dependencies {
 
 
 bukkit {
-    main = "dev.rollczi.example.bukkit.ExamplePlugin"
+    main = "dev.rollczi.example.bukkit.chatgpt.ExamplePlugin"
     apiVersion = "1.13"
     prefix = "ExamplePlugin"
     author = "Rollczi"

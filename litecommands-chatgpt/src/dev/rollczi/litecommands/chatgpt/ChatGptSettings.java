@@ -12,7 +12,7 @@ public class ChatGptSettings {
     private int minTokens = 2;
     private int maxTokens = 60;
     private boolean onlyAfterSpace = false;
-    private Duration cooldown = Duration.ofMillis(700);
+    private Duration cooldown = Duration.ofMillis(500);
 
     public ChatGptSettings() {
         this.apiKey = System.getenv("OPENAI_API_KEY");

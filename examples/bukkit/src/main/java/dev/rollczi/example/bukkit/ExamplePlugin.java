@@ -1,21 +1,24 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
-import dev.rollczi.example.bukkit.command.BanCommand;
-import dev.rollczi.example.bukkit.command.ChatGptCommand;
-import dev.rollczi.litecommands.chatgpt.ChatGptModel;
-import dev.rollczi.litecommands.chatgpt.LiteChatGptExtension;
+import dev.rollczi.example.bukkit.command.ConvertCommand;
+import dev.rollczi.example.bukkit.command.GameModeCommand;
+import dev.rollczi.example.bukkit.command.KickCommand;
+import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.programmatic.LiteCommand;
+import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExamplePlugin extends JavaPlugin {
@@ -31,19 +34,14 @@ public class ExamplePlugin extends JavaPlugin {
                 .nativePermissions(false) // enable/disable bukkit permissions system
             )
 
-            .extension(new LiteChatGptExtension<>(settings -> settings
-                .apiKey(System.getenv("OPENAI_API_KEY"))
-                .model(ChatGptModel.GPT_4)
-                .temperature(0.9)
-                .tokensLimit(1, 64)
-            ))
-
             // Commands
             .commands(LiteCommandsAnnotations.of(
-                new ChatGptCommand(),
-                new BanCommand()
+                new ConvertCommand(),
+                new GameModeCommand(),
+                new KickCommand(),
+                new TeleportCommand()
             ))
-    /*        .commands(LiteCommandsProgrammatic.of(
+            .commands(LiteCommandsProgrammatic.of(
                 new LiteCommand<CommandSender>("ban")
                     .permissions("example.ban")
                     .argument("player", Player.class)
@@ -51,7 +49,7 @@ public class ExamplePlugin extends JavaPlugin {
                         Player player = context.argument("player", Player.class);
                         player.kickPlayer("You have been banned!");
                     })
-            ))*/
+            ))
 
             // change default messages
             .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> "&cInvalid location format: &7" + input)

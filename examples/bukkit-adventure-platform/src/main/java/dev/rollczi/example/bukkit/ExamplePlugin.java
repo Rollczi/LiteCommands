@@ -25,10 +25,7 @@ public class ExamplePlugin extends JavaPlugin {
         this.audienceProvider = BukkitAudiences.create(this);
         this.miniMessage = MiniMessage.miniMessage();
 
-        this.liteCommands = LiteCommandsBukkit.builder()
-            .settings(settings -> settings
-                .fallbackPrefix("my-plugin")
-            )
+        this.liteCommands = LiteCommandsBukkit.builder("my-plugin")
 
             // register additional Kyori Adventure features
             // more: https://docs.advntr.dev/minimessage/format.html

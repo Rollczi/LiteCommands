@@ -5,7 +5,7 @@ import org.bukkit.Server;
 
 public class LiteBukkitSettings implements PlatformSettings {
 
-    private String fallbackPrefix;
+    private String fallbackPrefix = "";
     private boolean nativePermission = false;
     private boolean syncSuggestionWarning = true;
     private BukkitCommandsRegistry commandsRegistry;
