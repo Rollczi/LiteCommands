@@ -10,8 +10,4 @@ public interface ResultHandleService<SENDER> {
 
     <T> void resolve(Invocation<SENDER> invocation, T result, ResultHandlerChain<SENDER> chain);
 
-    static <SENDER> ResultHandleService<SENDER> create() {
-        return new ResultHandleServiceImpl<>();
-    }
-
 }

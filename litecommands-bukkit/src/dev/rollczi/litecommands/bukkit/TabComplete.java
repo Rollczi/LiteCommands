@@ -16,10 +16,18 @@ import java.util.concurrent.TimeoutException;
 
 abstract class TabComplete {
 
+    private final static String FALLBACK_SEPARATOR = ":";
+
     protected Map<String, BukkitCommand> listeners = new HashMap<>();
 
-    void register(String commandName, BukkitCommand listener) {
-        listeners.put(commandName, listener);
+    void register(String fallbackPrefix, BukkitCommand command) {
+        for (String alias : command.getAliases()) {
+            listeners.put(alias, command);
+            listeners.put(fallbackPrefix + FALLBACK_SEPARATOR + alias, command);
+        }
+
+        listeners.put(command.getName(), command);
+        listeners.put(fallbackPrefix + FALLBACK_SEPARATOR + command.getName(), command);
     }
 
     void unregister(String commandName) {
@@ -27,10 +35,10 @@ abstract class TabComplete {
     }
 
     void unregisterAll() {
-        HashSet<BukkitCommand> copy = new HashSet<>(this.listeners.values());
+        HashSet<String> set = new HashSet<>(this.listeners.keySet());
 
-        for (BukkitCommand command : copy) {
-            this.unregister(command.getName());
+        for (String commandName : set) {
+            this.unregister(commandName);
         }
     }
 

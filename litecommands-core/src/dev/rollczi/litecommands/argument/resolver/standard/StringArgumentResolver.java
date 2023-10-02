@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.resolver.std;
+package dev.rollczi.litecommands.argument.resolver.standard;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
@@ -16,8 +16,7 @@ public class StringArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Str
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> objectStringArgument, SuggestionContext context) {
-        return SuggestionResult.of("text");
+        return SuggestionResult.of("<" + objectStringArgument.getName() + ">");
     }
-
-
+    
 }

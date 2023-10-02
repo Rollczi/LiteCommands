@@ -28,7 +28,7 @@ public class Suggestion {
     }
 
     public List<String> multilevelList() {
-        return this.multiSuggestion;
+        return Collections.unmodifiableList(this.multiSuggestion);
     }
 
     public boolean isMultilevel() {
@@ -48,7 +48,18 @@ public class Suggestion {
             throw new UnsupportedOperationException();
         }
 
+        if (level > this.multiSuggestion.size()) {
+            throw new IllegalArgumentException("Level cannot be greater than suggestion size " + level + " > " + this.multiSuggestion.size());
+        }
+
         return Suggestion.from(this.multiSuggestion.subList(level, this.multiSuggestion.size()));
+    }
+
+    public Suggestion appendLevel(String levelPart) {
+        List<String> newSuggestion = new ArrayList<>(this.multiSuggestion);
+        newSuggestion.add(levelPart);
+
+        return Suggestion.from(newSuggestion);
     }
 
     public static Suggestion from(List<String> suggestion) {
@@ -56,7 +67,7 @@ public class Suggestion {
             throw new IllegalArgumentException("Suggestion cannot be empty");
         }
 
-        return new Suggestion(String.join(" ", suggestion), suggestion);
+        return new Suggestion(String.join(" ", suggestion), new ArrayList<>(suggestion));
     }
 
     public static Suggestion of(String suggestion) {

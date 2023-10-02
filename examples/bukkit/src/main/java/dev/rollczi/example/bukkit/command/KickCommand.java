@@ -1,4 +1,4 @@
-package dev.rollczi.example.bukkit.adventure.command;
+package dev.rollczi.example.bukkit.command;
 
 import dev.rollczi.example.bukkit.util.ChatUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class KickCommand {
 
     @Execute
-    public void kickPlayer(Server server, @Arg("target") Player target, @Join String reason) {
+    public void kickPlayer(Server server, @Arg("target") Player target, @Join("reason") String reason) {
         target.kickPlayer(ChatUtil.color(reason));
         server.broadcastMessage(ChatUtil.color("&cPlayer &7" + target.getName() + " &chas been kicked!"));
     }

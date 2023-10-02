@@ -99,13 +99,8 @@ public class CommandExecuteService<SENDER> {
         }
     }
 
-    @SuppressWarnings("unchecked") // TODO Support mapping of result in result resolver
+    // TODO Support mapping of result in result resolver
     private CommandExecuteResult mapResult(CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
-        Throwable throwable = executeResult.getThrowable();
-        if (throwable != null) {
-            return executeResult;
-        }
-
         Object result = executeResult.getResult();
         if (result != null) {
             return CommandExecuteResult.success(executeResult.getExecutor(), mapResult(result, commandRoute, executeResult, invocation));

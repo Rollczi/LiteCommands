@@ -64,7 +64,6 @@ class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> 
         String commandStructure = this.showStructure(invocation, context);
 
         UUID signed = this.sign(identifier);
-        Logger logger = Logger.getLogger("test");
 
         CompletableFuture<SuggestionResult> future = scheduler.supplyLater(SchedulerPoll.SUGGESTER, settings.cooldown(), () -> {
             if (!this.checkSignature(identifier, signed)) {
@@ -105,8 +104,6 @@ class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> 
     private String generateNewSuggestion(String commandStructure, String topic, String firstPart) {
         String prompt = settings.prompt(commandStructure, topic);
         String lastPart = chatGptClient.chat(prompt, "'" + firstPart + "'");
-
-        Logger.getLogger("LiteCommands").info("Generated suggestion: " + lastPart);
 
         if (lastPart.startsWith("'")) {
             lastPart = lastPart.substring(1);

@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.bukkit;
 class TabCompleteSync extends TabComplete {
 
     @Override
-    void register(String commandName, BukkitCommand listener) {
-        super.register(commandName, listener);
+    void register(String fallbackPrefix, BukkitCommand listener) {
+        super.register(fallbackPrefix, listener);
         listener.setSyncTabComplete(true);
     }
 

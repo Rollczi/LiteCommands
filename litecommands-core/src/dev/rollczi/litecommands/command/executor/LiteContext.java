@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.wrapper.Wrap;
@@ -57,7 +58,7 @@ public class LiteContext<SENDER> {
 
         Object unwrap = wrap.unwrap();
 
-        if (unwrap.getClass() != format.getOutTypeOrParsed()) {
+        if (!ReflectUtil.instanceOf(unwrap, format.getOutTypeOrParsed())) {
             throw new IllegalArgumentException("Argument with name '" + name + "' is not instance of " + format.getOutTypeOrParsed().getName() + " but " + unwrap.getClass().getName());
         }
 

@@ -20,6 +20,7 @@ import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
+import dev.rollczi.litecommands.handler.result.ResultHandleServiceImpl;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
@@ -80,7 +81,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final SuggesterRegistry<SENDER> suggesterRegistry = new SuggesterRegistryImpl<>();
     protected final BindRegistry bindRegistry = new BindRegistry();
     protected final ContextRegistry<SENDER> contextRegistry = new ContextRegistry<>();
-    protected final ResultHandleService<SENDER> resultHandleService = ResultHandleService.create();
+    protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleServiceImpl<>();
     protected final ExceptionHandleService<SENDER> exceptionHandleService = new ExceptionHandleService<>();
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
     protected final MessageRegistry messageRegistry = new MessageRegistry();

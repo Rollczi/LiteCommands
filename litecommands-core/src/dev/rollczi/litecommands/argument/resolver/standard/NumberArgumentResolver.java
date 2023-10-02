@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.resolver.std;
+package dev.rollczi.litecommands.argument.resolver.standard;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;

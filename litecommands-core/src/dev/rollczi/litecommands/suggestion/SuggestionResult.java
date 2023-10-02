@@ -32,7 +32,7 @@ public class SuggestionResult {
     public SuggestionResult filterBy(Suggestion suggestion) {
         String multilevel = suggestion.multilevel();
         Set<Suggestion> filtered = this.suggestions.stream()
-            .filter(suggestion1 -> suggestion1.multilevel().startsWith(multilevel))
+            .filter(suggestion1 ->  suggestion1.multilevel().startsWith(multilevel))
             .map(suggestion1 -> suggestion1.slashLevel(suggestion.lengthMultilevel() - 1))
             .collect(Collectors.toSet());
 

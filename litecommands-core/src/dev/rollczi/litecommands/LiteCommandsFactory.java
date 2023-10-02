@@ -1,11 +1,17 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.argument.resolver.std.NumberArgumentResolver;
-import dev.rollczi.litecommands.argument.resolver.std.StringArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
 import dev.rollczi.litecommands.builder.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
+import dev.rollczi.litecommands.handler.result.basic.CompletionStageHandler;
+import dev.rollczi.litecommands.handler.result.basic.OptionHandler;
+import dev.rollczi.litecommands.handler.result.basic.OptionalHandler;
+import dev.rollczi.litecommands.handler.result.basic.ThrowableHandler;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
@@ -21,6 +27,10 @@ import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
+import panda.std.Option;
+
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 
 public final class LiteCommandsFactory {
 
@@ -61,8 +71,12 @@ public final class LiteCommandsFactory {
                 .wrapper(new OptionalWrapper())
                 .wrapper(new CompletableFutureWrapper(scheduler))
 
-                .result(Throwable.class, (invocation, result, chain) -> result.printStackTrace())
+                .result(Throwable.class, new ThrowableHandler<>())
+                .result(Optional.class, new OptionalHandler<>())
+                .result(Option.class, new OptionHandler<>())
+                .result(CompletionStage.class, new CompletionStageHandler<>())
                 .result(MissingPermissions.class, new MissingPermissionResultHandler<>(pattern.getMessageRegistry()))
+                .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(pattern.getMessageRegistry()))
                 ;
         });
     }

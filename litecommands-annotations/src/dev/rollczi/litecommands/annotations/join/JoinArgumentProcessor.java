@@ -14,7 +14,13 @@ public class JoinArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, 
     @Override
     public <T> Argument<T> create(AnnotationHolder<Join, T, ?> holder) {
         Join annotation = holder.getAnnotation();
-        return new JoinArgument<>(holder.getName(), holder.getFormat(), annotation.separator(), annotation.limit());
+        String name = annotation.value();
+
+        if (name.isEmpty()) {
+            name = holder.getName();
+        }
+
+        return new JoinArgument<>(name, holder.getFormat(), annotation.separator(), annotation.limit());
     }
 
 }

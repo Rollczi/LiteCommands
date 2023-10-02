@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import java.util.HashMap;
 import java.util.Map;
 
-class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SENDER> {
+public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SENDER> {
 
     private final Map<Class<?>, ResultHandler<SENDER, ?>> handlers = new HashMap<>();
 

@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.chatgpt.annotation;
 
 import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
-import dev.rollczi.litecommands.chatgpt.ChatGptStringSuggester;
 import dev.rollczi.litecommands.chatgpt.LiteChatGptExtension;
 import dev.rollczi.litecommands.meta.Meta;
 

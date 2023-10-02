@@ -9,14 +9,21 @@ import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class LocationArgument implements MultipleArgumentResolver<CommandSender, Location> {
+
+    private final static String CURRENT_LOCATION = "~";
+    public static final String CORDINATE_FORMAT = "%.2f";
 
     private final MessageRegistry messageRegistry;
 
@@ -26,17 +33,17 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
 
     @Override
     public Range getRange(Argument<Location> argument) {
-        return Range.of(3);
+        return Range.of(LocationAxis.SIZE);
     }
 
     @Override
     public ParseResult<Location> parse(Invocation<CommandSender> invocation, Argument<Location> argument, RawInput rawInput) {
-        String input = String.join(" ", rawInput.seeNext(3));
+        String input = String.join(" ", rawInput.seeNext(LocationAxis.SIZE));
 
         try {
-            double x = rawInput.nextDouble();
-            double y = rawInput.nextDouble();
-            double z = rawInput.nextDouble();
+            double x = parseAxis(invocation, rawInput.next(), LocationAxis.X);
+            double y = parseAxis(invocation, rawInput.next(), LocationAxis.Y);
+            double z = parseAxis(invocation, rawInput.next(), LocationAxis.Z);
 
             return ParseResult.success(new Location(null, x, y, z));
         }
@@ -45,13 +52,96 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
         }
     }
 
+    private double parseAxis(Invocation<CommandSender> invocation, String input, LocationAxis axis) {
+        try {
+            return Double.parseDouble(input.replace(",", "."));
+        }
+        catch (NumberFormatException exception) {
+            if (!input.equals(CURRENT_LOCATION)) {
+                throw exception;
+            }
+
+            if (!(invocation.sender() instanceof Player)) {
+                throw exception;
+            }
+
+            Player player = (Player) invocation.sender();
+            Location location = player.getLocation();
+
+            return axis.getValue(location);
+        }
+    }
+
     @Override
     public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Location> argument, SuggestionContext context) {
-        return SuggestionResult.of(
-            "100 100 100",
-            "5 5 5",
-            "10 35 -10"
-        );
+        Suggestion current = context.getCurrent();
+
+        if (!isParsable(current)) {
+            return SuggestionResult.empty();
+        }
+
+        CommandSender sender = invocation.sender();
+        String firstPart = current.multilevel();
+        SuggestionResult result = SuggestionResult.empty();
+
+        if (!(sender instanceof Player)) {
+            return SuggestionResult.of(firstPart);
+        }
+
+        Player player = (Player) sender;
+        Location location = player.getLocation();
+
+        List<String> titulusSuggestion = suggestionsWithoutLast(current);
+        List<String> dynamicSuggestion = suggestionsWithoutLast(current);
+
+        if (dynamicSuggestion.size() == LocationAxis.SIZE) {
+            dynamicSuggestion.remove(LocationAxis.SIZE - 1);
+
+            dynamicSuggestion.add(String.format(Locale.US, CORDINATE_FORMAT, LocationAxis.Z.getValue(location)));
+            result.add(Suggestion.from(dynamicSuggestion));
+        }
+
+        for (int axisIndex = titulusSuggestion.size(); axisIndex < LocationAxis.SIZE; axisIndex++) {
+            LocationAxis axis = LocationAxis.at(axisIndex);
+
+            titulusSuggestion.add(CURRENT_LOCATION);
+            dynamicSuggestion.add(String.format(Locale.US, CORDINATE_FORMAT, axis.getValue(location)));
+
+            result.add(Suggestion.from(titulusSuggestion));
+            result.add(Suggestion.from(dynamicSuggestion));
+        }
+
+        return result;
+    }
+
+    private boolean isParsable(Suggestion current) {
+        List<String> arguments = suggestionsWithoutLast(current);
+
+        for (String arg : arguments) {
+            if (arg.equals(CURRENT_LOCATION)) {
+                continue;
+            }
+
+            try {
+                Double.parseDouble(arg);
+            }
+            catch (NumberFormatException exception) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<String> suggestionsWithoutLast(Suggestion suggestion) {
+        List<String> suggestionList = new ArrayList<>(suggestion.multilevelList());
+
+        if (!suggestion.lastLevel().isEmpty()) {
+            return suggestionList;
+        }
+
+        suggestionList.remove(suggestionList.size() - 1);
+        return suggestionList;
     }
 
 }
