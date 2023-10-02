@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
-public class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> implements Suggester<SENDER, String> {
+class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> implements Suggester<SENDER, String> {
 
     private final Scheduler scheduler;
     private final ChatGptClient chatGptClient;

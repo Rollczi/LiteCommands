@@ -1,20 +1,19 @@
-package dev.rollczi.example.bukkit;
+package dev.rollczi.example.bukkit.adventure;
 
-import dev.rollczi.example.bukkit.command.NoticeCommand;
+import dev.rollczi.example.bukkit.adventure.command.NoticeCommand;
 import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
-import dev.rollczi.example.bukkit.command.TeleportCommand;
+import dev.rollczi.example.bukkit.adventure.command.TeleportCommand;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
-import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ExamplePlugin extends JavaPlugin {
+public class ExampleAdventurePlugin extends JavaPlugin {
 
     private AudienceProvider audienceProvider;
     private MiniMessage miniMessage;

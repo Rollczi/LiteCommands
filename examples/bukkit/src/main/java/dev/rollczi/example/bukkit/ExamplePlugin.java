@@ -1,10 +1,10 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
-import dev.rollczi.example.bukkit.command.ConvertCommand;
-import dev.rollczi.example.bukkit.command.GameModeCommand;
-import dev.rollczi.example.bukkit.command.KickCommand;
-import dev.rollczi.example.bukkit.command.TeleportCommand;
+import dev.rollczi.example.bukkit.adventure.command.ConvertCommand;
+import dev.rollczi.example.bukkit.adventure.command.GameModeCommand;
+import dev.rollczi.example.bukkit.adventure.command.KickCommand;
+import dev.rollczi.example.bukkit.adventure.command.TeleportCommand;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;

@@ -1,4 +1,4 @@
-package dev.rollczi.example.bukkit.command;
+package dev.rollczi.example.bukkit.adventure.command;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
