@@ -10,7 +10,6 @@ public class DescriptionAnnotationResolver<SENDER> implements AnnotationProcesso
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         return invoker.on(Description.class, (annotation, metaHolder) -> {
             metaHolder.meta().put(Meta.DESCRIPTION, annotation.value());
-
         });
     }
 

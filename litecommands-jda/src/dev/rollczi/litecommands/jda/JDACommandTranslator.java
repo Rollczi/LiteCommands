@@ -123,7 +123,7 @@ class JDACommandTranslator {
 
         for (Argument<?> argument : executor.getArguments()) {
             String argumentName = argument.getName();
-            String description = /*argument.getDescription();*/ "test"; //TODO: Add description to Argument
+            String description = argument.meta().get(Meta.DESCRIPTION);
             boolean isRequired = !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
 
             Class<?> parsedType = argument.getWrapperFormat().getParsedType();
