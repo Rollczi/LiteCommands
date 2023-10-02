@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ChatGpt {
 
-    String ARGUMENT_KEY = "chat-gpt";
-
     String topic() default "";
 
 }

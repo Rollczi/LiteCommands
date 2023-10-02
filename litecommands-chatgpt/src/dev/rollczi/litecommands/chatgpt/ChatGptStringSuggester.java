@@ -7,7 +7,6 @@ import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.suggestion.Suggestion;
@@ -29,9 +28,6 @@ import java.util.logging.Logger;
 
 public class ChatGptStringSuggester<SENDER> implements Suggester<SENDER, String> {
 
-    private static final Logger LOGGER = Logger.getLogger(ChatGptStringSuggester.class.getName());
-    public static final MetaKey<String> TOPIC = MetaKey.of("chat-gpt-topic", String.class, "");
-
     private final Scheduler scheduler;
     private final ChatGptClient chatGptClient;
     private final ChatGptSettings settings;
@@ -51,7 +47,7 @@ public class ChatGptStringSuggester<SENDER> implements Suggester<SENDER, String>
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
         String firstPart = context.getCurrent().multilevel();
-        String topic = argument.meta().get(TOPIC);
+        String topic = argument.meta().get(LiteChatGptExtension.ARGUMENT_TOPIC);
 
         NavigableMap<String, String> navigableSuggestions = this.suggestions.computeIfAbsent(topic, key -> new TreeMap<>());
         Collection<String> suggestions = navigableSuggestions.subMap(firstPart, firstPart + Character.MAX_VALUE).values();

@@ -10,7 +10,7 @@ include(":litecommands-unit")
 // extensions
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform")
-include(":litecommands-chat-gpt")
+include(":litecommands-chatgpt")
 
 // platforms
 include(":litecommands-velocity", JavaVersion.VERSION_11)

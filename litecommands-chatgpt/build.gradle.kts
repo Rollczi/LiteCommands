@@ -20,5 +20,5 @@ litecommandsUnit {
 }
 
 litecommandsPublish {
-    artifactId = "litecommands-chat-gpt"
+    artifactId = "litecommands-chatgpt"
 }

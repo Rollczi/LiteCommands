@@ -9,10 +9,14 @@ import dev.rollczi.litecommands.builder.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.chatgpt.annotation.ChatGpt;
 import dev.rollczi.litecommands.chatgpt.annotation.ChatGptAnnotationProcessor;
 import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.meta.MetaKey;
 
 import java.util.function.UnaryOperator;
 
 public class LiteChatGptExtension<SENDER> implements LiteCommandsProviderExtension<SENDER> {
+
+    public static final String ARGUMENT_KEY = "chat-gpt";
+    public static final MetaKey<String> ARGUMENT_TOPIC = MetaKey.of("chat-gpt-topic", String.class, "");
 
     private final ChatGptSettings settings = new ChatGptSettings();
 
@@ -36,7 +40,7 @@ public class LiteChatGptExtension<SENDER> implements LiteCommandsProviderExtensi
         ChatGptStringSuggester<SENDER> suggester = new ChatGptStringSuggester<>(pattern.getScheduler(), chatGptClient, settings);
 
         builder
-            .argumentSuggester(String.class, JoinArgument.KEY.withKey(ChatGpt.ARGUMENT_KEY), suggester);
+            .argumentSuggester(String.class, JoinArgument.KEY.withKey(ARGUMENT_KEY), suggester);
     }
 
     @Override
