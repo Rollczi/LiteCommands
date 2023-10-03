@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.invocation;
 
 import dev.rollczi.litecommands.util.MapUtil;
-import panda.std.Option;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class InvocationContext {
 
@@ -14,8 +14,8 @@ public class InvocationContext {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Option<T> get(Class<T> type) {
-        return (Option<T>) MapUtil.findByInstanceOf(type, context);
+    public <T> Optional<T> get(Class<T> type) {
+        return (Optional<T>) MapUtil.findByInstanceOf(type, context);
     }
 
     public static InvocationContext.Builder builder() {

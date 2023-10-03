@@ -10,7 +10,6 @@ import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

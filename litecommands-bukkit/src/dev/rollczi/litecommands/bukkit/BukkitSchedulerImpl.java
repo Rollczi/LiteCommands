@@ -2,10 +2,10 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.shared.ThrowingSupplier;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
-import panda.std.function.ThrowingSupplier;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;

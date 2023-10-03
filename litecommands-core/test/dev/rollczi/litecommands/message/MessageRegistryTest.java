@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.message;
 
 import org.junit.jupiter.api.Test;
-import panda.std.Blank;
 
 import java.util.Optional;
 

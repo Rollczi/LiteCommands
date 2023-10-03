@@ -1,15 +1,14 @@
 package dev.rollczi.litecommands.bungee.tools;
 
-import dev.rollczi.litecommands.context.LegacyContextProvider;
+import dev.rollczi.litecommands.context.ContextProvider;
+import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import panda.std.Option;
-import panda.std.Result;
 
 import java.util.function.Supplier;
 
-public class BungeeOnlyPlayerContextual<MESSAGE> implements LegacyContextProvider<CommandSender, ProxiedPlayer> {
+public class BungeeOnlyPlayerContextual<MESSAGE> implements ContextProvider<CommandSender, ProxiedPlayer> {
 
     private final Supplier<MESSAGE> onlyPlayerMessage;
 
@@ -22,10 +21,12 @@ public class BungeeOnlyPlayerContextual<MESSAGE> implements LegacyContextProvide
     }
 
     @Override
-    public Result<ProxiedPlayer, Object> provideLegacy(Invocation<CommandSender> invocation) {
-        return Option.of(invocation.sender())
-            .is(ProxiedPlayer.class)
-            .toResult(onlyPlayerMessage.get());
+    public ContextResult<ProxiedPlayer> provide(Invocation<CommandSender> invocation) {
+        if (invocation.sender() instanceof ProxiedPlayer) {
+            return ContextResult.ok(() -> (ProxiedPlayer) invocation.sender());
+        }
+
+        return ContextResult.error(onlyPlayerMessage.get());
     }
 
 }

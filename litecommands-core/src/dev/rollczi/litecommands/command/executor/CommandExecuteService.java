@@ -317,7 +317,7 @@ public class CommandExecuteService<SENDER> {
 
     private <PARSED> RequirementResult<?> matchBind(BindRequirement<PARSED> bindRequirement, Invocation<SENDER> invocation) {
         WrapFormat<PARSED, ?> wrapFormat = bindRequirement.getWrapperFormat();
-        Result<PARSED, Object> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
+        Result<PARSED, String> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
         Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapFormat);
 
         if (instance.isOk()) {

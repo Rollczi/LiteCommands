@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.bind;
 
 import dev.rollczi.litecommands.util.MapUtil;
-import panda.std.Option;
 import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class BindRegistry {
@@ -21,8 +21,8 @@ public class BindRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Result<T, Object> getInstance(Class<T> clazz) {
-        Option<Supplier<?>> option = MapUtil.findByInstanceOf(clazz, this.instanceBindings);
+    public <T> Result<T, String> getInstance(Class<T> clazz) {
+        Optional<Supplier<?>> option = MapUtil.findByInstanceOf(clazz, this.instanceBindings);
 
         if (option.isPresent()) {
             Supplier<T> supplier = (Supplier<T>) option.get();

@@ -7,7 +7,6 @@ import dev.rollczi.litecommands.meta.MetaHolder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import panda.std.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,11 +128,16 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
 
     @Override
     public @NotNull CommandBuilder<SENDER> appendChild(CommandBuilder<SENDER> context) {
-        CommandBuilder<SENDER> newContext = Option.ofOptional(this.getChild(context.name()))
-            .peek(current -> current.meagre(context))
-            .orElseGet(context);
+        Optional<CommandBuilder<SENDER>> childOption = this.getChild(context.name());
 
-        this.children.put(newContext.name(), newContext);
+        if (childOption.isPresent()) {
+            CommandBuilder<SENDER> child = childOption.get();
+            child.meagre(context);
+
+            context = child;
+        }
+
+        this.children.put(context.name(), context);
         return this;
     }
 

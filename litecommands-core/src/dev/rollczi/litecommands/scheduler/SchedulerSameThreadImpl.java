@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.scheduler;
 
-import panda.std.function.ThrowingSupplier;
+import dev.rollczi.litecommands.shared.ThrowingSupplier;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;

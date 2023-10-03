@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.annotations.inject;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
+import panda.std.Result;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Injector<SENDER> {
+public class Injector {
 
     private final BindRegistry registry;
 
@@ -38,14 +39,14 @@ public class Injector<SENDER> {
             for (int i = 0; i < constructor.getParameterCount(); i++) {
                 Parameter parameter = constructor.getParameters()[i];
                 Class<?> parameterType = parameter.getType();
-                Object valueToInject = this.registry.getInstance(parameterType);
+                Result<?, String> result = this.registry.getInstance(parameterType);
 
-                if (valueToInject == null) {
-                    exceptions.add(new LiteCommandsReflectInvocationException(constructor, parameter, "Cannot inject parameter " + parameterType.getName()));
+                if (result.isErr()) {
+                    exceptions.add(new LiteCommandsReflectInvocationException(constructor, parameter, "Cannot inject parameter " + parameterType.getName() + " error: " + result.getError()));
                     continue;
                 }
 
-                parameters[i] = valueToInject;
+                parameters[i] = result.get();
             }
 
             try {

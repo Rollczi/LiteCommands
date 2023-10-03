@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.wrapper;
 
 import dev.rollczi.litecommands.wrapper.std.ValueWrapper;
-import panda.std.Option;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class WrapperRegistry {
 
@@ -21,14 +21,14 @@ public class WrapperRegistry {
         return factory.create(result.get(), wrapFormat);
     }
 
-    public <EXPECTED> Option<Wrap<EXPECTED>> empty(WrapFormat<EXPECTED, ?> wrapFormat) {
+    public <EXPECTED> Optional<Wrap<EXPECTED>> empty(WrapFormat<EXPECTED, ?> wrapFormat) {
         Wrapper factory = this.getWrappedExpectedFactory(wrapFormat);
 
         if (factory.canCreateEmpty()) {
-            return Option.of(factory.createEmpty(wrapFormat));
+            return Optional.of(factory.createEmpty(wrapFormat));
         }
 
-        return Option.none();
+        return Optional.empty();
     }
 
     public <EXPECTED> boolean isWrapper(Class<EXPECTED> expectedType) {

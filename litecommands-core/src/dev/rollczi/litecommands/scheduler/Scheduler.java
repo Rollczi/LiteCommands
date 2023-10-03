@@ -1,11 +1,10 @@
 package dev.rollczi.litecommands.scheduler;
 
-import panda.std.function.ThrowingRunnable;
-import panda.std.function.ThrowingSupplier;
+import dev.rollczi.litecommands.shared.ThrowingRunnable;
+import dev.rollczi.litecommands.shared.ThrowingSupplier;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 /**
  * Scheduler is used to run the commands, tasks, etc.

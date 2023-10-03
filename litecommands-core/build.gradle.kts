@@ -4,6 +4,7 @@ plugins {
     `litecommands-java-unit-test`
     `litecommands-repositories`
     `litecommands-publish`
+    `litecommands-compile-variables`
 }
 
 dependencies {

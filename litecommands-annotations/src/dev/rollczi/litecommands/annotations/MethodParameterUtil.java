@@ -3,11 +3,11 @@ package dev.rollczi.litecommands.annotations;
 import dev.rollczi.litecommands.reflect.ReflectFormatUtil;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
-import panda.std.Option;
 
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 final class MethodParameterUtil {
 
@@ -18,9 +18,9 @@ final class MethodParameterUtil {
         Class<?> outParameterType = parameter.getType();
 
         if (wrapperRegistry.isWrapper(outParameterType)) {
-            Option<Class<?>> optionGenericType = extractFirstType(parameter);
+            Optional<Class<?>> optionGenericType = extractFirstType(parameter);
 
-            if (optionGenericType.isEmpty()) {
+            if (!optionGenericType.isPresent()) {
                 throw new IllegalArgumentException("Cannot extract expected type from parameter " + ReflectFormatUtil.parameter(parameter));
             }
 
@@ -30,7 +30,7 @@ final class MethodParameterUtil {
         return WrapFormat.notWrapped(outParameterType);
     }
 
-    private static Option<Class<?>> extractFirstType(Parameter parameter) {
+    private static Optional<Class<?>> extractFirstType(Parameter parameter) {
         Type parameterizedType = parameter.getParameterizedType();
 
         if (parameterizedType instanceof ParameterizedType) {
@@ -38,19 +38,19 @@ final class MethodParameterUtil {
             Type[] arguments = parameterized.getActualTypeArguments();
 
             if (arguments.length == 0) {
-                return Option.none();
+                return Optional.empty();
             }
 
             Type type = arguments[0];
 
             if (!(type instanceof Class)) {
-                return Option.none();
+                return Optional.empty();
             }
 
-            return Option.of((Class<?>) type);
+            return Optional.of((Class<?>) type);
         }
 
-        return Option.none();
+        return Optional.empty();
     }
 
 }

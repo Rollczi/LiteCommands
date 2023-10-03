@@ -37,7 +37,7 @@ public class LiteCommandsAnnotations<SENDER> implements LiteCommandsProvider<SEN
         WrapperRegistry wrapperRegistry = builder.getWrapperRegistry();
 
         InstanceSourceProcessor<SENDER> processor = new InstanceSourceProcessor<>(annotationProcessorService, wrapperRegistry);
-        Injector<SENDER> injector = new Injector<>(builder.getBindRegistry());
+        Injector injector = new Injector(builder.getBindRegistry());
 
         List<Object> instances = new ArrayList<>(this.commandInstances);
 

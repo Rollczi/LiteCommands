@@ -2,10 +2,10 @@ package dev.rollczi.litecommands.context;
 
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.util.MapUtil;
-import panda.std.Option;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ContextRegistry<SENDER> {
 
@@ -17,7 +17,7 @@ public class ContextRegistry<SENDER> {
 
     @SuppressWarnings("unchecked")
     public <T> ContextResult<T> provideContext(Class<T> clazz, Invocation<SENDER> invocation) {
-        Option<ContextProvider<SENDER, ?>> bindContextual = MapUtil.findByInstanceOf(clazz, this.contextualBindings);
+        Optional<ContextProvider<SENDER, ?>> bindContextual = MapUtil.findByInstanceOf(clazz, this.contextualBindings);
 
         if (bindContextual.isPresent()) {
             return (ContextResult<T>) bindContextual.get().provide(invocation);
