@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.bukkit.argument;
+package dev.rollczi.litecommands.bukkit.context;
 
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.context.ContextProvider;
