@@ -3,7 +3,9 @@ package dev.rollczi.litecommands.bukkit;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
+import dev.rollczi.litecommands.bukkit.argument.LocationContext;
 import dev.rollczi.litecommands.bukkit.argument.WorldArgument;
+import dev.rollczi.litecommands.bukkit.argument.WorldContext;
 import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.message.MessageRegistry;
@@ -54,11 +56,13 @@ public final class LiteCommandsBukkit {
 
                 .settings(bukkitSettings -> bukkitSettings.tabCompleter(TabComplete.create(pattern.getScheduler(), plugin)))
 
-                .argument(Location.class, new LocationArgument(messageRegistry))
-                .argument(World.class, new WorldArgument(server, messageRegistry))
                 .argument(Player.class, new PlayerArgument(server, messageRegistry))
+                .argument(World.class, new WorldArgument(server, messageRegistry))
+                .argument(Location.class, new LocationArgument(messageRegistry))
 
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
+                .context(World.class, new WorldContext(messageRegistry))
+                .context(Location.class, new LocationContext(messageRegistry))
 
                 .result(String.class, new StringHandler());
         });

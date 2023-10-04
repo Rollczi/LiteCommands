@@ -22,7 +22,7 @@ public class PlayerOnlyContextProvider implements ContextProvider<CommandSender,
             return ContextResult.ok(() -> (Player) invocation.sender());
         }
 
-        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.PLAYER_ONLY));
+        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.PLAYER_ONLY, invocation.sender()));
     }
 
 }
