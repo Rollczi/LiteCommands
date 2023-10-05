@@ -69,6 +69,11 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
+    public @NotNull CommandBuilder<SENDER> enabled(boolean enabled) {
+        throw new UnsupportedOperationException("Cannot enable root command");
+    }
+
+    @Override
     public @NotNull CommandBuilder<SENDER> disable() {
         throw new UnsupportedOperationException("Cannot disable root command");
     }
