@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 @SuppressWarnings("rawtypes")
 public interface Meta {
@@ -35,6 +36,12 @@ public interface Meta {
 
     default <E> MetaListEditor<E> listEditor(MetaKey<List<E>> key) {
         return new MetaListEditor<>(this.get(key), this, key);
+    }
+
+    default <E> Meta list(MetaKey<List<E>> key, UnaryOperator<MetaListEditor<E>> operator) {
+        MetaListEditor<E> editor = listEditor(key);
+
+        return operator.apply(editor).apply();
     }
 
     Meta apply(Meta meta);

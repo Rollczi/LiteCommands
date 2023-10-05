@@ -40,6 +40,9 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     CommandBuilder<SENDER> enable();
 
     @NotNull
+    CommandBuilder<SENDER> enabled(boolean enabled);
+
+    @NotNull
     CommandBuilder<SENDER> disable();
 
     @NotNull

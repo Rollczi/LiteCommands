@@ -96,6 +96,12 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
+    public @NotNull CommandBuilder<SENDER> enabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    @Override
     public @NotNull CommandBuilder<SENDER> disable() {
         this.enabled = false;
         return this;
