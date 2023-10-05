@@ -7,15 +7,15 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 
 public class InvalidUsageHandlerImpl<SENDER> implements InvalidUsageHandler<SENDER> {
 
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<SENDER> messageRegistry;
 
-    public InvalidUsageHandlerImpl(MessageRegistry messageRegistry) {
+    public InvalidUsageHandlerImpl(MessageRegistry<SENDER> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
     @Override
     public void handle(Invocation<SENDER> invocation, InvalidUsage<SENDER> result, ResultHandlerChain<SENDER> chain) {
-        this.messageRegistry.get(LiteMessages.INVALID_USAGE, result)
+        this.messageRegistry.getInvoked(LiteMessages.INVALID_USAGE, invocation, result)
             .ifPresent(object -> chain.resolve(invocation, object));
     }
 

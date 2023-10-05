@@ -46,7 +46,7 @@ public final class LiteCommandsBukkit {
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin, Server server, LiteBukkitSettings settings) {
         return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings)).selfProcessor((builder, pattern) -> {
-            MessageRegistry messageRegistry = pattern.getMessageRegistry();
+            MessageRegistry<CommandSender> messageRegistry = pattern.getMessageRegistry();
 
             builder
                 .bind(Server.class, () -> server)

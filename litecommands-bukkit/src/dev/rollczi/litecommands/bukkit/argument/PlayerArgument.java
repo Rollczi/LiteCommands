@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
 public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
 
     private final Server server;
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<CommandSender> messageRegistry;
 
-    public PlayerArgument(Server server, MessageRegistry messageRegistry) {
+    public PlayerArgument(Server server, MessageRegistry<CommandSender> messageRegistry) {
         this.server = server;
         this.messageRegistry = messageRegistry;
     }
@@ -30,7 +30,7 @@ public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
             return ParseResult.success(player);
         }
 
-        return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.PLAYER_NOT_FOUND, argument));
+        return ParseResult.failure(messageRegistry.getInvoked(LiteBukkitMessages.PLAYER_NOT_FOUND, invocation, argument));
     }
 
     @Override

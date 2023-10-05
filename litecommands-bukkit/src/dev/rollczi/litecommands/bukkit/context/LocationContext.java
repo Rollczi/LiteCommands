@@ -6,15 +6,14 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class LocationContext implements ContextProvider<CommandSender, Location> {
 
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<CommandSender> messageRegistry;
 
-    public LocationContext(MessageRegistry messageRegistry) {
+    public LocationContext(MessageRegistry<CommandSender> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
@@ -28,7 +27,7 @@ public class LocationContext implements ContextProvider<CommandSender, Location>
             return ContextResult.ok(() -> player.getLocation());
         }
 
-        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.LOCATION_PLAYER_ONLY, sender));
+        return ContextResult.error(messageRegistry.getInvoked(LiteBukkitMessages.LOCATION_PLAYER_ONLY, invocation));
     }
 
 }

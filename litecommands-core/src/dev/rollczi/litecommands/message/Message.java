@@ -7,6 +7,7 @@ import java.util.function.Function;
  * @see MessageRegistry
  * @param <T> type of message
  */
+@FunctionalInterface
 public interface Message<T, CONTEXT> {
 
     T get(CONTEXT context);

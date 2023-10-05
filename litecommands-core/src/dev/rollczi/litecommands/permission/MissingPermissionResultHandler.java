@@ -9,15 +9,15 @@ import static dev.rollczi.litecommands.message.LiteMessages.MISSING_PERMISSIONS;
 
 public class MissingPermissionResultHandler<SENDER> implements ResultHandler<SENDER, MissingPermissions> {
 
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<SENDER> messageRegistry;
 
-    public MissingPermissionResultHandler(MessageRegistry messageRegistry) {
+    public MissingPermissionResultHandler(MessageRegistry<SENDER> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
     @Override
     public void handle(Invocation<SENDER> invocation, MissingPermissions missingPermissions, ResultHandlerChain<SENDER> chain) {
-        this.messageRegistry.get(MISSING_PERMISSIONS, missingPermissions)
+        this.messageRegistry.getInvoked(MISSING_PERMISSIONS, invocation, missingPermissions)
             .ifPresent(object -> chain.resolve(invocation, object));
     }
 

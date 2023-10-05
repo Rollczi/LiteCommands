@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 
 public class WorldContext implements ContextProvider<CommandSender, World> {
 
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<CommandSender> messageRegistry;
 
-    public WorldContext(MessageRegistry messageRegistry) {
+    public WorldContext(MessageRegistry<CommandSender> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
@@ -27,7 +27,7 @@ public class WorldContext implements ContextProvider<CommandSender, World> {
             return ContextResult.ok(() -> player.getWorld());
         }
 
-        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.WORLD_PLAYER_ONLY, sender));
+        return ContextResult.error(messageRegistry.getInvoked(LiteBukkitMessages.WORLD_PLAYER_ONLY, invocation));
     }
 
 }

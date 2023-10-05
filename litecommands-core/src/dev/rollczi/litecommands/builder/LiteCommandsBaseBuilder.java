@@ -24,6 +24,7 @@ import dev.rollczi.litecommands.handler.result.ResultHandleServiceImpl;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
+import dev.rollczi.litecommands.message.InvokedMessage;
 import dev.rollczi.litecommands.message.Message;
 import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.message.MessageRegistry;
@@ -84,7 +85,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleServiceImpl<>();
     protected final ExceptionHandleService<SENDER> exceptionHandleService = new ExceptionHandleService<>();
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
-    protected final MessageRegistry messageRegistry = new MessageRegistry();
+    protected final MessageRegistry<SENDER> messageRegistry = new MessageRegistry<SENDER>();
     protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
 
     protected Scheduler scheduler = new SchedulerSameThreadImpl();
@@ -264,6 +265,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <T, CONTEXT> LiteCommandsBuilder<SENDER, C, B> message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message) {
+        this.messageRegistry.register(key, message);
+        return this;
+    }
+
+    @Override
+    public <T, CONTEXT> LiteCommandsBuilder<SENDER, C, B> message(MessageKey<CONTEXT> key, InvokedMessage<SENDER, T, CONTEXT> message) {
         this.messageRegistry.register(key, message);
         return this;
     }
@@ -511,7 +518,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     @ApiStatus.Internal
-    public MessageRegistry getMessageRegistry() {
+    public MessageRegistry<SENDER> getMessageRegistry() {
         return this.messageRegistry;
     }
 

@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 
 public class PlayerOnlyContextProvider implements ContextProvider<CommandSender, Player> {
 
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<CommandSender> messageRegistry;
 
-    public PlayerOnlyContextProvider(MessageRegistry messageRegistry) {
+    public PlayerOnlyContextProvider(MessageRegistry<CommandSender> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
@@ -22,7 +22,7 @@ public class PlayerOnlyContextProvider implements ContextProvider<CommandSender,
             return ContextResult.ok(() -> (Player) invocation.sender());
         }
 
-        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.PLAYER_ONLY, invocation.sender()));
+        return ContextResult.error(messageRegistry.getInvoked(LiteBukkitMessages.PLAYER_ONLY, invocation));
     }
 
 }

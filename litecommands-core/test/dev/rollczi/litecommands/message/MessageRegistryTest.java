@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.message;
 
+import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -12,7 +13,7 @@ class MessageRegistryTest {
     @Test
     void testGetMethodWhenValidKeyThenReturnCorrectMessage() {
         // Arrange
-        MessageRegistry registry = new MessageRegistry();
+        MessageRegistry<TestSender> registry = new MessageRegistry<>();
         MessageKey<Void> key = MessageKey.of("validKey", "default message");
         String expectedMessage = "Hello, World!";
         registry.register(key, Message.of(o -> expectedMessage));

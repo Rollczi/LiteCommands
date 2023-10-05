@@ -18,9 +18,9 @@ import java.lang.reflect.InvocationTargetException;
 public class WorldArgument extends ArgumentResolver<CommandSender, World> {
 
     private final Server server;
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<CommandSender> messageRegistry;
 
-    public WorldArgument(Server server, MessageRegistry messageRegistry) {
+    public WorldArgument(Server server, MessageRegistry<CommandSender> messageRegistry) {
         this.server = server;
         this.messageRegistry = messageRegistry;
     }
@@ -30,7 +30,7 @@ public class WorldArgument extends ArgumentResolver<CommandSender, World> {
         World world = server.getWorld(argument);
 
         if (world == null) {
-            return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.WORLD_NOT_EXIST, argument));
+            return ParseResult.failure(messageRegistry.getInvoked(LiteBukkitMessages.WORLD_NOT_EXIST, invocation, argument));
         }
 
         return ParseResult.success(world);

@@ -26,9 +26,9 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
     private final static String CURRENT_LOCATION = "~";
     public static final String CORDINATE_FORMAT = "%.2f";
 
-    private final MessageRegistry messageRegistry;
+    private final MessageRegistry<CommandSender> messageRegistry;
 
-    public LocationArgument(MessageRegistry messageRegistry) {
+    public LocationArgument(MessageRegistry<CommandSender> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
@@ -49,7 +49,7 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
             return ParseResult.success(new Location(null, x, y, z));
         }
         catch (NumberFormatException exception) {
-            return ParseResult.failure(this.messageRegistry.get(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input));
+            return ParseResult.failure(this.messageRegistry.getInvoked(LiteBukkitMessages.LOCATION_INVALID_FORMAT, invocation, input));
         }
     }
 

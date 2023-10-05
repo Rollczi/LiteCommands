@@ -59,6 +59,6 @@ public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettin
     ExceptionHandleService<SENDER> getExceptionHandleService();
 
     @ApiStatus.Internal
-    MessageRegistry getMessageRegistry();
+    MessageRegistry<SENDER> getMessageRegistry();
 
 }

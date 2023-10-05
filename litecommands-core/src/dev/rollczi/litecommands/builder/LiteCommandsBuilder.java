@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
+import dev.rollczi.litecommands.message.InvokedMessage;
 import dev.rollczi.litecommands.message.Message;
 import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
@@ -157,6 +158,9 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     <T, CONTEXT>
     LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message);
+
+    <T, CONTEXT>
+    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, InvokedMessage<SENDER, T, CONTEXT> message);
 
     <T, CONTEXT>
     LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, T message);
