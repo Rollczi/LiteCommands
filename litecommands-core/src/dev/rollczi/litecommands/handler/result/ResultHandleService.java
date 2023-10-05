@@ -8,6 +8,6 @@ public interface ResultHandleService<SENDER> {
 
     <T> void resolve(Invocation<SENDER> invocation, T result);
 
-    <T> void resolve(Invocation<SENDER> invocation, T result, ResultHandlerChain<SENDER> chain);
+    <T> void resolve(Invocation<SENDER> invocation, T result, Class<? super T> typedAs, ResultHandlerChain<SENDER> chain);
 
 }

@@ -28,7 +28,7 @@ class MissingPermissionResultHandlerTest extends LiteTestSpec {
             missingPermissionHandler.set(true);
         })
         .invalidUsage((invocation, command, chain) -> invalidHandler.set(true))
-            .exception(RuntimeException.class, (invocation, exception) -> throwHandled.set(true));
+            .exception(RuntimeException.class, (invocation, exception, chain) -> throwHandled.set(true));
 
     @Command(name = "test sub")
     @Permission("test.permission")

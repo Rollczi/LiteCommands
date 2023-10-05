@@ -17,8 +17,8 @@ class ExceptionHandleTest extends LiteTestSpec {
     private static final Set<String> exceptions = new HashSet<>();
 
     static LiteConfig config = builder -> builder
-            .exception(IllegalArgumentException.class, (invocation, exception) -> exceptions.add("IllegalArgumentException"))
-            .exception(RuntimeException.class, (invocation, exception) -> exceptions.add("RuntimeException"));
+            .exception(IllegalArgumentException.class, (invocation, exception, chain) -> exceptions.add("IllegalArgumentException"))
+            .exception(RuntimeException.class, (invocation, exception, chain) -> exceptions.add("RuntimeException"));
 
     @Command(name = "test")
     static class TestCommand {

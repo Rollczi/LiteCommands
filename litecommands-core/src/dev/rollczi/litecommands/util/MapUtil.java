@@ -38,7 +38,8 @@ public final class MapUtil {
             }
         }
 
-        return Optional.empty();
+        return findKeySuperTypeOf0(Object.class, map);
+
     }
 
     private static <E> Optional<E> findKeySuperTypeOf0(Class<?> type, Map<Class<?>, E> map) {

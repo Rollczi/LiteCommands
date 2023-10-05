@@ -13,7 +13,6 @@ import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
-import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
 import dev.rollczi.litecommands.scheduler.ScheduledChainException;
@@ -23,7 +22,6 @@ import dev.rollczi.litecommands.schematic.SchematicInput;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.requirement.RequirementResult;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
-import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -51,7 +49,6 @@ public class CommandExecuteService<SENDER> {
 
     private final ValidatorService<SENDER> validatorService;
     private final ResultHandleService<SENDER> resultResolver;
-    private final ExceptionHandleService<SENDER> exceptionHandleService;
     private final Scheduler scheduler;
     private final SchematicGenerator<SENDER> schematicGenerator;
     private final ParserRegistry<SENDER> parserRegistry;
@@ -59,10 +56,9 @@ public class CommandExecuteService<SENDER> {
     private final WrapperRegistry wrapperRegistry;
     private final BindRegistry bindRegistry;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, ExceptionHandleService<SENDER> exceptionHandleService, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
-        this.exceptionHandleService = exceptionHandleService;
         this.scheduler = scheduler;
         this.schematicGenerator = schematicGenerator;
         this.parserRegistry = parserRegistry;
@@ -79,13 +75,13 @@ public class CommandExecuteService<SENDER> {
 
                 return executeResult;
             }))
-            .exceptionally(new LastExceptionHandler<>(exceptionHandleService, invocation));
+            .exceptionally(new LastExceptionHandler<>(resultResolver, invocation));
     }
 
     private void handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
         Throwable throwable = executeResult.getThrowable();
         if (throwable != null) {
-            exceptionHandleService.resolve(invocation, throwable);
+            resultResolver.resolve(invocation, throwable);
         }
 
         Object result = executeResult.getResult();
@@ -190,9 +186,8 @@ public class CommandExecuteService<SENDER> {
             return scheduler.supply(type, () -> {
                 try {
                     return match.executeCommand();
-                } catch (LiteCommandsException exception) {
-                    return CommandExecuteResult.thrown(executor, exception.getCause());
-                } catch (Throwable error) {
+                }
+                catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);
                 }
             });

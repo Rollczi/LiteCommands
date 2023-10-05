@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.handler.result;
 
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.util.MapUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,19 +17,18 @@ public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SEND
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> void resolve(Invocation<SENDER> invocation, T result) {
         ResultHandlerChain<SENDER> chain = new ResultHandlerChainImpl<>(this);
-        this.resolve(invocation, result, chain);
+        this.resolve(invocation, result, (Class<T>) result.getClass(), chain);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> void resolve(Invocation<SENDER> invocation, T result, ResultHandlerChain<SENDER> chain) {
-        Class<T> type = (Class<T>) result.getClass();
-        ResultHandler<SENDER, T> handler = this.getHandler(type);
+    public <T> void resolve(Invocation<SENDER> invocation, T result, Class<? super T> typedAs, ResultHandlerChain<SENDER> chain) {
+        ResultHandler<SENDER, ? super T> handler = this.getHandler(typedAs);
 
         if (handler == null) {
-            throw new LiteCommandsException("Cannot find handler for result type " + type.getName());
+            throw new LiteCommandsException("Cannot find handler for result type " + typedAs.getName());
         }
 
         handler.handle(invocation, result, chain);
@@ -42,16 +42,8 @@ public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SEND
             return handler;
         }
 
-        for (Map.Entry<Class<?>, ResultHandler<SENDER, ?>> entry : this.handlers.entrySet()) {
-            Class<?> key = entry.getKey();
-
-            if (key.isAssignableFrom(resultType)) {
-                handler = (ResultHandler<SENDER, T>) entry.getValue();
-                break;
-            }
-        }
-
-        return handler;
+        return (ResultHandler<SENDER, T>) MapUtil.findBySuperTypeOf(resultType, this.handlers)
+            .orElse(null);
     }
 
 }

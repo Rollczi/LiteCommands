@@ -17,7 +17,6 @@ import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.builder.extension.LiteExtension;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.editor.Editor;
-import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.handler.result.ResultHandleServiceImpl;
@@ -83,7 +82,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final BindRegistry bindRegistry = new BindRegistry();
     protected final ContextRegistry<SENDER> contextRegistry = new ContextRegistry<>();
     protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleServiceImpl<>();
-    protected final ExceptionHandleService<SENDER> exceptionHandleService = new ExceptionHandleService<>();
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
     protected final MessageRegistry<SENDER> messageRegistry = new MessageRegistry<SENDER>();
     protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
@@ -319,13 +317,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <E extends Throwable> LiteCommandsBuilder<SENDER, C, B> exception(Class<E> exceptionType, ExceptionHandler<SENDER, ? extends E> handler) {
-        this.exceptionHandleService.registerHandler(exceptionType, handler);
+        this.resultHandleService.registerHandler(exceptionType, handler);
         return this;
     }
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> exceptionUnexpected(ExceptionHandler<SENDER, Throwable> handler) {
-        this.exceptionHandleService.registerUnexpectedHandler(handler);
+        this.resultHandleService.registerHandler(Throwable.class, handler);
         return this;
     }
 
@@ -411,7 +409,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, exceptionHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
@@ -508,12 +506,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public CommandBuilderCollector<SENDER> getCommandBuilderCollector() {
         return this.commandBuilderCollector;
-    }
-
-    @Override
-    @ApiStatus.Internal
-    public ExceptionHandleService<SENDER> getExceptionHandleService() {
-        return this.exceptionHandleService;
     }
 
     @Override

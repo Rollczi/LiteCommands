@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.unit;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import org.opentest4j.AssertionFailedError;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -60,8 +61,14 @@ public class AssertExecute {
             throw new AssertionError("Command was successful executed with result " + result.getResult());
         }
 
-        if (!result.getThrowable().getClass().equals(exception)) {
-            throw new AssertionFailedError("Command throws different exception: " + result.getThrowable().getClass().getName(), result.getThrowable());
+        Throwable throwable = result.getThrowable();
+
+        if (throwable instanceof LiteCommandsReflectInvocationException) {
+            throwable = throwable.getCause();
+        }
+
+        if (!throwable.getClass().equals(exception)) {
+            throw new AssertionFailedError("Command throws different exception: " + throwable.getClass().getName(), throwable);
         }
 
         return this;

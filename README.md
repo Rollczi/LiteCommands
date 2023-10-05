@@ -34,12 +34,12 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>litecommands-core</artifactId>
-    <version>3.0.0-BETA-pre19</version>
+    <version>3.0.0-BETA-pre20</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre19'
+implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre20'
 ```
 
 ### First Simple Command
@@ -85,12 +85,12 @@ Add this to your dependencies if you want to use ready-made implementation for v
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>litecommands-velocity</artifactId>
-    <version>3.0.0-BETA-pre19</version>
+    <version>3.0.0-BETA-pre20</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi:litecommands-velocity:3.0.0-BETA-pre19'
+implementation 'dev.rollczi:litecommands-velocity:3.0.0-BETA-pre20'
 ```
 
 #### Add -parameters to your compiler to use all features of LiteCommands

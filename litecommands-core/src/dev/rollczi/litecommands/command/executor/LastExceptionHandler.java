@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.command.executor;
 
-import dev.rollczi.litecommands.handler.exception.ExceptionHandleService;
+import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.concurrent.CompletionException;
@@ -8,11 +8,11 @@ import java.util.function.Function;
 
 public class LastExceptionHandler<SENDER> implements Function<Throwable, CommandExecuteResult> {
 
-    private final ExceptionHandleService<SENDER> exceptionHandleService;
+    private final ResultHandleService<SENDER> resultHandleService;
     private final Invocation<SENDER> invocation;
 
-    public LastExceptionHandler(ExceptionHandleService<SENDER> exceptionHandleService, Invocation<SENDER> invocation) {
-        this.exceptionHandleService = exceptionHandleService;
+    public LastExceptionHandler(ResultHandleService<SENDER> resultHandleService, Invocation<SENDER> invocation) {
+        this.resultHandleService = resultHandleService;
         this.invocation = invocation;
     }
 
@@ -23,7 +23,7 @@ public class LastExceptionHandler<SENDER> implements Function<Throwable, Command
         }
 
         try {
-            this.exceptionHandleService.resolve(invocation, throwable);
+            this.resultHandleService.resolve(invocation, throwable);
         }
         catch (Throwable lastError) { // Handle exception from exception handler
             lastError.printStackTrace();

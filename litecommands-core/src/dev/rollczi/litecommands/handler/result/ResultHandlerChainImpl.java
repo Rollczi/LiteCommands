@@ -17,16 +17,16 @@ class ResultHandlerChainImpl<SENDER> implements ResultHandlerChain<SENDER> {
     }
 
     @Override
-    public <T> void resolve(Invocation<SENDER> invocation, T result) {
-        this.handledTypes.add(result.getClass());
+    public <T> void resolve(Invocation<SENDER> invocation, T result, Class<? super T> typeAs) {
+        this.handledTypes.add(typeAs);
 
         try {
-            this.service.resolve(invocation, result, this);
+            this.service.resolve(invocation, result, typeAs, this);
         }
         catch (StackOverflowError error) {
             String handledTypes = this.handledTypes.stream()
-                    .map(handlerType -> handlerType.getName())
-                    .collect(Collectors.joining(", "));
+                .map(handlerType -> handlerType.getName())
+                .collect(Collectors.joining(", "));
 
             throw new LiteCommandsException("Cycle detected in result handlers: " + handledTypes);
         }

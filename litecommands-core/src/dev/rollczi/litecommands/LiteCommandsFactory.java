@@ -6,11 +6,15 @@ import dev.rollczi.litecommands.builder.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
-import dev.rollczi.litecommands.handler.result.basic.CompletionStageHandler;
-import dev.rollczi.litecommands.handler.result.basic.OptionHandler;
-import dev.rollczi.litecommands.handler.result.basic.OptionalHandler;
-import dev.rollczi.litecommands.handler.result.basic.ThrowableHandler;
+import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
+import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
+import dev.rollczi.litecommands.handler.result.standard.CompletionStageHandler;
+import dev.rollczi.litecommands.handler.result.standard.OptionHandler;
+import dev.rollczi.litecommands.handler.result.standard.OptionalHandler;
+import dev.rollczi.litecommands.handler.exception.standard.ThrowableHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageExceptionHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinArgument;
@@ -29,6 +33,7 @@ import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
 import panda.std.Option;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -71,7 +76,11 @@ public final class LiteCommandsFactory {
                 .wrapper(new OptionalWrapper())
                 .wrapper(new CompletableFutureWrapper(scheduler))
 
-                .result(Throwable.class, new ThrowableHandler<>())
+                .exception(Throwable.class, new ThrowableHandler<>())
+                .exception(InvalidUsageException.class, new InvalidUsageExceptionHandler<>())
+                .exception(InvocationTargetException.class, new InvocationTargetExceptionHandler<>())
+                .exception(LiteCommandsException.class, new LiteCommandsExceptionHandler<>())
+
                 .result(Optional.class, new OptionalHandler<>())
                 .result(Option.class, new OptionHandler<>())
                 .result(CompletionStage.class, new CompletionStageHandler<>())

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.handler.result.basic;
+package dev.rollczi.litecommands.handler.result.standard;
 
 import dev.rollczi.litecommands.handler.result.ResultHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;

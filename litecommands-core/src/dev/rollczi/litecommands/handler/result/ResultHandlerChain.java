@@ -4,6 +4,11 @@ import dev.rollczi.litecommands.invocation.Invocation;
 
 public interface ResultHandlerChain<SENDER> {
 
-    <T> void resolve(Invocation<SENDER> invocation, T result);
+    @SuppressWarnings("unchecked")
+    default <T> void resolve(Invocation<SENDER> invocation, T result) {
+        resolve(invocation, result, (Class<T>) result.getClass());
+    }
+
+    <T> void resolve(Invocation<SENDER> invocation, T result, Class<? super T> typeAs);
 
 }
