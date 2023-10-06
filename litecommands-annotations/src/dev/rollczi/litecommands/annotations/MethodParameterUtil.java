@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.reflect.ReflectFormatUtil;
+import dev.rollczi.litecommands.prettyprint.PrettyPrintParameter;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
@@ -21,7 +21,7 @@ final class MethodParameterUtil {
             Optional<Class<?>> optionGenericType = extractFirstType(parameter);
 
             if (!optionGenericType.isPresent()) {
-                throw new IllegalArgumentException("Cannot extract expected type from parameter " + ReflectFormatUtil.parameter(parameter));
+                throw new IllegalArgumentException("Cannot extract expected type from parameter " + PrettyPrintParameter.formatParameter(parameter));
             }
 
             return WrapFormat.of(optionGenericType.get(), outParameterType);
