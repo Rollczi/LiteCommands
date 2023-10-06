@@ -14,17 +14,17 @@ public final class PrettyPrintConstructor {
         "{indentedContent}" + NEW_LINE +
         "}";
 
-    public static String formatMethod(Constructor<?> method, PrettyPrintPicker picker, String content) {
-        return formatMethod(method, -1, picker, content);
+    public static String formatConstructor(Constructor<?> method, PrettyPrintPicker picker, String content) {
+        return formatConstructor(method, -1, picker, content);
     }
 
-    public static String formatMethod(Constructor<?> method, Parameter parameter, String content) {
-        return formatMethod(method, PrettyPrintParameter.getParameterIndex(method, parameter), PrettyPrintPicker.PARAMETER, content);
+    public static String formatConstructor(Constructor<?> method, Parameter parameter, String content) {
+        return formatConstructor(method, PrettyPrintParameter.getParameterIndex(method, parameter), PrettyPrintPicker.PARAMETER, content);
     }
 
-    private static String formatMethod(Constructor<?> method, int parameter, PrettyPrintPicker picker, String content) {
+    private static String formatConstructor(Constructor<?> method, int parameter, PrettyPrintPicker picker, String content) {
         String annotations = PrettyPrintAnnotation.formatAnnotations(method.getAnnotations(), NEW_LINE, NEW_LINE);
-        String modifiers = PrettyPrintModifier.formatModifiers(method.getModifiers()) + SPACE;
+        String modifiers = PrettyPrintModifier.formatModifiers(method.getModifiers());
         String generic = PrettyPrintType.formatGeneric(method.getTypeParameters()) + SPACE;
         String name = method.getName();
         List<String> formattedParameters = PrettyPrintParameter.formatParameters(method.getParameters());

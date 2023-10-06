@@ -34,7 +34,7 @@ public final class PrettyPrintMethod {
 
     private static String formatMethod(Method method, int parameter, PrettyPrintPicker picker, String content) {
         String annotations = PrettyPrintAnnotation.formatAnnotations(method.getAnnotations(), NEW_LINE, NEW_LINE);
-        String modifiers = PrettyPrintModifier.formatModifiers(method.getModifiers()) + SPACE;
+        String modifiers = PrettyPrintModifier.formatModifiers(method.getModifiers());
         String generic = PrettyPrintType.formatGeneric(method.getTypeParameters());
         String type = PrettyPrintType.formatType(method.getGenericReturnType());
         String name = method.getName();

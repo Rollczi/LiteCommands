@@ -19,7 +19,7 @@ public final class PrettyPrintClass {
 
     public static String formatClass(Class<?> classToFormat, PrettyPrintPicker picker, String content) {
         String annotations = PrettyPrintAnnotation.formatAnnotations(classToFormat.getAnnotations(), NEW_LINE, NEW_LINE);
-        String modifiers = PrettyPrintModifier.formatModifiers(classToFormat.getModifiers()) + SPACE;
+        String modifiers = PrettyPrintModifier.formatModifiers(classToFormat.getModifiers());
         String keyword = formatKeyword(classToFormat);
         String name = classToFormat.getSimpleName();
         String generic = PrettyPrintType.formatGeneric(classToFormat.getTypeParameters());

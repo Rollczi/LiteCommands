@@ -11,8 +11,10 @@ import static dev.rollczi.litecommands.prettyprint.PrettyPrintLiteError.*;
 
 public class LiteCommandsReflectInvocationException extends LiteCommandsReflectException {
 
+    public static final String ERROR_PICKER = "^ error: ";
+
     public LiteCommandsReflectInvocationException(Class<?> clazz, String message) {
-        super(formatError(formatClass(clazz, PrettyPrintPicker.CLASS, "^ error: " + message)));
+        super(formatError(formatClass(clazz, PrettyPrintPicker.CLASS, ERROR_PICKER + message)));
     }
 
     public LiteCommandsReflectInvocationException(Executable executable, String message) {
@@ -24,11 +26,11 @@ public class LiteCommandsReflectInvocationException extends LiteCommandsReflectE
     }
 
     public LiteCommandsReflectInvocationException(Executable executable, String message, Throwable cause) {
-        this(executable, null, message, cause);
+        super(formatError(PrettyPrint.formatClass(executable, ERROR_PICKER + message)), cause);
     }
 
     public LiteCommandsReflectInvocationException(Executable executable, Parameter parameter, String message, Throwable cause) {
-        super(formatError(PrettyPrint.formatClass(executable, parameter, "^ error: " + message)), cause);
+        super(formatError(PrettyPrint.formatClass(executable, parameter, ERROR_PICKER + message)), cause);
     }
 
 }

@@ -14,7 +14,7 @@ public final class PrettyPrint {
 
     public static String formatClass(Executable executable, Parameter parameter, String content) {
         String formatted = executable instanceof Constructor
-                ? PrettyPrintConstructor.formatMethod((Constructor<?>) executable, parameter, content)
+                ? PrettyPrintConstructor.formatConstructor((Constructor<?>) executable, parameter, content)
                 : PrettyPrintMethod.formatMethod((Method) executable, parameter, content);
 
         return PrettyPrintClass.formatClass(executable.getDeclaringClass(), PrettyPrintPicker.NONE, NEW_LINE + formatted);
@@ -22,8 +22,8 @@ public final class PrettyPrint {
 
     public static String formatClass(Executable executable, String content) {
         String formatted = executable instanceof Constructor
-                ? PrettyPrintConstructor.formatMethod((Constructor<?>) executable, PrettyPrintPicker.EXECUTABLE, content)
-                : PrettyPrintMethod.formatMethod((Method) executable, PrettyPrintPicker.NONE, content);
+                ? PrettyPrintConstructor.formatConstructor((Constructor<?>) executable, PrettyPrintPicker.EXECUTABLE, content)
+                : PrettyPrintMethod.formatMethod((Method) executable, PrettyPrintPicker.EXECUTABLE, content);
 
         return PrettyPrintClass.formatClass(executable.getDeclaringClass(), PrettyPrintPicker.NONE, NEW_LINE + formatted);
     }
