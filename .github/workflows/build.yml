@@ -18,15 +18,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.jdk }}
           distribution: 'adopt'
           cache: gradle
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew clean build
+        env:
+          GIT_BRANCH: ${{ github.ref }}
+          GIT_COMMIT: ${{ github.sha }}

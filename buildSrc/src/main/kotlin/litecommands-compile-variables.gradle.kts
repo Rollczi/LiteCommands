@@ -13,10 +13,13 @@ blossom {
         val litecommandsVariables = "src/dev/rollczi/litecommands/LiteCommandsVariables.java"
 
         val version = project.version.toString()
-        val branchName = branchName() ?: throw IllegalStateException("branch name is null")
+        val branchName = branchName()
+            ?: System.getenv("GIT_BRANCH")
+            ?: throw IllegalStateException("branch name is null")
 
-        val commit = commit() ?: throw IllegalStateException("commit is null")
-        val commitHash = commit.name
+        val commitHash = commit()?.name
+            ?: System.getenv("GIT_COMMIT")
+            ?: throw IllegalStateException("commit is null")
 
         replaceToken("{litecommands-version}", version, litecommandsVariables)
         replaceToken("{litecommands-branch}", branchName, litecommandsVariables)
