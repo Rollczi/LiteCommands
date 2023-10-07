@@ -1,7 +1,7 @@
-Modern TODO
+TODO
 
-- [x] @Route
-- [x] @RootRoute
+- [x] @Command
+- [x] @RootCommand
 - [x] @Execute
 - [x] @Async @Execute
 - [ ] @Timeout(second = 10)
@@ -16,7 +16,7 @@ Modern TODO
 - [x] @Permission
 - [ ] @Arg @Range(min = 1, max = 10) int
 - [x] @Flag for booleans
-- [x] @Editor
+- [ ] @Editor
 - [ ] @Arg Enum
 - [ ] @Arg List<String> // for example text, text, text
 - [ ] @Arg Set<T> // for example 1, 4, 5
@@ -52,10 +52,7 @@ Modern TODO
 - [x] Support Paper
 - [x] Add support to provide other types of arguments by platforms
 
-
-
-
-This is not a command example.  They're just concepts!
+### This is not a command example.  They're just concepts!
 
 ```java
 @Command("report")
@@ -118,7 +115,7 @@ class ReportCommand {
 @Permission("myplugin.admin")
 class RootBanCommand {
 
-    @Command("ban")
+    @Execute("ban")
     void ban(
         @Arg User user,
         @Arg Duration duration,
@@ -128,7 +125,7 @@ class RootBanCommand {
         // ...
     }
 
-    @Command("unban")
+    @Execute("unban")
     void unban(@Arg User user) {
         // ...
     }
@@ -151,7 +148,7 @@ class TeleportCommand {
 @Command("teleport")
 class TeleportCommand {
 
-    @Command("here")
+    @Execute("here")
     void teleportHere(
             @Sender Player sender,
             @Context Location here,
@@ -160,7 +157,7 @@ class TeleportCommand {
         // ...
     }
 
-    @Command("to")
+    @Execute("to")
     void teleportTo(@Sender Player sender, @Arg Player target) {
         // ...
     }
@@ -172,12 +169,12 @@ class TeleportCommand {
 @Command("gamemode")
 class GamemodeCommand {
 
-    @Command
+    @Execute
     void gamemode(@Sender Player sender, @Arg GameMode gameMode) {
         // ...
     }
     
-    @Command
+    @Execute
     void gamemode(
             @Sender Player sender, 
             @Arg("gamemode") @Range(min = 0, max = 3) int gameMode
@@ -225,7 +222,7 @@ class GiveCommand {
 
 class DiscordCommand {
 
-    @Command("set")
+    @Execute("set")
     void set(
             @Sender Player sender, 
             @Arg @Regex("[a-zA-Z0-9_]") @Length(min = 3, max = 16) String playerName,
@@ -242,7 +239,7 @@ class DiscordCommand {
 class DatabaseCommand {
 
     @Async
-    @Command("query")
+    @Execute("query")
     @Timeout(seconds = 5)
     @Cooldown(seconds = 5)
     void query(@Arg @Join String query) {
