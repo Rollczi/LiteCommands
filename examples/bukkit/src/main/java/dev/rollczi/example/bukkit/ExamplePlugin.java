@@ -77,7 +77,9 @@ public class ExamplePlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // unregister all commands from bukkit
-        this.liteCommands.unregister();
+        if (this.liteCommands != null) {
+            this.liteCommands.unregister();
+        }    
     }
 
 }
