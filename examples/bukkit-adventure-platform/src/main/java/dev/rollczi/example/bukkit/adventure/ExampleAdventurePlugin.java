@@ -52,7 +52,9 @@ public class ExampleAdventurePlugin extends JavaPlugin {
     public void onDisable() {
         // unregister all commands from bukkit
         this.liteCommands.unregister();
-        this.audienceProvider.close();
+        if (this.audienceProvider != null) {
+            this.audienceProvider.close();
+        }    
     }
 
 }
