@@ -6,32 +6,32 @@ on:
   pull_request:
     branches: [ master ]
   schedule:
-    - cron: '21 8 * * 6'
+    # Every 2 days at 10:30 UTC
+    - cron: '30 10 */2 * *'
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'java' ]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          # We must fetch at least the immediate parents so that if this is
+          # a pull request then we can checkout the head.
+          fetch-depth: 2
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: ${{ matrix.language }}
+          languages: 'java'
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
+        env:
+          GIT_BRANCH: ${{ github.ref }}
+          GIT_COMMIT: ${{ github.sha }}
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
