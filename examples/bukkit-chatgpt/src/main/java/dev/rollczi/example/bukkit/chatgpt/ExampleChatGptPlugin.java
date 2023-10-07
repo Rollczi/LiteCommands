@@ -37,7 +37,9 @@ public class ExampleChatGptPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.liteCommands.unregister();
+        if (this.liteCommands != null) {
+            this.liteCommands.unregister();
+        }    
     }
 
 }
