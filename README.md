@@ -141,6 +141,6 @@ tasks.withType<JavaCompile> {
 #### Plugins that use LiteCommands:
 
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
+- [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [EternalCheck](https://github.com/EternalCodeTeam/EternalCheck)
-- [EternalRTP](https://github.com/EternalCodeTeam/EternalRTP)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
