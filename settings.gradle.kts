@@ -10,7 +10,7 @@ include(":litecommands-unit")
 // extensions
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform")
-include(":litecommands-chatgpt")
+include(":litecommands-chatgpt", JavaVersion.VERSION_11)
 
 // platforms
 include(":litecommands-velocity", JavaVersion.VERSION_11)
@@ -22,7 +22,7 @@ include("litecommands-jda", JavaVersion.VERSION_17)
 // examples
 include(":examples:bukkit")
 include(":examples:bukkit-adventure-platform")
-include(":examples:bukkit-chatgpt")
+include(":examples:bukkit-chatgpt", JavaVersion.VERSION_11)
 include(":examples:velocity", JavaVersion.VERSION_11)
 
 fun include(projectPath: String, version: JavaVersion) {
