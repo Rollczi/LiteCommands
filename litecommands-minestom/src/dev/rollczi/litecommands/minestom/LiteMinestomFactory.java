@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.network.socket.Server;
@@ -13,8 +13,7 @@ public final class LiteMinestomFactory {
 
     public static LiteCommandsBuilder<CommandSender, LiteMinestomSettings, ?> builder(Server server, CommandManager commandManager) {
         return LiteCommandsFactory.builder(CommandSender.class, new MinestomPlatform(commandManager))
-            .bind(Server.class, () -> server)
-            ;
+            .bind(Server.class, () -> server);
     }
 
 }

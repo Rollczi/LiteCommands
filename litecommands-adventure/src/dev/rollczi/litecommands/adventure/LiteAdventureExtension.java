@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.adventure;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
-import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
-import dev.rollczi.litecommands.builder.extension.LiteExtension;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsInternal;
+import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.join.JoinArgument;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -50,7 +50,7 @@ public class LiteAdventureExtension<SENDER> implements LiteExtension<SENDER> {
     }
 
     @Override
-    public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
+    public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal) {
         if (componentSerializer == null) {
             componentSerializer = supportsMiniMessage
                 ? AdventureMiniMessageFactory.create(supportsLegacyColor)

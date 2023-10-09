@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
@@ -26,8 +26,8 @@ public final class LiteJDAFactory {
     public static LiteCommandsBuilder<User, LiteJDASettings, ?> builder(JDA jda) {
         JDAPlatform platform = new JDAPlatform(new LiteJDASettings(), jda);
 
-        return LiteCommandsFactory.builder(User.class, platform).selfProcessor((builder, pattern) -> builder
-            .settings(settings -> settings.translator(createTranslator(pattern.getWrapperRegistry())))
+        return LiteCommandsFactory.builder(User.class, platform).selfProcessor((builder, internal) -> builder
+            .settings(settings -> settings.translator(createTranslator(internal.getWrapperRegistry())))
             .bind(JDA.class, () -> jda)
             .result(String.class, new StringHandler())
             .result(RestAction.class, new RestActionHandler())

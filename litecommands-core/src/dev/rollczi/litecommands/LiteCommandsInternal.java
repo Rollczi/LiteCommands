@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.builder;
+package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.bind.BindRegistry;
@@ -16,7 +16,7 @@ import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public interface LiteCommandsInternalBuilderApi<SENDER, C extends PlatformSettings> {
+public interface LiteCommandsInternal<SENDER, C extends PlatformSettings> {
 
     @ApiStatus.Internal
     Class<SENDER> getSenderClass();

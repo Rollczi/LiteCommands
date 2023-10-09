@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.programmatic;
 
-import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
-import dev.rollczi.litecommands.builder.LiteCommandsProvider;
+import dev.rollczi.litecommands.LiteCommandsInternal;
+import dev.rollczi.litecommands.LiteCommandsProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class LiteCommandsProgrammatic<SENDER> implements LiteCommandsProvider<SE
     }
 
     @Override
-    public List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
+    public List<CommandBuilder<SENDER>> provide(LiteCommandsInternal<SENDER, ?> builder) {
         return commands.stream()
             .map(liteCommand -> liteCommand.toRoute())
             .collect(Collectors.toList());

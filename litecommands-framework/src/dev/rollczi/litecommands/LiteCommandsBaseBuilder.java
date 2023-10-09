@@ -1,7 +1,5 @@
-package dev.rollczi.litecommands.builder;
+package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.LiteCommandsBase;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
@@ -9,12 +7,12 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
-import dev.rollczi.litecommands.builder.extension.LiteCommandsProviderExtension;
-import dev.rollczi.litecommands.builder.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
+import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.bind.BindRegistry;
-import dev.rollczi.litecommands.builder.extension.LiteExtension;
+import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
@@ -64,7 +62,7 @@ import java.util.function.UnaryOperator;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
-    LiteCommandsInternalBuilderApi<SENDER, C> {
+    LiteCommandsInternal<SENDER, C> {
 
     protected final Class<SENDER> senderClass;
     protected final Platform<SENDER, C> platform;
@@ -124,7 +122,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      * @param commandsProvider provider of commands.
      */
     private void preProcessExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
-        this.preProcessor((builder, pattern) -> {
+        this.preProcessor((builder, internal) -> {
             for (LiteCommandsProviderExtension<SENDER> extension : commandsProviderExtensions) {
                 extension.extendCommandsProvider(this, this, commandsProvider);
             }
@@ -429,7 +427,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        LiteCommandsBase<SENDER> liteCommand = new LiteCommandsBase<>(commandManager);
+        LiteCommandsImpl<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager);
 
         if (register) {
             liteCommand.register();

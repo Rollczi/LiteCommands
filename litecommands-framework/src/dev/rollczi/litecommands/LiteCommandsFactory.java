@@ -2,8 +2,6 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
-import dev.rollczi.litecommands.builder.LiteCommandsBaseBuilder;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
@@ -43,8 +41,8 @@ public final class LiteCommandsFactory {
     }
 
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
-        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).selfProcessor((builder, pattern) -> {
-            Scheduler scheduler = pattern.getScheduler();
+        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).selfProcessor((builder, internal) -> {
+            Scheduler scheduler = internal.getScheduler();
 
             builder
                 .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
@@ -84,8 +82,8 @@ public final class LiteCommandsFactory {
                 .result(Optional.class, new OptionalHandler<>())
                 .result(Option.class, new OptionHandler<>())
                 .result(CompletionStage.class, new CompletionStageHandler<>())
-                .result(MissingPermissions.class, new MissingPermissionResultHandler<>(pattern.getMessageRegistry()))
-                .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(pattern.getMessageRegistry()))
+                .result(MissingPermissions.class, new MissingPermissionResultHandler<>(internal.getMessageRegistry()))
+                .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(internal.getMessageRegistry()))
                 ;
         });
     }

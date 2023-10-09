@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.builder;
+package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.builder.CommandBuilderProvider;
@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface LiteCommandsProvider<SENDER> {
 
-    List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder);
+    List<CommandBuilder<SENDER>> provide(LiteCommandsInternal<SENDER, ?> builder);
 
-    default CommandBuilderProvider<SENDER> toInternalProvider(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
+    default CommandBuilderProvider<SENDER> toInternalProvider(LiteCommandsInternal<SENDER, ?> builder) {
         return () -> LiteCommandsProvider.this.provide(builder);
     }
 

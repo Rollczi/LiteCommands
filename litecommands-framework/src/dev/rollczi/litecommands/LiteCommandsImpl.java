@@ -2,11 +2,11 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.command.CommandManager;
 
-public class LiteCommandsBase<SENDER> implements LiteCommands<SENDER> {
+class LiteCommandsImpl<SENDER> implements LiteCommands<SENDER> {
 
     protected final CommandManager<SENDER> commandManager;
 
-    public LiteCommandsBase(CommandManager<SENDER> commandManager) {
+    public LiteCommandsImpl(CommandManager<SENDER> commandManager) {
         this.commandManager = commandManager;
     }
 

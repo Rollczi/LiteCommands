@@ -2,11 +2,10 @@ package dev.rollczi.litecommands.chatgpt;
 
 import dev.rollczi.litecommands.annotations.AnnotationProcessorService;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
-import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
-import dev.rollczi.litecommands.builder.LiteCommandsProvider;
-import dev.rollczi.litecommands.builder.extension.LiteCommandsProviderExtension;
-import dev.rollczi.litecommands.chatgpt.annotation.ChatGpt;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsInternal;
+import dev.rollczi.litecommands.LiteCommandsProvider;
+import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.chatgpt.annotation.ChatGptAnnotationProcessor;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.meta.MetaKey;
@@ -35,16 +34,16 @@ public class LiteChatGptExtension<SENDER> implements LiteCommandsProviderExtensi
     }
 
     @Override
-    public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern) {
+    public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal) {
         ChatGptClient chatGptClient = new ChatGptClient(settings);
-        ChatGptStringSuggester<SENDER> suggester = new ChatGptStringSuggester<>(pattern.getScheduler(), chatGptClient, settings);
+        ChatGptStringSuggester<SENDER> suggester = new ChatGptStringSuggester<>(internal.getScheduler(), chatGptClient, settings);
 
         builder
             .argument(String.class, JoinArgument.KEY.withKey(ARGUMENT_KEY), suggester);
     }
 
     @Override
-    public void extendCommandsProvider(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternalBuilderApi<SENDER, ?> pattern, LiteCommandsProvider<SENDER> provider) {
+    public void extendCommandsProvider(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal, LiteCommandsProvider<SENDER> provider) {
         if (!(provider instanceof LiteCommandsAnnotations)) {
             return;
         }

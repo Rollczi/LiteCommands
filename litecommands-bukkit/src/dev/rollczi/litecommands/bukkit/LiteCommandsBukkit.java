@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.builder.LiteCommandsBuilder;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
 import dev.rollczi.litecommands.bukkit.context.LocationContext;
 import dev.rollczi.litecommands.bukkit.argument.WorldArgument;
@@ -45,8 +45,8 @@ public final class LiteCommandsBukkit {
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(Plugin plugin, Server server, LiteBukkitSettings settings) {
-        return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings)).selfProcessor((builder, pattern) -> {
-            MessageRegistry<CommandSender> messageRegistry = pattern.getMessageRegistry();
+        return LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings)).selfProcessor((builder, internal) -> {
+            MessageRegistry<CommandSender> messageRegistry = internal.getMessageRegistry();
 
             builder
                 .bind(Server.class, () -> server)
@@ -54,7 +54,7 @@ public final class LiteCommandsBukkit {
 
                 .scheduler(new BukkitSchedulerImpl(server.getScheduler(), plugin))
 
-                .settings(bukkitSettings -> bukkitSettings.tabCompleter(TabComplete.create(pattern.getScheduler(), plugin)))
+                .settings(bukkitSettings -> bukkitSettings.tabCompleter(TabComplete.create(internal.getScheduler(), plugin)))
 
                 .argument(Player.class, new PlayerArgument(server, messageRegistry))
                 .argument(World.class, new WorldArgument(server, messageRegistry))

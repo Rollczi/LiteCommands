@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.inject.Injector;
-import dev.rollczi.litecommands.builder.LiteCommandsInternalBuilderApi;
-import dev.rollczi.litecommands.builder.LiteCommandsProvider;
+import dev.rollczi.litecommands.LiteCommandsInternal;
+import dev.rollczi.litecommands.LiteCommandsProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
@@ -33,7 +33,7 @@ public class LiteCommandsAnnotations<SENDER> implements LiteCommandsProvider<SEN
     }
 
     @Override
-    public List<CommandBuilder<SENDER>> provide(LiteCommandsInternalBuilderApi<SENDER, ?> builder) {
+    public List<CommandBuilder<SENDER>> provide(LiteCommandsInternal<SENDER, ?> builder) {
         WrapperRegistry wrapperRegistry = builder.getWrapperRegistry();
 
         InstanceSourceProcessor<SENDER> processor = new InstanceSourceProcessor<>(annotationProcessorService, wrapperRegistry);
