@@ -8,7 +8,7 @@ repositories {
 
 dependencies {
     implementation("me.champeau.jmh:jmh-gradle-plugin:0.7.1")
-    implementation("net.kyori:blossom:1.3.1")
+    implementation("net.kyori:blossom:2.1.0")
     implementation("net.kyori:indra-git:3.1.3")
 }
 
