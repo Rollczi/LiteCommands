@@ -19,31 +19,38 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JDACommandTranslatorTest {
 
+    public static final String COMMAND = "siema";
+    public static final String SUB_COMMAND = "sub";
+    public static final String NESTED_SUB_COMMAND = "subofsub";
+    public static final String DESCRIPTION = "description";
+    public static final String STRING_ARG = "name";
+    public static final String INT_ARG = "age";
+
     final JDACommandTranslator translator = new JDACommandTranslator(new WrapperRegistry())
         .type(String.class,       OptionType.STRING,      option -> option.getAsString())
-        .type(Integer.class,         OptionType.INTEGER,     option -> option.getAsInt());
+        .type(Integer.class,      OptionType.INTEGER,     option -> option.getAsInt());
 
     @Test
     void test() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
-        CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
-        siema.meta().put(Meta.DESCRIPTION, "description");
+        CommandRoute<TestSender> siema = CommandRoute.create(root, COMMAND, List.of());
+        siema.meta().put(Meta.DESCRIPTION, DESCRIPTION);
         siema.appendExecutor(simpleExecutor(siema));
 
-        JDACommandTranslator.JDALiteCommand translated = translator.translate("siema", siema);
+        JDACommandTranslator.JDALiteCommand translated = translator.translate(COMMAND, siema);
         SlashCommandData slashCommandData = translated.jdaCommandData();
 
-        assertEquals("siema", slashCommandData.getName());
-        assertEquals("description", slashCommandData.getDescription());
+        assertEquals(COMMAND, slashCommandData.getName());
+        assertEquals(DESCRIPTION, slashCommandData.getDescription());
         assertEquals(2, slashCommandData.getOptions().size());
 
         OptionData name = slashCommandData.getOptions().get(0);
-        assertEquals("name", name.getName());
+        assertEquals(STRING_ARG, name.getName());
         assertEquals(OptionType.STRING, name.getType());
         assertTrue(name.isRequired());
 
         OptionData age = slashCommandData.getOptions().get(1);
-        assertEquals("age", age.getName());
+        assertEquals(INT_ARG, age.getName());
         assertEquals(OptionType.INTEGER, age.getType());
         assertTrue(age.isRequired());
     }
@@ -51,55 +58,55 @@ class JDACommandTranslatorTest {
     @Test
     void subcommandsAndGroup() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
-        CommandRoute<TestSender> siema = CommandRoute.create(root, "siema", List.of());
-        siema.meta().put(Meta.DESCRIPTION, "description");
+        CommandRoute<TestSender> command = CommandRoute.create(root, COMMAND, List.of());
+        command.meta().put(Meta.DESCRIPTION, DESCRIPTION);
 
-        CommandRoute<TestSender> sub = CommandRoute.create(siema, "sub", List.of());
-        siema.appendChildren(sub);
-        sub.appendExecutor(simpleExecutor(sub));
+        CommandRoute<TestSender> subCommand = CommandRoute.create(command, SUB_COMMAND, List.of());
+        command.appendChildren(subCommand);
+        subCommand.appendExecutor(simpleExecutor(subCommand));
 
-        CommandRoute<TestSender> subOfSub = CommandRoute.create(siema, "subofsub", List.of());
-        sub.appendChildren(subOfSub);
-        subOfSub.appendExecutor(simpleExecutor(sub));
+        CommandRoute<TestSender> nestedSubCommand = CommandRoute.create(command, NESTED_SUB_COMMAND, List.of());
+        subCommand.appendChildren(nestedSubCommand);
+        nestedSubCommand.appendExecutor(simpleExecutor(subCommand));
 
-        JDACommandTranslator.JDALiteCommand translated = translator.translate("siema", siema);
+        JDACommandTranslator.JDALiteCommand translated = translator.translate(COMMAND, command);
         SlashCommandData slashCommandData = translated.jdaCommandData();
 
-        assertEquals("siema", slashCommandData.getName());
-        assertEquals("description", slashCommandData.getDescription());
+        assertEquals(COMMAND, slashCommandData.getName());
+        assertEquals(DESCRIPTION, slashCommandData.getDescription());
         assertEquals(1, slashCommandData.getSubcommands().size());
 
         {
             SubcommandData subcommandData = slashCommandData.getSubcommands().get(0);
-            assertEquals("sub", subcommandData.getName());
+            assertEquals(SUB_COMMAND, subcommandData.getName());
             assertEquals(2, subcommandData.getOptions().size());
 
             OptionData name = subcommandData.getOptions().get(0);
-            assertEquals("name", name.getName());
+            assertEquals(STRING_ARG, name.getName());
             assertEquals(OptionType.STRING, name.getType());
             assertTrue(name.isRequired());
 
             OptionData age = subcommandData.getOptions().get(1);
-            assertEquals("age", age.getName());
+            assertEquals(INT_ARG, age.getName());
             assertEquals(OptionType.INTEGER, age.getType());
             assertTrue(age.isRequired());
         }
 
         {
             SubcommandGroupData subcommandGroupData = slashCommandData.getSubcommandGroups().get(0);
-            assertEquals("sub", subcommandGroupData.getName());
+            assertEquals(SUB_COMMAND, subcommandGroupData.getName());
             assertEquals(1, subcommandGroupData.getSubcommands().size());
 
             SubcommandData subcommandData = subcommandGroupData.getSubcommands().get(0);
-            assertEquals("subofsub", subcommandData.getName());
+            assertEquals(NESTED_SUB_COMMAND, subcommandData.getName());
             assertEquals(2, subcommandData.getOptions().size());
 
             OptionData name = subcommandData.getOptions().get(0);
-            assertEquals("name", name.getName());
+            assertEquals(STRING_ARG, name.getName());
             assertEquals(OptionType.STRING, name.getType());
 
             OptionData age = subcommandData.getOptions().get(1);
-            assertEquals("age", age.getName());
+            assertEquals(INT_ARG, age.getName());
             assertEquals(OptionType.INTEGER, age.getType());
         }
 
@@ -107,8 +114,8 @@ class JDACommandTranslatorTest {
 
     private TestExecutor<TestSender> simpleExecutor(CommandRoute<TestSender> test) {
         return new TestExecutor<>(test)
-            .withArg("name", String.class, (invocation, argument) -> ParseResult.success(argument))
-            .withArg("age", Integer.class, (invocation, argument) -> ParseResult.success(Integer.parseInt(argument)));
+            .withArg(STRING_ARG, String.class, (invocation, argument) -> ParseResult.success(argument))
+            .withArg(INT_ARG, Integer.class, (invocation, argument) -> ParseResult.success(Integer.parseInt(argument)));
     }
 
 }

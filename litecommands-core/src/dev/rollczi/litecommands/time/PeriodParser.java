@@ -32,7 +32,7 @@ public class PeriodParser extends TemporalAmountParser<Period> {
     }
 
     @Override
-    protected Period toTempolarAmount(LocalDateTimeProvider basisEstimation, Duration duration) {
+    protected Period toTemporalAmount(LocalDateTimeProvider basisEstimation, Duration duration) {
         LocalDateTime localDate = basisEstimation.get();
         LocalDateTime estimatedDate = localDate.plus(duration);
 

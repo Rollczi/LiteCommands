@@ -197,10 +197,10 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
             total = total.negated();
         }
 
-        return this.toTempolarAmount(this.baseForTimeEstimation, total);
+        return this.toTemporalAmount(this.baseForTimeEstimation, total);
     }
 
-    protected abstract T toTempolarAmount(LocalDateTimeProvider baseForTimeEstimation, Duration duration);
+    protected abstract T toTemporalAmount(LocalDateTimeProvider baseForTimeEstimation, Duration duration);
 
     private Duration parseDuration(String number, String unit) {
         if (number.isEmpty()) {

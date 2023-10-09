@@ -19,21 +19,21 @@ public class CommandExecutorMatchResult {
     public CommandExecuteResult executeCommand() {
         Preconditions.checkState(preparedExecutor != null, "Cannot execute command when it failed");
 
-        return preparedExecutor.get();
+        return this.preparedExecutor.get();
     }
 
     public FailedReason getFailedReason() {
         Preconditions.checkState(isFailed(), "Cannot get failed reason when command was successful");
 
-        return failedReason;
+        return this.failedReason;
     }
 
     public boolean isFailed() {
-        return failedReason != null;
+        return this.failedReason != null;
     }
 
     public boolean isSuccessful() {
-        return preparedExecutor != null;
+        return this.preparedExecutor != null;
     }
 
     public static CommandExecutorMatchResult success(Supplier<CommandExecuteResult> preparedExecutor) {

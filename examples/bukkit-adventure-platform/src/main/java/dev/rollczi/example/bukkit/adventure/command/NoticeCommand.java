@@ -20,22 +20,22 @@ public class NoticeCommand {
 
     @Execute(name = "message")
     public void message(@Arg Component component) {
-        audienceProvider.all().sendMessage(component);
+        this.audienceProvider.all().sendMessage(component);
     }
 
     @Execute(name = "actionbar")
     public void actionbar(@Arg Component component) {
-        audienceProvider.all().sendActionBar(component);
+        this.audienceProvider.all().sendActionBar(component);
     }
 
     @Execute(name = "title")
     public void title(@Arg Component component) {
-        audienceProvider.all().sendTitlePart(TitlePart.TITLE, component);
+        this.audienceProvider.all().sendTitlePart(TitlePart.TITLE, component);
     }
 
     @Execute(name = "subtitle")
     public void subtitle(@Arg Component component) {
-        audienceProvider.all().sendTitlePart(TitlePart.SUBTITLE, component);
+        this.audienceProvider.all().sendTitlePart(TitlePart.SUBTITLE, component);
     }
 
 }

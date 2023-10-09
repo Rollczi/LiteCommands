@@ -26,11 +26,11 @@ public class TestPlatformSender extends AbstractPlatformSender {
 
     @Override
     public boolean hasPermission(String permission) {
-        if (permittedAll) {
+        if (this.permittedAll) {
             return true;
         }
 
-        return permissions.contains(permission);
+        return this.permissions.contains(permission);
     }
 
     public static Builder builder() {
@@ -54,22 +54,22 @@ public class TestPlatformSender extends AbstractPlatformSender {
         private final TestPlatformSender sender = new TestPlatformSender();
 
         public Builder permission(String permission) {
-            sender.permissions.add(permission);
+            this.sender.permissions.add(permission);
             return this;
         }
 
         public Builder permissions(String... permissions) {
-            sender.permissions.addAll(Arrays.asList(permissions));
+            this.sender.permissions.addAll(Arrays.asList(permissions));
             return this;
         }
 
         public Builder permissions(List<String> permissions) {
-            sender.permissions.addAll(permissions);
+            this.sender.permissions.addAll(permissions);
             return this;
         }
 
         public Builder permittedAll() {
-            sender.permittedAll = true;
+            this.sender.permittedAll = true;
             return this;
         }
 

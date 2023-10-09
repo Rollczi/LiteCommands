@@ -42,7 +42,7 @@ public class DurationParser extends TemporalAmountParser<Duration> {
     }
 
     @Override
-    protected Duration toTempolarAmount(LocalDateTimeProvider baseForTimeEstimation, Duration duration) {
+    protected Duration toTemporalAmount(LocalDateTimeProvider baseForTimeEstimation, Duration duration) {
         return duration;
     }
 

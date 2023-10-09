@@ -22,7 +22,7 @@ public class ExampleChatGptPlugin extends JavaPlugin {
             .extension(new LiteChatGptExtension<>(settings -> settings
                 .apiKey("OPENAI_API_KEY") // get your api key from https://platform.openai.com/account/api-keys
                 .model(ChatGptModel.GPT_4) // get model from https://platform.openai.com/docs/models/gpt-3-5
-                .temperature(1.0)
+                .temperature(1.0) // see more https://platform.openai.com/docs/guides/gpt/how-should-i-set-the-temperature-parameter
                 .tokensLimit(2, 64) // min and max tokens
                 .cooldown(Duration.ofMillis(500)) // cooldown between suggestions per player
             ))
