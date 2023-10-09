@@ -39,19 +39,24 @@ public class AnnotationProcessorService<SENDER> {
 
     public static <SENDER> AnnotationProcessorService<SENDER> defaultService() {
         return new AnnotationProcessorService<SENDER>()
+            // class processors
             .register(new CommandAnnotationProcessor<>())
             .register(new RootCommandAnnotationProcessor<>())
+            // method processors
+            .register(new ExecuteAnnotationResolver<>())
+            // meta holder processors
             .register(new MarkMetaAnnotationResolver<>())
             .register(new DescriptionAnnotationResolver<>())
             .register(new AsyncAnnotationResolver<>())
             .register(new PermissionAnnotationResolver<>())
             .register(new PermissionsAnnotationResolver<>())
             .register(new ValidateAnnotationResolver<>())
-            .register(new ExecuteAnnotationResolver<>())
+            .register(new KeyAnnotationResolver<>()) // only for arguments
+            // argument processors
             .register(new FlagArgumentProcessor<>())
             .register(new ArgArgumentProcessor<>())
-            .register(new KeyAnnotationResolver<>())
             .register(new JoinArgumentProcessor<>())
+            // other requirements processors
             .register(new ContextRequirementProcessor<>())
             .register(new BindRequirementProcessor<>());
     }
