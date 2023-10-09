@@ -17,8 +17,7 @@ public final class LiteVelocityFactory {
             .extension(new LiteAdventureExtension<>())
 
             .bind(ProxyServer.class, () -> proxy)
-            .bind(CommandManager.class, proxy::getCommandManager)
-            ;
+            .bind(CommandManager.class, proxy::getCommandManager);
     }
 
 }
