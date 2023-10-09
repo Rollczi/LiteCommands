@@ -1,34 +1,33 @@
 package dev.rollczi.example.bukkit.command;
 
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.argument.Name;
-import dev.rollczi.litecommands.argument.option.Opt;
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.route.Route;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.context.Context;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
+import dev.rollczi.litecommands.annotations.command.Command;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import panda.std.Option;
 
-@Route(name = "teleport", aliases = "tp")
+@Command(name = "teleport", aliases = "tp")
 @Permission("dev.rollczi.teleport")
 public class TeleportCommand {
 
-    @Execute(required = 1)
-    public void teleportSelf(Player sender, @Arg Player to) {
+    @Execute
+    public void teleportSelf(@Context Player sender, @Arg Player to) {
         sender.teleport(to.getLocation());
     }
 
-    @Execute(min = 3, max = 4)
-    public void teleportSelfToPosition(Player sender, @Arg Location location, @Opt Option<World> world) {
+    @Execute
+    public void teleportSelfToPosition(@Context Player sender, @Arg Location location, @Arg Option<World> world) {
         location.setWorld(world.orElseGet(sender.getWorld()));
         sender.teleport(location);
     }
 
-    @Execute(required = 2)
+    @Execute
     @Permission("dev.rollczi.teleport.other")
-    public void teleportOther(@Arg @Name("target") Player target, @Arg @Name("to") Player to) {
+    public void teleportOther(@Arg("target") Player target, @Arg("to") Player to) {
         target.teleport(to.getLocation());
     }
 

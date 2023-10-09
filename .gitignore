@@ -2,5 +2,5 @@
 .gradle
 .idea
 build
-out
 *.iml
+run

@@ -2,7 +2,7 @@
 
 # ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord) [![OSCS Status](https://www.oscs1024.com/platform/badge/Rollczi/LiteCommands.svg?size=small)](https://www.oscs1024.com/project/Rollczi/LiteCommands?ref=badge_small)
 
-#### Command framework for Velocity, Bukkit, Paper, BungeeCord and your other implementations.
+#### Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and your other implementations.
 
 Helpful links:
 
@@ -32,42 +32,36 @@ Framework Core
 ```xml
 
 <dependency>
-    <groupId>dev.rollczi.litecommands</groupId>
-    <artifactId>core</artifactId>
-    <version>2.8.9</version>
+    <groupId>dev.rollczi</groupId>
+    <artifactId>litecommands-core</artifactId>
+    <version>3.0.0-BETA-pre22</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi.litecommands:core:2.8.9'
+implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre22'
 ```
 
 ### First Simple Command
 
-`/helloworld <text...>`  
-`/helloworld other-solution <text...>`  
-`/helloworld subcommand <text>`
+`/hello-world <name> <amount>`  
+`/hello-world message <text...>`  
 
 ```java
 
-@Route(name = "helloworld")
+@Command(name = "hello-world")
 @Permission("dev.rollczi.helloworld")
 public class HelloWorldCommand {
 
     @Execute
-    @Min(1)
-    public void command(LiteSender sender, @Args String[] args) {
-        sender.sendMessage(String.join(" ", args));
+    public void command(@Context CommandSender sender, @Arg String name, @Arg int amount) {
+        for (int i = 0; i < amount; i++) {
+            sender.sendMessage("Hello " + name);
+        }
     }
-
-    @Execute(route = "other-solution")
-    @Min(1)
-    public void otherSolution(LiteSender sender, @Joiner String text) {
-        sender.sendMessage(text);
-    }
-
-    @Execute(route = "subcommand")
-    public void subcommand(LiteSender sender, @Arg String text) {
+    
+    @Execute(name = "message")
+    public void subcommand(@Context CommandSender sender, @Join String text) {
         sender.sendMessage(text);
     }
 
@@ -84,19 +78,19 @@ this.liteCommands=LiteVelocityFactory.builder(proxy)
 
 ### Velocity Extension Dependencies (Maven or Gradle)
 
-Add this to your dependencies if you want use ready-made implementation for velocity.
+Add this to your dependencies if you want to use ready-made implementation for velocity.
 
 ```xml
 
 <dependency>
-    <groupId>dev.rollczi.litecommands</groupId>
-    <artifactId>velocity</artifactId>
-    <version>2.8.9</version>
+    <groupId>dev.rollczi</groupId>
+    <artifactId>litecommands-velocity</artifactId>
+    <version>3.0.0-BETA-pre22</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi.litecommands:velocity:2.8.9'
+implementation 'dev.rollczi:litecommands-velocity:3.0.0-BETA-pre22'
 ```
 
 #### Add -parameters to your compiler to use all features of LiteCommands
@@ -147,6 +141,6 @@ tasks.withType<JavaCompile> {
 #### Plugins that use LiteCommands:
 
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
+- [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [EternalCheck](https://github.com/EternalCodeTeam/EternalCheck)
-- [EternalRTP](https://github.com/EternalCodeTeam/EternalRTP)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)

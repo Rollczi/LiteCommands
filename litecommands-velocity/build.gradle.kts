@@ -1,26 +1,17 @@
 plugins {
-    id("litecommands.java-conventions")
+    `litecommands-java`
+    `litecommands-java-11`
+    `litecommands-repositories`
+    `litecommands-publish`
 }
 
 dependencies {
-    api(project(":litecommands-core"))
+    api(project(":litecommands-framework"))
+    api(project(":litecommands-adventure"))
 
     compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
-    annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
 }
 
-val velocityArtifact: String by extra
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            this.artifactId = velocityArtifact
-            this.from(components["java"])
-        }
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+litecommandsPublish {
+    artifactId = "litecommands-velocity"
 }

@@ -1,19 +1,19 @@
 package dev.rollczi.example.velocity.argument;
 
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import panda.std.Option;
-import panda.std.Result;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.suggestion.SuggestionStream;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@ArgumentName("player")
-public class PlayerArgument implements OneArgument<Player> {
+public class PlayerArgument extends ArgumentResolver<CommandSource, Player> {
 
     private final ProxyServer server;
 
@@ -22,17 +22,18 @@ public class PlayerArgument implements OneArgument<Player> {
     }
 
     @Override
-    public Result<Player,?> parse(LiteInvocation liteInvocation, String argument) {
-        return Option.ofOptional(this.server.getPlayer(argument)).toResult("Player not found");
+    protected ParseResult<Player> parse(Invocation<CommandSource> invocation, Argument<Player> context, String argument) {
+        Optional<Player> optionalPlayer = this.server.getPlayer(argument);
+
+        return optionalPlayer.map(player -> ParseResult.success(player))
+            .orElseGet(() -> ParseResult.failure("Player " + argument + " not found"));
 
     }
 
     @Override
-    public List<Suggestion> suggest(LiteInvocation invocation) {
-        return server.getAllPlayers().stream()
-            .map(Player::getUsername)
-            .map(Suggestion::of)
-            .collect(Collectors.toList());
+    public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<Player> argument, SuggestionContext context) {
+        return SuggestionStream.of(this.server.getAllPlayers())
+            .collect(player -> player.getUsername());
     }
 
 }

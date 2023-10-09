@@ -1,24 +1,18 @@
 plugins {
-    id("litecommands.java-conventions")
+    `litecommands-java`
+    `litecommands-java-17`
+    `litecommands-java-unit-test`
+    `litecommands-repositories`
+    `litecommands-publish`
 }
 
 dependencies {
-    api(project(":litecommands-core"))
-    compileOnly("com.github.Minestom.Minestom:Minestom:aebf72de90")
+    api(project(":litecommands-framework"))
+    testImplementation(project(":litecommands-annotations"))
+    compileOnly("dev.hollowcube:minestom-ce:438338381e")
+    testImplementation("dev.hollowcube:minestom-ce:438338381e")
 }
 
-val minestomArtifact: String by extra
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            this.artifactId = minestomArtifact
-            this.from(components["java"])
-        }
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+litecommandsPublish {
+    artifactId = "litecommands-minestom"
 }

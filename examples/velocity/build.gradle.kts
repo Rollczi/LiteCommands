@@ -1,11 +1,12 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("xyz.jpenilla.run-velocity") version "2.2.0"
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 repositories {
@@ -17,17 +18,29 @@ repositories {
 dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
-    // implementation("dev.rollczi.litecommands:velocity:2.8.9") // <-- uncomment in your project
-    implementation(project(":litecommands-velocity")) // don't use this line in your build.gradle
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+    // implementation("dev.rollczi:litecommands-velocity:3.0.0-BETA-pre22") // <-- uncomment in your project
+    implementation(project(":litecommands-velocity")) // don't use this line in your build.gradle
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveFileName.set("ExamplePlugin v${project.version}.jar")
+val pluginName = "ExampleVelocityPlugin"
+val packageName = "dev.rollczi.example.velocity"
 
-    relocate("panda", "dev.rollczi.example.bukkit.libs.org.panda")
-    relocate("org.panda_lang", "dev.rollczi.example.bukkit.libs.org.panda")
-    relocate("dev.rollczi.litecommands", "dev.rollczi.example.bukkit.libs.dev.rollczi")
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveFileName.set("$pluginName v${project.version}.jar")
+
+    listOf(
+        "panda",
+        "org.panda_lang",
+        "dev.rollczi.litecommands",
+    ).forEach { relocate(it, "$packageName.libs.$it") }
+}
+
+sourceSets.test {
+    java.setSrcDirs(emptyList<String>())
+    resources.setSrcDirs(emptyList<String>())
+}
+
+tasks.runVelocity {
+    velocityVersion("3.2.0-SNAPSHOT")
 }

@@ -1,8 +1,13 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.0.0"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+    id("xyz.jpenilla.run-paper") version "2.2.0"
 }
+
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -11,31 +16,38 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT")
-    // implementation("dev.rollczi.litecommands:bukkit:2.8.9") // <-- uncomment in your project
-    implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
+    compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+    // implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre22") // <-- uncomment in your project
+    implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 }
 
+val pluginName = "ExamplePlugin"
+val packageName = "dev.rollczi.example.bukkit"
 
 bukkit {
-    main = "dev.rollczi.example.bukkit.ExamplePlugin"
+    main = "$packageName.$pluginName"
     apiVersion = "1.13"
-    prefix = "ExamplePlugin"
     author = "Rollczi"
-    name = "ExamplePlugin"
+    name = pluginName
     version = "${project.version}"
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveFileName.set("ExamplePlugin v${project.version}.jar")
+tasks.withType<ShadowJar> {
+    archiveFileName.set("$pluginName v${project.version}.jar")
 
-    mergeServiceFiles()
-    minimize()
+    listOf(
+        "panda",
+        "org.panda_lang",
+        "dev.rollczi.litecommands",
+    ).forEach { relocate(it, "$packageName.libs.$it") }
+}
 
-    relocate("panda", "dev.rollczi.example.bukkit.libs.org.panda")
-    relocate("org.panda_lang", "dev.rollczi.example.bukkit.libs.org.panda")
-    relocate("dev.rollczi.litecommands", "dev.rollczi.example.bukkit.libs.dev.rollczi")
+sourceSets.test {
+    java.setSrcDirs(emptyList<String>())
+    resources.setSrcDirs(emptyList<String>())
+}
+
+tasks.runServer {
+    minecraftVersion("1.20.2")
 }
