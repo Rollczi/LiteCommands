@@ -14,8 +14,14 @@ Helpful links:
 
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
-- [Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
 - [Documentation](https://docs.rollczi.dev/)
+
+#### Examples:
+
+- [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
+- [Velocity Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/velocity)
+- [ChatGPT Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-chatgpt)
+- [Bukkit (with Adventure Platform)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-adventure-platform)
 
 ### Panda Repository (Maven or Gradle)  ❤️
 
@@ -74,45 +80,58 @@ public class HelloWorldCommand {
 }
 ```
 
-Register your first command in plugin main class: (in this case for Velocity)
+Register your first command in plugin main class: (in this case for Bukkit)
 
 ```java
-this.liteCommands=LiteVelocityFactory.builder(proxy)
-    .command(HelloWorldCommand.class)
-    .register();
+this.liteCommands = LiteBukkitFactory.builder("example-plugin")
+    .commands(LiteCommandsAnnotations.of(
+        new HelloWorldCommand()
+    ))
+    .build();
 ```
 
-### Velocity Extension Dependencies (Maven or Gradle)
+### Bukkit Platform Dependencies (Maven or Gradle)
 
-Add this to your dependencies if you want to use ready-made implementation for velocity.
+Add this to your dependencies if you want to use ready-made implementation for bukkit.
+
+```kts
+implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre22")
+```
 
 ```xml
-
 <dependency>
     <groupId>dev.rollczi</groupId>
-    <artifactId>litecommands-velocity</artifactId>
+    <artifactId>litecommands-bukkit</artifactId>
     <version>3.0.0-BETA-pre22</version>
 </dependency>
 ```
 
-```groovy
-implementation 'dev.rollczi:litecommands-velocity:3.0.0-BETA-pre22'
-```
+#### Platforms
+- Velocity `litecommands-velocity`
+- Bukkit `litecommands-bukkit`
+- BungeeCord `litecommands-bungee`
+- Minestom `litecommands-minestom`
+- JDA `litecommands-jda`
 
-#### Add -parameters to your compiler to use all features of LiteCommands
+#### Extensions:
+- Adventure `litecommands-adventure`
+- Adventure Platform `litecommands-adventure-platform`
+- ChatGPT `litecommands-chatgpt`
 
+### Add -parameters to your compiler to use all features of LiteCommands
+Gradle
 ```groovy
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
 ```
-
+Gradle KTS
 ```kotlin
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
 }
 ```
-
+Maven
 ```xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
@@ -126,24 +145,9 @@ tasks.withType<JavaCompile> {
 </plugin>
 ```
 
-#### All extensions:
-
-- [Velocity](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-velocity)
-- [Bukkit](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit)
-- [Bukkit Adventure extension](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bukkit-adventure)
-- [BungeeCord](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-bungee)
-- [Minestom](https://github.com/Rollczi/LiteCommands/tree/master/litecommands-minestom)
-
-#### Other examples:
-
-- [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
-
-#### See (Important dependencies used)
-
+#### Dependencies used
 - [panda-lang/expressible](https://github.com/panda-lang/expressible)
-- [panda-lang/panda (panda-utilities)](https://github.com/panda-lang/panda) (v1.0.0 - v1.9.2) (in v2.0.0 and above a
-  built-in DI modeled on it is used)
-
+- [JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
 #### Plugins that use LiteCommands:
 
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
