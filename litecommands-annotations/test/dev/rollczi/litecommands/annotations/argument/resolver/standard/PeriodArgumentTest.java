@@ -14,8 +14,8 @@ class PeriodArgumentTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute
-        Period test(@Arg Period duration) {
-            return duration;
+        Period test(@Arg Period period) {
+            return period;
         }
     }
 
