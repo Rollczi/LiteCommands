@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
 import dev.rollczi.litecommands.context.ContextResult;
@@ -32,6 +33,7 @@ import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
 import panda.std.Option;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -65,6 +67,7 @@ public final class LiteCommandsFactory {
                 .argument(byte.class, NumberArgumentResolver.ofByte())
                 .argument(Short.class, NumberArgumentResolver.ofShort())
                 .argument(short.class, NumberArgumentResolver.ofShort())
+                .argument(Duration.class, new DurationArgumentResolver<>())
 
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
