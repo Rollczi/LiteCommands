@@ -14,15 +14,15 @@ class DurationArgumentTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute
-        void test(@Arg Duration duration) {
+        Duration test(@Arg Duration duration) {
+            return duration;
         }
-
     }
 
     @Test
     void test() {
         platform.execute("test 1d")
-            .assertSuccess();
+            .assertSuccess(Duration.ofDays(1));
     }
 
     @Test
@@ -33,8 +33,13 @@ class DurationArgumentTest extends LiteTestSpec {
 
     @Test
     void testMultipleValues() {
-        platform.execute("test 1y7d1h1m1s1ms1us1ns")
+        platform.execute("test 7d1h1m1s1ms1us1ns")
             .assertSuccess();
     }
 
+    @Test
+    void testReturn() {
+        platform.execute("test 1d3m")
+            .assertSuccess(Duration.ofDays(1).plus(Duration.ofMinutes(3)));
+    }
 }
