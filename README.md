@@ -148,5 +148,4 @@ tasks.withType<JavaCompile> {
 
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
-- [EternalCheck](https://github.com/EternalCodeTeam/EternalCheck)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
