@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.join.Join;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -28,7 +27,7 @@ class DurationArgumentTest extends LiteTestSpec {
 
     @Test
     void testInvalid() {
-        platform.execute("test 1abcd")
+        platform.execute("test 1acab")
             .assertFailure();
     }
 
