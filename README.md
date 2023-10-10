@@ -1,6 +1,6 @@
 
 <div align="center"><img src="https://github.com/Rollczi/LiteCommands/assets/49173834/c3f218a0-268a-419d-899d-703ab0501ff0" alt="hacktoberfest" width="60%"/></div>
-<div align="center"><h3>LiteCommands & Hacktoberfest 2023</h2></div>
+<div align="center"><h3>LiteCommands & Hacktoberfest 2023</h3></div>
 <div align="center">Register on <a href="https://hacktoberfest.com/">hacktoberfest.com</a> and start supporting open source!</div>
 <div align="center">Add/Improve/Fix features and open <a href="https://github.com/Rollczi/LiteCommands/pulls">Pull request</a>! If you don't have an idea, see  <a href="https://github.com/Rollczi/LiteCommands/issues">issues</a>!</div>
 <br>
