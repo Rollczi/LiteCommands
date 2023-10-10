@@ -9,6 +9,9 @@ import java.util.Map;
 public class PeriodParser extends TemporalAmountParser<Period> {
 
     public static final TemporalAmountParser<Period> DATE_UNITS = new PeriodParser()
+        .withUnit("s", ChronoUnit.SECONDS)
+        .withUnit("m", ChronoUnit.MINUTES)
+        .withUnit("h", ChronoUnit.HOURS)
         .withUnit("d", ChronoUnit.DAYS)
         .withUnit("w", ChronoUnit.WEEKS)
         .withUnit("mo", ChronoUnit.MONTHS)
