@@ -7,12 +7,18 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 class RootCommandTest extends LiteTestSpec {
 
     @RootCommand
     static class Command {
         @Execute(name = "first")
         public void test() {}
+
+        @Execute(name = "first")
+        @Permission("test.permission.execute.two")
+        public void test(@Arg String one, @Arg String two) {}
 
         @Execute(name = "second")
         public void test2() {}
@@ -30,6 +36,12 @@ class RootCommandTest extends LiteTestSpec {
     }
 
     @Test
+    void verifyStructure() {
+        assertThat(platform.findCommand("first").getExecutors())
+            .hasSize(3);
+    }
+
+    @Test
     void testExecuteRootRouteCommands() {
         platform.execute("first")
             .assertMissingPermission("test.permission");
@@ -42,6 +54,9 @@ class RootCommandTest extends LiteTestSpec {
     void testExecuteMergedRootRouteCommands() {
         platform.execute("first test")
             .assertMissingPermission("test.permission", "test.permission.execute");
+
+        platform.execute("first one two")
+            .assertMissingPermission("test.permission", "test.permission.execute.two");
 
         platform.execute("third")
             .assertMissingPermission("test.permission");

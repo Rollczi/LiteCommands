@@ -17,9 +17,8 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
+class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
-    private final Map<String, CommandBuilder<SENDER>> children = new HashMap<>();
     private final Meta meta = Meta.create();
     private final Map<String, Meta> childrenMeta = new HashMap<>();
 
@@ -76,56 +75,6 @@ class CommandBuilderRootImpl<SENDER> implements CommandBuilder<SENDER> {
     @Override
     public @NotNull CommandBuilder<SENDER> disable() {
         throw new UnsupportedOperationException("Cannot disable root command");
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> editChild(String name, UnaryOperator<CommandBuilder<SENDER>> operator) {
-        for (CommandBuilder<SENDER> child : children.values()) {
-            if (child.isNameOrAlias(name)) {
-                CommandBuilder<SENDER> newChild = operator.apply(child);
-                children.put(child.name(), newChild);
-                return this;
-            }
-        }
-
-        throw new IllegalArgumentException("Cannot find child with name " + name);
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> appendChild(String name, UnaryOperator<CommandBuilder<SENDER>> operator) {
-        CommandBuilder<SENDER> child = new CommandBuilderImpl<>();
-
-        child = operator.apply(child);
-        this.children.put(name, child);
-        return this;
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> appendChild(CommandBuilder<SENDER> context) {
-        this.children.put(context.name(), context);
-        return this;
-    }
-
-    @Override
-    public Collection<CommandBuilder<SENDER>> children() {
-        return Collections.unmodifiableCollection(children.values());
-    }
-
-    @Override
-    public Optional<CommandBuilder<SENDER>> getChild(String test) {
-        CommandBuilder<SENDER> context = children.get(test);
-
-        if (context != null) {
-            return Optional.of(context);
-        }
-
-        for (CommandBuilder<SENDER> child : children.values()) {
-            if (child.isNameOrAlias(test)) {
-                return Optional.of(child);
-            }
-        }
-
-        return Optional.empty();
     }
 
     @Override

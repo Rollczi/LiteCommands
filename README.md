@@ -46,12 +46,12 @@ Framework Core
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>litecommands-core</artifactId>
-    <version>3.0.0-BETA-pre22</version>
+    <version>3.0.0-BETA-pre23</version>
 </dependency>
 ```
 
 ```groovy
-implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre22'
+implementation 'dev.rollczi:litecommands-core:3.0.0-BETA-pre23'
 ```
 
 ### First Simple Command
@@ -95,14 +95,14 @@ this.liteCommands = LiteBukkitFactory.builder("example-plugin")
 Add this to your dependencies if you want to use ready-made implementation for bukkit.
 
 ```kts
-implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre22")
+implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre23")
 ```
 
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>litecommands-bukkit</artifactId>
-    <version>3.0.0-BETA-pre22</version>
+    <version>3.0.0-BETA-pre23</version>
 </dependency>
 ```
 
