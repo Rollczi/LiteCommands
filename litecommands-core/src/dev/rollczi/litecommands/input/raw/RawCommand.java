@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.input.raw;
 
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.ArrayList;
@@ -23,8 +25,16 @@ public class RawCommand {
         return label;
     }
 
-    public RawInput getRawInput() {
+    public RawInput toRawInput() {
         return RawInput.of(args);
+    }
+
+    public SuggestionInput<?> toSuggestionInput() {
+        return SuggestionInput.raw(args.toArray(new String[0]));
+    }
+
+    public ParseableInput<?> toParseableInput() {
+        return ParseableInput.raw(args.toArray(new String[0]));
     }
 
     public List<String> getArgs() {

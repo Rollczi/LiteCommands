@@ -11,17 +11,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
+abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
     protected @Nullable String name;
     protected final List<String> aliases = new ArrayList<>();
-    protected final Map<String, CommandBuilder<SENDER>> children = new HashMap<>();
     protected final List<CommandExecutorProvider<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
@@ -105,68 +101,6 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     public @NotNull CommandBuilder<SENDER> disable() {
         this.enabled = false;
         return this;
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> editChild(String name, UnaryOperator<CommandBuilder<SENDER>> operator) {
-        Optional<CommandBuilder<SENDER>> contextOptional = this.getChild(name);
-
-        if (!contextOptional.isPresent()) {
-            throw new IllegalArgumentException("Child " + name + " not found");
-        }
-
-        CommandBuilder<SENDER> child = contextOptional.get();
-
-        child = operator.apply(child);
-        this.children.put(name, child);
-        return this;
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> appendChild(String name, UnaryOperator<CommandBuilder<SENDER>> operator) {
-        CommandBuilder<SENDER> child = new CommandBuilderImpl<>();
-        child.name(name);
-
-        child = operator.apply(child);
-        this.children.put(name, child);
-        return this;
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> appendChild(CommandBuilder<SENDER> context) {
-        Optional<CommandBuilder<SENDER>> childOption = this.getChild(context.name());
-
-        if (childOption.isPresent()) {
-            CommandBuilder<SENDER> child = childOption.get();
-            child.meagre(context);
-
-            context = child;
-        }
-
-        this.children.put(context.name(), context);
-        return this;
-    }
-
-    @Override
-    public Collection<CommandBuilder<SENDER>> children() {
-        return Collections.unmodifiableCollection(this.children.values());
-    }
-
-    @Override
-    public Optional<CommandBuilder<SENDER>> getChild(String test) {
-        CommandBuilder<SENDER> context = this.children.get(test);
-
-        if (context != null) {
-            return Optional.of(context);
-        }
-
-        for (CommandBuilder<SENDER> child : this.children.values()) {
-            if (child.isNameOrAlias(test)) {
-                return Optional.of(child);
-            }
-        }
-
-        return Optional.empty();
     }
 
     @Override
