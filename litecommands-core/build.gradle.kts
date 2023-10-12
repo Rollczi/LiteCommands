@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    api("org.panda-lang:expressible:1.3.1")
+    api("org.panda-lang:expressible:1.3.6")
     api("org.jetbrains:annotations:24.0.1")
 }
 
