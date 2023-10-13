@@ -14,11 +14,11 @@ import java.util.stream.Stream;
 
 public class InstantArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Instant> {
 
-    private static final SuggestionResult SUGGESTIONS = Stream.of(
+    private static final SuggestionResult SUGGESTIONS = SuggestionResult.of(
         "2021-12-25T08:00:00Z",
         "2023-09-20T14:00:00+02:00",
         "2023-07-29T09:40:30+03:00"
-    ).collect(SuggestionResult.collector());
+    );
 
     @Override
     protected ParseResult<Instant> parse(Invocation<SENDER> invocation, Argument<Instant> context, String argument) {
