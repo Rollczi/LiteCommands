@@ -37,6 +37,6 @@ public class InstantArgumentTest extends LiteTestSpec {
     void testSuggestions() {
         platform.suggest("test ").getSuggestions().stream()
             .map(Suggestion::multilevel)
-            .forEach(suggestion -> Assertions.assertDoesNotThrow(() -> Instant.parse(suggestion)));
+            .forEach(suggestion -> platform.execute("test " + suggestion).assertSuccess());
     }
 }
