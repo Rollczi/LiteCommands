@@ -3,10 +3,12 @@ package dev.rollczi.litecommands.argument.parser;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
+import dev.rollczi.litecommands.util.MapUtil;
 import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
 
@@ -23,14 +25,15 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
     @Override
     @SuppressWarnings("unchecked")
     public <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parserType, ArgumentKey key) {
-        BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) buckets.computeIfAbsent(parserType, k -> new BucketByArgument<>());
-        ParserSetImpl<SENDER, PARSED> parserSet = bucket.getParserSet(key);
+        Optional<BucketByArgument<?>> argumentOptional = MapUtil.findBySuperTypeOf(parserType, buckets);
 
-        if (parserSet == null) {
-            return new ParserSetImpl<>(parserType);
+        if (argumentOptional.isPresent()) {
+            BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) argumentOptional.get();
+
+            return bucket.getParserSet(key);
         }
 
-        return parserSet;
+        return new EmptyParserSetImpl<>();
     }
 
     private class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
@@ -52,14 +55,14 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         @Override
-        ParserSetImpl<SENDER, PARSED> getParserSet(ArgumentKey key) {
-            ParserSetImpl<SENDER, PARSED> bucket = super.getParserSet(key);
+        ParserSet<SENDER, PARSED> getParserSet(ArgumentKey key) {
+            ParserSet<SENDER, PARSED> bucket = super.getParserSet(key);
 
             if (bucket != null) {
                 return bucket;
             }
 
-            return universalTypedBucket.getParserSet( key);
+            return universalTypedBucket.getParserSet(key);
         }
 
     }
@@ -79,7 +82,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
             bucket.registerParser(parser);
         }
 
-        ParserSetImpl<SENDER, PARSED> getParserSet(ArgumentKey key) {
+        ParserSet<SENDER, PARSED> getParserSet(ArgumentKey key) {
             String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
             ParserSetImpl<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);
 

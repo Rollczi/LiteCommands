@@ -55,19 +55,4 @@ class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
         parsers.put(parser.getInputType(), parser);
     }
 
-    private class EmptyParserSetImpl implements ParserSet<SENDER,PARSED> {
-        @Override
-        public <INPUT> Optional<Parser<SENDER, INPUT, PARSED>> getParser(Class<INPUT> inType) {
-            return Optional.empty();
-        }
-
-        @Override
-        public Collection<Parser<SENDER, ?, PARSED>> getParsers() {
-            return Collections.emptyList();
-        }
-
-        public Class<PARSED> getParsedType() {
-            throw new UnsupportedOperationException();
-        }
-    }
 }
