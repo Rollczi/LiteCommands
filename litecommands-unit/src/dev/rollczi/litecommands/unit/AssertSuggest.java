@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 public class AssertSuggest {
 
     private final SuggestionResult suggest;
@@ -16,15 +18,8 @@ public class AssertSuggest {
     public AssertSuggest assertSuggest(String... suggestions) {
         Set<Suggestion> actualSuggestions = suggest.getSuggestions();
 
-        if (suggestions.length != actualSuggestions.size()) {
-            throw new AssertionError("Expected " + suggestions.length + " suggestions, but got " + actualSuggestions.size() + " " + actualSuggestions);
-        }
-
-        for (String suggestion : suggestions) {
-            if (!actualSuggestions.contains(Suggestion.of(suggestion))) {
-                throw new AssertionError("Expected suggestion " + suggestion + " but not found in " + actualSuggestions);
-            }
-        }
+        assertThat(actualSuggestions.stream().map(Suggestion::multilevel))
+            .containsExactly(suggestions);
 
         return this;
     }

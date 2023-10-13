@@ -28,11 +28,24 @@ class EnumArgumentTest extends LiteTestSpec {
     void test() {
         platform.execute("test FIRST")
             .assertSuccess(TestEnum.FIRST);
+
+        platform.execute("test SECOND")
+            .assertSuccess(TestEnum.FIRST);
     }
 
     @Test
     void testInvalid() {
-        platform.execute("test fodfds")
+        platform.execute("test invalid")
             .assertFailure();
     }
+
+    @Test
+    void testSuggestions() {
+        platform.suggest("test ")
+            .assertSuggest("FIRST", "SECOND");
+
+        platform.suggest("test F")
+            .assertSuggest("FIRST");
+    }
+
 }
