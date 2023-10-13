@@ -46,6 +46,10 @@ class EnumArgumentTest extends LiteTestSpec {
 
         platform.suggest("test F")
             .assertSuggest("FIRST");
+
+        // test cached suggestions (test mutable state)
+        platform.suggest("test ")
+            .assertSuggest("FIRST", "SECOND");
     }
 
 }
