@@ -3,10 +3,12 @@ package dev.rollczi.litecommands.argument.suggester;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
+import dev.rollczi.litecommands.util.MapUtil;
 import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> {
 
@@ -25,12 +27,13 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
     @Override
     @SuppressWarnings("unchecked")
     public <PARSED> Suggester<SENDER, PARSED> getSuggester(Class<PARSED> parsedClass, ArgumentKey key) {
-        BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) buckets.get(parsedClass);
+        Optional<BucketByArgument<?>> optional = MapUtil.findBySuperTypeOf(parsedClass, buckets);
 
-        if (bucket == null) {
+        if (!optional.isPresent()) {
             return (Suggester<SENDER, PARSED>) noneSuggester;
         }
 
+        BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) optional.get();
         Suggester<SENDER, PARSED> suggester = bucket.getSuggester(key);
 
         if (suggester == null) {
