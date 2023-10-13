@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
@@ -71,6 +72,7 @@ public final class LiteCommandsFactory {
                 .argument(short.class, NumberArgumentResolver.ofShort())
                 .argument(Duration.class, new DurationArgumentResolver<>())
                 .argument(Period.class, new PeriodArgumentResolver<>())
+                .argument(Enum.class, new EnumArgumentResolver<>())
 
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
