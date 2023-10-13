@@ -24,7 +24,7 @@ public class InstantArgumentResolver<SENDER> extends ArgumentResolver<SENDER, In
     protected ParseResult<Instant> parse(Invocation<SENDER> invocation, Argument<Instant> context, String argument) {
         try {
             return ParseResult.success(Instant.parse(argument));
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException ignored) {
             return ParseResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT);
         }
     }
