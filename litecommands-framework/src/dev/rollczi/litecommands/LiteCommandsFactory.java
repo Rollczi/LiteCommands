@@ -2,6 +2,7 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
@@ -36,6 +37,7 @@ import panda.std.Option;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.Period;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -73,6 +75,7 @@ public final class LiteCommandsFactory {
                 .argument(Duration.class, new DurationArgumentResolver<>())
                 .argument(Period.class, new PeriodArgumentResolver<>())
                 .argument(Enum.class, new EnumArgumentResolver<>())
+                .argument(Instant.class, new InstantArgumentResolver<>())
 
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
