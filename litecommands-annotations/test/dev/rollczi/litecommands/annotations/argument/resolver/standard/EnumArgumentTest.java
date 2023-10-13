@@ -30,7 +30,7 @@ class EnumArgumentTest extends LiteTestSpec {
             .assertSuccess(TestEnum.FIRST);
 
         platform.execute("test SECOND")
-            .assertSuccess(TestEnum.FIRST);
+            .assertSuccess(TestEnum.SECOND);
     }
 
     @Test

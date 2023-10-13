@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.unit;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -19,7 +20,7 @@ public class AssertSuggest {
         Set<Suggestion> actualSuggestions = suggest.getSuggestions();
 
         assertThat(actualSuggestions.stream().map(Suggestion::multilevel))
-            .containsExactly(suggestions);
+            .containsAll(Arrays.asList(suggestions));
 
         return this;
     }

@@ -15,27 +15,32 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("rawtypes")
 public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum> {
 
-    private final Map<Class<?>, SuggestionResult> cachedEnumSuggestions = new ConcurrentHashMap<>();
+    private final Map<Class<Enum>, SuggestionResult> cachedEnumSuggestions = new ConcurrentHashMap<>();
 
     @Override
     protected ParseResult<Enum> parse(Invocation<SENDER> invocation, Argument<Enum> context, String argument) {
+        Class<Enum> enumClass = context.getWrapperFormat().getParsedType();
+
         try {
-            return ParseResult.success(getEnum(context.getWrapperFormat().getParsedType(), argument));
-        } catch (IllegalArgumentException e) {
+            return ParseResult.success(getEnum(enumClass, argument));
+        } catch (IllegalArgumentException ignored) {
             return ParseResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT);
         }
     }
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Enum> argument, SuggestionContext context) {
-        return cachedEnumSuggestions.computeIfAbsent(argument.getWrapperFormat().getParsedType(), clazz -> {
-            final Object[] enumConstants = clazz.getEnumConstants();
-            if (enumConstants == null || enumConstants.length == 0) {
+        Class<Enum> enumClass = argument.getWrapperFormat().getParsedType();
+
+        return cachedEnumSuggestions.computeIfAbsent(enumClass, key -> {
+            Enum[] enums = enumClass.getEnumConstants();
+            if (enums == null || enums.length == 0) {
                 return SuggestionResult.empty();
             }
 
-
-            return Arrays.stream(enumConstants).map(Object::toString).collect(SuggestionResult.collector());
+            return Arrays.stream(enums)
+                .map(anEnum -> anEnum.name())
+                .collect(SuggestionResult.collector());
         });
     }
 
@@ -43,4 +48,5 @@ public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum>
     private Enum getEnum(Class<? extends Enum> clazz, String name) throws IllegalArgumentException {
         return Enum.valueOf(clazz, name);
     }
+
 }
