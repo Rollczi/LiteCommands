@@ -8,6 +8,8 @@ import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 public class InstantArgumentTest extends LiteTestSpec {
 
@@ -22,8 +24,12 @@ public class InstantArgumentTest extends LiteTestSpec {
 
     @Test
     void test() {
-        platform.execute("test 2023-10-13T15:30:00Z")
-            .assertSuccess(Instant.parse("2023-10-13T15:30:00Z"));
+        platform.execute("test 2023-10-13 11:20:00")
+            .assertSuccess(Instant.from(DateTimeFormatter
+                .ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneOffset.UTC)
+                .parse("2023-10-13 11:20:00")
+            ));
     }
 
     @Test

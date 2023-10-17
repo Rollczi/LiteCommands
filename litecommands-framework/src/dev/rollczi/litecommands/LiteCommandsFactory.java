@@ -75,7 +75,7 @@ public final class LiteCommandsFactory {
                 .argument(Duration.class, new DurationArgumentResolver<>())
                 .argument(Period.class, new PeriodArgumentResolver<>())
                 .argument(Enum.class, new EnumArgumentResolver<>())
-                .argument(Instant.class, new InstantArgumentResolver<>())
+                .argument(Instant.class, new InstantArgumentResolver<>(internal.getMessageRegistry()))
 
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
