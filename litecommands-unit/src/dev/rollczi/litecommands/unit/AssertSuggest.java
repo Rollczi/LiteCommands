@@ -4,7 +4,10 @@ import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -17,12 +20,28 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(String... suggestions) {
-        Set<Suggestion> actualSuggestions = suggest.getSuggestions();
-
-        assertThat(actualSuggestions.stream().map(Suggestion::multilevel))
-            .containsAll(Arrays.asList(suggestions));
-
+        assertThat(getSuggestions()).containsAll(Arrays.asList(suggestions));
         return this;
+    }
+
+    public AssertSuggest assertNotEmpty() {
+        assertThat(suggest.getSuggestions()).isNotEmpty();
+        return this;
+    }
+
+    public AssertSuggest assertCorrect(Consumer<String> suggestionAction) {
+        for (String suggestion : getSuggestions()) {
+            try {
+                suggestionAction.accept(suggestion);
+            } catch (AssertionError e) {
+                throw new AssertionError("Suggestion '" + suggestion + "' was not valid", e);
+            }
+        }
+        return this;
+    }
+
+    public Collection<String> getSuggestions() {
+        return suggest.getSuggestions().stream().map(Suggestion::multilevel).collect(Collectors.toList());
     }
 
 }
