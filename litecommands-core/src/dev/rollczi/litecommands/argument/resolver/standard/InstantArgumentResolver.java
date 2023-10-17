@@ -35,7 +35,7 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
 
     @Override
     public ParseResult<Instant> parse(Invocation<SENDER> invocation, Argument<Instant> argument, RawInput rawInput) {
-        final String commandInput = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(2));
+        String commandInput = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(2));
 
         try {
             String rawInstant = String.join(" ", rawInput.next(2));
