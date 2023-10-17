@@ -50,7 +50,7 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Instant> argument, SuggestionContext context) {
         return IntStream.range(0, DAY_COUNT_TO_SUGGESTIONS)
             .mapToObj(day -> Instant.now().plus(day, ChronoUnit.DAYS))
-            .map(formatter::format)
+            .map(instant -> formatter.format(instant))
             .collect(SuggestionResult.collector());
     }
 
