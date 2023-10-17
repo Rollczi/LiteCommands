@@ -29,8 +29,8 @@ public class AssertSuggest {
         return this;
     }
 
-    public AssertSuggest assertCorrect(Consumer<String> suggestionAction) {
-        for (String suggestion : getSuggestions()) {
+    public AssertSuggest assertCorrect(Consumer<Suggestion> suggestionAction) {
+        for (Suggestion suggestion : suggest.getSuggestions()) {
             try {
                 suggestionAction.accept(suggestion);
             } catch (AssertionError e) {

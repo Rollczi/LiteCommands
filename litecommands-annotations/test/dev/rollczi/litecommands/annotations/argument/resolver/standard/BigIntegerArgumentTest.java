@@ -49,6 +49,6 @@ public class BigIntegerArgumentTest extends LiteTestSpec {
     void testSuggestions() {
         platform.suggest("test ")
             .assertNotEmpty()
-            .assertCorrect(suggestion -> platform.execute("test " + suggestion).assertSuccess());
+            .assertCorrect(suggestion -> platform.execute("test " + suggestion.multilevel()).assertSuccess());
     }
 }
