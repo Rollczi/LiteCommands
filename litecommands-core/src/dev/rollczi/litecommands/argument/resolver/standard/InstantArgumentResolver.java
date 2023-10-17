@@ -21,6 +21,8 @@ import java.util.stream.IntStream;
 
 public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver<SENDER, Instant> {
 
+    public final static int DAY_COUNT_TO_SUGGESTIONS = 7;
+
     private final DateTimeFormatter formatter = DateTimeFormatter
         .ofPattern("yyyy-MM-dd HH:mm:ss")
         .withZone(ZoneOffset.UTC);
@@ -48,7 +50,7 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Instant> argument, SuggestionContext context) {
-        return IntStream.range(0, 7)
+        return IntStream.range(0, DAY_COUNT_TO_SUGGESTIONS)
             .mapToObj(day -> Instant.now().plus(day, ChronoUnit.DAYS))
             .map(instant -> formatter.format(instant))
             .collect(SuggestionResult.collector());

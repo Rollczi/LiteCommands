@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ class InstantArgumentTest extends LiteTestSpec {
     void testSuggestions() {
         Collection<Suggestion> suggestions = platform.suggest("test ").getSuggestions();
 
-        assertThat(suggestions).hasSize(7);
+        assertThat(suggestions).hasSize(InstantArgumentResolver.DAY_COUNT_TO_SUGGESTIONS);
 
         suggestions.stream()
             .map(Suggestion::multilevel)
