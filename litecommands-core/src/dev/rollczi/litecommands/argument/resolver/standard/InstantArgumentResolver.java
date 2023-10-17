@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver<SENDER, Instant> {
 
-    public final static int DAY_COUNT_TO_SUGGESTIONS = 7;
+    public static final int DAY_COUNT_TO_SUGGESTIONS = 7;
 
     private final DateTimeFormatter formatter = DateTimeFormatter
         .ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -35,13 +35,11 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
 
     @Override
     public ParseResult<Instant> parse(Invocation<SENDER> invocation, Argument<Instant> argument, RawInput rawInput) {
-        String commandInput = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(2));
+        final String commandInput = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(2));
 
         try {
-            String rawInstant = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.next(2));
-            Instant instant = Instant.from(formatter.parse(rawInstant));
-
-            return ParseResult.success(instant);
+            final String rawInstant = String.join(" ", rawInput.next(2));
+            return ParseResult.success(Instant.from(formatter.parse(rawInstant)));
         }
         catch (DateTimeException ignored) {
             return ParseResult.failure(this.messageRegistry.getInvoked(LiteMessages.INSTANT_INVALID_FORMAT, invocation, commandInput));
@@ -52,7 +50,7 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Instant> argument, SuggestionContext context) {
         return IntStream.range(0, DAY_COUNT_TO_SUGGESTIONS)
             .mapToObj(day -> Instant.now().plus(day, ChronoUnit.DAYS))
-            .map(instant -> formatter.format(instant))
+            .map(formatter::format)
             .collect(SuggestionResult.collector());
     }
 
