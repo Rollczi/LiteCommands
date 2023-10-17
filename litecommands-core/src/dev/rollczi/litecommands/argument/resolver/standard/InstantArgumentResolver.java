@@ -2,11 +2,9 @@ package dev.rollczi.litecommands.argument.resolver.standard;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.input.raw.RawInput;
-import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.message.MessageRegistry;
@@ -18,11 +16,8 @@ import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.time.temporal.ChronoUnit;
+import java.util.stream.IntStream;
 
 public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver<SENDER, Instant> {
 
@@ -38,18 +33,30 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
 
     @Override
     public ParseResult<Instant> parse(Invocation<SENDER> invocation, Argument<Instant> argument, RawInput rawInput) {
-        final String commandInput = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(2));
+        String commandInput = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(2));
 
         try {
-            final String dateInput = String.join(" ", rawInput.next(2));
-            return ParseResult.success(Instant.from(formatter.parse(dateInput)));
-        } catch (DateTimeException ignored) {
+            String rawInstant = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.next(2));
+            Instant instant = Instant.from(formatter.parse(rawInstant));
+
+            return ParseResult.success(instant);
+        }
+        catch (DateTimeException ignored) {
             return ParseResult.failure(this.messageRegistry.getInvoked(LiteMessages.INSTANT_INVALID_FORMAT, invocation, commandInput));
         }
+    }
+
+    @Override
+    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Instant> argument, SuggestionContext context) {
+        return IntStream.range(0, 7)
+            .mapToObj(day -> Instant.now().plus(day, ChronoUnit.DAYS))
+            .map(instant -> formatter.format(instant))
+            .collect(SuggestionResult.collector());
     }
 
     @Override
     public Range getRange(Argument<Instant> instantArgument) {
         return Range.of(2);
     }
+
 }

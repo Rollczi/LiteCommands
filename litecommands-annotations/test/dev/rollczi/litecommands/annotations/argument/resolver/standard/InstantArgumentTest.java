@@ -8,10 +8,13 @@ import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 
-public class InstantArgumentTest extends LiteTestSpec {
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
+class InstantArgumentTest extends LiteTestSpec {
 
     @Command(name = "test")
     static class TestCommand {
@@ -25,22 +28,28 @@ public class InstantArgumentTest extends LiteTestSpec {
     @Test
     void test() {
         platform.execute("test 2023-10-13 11:20:00")
-            .assertSuccess(Instant.from(DateTimeFormatter
-                .ofPattern("yyyy-MM-dd HH:mm:ss")
-                .withZone(ZoneOffset.UTC)
-                .parse("2023-10-13 11:20:00")
-            ));
+            .assertSuccess(LocalDateTime.of(2023, 10, 13, 11, 20, 0).toInstant(ZoneOffset.UTC));
     }
 
     @Test
     void testInvalid() {
-        platform.execute("test 1acab")
+        platform.execute("test invalid")
+            .assertFailure();
+
+        platform.execute("test invalid 11:20:00")
+            .assertFailure();
+
+        platform.execute("test 2023-10-13 invalid")
             .assertFailure();
     }
 
     @Test
     void testSuggestions() {
-        platform.suggest("test ").getSuggestions().stream()
+        Collection<Suggestion> suggestions = platform.suggest("test ").getSuggestions();
+
+        assertThat(suggestions).hasSize(7);
+
+        suggestions.stream()
             .map(Suggestion::multilevel)
             .forEach(suggestion -> platform.execute("test " + suggestion).assertSuccess());
     }
