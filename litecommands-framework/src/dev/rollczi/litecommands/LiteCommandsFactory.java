@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver;
@@ -36,6 +37,7 @@ import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
 import panda.std.Option;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Period;
@@ -76,6 +78,7 @@ public final class LiteCommandsFactory {
                 .argument(Period.class, new PeriodArgumentResolver<>())
                 .argument(Enum.class, new EnumArgumentResolver<>())
                 .argument(BigInteger.class, new BigIntegerArgumentResolver<>(internal.getMessageRegistry()))
+                .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(internal.getMessageRegistry()))
 
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
