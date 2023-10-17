@@ -38,7 +38,7 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
         final String commandInput = String.join(RawCommand.COMMAND_SEPARATOR, rawInput.seeNext(2));
 
         try {
-            final String rawInstant = String.join(" ", rawInput.next(2));
+            String rawInstant = String.join(" ", rawInput.next(2));
             return ParseResult.success(Instant.from(formatter.parse(rawInstant)));
         }
         catch (DateTimeException ignored) {
