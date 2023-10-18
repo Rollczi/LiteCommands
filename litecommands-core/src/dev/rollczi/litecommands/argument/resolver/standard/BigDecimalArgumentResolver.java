@@ -16,9 +16,7 @@ import java.util.stream.Stream;
 public class BigDecimalArgumentResolver<SENDER> extends ArgumentResolver<SENDER, BigDecimal> {
 
     private static final SuggestionResult SUGGESTIONS = Stream.of(
-        "18.48",
-        "-90.374329",
-        "0.3728933"
+        "0", "1", "1.5", "10", "10.5", "100", "100.5"
     ).collect(SuggestionResult.collector());
 
     private final MessageRegistry<SENDER> messageRegistry;
