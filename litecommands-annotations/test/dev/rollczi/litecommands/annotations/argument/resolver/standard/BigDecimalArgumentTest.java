@@ -34,7 +34,7 @@ public class BigDecimalArgumentTest extends LiteTestSpec {
         platform.execute("test 0")
             .assertSuccess(BigDecimal.valueOf(0));
 
-        final BigDecimal testBigInteger = BigDecimal.ZERO
+        BigDecimal testBigInteger = BigDecimal.ZERO
             .add(BigDecimal.valueOf(Double.MAX_VALUE))
             .add(BigDecimal.valueOf(Double.MAX_VALUE))
             .add(BigDecimal.valueOf(Double.MAX_VALUE));
