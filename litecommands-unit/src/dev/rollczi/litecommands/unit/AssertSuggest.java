@@ -41,7 +41,9 @@ public class AssertSuggest {
     }
 
     public Collection<String> getSuggestions() {
-        return suggest.getSuggestions().stream().map(Suggestion::multilevel).collect(Collectors.toList());
+        return suggest.getSuggestions().stream()
+            .map(Suggestion::multilevel)
+            .collect(Collectors.toList());
     }
 
 }
