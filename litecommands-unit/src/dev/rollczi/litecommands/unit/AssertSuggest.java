@@ -33,8 +33,8 @@ public class AssertSuggest {
         for (Suggestion suggestion : suggest.getSuggestions()) {
             try {
                 suggestionAction.accept(suggestion);
-            } catch (AssertionError e) {
-                throw new AssertionError("Suggestion '" + suggestion + "' was not valid", e);
+            } catch (AssertionError error) {
+                throw new AssertionError("Suggestion '" + suggestion + "' was not valid", error);
             }
         }
         return this;
