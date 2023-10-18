@@ -18,6 +18,7 @@ include(":litecommands-bungee")
 include(":litecommands-bukkit")
 include(":litecommands-minestom", JavaVersion.VERSION_17)
 include("litecommands-jda", JavaVersion.VERSION_17)
+include("litecommands-sponge")
 
 // examples
 include(":examples:bukkit")
