@@ -34,7 +34,7 @@ public class RawInput {
         }
 
         consumed += count;
-        List<String> consumedArguments = rawArgumentsToConsume.subList(0, count);
+        List<String> consumedArguments = new ArrayList<>(rawArgumentsToConsume).subList(0, count);
         rawArgumentsToConsume.removeAll(consumedArguments);
         return consumedArguments;
     }

@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -17,12 +18,13 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(String... suggestions) {
-        Set<Suggestion> actualSuggestions = suggest.getSuggestions();
-
-        assertThat(actualSuggestions.stream().map(Suggestion::multilevel))
+        assertThat(getSuggestions().stream().map(Suggestion::multilevel))
             .containsAll(Arrays.asList(suggestions));
 
         return this;
     }
 
+    public Collection<Suggestion> getSuggestions() {
+        return suggest.getSuggestions();
+    }
 }
