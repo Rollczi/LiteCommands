@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentRes
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
@@ -40,6 +41,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.Period;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -79,6 +81,7 @@ public final class LiteCommandsFactory {
                 .argument(Enum.class, new EnumArgumentResolver<>())
                 .argument(BigInteger.class, new BigIntegerArgumentResolver<>(internal.getMessageRegistry()))
                 .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(internal.getMessageRegistry()))
+                .argument(Instant.class, new InstantArgumentResolver<>(internal.getMessageRegistry()))
 
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())

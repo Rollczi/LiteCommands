@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.message;
 
+import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 
@@ -25,6 +26,15 @@ public class LiteMessages {
      * It's used in {@link dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl}
      */
     public static final MessageKey<InvalidUsage<?>> INVALID_USAGE = MessageKey.of("invalid-usage", invalidUsage -> "Invalid usage of command!");
+
+    /**
+     * Default message key for invalid Instant format.
+     * It's used in {@link InstantArgumentResolver}
+     */
+    public static final MessageKey<String> INSTANT_INVALID_FORMAT = MessageKey.of(
+        "instant-invalid-format",
+        input -> "&cInvalid date format '" + input + "'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)"
+    );
 
     protected LiteMessages() {
     }

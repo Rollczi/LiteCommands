@@ -2,15 +2,16 @@ package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
+import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
+@SuppressWarnings({"UnusedReturnValue", "Convert2MethodRef"})
 public class AssertSuggest {
 
     private final SuggestionResult suggest;
@@ -20,7 +21,8 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(String... suggestions) {
-        assertThat(getSuggestions()).containsAll(Arrays.asList(suggestions));
+        assertThat(getSuggestions().stream().map(suggestion -> suggestion.multilevel()))
+            .containsAll(Arrays.asList(suggestions));
         return this;
     }
 
@@ -40,8 +42,7 @@ public class AssertSuggest {
         return this;
     }
 
-    public Collection<String> getSuggestions() {
-        return suggest.getSuggestions().stream().map(Suggestion::multilevel).collect(Collectors.toList());
+    public @Unmodifiable Collection<Suggestion> getSuggestions() {
+        return Collections.unmodifiableCollection(suggest.getSuggestions());
     }
-
 }
