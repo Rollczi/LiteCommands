@@ -9,5 +9,5 @@ sourceSets.getByName("jmh") {
 }
 
 dependencies {
-    jmhAnnotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:1.36")
+    jmhAnnotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:1.37")
 }
