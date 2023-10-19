@@ -46,6 +46,7 @@ import java.time.Period;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
+@SuppressWarnings("Convert2MethodRef")
 public final class LiteCommandsFactory {
 
     private LiteCommandsFactory() {

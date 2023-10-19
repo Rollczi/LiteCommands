@@ -21,7 +21,7 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(String... suggestions) {
-        assertThat(getSuggestions().stream().map(suggestion -> suggestion.multilevel()))
+        assertThat(suggest.getSuggestions().stream().map(suggestion -> suggestion.multilevel()))
             .containsAll(Arrays.asList(suggestions));
         return this;
     }
