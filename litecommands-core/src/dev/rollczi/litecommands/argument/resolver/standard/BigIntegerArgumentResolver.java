@@ -15,10 +15,7 @@ import java.util.stream.Stream;
 public class BigIntegerArgumentResolver<SENDER> extends ArgumentResolver<SENDER, BigInteger> {
 
     private static final SuggestionResult SUGGESTIONS = Stream.of(
-        "1843342345",
-        "-4374629832",
-        "843787420427384239740947328943742734372984",
-        "0"
+        "0", "1", "5", "10", "25", "50", "100", "250", "500"
     ).collect(SuggestionResult.collector());
 
     private final MessageRegistry<SENDER> messageRegistry;
