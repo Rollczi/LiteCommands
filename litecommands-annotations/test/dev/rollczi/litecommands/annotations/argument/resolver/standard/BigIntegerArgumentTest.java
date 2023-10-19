@@ -4,43 +4,44 @@ import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Collection;
+import java.math.BigInteger;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-
-class InstantArgumentTest extends LiteTestSpec {
+public class BigIntegerArgumentTest extends LiteTestSpec {
 
     @Command(name = "test")
     static class TestCommand {
 
         @Execute
-        Instant test(@Arg Instant instant) {
-            return instant;
+        BigInteger test(@Arg BigInteger testArgument) {
+            return testArgument;
         }
     }
 
     @Test
     void test() {
-        platform.execute("test 2023-10-13 11:20:00")
-            .assertSuccess(LocalDateTime.of(2023, 10, 13, 11, 20, 0).toInstant(ZoneOffset.UTC));
+        platform.execute("test 83737373")
+            .assertSuccess(BigInteger.valueOf(83737373));
+
+        platform.execute("test -88")
+            .assertSuccess(BigInteger.valueOf(-88));
+
+        platform.execute("test 0")
+            .assertSuccess(BigInteger.valueOf(0));
+
+        final BigInteger testBigInteger = BigInteger.ZERO
+            .add(BigInteger.valueOf(Long.MAX_VALUE))
+            .add(BigInteger.valueOf(Long.MAX_VALUE))
+            .add(BigInteger.valueOf(Long.MAX_VALUE));
+
+        platform.execute("test " + testBigInteger)
+            .assertSuccess(testBigInteger);
     }
 
     @Test
     void testInvalid() {
         platform.execute("test invalid")
-            .assertFailure();
-
-        platform.execute("test invalid 11:20:00")
-            .assertFailure();
-
-        platform.execute("test 2023-10-13 invalid")
             .assertFailure();
     }
 

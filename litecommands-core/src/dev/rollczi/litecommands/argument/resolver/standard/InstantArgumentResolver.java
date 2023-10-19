@@ -19,9 +19,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.IntStream;
 
+@SuppressWarnings("Convert2MethodRef")
 public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver<SENDER, Instant> {
-
-    public static final int DAY_COUNT_TO_SUGGESTIONS = 7;
 
     private final DateTimeFormatter formatter = DateTimeFormatter
         .ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -48,7 +47,7 @@ public class InstantArgumentResolver<SENDER> implements MultipleArgumentResolver
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Instant> argument, SuggestionContext context) {
-        return IntStream.range(0, DAY_COUNT_TO_SUGGESTIONS)
+        return IntStream.range(0, 7)
             .mapToObj(day -> Instant.now().plus(day, ChronoUnit.DAYS))
             .map(instant -> formatter.format(instant))
             .collect(SuggestionResult.collector());
