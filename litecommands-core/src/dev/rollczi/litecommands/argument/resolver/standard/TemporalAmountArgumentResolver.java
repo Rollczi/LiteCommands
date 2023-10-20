@@ -15,8 +15,7 @@ import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.function.Supplier;
 
-class TemporalAmountArgumentResolver<SENDER, UNIT extends TemporalAmount>
-    extends ArgumentResolver<SENDER, UNIT> {
+class TemporalAmountArgumentResolver<SENDER, UNIT extends TemporalAmount> extends ArgumentResolver<SENDER, UNIT> {
 
     private final TemporalAmountParser<UNIT> parser;
     private final Supplier<List<String>> suggestions;
