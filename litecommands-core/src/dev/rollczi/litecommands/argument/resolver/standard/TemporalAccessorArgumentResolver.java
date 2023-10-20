@@ -37,7 +37,8 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
         MessageKey<String> invalidFormatMessage,
         DateTimeFormatter formatter,
         TemporalQuery<UNIT> query,
-        Supplier<List<UNIT>> suggestions) {
+        Supplier<List<UNIT>> suggestions
+    ) {
         this.messageRegistry = messageRegistry;
         this.invalidFormatMessage = invalidFormatMessage;
         this.formatter = formatter;
@@ -51,7 +52,8 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
         MessageKey<String> invalidFormatMessage,
         String formatterPattern,
         TemporalQuery<UNIT> query,
-        Supplier<List<UNIT>> suggestions) {
+        Supplier<List<UNIT>> suggestions
+    ) {
         this(messageRegistry, invalidFormatMessage, DateTimeFormatter.ofPattern(formatterPattern), query, suggestions);
     }
 
