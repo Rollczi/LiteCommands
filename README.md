@@ -43,7 +43,7 @@ maven("https://repo.panda-lang.org/releases")
     <version>3.0.0</version>
 </dependency>
 ```
-`{artifact}` replace with [platform artifact](https://github.com/Rollczi/LiteCommands/edit/master/README.md#platform-artifacts)
+`{artifact}` replace with [platform artifact](https://github.com/Rollczi/LiteCommands#platform-artifacts)
 
 ### First Simple Command
 `/hello-world <name> <amount>`  
