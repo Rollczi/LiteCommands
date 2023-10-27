@@ -14,7 +14,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LiteAnnotationProcessExtension<SENDER> implements LiteCommandsProviderExtension<SENDER> {
+public class LiteAnnotationsProcessorExtension<SENDER> implements LiteCommandsProviderExtension<SENDER> {
 
     private final List<AnnotationProcessor<SENDER>> processors = new ArrayList<>();
 
@@ -36,12 +36,12 @@ public class LiteAnnotationProcessExtension<SENDER> implements LiteCommandsProvi
     public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal) {
     }
 
-    public LiteAnnotationProcessExtension<SENDER> processor(AnnotationProcessor<SENDER> processor) {
+    public LiteAnnotationsProcessorExtension<SENDER> processor(AnnotationProcessor<SENDER> processor) {
         processors.add(processor);
         return this;
     }
 
-    public <T, A extends Annotation> LiteAnnotationProcessExtension<SENDER> validator(Class<T> type, Class<A> annotation, AnnotatedValidator<SENDER, T, A> validator) {
+    public <T, A extends Annotation> LiteAnnotationsProcessorExtension<SENDER> validator(Class<T> type, Class<A> annotation, AnnotatedValidator<SENDER, T, A> validator) {
         return processor(new AnnotatedValidatorProcessor<>(annotation, type, validator));
     }
 
