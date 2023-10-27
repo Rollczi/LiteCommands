@@ -1,11 +1,13 @@
 package dev.rollczi.litecommands.argument.parser;
 
+import dev.rollczi.litecommands.requirement.RequirementResult;
 import dev.rollczi.litecommands.shared.FailedReason;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class ParseResult<EXPECTED> {
+public class ParseResult<EXPECTED> implements RequirementResult<EXPECTED> {
 
     private final @Nullable EXPECTED successfulResult;
     private final @Nullable FailedReason failedResult;
@@ -23,15 +25,18 @@ public class ParseResult<EXPECTED> {
         this.failedResult = failedResult;
     }
 
+    @Override
     public boolean isSuccessful() {
         return this.successfulResult != null;
     }
 
+    @Override
     public boolean isFailed() {
         return this.failedResult != null;
     }
 
-    public EXPECTED getSuccessfulResult() {
+    @Override
+    public @NotNull EXPECTED getSuccess() {
         if (this.successfulResult == null) {
             throw new IllegalStateException("Cannot get successful result when it is empty");
         }
@@ -39,12 +44,13 @@ public class ParseResult<EXPECTED> {
         return this.successfulResult;
     }
 
-    public FailedReason getFailedReason() {
+    @Override
+    public @NotNull Object getFailedReason() {
         if (this.failedResult == null) {
             throw new IllegalStateException("Cannot get failed reason when it is empty");
         }
 
-        return this.failedResult;
+        return this.failedResult.getReason();
     }
 
     public static <PARSED> ParseResult<PARSED> success(PARSED parsed) {
