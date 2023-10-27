@@ -2,14 +2,18 @@ package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
+import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
+import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
+import dev.rollczi.example.bukkit.validator.IsNotOp;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
+import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
@@ -39,8 +43,16 @@ public class ExamplePlugin extends JavaPlugin {
                 new ConvertCommand(),
                 new GameModeCommand(),
                 new KickCommand(),
-                new TeleportCommand()
+                new TeleportCommand(),
+                new FlyCommand()
             ))
+
+            // Custom annotation validators
+            .extension(new LiteAnnotationsProcessorExtension<>(), extension -> extension
+                .validator(Player.class, IsNotOp.class, new IsNotOpValidator()) // see FlyCommand
+            )
+
+            // Programmatic commands
             .commands(LiteCommandsProgrammatic.of(
                 new LiteCommand<CommandSender>("ban")
                     .permissions("example.ban")
