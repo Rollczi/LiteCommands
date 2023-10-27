@@ -18,7 +18,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.0.0") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.0.1") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 }
 
