@@ -30,6 +30,16 @@ public class CustomSuggestionTest extends LiteTestSpec {
     }
 
     @Test
+    @DisplayName("should suggest default suggestion with ignore case")
+    void testIgnoreCase() {
+        platform.suggest("test D")
+            .assertSuggest("default-suggestion");
+
+        platform.suggest("test DEFAULT-SUGGESTION")
+            .assertSuggest("default-suggestion");
+    }
+
+    @Test
     @DisplayName("should suggest custom suggestion")
     void testCustom() {
         platform.suggest("test text ")
