@@ -16,4 +16,13 @@ public final class StringUtil {
         return builder.toString();
     }
 
+    public static boolean startsWithIgnoreCase(String text, String prefix) {
+        return text.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    public static boolean endsWithIgnoreCase(String str, String suffix) {
+        int suffixLength = suffix.length();
+        return str.regionMatches(true, str.length() - suffixLength, suffix, 0, suffixLength);
+    }
+
 }
