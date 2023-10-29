@@ -9,9 +9,6 @@ import java.util.Map;
 public class PeriodParser extends TemporalAmountParser<Period> {
 
     public static final TemporalAmountParser<Period> DATE_UNITS = new PeriodParser()
-        .withUnit("s", ChronoUnit.SECONDS)
-        .withUnit("m", ChronoUnit.MINUTES)
-        .withUnit("h", ChronoUnit.HOURS)
         .withUnit("d", ChronoUnit.DAYS)
         .withUnit("w", ChronoUnit.WEEKS)
         .withUnit("mo", ChronoUnit.MONTHS)
@@ -35,11 +32,37 @@ public class PeriodParser extends TemporalAmountParser<Period> {
     }
 
     @Override
-    protected Period toTemporalAmount(LocalDateTimeProvider basisEstimation, Duration duration) {
-        LocalDateTime localDate = basisEstimation.get();
-        LocalDateTime estimatedDate = localDate.plus(duration);
+    protected Period plus(LocalDateTimeProvider baseForTimeEstimation, Period temporalAmount, TemporalEntry temporalEntry) {
+        int count = (int) temporalEntry.getCount();
+        ChronoUnit unit = temporalEntry.getUnit();
 
-        return Period.between(localDate.toLocalDate(), estimatedDate.toLocalDate());
+        if (unit == ChronoUnit.DAYS) {
+            return temporalAmount.plus(Period.ofDays(count));
+        }
+
+        if (unit == ChronoUnit.WEEKS) {
+            return temporalAmount.plus(Period.ofWeeks(count));
+        }
+
+        if (unit == ChronoUnit.MONTHS) {
+            return temporalAmount.plus(Period.ofMonths(count));
+        }
+
+        if (unit == ChronoUnit.YEARS) {
+            return temporalAmount.plus(Period.ofYears(count));
+        }
+
+        throw new IllegalArgumentException("Unsupported unit: " + unit);
+    }
+
+    @Override
+    protected Period negate(Period temporalAmount) {
+        return temporalAmount.negated();
+    }
+
+    @Override
+    protected Period getZero() {
+        return Period.ZERO;
     }
 
     @Override

@@ -228,14 +228,7 @@ public class CommandExecuteService<SENDER> {
             WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
 
             if (requirementResult.isFailed()) {
-                Object failedReason = requirementResult.getFailedReason();
-                Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapperFormat);
-
-                if (failedReason == InvalidUsage.Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
-                    return toMatch(requirement, wrapper.createEmpty(wrapperFormat));
-                }
-
-                throw new ScheduledChainException(failedReason);
+                return this.handleFailed(requirementResult, wrapperFormat, requirement);
             }
 
             Object success = requirementResult.getSuccess();
@@ -271,6 +264,20 @@ public class CommandExecuteService<SENDER> {
 
             return completedFuture(executor.match(restulrBuilder.build()));
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private <R extends Requirement<? extends T>, T> RequirementMatch<R, T> handleFailed(RequirementResult<?> requirementResult, WrapFormat<?, ?> wrapperFormat, R requirement) {
+        Object failedReason = requirementResult.getFailedReason();
+        Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapperFormat);
+
+        if (failedReason == Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
+            Wrap<T> wrap = (Wrap<T>) wrapper.createEmpty(wrapperFormat);
+
+            return new RequirementMatch<>(requirement, wrap);
+        }
+
+        throw new ScheduledChainException(failedReason);
     }
 
     @SuppressWarnings("unchecked")
