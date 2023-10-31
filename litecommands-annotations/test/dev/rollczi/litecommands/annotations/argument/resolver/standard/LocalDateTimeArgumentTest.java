@@ -6,42 +6,36 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
-class BigIntegerArgumentTest extends LiteTestSpec {
+class LocalDateTimeArgumentTest extends LiteTestSpec {
 
     @Command(name = "test")
     static class TestCommand {
 
         @Execute
-        BigInteger test(@Arg BigInteger testArgument) {
-            return testArgument;
+        LocalDateTime test(@Arg LocalDateTime localDateTime) {
+            return localDateTime;
         }
     }
 
     @Test
     void test() {
-        platform.execute("test 83737373")
-            .assertSuccess(BigInteger.valueOf(83737373));
-
-        platform.execute("test -88")
-            .assertSuccess(BigInteger.valueOf(-88));
-
-        platform.execute("test 0")
-            .assertSuccess(BigInteger.valueOf(0));
-
-        final BigInteger testBigInteger = BigInteger.ZERO
-            .add(BigInteger.valueOf(Long.MAX_VALUE))
-            .add(BigInteger.valueOf(Long.MAX_VALUE))
-            .add(BigInteger.valueOf(Long.MAX_VALUE));
-
-        platform.execute("test " + testBigInteger)
-            .assertSuccess(testBigInteger);
+        platform.execute("test 2023-10-13 11:20:00")
+            .assertSuccess(LocalDateTime.of(2023, 10, 13, 11, 20, 0));
     }
 
     @Test
     void testInvalid() {
         platform.execute("test invalid")
+            .assertFailure();
+
+        platform.execute("test invalid 11:20:00")
+            .assertFailure();
+
+        platform.execute("test 2023-10-13 invalid")
             .assertFailure();
     }
 
