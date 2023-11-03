@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.jda.visibility.Visibility;
 import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
 import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.Permission;
@@ -63,21 +64,20 @@ class JDACommandTranslator {
         CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.meta().get(Meta.DESCRIPTION));
         commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
 
-        List<Permission> permissions = commandRoute.metaCollector().collect(DiscordPermission.META_KEY).stream()
-            .flatMap(List::stream)
-            .toList();
-
-        if (!permissions.isEmpty()) {
-            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
-        }
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
         // Single command
         if (!commandRoute.getExecutors().isEmpty()) {
-            this.translateExecutor(commandRoute, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
+            CommandExecutor<SENDER> executor = this.translateExecutor(commandRoute, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                 commandData.addOption(optionType, argName, description, isRequired, autocomplete);
                 jdaLiteCommand.addTypeMapper(new JDARoute(argName), mapper);
             });
+
+            List<Permission> permissions = getPermissions(executor);
+
+            if (!permissions.isEmpty()) {
+                commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+            }
 
             return jdaLiteCommand;
         }
@@ -95,7 +95,6 @@ class JDACommandTranslator {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
                     jdaLiteCommand.addTypeMapper(new JDARoute(child.getName(), argName), mapper);
                 });
-
                 commandData.addSubcommands(subcommandData);
             }
 
@@ -123,10 +122,22 @@ class JDACommandTranslator {
             commandData.addSubcommandGroups(subcommandGroupData);
         }
 
+        List<Permission> permissions = getPermissions(commandRoute);
+
+        if (!permissions.isEmpty()) {
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+        }
+
         return jdaLiteCommand;
     }
 
-    private <SENDER> void translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
+    private List<Permission> getPermissions(MetaHolder holder) {
+        return holder.metaCollector().collect(DiscordPermission.META_KEY).stream()
+            .flatMap(List::stream)
+            .toList();
+    }
+
+    private <SENDER> CommandExecutor<SENDER> translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
         List<CommandExecutor<SENDER>> executors = route.getExecutors();
         if (executors.size() != 1) {
             throw new IllegalArgumentException("Discrod command cannot have more than one executor in same route");
@@ -158,6 +169,8 @@ class JDACommandTranslator {
 
             consumer.translate(OptionType.STRING, option -> option.getAsString(), argumentName, description, isRequired, true);
         }
+
+        return executor;
     }
 
     private interface TranslateExecutorConsumer {
