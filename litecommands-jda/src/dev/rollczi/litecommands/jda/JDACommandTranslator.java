@@ -6,6 +6,8 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
+import dev.rollczi.litecommands.jda.visibility.Visibility;
+import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
 import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.shared.Preconditions;
@@ -59,7 +61,7 @@ class JDACommandTranslator {
         CommandRoute<SENDER> commandRoute
     ) {
         CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.meta().get(Meta.DESCRIPTION));
-        commandData.setGuildOnly(true);
+        commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
 
         List<Permission> permissions = commandRoute.metaCollector().collect(DiscordPermission.META_KEY).stream()
             .flatMap(List::stream)
@@ -68,7 +70,6 @@ class JDACommandTranslator {
         if (!permissions.isEmpty()) {
             commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
         }
-
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
         // Single command
