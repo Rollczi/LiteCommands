@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.jda.permission;
 import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 
-public class JDACommandAnnotationProcessor<SENDER> implements AnnotationProcessor<SENDER> {
+public class DiscordPermissionAnnotationProcessor<SENDER> implements AnnotationProcessor<SENDER> {
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
