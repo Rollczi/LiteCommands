@@ -35,6 +35,7 @@ public class MessageRegistry<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public <CONTEXT> Optional<Object> get(MessageKey<CONTEXT> key, CONTEXT context) {
         Message<?, CONTEXT> message = (Message<?, CONTEXT>) messages.get(key);
 
@@ -45,6 +46,7 @@ public class MessageRegistry<SENDER> {
         return Optional.of(message.get(context));
     }
 
+    @Deprecated
     public Optional<Object> get(MessageKey<Void> key) {
         return get(key, null);
     }
