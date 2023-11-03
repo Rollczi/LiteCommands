@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message.Attachment;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -31,6 +32,7 @@ public final class LiteJDAFactory {
             .bind(JDA.class, () -> jda)
             .result(String.class, new StringHandler())
             .result(RestAction.class, new RestActionHandler())
+            .result(MessageEmbed.class, new MessageEmbedHandler())
 
             .context(Guild.class, invocation -> from(invocation, Guild.class))
             .context(MessageChannelUnion.class, invocation -> from(invocation, MessageChannelUnion.class))
