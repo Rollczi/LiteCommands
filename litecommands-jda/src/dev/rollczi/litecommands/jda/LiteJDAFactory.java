@@ -3,7 +3,13 @@ package dev.rollczi.litecommands.jda;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.jda.permission.DiscordMissingPermissions;
+import dev.rollczi.litecommands.jda.permission.DiscordMissingPermissionsHandler;
+import dev.rollczi.litecommands.jda.permission.DiscordPermissionValidator;
+import dev.rollczi.litecommands.jda.permission.JDACommandAnnotationProcessor;
+import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -36,6 +42,12 @@ public final class LiteJDAFactory {
             .context(MessageChannelUnion.class, invocation -> from(invocation, MessageChannelUnion.class))
             .context(Member.class, invocation -> from(invocation, Member.class))
             .context(SlashCommandInteractionEvent.class, invocation -> from(invocation, SlashCommandInteractionEvent.class))
+
+            .validator(Scope.global(), new DiscordPermissionValidator())
+            .result(DiscordMissingPermissions.class, new DiscordMissingPermissionsHandler<>(internal.getMessageRegistry()))
+            .extension(new LiteAnnotationsProcessorExtension<>(), extension -> extension
+                .processor(new JDACommandAnnotationProcessor<>())
+            )
         );
     }
 
