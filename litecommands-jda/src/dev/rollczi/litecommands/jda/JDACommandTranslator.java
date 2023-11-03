@@ -8,9 +8,11 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
 import dev.rollczi.litecommands.jda.visibility.Visibility;
 import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
+import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -18,6 +20,7 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandAutoCompleteInteraction;
 import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -59,6 +62,14 @@ class JDACommandTranslator {
     ) {
         CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.meta().get(Meta.DESCRIPTION));
         commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
+
+        List<Permission> permissions = commandRoute.metaCollector().collect(DiscordPermission.META_KEY).stream()
+            .flatMap(List::stream)
+            .toList();
+
+        if (!permissions.isEmpty()) {
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+        }
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
         // Single command
