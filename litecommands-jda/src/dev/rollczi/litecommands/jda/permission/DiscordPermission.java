@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.List;
 
-@Target({ ElementType.PARAMETER })
+@Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DiscordPermission {
 
