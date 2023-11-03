@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,20 +28,18 @@ public class DiscordPermissionValidator implements Validator<User> {
         }
 
         User sender = invocation.sender();
-        Optional<Guild> guild = invocation.context().get(Guild.class);
+        CommandInteractionPayload interactionPayload = invocation.context().get(CommandInteractionPayload.class)
+            .orElseThrow(() -> new IllegalStateException("CommandInteractionPayload is not present in context"));
 
-        if (guild.isEmpty()) {
-            return Flow.terminateFlow(new IllegalStateException("Guild is not present in context"));
+        Guild guild = interactionPayload.getGuild();
+        Member member = interactionPayload.getMember();
+
+        if (guild == null || member == null) {
+            return Flow.terminateFlow(new IllegalStateException("@DiscordPermission is not supported in DM"));
         }
 
-        if (sender.getIdLong() == guild.get().getOwnerIdLong()) {
+        if (sender.getIdLong() == guild.getOwnerIdLong()) {
             return Flow.continueFlow();
-        }
-
-        Member member = guild.get().getMember(sender);
-
-        if (member == null) {
-            return Flow.terminateFlow(new IllegalStateException("Member is not present in guild"));
         }
 
         List<Permission> missingPermissions = invocation.context().get(GuildChannel.class)
