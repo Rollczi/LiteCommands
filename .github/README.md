@@ -1,12 +1,6 @@
-
-<div align="center"><img src="https://github.com/Rollczi/LiteCommands/assets/49173834/c3f218a0-268a-419d-899d-703ab0501ff0" alt="hacktoberfest" width="60%"/></div>
-<div align="center"><h3>LiteCommands & Hacktoberfest 2023</h3></div>
-<div align="center">Register on <a href="https://hacktoberfest.com/">hacktoberfest.com</a> and start supporting open source!</div>
-<div align="center">Add/Improve/Fix features and open <a href="https://github.com/Rollczi/LiteCommands/pulls">Pull request</a>! If you don't have an idea, see  <a href="https://github.com/Rollczi/LiteCommands/issues">issues</a>!</div>
-<br>
 <div align="center"><img src="https://savemc.pl/files/litecommandsbanner.png" alt="banner" width="50%"/></div>
 
-# ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
+# ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
 
 #### Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and your other implementations.
 
@@ -130,3 +124,26 @@ Maven
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
+
+<div align="center">
+    <h3>Thanks to all sponsors!</h3>
+    <p>Special thanks to all sponsors for supporting me and my projects! ❤️</p>
+    <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://github.com/rchomczyk.png" width="60px" alt="Rafał Chomczyk" /></a><!-- sponsors -->
+</div>
+
+
+<div align="center">
+    <h3>Also thanks to our partners!</h3>
+    <p>
+        <b>JetBrains - supports us with a free license for the most intelligent Java IDE - <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA Ultimate</a></b>
+    </p>
+    <a  href="https://www.jetbrains.com/idea/">
+        <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" alt="JetBrains" width="20%"/>
+    </a>
+    <p>
+        <b>Reposilite - provides us with a Maven repository for our artifacts - <a href="https://repo.panda-lang.org/">repo.panda-lang.org</a></b>
+    </p>
+    <a  href="https://reposilite.com/">
+        <img src="https://avatars.githubusercontent.com/u/88636591" alt="Reposilite" width="15%"/>
+    </a>
+</div>
