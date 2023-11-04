@@ -15,11 +15,11 @@ jobs:
         uses: JamesIves/github-sponsors-readme-action@v1
         with:
           token: ${{ secrets.PAT }}
-          file: 'README.md'
+          file: '.github/README.md'
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           commit-message: Update Sponsors 💖
           branch: master
-          folder: '.github'
+          folder: '.'
