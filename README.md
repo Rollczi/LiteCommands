@@ -124,3 +124,30 @@ Maven
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
+
+### Thanks to our sponsors!
+
+Special thanks to all sponsors for supporting this project! ❤️
+
+<!-- sponsors -->
+<!-- sponsors -->
+
+<div align="center">
+    <a  href="https://www.jetbrains.com/idea/">
+        <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" alt="JetBrains" width="15%"/>
+    </a>
+    <p>
+        <b>JetBrains supports us with a free license for the most intelligent Java IDE - <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA Ultimate</a></b>
+    </p>
+    <p>
+    </p>
+</div>
+
+<div align="center">
+    <a  href="https://reposilite.com/">
+        <img src="https://avatars.githubusercontent.com/u/88636591" alt="Reposilite" width="10%"/>
+    </a>
+    <p>
+        <b>Reposilite provides us with a Maven repository for our artifacts - <a href="https://repo.panda-lang.org/">repo.panda-lang.org</a></b>
+    </p>
+</div>
