@@ -1,9 +1,3 @@
-
-<div align="center"><img src="https://github.com/Rollczi/LiteCommands/assets/49173834/c3f218a0-268a-419d-899d-703ab0501ff0" alt="hacktoberfest" width="60%"/></div>
-<div align="center"><h3>LiteCommands & Hacktoberfest 2023</h3></div>
-<div align="center">Register on <a href="https://hacktoberfest.com/">hacktoberfest.com</a> and start supporting open source!</div>
-<div align="center">Add/Improve/Fix features and open <a href="https://github.com/Rollczi/LiteCommands/pulls">Pull request</a>! If you don't have an idea, see  <a href="https://github.com/Rollczi/LiteCommands/issues">issues</a>!</div>
-<br>
 <div align="center"><img src="https://savemc.pl/files/litecommandsbanner.png" alt="banner" width="50%"/></div>
 
 # ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands/core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
