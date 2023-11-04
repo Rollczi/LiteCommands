@@ -201,15 +201,15 @@ class JDACommandTranslator {
 
     Invocation<User> translateInvocation(CommandRoute<User> route, Input<?> arguments, CommandInteractionPayload interaction) {
         InvocationContext context = InvocationContext.builder()
-            .putUnsafe(interaction.getClass(), interaction)
-            .put(MessageChannelUnion.class, (MessageChannelUnion) interaction.getChannel())
-            .put(Guild.class, interaction.getGuild())
-            .put(Member.class, interaction.getMember())
+            .put(interaction)
+            .put(interaction.getChannel())
+            .put(interaction.getGuild())
+            .put(interaction.getMember())
             .build();
 
         return new Invocation<>(
             interaction.getUser(),
-            new JDAPlatformSender(interaction.getUser()),
+            new JDAPlatformSender(interaction.getUser(), interaction.getMember()),
             route.getName(),
             interaction.getName(),
             arguments,
