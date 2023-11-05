@@ -191,8 +191,8 @@ class CommandInjector<SENDER> implements Injector<SENDER> {
         }
         catch (Exception exception) {
             String formattedParams = parameters.stream()
-                    .map(obj -> obj.getClass().getName())
-                    .collect(Collectors.joining(", "));
+                .map(obj -> obj == null ? "null" : obj.getClass().getName())
+                .collect(Collectors.joining(", "));
 
             if (formattedParams.isEmpty()) {
                 formattedParams = "[]";
