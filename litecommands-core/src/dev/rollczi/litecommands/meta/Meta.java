@@ -13,14 +13,14 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("rawtypes")
 public interface Meta {
 
-    MetaKey<String> DESCRIPTION = MetaKey.of("description", String.class, "none");
-    MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
-    MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
-    MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
+    MetaKey<String> DESCRIPTION = MetaKey.of("description", String.class, "none", true);
+    MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList(), true);
+    MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false, true);
+    MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN, true);
     MetaKey<String> ARGUMENT_KEY = MetaKey.of("argument-key", String.class);
     MetaKey<Class> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", Class.class);
-    MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
-    MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
+    MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList(), true);
+    MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList(), true);
 
     Meta EMPTY_META = new MetaEmptyImpl();
 
@@ -49,6 +49,10 @@ public interface Meta {
     Meta apply(Meta meta);
 
     Meta copy();
+
+    default Meta copyToFastUse() {
+        return copy();
+    }
 
     Collection<MetaKey<?>> getKeys();
 

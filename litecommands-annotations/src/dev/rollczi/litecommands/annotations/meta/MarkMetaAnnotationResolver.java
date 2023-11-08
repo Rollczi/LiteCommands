@@ -9,7 +9,7 @@ public class MarkMetaAnnotationResolver<SENDER> implements AnnotationProcessor<S
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         return invoker.on(MarkMeta.class, (annotation, metaHolder) -> {
-            metaHolder.meta().put(MetaKey.of(annotation.key(), String.class), annotation.value());
+            metaHolder.meta().put(MetaKey.of(annotation.key(), String.class, null, annotation.copyToFastCommand()), annotation.value());
         });
     }
 }

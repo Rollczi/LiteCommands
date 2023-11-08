@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
 import dev.rollczi.litecommands.annotations.bind.BindRequirementProcessor;
 import dev.rollczi.litecommands.annotations.command.CommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.command.RootCommandAnnotationProcessor;
+import dev.rollczi.litecommands.annotations.fastuse.FastUseAnnotationResolver;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.annotations.context.ContextRequirementProcessor;
 import dev.rollczi.litecommands.annotations.execute.ExecuteAnnotationResolver;
@@ -44,6 +45,7 @@ public class AnnotationProcessorService<SENDER> {
             .register(new RootCommandAnnotationProcessor<>())
             // method processors
             .register(new ExecuteAnnotationResolver<>())
+            .register(new FastUseAnnotationResolver<>())
             // meta holder processors
             .register(new MarkMetaAnnotationResolver<>())
             .register(new DescriptionAnnotationResolver<>())

@@ -13,5 +13,7 @@ public @interface MarkMeta {
 
     String value();
 
+    boolean copyToFastCommand() default false;
+
 }
 

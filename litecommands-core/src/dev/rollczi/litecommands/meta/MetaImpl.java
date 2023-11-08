@@ -67,8 +67,7 @@ class MetaImpl implements Meta {
     public <T> @NotNull T get(MetaKey<T> key, T defaultValue) {
         try {
             return this.get(key);
-        }
-        catch (NoSuchElementException ignored) {
+        } catch (NoSuchElementException ignored) {
             return defaultValue;
         }
     }
@@ -99,6 +98,20 @@ class MetaImpl implements Meta {
         MetaImpl copy = new MetaImpl();
 
         for (MetaKey<?> key : this.meta.keySet()) {
+            copy.meta.put(key, this.getOut(key));
+        }
+
+        return copy;
+    }
+
+    @Override
+    public Meta copyToFastUse() {
+        MetaImpl copy = new MetaImpl();
+
+        for (MetaKey<?> key : this.meta.keySet()) {
+            if (!key.copyToFastUse()) {
+                continue;
+            }
             copy.meta.put(key, this.getOut(key));
         }
 

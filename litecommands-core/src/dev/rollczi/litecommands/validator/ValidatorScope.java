@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.scope.Scopeable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ public class ValidatorScope implements Scope {
     @Override
     public boolean isApplicable(Scopeable scopeable) {
         List<Class<? extends Validator<?>>> validators = scopeable.metaCollector().collect(Meta.VALIDATORS).stream()
-            .flatMap(classes -> classes.stream())
+            .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
 
