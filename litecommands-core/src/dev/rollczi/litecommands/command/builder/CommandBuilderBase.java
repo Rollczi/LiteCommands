@@ -4,15 +4,16 @@ import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
@@ -21,6 +22,9 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     protected final List<CommandExecutorProvider<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
+
+    protected String shortName;
+    protected List<String> shortAliases = new ArrayList<>();
 
     protected CommandBuilderDummyPrefix<SENDER> dummyPrefix;
 
@@ -220,6 +224,32 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
+    @ApiStatus.Internal
+    public CommandBuilder<SENDER> shortRouteName(String name) {
+        this.shortName = name;
+        return this;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public String shortRouteName() {
+        return this.shortName;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public CommandBuilder<SENDER> shortRouteAliases(List<String> aliases) {
+        this.shortAliases = aliases;
+        return this;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public List<String> shortRouteAliases() {
+        return Collections.unmodifiableList(this.shortAliases);
+    }
+
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -237,25 +267,31 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
 
     @Override
     public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
-        CommandRoute<SENDER> route = CommandRoute.create(parent, this.name, this.aliases);
+        Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
 
-        route.meta().apply(this.meta);
-
+        CommandRoute<SENDER> mainRoute = CommandRoute.create(parent, this.name, this.aliases);
+        mainRoute.meta().apply(this.meta);
         for (CommandExecutorProvider<SENDER> executor : this.executors) {
-            route.appendExecutor(executor.provide(route));
+            mainRoute.appendExecutor(executor.provide(mainRoute));
         }
+        routes.add(mainRoute);
 
         for (CommandBuilder<SENDER> child : this.children()) {
             if (!child.buildable()) {
                 continue;
             }
 
-            for (CommandRoute<SENDER> childRoute : child.build(route)) {
-                route.appendChildren(childRoute);
+            if (child.shortRouteName() != null) {
+                CommandRoute<SENDER> shortRoute = CommandRoute.create(parent, child.shortRouteName(), child.shortRouteAliases());
+                routes.addAll(child.build(shortRoute));
+            }
+
+            for (CommandRoute<SENDER> childRoute : child.build(mainRoute)) {
+                mainRoute.appendChildren(childRoute);
             }
         }
 
-        return Collections.singleton(route);
+        return routes;
     }
 
     @Override

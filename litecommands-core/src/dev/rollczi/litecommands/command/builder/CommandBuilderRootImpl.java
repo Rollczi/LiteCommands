@@ -1,21 +1,19 @@
 package dev.rollczi.litecommands.command.builder;
 
 import dev.rollczi.litecommands.command.CommandExecutorProvider;
-import dev.rollczi.litecommands.meta.MetaHolder;
-import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.util.StringUtil;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
@@ -120,6 +118,26 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     @Override
     public CommandBuilder<SENDER> getRealRoute() {
         return this;
+    }
+
+    @Override
+    public CommandBuilder<SENDER> shortRouteName(String name) {
+        throw new UnsupportedOperationException("Cannot set short name for root command");
+    }
+
+    @Override
+    public String shortRouteName() {
+        throw new UnsupportedOperationException("Cannot get short name for root command");
+    }
+
+    @Override
+    public CommandBuilder<SENDER> shortRouteAliases(List<String> aliases) {
+        throw new UnsupportedOperationException("Cannot set short aliases for root command");
+    }
+
+    @Override
+    public List<String> shortRouteAliases() {
+        throw new UnsupportedOperationException("Cannot get short aliases for root command");
     }
 
     @Override
