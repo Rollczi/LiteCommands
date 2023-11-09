@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.meta.MetaKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -259,6 +261,7 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent, boolean useShortRoute) {
         Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
 
@@ -278,7 +281,17 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
             }
 
             if (child.hasShortRoute()) {
-                routes.addAll(child.build(parent, true));
+                routes.addAll(child.build(parent, true)
+                    .stream()
+                    .peek(childRoute -> {
+                        Meta metaCopy = this.meta.copyToShortRoute();
+                        Meta routeMeta = childRoute.meta();
+                        for (MetaKey key : routeMeta.getKeys()) {
+                            metaCopy.putOrAppend(key, routeMeta.get(key));
+                        }
+                        childRoute.meta().apply(metaCopy);
+                    })
+                    .collect(Collectors.toSet()));
             }
 
             for (CommandRoute<SENDER> childRoute : child.build(route)) {

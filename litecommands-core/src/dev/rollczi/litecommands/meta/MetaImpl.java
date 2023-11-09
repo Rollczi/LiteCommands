@@ -1,7 +1,5 @@
 package dev.rollczi.litecommands.meta;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,13 +10,29 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 class MetaImpl implements Meta {
 
     private final Map<MetaKey<?>, Object> meta = new HashMap<>();
 
+    @Override
     public <T> Meta put(MetaKey<T> key, T value) {
         this.meta.put(key, key.getType().in(value));
+        return this;
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public <T> Meta putOrAppend(MetaKey<T> key, T value) {
+        MetaType<T> keyType = key.getType();
+        if (keyType.isList()) {
+            this.appendToList((MetaKey<List<T>>) key, value);
+        } else if (keyType.isSet()) {
+            this.appendToSet((MetaKey<Set<T>>) key, value);
+        } else {
+            this.put(key, value);
+        }
         return this;
     }
 
@@ -105,11 +119,11 @@ class MetaImpl implements Meta {
     }
 
     @Override
-    public Meta copyToFastUse() {
+    public Meta copyToShortRoute() {
         MetaImpl copy = new MetaImpl();
 
         for (MetaKey<?> key : this.meta.keySet()) {
-            if (!key.copyToFastUse()) {
+            if (!key.copyToShortRoute()) {
                 continue;
             }
             copy.meta.put(key, this.getOut(key));

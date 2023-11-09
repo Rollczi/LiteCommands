@@ -1,21 +1,20 @@
 package dev.rollczi.litecommands.meta;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 public class MetaKey<T> {
 
     private final String key;
     private final MetaType<T> type;
     private final @Nullable T defaultValue;
-    private final boolean copyToFastCommand;
+    private final boolean copyToShortRoute;
 
-    private MetaKey(String key, MetaType<T> type, @Nullable T defaultValue, boolean copyToFastCommand) {
+    private MetaKey(String key, MetaType<T> type, @Nullable T defaultValue, boolean copyToShortRoute) {
         this.key = key;
         this.type = type;
         this.defaultValue = defaultValue;
-        this.copyToFastCommand = copyToFastCommand;
+        this.copyToShortRoute = copyToShortRoute;
     }
 
     String getKey() {
@@ -35,8 +34,8 @@ public class MetaKey<T> {
         return this.defaultValue != null;
     }
 
-    public boolean copyToFastUse() {
-        return copyToFastCommand;
+    public boolean copyToShortRoute() {
+        return copyToShortRoute;
     }
 
     public static <T> MetaKey<T> of(String key, Class<T> type) {
@@ -47,8 +46,8 @@ public class MetaKey<T> {
         return of(key, MetaType.of(type), defaultValue);
     }
 
-    public static <T> MetaKey<T> of(String key, Class<T> type, T defaultValue, boolean copyToFastCommand) {
-        return of(key, MetaType.of(type), defaultValue, copyToFastCommand);
+    public static <T> MetaKey<T> of(String key, Class<T> type, T defaultValue, boolean copyToShorRoute) {
+        return of(key, MetaType.of(type), defaultValue, copyToShorRoute);
     }
 
     public static <T> MetaKey<T> of(String key, MetaType<T> type) {
@@ -59,8 +58,8 @@ public class MetaKey<T> {
         return of(key, type, defaultValue, false);
     }
 
-    public static <T> MetaKey<T> of(String key, MetaType<T> type, T defaultValue, boolean copyToFastCommand) {
-        return new MetaKey<>(key, type, defaultValue, copyToFastCommand);
+    public static <T> MetaKey<T> of(String key, MetaType<T> type, T defaultValue, boolean copyToShortRoute) {
+        return new MetaKey<>(key, type, defaultValue, copyToShortRoute);
     }
 
     @Override

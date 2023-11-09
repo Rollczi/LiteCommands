@@ -3,12 +3,11 @@ package dev.rollczi.litecommands.meta;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
 public interface Meta {
@@ -30,6 +29,8 @@ public interface Meta {
 
     <T> Meta put(MetaKey<T> key, T value);
 
+    <T> Meta putOrAppend(MetaKey<T> key, T value);
+
     <T> Meta remove(MetaKey<T> key);
 
     Meta clear();
@@ -50,7 +51,7 @@ public interface Meta {
 
     Meta copy();
 
-    default Meta copyToFastUse() {
+    default Meta copyToShortRoute() {
         return copy();
     }
 
