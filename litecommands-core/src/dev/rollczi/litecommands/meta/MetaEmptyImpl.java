@@ -1,10 +1,9 @@
 package dev.rollczi.litecommands.meta;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
+import org.jetbrains.annotations.NotNull;
 
 class MetaEmptyImpl implements Meta {
 
@@ -20,6 +19,11 @@ class MetaEmptyImpl implements Meta {
 
     @Override
     public <T> Meta put(MetaKey<T> key, T value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> Meta putOrAppend(MetaKey<T> key, T value) {
         throw new UnsupportedOperationException();
     }
 
