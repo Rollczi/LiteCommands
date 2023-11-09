@@ -78,17 +78,15 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     @ApiStatus.Internal
     CommandBuilder<SENDER> getRealRoute();
 
+    default boolean hasShortRoute() {
+        return false;
+    }
+
     @ApiStatus.Internal
     CommandBuilder<SENDER> shortRouteName(String name);
 
     @ApiStatus.Internal
-    String shortRouteName();
-
-    @ApiStatus.Internal
     CommandBuilder<SENDER> shortRouteAliases(List<String> aliases);
-
-    @ApiStatus.Internal
-    List<String> shortRouteAliases();
 
     @ApiStatus.Internal
     void meagre(CommandBuilder<SENDER> context);
@@ -105,7 +103,12 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     CommandBuilder<SENDER> parent();
 
     @ApiStatus.Internal
-    Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent);
+    Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent, boolean useShortRoute);
+
+    @ApiStatus.Internal
+    default Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
+        return build(parent, false);
+    }
 
     static <SENDER> CommandBuilder<SENDER> create() {
         return new CommandBuilderImpl<>();

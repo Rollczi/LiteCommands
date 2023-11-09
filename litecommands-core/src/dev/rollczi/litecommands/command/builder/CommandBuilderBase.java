@@ -224,6 +224,11 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
+    public boolean hasShortRoute() {
+        return this.shortName != null;
+    }
+
+    @Override
     @ApiStatus.Internal
     public CommandBuilder<SENDER> shortRouteName(String name) {
         this.shortName = name;
@@ -232,21 +237,9 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
 
     @Override
     @ApiStatus.Internal
-    public String shortRouteName() {
-        return this.shortName;
-    }
-
-    @Override
-    @ApiStatus.Internal
     public CommandBuilder<SENDER> shortRouteAliases(List<String> aliases) {
         this.shortAliases = aliases;
         return this;
-    }
-
-    @Override
-    @ApiStatus.Internal
-    public List<String> shortRouteAliases() {
-        return Collections.unmodifiableList(this.shortAliases);
     }
 
     @Override
@@ -266,28 +259,30 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent, boolean useShortRoute) {
         Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
 
-        CommandRoute<SENDER> mainRoute = CommandRoute.create(parent, this.name, this.aliases);
-        mainRoute.meta().apply(this.meta);
+        CommandRoute<SENDER> route = useShortRoute
+            ? CommandRoute.create(parent, this.shortName, this.shortAliases)
+            : CommandRoute.create(parent, this.name, this.aliases);
+
+        route.meta().apply(this.meta);
         for (CommandExecutorProvider<SENDER> executor : this.executors) {
-            mainRoute.appendExecutor(executor.provide(mainRoute));
+            route.appendExecutor(executor.provide(route));
         }
-        routes.add(mainRoute);
+        routes.add(route);
 
         for (CommandBuilder<SENDER> child : this.children()) {
             if (!child.buildable()) {
                 continue;
             }
 
-            if (child.shortRouteName() != null) {
-                CommandRoute<SENDER> shortRoute = CommandRoute.create(parent, child.shortRouteName(), child.shortRouteAliases());
-                routes.addAll(child.build(shortRoute));
+            if (child.hasShortRoute()) {
+                routes.addAll(child.build(parent, true));
             }
 
-            for (CommandRoute<SENDER> childRoute : child.build(mainRoute)) {
-                mainRoute.appendChildren(childRoute);
+            for (CommandRoute<SENDER> childRoute : child.build(route)) {
+                route.appendChildren(childRoute);
             }
         }
 

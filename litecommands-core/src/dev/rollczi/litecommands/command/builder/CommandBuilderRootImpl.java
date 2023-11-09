@@ -126,18 +126,8 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     }
 
     @Override
-    public String shortRouteName() {
-        throw new UnsupportedOperationException("Cannot get short name for root command");
-    }
-
-    @Override
     public CommandBuilder<SENDER> shortRouteAliases(List<String> aliases) {
         throw new UnsupportedOperationException("Cannot set short aliases for root command");
-    }
-
-    @Override
-    public List<String> shortRouteAliases() {
-        throw new UnsupportedOperationException("Cannot get short aliases for root command");
     }
 
     @Override
@@ -179,7 +169,11 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent, boolean useShortRoute) {
+        if (useShortRoute) {
+            throw new UnsupportedOperationException("Cannot build root command with short route");
+        }
+
         return this.children.values().stream()
             .map(senderCommandEditorContext -> senderCommandEditorContext.build(parent))
             .flatMap(Collection::stream)

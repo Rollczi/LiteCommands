@@ -25,10 +25,16 @@ public class ShortCommandAnnotationProcessor<SENDER> implements AnnotationProces
             throw new IllegalArgumentException("Route name cannot be empty");
         }
 
-        context.getChild(executeAnnotation.name()).ifPresent(child -> {
-            child.shortRouteName(shortAnnotation.name());
-            child.shortRouteAliases(Arrays.asList(shortAnnotation.aliases()));
-        });
+        String childName = executeAnnotation.name();
+        if (childName.isEmpty()) {
+            throw new IllegalArgumentException("@ShortCommand annotation cannot be declared on root executor");
+        }
+
+        CommandBuilder<SENDER> child = context.getChild(childName)
+            .orElseThrow(() -> new IllegalArgumentException("Cannot find route with name " + childName));
+        child.shortRouteName(shortAnnotation.name());
+        child.shortRouteAliases(Arrays.asList(shortAnnotation.aliases()));
+
         return context;
     }
 
