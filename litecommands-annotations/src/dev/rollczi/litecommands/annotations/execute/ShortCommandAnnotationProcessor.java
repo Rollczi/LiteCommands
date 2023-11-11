@@ -30,8 +30,9 @@ public class ShortCommandAnnotationProcessor<SENDER> implements AnnotationProces
             throw new IllegalArgumentException("@ShortCommand annotation cannot be declared on root executor");
         }
 
-        CommandBuilder<SENDER> child = context.getChild(childName)
+        CommandBuilder<SENDER> child = context.getRealRoute().getChild(childName)
             .orElseThrow(() -> new IllegalArgumentException("Cannot find route with name " + childName));
+
         child.shortRouteName(shortAnnotation.name());
         child.shortRouteAliases(Arrays.asList(shortAnnotation.aliases()));
 

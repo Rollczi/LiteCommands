@@ -103,12 +103,7 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     CommandBuilder<SENDER> parent();
 
     @ApiStatus.Internal
-    Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent, boolean useShortRoute);
-
-    @ApiStatus.Internal
-    default Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
-        return build(parent, false);
-    }
+    Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent);
 
     static <SENDER> CommandBuilder<SENDER> create() {
         return new CommandBuilderImpl<>();

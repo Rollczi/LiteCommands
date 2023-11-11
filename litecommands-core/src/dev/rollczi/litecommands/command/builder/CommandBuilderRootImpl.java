@@ -169,11 +169,7 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent, boolean useShortRoute) {
-        if (useShortRoute) {
-            throw new UnsupportedOperationException("Cannot build root command with short route");
-        }
-
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
         return this.children.values().stream()
             .map(senderCommandEditorContext -> senderCommandEditorContext.build(parent))
             .flatMap(Collection::stream)

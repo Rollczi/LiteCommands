@@ -261,42 +261,35 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent, boolean useShortRoute) {
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parentRoute) {
         Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
-
-        CommandRoute<SENDER> route = useShortRoute
-            ? CommandRoute.create(parent, this.shortName, this.shortAliases)
-            : CommandRoute.create(parent, this.name, this.aliases);
+        CommandRoute<SENDER> route = CommandRoute.create(parentRoute, this.name, this.aliases);
 
         route.meta().apply(this.meta);
+
         for (CommandExecutorProvider<SENDER> executor : this.executors) {
             route.appendExecutor(executor.provide(route));
         }
-        routes.add(route);
 
         for (CommandBuilder<SENDER> child : this.children()) {
             if (!child.buildable()) {
                 continue;
             }
 
-            if (child.hasShortRoute()) {
-                routes.addAll(child.build(parent, true)
-                    .stream()
-                    .peek(childRoute -> {
-                        Meta metaCopy = this.meta.copyToShortRoute();
-                        Meta routeMeta = childRoute.meta();
-                        for (MetaKey key : routeMeta.getKeys()) {
-                            metaCopy.putOrAppend(key, routeMeta.get(key));
-                        }
-                        childRoute.meta().apply(metaCopy);
-                    })
-                    .collect(Collectors.toSet()));
-            }
-
             for (CommandRoute<SENDER> childRoute : child.build(route)) {
+                if (childRoute.isReference()) {
+                    routes.add(childRoute);
+                    continue;
+                }
+
                 route.appendChildren(childRoute);
             }
+        }
+
+        routes.add(route);
+
+        if (this.hasShortRoute()) {
+            routes.add(CommandRoute.createReference(this.shortName, this.shortAliases, route));
         }
 
         return routes;

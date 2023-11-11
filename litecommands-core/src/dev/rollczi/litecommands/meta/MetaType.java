@@ -29,18 +29,6 @@ public interface MetaType<T> {
         return new MetaTypeImpl<>(type);
     }
 
-    default boolean isCollection() {
-        return this.isList() || this.isSet();
-    }
-
-    default boolean isList() {
-        return false;
-    }
-
-    default boolean isSet() {
-        return false;
-    }
-
     class MetaTypeImpl<T> implements MetaType<T> {
 
         private final Class<T> type;
@@ -74,11 +62,6 @@ public interface MetaType<T> {
             return new ArrayList<>(value);
         }
 
-        @Override
-        public boolean isList() {
-            return true;
-        }
-
     }
 
     class MetaTypeSet<T> implements MetaType<Set<T>> {
@@ -97,11 +80,6 @@ public interface MetaType<T> {
         @Override
         public Set<T> out(Set<T> value) {
             return new HashSet<>(value);
-        }
-
-        @Override
-        public boolean isSet() {
-            return true;
         }
 
     }

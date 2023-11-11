@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.meta;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +12,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 class MetaImpl implements Meta {
 
@@ -22,19 +23,6 @@ class MetaImpl implements Meta {
         return this;
     }
 
-    @Override
-    @SuppressWarnings({"unchecked"})
-    public <T> Meta putOrAppend(MetaKey<T> key, T value) {
-        MetaType<T> keyType = key.getType();
-        if (keyType.isList()) {
-            this.appendToList((MetaKey<List<T>>) key, value);
-        } else if (keyType.isSet()) {
-            this.appendToSet((MetaKey<Set<T>>) key, value);
-        } else {
-            this.put(key, value);
-        }
-        return this;
-    }
 
     public <E> Meta appendToList(MetaKey<List<E>> key, E element) {
         this.addToCollection(key, element, ArrayList::new);
@@ -81,7 +69,8 @@ class MetaImpl implements Meta {
     public <T> @NotNull T get(MetaKey<T> key, T defaultValue) {
         try {
             return this.get(key);
-        } catch (NoSuchElementException ignored) {
+        }
+        catch (NoSuchElementException ignored) {
             return defaultValue;
         }
     }
@@ -112,20 +101,6 @@ class MetaImpl implements Meta {
         MetaImpl copy = new MetaImpl();
 
         for (MetaKey<?> key : this.meta.keySet()) {
-            copy.meta.put(key, this.getOut(key));
-        }
-
-        return copy;
-    }
-
-    @Override
-    public Meta copyToShortRoute() {
-        MetaImpl copy = new MetaImpl();
-
-        for (MetaKey<?> key : this.meta.keySet()) {
-            if (!key.copyToShortRoute()) {
-                continue;
-            }
             copy.meta.put(key, this.getOut(key));
         }
 

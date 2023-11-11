@@ -3,23 +3,24 @@ package dev.rollczi.litecommands.meta;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("rawtypes")
 public interface Meta {
 
-    MetaKey<String> DESCRIPTION = MetaKey.of("description", String.class, "none", true);
-    MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList(), true);
-    MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false, true);
-    MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN, true);
+    MetaKey<String> DESCRIPTION = MetaKey.of("description", String.class, "none");
+    MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
+    MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
+    MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
     MetaKey<String> ARGUMENT_KEY = MetaKey.of("argument-key", String.class);
     MetaKey<Class> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", Class.class);
-    MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList(), true);
-    MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList(), true);
+    MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
+    MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
 
     Meta EMPTY_META = new MetaEmptyImpl();
 
@@ -28,8 +29,6 @@ public interface Meta {
     @NotNull <T> T get(MetaKey<T> key, T defaultValue);
 
     <T> Meta put(MetaKey<T> key, T value);
-
-    <T> Meta putOrAppend(MetaKey<T> key, T value);
 
     <T> Meta remove(MetaKey<T> key);
 
@@ -50,10 +49,6 @@ public interface Meta {
     Meta apply(Meta meta);
 
     Meta copy();
-
-    default Meta copyToShortRoute() {
-        return copy();
-    }
 
     Collection<MetaKey<?>> getKeys();
 

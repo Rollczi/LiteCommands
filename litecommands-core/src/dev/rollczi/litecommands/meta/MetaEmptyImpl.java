@@ -23,11 +23,6 @@ class MetaEmptyImpl implements Meta {
     }
 
     @Override
-    public <T> Meta putOrAppend(MetaKey<T> key, T value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public <T> Meta remove(MetaKey<T> key) {
         throw new UnsupportedOperationException();
     }
