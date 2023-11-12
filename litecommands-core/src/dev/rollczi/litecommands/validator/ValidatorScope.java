@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.scope.Scopeable;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
