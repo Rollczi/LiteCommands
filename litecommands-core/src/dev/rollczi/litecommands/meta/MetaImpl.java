@@ -23,7 +23,6 @@ class MetaImpl implements Meta {
         return this;
     }
 
-
     public <E> Meta appendToList(MetaKey<List<E>> key, E element) {
         this.addToCollection(key, element, ArrayList::new);
         return this;

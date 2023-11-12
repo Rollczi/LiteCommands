@@ -19,7 +19,7 @@ public class ValidatorScope implements Scope {
     @Override
     public boolean isApplicable(Scopeable scopeable) {
         List<Class<? extends Validator<?>>> validators = scopeable.metaCollector().collect(Meta.VALIDATORS).stream()
-            .flatMap(Collection::stream)
+            .flatMap(classes -> classes.stream())
             .collect(Collectors.toList());
 
 
