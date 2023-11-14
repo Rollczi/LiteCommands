@@ -15,13 +15,13 @@ public class ConvertCommand {
     private static final String CONVERSION_MESSAGE_TEMPLATE = "&7Convert: &f%s&7ms.";
 
     @Execute(name = "instant")
-    @Shortcut(name = "conv-instant")
+    @Shortcut("conv-instant")
     public String convertInstant(@Arg("time") Instant value) {
         return String.format(CONVERSION_MESSAGE_TEMPLATE, value.toEpochMilli());
     }
 
     @Execute(name = "duration")
-    @Shortcut(name = "conv-duration")
+    @Shortcut("conv-duration")
     public String convertDuration(@Arg("duration") Duration value) {
         return String.format(CONVERSION_MESSAGE_TEMPLATE, value.toMillis());
     }

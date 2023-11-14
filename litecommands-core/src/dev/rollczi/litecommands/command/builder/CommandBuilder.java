@@ -83,10 +83,7 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     }
 
     @ApiStatus.Internal
-    CommandBuilder<SENDER> shortRouteName(String name);
-
-    @ApiStatus.Internal
-    CommandBuilder<SENDER> shortRouteAliases(List<String> aliases);
+    CommandBuilder<SENDER> shortRoutes(List<String> aliases);
 
     @ApiStatus.Internal
     void meagre(CommandBuilder<SENDER> context);

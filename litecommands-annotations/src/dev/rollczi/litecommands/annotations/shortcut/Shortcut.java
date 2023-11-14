@@ -29,8 +29,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Shortcut {
 
-    String name();
-
-    String[] aliases() default {};
+    String[] value();
 
 }

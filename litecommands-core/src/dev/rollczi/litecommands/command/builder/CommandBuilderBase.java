@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import dev.rollczi.litecommands.meta.MetaKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,8 +23,7 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
 
-    protected String shortName;
-    protected List<String> shortAliases = new ArrayList<>();
+    protected List<String> shortRoutes = new ArrayList<>();
 
     protected CommandBuilderDummyPrefix<SENDER> dummyPrefix;
 
@@ -227,20 +224,13 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
 
     @Override
     public boolean hasShortRoute() {
-        return this.shortName != null;
+        return !this.shortRoutes.isEmpty();
     }
 
     @Override
     @ApiStatus.Internal
-    public CommandBuilder<SENDER> shortRouteName(String name) {
-        this.shortName = name;
-        return this;
-    }
-
-    @Override
-    @ApiStatus.Internal
-    public CommandBuilder<SENDER> shortRouteAliases(List<String> aliases) {
-        this.shortAliases = aliases;
+    public CommandBuilder<SENDER> shortRoutes(List<String> aliases) {
+        this.shortRoutes = aliases;
         return this;
     }
 
@@ -289,7 +279,11 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
         routes.add(route);
 
         if (this.hasShortRoute()) {
-            routes.add(CommandRoute.createReference(this.shortName, this.shortAliases, route));
+            String shortName = this.shortRoutes.get(0);
+            List<String> shortAliases = this.shortRoutes.size() > 1
+                ? this.shortRoutes.subList(1, this.shortRoutes.size())
+                : Collections.emptyList();
+            routes.add(CommandRoute.createReference(shortName, shortAliases, route));
         }
 
         return routes;

@@ -121,12 +121,7 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     }
 
     @Override
-    public CommandBuilder<SENDER> shortRouteName(String name) {
-        throw new UnsupportedOperationException("Cannot set short name for root command");
-    }
-
-    @Override
-    public CommandBuilder<SENDER> shortRouteAliases(List<String> aliases) {
+    public CommandBuilder<SENDER> shortRoutes(List<String> aliases) {
         throw new UnsupportedOperationException("Cannot set short aliases for root command");
     }
 

@@ -21,7 +21,7 @@ public class ShortcutCommandAnnotationProcessor<SENDER> implements AnnotationPro
     }
 
     private CommandBuilder<SENDER> resolve(Execute executeAnnotation, Shortcut shortAnnotation, CommandBuilder<SENDER> context) {
-        boolean isNotEmpty = LiteCommandsUtil.checkConsistent(shortAnnotation.name(), shortAnnotation.aliases());
+        boolean isNotEmpty = LiteCommandsUtil.checkAliases(shortAnnotation.value());
         if (!isNotEmpty) {
             throw new IllegalArgumentException("Route name cannot be empty");
         }
@@ -31,11 +31,9 @@ public class ShortcutCommandAnnotationProcessor<SENDER> implements AnnotationPro
             throw new IllegalArgumentException("@ShortCommand annotation cannot be declared on root executor");
         }
 
-        CommandBuilder<SENDER> child = context.getRealRoute().getChild(childName)
-            .orElseThrow(() -> new IllegalArgumentException("Cannot find route with name " + childName));
-
-        child.shortRouteName(shortAnnotation.name());
-        child.shortRouteAliases(Arrays.asList(shortAnnotation.aliases()));
+        context.getRealRoute().getChild(childName)
+            .orElseThrow(() -> new IllegalArgumentException("Cannot find route with name " + childName))
+            .shortRoutes(Arrays.asList(shortAnnotation.value()));
 
         return context;
     }
