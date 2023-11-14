@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 

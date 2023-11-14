@@ -7,11 +7,12 @@ import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
 
 class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
