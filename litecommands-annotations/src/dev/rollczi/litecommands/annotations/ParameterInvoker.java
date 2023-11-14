@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
@@ -49,7 +48,7 @@ class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     private <A extends Annotation> AnnotationHolder<A, ?, ?> createHolder(A annotation, Parameter parameter) {
         WrapFormat<?, ?> format = MethodParameterUtil.wrapperFormat(wrapperRegistry, parameter);
 
-        return AnnotationHolder.of(annotation, format, () -> parameter.getName());
+        return AnnotationHolder.of(parameter.getAnnotations(), annotation, format, () -> parameter.getName());
     }
 
     @Override
