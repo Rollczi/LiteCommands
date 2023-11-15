@@ -17,7 +17,7 @@ class ShortcutTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute(name = "executor")
-        @Shortcut(name = "short")
+        @Shortcut("short")
         @Permission("executor.permission")
         String executeOpt(@Arg String text, @Arg Option<String> test) {
             return text + ":" + test.orElseGet("none");
