@@ -4,15 +4,16 @@ import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
@@ -21,6 +22,8 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     protected final List<CommandExecutorProvider<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
+
+    protected List<String> shortRoutes = new ArrayList<>();
 
     protected CommandBuilderDummyPrefix<SENDER> dummyPrefix;
 
@@ -220,6 +223,18 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
+    public boolean hasShortRoute() {
+        return !this.shortRoutes.isEmpty();
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public CommandBuilder<SENDER> shortRoutes(List<String> aliases) {
+        this.shortRoutes = aliases;
+        return this;
+    }
+
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -236,8 +251,9 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
-        CommandRoute<SENDER> route = CommandRoute.create(parent, this.name, this.aliases);
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parentRoute) {
+        Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
+        CommandRoute<SENDER> route = CommandRoute.create(parentRoute, this.name, this.aliases);
 
         route.meta().apply(this.meta);
 
@@ -251,11 +267,26 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
             }
 
             for (CommandRoute<SENDER> childRoute : child.build(route)) {
+                if (childRoute.isReference()) {
+                    routes.add(childRoute);
+                    continue;
+                }
+
                 route.appendChildren(childRoute);
             }
         }
 
-        return Collections.singleton(route);
+        routes.add(route);
+
+        if (this.hasShortRoute()) {
+            String shortName = this.shortRoutes.get(0);
+            List<String> shortAliases = this.shortRoutes.size() > 1
+                ? this.shortRoutes.subList(1, this.shortRoutes.size())
+                : Collections.emptyList();
+            routes.add(CommandRoute.createReference(shortName, shortAliases, route));
+        }
+
+        return routes;
     }
 
     @Override

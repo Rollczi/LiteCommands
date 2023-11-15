@@ -17,6 +17,7 @@ class MetaImpl implements Meta {
 
     private final Map<MetaKey<?>, Object> meta = new HashMap<>();
 
+    @Override
     public <T> Meta put(MetaKey<T> key, T value) {
         this.meta.put(key, key.getType().in(value));
         return this;
