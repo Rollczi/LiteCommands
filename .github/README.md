@@ -28,13 +28,13 @@ maven("https://repo.panda-lang.org/releases")
 
 ### Dependency
 ```kts
- implementation("dev.rollczi:{artifact}:3.0.2")
+ implementation("dev.rollczi:{artifact}:3.0.3")
 ```
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>{artifact}</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
 </dependency>
 ```
 `{artifact}` replace with [platform artifact](https://github.com/Rollczi/LiteCommands#platform-artifacts)
