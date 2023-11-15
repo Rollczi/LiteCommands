@@ -68,8 +68,4 @@ class ShortcutTest extends LiteTestSpec {
             .assertMissingPermission("executor.multi", "base.multi");
     }
 
-
-
-
-
 }
