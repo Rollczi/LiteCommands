@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
  * public static class TestCommand {
  *
  *  &#64;Execute(name = "sub") // /base sub
- *  <b>&#64;Shortcut(name = "short", aliases = "shortcut")</b> // /short
+ *  <b>&#64;Shortcut({ "short", "shortcut" })</b> // /short or /shortcut
  *  void executeSub()
  *      ...
  *  }
