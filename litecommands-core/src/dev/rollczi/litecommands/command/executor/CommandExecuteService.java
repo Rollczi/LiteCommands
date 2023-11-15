@@ -220,7 +220,7 @@ public class CommandExecuteService<SENDER> {
         }
 
         for (BindRequirement<?> bindRequirement : executor.getBindRequirements()) {
-            builder.link(new ScheduledRequirement<>(bindRequirement, () -> matchBind(bindRequirement, invocation)));
+            builder.link(new ScheduledRequirement<>(bindRequirement, () -> matchBind(bindRequirement)));
         }
 
         return builder.build((scheduledRequirement, requirementResult) -> {
@@ -334,7 +334,7 @@ public class CommandExecuteService<SENDER> {
         return contextRegistry.provideContext(contextRequirement.getWrapperFormat().getParsedType(), invocation);
     }
 
-    private <PARSED> RequirementResult<?> matchBind(BindRequirement<PARSED> bindRequirement, Invocation<SENDER> invocation) {
+    private <PARSED> RequirementResult<?> matchBind(BindRequirement<PARSED> bindRequirement) {
         WrapFormat<PARSED, ?> wrapFormat = bindRequirement.getWrapperFormat();
         Result<PARSED, String> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
 

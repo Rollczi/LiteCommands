@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.util.MapUtil;
 import dev.rollczi.litecommands.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
 
     @Override
     @SuppressWarnings("unchecked")
+    @NotNull
     public <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parserType, ArgumentKey key) {
         Optional<BucketByArgument<?>> argumentOptional = MapUtil.findBySuperTypeOf(parserType, buckets);
 
@@ -55,6 +58,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         @Override
+        @NotNull
         ParserSet<SENDER, PARSED> getParserSet(ArgumentKey key) {
             ParserSet<SENDER, PARSED> bucket = super.getParserSet(key);
 
@@ -62,7 +66,13 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
                 return bucket;
             }
 
-            return universalTypedBucket.getParserSet(key);
+            ParserSet<SENDER, PARSED> set = universalTypedBucket.getParserSet(key);
+
+            if (set != null) {
+                return set;
+            }
+
+            return new EmptyParserSetImpl<>();
         }
 
     }
@@ -82,6 +92,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
             bucket.registerParser(parser);
         }
 
+        @Nullable
         ParserSet<SENDER, PARSED> getParserSet(ArgumentKey key) {
             String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
             ParserSetImpl<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);
@@ -92,6 +103,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
 
             return buckets.get(StringUtil.EMPTY, namespace);
         }
+
     }
 
 }
