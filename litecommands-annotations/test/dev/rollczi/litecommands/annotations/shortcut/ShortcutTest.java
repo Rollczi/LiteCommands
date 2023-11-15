@@ -30,7 +30,7 @@ class ShortcutTest extends LiteTestSpec {
     static class TestMultiCommand {
 
         @Execute(name = "executor")
-        @Shortcut(name = "short-multi")
+        @Shortcut("short-multi")
         @Permission("executor.multi")
         String executeOpt(@Arg String text, @Arg Option<String> test) {
             return text + ":" + test.orElseGet("none");
