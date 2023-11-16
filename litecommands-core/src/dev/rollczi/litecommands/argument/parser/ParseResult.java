@@ -65,6 +65,7 @@ public class ParseResult<EXPECTED> implements RequirementResult<EXPECTED> {
         return new ParseResult<>(null, FailedReason.of(failedReason));
     }
 
+    @Deprecated
     public static <EXPECTED> ParseResult<EXPECTED> failure() {
         return new ParseResult<>(null, FailedReason.empty());
     }

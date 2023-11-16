@@ -2,6 +2,7 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.BooleanArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
@@ -67,6 +68,8 @@ public final class LiteCommandsFactory {
                 .validator(Scope.global(), new MissingPermissionValidator<>())
 
                 .argument(String.class, new StringArgumentResolver<>())
+                .argument(Boolean.class, new BooleanArgumentResolver<>())
+                .argument(boolean.class, new BooleanArgumentResolver<>())
                 .argument(Long.class, NumberArgumentResolver.ofLong())
                 .argument(long.class, NumberArgumentResolver.ofLong())
                 .argument(Integer.class, NumberArgumentResolver.ofInteger())

@@ -32,6 +32,7 @@ public class FailedReason {
         return new FailedReason(reason, false);
     }
 
+    @Deprecated
     public static FailedReason empty() {
         return new FailedReason(null, true);
     }
