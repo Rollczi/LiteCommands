@@ -67,13 +67,15 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     /**
      * This method is used to register additional commands.
      * There are several types of objects that can be registered:
+     * <b>Using annotations:</b>
      * <ul>
-     *     <b>Using annotations:</b>
      *     <li>An instance annotated with {@link dev.rollczi.litecommands.annotations.command.Command}</li>
      *     <li>An instance annotated with {@link dev.rollczi.litecommands.annotations.command.RootCommand}</li>
      *     <li>A class annotated with {@link dev.rollczi.litecommands.annotations.command.Command}</li>
      *     <li>A class annotated with {@link dev.rollczi.litecommands.annotations.command.RootCommand}</li>
-     *     <b>Programmatically:</b>
+     * </ul>
+     * <b>Programmatically:</b>
+     * <ul>
      *     <li>An instance of {@link dev.rollczi.litecommands.programmatic.LiteCommand}</li>
      * </ul>
      * Please note that this method is experimental and may be deprecated or removed in the future.
