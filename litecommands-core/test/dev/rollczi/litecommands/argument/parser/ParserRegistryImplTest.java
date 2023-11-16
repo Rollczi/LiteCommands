@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.input.raw.RawInput;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
@@ -16,9 +17,24 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 class ParserRegistryImplTest {
 
     static final WrapFormat<String, String> STRING_FORMAT = WrapFormat.notWrapped(String.class);
+    static final WrapFormat<Integer, Integer> INTEGER_FORMAT = WrapFormat.notWrapped(Integer.class);
+    static final WrapFormat<Number, Number> NUMBER_FORMAT = WrapFormat.notWrapped(Number.class);
 
     @Test
     void registerParser() {
+        ParserRegistryImpl<TestSender> registry = new ParserRegistryImpl<>();
+
+        registry.registerParser(String.class, ArgumentKey.of(), new NamedResolver("universal"));
+
+        ParserSet<TestSender, String> universal = registry.getParserSet(String.class, ArgumentKey.of());
+        Parser<TestSender, RawInput, String> universalParser = assertOptional(universal.getParser(RawInput.class));
+
+        assertThat(universalParser.parse(null, Argument.of("universal", STRING_FORMAT), RawInput.of("in")))
+            .isEqualTo(ParseResult.success("universal"));
+    }
+
+    @Test
+    void registerCustomParser() {
         ParserRegistryImpl<TestSender> registry = new ParserRegistryImpl<>();
 
         registry.registerParser(String.class, ArgumentKey.of("custom"), new NamedResolver("custom"));
@@ -42,6 +58,24 @@ class ParserRegistryImplTest {
             .isEqualTo(ParseResult.success("universal"));
     }
 
+    @Test
+    void testGenericTypes() {
+        ParserRegistryImpl<TestSender> registry = new ParserRegistryImpl<>();
+        registry.registerParser(Number.class, ArgumentKey.of(), new NumberResolver());
+
+        ParserSet<TestSender, Number> number = registry.getParserSet(Number.class, ArgumentKey.of());
+        ParserSet<TestSender, Integer> integer = registry.getParserSet(Integer.class, ArgumentKey.of());
+
+        Parser<TestSender, RawInput, Number> numberParser = assertOptional(number.getParser(RawInput.class));
+        Parser<TestSender, RawInput, Integer> integerParser = assertOptional(integer.getParser(RawInput.class));
+
+        assertThat(numberParser.parse(null, Argument.of("number", NUMBER_FORMAT), RawInput.of("1")))
+            .isEqualTo(ParseResult.success(1));
+
+        assertThat(integerParser.parse(null, Argument.of("integer", INTEGER_FORMAT), RawInput.of("1")))
+            .isEqualTo(ParseResult.success(1));
+    }
+
     private <T> T assertOptional(Optional<T> optional) {
         assertThat(optional).isPresent();
         return optional.get();
@@ -58,6 +92,19 @@ class ParserRegistryImplTest {
         protected ParseResult<String> parse(Invocation<TestSender> invocation, Argument<String> context, String argument) {
             return ParseResult.success(name);
         }
+    }
+
+    static class NumberResolver extends ArgumentResolver<TestSender, Number> {
+        @Override
+        protected ParseResult<Number> parse(Invocation<TestSender> invocation, Argument<Number> context, String argument) {
+            try {
+                return ParseResult.success(Integer.parseInt(argument));
+            }
+            catch (NumberFormatException ingored) {
+                return ParseResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT);
+            }
+        }
+
     }
 
 }

@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.time;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
@@ -42,8 +43,27 @@ public class DurationParser extends TemporalAmountParser<Duration> {
     }
 
     @Override
-    protected Duration toTemporalAmount(LocalDateTimeProvider baseForTimeEstimation, Duration duration) {
-        return duration;
+    protected Duration plus(LocalDateTimeProvider baseForTimeEstimation, Duration temporalAmount, TemporalEntry temporalEntry) {
+        if (temporalEntry.getUnit().isDurationEstimated()) {
+            LocalDateTime baseDateTime = baseForTimeEstimation.get();
+            LocalDateTime estimatedDateTime = baseDateTime.plus(temporalEntry.getCount(), temporalEntry.getUnit());
+            Duration estimatedDuration = Duration.between(baseDateTime, estimatedDateTime);
+
+            return temporalAmount.plus(estimatedDuration);
+        }
+
+        return temporalAmount.plus(temporalEntry.getCount(), temporalEntry.getUnit());
+    }
+
+
+    @Override
+    protected Duration negate(Duration temporalAmount) {
+        return temporalAmount.negated();
+    }
+
+    @Override
+    protected Duration getZero() {
+        return Duration.ZERO;
     }
 
     @Override

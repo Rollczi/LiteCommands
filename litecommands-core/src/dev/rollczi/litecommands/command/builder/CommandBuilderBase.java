@@ -4,27 +4,26 @@ import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.UnaryOperator;
-
-abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
+abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
     protected @Nullable String name;
     protected final List<String> aliases = new ArrayList<>();
-    protected final Map<String, CommandBuilder<SENDER>> children = new HashMap<>();
     protected final List<CommandExecutorProvider<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
+
+    protected List<String> shortRoutes = new ArrayList<>();
 
     protected CommandBuilderDummyPrefix<SENDER> dummyPrefix;
 
@@ -105,68 +104,6 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     public @NotNull CommandBuilder<SENDER> disable() {
         this.enabled = false;
         return this;
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> editChild(String name, UnaryOperator<CommandBuilder<SENDER>> operator) {
-        Optional<CommandBuilder<SENDER>> contextOptional = this.getChild(name);
-
-        if (!contextOptional.isPresent()) {
-            throw new IllegalArgumentException("Child " + name + " not found");
-        }
-
-        CommandBuilder<SENDER> child = contextOptional.get();
-
-        child = operator.apply(child);
-        this.children.put(name, child);
-        return this;
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> appendChild(String name, UnaryOperator<CommandBuilder<SENDER>> operator) {
-        CommandBuilder<SENDER> child = new CommandBuilderImpl<>();
-        child.name(name);
-
-        child = operator.apply(child);
-        this.children.put(name, child);
-        return this;
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> appendChild(CommandBuilder<SENDER> context) {
-        Optional<CommandBuilder<SENDER>> childOption = this.getChild(context.name());
-
-        if (childOption.isPresent()) {
-            CommandBuilder<SENDER> child = childOption.get();
-            child.meagre(context);
-
-            context = child;
-        }
-
-        this.children.put(context.name(), context);
-        return this;
-    }
-
-    @Override
-    public Collection<CommandBuilder<SENDER>> children() {
-        return Collections.unmodifiableCollection(this.children.values());
-    }
-
-    @Override
-    public Optional<CommandBuilder<SENDER>> getChild(String test) {
-        CommandBuilder<SENDER> context = this.children.get(test);
-
-        if (context != null) {
-            return Optional.of(context);
-        }
-
-        for (CommandBuilder<SENDER> child : this.children.values()) {
-            if (child.isNameOrAlias(test)) {
-                return Optional.of(child);
-            }
-        }
-
-        return Optional.empty();
     }
 
     @Override
@@ -286,6 +223,18 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
+    public boolean hasShortRoute() {
+        return !this.shortRoutes.isEmpty();
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public CommandBuilder<SENDER> shortRoutes(List<String> aliases) {
+        this.shortRoutes = aliases;
+        return this;
+    }
+
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -302,8 +251,9 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
-        CommandRoute<SENDER> route = CommandRoute.create(parent, this.name, this.aliases);
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parentRoute) {
+        Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
+        CommandRoute<SENDER> route = CommandRoute.create(parentRoute, this.name, this.aliases);
 
         route.meta().apply(this.meta);
 
@@ -317,11 +267,26 @@ abstract class CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
             }
 
             for (CommandRoute<SENDER> childRoute : child.build(route)) {
+                if (childRoute.isReference()) {
+                    routes.add(childRoute);
+                    continue;
+                }
+
                 route.appendChildren(childRoute);
             }
         }
 
-        return Collections.singleton(route);
+        routes.add(route);
+
+        if (this.hasShortRoute()) {
+            String shortName = this.shortRoutes.get(0);
+            List<String> shortAliases = this.shortRoutes.size() > 1
+                ? this.shortRoutes.subList(1, this.shortRoutes.size())
+                : Collections.emptyList();
+            routes.add(CommandRoute.createReference(shortName, shortAliases, route));
+        }
+
+        return routes;
     }
 
     @Override

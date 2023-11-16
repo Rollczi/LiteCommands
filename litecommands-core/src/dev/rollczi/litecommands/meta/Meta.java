@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.meta;
 
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.Validator;
+import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -19,6 +20,7 @@ public interface Meta {
     MetaKey<String> ARGUMENT_KEY = MetaKey.of("argument-key", String.class);
     MetaKey<Class> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", Class.class);
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
+    MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
 
     Meta EMPTY_META = new MetaEmptyImpl();
 

@@ -1,16 +1,11 @@
-package dev.rollczi.litecommands.jda;
-
-import net.dv8tion.jda.api.Permission;
+package dev.rollczi.example.bukkit.validator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DiscordPermission {
-
-    Permission[] value();
-
+@Target(ElementType.PARAMETER)
+public @interface IsNotOp {
 }

@@ -29,12 +29,11 @@ public final class LiteCommandsUtil {
      *
      * @param name    command name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
      * @param aliases aliases name cannot be null, cannot contain null, cannot contain empty, cannot contain two spaces in a row, cannot start or end with space, cannot contain different count of words than name
-     *
      * @return true if name and aliases are consistent, if name and aliases are empty returns false, otherwise throws exception
-     *
      * @throws IllegalArgumentException if name or aliases are not consistent, if name or aliases contain two spaces in a row, if name or aliases start or end with space
      * @throws NullPointerException     if name or aliases are null
      * @see #checkName(String)
+     * @see #checkAliases(String[])
      */
     public static boolean checkConsistent(String name, String[] aliases) {
         if (!checkName(name)) {
@@ -53,13 +52,7 @@ public final class LiteCommandsUtil {
             }
         }
 
-        for (String alias : aliases) {
-            if (!checkName(alias)) {
-                throw new IllegalStateException("Alias '" + alias + "' is not consistent");
-            }
-        }
-
-        return true;
+        return checkAliases(aliases);
     }
 
     /**
@@ -81,12 +74,11 @@ public final class LiteCommandsUtil {
      * </ul>
      *
      * @param name cannot be null or empty, cannot start or end with space, cannot contain two spaces in a row
-     *
      * @return true if name is not empty, otherwise throws exception
-     *
      * @throws IllegalArgumentException if name contains two spaces in a row, if name start or end with space
      * @throws NullPointerException     if name is null
      * @see #checkConsistent(String, String[])
+     * @see #checkAliases(String[])
      */
     public static boolean checkName(String name) {
         if (name == null) {
@@ -103,6 +95,45 @@ public final class LiteCommandsUtil {
 
         if (name.startsWith(" ") || name.endsWith(" ")) {
             throw new IllegalArgumentException("Name cannot start or end with space");
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if aliases are consistent
+     * <p>
+     * Aliases cannot be null, cannot contain null, cannot contain empty, cannot contain two spaces in a row, cannot start or end with space
+     * </p>
+     * <p>
+     * Example:
+     * </p>
+     * <ul>
+     *     <li>aliases: ["command-1", "command-2"] - true</li>
+     *     <li>aliases: ["command-1", "command-2", ""] - throws IllegalArgumentException</li>
+     *     <li>aliases: ["command-1", "command-2", " "] - throws IllegalArgumentException</li>
+     *     <li>aliases: ["command-1", "command-2", "command-3 "] - throws IllegalArgumentException</li>
+     *     <li>aliases: ["command-1", "command-2", null] - throws NullPointerException</li>
+     *     <li>aliases: null - throws NullPointerException</li>
+     *     <li>aliases: [] - true</li>
+     * </ul>
+     *
+     * @param aliases cannot be null, cannot contain null, cannot contain empty, cannot contain two spaces in a row, cannot start or end with space
+     * @return true if aliases are not empty, otherwise throws exception
+     * @throws IllegalArgumentException if aliases contain two spaces in a row, if aliases start or end with space
+     * @throws NullPointerException     if aliases are null
+     * @see #checkConsistent(String, String[])
+     * @see #checkName(String)
+     */
+    public static boolean checkAliases(String[] aliases) {
+        if (aliases == null) {
+            throw new NullPointerException("Aliases cannot be null");
+        }
+
+        for (String alias : aliases) {
+            if (!checkName(alias)) {
+                throw new IllegalStateException("Alias '" + alias + "' is not consistent");
+            }
         }
 
         return true;

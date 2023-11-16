@@ -1,0 +1,25 @@
+name: Update Sponsors
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 30 15 * * *
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+
+      - name: Generate Sponsors 💖
+        uses: JamesIves/github-sponsors-readme-action@v1
+        with:
+          token: ${{ secrets.PAT }}
+          file: '.github/README.md'
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          commit-message: Update Sponsors 💖
+          branch: master
+          folder: '.'

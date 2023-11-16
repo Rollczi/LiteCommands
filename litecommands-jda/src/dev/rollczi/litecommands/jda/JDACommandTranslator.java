@@ -6,9 +6,14 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
+import dev.rollczi.litecommands.jda.visibility.Visibility;
+import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
+import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -16,6 +21,7 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandAutoCompleteInteraction;
 import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -56,15 +62,22 @@ class JDACommandTranslator {
         CommandRoute<SENDER> commandRoute
     ) {
         CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.meta().get(Meta.DESCRIPTION));
-        commandData.setGuildOnly(true);
+        commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
+
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
         // Single command
         if (!commandRoute.getExecutors().isEmpty()) {
-            this.translateExecutor(commandRoute, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
+            CommandExecutor<SENDER> executor = this.translateExecutor(commandRoute, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                 commandData.addOption(optionType, argName, description, isRequired, autocomplete);
                 jdaLiteCommand.addTypeMapper(new JDARoute(argName), mapper);
             });
+
+            List<Permission> permissions = getPermissions(executor);
+
+            if (!permissions.isEmpty()) {
+                commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+            }
 
             return jdaLiteCommand;
         }
@@ -82,7 +95,6 @@ class JDACommandTranslator {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
                     jdaLiteCommand.addTypeMapper(new JDARoute(child.getName(), argName), mapper);
                 });
-
                 commandData.addSubcommands(subcommandData);
             }
 
@@ -110,10 +122,22 @@ class JDACommandTranslator {
             commandData.addSubcommandGroups(subcommandGroupData);
         }
 
+        List<Permission> permissions = getPermissions(commandRoute);
+
+        if (!permissions.isEmpty()) {
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+        }
+
         return jdaLiteCommand;
     }
 
-    private <SENDER> void translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
+    private List<Permission> getPermissions(MetaHolder holder) {
+        return holder.metaCollector().collect(DiscordPermission.META_KEY).stream()
+            .flatMap(List::stream)
+            .toList();
+    }
+
+    private <SENDER> CommandExecutor<SENDER> translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
         List<CommandExecutor<SENDER>> executors = route.getExecutors();
         if (executors.size() != 1) {
             throw new IllegalArgumentException("Discrod command cannot have more than one executor in same route");
@@ -145,6 +169,8 @@ class JDACommandTranslator {
 
             consumer.translate(OptionType.STRING, option -> option.getAsString(), argumentName, description, isRequired, true);
         }
+
+        return executor;
     }
 
     private interface TranslateExecutorConsumer {
@@ -175,15 +201,15 @@ class JDACommandTranslator {
 
     Invocation<User> translateInvocation(CommandRoute<User> route, Input<?> arguments, CommandInteractionPayload interaction) {
         InvocationContext context = InvocationContext.builder()
-            .putUnsafe(interaction.getClass(), interaction)
-            .put(MessageChannelUnion.class, (MessageChannelUnion) interaction.getChannel())
-            .put(Guild.class, interaction.getGuild())
-            .put(Member.class, interaction.getMember())
+            .put(interaction)
+            .put(interaction.getChannel())
+            .put(interaction.getGuild())
+            .put(interaction.getMember())
             .build();
 
         return new Invocation<>(
             interaction.getUser(),
-            new JDAPlatformSender(interaction.getUser()),
+            new JDAPlatformSender(interaction.getUser(), interaction.getMember()),
             route.getName(),
             interaction.getName(),
             arguments,

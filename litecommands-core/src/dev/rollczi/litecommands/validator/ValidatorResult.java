@@ -38,8 +38,8 @@ public class ValidatorResult {
         return new ValidatorResult(true, false, null);
     }
 
-    public static ValidatorResult invalid(boolean canBeIgnored) {
-        return new ValidatorResult(false, canBeIgnored, null);
+    public static ValidatorResult invalid(Object invalidResult) {
+        return new ValidatorResult(false, false, invalidResult);
     }
 
     public static ValidatorResult invalid(Object invalidResult, boolean canBeIgnored) {
