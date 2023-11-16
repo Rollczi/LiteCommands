@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
@@ -28,6 +29,8 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
+import dev.rollczi.litecommands.programmatic.LiteCommand;
+import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -54,6 +57,7 @@ import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -112,6 +116,51 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     public LiteCommandsBuilder<SENDER, C, B> commands(LiteCommandsProvider<SENDER> commandsProvider) {
         this.preProcessExtensionsOnProvider(commandsProvider);
         this.commandBuilderCollector.add(commandsProvider.toInternalProvider(this));
+        return this;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public LiteCommandsBuilder<SENDER, C, B> commands(Object... commands) {
+        List<LiteCommandsProvider<SENDER>> providers = new ArrayList<>();
+        Collection<LiteCommand<SENDER>> programmatic = new ArrayList<>();
+        List<Class<?>> classes = new ArrayList<>();
+        List<Object> instances = new ArrayList<>();
+
+        for (Object command : commands) {
+            if (command instanceof LiteCommandsProvider) {
+                providers.add((LiteCommandsProvider<SENDER>) command);
+                continue;
+            }
+
+            if (command instanceof LiteCommand) {
+                programmatic.add((LiteCommand<SENDER>) command);
+                continue;
+            }
+
+            if (command instanceof Class) {
+                classes.add((Class<?>) command);
+                continue;
+            }
+
+            instances.add(command);
+        }
+
+        for (LiteCommandsProvider<SENDER> provider : providers) {
+            this.commands(provider);
+        }
+
+        if (!programmatic.isEmpty()) {
+            this.commands(LiteCommandsProgrammatic.of(programmatic));
+        }
+
+        if (!classes.isEmpty() || !instances.isEmpty()) {
+            this.commands(LiteCommandsAnnotations.<SENDER>create()
+                .load(instances.toArray(new Object[0]))
+                .loadClasses(classes.toArray(new Class<?>[0]))
+            );
+        }
+
         return this;
     }
 

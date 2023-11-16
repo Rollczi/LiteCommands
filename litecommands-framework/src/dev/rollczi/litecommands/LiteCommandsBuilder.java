@@ -29,6 +29,7 @@ import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
 import dev.rollczi.litecommands.wrapper.Wrapper;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -56,11 +57,34 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     /**
      * Register commands from given provider.
      *
+     * @see LiteCommandsBuilder#commands(Object...)
      * @see LiteCommandsProvider
      * @param commandsProvider provider of commands
      * @return this builder
      */
     LiteCommandsBuilder<SENDER, SETTINGS, B> commands(LiteCommandsProvider<SENDER> commandsProvider);
+
+    /**
+     * This method is used to register additional commands.
+     * There are several types of objects that can be registered:
+     * <ul>
+     *     <b>Using annotations:</b>
+     *     <li>An instance annotated with {@link dev.rollczi.litecommands.annotations.command.Command}</li>
+     *     <li>An instance annotated with {@link dev.rollczi.litecommands.annotations.command.RootCommand}</li>
+     *     <li>A class annotated with {@link dev.rollczi.litecommands.annotations.command.Command}</li>
+     *     <li>A class annotated with {@link dev.rollczi.litecommands.annotations.command.RootCommand}</li>
+     *     <b>Programmatically:</b>
+     *     <li>An instance of {@link dev.rollczi.litecommands.programmatic.LiteCommand}</li>
+     * </ul>
+     * Please note that this method is experimental and may be deprecated or removed in the future.
+     *
+     * @see LiteCommandsBuilder#commands(LiteCommandsProvider)
+     * @param commands commands to register
+     * @return This method returns the current LiteCommand builder instance
+     * This allows you to chain multiple calls together, using the builder design pattern.
+     */
+    @ApiStatus.Experimental
+    LiteCommandsBuilder<SENDER, SETTINGS, B> commands(Object... commands);
 
     <IN, T, PARSER extends Parser<SENDER, IN, T>>
     LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, PARSER parser);
