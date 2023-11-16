@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.resolver.standard.BooleanArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
@@ -47,47 +48,48 @@ public final class LiteCommandsFactory {
             Scheduler scheduler = internal.getScheduler();
 
             builder
-                .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
-                .context(String[].class, invocation -> ContextResult.ok(() -> invocation.arguments().asArray()))
-                .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
-                .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
+                    .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
+                    .context(String[].class, invocation -> ContextResult.ok(() -> invocation.arguments().asArray()))
+                    .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
+                    .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
-                .validator(Scope.global(), new MissingPermissionValidator<>())
+                    .validator(Scope.global(), new MissingPermissionValidator<>())
 
-                .argument(String.class, new StringArgumentResolver<>())
-                .argument(Long.class, NumberArgumentResolver.ofLong())
-                .argument(long.class, NumberArgumentResolver.ofLong())
-                .argument(Integer.class, NumberArgumentResolver.ofInteger())
-                .argument(int.class, NumberArgumentResolver.ofInteger())
-                .argument(Double.class, NumberArgumentResolver.ofDouble())
-                .argument(double.class, NumberArgumentResolver.ofDouble())
-                .argument(Float.class, NumberArgumentResolver.ofFloat())
-                .argument(float.class, NumberArgumentResolver.ofFloat())
-                .argument(Byte.class, NumberArgumentResolver.ofByte())
-                .argument(byte.class, NumberArgumentResolver.ofByte())
-                .argument(Short.class, NumberArgumentResolver.ofShort())
-                .argument(short.class, NumberArgumentResolver.ofShort())
-                .argument(Duration.class, new DurationArgumentResolver<>())
+                    .argument(String.class, new StringArgumentResolver<>())
+                    .argument(Long.class, NumberArgumentResolver.ofLong())
+                    .argument(long.class, NumberArgumentResolver.ofLong())
+                    .argument(Integer.class, NumberArgumentResolver.ofInteger())
+                    .argument(int.class, NumberArgumentResolver.ofInteger())
+                    .argument(Double.class, NumberArgumentResolver.ofDouble())
+                    .argument(double.class, NumberArgumentResolver.ofDouble())
+                    .argument(Float.class, NumberArgumentResolver.ofFloat())
+                    .argument(float.class, NumberArgumentResolver.ofFloat())
+                    .argument(Byte.class, NumberArgumentResolver.ofByte())
+                    .argument(byte.class, NumberArgumentResolver.ofByte())
+                    .argument(Short.class, NumberArgumentResolver.ofShort())
+                    .argument(short.class, NumberArgumentResolver.ofShort())
+                    .argument(Duration.class, new DurationArgumentResolver<>())
+                    .argument(Boolean.class, new BooleanArgumentResolver<>())
 
-                .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
-                .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
-                .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
+                    .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
+                    .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
+                    .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
 
-                .wrapper(new OptionWrapper())
-                .wrapper(new OptionalWrapper())
-                .wrapper(new CompletableFutureWrapper(scheduler))
+                    .wrapper(new OptionWrapper())
+                    .wrapper(new OptionalWrapper())
+                    .wrapper(new CompletableFutureWrapper(scheduler))
 
-                .exception(Throwable.class, new ThrowableHandler<>())
-                .exception(InvalidUsageException.class, new InvalidUsageExceptionHandler<>())
-                .exception(InvocationTargetException.class, new InvocationTargetExceptionHandler<>())
-                .exception(LiteCommandsException.class, new LiteCommandsExceptionHandler<>())
+                    .exception(Throwable.class, new ThrowableHandler<>())
+                    .exception(InvalidUsageException.class, new InvalidUsageExceptionHandler<>())
+                    .exception(InvocationTargetException.class, new InvocationTargetExceptionHandler<>())
+                    .exception(LiteCommandsException.class, new LiteCommandsExceptionHandler<>())
 
-                .result(Optional.class, new OptionalHandler<>())
-                .result(Option.class, new OptionHandler<>())
-                .result(CompletionStage.class, new CompletionStageHandler<>())
-                .result(MissingPermissions.class, new MissingPermissionResultHandler<>(internal.getMessageRegistry()))
-                .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(internal.getMessageRegistry()))
-                ;
+                    .result(Optional.class, new OptionalHandler<>())
+                    .result(Option.class, new OptionHandler<>())
+                    .result(CompletionStage.class, new CompletionStageHandler<>())
+                    .result(MissingPermissions.class, new MissingPermissionResultHandler<>(internal.getMessageRegistry()))
+                    .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(internal.getMessageRegistry()))
+            ;
         });
     }
 
