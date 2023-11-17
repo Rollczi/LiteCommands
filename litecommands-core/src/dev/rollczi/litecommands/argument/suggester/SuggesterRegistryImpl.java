@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.util.MapUtil;
 import dev.rollczi.litecommands.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
 
     @Override
     @SuppressWarnings("unchecked")
+    @NotNull
     public <PARSED> Suggester<SENDER, PARSED> getSuggester(Class<PARSED> parsedClass, ArgumentKey key) {
         Optional<BucketByArgument<?>> optional = MapUtil.findBySuperTypeOf(parsedClass, buckets);
 
@@ -62,6 +65,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
         }
 
         @Override
+        @Nullable
         Suggester<SENDER, PARSED> getSuggester(ArgumentKey key) {
             Suggester<SENDER, PARSED> bucket = super.getSuggester(key);
 
@@ -87,6 +91,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
             buckets.put(key.getKey(), key.getNamespace(), parser);
         }
 
+        @Nullable
         Suggester<SENDER, PARSED> getSuggester(ArgumentKey key) {
             String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
             Suggester<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);

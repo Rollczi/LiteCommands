@@ -28,10 +28,50 @@ public class InvalidUsage<SENDER> {
     }
 
     public enum Cause {
+
+        /**
+         * When command is not found
+         */
         UNKNOWN_COMMAND,
+
+        /**
+         * When input is invalid
+         * e.g.
+         * <pre>
+         * command: /command [int]
+         * input: /command text
+         * </pre>
+         */
         INVALID_ARGUMENT,
+
+        /**
+         * When input is valid but not enough
+         * e.g.
+         * <pre>
+         * command: /command [text] [x y z]
+         * input: /command text
+         * </pre>
+         */
         MISSING_ARGUMENT,
+
+        /**
+         * When input is valid but not enough (part of argument is missing)
+         * e.g.
+         * <pre>
+         * command: /command [text] [x y z]
+         * input: /command text 10 20
+         * </pre>
+         */
         MISSING_PART_OF_ARGUMENT,
+
+        /**
+         * When input is valid but too much
+         * e.g.
+         * <pre>
+         * command: /command [text] [x y z]
+         * input: /command text 10 20 30 40
+         * </pre>
+         */
         TOO_MANY_ARGUMENTS
     }
 

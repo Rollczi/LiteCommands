@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-public class BigIntegerArgumentTest extends LiteTestSpec {
+class BigIntegerArgumentTest extends LiteTestSpec {
 
     @Command(name = "test")
     static class TestCommand {

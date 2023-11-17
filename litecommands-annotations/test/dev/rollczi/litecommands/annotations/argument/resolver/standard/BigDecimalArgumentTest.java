@@ -7,9 +7,8 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
-public class BigDecimalArgumentTest extends LiteTestSpec {
+class BigDecimalArgumentTest extends LiteTestSpec {
 
     @Command(name = "test")
     static class TestCommand {

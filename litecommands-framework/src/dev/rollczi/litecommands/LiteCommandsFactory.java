@@ -2,9 +2,11 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.BooleanArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.LocalDateTimeArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
@@ -42,6 +44,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -65,6 +68,8 @@ public final class LiteCommandsFactory {
                 .validator(Scope.global(), new MissingPermissionValidator<>())
 
                 .argument(String.class, new StringArgumentResolver<>())
+                .argument(Boolean.class, new BooleanArgumentResolver<>())
+                .argument(boolean.class, new BooleanArgumentResolver<>())
                 .argument(Long.class, NumberArgumentResolver.ofLong())
                 .argument(long.class, NumberArgumentResolver.ofLong())
                 .argument(Integer.class, NumberArgumentResolver.ofInteger())
@@ -83,6 +88,7 @@ public final class LiteCommandsFactory {
                 .argument(BigInteger.class, new BigIntegerArgumentResolver<>(internal.getMessageRegistry()))
                 .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(internal.getMessageRegistry()))
                 .argument(Instant.class, new InstantArgumentResolver<>(internal.getMessageRegistry()))
+                .argument(LocalDateTime.class, new LocalDateTimeArgumentResolver<>(internal.getMessageRegistry()))
 
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())

@@ -5,14 +5,13 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.scope.Scopeable;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
 
@@ -78,6 +77,13 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
 
     @ApiStatus.Internal
     CommandBuilder<SENDER> getRealRoute();
+
+    default boolean hasShortRoute() {
+        return false;
+    }
+
+    @ApiStatus.Internal
+    CommandBuilder<SENDER> shortRoutes(List<String> aliases);
 
     @ApiStatus.Internal
     void meagre(CommandBuilder<SENDER> context);

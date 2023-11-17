@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.shared.IterableMutableArray;
+import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +33,7 @@ public class SuggestionResult {
     public SuggestionResult filterBy(Suggestion suggestion) {
         String multilevel = suggestion.multilevel();
         Set<Suggestion> filtered = this.suggestions.stream()
-            .filter(suggestion1 ->  suggestion1.multilevel().startsWith(multilevel))
+            .filter(current ->  StringUtil.startsWithIgnoreCase(current.multilevel(), multilevel))
             .map(suggestion1 -> suggestion1.slashLevel(suggestion.lengthMultilevel() - 1))
             .collect(Collectors.toSet());
 

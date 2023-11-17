@@ -76,7 +76,11 @@ public class AssertExecute {
 
     public AssertExecute assertFailure() {
         if (!result.isFailed()) {
-            throw new AssertionError("Command was not failed.");
+            if (result.isThrown()) {
+                throw new AssertionError("Command was thrown", result.getThrowable());
+            }
+
+            throw new AssertionError("Command was not failed. Result: " + result.getResult());
         }
 
         return this;
