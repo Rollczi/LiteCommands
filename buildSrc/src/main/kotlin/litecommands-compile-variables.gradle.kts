@@ -3,11 +3,11 @@ plugins {
     id("net.kyori.indra.git")
 }
 
-tasks.build {
-    val litecommandsVariables = "src/dev/rollczi/litecommands/LiteCommandsVariables.java"
-    val source = file(litecommandsVariables)
-    val content = source.readText()
+val litecommandsVariables = "src/dev/rollczi/litecommands/LiteCommandsVariables.java"
+val sourceFile = file(litecommandsVariables)
+var content: String = sourceFile.readText()
 
+tasks.compileJava {
     if (!indraGit.isPresent) {
         throw IllegalStateException("indra-git is not present")
     }
@@ -26,9 +26,13 @@ tasks.build {
         .replace("{litecommands-branch}", branchName)
         .replace("{litecommands-commit}", commitHash)
 
-    source.writeText(newContent)
+    doFirst {
+        sourceFile.writeText(newContent)
+    }
+}
 
+tasks.classes {
     doLast {
-        source.writeText(content)
+        sourceFile.writeText(content)
     }
 }
