@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.argument;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+
 import java.util.Optional;
 
 public interface Argument<PARSED> extends Requirement<PARSED> {
