@@ -72,6 +72,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
             if (requirementOptional.isPresent()) {
                 Requirement<?> requirement = requirementOptional.get();
 
+                requirement.meta().put(Meta.REQUIREMENT_PARAMETER, parameter);
                 methodDefinition.putRequirement(index, requirement);
                 annotationProcessorService.process(new ParameterInvoker<>(wrapperRegistry, commandBuilder, parameter, requirement));
             }
@@ -88,7 +89,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
     private <A extends Annotation> AnnotationHolder<A, ?, ?> createHolder(A annotation, Parameter parameter) {
         WrapFormat<?, ?> format = MethodParameterUtil.wrapperFormat(wrapperRegistry, parameter);
 
-        return AnnotationHolder.of(parameter.getAnnotations(), annotation, format, () -> parameter.getName());
+        return AnnotationHolder.of(annotation, format, () -> parameter.getName());
     }
 
     @Override
