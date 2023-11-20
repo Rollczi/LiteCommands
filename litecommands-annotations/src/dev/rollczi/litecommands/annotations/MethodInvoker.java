@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
@@ -83,6 +84,21 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
     @Override
     public CommandBuilder<SENDER> getResult() {
+        Parameter[] parameters = method.getParameters();
+
+        for (int index = 0; index < parameters.length; index++) {
+            if (methodDefinition.hasRequirement(index)) {
+                continue;
+            }
+
+            Parameter parameter = parameters[index];
+            throw new LiteCommandsReflectInvocationException(
+                method,
+                parameter,
+                "Parameter '" + parameter.getName() + "' needs @Arg, @Flag, @Join, @Context or @Bind annotation for define requirement!"
+            );
+        }
+
         return commandBuilder;
     }
 
