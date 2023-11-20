@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
  * Is used to register a shortcut for the sub command executor.
  * It has to be declared on the method annotated with {@link dev.rollczi.litecommands.annotations.execute.Execute}
  * with name specified (cannot be used with root executor).
- * <p>
  * Example:
  * <pre>
  * {@code
