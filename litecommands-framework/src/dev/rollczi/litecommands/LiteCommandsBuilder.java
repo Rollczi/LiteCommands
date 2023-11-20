@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.extension.LiteExtension;
@@ -32,7 +34,6 @@ import dev.rollczi.litecommands.wrapper.Wrapper;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * Builder for {@link LiteCommands}.
@@ -228,10 +229,67 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> postProcessor(LiteBuilderProcessor<SENDER, SETTINGS> postProcessor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(LiteExtension<SENDER> extension);
 
-    <E extends LiteExtension<SENDER>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(E extension, UnaryOperator<E> configuration);
+    /**
+     * Register extension for this builder.
+     * @param extension extension to register
+     * <b>Example:</b>
+     * <pre>
+     *  {@code
+     *  .extension(new LiteAdventureExtension<>())
+     *  }
+     * </pre>
+     * @return this builder
+     * @param <CONFIGURATION> type of configuration
+     */
+    <CONFIGURATION>
+    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(LiteExtension<SENDER, CONFIGURATION> extension);
+
+    /**
+     * Register extension for this builder with configurator.
+     *
+     * @param extension extension to register
+     * @param configurator configurator for extension
+     * <b>Example:</b>
+     * <pre>
+     *  {@code
+     *  .extension(new LiteAdventureExtension<>(), configuration -> configuration
+     *    .colorizeArgument(true)
+     *    .miniMessage(true)
+     *    .legacyColor(true)
+     *    .serializer(ComponentSerializer.miniMessage())
+     *  )
+     *  }
+     * </pre>
+     *
+     * @return this builder
+     * @param <CONFIGURATION> type of configuration
+     */
+    <CONFIGURATION, E extends LiteExtension<SENDER, CONFIGURATION>>
+    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(E extension, LiteConfigurator<CONFIGURATION> configurator);
+
+    /**
+     * [Experimental]
+     * Register extension for annotations processing/
+     * Please note that this method is experimental and may be deprecated or removed in the future.
+     * @param configurator configurator for extension
+     * <ul>
+     *  <li>processor - register new annotation processor</li>
+     *  <li>validator - register new validator for requirement</li>
+     * </ul>
+     * <b>Example:</b>
+     * <pre>
+     * {@code
+     * .extensionAnnotation(extension -> extension
+     *     .processor(new MyAnnotationProcessor())
+     *     .validator(String.class, IsValid.class, new StringValidator())
+     * )
+     * }
+     * </pre>
+     * @return this builder
+     */
+    @ApiStatus.Experimental
+    LiteCommandsBuilder<SENDER, SETTINGS, B> annotations(LiteConfigurator<AnnotationsExtension<SENDER>> configurator);
 
     LiteCommands<SENDER> build();
 

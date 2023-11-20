@@ -20,9 +20,6 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @State(Scope.Benchmark)
@@ -33,9 +30,9 @@ public class LiteBenchmark {
     @Setup
     public void setUp() {
         testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder
-            .commands(LiteCommandsAnnotations.of(
+            .commands(
                 new TestCommand()
-            ))
+            )
         );
     }
 

@@ -9,21 +9,18 @@ import java.lang.annotation.Target;
  * Is used to register a shortcut for the sub command executor.
  * It has to be declared on the method annotated with {@link dev.rollczi.litecommands.annotations.execute.Execute}
  * with name specified (cannot be used with root executor).
- * <p>
  * Example:
  * <pre>
- * &#64;Command(name = "base")
- * public static class TestCommand {
- *
- *  &#64;Execute(name = "sub") // /base sub
- *  <b>&#64;Shortcut({ "short", "shortcut" })</b> // /short or /shortcut
- *  void executeSub()
- *      ...
- *  }
- *
- * }
+ *   &#64;Command(name = "team")
+ *   public class TeamCommand {
+ *      &#64;Execute(name = "add")
+ *      &#64;Shortcut("t-add")
+ *      void execute() {
+ *          // ...
+ *      }
+ *   }
  * </pre>
- * Class above would register command <b>/base sub</b> and its shortcut <b>/short</b> or <b>/shortcut</b>.
+ * Class above would register command <b>/team add</b> and its shortcut <b>/t-add</b>.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

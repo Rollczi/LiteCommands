@@ -8,7 +8,10 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
+import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
+import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -62,7 +65,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -74,8 +76,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final Set<LiteBuilderProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
     protected final Set<LiteBuilderProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
 
-    protected final List<LiteExtension<SENDER>> extensions = new ArrayList<>();
-    protected final List<LiteCommandsProviderExtension<SENDER>> commandsProviderExtensions = new ArrayList<>();
+    protected final List<LiteExtension<SENDER, ?>> extensions = new ArrayList<>();
+    protected final List<LiteCommandsProviderExtension<SENDER, ?>> commandsProviderExtensions = new ArrayList<>();
 
     protected final EditorService<SENDER> editorService = new EditorService<>();
     protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
@@ -172,7 +174,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      */
     private void preProcessExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
         this.preProcessor((builder, internal) -> {
-            for (LiteCommandsProviderExtension<SENDER> extension : commandsProviderExtensions) {
+            for (LiteCommandsProviderExtension<SENDER, ?> extension : commandsProviderExtensions) {
                 extension.extendCommandsProvider(this, this, commandsProvider);
             }
         });
@@ -423,22 +425,27 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> extension(LiteExtension<SENDER> extension) {
-        return this.extension(extension, UnaryOperator.identity());
+    public <CONFIGURATION> LiteCommandsBuilder<SENDER, C, B> extension(LiteExtension<SENDER, CONFIGURATION> extension) {
+        return this.extension(extension, configuration -> {});
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration) {
-        extension = configuration.apply(extension);
+    public <CONFIGURATION, E extends LiteExtension<SENDER, CONFIGURATION>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, LiteConfigurator<CONFIGURATION> configurator) {
+        extension.configure(configurator);
         extension.extend(this, this);
         extensions.add(extension);
 
         if (extension instanceof LiteCommandsProviderExtension) {
-            commandsProviderExtensions.add((LiteCommandsProviderExtension<SENDER>) extension);
+            commandsProviderExtensions.add((LiteCommandsProviderExtension<SENDER, CONFIGURATION>) extension);
         }
 
         return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER, C, B> annotations(LiteConfigurator<AnnotationsExtension<SENDER>> configuration) {
+        return this.extension(new LiteAnnotationsProcessorExtension<>(), configuration);
     }
 
     @Override

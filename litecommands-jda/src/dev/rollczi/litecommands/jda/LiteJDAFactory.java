@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.jda;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextResult;
-import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.jda.permission.DiscordMissingPermissions;
 import dev.rollczi.litecommands.jda.permission.DiscordMissingPermissionsHandler;
@@ -48,7 +47,7 @@ public final class LiteJDAFactory {
 
             .validator(Scope.global(), new DiscordPermissionValidator())
             .result(DiscordMissingPermissions.class, new DiscordMissingPermissionsHandler<>(internal.getMessageRegistry()))
-            .extension(new LiteAnnotationsProcessorExtension<>(), extension -> extension
+            .annotations(extension -> extension
                 .processor(new DiscordPermissionAnnotationProcessor<>())
                 .processor(new VisibilityAnnotationProcessor<>())
             )

@@ -12,11 +12,8 @@ import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
-import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
-import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -39,21 +36,21 @@ public class ExamplePlugin extends JavaPlugin {
             )
 
             // Commands
-            .commands(LiteCommandsAnnotations.of(
+            .commands(
                 new ConvertCommand(),
                 new GameModeCommand(),
                 new KickCommand(),
                 new TeleportCommand(),
                 new FlyCommand()
-            ))
+            )
 
             // Custom annotation validators
-            .extension(new LiteAnnotationsProcessorExtension<>(), extension -> extension
-                .validator(Player.class, IsNotOp.class, new IsNotOpValidator()) // see FlyCommand
+            .annotations(configuration -> configuration
+                .validator(Player.class, IsNotOp.class, new IsNotOpValidator())
             )
 
             // Programmatic commands
-            .commands(LiteCommandsProgrammatic.of(
+            .commands(
                 new LiteCommand<CommandSender>("ban")
                     .permissions("example.ban")
                     .argument("player", Player.class)
@@ -61,7 +58,7 @@ public class ExamplePlugin extends JavaPlugin {
                         Player player = context.argument("player", Player.class);
                         player.kickPlayer("You have been banned!");
                     })
-            ))
+            )
 
             // change default messages
             .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> "&cInvalid location format: &7" + input)
