@@ -63,7 +63,7 @@ public class RawInputAnalyzer {
         return parserSet.getParser(RawInput.class)
             .map(parser -> parser.getRange(argument))
             .map(range -> range.getMin() == 0)
-            .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
+            .orElseThrow(() -> new LiteCommandsException("No parser for " + argument.getWrapperFormat().getParsedType().getName()));
     }
 
     public class Context<SENDER, T> {
@@ -80,7 +80,7 @@ public class RawInputAnalyzer {
         ) {
             this.argument = argument;
             this.parser = parserSet.getParser(RawInput.class)
-                .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
+                .orElseThrow(() -> new LiteCommandsException("No parser for " + argument.getWrapperFormat().getParsedType().getName()));
 
             Range range = parser.getRange(argument);
 

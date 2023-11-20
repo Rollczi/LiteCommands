@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
 import dev.rollczi.litecommands.editor.EditorService;
+import dev.rollczi.litecommands.logger.LiteLogger;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
@@ -23,6 +24,9 @@ public interface LiteCommandsInternal<SENDER, C extends PlatformSettings> {
 
     @ApiStatus.Internal
     Platform<SENDER, C> getPlatform();
+
+    @ApiStatus.Internal
+    LiteLogger getLogger();
 
     @ApiStatus.Internal
     Scheduler getScheduler();

@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
+import dev.rollczi.litecommands.logger.LiteLogger;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.extension.LiteExtension;
@@ -34,6 +35,7 @@ import dev.rollczi.litecommands.wrapper.Wrapper;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 /**
  * Builder for {@link LiteCommands}.
@@ -179,6 +181,28 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     LiteCommandsBuilder<SENDER, SETTINGS, B> bind(Class<T> on, Supplier<T> bind);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> bindUnsafe(Class<?> on, Supplier<?> bind);
+
+    /**
+     * Register custom logger.
+     * @param logger logger to register
+     * @return this builder
+     */
+    @ApiStatus.Experimental
+    LiteCommandsBuilder<SENDER, SETTINGS, B> logger(LiteLogger logger);
+
+    /**
+     * Set logger level.
+     * Example:
+     * <pre>
+     *     {@code
+     *     .loggerLevel(Level.INFO)
+     *     }
+     * </pre>
+     * @param level level of logger
+     * @return this builder
+     */
+    @ApiStatus.Experimental
+    LiteCommandsBuilder<SENDER, SETTINGS, B> loggerLevel(Level level);
 
     LiteCommandsBuilder<SENDER, SETTINGS, B> scheduler(Scheduler scheduler);
 

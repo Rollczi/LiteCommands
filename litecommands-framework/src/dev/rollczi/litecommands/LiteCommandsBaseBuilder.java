@@ -12,6 +12,8 @@ import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
+import dev.rollczi.litecommands.logger.LiteJavaLogger;
+import dev.rollczi.litecommands.logger.LiteLogger;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -65,6 +67,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -90,6 +93,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final MessageRegistry<SENDER> messageRegistry = new MessageRegistry<SENDER>();
     protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
 
+    protected LiteLogger logger = new LiteJavaLogger(Level.WARNING);
     protected Scheduler scheduler = new SchedulerSameThreadImpl();
     protected SchematicGenerator<SENDER> schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
 
@@ -304,6 +308,18 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    public LiteCommandsBuilder<SENDER, C, B> logger(LiteLogger logger) {
+        this.logger = logger;
+        return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER, C, B> loggerLevel(Level level) {
+        this.logger.setLevel(level);
+        return this;
+    }
+
+    @Override
     public LiteCommandsBuilder<SENDER, C, B> scheduler(Scheduler scheduler) {
         this.scheduler.shutdown();
         this.scheduler = scheduler;
@@ -483,7 +499,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        LiteCommands<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager);
+        LiteCommands<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager, logger);
 
         if (register) {
             liteCommand.register();
@@ -506,6 +522,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public Platform<SENDER, C> getPlatform() {
         return this.platform;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public LiteLogger getLogger() {
+        return this.logger;
     }
 
     @Override
