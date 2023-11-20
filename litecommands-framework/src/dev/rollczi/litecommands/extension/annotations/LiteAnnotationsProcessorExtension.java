@@ -14,7 +14,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LiteAnnotationsProcessorExtension<SENDER> implements LiteCommandsProviderExtension<SENDER> {
+public class LiteAnnotationsProcessorExtension<SENDER> implements AnnotationsExtension<SENDER>, LiteCommandsProviderExtension<SENDER> {
 
     private final List<AnnotationProcessor<SENDER>> processors = new ArrayList<>();
 

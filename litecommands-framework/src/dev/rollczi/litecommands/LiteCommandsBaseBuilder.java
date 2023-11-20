@@ -8,7 +8,10 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
+import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
+import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -62,7 +65,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -424,13 +426,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> extension(LiteExtension<SENDER> extension) {
-        return this.extension(extension, UnaryOperator.identity());
+        return this.extension(extension, configuration -> {});
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration) {
-        extension = configuration.apply(extension);
+    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, LiteConfigurator<E> configuration) {
+        configuration.configure(extension);
         extension.extend(this, this);
         extensions.add(extension);
 
@@ -439,6 +441,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         }
 
         return this;
+    }
+
+    @Override
+    public LiteCommandsBuilder<SENDER, C, B> annotations(LiteConfigurator<AnnotationsExtension<SENDER>> configuration) {
+        LiteAnnotationsProcessorExtension<SENDER> extension = new LiteAnnotationsProcessorExtension<>();
+        configuration.configure(extension);
+        return this.extension(extension);
     }
 
     @Override

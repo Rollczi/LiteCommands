@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -19,7 +18,7 @@ import java.lang.annotation.RetentionPolicy;
 class AnnotatedValidatorTest extends LiteTestSpec {
 
     static LiteConfig config = builder -> builder
-        .extension(new LiteAnnotationsProcessorExtension<>(), extension -> extension
+        .annotations(extension -> extension
             .validator(String.class, IsStupid.class, new IsStupidValidator())
         );
 

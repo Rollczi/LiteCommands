@@ -17,7 +17,7 @@ public class ProgrammaticApiTest {
 
     String PERMISSION = "example.ban";
 
-    TestPlatform testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder.commands(LiteCommandsProgrammatic.of(
+    TestPlatform testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder.commands(
         new LiteCommand<TestSender>("ban")
             .permissions(PERMISSION)
             .argument("player", String.class)
@@ -25,7 +25,7 @@ public class ProgrammaticApiTest {
                 TestSender sender = context.invocation().sender();
                 sender.sendMessage("banned");
             })
-    )));
+    ));
 
     @Test
     @DisplayName("Should success when all requirements are met")

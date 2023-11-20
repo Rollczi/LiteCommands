@@ -15,7 +15,6 @@ import dev.rollczi.example.velocity.command.SendCommand;
 import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -43,9 +42,9 @@ public class ExamplePlugin {
             )
 
             // Commands
-            .commands(LiteCommandsAnnotations.of(
+            .commands(
                 new SendCommand()
-            ))
+            )
 
             // Arguments @Arg
             .argument(Player.class, new PlayerArgument(this.proxyServer))
