@@ -11,18 +11,14 @@ import java.lang.annotation.Target;
  * with name specified (cannot be used with root executor).
  * Example:
  * <pre>
- * {@code
- *   @Command(name = "team")
+ *   &#64;Command(name = "team")
  *   public class TeamCommand {
- *
- *      @Execute(name = "add")
- *      @Shortcut("t-add")
+ *      &#64;Execute(name = "add")
+ *      &#64;Shortcut("t-add")
  *      void execute() {
  *          // ...
  *      }
- *
  *   }
- * }
  * </pre>
  * Class above would register command <b>/team add</b> and its shortcut <b>/t-add</b>.
  */
