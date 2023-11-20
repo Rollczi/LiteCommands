@@ -21,7 +21,7 @@ public interface AnnotationProcessor<SENDER> {
     }
 
     interface StructureExecutorListener<SENDER, A extends Annotation> {
-        CommandBuilder<SENDER> call(A annotation, CommandBuilder<SENDER> builder, CommandExecutorProvider<SENDER> executorProvider);
+        void call(A annotation, CommandBuilder<SENDER> builder, CommandExecutorProvider<SENDER> executorProvider);
     }
 
     interface RequirementListener<SENDER, A extends Annotation> {

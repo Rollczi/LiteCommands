@@ -23,7 +23,7 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
 
-    protected List<String> shortRoutes = new ArrayList<>();
+    protected final List<String> shortRoutes = new ArrayList<>();
 
     protected CommandBuilderDummyPrefix<SENDER> dummyPrefix;
 
@@ -230,8 +230,19 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     @Override
     @ApiStatus.Internal
     public CommandBuilder<SENDER> shortRoutes(List<String> aliases) {
-        this.shortRoutes = aliases;
+        this.shortRoutes.clear();
+        this.shortRoutes.addAll(aliases);
         return this;
+    }
+
+    private String getShortName() {
+        return this.shortRoutes.get(0);
+    }
+
+    private List<String> getShortAliases() {
+        return this.shortRoutes.size() > 1
+            ? this.shortRoutes.subList(1, this.shortRoutes.size())
+            : Collections.emptyList();
     }
 
     @Override
@@ -279,10 +290,9 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
         routes.add(route);
 
         if (this.hasShortRoute()) {
-            String shortName = this.shortRoutes.get(0);
-            List<String> shortAliases = this.shortRoutes.size() > 1
-                ? this.shortRoutes.subList(1, this.shortRoutes.size())
-                : Collections.emptyList();
+            String shortName = this.getShortName();
+            List<String> shortAliases = this.getShortAliases();
+
             routes.add(CommandRoute.createReference(shortName, shortAliases, route));
         }
 

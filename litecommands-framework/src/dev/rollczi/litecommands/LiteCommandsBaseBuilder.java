@@ -483,7 +483,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        LiteCommandsImpl<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager);
+        LiteCommands<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager);
 
         if (register) {
             liteCommand.register();

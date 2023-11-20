@@ -16,7 +16,7 @@ public class ShortcutCommandAnnotationProcessor<SENDER> implements AnnotationPro
             (executeAnnotation, builder, executorBuilder) -> invoker.onExecutorStructure(
                 Shortcut.class,
                 (shortAnnotation, shortBuilder, shortExecutorBuilder) -> resolve(executeAnnotation, shortAnnotation, builder)
-            ).getResult()
+            )
         );
     }
 

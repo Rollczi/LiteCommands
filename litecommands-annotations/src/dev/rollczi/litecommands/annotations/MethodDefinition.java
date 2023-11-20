@@ -46,6 +46,10 @@ class MethodDefinition {
         throw new IllegalArgumentException("Cannot find requirement for parameter index " + parameterIndex);
     }
 
+    boolean hasRequirement(int parameterIndex) {
+        return arguments.containsKey(parameterIndex) || contextRequirements.containsKey(parameterIndex) || bindRequirements.containsKey(parameterIndex);
+    }
+
     public Collection<Argument<?>> getArguments() {
         return arguments.values();
     }

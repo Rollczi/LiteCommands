@@ -33,6 +33,10 @@ final class PrettyPrintAnnotation {
             builder.add(formatAnnotation(annotation));
         }
 
+        if (builder.length() == 0) {
+            return "";
+        }
+
         return builder + endSeparator;
     }
 

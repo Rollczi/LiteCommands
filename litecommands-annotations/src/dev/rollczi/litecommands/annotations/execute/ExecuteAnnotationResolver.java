@@ -15,7 +15,7 @@ public class ExecuteAnnotationResolver<SENDER> implements AnnotationProcessor<SE
         return invoker.onExecutorStructure(Execute.class, (annotation, builder, executorBuilder) -> resolve(annotation, builder, executorBuilder));
     }
 
-    private CommandBuilder<SENDER> resolve(Execute annotation, CommandBuilder<SENDER> context, CommandExecutorProvider<SENDER> executorProvider) {
+    private void resolve(Execute annotation, CommandBuilder<SENDER> context, CommandExecutorProvider<SENDER> executorProvider) {
         boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
         if (isNotEmpty) {
@@ -24,11 +24,10 @@ public class ExecuteAnnotationResolver<SENDER> implements AnnotationProcessor<SE
                 .routeAliases(Arrays.asList(annotation.aliases()))
                 .applyOnRoute(builder -> builder.appendExecutor(executorProvider)));
 
-            return context;
+            return;
         }
 
         context.getRealRoute().appendExecutor(executorProvider);
-        return context;
     }
 
 }
