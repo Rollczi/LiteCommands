@@ -12,18 +12,20 @@ import java.lang.annotation.Target;
  * <p>
  * Example:
  * <pre>
- * &#64;Command(name = "base")
- * public static class TestCommand {
+ * {@code
+ *   @Command(name = "team")
+ *   public class TeamCommand {
  *
- *  &#64;Execute(name = "sub") // /base sub
- *  <b>&#64;Shortcut({ "short", "shortcut" })</b> // /short or /shortcut
- *  void executeSub()
- *      ...
- *  }
+ *      @Execute(name = "add")
+ *      @Shortcut("t-add")
+ *      void execute() {
+ *          // ...
+ *      }
  *
+ *   }
  * }
  * </pre>
- * Class above would register command <b>/base sub</b> and its shortcut <b>/short</b> or <b>/shortcut</b>.
+ * Class above would register command <b>/team add</b> and its shortcut <b>/t-add</b>.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
