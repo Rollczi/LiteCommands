@@ -4,9 +4,6 @@ import dev.rollczi.litecommands.annotations.AnnotationHolder;
 import dev.rollczi.litecommands.annotations.requirement.RequirementProcessor;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.SimpleArgument;
-import dev.rollczi.litecommands.meta.Meta;
-
-import java.util.Arrays;
 
 public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, Arg> {
 
@@ -26,5 +23,4 @@ public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, A
 
         return new SimpleArgument<>(name, holder.getFormat());
     }
-
 }
