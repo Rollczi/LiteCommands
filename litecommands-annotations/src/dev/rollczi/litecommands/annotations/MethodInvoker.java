@@ -72,6 +72,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
             if (requirementOptional.isPresent()) {
                 Requirement<?> requirement = requirementOptional.get();
 
+                requirement.meta().put(Meta.REQUIREMENT_PARAMETER, parameter);
                 methodDefinition.putRequirement(index, requirement);
                 annotationProcessorService.process(new ParameterInvoker<>(wrapperRegistry, commandBuilder, parameter, requirement));
             }
