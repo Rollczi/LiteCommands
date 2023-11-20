@@ -8,13 +8,14 @@ import dev.rollczi.litecommands.annotations.AnnotationProcessorService;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.annotations.validator.requirment.AnnotatedValidator;
 import dev.rollczi.litecommands.annotations.validator.requirment.AnnotatedValidatorProcessor;
+import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LiteAnnotationsProcessorExtension<SENDER> implements AnnotationsExtension<SENDER>, LiteCommandsProviderExtension<SENDER> {
+public class LiteAnnotationsProcessorExtension<SENDER> implements AnnotationsExtension<SENDER>, LiteCommandsProviderExtension<SENDER, AnnotationsExtension<SENDER>> {
 
     private final List<AnnotationProcessor<SENDER>> processors = new ArrayList<>();
 
@@ -30,6 +31,11 @@ public class LiteAnnotationsProcessorExtension<SENDER> implements AnnotationsExt
         for (AnnotationProcessor<SENDER> processor : processors) {
             annotationProcessorService.register(processor);
         }
+    }
+
+    @Override
+    public void configure(LiteConfigurator<AnnotationsExtension<SENDER>> configurer) {
+        configurer.configure(this);
     }
 
     @Override

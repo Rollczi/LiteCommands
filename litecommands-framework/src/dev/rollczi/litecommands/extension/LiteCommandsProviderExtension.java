@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.LiteCommandsProvider;
  *
  * @param <SENDER> the type of the sender
  */
-public interface LiteCommandsProviderExtension<SENDER> extends LiteExtension<SENDER> {
+public interface LiteCommandsProviderExtension<SENDER, CONFIGURATION> extends LiteExtension<SENDER, CONFIGURATION> {
 
     void extendCommandsProvider(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal, LiteCommandsProvider<SENDER> provider);
 

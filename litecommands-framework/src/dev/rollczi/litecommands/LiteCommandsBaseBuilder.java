@@ -76,8 +76,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final Set<LiteBuilderProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
     protected final Set<LiteBuilderProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
 
-    protected final List<LiteExtension<SENDER>> extensions = new ArrayList<>();
-    protected final List<LiteCommandsProviderExtension<SENDER>> commandsProviderExtensions = new ArrayList<>();
+    protected final List<LiteExtension<SENDER, ?>> extensions = new ArrayList<>();
+    protected final List<LiteCommandsProviderExtension<SENDER, ?>> commandsProviderExtensions = new ArrayList<>();
 
     protected final EditorService<SENDER> editorService = new EditorService<>();
     protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
@@ -174,7 +174,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      */
     private void preProcessExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
         this.preProcessor((builder, internal) -> {
-            for (LiteCommandsProviderExtension<SENDER> extension : commandsProviderExtensions) {
+            for (LiteCommandsProviderExtension<SENDER, ?> extension : commandsProviderExtensions) {
                 extension.extendCommandsProvider(this, this, commandsProvider);
             }
         });
@@ -425,19 +425,19 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> extension(LiteExtension<SENDER> extension) {
+    public <CONFIGURATION> LiteCommandsBuilder<SENDER, C, B> extension(LiteExtension<SENDER, CONFIGURATION> extension) {
         return this.extension(extension, configuration -> {});
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, LiteConfigurator<E> configuration) {
-        configuration.configure(extension);
+    public <CONFIGURATION, E extends LiteExtension<SENDER, CONFIGURATION>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, LiteConfigurator<CONFIGURATION> configurator) {
+        extension.configure(configurator);
         extension.extend(this, this);
         extensions.add(extension);
 
         if (extension instanceof LiteCommandsProviderExtension) {
-            commandsProviderExtensions.add((LiteCommandsProviderExtension<SENDER>) extension);
+            commandsProviderExtensions.add((LiteCommandsProviderExtension<SENDER, CONFIGURATION>) extension);
         }
 
         return this;
@@ -445,9 +445,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> annotations(LiteConfigurator<AnnotationsExtension<SENDER>> configuration) {
-        LiteAnnotationsProcessorExtension<SENDER> extension = new LiteAnnotationsProcessorExtension<>();
-        configuration.configure(extension);
-        return this.extension(extension);
+        return this.extension(new LiteAnnotationsProcessorExtension<>(), configuration);
     }
 
     @Override
