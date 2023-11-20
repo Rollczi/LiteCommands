@@ -54,7 +54,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
             return this;
         }
 
-        commandBuilder = listener.call(methodAnnotation, commandBuilder, executorProvider);
+        listener.call(methodAnnotation, commandBuilder, executorProvider);
         return this;
     }
 
