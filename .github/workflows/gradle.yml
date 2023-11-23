@@ -5,9 +5,9 @@ name: LiteCommands Java CI with Gradle
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, v2.x.x ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, v2.x.x ]
 jobs:
   build:
     name: "Build with JDK${{ matrix.jdk }}"
