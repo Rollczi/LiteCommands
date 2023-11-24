@@ -101,13 +101,13 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
-    public LiteCommand<SENDER> onExecute(Consumer<LiteContext<SENDER>> executor) {
+    public final LiteCommand<SENDER> onExecute(Consumer<LiteContext<SENDER>> executor) {
         this.executor = executor;
         return this;
     }
 
-    protected void execute(LiteContext<SENDER> liteContext) {
-        this.executor.accept(liteContext);
+    protected void execute(LiteContext<SENDER> context) {
+        this.executor.accept(context);
     }
 
     @SafeVarargs
