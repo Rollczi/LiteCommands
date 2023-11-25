@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 
 class TabCompleteProtocolLibAsync extends TabCompleteSync {
 
-    private final static Logger LOGGER = Logger.getLogger(TabCompleteProtocolLibAsync.class.getName());
     private final static ProtocolManager MANAGER = ProtocolLibrary.getProtocolManager();
 
     private final Scheduler scheduler;
@@ -47,22 +46,17 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
     }
 
     private void tryReplaceConsoleTabCompleter(Server server) {
-        try {
-            Object craftServer = ReflectUtil.getFromMethod(server, "getHandle");
-            Object minecraftServer = getMinecraftServer(craftServer);
-            ConsoleReader reader = ReflectUtil.getFromField(minecraftServer, "reader");
+        Object craftServer = ReflectUtil.getFromMethod(server, "getHandle");
+        Object minecraftServer = getMinecraftServer(craftServer);
+        ConsoleReader reader = ReflectUtil.getFromField(minecraftServer, "reader");
 
-            Collection<Completer> completers = reader.getCompleters();
+        Collection<Completer> completers = reader.getCompleters();
 
-            if (completers.size() == 1) {
-                Completer completer = completers.iterator().next();
+        if (completers.size() == 1) {
+            Completer completer = completers.iterator().next();
 
-                reader.removeCompleter(completer);
-                reader.addCompleter(new ProtocolLibConsoleTabConsoleCompleter(server.getConsoleSender(), completer));
-            }
-        }
-        catch (LiteCommandsReflectException exception) {
-            LOGGER.log(Level.WARNING, "Failed to replace console tab completer.", exception);
+            reader.removeCompleter(completer);
+            reader.addCompleter(new ProtocolLibConsoleTabConsoleCompleter(server.getConsoleSender(), completer));
         }
     }
 
