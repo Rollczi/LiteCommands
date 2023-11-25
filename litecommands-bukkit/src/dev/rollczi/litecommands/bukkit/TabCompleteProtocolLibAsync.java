@@ -49,7 +49,7 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
     private void tryReplaceConsoleTabCompleter(Server server) {
         try {
             Object craftServer = ReflectUtil.getFromMethod(server, "getHandle");
-            Object minecraftServer = ReflectUtil.getFromField(craftServer, "server");
+            Object minecraftServer = getMinecraftServer(craftServer);
             ConsoleReader reader = ReflectUtil.getFromField(minecraftServer, "reader");
 
             Collection<Completer> completers = reader.getCompleters();
@@ -63,6 +63,15 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         }
         catch (LiteCommandsReflectException exception) {
             LOGGER.log(Level.WARNING, "Failed to replace console tab completer.", exception);
+        }
+    }
+
+    private Object getMinecraftServer(Object craftServer) {
+        try {
+            return ReflectUtil.getFromField(craftServer, "server");
+        }
+        catch (LiteCommandsReflectException exception) {
+            return ReflectUtil.getFromField(craftServer, "cserver");
         }
     }
 

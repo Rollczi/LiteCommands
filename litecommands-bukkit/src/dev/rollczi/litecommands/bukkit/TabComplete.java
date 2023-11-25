@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-abstract class TabComplete {
+public abstract class TabComplete {
 
     private final static String FALLBACK_SEPARATOR = ":";
 
