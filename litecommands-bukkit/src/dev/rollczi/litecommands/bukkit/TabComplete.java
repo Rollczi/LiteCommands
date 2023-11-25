@@ -78,6 +78,7 @@ public abstract class TabComplete {
 
         try {
             Class.forName("com.comphenix.protocol.ProtocolLibrary");
+            Class.forName("org.bukkit.craftbukkit.libs.jline.console.ConsoleReader");
             return new TabCompleteProtocolLibAsync(plugin, scheduler);
         }
         catch (ClassNotFoundException ignored) {}
