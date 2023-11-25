@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.input.raw.RawCommand;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -81,7 +82,7 @@ public abstract class TabComplete {
             Class.forName("org.bukkit.craftbukkit.libs.jline.console.ConsoleReader");
             return new TabCompleteProtocolLibAsync(plugin, scheduler);
         }
-        catch (ClassNotFoundException ignored) {}
+        catch (ClassNotFoundException | LiteCommandsReflectException ignored) {}
 
         return new TabCompleteSync();
     }

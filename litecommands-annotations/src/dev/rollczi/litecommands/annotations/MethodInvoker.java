@@ -25,6 +25,8 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
     private final CommandExecutorProvider<SENDER> executorProvider;
     private final Meta meta = Meta.create();
 
+    private boolean isExecutorStructure = false;
+
     public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, WrapperRegistry wrapperRegistry, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
         this.annotationProcessorService = annotationProcessorService;
         this.wrapperRegistry = wrapperRegistry;
@@ -55,6 +57,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
         }
 
         listener.call(methodAnnotation, commandBuilder, executorProvider);
+        isExecutorStructure = true;
         return this;
     }
 
@@ -84,6 +87,10 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
     @Override
     public CommandBuilder<SENDER> getResult() {
+        if (!isExecutorStructure) {
+            return commandBuilder;
+        }
+
         Parameter[] parameters = method.getParameters();
 
         for (int index = 0; index < parameters.length; index++) {
