@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.reflect.Method;
@@ -21,7 +22,8 @@ class InstanceSourceProcessor<SENDER> {
     public CommandBuilder<SENDER> processBuilder(InstanceSource source) {
         Object instance = source.getInstance();
         Class<?> type = instance.getClass();
-        CommandBuilder<SENDER> context = CommandBuilder.create();
+        CommandBuilder<SENDER> context = CommandBuilder.<SENDER>create()
+            .applyMeta(meta -> meta.put(Meta.COMMAND_ORIGIN_TYPE, type));
 
         AnnotationInvoker<SENDER> classInvoker = new ClassInvoker<>(type, context);
         context = annotationProcessorService.process(classInvoker);

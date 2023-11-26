@@ -470,11 +470,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         List<CommandBuilder<SENDER>> collectedContexts = this.commandBuilderCollector.collectAndMergeCommands();
 
         for (CommandBuilder<SENDER> context : collectedContexts) {
-            if (!context.buildable()) {
+            CommandBuilder<SENDER> edited = editorService.edit(context);
+
+            if (!edited.buildable()) {
                 continue;
             }
 
-            for (CommandRoute<SENDER> commandRoute : context.build(commandManager.getRoot())) {
+            for (CommandRoute<SENDER> commandRoute : edited.build(commandManager.getRoot())) {
                 commandManager.register(commandRoute);
             }
         }
