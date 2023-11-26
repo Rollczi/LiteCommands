@@ -12,7 +12,7 @@ public class DescriptionAnnotationResolver<SENDER> implements AnnotationProcesso
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         return invoker.on(Description.class, (annotation, metaHolder) -> {
-            metaHolder.meta().put(Meta.DESCRIPTION, Arrays.stream(annotation.value()).collect(Collectors.toList()));
+            metaHolder.meta().put(Meta.DESCRIPTION, Arrays.asList(annotation.value()));
         });
     }
 
