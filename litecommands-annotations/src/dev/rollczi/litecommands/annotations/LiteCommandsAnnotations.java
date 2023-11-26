@@ -49,7 +49,6 @@ public class LiteCommandsAnnotations<SENDER> implements LiteCommandsProvider<SEN
 
         return instances.stream()
             .map(instance -> processor.processBuilder(new InstanceSource(instance)))
-            .map(senderCommandBuilder -> builder.getEditorService().edit(senderCommandBuilder))
             .collect(Collectors.toList());
     }
 

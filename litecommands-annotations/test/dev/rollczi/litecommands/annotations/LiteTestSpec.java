@@ -36,11 +36,10 @@ public class LiteTestSpec {
 
         platform = new TestPlatform();
 
-        liteCommands = LiteCommandsFactory.builder(TestSender.class, platform)
-            .preProcessor((builder, internal) -> configureLiteTest(builder, type))
+        liteCommands = configureLiteTest(LiteCommandsFactory.builder(TestSender.class, platform)
             .commands(LiteCommandsAnnotations.ofClasses(commands))
-            .exceptionUnexpected((invocation, exception, chain) -> {})
-            .build(true);
+            .exceptionUnexpected((invocation, exception, chain) -> {}), type)
+            .build();
     }
 
     private static LiteCommandsBuilder<TestSender, TestSettings, ?> configureLiteTest(LiteCommandsBuilder<TestSender, TestSettings, ?> builder, Class<?> type) {
