@@ -21,6 +21,10 @@ public class LiteContext<SENDER> {
         return this.get(name, WrapFormat.notWrapped(type));
     }
 
+    public String argumentQuoted(String name) {
+        return this.argument(name, String.class);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> Optional<T> argumentOptional(String name, Class<T> type) {
         return (Optional<T>) this.get(name, WrapFormat.of(type, Optional.class));

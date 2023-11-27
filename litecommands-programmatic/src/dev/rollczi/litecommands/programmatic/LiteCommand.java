@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
+import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
@@ -55,6 +56,13 @@ public class LiteCommand<SENDER> {
     public LiteCommand<SENDER> argument(Argument<?> argument) {
         this.arguments.add(argument);
         return this;
+    }
+
+    public LiteCommand<SENDER> argumentQuoted(String name) {
+        Argument<String> argument = new SimpleArgument<>(name, WrapFormat.notWrapped(String.class));
+        argument.meta().put(Meta.ARGUMENT_KEY, QuotedStringArgumentResolver.KEY);
+
+        return this.argument(argument);
     }
 
     public LiteCommand<SENDER> argumentOptional(String name, Class<?> type) {

@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands;
 
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BooleanArgumentResolver;
@@ -10,6 +11,7 @@ import dev.rollczi.litecommands.argument.resolver.standard.LocalDateTimeArgument
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
@@ -25,6 +27,7 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.MissingPermissions;
@@ -32,6 +35,7 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.flag.FlagArgumentResolver;
+import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
@@ -58,6 +62,8 @@ public final class LiteCommandsFactory {
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).selfProcessor((builder, internal) -> {
             Scheduler scheduler = internal.getScheduler();
+            MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
+            SuggesterRegistry<SENDER> suggesterRegistry = internal.getSuggesterRegistry();
 
             builder
                 .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
@@ -85,11 +91,12 @@ public final class LiteCommandsFactory {
                 .argument(Duration.class, new DurationArgumentResolver<>())
                 .argument(Period.class, new PeriodArgumentResolver<>())
                 .argument(Enum.class, new EnumArgumentResolver<>())
-                .argument(BigInteger.class, new BigIntegerArgumentResolver<>(internal.getMessageRegistry()))
-                .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(internal.getMessageRegistry()))
-                .argument(Instant.class, new InstantArgumentResolver<>(internal.getMessageRegistry()))
-                .argument(LocalDateTime.class, new LocalDateTimeArgumentResolver<>(internal.getMessageRegistry()))
+                .argument(BigInteger.class, new BigIntegerArgumentResolver<>(messageRegistry))
+                .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(messageRegistry))
+                .argument(Instant.class, new InstantArgumentResolver<>(messageRegistry))
+                .argument(LocalDateTime.class, new LocalDateTimeArgumentResolver<>(messageRegistry))
 
+                .argument(String.class, ArgumentKey.of(QuotedStringArgumentResolver.KEY), new QuotedStringArgumentResolver<>(messageRegistry, suggesterRegistry))
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
                 .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
@@ -106,8 +113,8 @@ public final class LiteCommandsFactory {
                 .result(Optional.class, new OptionalHandler<>())
                 .result(Option.class, new OptionHandler<>())
                 .result(CompletionStage.class, new CompletionStageHandler<>())
-                .result(MissingPermissions.class, new MissingPermissionResultHandler<>(internal.getMessageRegistry()))
-                .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(internal.getMessageRegistry()))
+                .result(MissingPermissions.class, new MissingPermissionResultHandler<>(messageRegistry))
+                .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
                 ;
         });
     }
