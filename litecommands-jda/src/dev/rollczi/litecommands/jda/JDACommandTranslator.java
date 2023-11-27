@@ -61,7 +61,7 @@ class JDACommandTranslator {
         String name,
         CommandRoute<SENDER> commandRoute
     ) {
-        CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.meta().get(Meta.DESCRIPTION));
+        CommandDataImpl commandData = new CommandDataImpl(name, this.getDescription(commandRoute));
         commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
 
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
@@ -89,7 +89,7 @@ class JDACommandTranslator {
         // group command and subcommands
         for (CommandRoute<SENDER> child : commandRoute.getChildren()) {
             if (!child.getExecutors().isEmpty()) {
-                SubcommandData subcommandData = new SubcommandData(child.getName(), child.meta().get(Meta.DESCRIPTION));
+                SubcommandData subcommandData = new SubcommandData(child.getName(), this.getDescription(child));
 
                 this.translateExecutor(child, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
@@ -102,14 +102,14 @@ class JDACommandTranslator {
                 continue;
             }
 
-            SubcommandGroupData subcommandGroupData = new SubcommandGroupData(child.getName(), child.meta().get(Meta.DESCRIPTION));
+            SubcommandGroupData subcommandGroupData = new SubcommandGroupData(child.getName(), this.getDescription(child));
 
             for (CommandRoute<SENDER> childChild : child.getChildren()) {
                 if (childChild.getExecutors().isEmpty()) {
                     continue;
                 }
 
-                SubcommandData subcommandData = new SubcommandData(childChild.getName(), childChild.meta().get(Meta.DESCRIPTION));
+                SubcommandData subcommandData = new SubcommandData(childChild.getName(), this.getDescription(childChild));
 
                 this.translateExecutor(childChild, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
@@ -131,6 +131,16 @@ class JDACommandTranslator {
         return jdaLiteCommand;
     }
 
+    private String getDescription(MetaHolder holder) {
+        String joined = String.join(", ", holder.meta().get(Meta.DESCRIPTION));
+
+        if (joined.isEmpty()) {
+            return "none"; // Discord doesn't allow empty description
+        }
+
+        return joined;
+    }
+
     private List<Permission> getPermissions(MetaHolder holder) {
         return holder.metaCollector().collect(DiscordPermission.META_KEY).stream()
             .flatMap(List::stream)
@@ -147,7 +157,7 @@ class JDACommandTranslator {
 
         for (Argument<?> argument : executor.getArguments()) {
             String argumentName = argument.getName();
-            String description = argument.meta().get(Meta.DESCRIPTION);
+            String description = this.getDescription(argument);
             boolean isRequired = !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
 
             Class<?> parsedType = argument.getWrapperFormat().getParsedType();
