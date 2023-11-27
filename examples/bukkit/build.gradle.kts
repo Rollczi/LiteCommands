@@ -43,6 +43,10 @@ tasks.withType<ShadowJar> {
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }
 
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
+
 sourceSets.test {
     java.setSrcDirs(emptyList<String>())
     resources.setSrcDirs(emptyList<String>())
