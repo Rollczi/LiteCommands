@@ -11,23 +11,30 @@ public class ParseResult<EXPECTED> implements RequirementResult<EXPECTED> {
 
     private final @Nullable EXPECTED successfulResult;
     private final @Nullable FailedReason failedResult;
+    private final boolean nullable;
 
-    private ParseResult(@Nullable EXPECTED successfulResult, @Nullable FailedReason failedResult) {
+    private ParseResult(@Nullable EXPECTED successfulResult, @Nullable FailedReason failedResult, boolean nullable) {
         if (successfulResult != null && failedResult != null) {
             throw new IllegalArgumentException("Cannot be both successful and failed");
         }
-
-        if (successfulResult == null && failedResult == null) {
+        else if ((successfulResult == null && !nullable) && failedResult == null) {
             throw new IllegalArgumentException("Cannot be both empty");
         }
 
+        this.nullable = nullable;
         this.successfulResult = successfulResult;
         this.failedResult = failedResult;
     }
 
+
     @Override
     public boolean isSuccessful() {
         return this.successfulResult != null;
+    }
+
+    @Override
+    public boolean isSuccessfulNull() {
+        return this.nullable && this.successfulResult == null;
     }
 
     @Override
@@ -54,20 +61,24 @@ public class ParseResult<EXPECTED> implements RequirementResult<EXPECTED> {
     }
 
     public static <PARSED> ParseResult<PARSED> success(PARSED parsed) {
-        return new ParseResult<>(parsed, null);
+        return new ParseResult<>(parsed, null, false);
+    }
+
+    public static <T> ParseResult<T> successNull() {
+        return new ParseResult<>(null, null, true);
     }
 
     public static <EXPECTED> ParseResult<EXPECTED> failure(FailedReason failedReason) {
-        return new ParseResult<>(null, failedReason);
+        return new ParseResult<>(null, failedReason, false);
     }
 
     public static <EXPECTED> ParseResult<EXPECTED> failure(Object failedReason) {
-        return new ParseResult<>(null, FailedReason.of(failedReason));
+        return new ParseResult<>(null, FailedReason.of(failedReason), false);
     }
 
     @Deprecated
     public static <EXPECTED> ParseResult<EXPECTED> failure() {
-        return new ParseResult<>(null, FailedReason.empty());
+        return new ParseResult<>(null, FailedReason.empty(), false);
     }
 
     @Override

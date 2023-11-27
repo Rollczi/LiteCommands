@@ -6,6 +6,8 @@ public interface RequirementResult<PARSED> {
 
     boolean isSuccessful();
 
+    boolean isSuccessfulNull();
+
     boolean isFailed();
 
     @NotNull

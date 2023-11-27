@@ -40,6 +40,11 @@ public class ContextResult<T> implements RequirementResult<T> {
         return result != null;
     }
 
+    @Override
+    public boolean isSuccessfulNull() {
+        return false;
+    }
+
     public static <T> ContextResult<T> ok(Supplier<T> supplier) {
         return new ContextResult<>(supplier, null);
     }

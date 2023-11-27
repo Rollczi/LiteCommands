@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -57,6 +58,10 @@ public class LiteContext<SENDER> {
         }
 
         Object unwrap = wrap.unwrap();
+
+        if (unwrap == null) {
+            return null;
+        }
 
         if (!ReflectUtil.instanceOf(unwrap, format.getOutTypeOrParsed())) {
             throw new IllegalArgumentException("Argument with name '" + name + "' is not instance of " + format.getOutTypeOrParsed().getName() + " but " + unwrap.getClass().getName());

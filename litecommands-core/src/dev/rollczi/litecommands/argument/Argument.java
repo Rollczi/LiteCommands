@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.argument;
 
+import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
@@ -12,7 +13,7 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
 
     WrapFormat<PARSED, ?> getWrapperFormat();
 
-    default Optional<PARSED> defaultValue() {
+    default Optional<ParseResult<PARSED>> defaultValue() {
         return Optional.empty();
     }
 
@@ -29,7 +30,11 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
     }
 
     static <T> Argument<T> of(String name, WrapFormat<T, ?> format) {
-        return new SimpleArgument<>(name, format);
+        return new SimpleArgument<>(name, format, false);
+    }
+
+    static <T> Argument<T> of(String name, WrapFormat<T, ?> format, boolean nullable) {
+        return new SimpleArgument<>(name, format, nullable);
     }
 
 }

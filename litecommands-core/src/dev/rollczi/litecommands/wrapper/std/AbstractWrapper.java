@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.wrapper.std;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.Wrapper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -20,13 +21,13 @@ abstract class AbstractWrapper<WRAPPER> implements Wrapper {
     }
 
     @Override
-    public final <EXPECTED> Wrap<EXPECTED> create(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
+    public final <EXPECTED> Wrap<EXPECTED> create(@Nullable EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
         this.check(info);
 
         return new TypeSafeWrap<>(info.getParsedType(), this.wrapValue(valueToWrap, info));
     }
 
-    protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info);
+    protected abstract <EXPECTED> Supplier<WRAPPER> wrapValue(@Nullable EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info);
 
     @Override
     public final <EXPECTED> Wrap<EXPECTED> createEmpty(WrapFormat<EXPECTED, ?> info) {

@@ -11,4 +11,6 @@ public @interface Arg {
 
     String value() default "";
 
+    boolean nullable() default false;
+
 }

@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
@@ -47,6 +48,15 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
             RequirementMatch<?, ?> requirementMatch = results.get(name);
             Object unwrapped = requirementMatch.getResult().unwrap();
+            Parameter parameter = method.getParameters()[parameterIndex];
+
+            if (unwrapped == null && parameter.getType().isPrimitive()) {
+                return CommandExecutorMatchResult.failed(new LiteCommandsReflectInvocationException(
+                    method,
+                    parameter,
+                    "Null value cannot be assigned to primitive type"
+                ));
+            }
 
             objects[parameterIndex] = unwrapped;
         }

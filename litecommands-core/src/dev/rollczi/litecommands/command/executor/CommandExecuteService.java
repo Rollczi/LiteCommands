@@ -246,6 +246,10 @@ public class CommandExecuteService<SENDER> {
                 return this.handleFailed(requirementResult, wrapperFormat, requirement);
             }
 
+            if (requirementResult.isSuccessfulNull()) {
+                return toMatch(requirement, null);
+            }
+
             Object success = requirementResult.getSuccess();
             List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
 

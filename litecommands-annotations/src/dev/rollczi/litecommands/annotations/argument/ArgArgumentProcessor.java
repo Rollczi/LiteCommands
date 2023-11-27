@@ -21,6 +21,6 @@ public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, A
             name = holder.getName();
         }
 
-        return new SimpleArgument<>(name, holder.getFormat());
+        return new SimpleArgument<>(name, holder.getFormat(), annotation.nullable());
     }
 }

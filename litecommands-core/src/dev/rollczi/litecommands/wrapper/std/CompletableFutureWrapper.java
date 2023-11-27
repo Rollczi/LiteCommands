@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrapper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -19,7 +20,7 @@ public class CompletableFutureWrapper extends AbstractWrapper<CompletableFuture>
     }
 
     @Override
-    protected <EXPECTED> Supplier<CompletableFuture> wrapValue(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
+    protected <EXPECTED> Supplier<CompletableFuture> wrapValue(@Nullable EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
         return () -> scheduler.supply(SchedulerPoll.ASYNCHRONOUS, () -> valueToWrap);
     }
 
