@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.meta;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,7 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("rawtypes")
 public interface Meta {
 
-    MetaKey<String> DESCRIPTION = MetaKey.of("description", String.class, "none");
+    MetaKey<List<String>> DESCRIPTION = MetaKey.of("description", MetaType.list(), Collections.emptyList());
     MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
