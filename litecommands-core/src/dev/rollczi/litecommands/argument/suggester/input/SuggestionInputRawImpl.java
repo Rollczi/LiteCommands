@@ -89,13 +89,25 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 return SuggestionInputResult.endWith(result);
             }
 
-            if (context.isMissingPartOfArgument() || context.isLastRawArgument() || context.isPotentialLastArgument()) {
+            if (context.isMissingPartOfArgument() || context.isLastRawArgument()) {
                 Suggestion current = Suggestion.from(context.getAllNotConsumedArguments());
                 SuggestionContext suggestionContext = new SuggestionContext(current);
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
                     .filterBy(current);
 
                 return SuggestionInputResult.endWith(result);
+            }
+
+            if (context.isPotentialLastArgument()) {
+                Suggestion current = Suggestion.from(context.getAllNotConsumedArguments());
+                SuggestionContext suggestionContext = new SuggestionContext(current);
+                SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
+                    .filterBy(current);
+
+                int consumed = suggestionContext.getConsumed();
+                if (consumed == current.lengthMultilevel()) {
+                    return SuggestionInputResult.endWith(result);
+                }
             }
 
             ParseResult<T> result = context.parseArgument(invocation);

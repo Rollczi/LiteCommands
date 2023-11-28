@@ -38,7 +38,7 @@ public class QuotedStringTest {
     @Test
     void testSuggestionsEmpty() {
         platform.suggest("test before ")
-            .assertSuggest("\"\"", "\"<message>\"");
+            .assertSuggest("\"");
     }
 
     @Test
@@ -51,6 +51,20 @@ public class QuotedStringTest {
 
         platform.suggest("test before \"<message>")
             .assertSuggest("\"<message>\"");
+    }
+
+    @Test
+    void testSuggestionsEmptyInvalid() {
+        platform.suggest("test before \" ")
+            .assertSuggest("\"");
+    }
+
+    @Test
+    void testSuggestionsAfter() {
+        platform.suggest("test before \"<message>\" ")
+            .assertSuggest("<after>");
+        platform.suggest("test before \" \" ")
+            .assertSuggest("<after>");
     }
 
 }

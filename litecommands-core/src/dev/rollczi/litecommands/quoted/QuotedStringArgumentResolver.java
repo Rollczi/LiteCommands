@@ -49,7 +49,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
             return ParseResult.failure(this.messageRegistry.getInvoked(LiteMessages.QUOTED_STRING_INVALID_FORMAT, invocation, error));
         }
 
-        if (first.endsWith(quote)) {
+        if (first.length() > 1 && first.endsWith(quote)) {
             return ParseResult.success(first.substring(1, first.length() - 1));
         }
 
@@ -75,7 +75,16 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
-        SuggestionResult newResult = SuggestionResult.from(quoted(context.getCurrent()));
+        Suggestion current = context.getCurrent();
+
+        if (current.multilevel().isEmpty()) {
+            return SuggestionResult.of(quote);
+        }
+
+        Suggestion quotedSuggestion = quoted(current);
+        SuggestionResult newResult = SuggestionResult.from(quotedSuggestion);
+
+        context.setConsumed(quotedSuggestion.lengthMultilevel());
 
         ArgumentKey currentKey = argument.getKey();
         String name = argument.getName();
@@ -105,6 +114,11 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
             if (level.equals(quote) && multiLevelList.size() == 1) {
                 newMultiLevelList.add(quote + quote);
                 continue;
+            }
+
+            if ((index != 0 || level.length() != 1) && level.endsWith(quote)) {
+                newMultiLevelList.add(modifiedLevel);
+                break;
             }
 
             if (index == 0 && !level.startsWith(quote)) {

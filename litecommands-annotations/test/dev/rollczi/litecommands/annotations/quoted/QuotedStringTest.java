@@ -12,7 +12,7 @@ class QuotedStringTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute
-        String test(@Arg String before, @Arg("message") @Quoted String message, @Arg String after) {
+        String test(@Arg String before, @Arg("message") @Quoted String message, @Arg("after") String after) {
             return before + "-" + message + "-" + after;
         }
 
@@ -33,7 +33,7 @@ class QuotedStringTest extends LiteTestSpec {
     @Test
     void testSuggestionsEmpty() {
         platform.suggest("test before ")
-            .assertSuggest("\"\"", "\"<message>\"");
+            .assertSuggest("\"");
     }
 
     @Test
@@ -46,6 +46,20 @@ class QuotedStringTest extends LiteTestSpec {
 
         platform.suggest("test before \"<message>")
             .assertSuggest("\"<message>\"");
+    }
+
+    @Test
+    void testSuggestionsEmptyInvalid() {
+        platform.suggest("test before \" ")
+            .assertSuggest("\"");
+    }
+
+    @Test
+    void testSuggestionsAfter() {
+        platform.suggest("test before \"<message>\" ")
+            .assertSuggest("<after>");
+        platform.suggest("test before \" \" ")
+            .assertSuggest("<after>");
     }
 
 }
