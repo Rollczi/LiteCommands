@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.rollczi"
-version = "3.1.0"
+version = "3.1.1-SNAPSHOT"
 
 java {
     withSourcesJar()
