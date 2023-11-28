@@ -16,12 +16,23 @@ class QuotedStringTest extends LiteTestSpec {
             return before + "-" + message + "-" + after;
         }
 
+        @Execute(name = "end-quoted")
+        String test2(@Arg String before, @Arg("message") @Quoted String message) {
+            return before + "-" + message;
+        }
+
     }
 
     @Test
     void testSingle() {
         platform.execute("test before \"test\" after")
             .assertSuccess("before-test-after");
+    }
+
+    @Test
+    void testNoQuoted() {
+        platform.execute("test end-quoted before \"test after end")
+            .assertSuccess("before-test after end");
     }
 
     @Test

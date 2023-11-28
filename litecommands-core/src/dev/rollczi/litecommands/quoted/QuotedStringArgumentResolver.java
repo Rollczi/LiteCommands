@@ -8,7 +8,6 @@ import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.Suggestion;
@@ -45,8 +44,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
         String first = rawInput.next();
 
         if (!first.startsWith(quote)) {
-            QuotedError error = new QuotedError(first, QuotedError.Cause.FIRST_QUOTE);
-            return ParseResult.failure(this.messageRegistry.getInvoked(LiteMessages.QUOTED_STRING_INVALID_FORMAT, invocation, error));
+            return ParseResult.success(first);
         }
 
         if (first.length() > 1 && first.endsWith(quote)) {
@@ -69,8 +67,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
             return ParseResult.success(builder.toString());
         }
 
-        QuotedError error = new QuotedError(builder.toString(), QuotedError.Cause.LAST_QUOTE);
-        return ParseResult.failure(this.messageRegistry.getInvoked(LiteMessages.QUOTED_STRING_INVALID_FORMAT, invocation, error));
+        return ParseResult.success(builder.toString());
     }
 
     @Override
