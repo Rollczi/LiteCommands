@@ -31,6 +31,8 @@ class QuotedStringTest extends LiteTestSpec {
 
     @Test
     void testNoQuoted() {
+        platform.execute("test before test after")
+            .assertSuccess("before-test-after");
         platform.execute("test end-quoted before \"test after end")
             .assertSuccess("before-test after end");
     }
