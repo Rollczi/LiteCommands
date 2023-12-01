@@ -5,13 +5,13 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import org.junit.jupiter.api.Test;
 
-public class NullableArgTest extends LiteTestSpec {
+public class OptionalArgTest extends LiteTestSpec {
 
     @Command(name = "test")
     static class TestCommand {
 
         @Execute
-        String test(@Arg(nullable = true) String arg) {
+        String test(@Arg(optional = true) String arg) {
             return String.valueOf(arg);
         }
 
