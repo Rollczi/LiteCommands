@@ -89,7 +89,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 return SuggestionInputResult.endWith(result);
             }
 
-            if (context.isMissingPartOfArgument() || context.isLastRawArgument()) {
+            if (context.isMissingPartOfArgument()) {
                 Suggestion current = Suggestion.from(context.getAllNotConsumedArguments());
                 SuggestionContext suggestionContext = new SuggestionContext(current);
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
@@ -98,7 +98,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 return SuggestionInputResult.endWith(result);
             }
 
-            if (context.isPotentialLastArgument()) {
+            if (context.isLastRawArgument() || context.isPotentialLastArgument()) {
                 Suggestion current = Suggestion.from(context.getAllNotConsumedArguments());
                 SuggestionContext suggestionContext = new SuggestionContext(current);
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)

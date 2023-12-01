@@ -96,7 +96,7 @@ public final class LiteCommandsFactory {
                 .argument(Instant.class, new InstantArgumentResolver<>(messageRegistry))
                 .argument(LocalDateTime.class, new LocalDateTimeArgumentResolver<>(messageRegistry))
 
-                .argument(String.class, ArgumentKey.of(QuotedStringArgumentResolver.KEY), new QuotedStringArgumentResolver<>(messageRegistry, suggesterRegistry))
+                .argument(String.class, ArgumentKey.of(QuotedStringArgumentResolver.KEY), new QuotedStringArgumentResolver<>(suggesterRegistry))
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
                 .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
