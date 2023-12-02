@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.annotations.join.JoinArgumentProcessor;
 import dev.rollczi.litecommands.annotations.meta.MarkMetaAnnotationResolver;
 import dev.rollczi.litecommands.annotations.permission.PermissionAnnotationResolver;
 import dev.rollczi.litecommands.annotations.permission.PermissionsAnnotationResolver;
+import dev.rollczi.litecommands.annotations.quoted.QuotedAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.shortcut.ShortcutCommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.validator.ValidateAnnotationResolver;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -52,7 +53,9 @@ public class AnnotationProcessorService<SENDER> {
             .register(new PermissionAnnotationResolver<>())
             .register(new PermissionsAnnotationResolver<>())
             .register(new ValidateAnnotationResolver<>())
-            .register(new KeyAnnotationResolver<>()) // only for arguments
+            // argument meta processors
+            .register(new KeyAnnotationResolver<>())
+            .register(new QuotedAnnotationProcessor<>())
             // argument processors
             .register(new FlagArgumentProcessor<>())
             .register(new ArgArgumentProcessor<>())

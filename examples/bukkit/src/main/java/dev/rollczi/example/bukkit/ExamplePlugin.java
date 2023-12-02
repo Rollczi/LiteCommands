@@ -1,6 +1,7 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.example.bukkit.command.MuteCommand;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
@@ -40,6 +41,7 @@ public class ExamplePlugin extends JavaPlugin {
                 new ConvertCommand(),
                 new GameModeCommand(),
                 new KickCommand(),
+                new MuteCommand(),
                 new TeleportCommand(),
                 new FlyCommand()
             )
