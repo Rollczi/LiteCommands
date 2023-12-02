@@ -10,14 +10,14 @@ TODO
 - [ ] @Arg @Strict Option<T>
 - [x] @Arg Optional<T>
 - [x] @Arg CompletableFuture<User>
-- [ ] Support String and basic types
-- [ ] @Joiner String
+- [x] Support String and basic types
+- [x] @Join String
 - [x] @Async @Arg
 - [x] @Permission
 - [ ] @Arg @Range(min = 1, max = 10) int
 - [x] @Flag for booleans
 - [ ] @Editor
-- [ ] @Arg Enum
+- [x] @Arg Enum
 - [ ] @Arg List<String> // for example text, text, text
 - [ ] @Arg Set<T> // for example 1, 4, 5
 - [ ] @Arg Map<K, V> // for example key1=value1, key2=value2 // do wyrzucenia chyba
@@ -36,7 +36,7 @@ TODO
 - [ ] @Confirmation .confirmation()
 - [x] @Context
 - [ ] .debugger(true)
-- [ ] .errorHandler()
+- [x] .errorHandler()
 - [ ] @Arg @Regex("") String
 - [ ] @Arg @Regex("[a-zA-Z0-9_]") @Length(min = 3, max = 16) String playerName
 - [x] Return result handler
