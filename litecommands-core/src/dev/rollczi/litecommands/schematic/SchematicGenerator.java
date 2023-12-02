@@ -7,8 +7,9 @@ public interface SchematicGenerator<SENDER> {
 
     Schematic generate(SchematicInput<SENDER> schematicInput);
 
+    @Deprecated
     static <SENDER> SchematicGenerator<SENDER> from(SchematicFormat format, ValidatorService<SENDER> validatorService, WrapperRegistry wrapperRegistry) {
-        return new SchematicGeneratorSimpleImpl<>(format, validatorService, wrapperRegistry);
+        return new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry);
     }
 
 }

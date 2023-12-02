@@ -38,6 +38,7 @@ import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
+import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
@@ -91,7 +92,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
 
     protected Scheduler scheduler = new SchedulerSameThreadImpl();
-    protected SchematicGenerator<SENDER> schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+    protected SchematicGenerator<SENDER> schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -396,7 +397,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public LiteCommandsBuilder<SENDER, C, B> schematicGenerator(SchematicFormat format) {
-        this.schematicGenerator = SchematicGenerator.from(format, validatorService, wrapperRegistry);
+        this.schematicGenerator = new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry);
         return this;
     }
 
