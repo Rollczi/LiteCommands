@@ -35,6 +35,7 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
 
     TabCompleteProtocolLibAsync(Plugin plugin, Scheduler scheduler) {
         this.scheduler = scheduler;
+        this.tryReplaceConsoleTabCompleter(plugin.getServer());
         MANAGER.addPacketListener(listener = new PacketAdapter(plugin, PacketType.Play.Client.TAB_COMPLETE) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
@@ -42,7 +43,6 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
             }
         });
 
-        this.tryReplaceConsoleTabCompleter(plugin.getServer());
     }
 
     private void tryReplaceConsoleTabCompleter(Server server) {
