@@ -57,7 +57,7 @@ public class BukkitCommand extends Command {
             CompletableFuture<List<String>> future = this.suggest(sender, alias, args);
 
             try {
-                future.get(0, TimeUnit.MILLISECONDS);
+                return future.get(0, TimeUnit.MILLISECONDS);
             }
             catch (TimeoutException exception) {
                 if (settings.syncSuggestionWarning()) {
