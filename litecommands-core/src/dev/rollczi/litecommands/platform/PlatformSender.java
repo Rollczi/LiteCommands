@@ -28,7 +28,7 @@ public interface PlatformSender {
      *             Use {@link Invocation#sender()} instead and check permissions.
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.1.0")
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.1.1")
     boolean hasPermission(String permission);
 
     <T> T getProperty(MetaKey<T> key);
