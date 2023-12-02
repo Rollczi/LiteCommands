@@ -8,7 +8,6 @@ import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.context.ContextRegistry;
-import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.Requirement;
@@ -37,7 +36,6 @@ import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import panda.std.Result;
 
@@ -114,30 +112,17 @@ public class CommandExecuteService<SENDER> {
         return executeResult;
     }
 
-    private Object mapResult(Object result, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
-        if (result instanceof InvalidUsageException) {
-            InvalidUsageException exception = (InvalidUsageException) result;
-            Object errorResult = exception.getErrorResult();
-
-            if (errorResult instanceof InvalidUsage.Cause) {
-                return createInvalidUsage((Cause) errorResult, commandRoute, executeResult, invocation);
-            }
-        }
-
-        if (result instanceof Cause) {
-            return createInvalidUsage((Cause) result, commandRoute, executeResult, invocation);
-        }
-
-        return result;
-    }
-
-    @NotNull
     @SuppressWarnings("unchecked")
-    private InvalidUsage<SENDER> createInvalidUsage(Cause result, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
-        @Nullable CommandExecutor<SENDER> executor = (CommandExecutor<SENDER>) executeResult.getExecutor();
-        Schematic schematic = schematicGenerator.generate(new SchematicInput<>(commandRoute, executor, invocation));
+    private Object mapResult(Object error, CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
+        if (error instanceof Cause) {
+            Cause cause = (Cause) error;
+            @Nullable CommandExecutor<SENDER> executor = (CommandExecutor<SENDER>) executeResult.getExecutor();
+            Schematic schematic = schematicGenerator.generate(new SchematicInput<>(commandRoute, executor, invocation));
 
-        return new InvalidUsage<>(result, commandRoute, schematic);
+            return new InvalidUsage<>(cause, commandRoute, schematic);
+        }
+
+        return error;
     }
 
     private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute0(

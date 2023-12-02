@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
@@ -62,6 +63,10 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             }
             catch (InvocationTargetException exception) {
                 Throwable targetException = exception.getTargetException();
+
+                if (targetException instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
+                    return CommandExecuteResult.failed(this, ((InvalidUsageException) targetException).getErrorResult());
+                }
 
                 throw new LiteCommandsReflectInvocationException(this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }
