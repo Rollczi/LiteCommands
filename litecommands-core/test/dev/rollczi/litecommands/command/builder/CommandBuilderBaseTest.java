@@ -155,8 +155,8 @@ class CommandBuilderBaseTest {
 
         CommandBuilderDummyPrefix dummy = assertInstanceOf(CommandBuilderDummyPrefix.class, context);
 
-        assertEquals("child", dummy.children.name());
-        assertEquals(Arrays.asList("child", "c"), dummy.children.aliases());
+        assertEquals("child", dummy.nativeDummyChildren.name());
+        assertEquals(Arrays.asList("child", "c"), dummy.nativeDummyChildren.aliases());
     }
 
     @Test
@@ -171,13 +171,13 @@ class CommandBuilderBaseTest {
 
         CommandBuilderDummyPrefix dummy = assertInstanceOf(CommandBuilderDummyPrefix.class, context);
 
-        assertEquals("child", dummy.children.name());
-        assertEquals(Arrays.asList("child", "c"), dummy.children.aliases());
+        assertEquals("child", dummy.nativeDummyChildren.name());
+        assertEquals(Arrays.asList("child", "c"), dummy.nativeDummyChildren.aliases());
 
-        CommandBuilderDummyPrefix dummy2 = assertInstanceOf(CommandBuilderDummyPrefix.class, dummy.children);
+        CommandBuilderDummyPrefix dummy2 = assertInstanceOf(CommandBuilderDummyPrefix.class, dummy.nativeDummyChildren);
 
-        assertEquals("grandchild", dummy2.children.name());
-        assertEquals(Arrays.asList("grandchild-alias", "gc"), dummy2.children.aliases());
+        assertEquals("grandchild", dummy2.nativeDummyChildren.name());
+        assertEquals(Arrays.asList("grandchild-alias", "gc"), dummy2.nativeDummyChildren.aliases());
     }
 
     @Test
@@ -194,8 +194,8 @@ class CommandBuilderBaseTest {
 
         CommandBuilderDummyPrefix<?> dummy = assertInstanceOf(CommandBuilderDummyPrefix.class, context);
 
-        assertEquals("child", dummy.children.name());
-        assertEquals(Arrays.asList("child", "c"), dummy.children.aliases());
+        assertEquals("child", dummy.nativeDummyChildren.name());
+        assertEquals(Arrays.asList("child", "c"), dummy.nativeDummyChildren.aliases());
     }
 
     @Test
@@ -235,8 +235,8 @@ class CommandBuilderBaseTest {
 
         CommandBuilderDummyPrefix<?> dummy = assertInstanceOf(CommandBuilderDummyPrefix.class, context);
 
-        assertEquals("edited-child", dummy.children.name());
-        assertEquals(Collections.singletonList("edited-c"), dummy.children.aliases());
+        assertEquals("edited-child", dummy.nativeDummyChildren.name());
+        assertEquals(Collections.singletonList("edited-c"), dummy.nativeDummyChildren.aliases());
     }
 
     @Test

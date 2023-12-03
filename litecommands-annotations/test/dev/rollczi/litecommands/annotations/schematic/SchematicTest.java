@@ -43,10 +43,10 @@ class SchematicTest extends LiteTestSpec {
         @Execute(name = "permission info")
         void permissionInfo(@Arg("rank") ServerRank rank, @Arg("permission") Option<String> permission) {}
 
-        @Execute(name = "permission add")
+        @Execute(name = "permission add", aliases = {"perm add"})
         void permissionAdd(@Arg("permission") String permission) {}
 
-        @Execute(name = "permission remove")
+        @Execute(name = "permission remove", aliases = {"perm remove"})
         void permissionRemove(@Arg("permission") String permission) {}
     }
 

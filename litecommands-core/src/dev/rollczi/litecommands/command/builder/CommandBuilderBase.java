@@ -159,7 +159,7 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     @ApiStatus.Internal
     public CommandBuilder<SENDER> routeAliases(List<String> aliases) {
         if (aliases.isEmpty()) {
-            return this;
+            return getFirstRoute();
         }
 
         int countDummy = this.countDummy(aliases.get(0));
@@ -325,6 +325,21 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
             this.appendChild(childToMeagre);
         }
 
+    }
+
+    @Nullable
+    protected CommandBuilderBase<SENDER> getFirstRoute() {
+        if (this.dummyPrefix == null) {
+            return this;
+        }
+
+        CommandBuilderBase<SENDER> prefix = this.dummyPrefix.getFirstRoute();
+
+        if (prefix == null) {
+            return this.dummyPrefix;
+        }
+
+        return prefix;
     }
 
 }
