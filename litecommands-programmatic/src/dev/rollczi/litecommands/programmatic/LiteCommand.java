@@ -52,11 +52,6 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
-    public LiteCommand<SENDER> argument(String name, Class<?> type, boolean nullable) {
-        this.arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type), nullable));
-        return this;
-    }
-
     public LiteCommand<SENDER> argument(Argument<?> argument) {
         this.arguments.add(argument);
         return this;
