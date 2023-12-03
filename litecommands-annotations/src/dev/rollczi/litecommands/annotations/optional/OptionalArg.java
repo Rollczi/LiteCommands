@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.annotations.argument;
+package dev.rollczi.litecommands.annotations.optional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Arg {
+public @interface OptionalArg {
 
     String value() default "";
 
