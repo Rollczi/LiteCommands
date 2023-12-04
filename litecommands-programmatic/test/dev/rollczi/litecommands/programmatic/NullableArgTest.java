@@ -13,11 +13,11 @@ public class NullableArgTest {
     TestPlatform testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder.commands(
         new LiteCommand<TestSender>("ban")
             .argument("player", String.class)
-            .argument("reason", String.class, true)
+            .argumentNullable("reason", String.class)
             .onExecute(context -> {
                 TestSender sender = context.invocation().sender();
                 String player = context.argument("player", String.class);
-                String reason = context.argument("reason", String.class);
+                String reason = context.argumentNullable("reason", String.class);
 
                 sender.sendMessage("banned " + player + " " + reason);
             })

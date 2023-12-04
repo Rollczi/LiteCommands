@@ -27,6 +27,14 @@ public class LiteContext<SENDER> {
         return (Optional<T>) this.get(name, WrapFormat.of(type, Optional.class));
     }
 
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <T> T argumentNullable(String name, Class<T> type) {
+        Optional<T> optional = this.get(name, WrapFormat.of(type, Optional.class));
+
+        return optional.orElse(null);
+    }
+
     public boolean argumentFlag(String name) {
         return Boolean.TRUE.equals(this.get(name, WrapFormat.notWrapped(Boolean.class)));
     }

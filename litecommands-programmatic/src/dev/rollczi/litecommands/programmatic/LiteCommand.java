@@ -62,6 +62,11 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
+    public LiteCommand<SENDER> argumentNullable(String name, Class<?> type) {
+        this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
+        return this;
+    }
+
     public LiteCommand<SENDER> argumentFlag(String name) {
         this.arguments.add(new FlagArgument(name, WrapFormat.notWrapped(boolean.class)));
         return this;
