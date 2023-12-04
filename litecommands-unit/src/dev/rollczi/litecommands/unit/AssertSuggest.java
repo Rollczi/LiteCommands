@@ -21,8 +21,10 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(String... suggestions) {
-        assertThat(suggest.getSuggestions().stream().map(suggestion -> suggestion.multilevel()))
-            .containsAll(Arrays.asList(suggestions));
+        assertThat(suggest.getSuggestions().stream()
+            .map(suggestion -> suggestion.multilevel())
+            .filter(suggestion -> !suggestion.isEmpty())
+        ).containsExactlyInAnyOrderElementsOf(Arrays.asList(suggestions));
         return this;
     }
 

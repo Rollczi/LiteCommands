@@ -92,6 +92,38 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
+    public CommandRoute<SENDER> merge(CommandRoute<SENDER> toMerge) {
+        if (!this.name.equals(toMerge.getName())) {
+            throw new IllegalArgumentException("Cannot merge routes with different names!");
+        }
+
+        List<String> aliases = new ArrayList<>(this.aliases);
+        aliases.addAll(toMerge.getAliases());
+
+        CommandRouteImpl<SENDER> merged = new CommandRouteImpl<>(this.name, aliases, this.parent);
+        merged.meta().apply(this.meta());
+        merged.meta().apply(toMerge.meta());
+
+        for (CommandExecutor<SENDER> executor : this.executors) {
+            merged.appendExecutor(executor);
+        }
+
+        for (CommandExecutor<SENDER> executor : toMerge.getExecutors()) {
+            merged.appendExecutor(executor);
+        }
+
+        for (CommandRoute<SENDER> child : this.childRoutes) {
+            merged.appendChildren(child);
+        }
+
+        for (CommandRoute<SENDER> child : toMerge.getChildren()) {
+            merged.appendChildren(child);
+        }
+
+        return merged;
+    }
+
+    @Override
     public @Nullable MetaHolder parentMeta() {
         return parent;
     }
