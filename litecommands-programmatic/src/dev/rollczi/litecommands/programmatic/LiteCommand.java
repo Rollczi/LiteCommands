@@ -49,7 +49,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argument(String name, Class<?> type) {
-        this.arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type)));
+        this.arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type), false));
         return this;
     }
 
@@ -66,6 +66,11 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argumentOptional(String name, Class<?> type) {
+        this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
+        return this;
+    }
+
+    public LiteCommand<SENDER> argumentNullable(String name, Class<?> type) {
         this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
         return this;
     }

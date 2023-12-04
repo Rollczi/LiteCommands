@@ -2,10 +2,10 @@ package dev.rollczi.litecommands.flag;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.SimpleArgument;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class FlagArgument extends SimpleArgument<Boolean> {
 
@@ -16,8 +16,8 @@ public class FlagArgument extends SimpleArgument<Boolean> {
     }
 
     @Override
-    public Optional<Boolean> defaultValue() {
-        return Optional.of(false);
+    public Optional<ParseResult<Boolean>> defaultValue() {
+        return Optional.of(ParseResult.success(false));
     }
 
 }

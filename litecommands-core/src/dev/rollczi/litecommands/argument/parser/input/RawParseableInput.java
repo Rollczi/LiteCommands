@@ -45,10 +45,9 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
             RawInputAnalyzer.Context<SENDER, PARSED> context = rawInputAnalyzer.toContext(argument, parserSet);
 
             if (context.isMissingFullArgument()) {
-                Optional<PARSED> optional = argument.defaultValue();
+                Optional<ParseResult<PARSED>> optional = argument.defaultValue();
 
                 return optional
-                    .map(ParseResult::success)
                     .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT));
             }
 

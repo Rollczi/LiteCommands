@@ -1,9 +1,11 @@
 package dev.rollczi.litecommands.wrapper;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface Wrapper {
 
     <EXPECTED> Wrap<EXPECTED> create(
-        EXPECTED valueToWrap,
+        @Nullable EXPECTED valueToWrap,
         WrapFormat<EXPECTED, ?> info
     );
 
