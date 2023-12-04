@@ -128,7 +128,7 @@ Maven
 <div align="center">
     <h3>Thanks to all sponsors!</h3>
     <p>Special thanks to all sponsors for supporting me and my projects! ❤️</p>
-    <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://github.com/rchomczyk.png" width="60px" alt="Rafał Chomczyk" /></a><!-- sponsors -->
+    <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://github.com/rchomczyk.png" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://github.com/SfenKer.png" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 </div>
 
 
