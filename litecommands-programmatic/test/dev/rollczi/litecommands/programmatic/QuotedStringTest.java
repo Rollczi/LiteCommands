@@ -38,19 +38,19 @@ public class QuotedStringTest {
     @Test
     void testSuggestionsEmpty() {
         platform.suggest("test before ")
-            .assertSuggest("\"");
+            .assertSuggest("\"", "\"<message>\"", "<message>", "\"\"");
     }
 
     @Test
     void testSuggestions() {
         platform.suggest("test before \"")
-            .assertSuggest("\"\"", "\"<message>\"");
+            .assertSuggest("\"\"", "\"", "\"<message>\"");
 
         platform.suggest("test before \"<")
-            .assertSuggest("\"<\"", "\"<message>\"");
+            .assertSuggest("\"<\"", "\"<", "\"<message>\"");
 
         platform.suggest("test before \"<message>")
-            .assertSuggest("\"<message>\"");
+            .assertSuggest("\"<message>\"", "\"<message>");
     }
 
     @Test

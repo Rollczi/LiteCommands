@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
@@ -168,7 +169,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     /**
-     * Pre-process extensions on provider before executing {@link CommandBuilderCollector#collectAndMergeCommands()}
+     * Pre-process extensions on provider before executing {@link CommandBuilderCollector#collectCommands()}
      * Kinda magic, but it works.
      *
      * @param commandsProvider provider of commands.
@@ -468,18 +469,22 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
-        List<CommandBuilder<SENDER>> collectedContexts = this.commandBuilderCollector.collectAndMergeCommands();
+        CommandMerger<SENDER> commandMerger = new CommandMerger<>();
 
-        for (CommandBuilder<SENDER> context : collectedContexts) {
-            CommandBuilder<SENDER> edited = editorService.edit(context);
+        for (CommandBuilder<SENDER> collected : this.commandBuilderCollector.collectCommands()) {
+            CommandBuilder<SENDER> edited = editorService.edit(collected);
 
             if (!edited.buildable()) {
                 continue;
             }
 
             for (CommandRoute<SENDER> commandRoute : edited.build(commandManager.getRoot())) {
-                commandManager.register(commandRoute);
+                commandMerger.merge(commandRoute);
             }
+        }
+
+        for (CommandRoute<SENDER> mergedCommand : commandMerger.getMergedCommands()) {
+            commandManager.register(mergedCommand);
         }
 
         for (LiteBuilderProcessor<SENDER, C> processor : postProcessors) {

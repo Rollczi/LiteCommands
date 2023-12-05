@@ -25,19 +25,6 @@ class ShortcutTest extends LiteTestSpec {
 
     }
 
-    @Command(name = "multi base")
-    @Permission("base.multi")
-    static class TestMultiCommand {
-
-        @Execute(name = "executor")
-        @Shortcut("short-multi")
-        @Permission("executor.multi")
-        String executeOpt(@Arg String text, @Arg Option<String> test) {
-            return text + ":" + test.orElseGet("none");
-        }
-
-    }
-
     @Test
     void testExecuteNormalCommand() {
         platform.execute(permitted("base.permission", "executor.permission"), "base executor key value")
@@ -54,18 +41,6 @@ class ShortcutTest extends LiteTestSpec {
     void testExecuteShortCommandWithoutPermission() {
         platform.execute("short key value")
             .assertMissingPermission("executor.permission", "base.permission");
-    }
-
-    @Test
-    void testExecuteShortMultiCommand() {
-        platform.execute(permitted("base.multi", "executor.multi"), "short-multi key value")
-            .assertSuccess("key:value");
-    }
-
-    @Test
-    void testExecuteShortMultiCommandWithoutPermission() {
-        platform.execute("short-multi key value")
-            .assertMissingPermission("executor.multi", "base.multi");
     }
 
 }

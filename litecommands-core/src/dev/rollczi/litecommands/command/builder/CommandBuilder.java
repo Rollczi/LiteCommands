@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.command.builder;
 
 import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.CommandRoutePath;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.scope.Scopeable;
@@ -78,12 +79,11 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     @ApiStatus.Internal
     CommandBuilder<SENDER> getRealRoute();
 
-    default boolean hasShortRoute() {
-        return false;
-    }
+    @ApiStatus.Experimental
+    CommandBuilder<SENDER> shortcuts(List<String> shortcuts);
 
     @ApiStatus.Internal
-    CommandBuilder<SENDER> shortRoutes(List<String> aliases);
+    CommandBuilder<SENDER> shortcuts(CommandExecutorProvider<SENDER> executorProvider, List<String> shortcuts);
 
     @ApiStatus.Internal
     void meagre(CommandBuilder<SENDER> context);

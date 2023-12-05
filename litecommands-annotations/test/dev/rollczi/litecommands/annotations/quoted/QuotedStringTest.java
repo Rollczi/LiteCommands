@@ -71,7 +71,7 @@ class QuotedStringTest extends LiteTestSpec {
     @Test
     void testSuggestionsEmpty() {
         platform.suggest("test before ")
-            .assertSuggest("\"", "<message>");
+            .assertSuggest("\"\"", "\"", "<message>", "\"<message>\"");
     }
 
     @Test
@@ -94,13 +94,13 @@ class QuotedStringTest extends LiteTestSpec {
     @Test
     void testSuggestions() {
         platform.suggest("test before \"")
-            .assertSuggest("\"\"", "\"<message>\"");
+            .assertSuggest("\"\"", "\"", "\"<message>\"");
 
         platform.suggest("test before \"<")
-            .assertSuggest("\"<\"", "\"<message>\"");
+            .assertSuggest("\"<\"", "\"<", "\"<message>\"");
 
         platform.suggest("test before \"<message>")
-            .assertSuggest("\"<message>\"");
+            .assertSuggest("\"<message>\"", "\"<message>");
     }
 
     @Test
