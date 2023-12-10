@@ -51,7 +51,13 @@ class BukkitCommandsRegistryImpl implements BukkitCommandsRegistry {
 
     @Override
     public boolean register(@NotNull String label, @NotNull String fallbackPrefix, @NotNull Command command) {
-        return this.commandMap.get().register(label, fallbackPrefix, command);
+        CommandMap map = this.commandMap.get();
+
+        if (map.getCommand(label) != null) {
+            this.knownCommands.get().remove(label);
+        }
+
+        return map.register(label, fallbackPrefix, command);
     }
 
     @Override
