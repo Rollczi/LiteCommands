@@ -28,6 +28,7 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
     public Schematic generate(SchematicInput<SENDER> schematicInput) {
         List<String> schematics = generateRaw(schematicInput)
             .map(schematic -> format.prefix() + schematic.trim() + format.suffix())
+            .distinct()
             .collect(Collectors.toList());
 
         return new Schematic(schematics);
