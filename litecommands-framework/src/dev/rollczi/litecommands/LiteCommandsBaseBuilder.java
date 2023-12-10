@@ -491,7 +491,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        LiteCommands<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager);
+        LiteCommands<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager, this);
 
         if (register) {
             liteCommand.register();
@@ -520,6 +520,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public Scheduler getScheduler() {
         return this.scheduler;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public SchematicGenerator<SENDER> getSchematicGenerator() {
+        return this.schematicGenerator;
     }
 
     @Override
