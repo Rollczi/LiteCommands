@@ -81,19 +81,19 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final List<LiteExtension<SENDER, ?>> extensions = new ArrayList<>();
     protected final List<LiteCommandsProviderExtension<SENDER, ?>> commandsProviderExtensions = new ArrayList<>();
 
-    protected final EditorService<SENDER> editorService = new EditorService<>();
-    protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
-    protected final ParserRegistry<SENDER> parserRegistry = new ParserRegistryImpl<>();
-    protected final SuggesterRegistry<SENDER> suggesterRegistry = new SuggesterRegistryImpl<>();
-    protected final BindRegistry bindRegistry = new BindRegistry();
-    protected final ContextRegistry<SENDER> contextRegistry = new ContextRegistry<>();
-    protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleServiceImpl<>();
-    protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
-    protected final MessageRegistry<SENDER> messageRegistry = new MessageRegistry<SENDER>();
-    protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
+    protected final EditorService<SENDER> editorService;
+    protected final ValidatorService<SENDER> validatorService;
+    protected final ParserRegistry<SENDER> parserRegistry;
+    protected final SuggesterRegistry<SENDER> suggesterRegistry;
+    protected final BindRegistry bindRegistry;
+    protected final ContextRegistry<SENDER> contextRegistry;
+    protected final ResultHandleService<SENDER> resultHandleService;
+    protected final CommandBuilderCollector<SENDER> commandBuilderCollector;
+    protected final MessageRegistry<SENDER> messageRegistry;
+    protected final WrapperRegistry wrapperRegistry;
 
-    protected Scheduler scheduler = new SchedulerSameThreadImpl();
-    protected SchematicGenerator<SENDER> schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+    protected Scheduler scheduler;
+    protected SchematicGenerator<SENDER> schematicGenerator;
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -102,8 +102,57 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      * @param platform platform
      */
     public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+        this(
+            senderClass,
+            platform,
+            new EditorService<>(),
+            new ValidatorService<>(),
+            new ParserRegistryImpl<>(),
+            new SuggesterRegistryImpl<>(),
+            new BindRegistry(),
+            new ContextRegistry<>(),
+            new ResultHandleServiceImpl<>(),
+            new CommandBuilderCollector<>(),
+            new MessageRegistry<>(),
+            new WrapperRegistry()
+        );
+    }
+
+    /**
+     * Copy constructor
+     */
+    @ApiStatus.Experimental
+    public LiteCommandsBaseBuilder(
+        Class<SENDER> senderClass,
+        Platform<SENDER, C> platform,
+
+        EditorService<SENDER> editorService,
+        ValidatorService<SENDER> validatorService,
+        ParserRegistry<SENDER> parserRegistry,
+        SuggesterRegistry<SENDER> suggesterRegistry,
+        BindRegistry bindRegistry,
+        ContextRegistry<SENDER> contextRegistry,
+        ResultHandleService<SENDER> resultHandleService,
+        CommandBuilderCollector<SENDER> commandBuilderCollector,
+        MessageRegistry<SENDER> messageRegistry,
+        WrapperRegistry wrapperRegistry
+    ) {
         this.senderClass = senderClass;
         this.platform = platform;
+
+        this.editorService = editorService;
+        this.validatorService = validatorService;
+        this.parserRegistry = parserRegistry;
+        this.suggesterRegistry = suggesterRegistry;
+        this.bindRegistry = bindRegistry;
+        this.contextRegistry = contextRegistry;
+        this.resultHandleService = resultHandleService;
+        this.commandBuilderCollector = commandBuilderCollector;
+        this.messageRegistry = messageRegistry;
+        this.wrapperRegistry = wrapperRegistry;
+
+        this.scheduler = new SchedulerSameThreadImpl();
+        this.schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
     }
 
     @Override
