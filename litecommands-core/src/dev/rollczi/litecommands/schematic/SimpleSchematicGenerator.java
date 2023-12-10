@@ -28,6 +28,7 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
     public Schematic generate(SchematicInput<SENDER> schematicInput) {
         List<String> schematics = generateRaw(schematicInput)
             .map(schematic -> format.prefix() + schematic.trim() + format.suffix())
+            .distinct()
             .collect(Collectors.toList());
 
         return new Schematic(schematics);
@@ -40,11 +41,14 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
             .collect(Collectors.joining(SEPARATOR))
             + SEPARATOR;
 
+        Stream<String> routeScheme = generateRoute(schematicInput, schematicInput.getLastRoute(), base);
+
         if (executor != null) {
-            return Stream.of(base + generateExecutor(schematicInput, executor));
+            Stream<String> executorScheme = Stream.of(base + generateExecutor(schematicInput, executor));
+            return Stream.concat(routeScheme, executorScheme);
         }
 
-        return generateRoute(schematicInput, schematicInput.getLastRoute(), base);
+        return routeScheme;
     }
 
     protected Stream<String> generateRoute(SchematicInput<SENDER> input, CommandRoute<SENDER> route, String base) {

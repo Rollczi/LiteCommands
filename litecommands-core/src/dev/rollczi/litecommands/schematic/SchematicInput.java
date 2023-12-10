@@ -40,7 +40,13 @@ public class SchematicInput<SENDER> {
 
         while (currentRoute != null && !currentRoute.isRoot()) {
             routes.add(currentRoute);
-            currentRoute = currentRoute.getParent();
+            CommandRoute<SENDER> parent = currentRoute.getParent();
+
+            if (currentRoute.isReference() && parent != null && !parent.isReference()) {
+                break;
+            }
+
+            currentRoute = parent;
         }
 
         Collections.reverse(routes);

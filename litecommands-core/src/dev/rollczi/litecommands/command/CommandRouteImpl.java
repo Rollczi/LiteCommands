@@ -100,11 +100,17 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
         List<String> aliases = new ArrayList<>(this.aliases);
         aliases.addAll(toMerge.getAliases());
 
-        CommandRouteImpl<SENDER> merged = new CommandRouteImpl<>(this.name, aliases, this.parent);
+        CommandRouteImpl<SENDER> merged = new CommandRouteImpl<SENDER>(this.name, aliases, this.parent) {
+            @Override
+            public boolean isReference() {
+                return CommandRouteImpl.this.isReference(); // because parent is the same. TODO: refactor
+            }
+        };
+
         merged.meta().apply(this.meta());
         merged.meta().apply(toMerge.meta());
 
-        for (CommandExecutor<SENDER> executor : this.executors) {
+        for (CommandExecutor<SENDER> executor : this.getExecutors()) {
             merged.appendExecutor(executor);
         }
 
@@ -112,7 +118,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
             merged.appendExecutor(executor);
         }
 
-        for (CommandRoute<SENDER> child : this.childRoutes) {
+        for (CommandRoute<SENDER> child : this.getChildren()) {
             merged.appendChildren(child);
         }
 
