@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.annotations.async.Async;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import dev.rollczi.litecommands.annotations.shortcut.Shortcut;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.unit.TestPlatformSender;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,11 @@ class SchematicTest extends LiteTestSpec {
     @Command(name = "rank")
     @Permission("server.management.rank")
     static class RankCommand {
+
+        @Execute
+        @Shortcut("r")
+        void rank(@Arg("test") String test) {}
+
         @Execute(name = "list")
         void list(@Arg("rank") Option<ServerRank> rank) {}
 
@@ -30,6 +36,7 @@ class SchematicTest extends LiteTestSpec {
         void set(@Arg("target") String target, @Arg("rank") Option<ServerRank> rank, @Arg("duration") Option<String> duration) {}
 
         @Execute(name = "info")
+        @Shortcut("r info")
         void info(@Arg("rank") ServerRank rank) {}
 
         @Async
@@ -57,10 +64,11 @@ class SchematicTest extends LiteTestSpec {
             .assertFailedAs(InvalidUsage.class);
 
         assertThat(invalidUsage.getCause())
-            .isEqualByComparingTo(InvalidUsage.Cause.UNKNOWN_COMMAND);
+            .isEqualByComparingTo(InvalidUsage.Cause.MISSING_ARGUMENT);
 
         assertThat(invalidUsage.getSchematic().all())
             .containsOnly(
+                "/rank <test>",
                 "/rank list [rank]",
                 "/rank set <target> [rank] [duration]",
                 "/rank info <rank>",
@@ -69,6 +77,22 @@ class SchematicTest extends LiteTestSpec {
                 "/rank permission info <rank> [permission]",
                 "/rank permission add <permission>",
                 "/rank permission remove <permission>"
+            );
+    }
+
+    @Test
+    @DisplayName("Should generate schematic for all commands (with shortcuts)")
+    void shouldGenerateSchematicForAllCommandsWithShortcuts() {
+        InvalidUsage invalidUsage = platform.execute(TestPlatformSender.permittedAll(), "r")
+            .assertFailedAs(InvalidUsage.class);
+
+        assertThat(invalidUsage.getCause())
+            .isEqualByComparingTo(InvalidUsage.Cause.MISSING_ARGUMENT);
+
+        assertThat(invalidUsage.getSchematic().all())
+            .containsOnly(
+                "/r <test>",
+                "/r info <rank>"
             );
     }
 
