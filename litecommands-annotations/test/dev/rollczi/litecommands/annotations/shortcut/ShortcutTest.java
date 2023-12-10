@@ -16,6 +16,12 @@ class ShortcutTest extends LiteTestSpec {
     @Permission("base.permission")
     static class TestCommand {
 
+        @Execute
+        @Shortcut("root")
+        String execute() {
+            return "root";
+        }
+
         @Execute(name = "executor")
         @Shortcut("short")
         @Permission("executor.permission")
@@ -23,6 +29,12 @@ class ShortcutTest extends LiteTestSpec {
             return text + ":" + test.orElseGet("none");
         }
 
+    }
+
+    @Test
+    void testExecuteRootCommand() {
+        platform.execute(permitted("base.permission"), "root")
+            .assertSuccess("root");
     }
 
     @Test
