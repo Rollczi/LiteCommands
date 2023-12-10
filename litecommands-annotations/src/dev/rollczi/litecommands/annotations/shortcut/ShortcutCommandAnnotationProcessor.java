@@ -29,7 +29,10 @@ public class ShortcutCommandAnnotationProcessor<SENDER> implements AnnotationPro
 
         String childName = executeAnnotation.name();
         if (childName.isEmpty()) {
-            throw new IllegalArgumentException("@ShortCommand annotation cannot be declared on root executor");
+            context.getRealRoute()
+                .shortcuts(executorProvider, Arrays.asList(shortAnnotation.value()));
+
+            return context;
         }
 
         context.getRealRoute().getChild(childName)
