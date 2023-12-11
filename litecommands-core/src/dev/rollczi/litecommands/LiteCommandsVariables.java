@@ -7,9 +7,9 @@ package dev.rollczi.litecommands;
  */
 public final class LiteCommandsVariables {
 
-    public static final String VERSION = "3.2.0-SNAPSHOT";
-    public static final String BRANCH = "master";
-    public static final String COMMIT = "3e05bcf3550cfac6b33a0b6a824226e46c50a109";
+    public static final String VERSION = "{litecommands-version}";
+    public static final String BRANCH = "{litecommands-branch}";
+    public static final String COMMIT = "{litecommands-commit}";
 
     private LiteCommandsVariables() {
     }
