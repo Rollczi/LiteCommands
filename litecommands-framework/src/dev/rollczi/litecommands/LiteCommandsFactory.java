@@ -16,6 +16,7 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
+import dev.rollczi.litecommands.handler.result.standard.CollectionHandler;
 import dev.rollczi.litecommands.handler.result.standard.CompletionStageHandler;
 import dev.rollczi.litecommands.handler.result.standard.OptionHandler;
 import dev.rollczi.litecommands.handler.result.standard.OptionalHandler;
@@ -50,6 +51,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
@@ -113,6 +115,7 @@ public final class LiteCommandsFactory {
                 .result(Optional.class, new OptionalHandler<>())
                 .result(Option.class, new OptionHandler<>())
                 .result(CompletionStage.class, new CompletionStageHandler<>())
+                .result(Collection.class, new CollectionHandler<>())
                 .result(MissingPermissions.class, new MissingPermissionResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
                 ;

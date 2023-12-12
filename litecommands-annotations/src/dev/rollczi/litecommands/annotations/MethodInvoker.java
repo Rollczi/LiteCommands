@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.annotations;
 
+import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorService;
 import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.meta.Meta;
@@ -27,13 +28,13 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
     private boolean isExecutorStructure = false;
 
-    public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, WrapperRegistry wrapperRegistry, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
+    public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, MethodValidatorService<SENDER> validatorService, WrapperRegistry wrapperRegistry, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
         this.annotationProcessorService = annotationProcessorService;
         this.wrapperRegistry = wrapperRegistry;
         this.method = method;
         this.commandBuilder = commandBuilder;
         this.methodDefinition = new MethodDefinition(method);
-        this.executorProvider = parent -> new MethodCommandExecutor<>(parent, method, instance, methodDefinition, meta);
+        this.executorProvider = parent -> new MethodCommandExecutor<>(parent, method, instance, methodDefinition, meta, validatorService);
     }
 
     @Override
