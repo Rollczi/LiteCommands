@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
+import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorContext;
+import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorService;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
@@ -10,6 +12,7 @@ import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
+import dev.rollczi.litecommands.validator.ValidatorResult;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,18 +23,21 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     private final Method method;
     private final Object instance;
     private final MethodDefinition definition;
+    private final MethodValidatorService<SENDER> validatorService;
 
     MethodCommandExecutor(
         CommandRoute<SENDER> parent,
         Method method,
         Object instance,
         MethodDefinition definition,
-        Meta meta
+        Meta meta,
+        MethodValidatorService<SENDER> validatorService
     ) {
         super(parent, definition.getArguments(), definition.getContextRequirements(), definition.getBindRequirements());
         this.method = method;
         this.instance = instance;
         this.definition = definition;
+        this.validatorService = validatorService;
         this.meta.apply(meta);
     }
 
@@ -60,6 +66,12 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             }
 
             objects[parameterIndex] = unwrapped;
+        }
+
+        ValidatorResult result = validatorService.validate(new MethodValidatorContext<>(results.getInvocation(), instance, method, objects));
+
+        if (result.isInvalid()) {
+            return CommandExecutorMatchResult.failed(result.getInvalidResult());
         }
 
         return CommandExecutorMatchResult.success(() -> {

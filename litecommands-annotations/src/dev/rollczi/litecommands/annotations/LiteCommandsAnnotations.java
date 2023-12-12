@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.annotations;
 import dev.rollczi.litecommands.annotations.inject.Injector;
 import dev.rollczi.litecommands.LiteCommandsInternal;
 import dev.rollczi.litecommands.LiteCommandsProvider;
+import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorService;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
@@ -17,26 +18,32 @@ public class LiteCommandsAnnotations<SENDER> implements LiteCommandsProvider<SEN
     private final List<Object> commandInstances;
     private final List<Class<?>> commandClasses;
     private final AnnotationProcessorService<SENDER> annotationProcessorService;
+    private final MethodValidatorService<SENDER> validatorService;
 
-    private LiteCommandsAnnotations(AnnotationProcessorService<SENDER> annotationProcessorService) {
+    private LiteCommandsAnnotations(AnnotationProcessorService<SENDER> annotationProcessorService, MethodValidatorService<SENDER> validatorService) {
         this.annotationProcessorService = annotationProcessorService;
+        this.validatorService = validatorService;
         this.commandInstances = new ArrayList<>();
         this.commandClasses = new ArrayList<>();
     }
 
     private LiteCommandsAnnotations() {
-        this(AnnotationProcessorService.defaultService());
+        this(AnnotationProcessorService.defaultService(), new MethodValidatorService<>());
     }
 
     public AnnotationProcessorService<SENDER> getAnnotationProcessorService() {
         return annotationProcessorService;
     }
 
+    public MethodValidatorService<SENDER> getValidatorService() {
+        return validatorService;
+    }
+
     @Override
     public List<CommandBuilder<SENDER>> provide(LiteCommandsInternal<SENDER, ?> builder) {
         WrapperRegistry wrapperRegistry = builder.getWrapperRegistry();
 
-        InstanceSourceProcessor<SENDER> processor = new InstanceSourceProcessor<>(annotationProcessorService, wrapperRegistry);
+        InstanceSourceProcessor<SENDER> processor = new InstanceSourceProcessor<>(annotationProcessorService, validatorService, wrapperRegistry);
         Injector injector = new Injector(builder.getBindRegistry());
 
         List<Object> instances = new ArrayList<>(this.commandInstances);

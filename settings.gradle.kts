@@ -11,6 +11,7 @@ include(":litecommands-unit")
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform")
 include(":litecommands-chatgpt", JavaVersion.VERSION_11)
+include(":litecommands-jakarta")
 
 // platforms
 include(":litecommands-velocity", JavaVersion.VERSION_11)

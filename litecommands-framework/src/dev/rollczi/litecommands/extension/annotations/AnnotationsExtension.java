@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.extension.annotations;
 
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
+import dev.rollczi.litecommands.annotations.validator.method.MethodValidator;
 import dev.rollczi.litecommands.annotations.validator.requirment.AnnotatedValidator;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -13,4 +14,6 @@ public interface AnnotationsExtension<SENDER> {
 
     <T, A extends Annotation> LiteAnnotationsProcessorExtension<SENDER> validator(Class<T> type, Class<A> annotation, AnnotatedValidator<SENDER, T, A> validator);
 
+    @ApiStatus.Experimental
+    LiteAnnotationsProcessorExtension<SENDER> methodValidator(MethodValidator<SENDER> validator);
 }
