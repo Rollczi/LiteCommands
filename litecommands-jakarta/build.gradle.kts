@@ -18,5 +18,5 @@ litecommandsUnit {
 }
 
 litecommandsPublish {
-    artifactId = "litecommands-chatgpt"
+    artifactId = "litecommands-jakarta"
 }
