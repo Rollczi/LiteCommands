@@ -8,6 +8,8 @@ public class RootCommandAnnotationProcessor<SENDER> implements AnnotationProcess
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.onStructure(RootCommand.class, (annotation, builder) -> CommandBuilder.createRoot());
+        return invoker.onStructure(RootCommand.class, (annotation, builder) -> CommandBuilder.<SENDER>createRoot()
+            .applyMeta(meta -> meta.apply(builder.meta()))
+        );
     }
 }
