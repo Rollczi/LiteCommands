@@ -7,7 +7,8 @@
 #### Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
-- [Documentation](https://docs.rollczi.dev/)
+- [Documentation 3.x](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)
+- [Documentation 2.x](https://docs.rollczi.dev/)
 
 #### Examples:
 - [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
