@@ -134,7 +134,7 @@ public class LiteCommand<SENDER> {
             .routeName(name)
             .routeAliases(aliases)
             .applyMeta(meta -> meta.apply(this.meta))
-            .applyMeta(meta -> meta.put(Meta.COMMAND_ORIGIN_TYPE, this.getClass()))
+            .applyMeta(meta -> meta.listEditor(Meta.COMMAND_ORIGIN_TYPE).add(this.getClass()).apply())
             .appendExecutor(root -> CommandExecutor.builder(root)
                 .executor(liteContext -> execute(liteContext))
                 .arguments(arguments)

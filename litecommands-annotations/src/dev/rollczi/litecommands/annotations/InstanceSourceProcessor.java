@@ -26,7 +26,7 @@ class InstanceSourceProcessor<SENDER> {
         Object instance = source.getInstance();
         Class<?> type = instance.getClass();
         CommandBuilder<SENDER> context = CommandBuilder.<SENDER>create()
-            .applyMeta(meta -> meta.put(Meta.COMMAND_ORIGIN_TYPE, type));
+            .applyMeta(meta -> meta.list(Meta.COMMAND_ORIGIN_TYPE, list -> list.add(type)));
 
         AnnotationInvoker<SENDER> classInvoker = new ClassInvoker<>(type, context);
         context = annotationProcessorService.process(classInvoker);

@@ -42,12 +42,12 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
 
     @Override
     public boolean isNameOrAlias(String name) {
-        return name.isEmpty();
+        return false;
     }
 
     @Override
     public boolean hasSimilarNames(CommandBuilder<SENDER> context) {
-        return context.name().isEmpty();
+        return false;
     }
 
     @Override
