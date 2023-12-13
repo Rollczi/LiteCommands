@@ -19,7 +19,7 @@ public class ContextResult<T> implements RequirementResult<T> {
     @Override
     public @NotNull T getSuccess() {
         if (result == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Cannot get success result from failed result");
         }
 
         return result.get();
