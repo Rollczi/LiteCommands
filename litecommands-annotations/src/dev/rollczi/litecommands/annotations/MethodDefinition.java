@@ -73,7 +73,7 @@ class MethodDefinition {
 
         if (requirement instanceof Argument) {
             if (arguments.containsKey(parameterIndex)) {
-                throw new IllegalArgumentException("Cannot put argument on index " + parameterIndex + " because it is already occupied!");
+                throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put argument on index " + parameterIndex + " because it is already occupied!");
             }
 
             arguments.put(parameterIndex, (Argument<?>) requirement);
@@ -82,7 +82,7 @@ class MethodDefinition {
 
         if (requirement instanceof ContextRequirement) {
             if (contextRequirements.containsKey(parameterIndex)) {
-                throw new IllegalArgumentException("Cannot put context requirement on index " + parameterIndex + " because it is already occupied!");
+                throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put context requirement on index " + parameterIndex + " because it is already occupied!");
             }
 
             contextRequirements.put(parameterIndex, (ContextRequirement<?>) requirement);
@@ -91,14 +91,14 @@ class MethodDefinition {
 
         if (requirement instanceof BindRequirement) {
             if (bindRequirements.containsKey(parameterIndex)) {
-                throw new IllegalArgumentException("Cannot put bind requirement on index " + parameterIndex + " because it is already occupied!");
+                throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put bind requirement on index " + parameterIndex + " because it is already occupied!");
             }
 
             bindRequirements.put(parameterIndex, (BindRequirement<?>) requirement);
             return;
         }
 
-        throw new IllegalArgumentException("Cannot put requirement on index " + parameterIndex + " because it is not supported!");
+        throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put requirement on index " + parameterIndex + " because it is not supported!");
     }
 
 }

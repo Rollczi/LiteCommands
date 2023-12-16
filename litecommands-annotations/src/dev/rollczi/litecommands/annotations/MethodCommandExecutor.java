@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
@@ -56,12 +57,15 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             RequirementMatch<?, ?> requirementMatch = results.get(name);
             Object unwrapped = requirementMatch.getResult().unwrap();
             Parameter parameter = method.getParameters()[parameterIndex];
+            Class<?> type = parameter.getType();
 
-            if (unwrapped == null && parameter.getType().isPrimitive()) {
+            if (unwrapped == null && type.isPrimitive()) {
+                Class<?> primitive = ReflectUtil.primitiveToBoxed(type);
+
                 return CommandExecutorMatchResult.failed(new LiteCommandsReflectInvocationException(
                     method,
                     parameter,
-                    "Null value cannot be assigned to primitive type"
+                    "Null value cannot be assigned to primitive type. Replace " + type.getSimpleName() + " with " + primitive.getSimpleName()
                 ));
             }
 
