@@ -36,6 +36,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     ) {
         super(parent, definition.getArguments(), definition.getContextRequirements(), definition.getBindRequirements());
         this.method = method;
+        this.method.setAccessible(true);
         this.instance = instance;
         this.definition = definition;
         this.validatorService = validatorService;

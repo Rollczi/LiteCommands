@@ -1,6 +1,7 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.example.bukkit.command.GiveCommand;
 import dev.rollczi.example.bukkit.command.MuteCommand;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.FlyCommand;
@@ -19,6 +20,7 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,7 +45,8 @@ public class ExamplePlugin extends JavaPlugin {
                 new KickCommand(),
                 new MuteCommand(),
                 new TeleportCommand(),
-                new FlyCommand()
+                new FlyCommand(),
+                new GiveCommand()
             )
 
             // Custom annotation validators

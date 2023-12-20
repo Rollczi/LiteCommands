@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.argument.resolver.array.ArrayArgument;
+import dev.rollczi.litecommands.argument.resolver.array.ArrayArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BooleanArgumentResolver;
@@ -102,6 +104,7 @@ public final class LiteCommandsFactory {
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
                 .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
+                .argument(Object.class, ArrayArgument.KEY, new ArrayArgumentResolver<>(internal.getParserRegistry(), suggesterRegistry))
 
                 .wrapper(new OptionWrapper())
                 .wrapper(new OptionalWrapper())

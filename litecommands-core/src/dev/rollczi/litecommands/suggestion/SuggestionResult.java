@@ -34,7 +34,7 @@ public class SuggestionResult {
         String multilevel = suggestion.multilevel();
         Set<Suggestion> filtered = this.suggestions.stream()
             .filter(current ->  StringUtil.startsWithIgnoreCase(current.multilevel(), multilevel))
-            .map(suggestion1 -> suggestion1.slashLevel(suggestion.lengthMultilevel() - 1))
+            .map(suggestion1 -> suggestion1.deleteLeft(suggestion.lengthMultilevel() - 1))
             .collect(Collectors.toSet());
 
         return new SuggestionResult(filtered);
@@ -49,6 +49,29 @@ public class SuggestionResult {
             .map(Suggestion::multilevel)
             .collect(Collectors.toList());
     }
+
+    public SuggestionResult appendLeft(String... suggestions) {
+        Set<Suggestion> parsedSuggestions = new HashSet<>();
+
+        for (Suggestion suggestion : this.suggestions) {
+            parsedSuggestions.add(suggestion.appendLeft(suggestions));
+        }
+
+        return new SuggestionResult(parsedSuggestions);
+    }
+
+    public SuggestionResult appendLeft(
+        Iterable<String> suggestions
+    ) {
+        Set<Suggestion> parsedSuggestions = new HashSet<>();
+
+        for (Suggestion suggestion : this.suggestions) {
+            parsedSuggestions.add(suggestion.appendLeft(suggestions));
+        }
+
+        return new SuggestionResult(parsedSuggestions);
+    }
+
 
     public static SuggestionResult of(String... suggestions) {
         return of(new IterableMutableArray<>(suggestions));

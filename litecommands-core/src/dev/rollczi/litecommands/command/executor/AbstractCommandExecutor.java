@@ -15,9 +15,9 @@ import java.util.List;
 public abstract class AbstractCommandExecutor<SENDER> implements CommandExecutor<SENDER> {
 
     protected final CommandRoute<SENDER> parent;
-    protected final List<Argument<?>> arguments = new ArrayList<>();
-    protected final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
-    protected final List<BindRequirement<?>> bindRequirements = new ArrayList<>();
+    protected final List<Argument<?>> arguments;
+    protected final List<ContextRequirement<?>> contextRequirements;
+    protected final List<BindRequirement<?>> bindRequirements;
     protected final Meta meta = Meta.create();
 
     protected AbstractCommandExecutor(
@@ -27,9 +27,9 @@ public abstract class AbstractCommandExecutor<SENDER> implements CommandExecutor
         Collection<BindRequirement<?>> bindRequirements
     ) {
         this.parent = parent;
-        this.arguments.addAll(arguments);
-        this.contextRequirements.addAll(contextRequirements);
-        this.bindRequirements.addAll(bindRequirements);
+        this.arguments = Collections.unmodifiableList(new ArrayList<>(arguments));
+        this.contextRequirements = Collections.unmodifiableList(new ArrayList<>(contextRequirements));
+        this.bindRequirements = Collections.unmodifiableList(new ArrayList<>(bindRequirements));
     }
 
     @Override
@@ -49,17 +49,17 @@ public abstract class AbstractCommandExecutor<SENDER> implements CommandExecutor
 
     @Override
     public List<Argument<?>> getArguments() {
-        return Collections.unmodifiableList(arguments);
+        return arguments;
     }
 
     @Override
     public List<ContextRequirement<?>> getContextRequirements() {
-        return Collections.unmodifiableList(contextRequirements);
+        return contextRequirements;
     }
 
     @Override
     public List<BindRequirement<?>> getBindRequirements() {
-        return Collections.unmodifiableList(bindRequirements);
+        return bindRequirements;
     }
 
 }

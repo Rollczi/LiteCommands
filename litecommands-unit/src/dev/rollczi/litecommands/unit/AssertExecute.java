@@ -47,7 +47,7 @@ public class AssertExecute {
             throw new AssertionError("Command result is empty");
         }
 
-        assertEquals(expected, object);
+        assertThat(object).isEqualTo(object);
 
         return this;
     }
