@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.util;
 
+import dev.rollczi.litecommands.reflect.ReflectUtil;
 import java.util.Map;
 import java.util.Optional;
 
@@ -77,7 +78,7 @@ public final class MapUtil {
         }
 
         for (Class<?> anInterface : componentType.getInterfaces()) {
-            Class<?> arrayType = anInterface.arrayType();
+            Class<?> arrayType = ReflectUtil.getArrayType(anInterface);
             E element = map.get(arrayType);
 
             if (element != null) {
@@ -89,7 +90,7 @@ public final class MapUtil {
     }
 
     private static <E> Optional<E> findBySuperTypeOfArray0(Class<?> componentType, Map<Class<?>, E> map) {
-        Class<?> arrayType = componentType.arrayType();
+        Class<?> arrayType = ReflectUtil.getArrayType(componentType);
         E element = map.get(arrayType);
 
         if (element != null) {

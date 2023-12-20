@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.reflect;
 
 import dev.rollczi.litecommands.LiteCommandsException;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -36,6 +37,10 @@ public final class ReflectUtil {
     }
 
     private ReflectUtil() {}
+
+    public static Class<?> getArrayType(Class<?> componentType) {
+        return Array.newInstance(componentType, 0).getClass();
+    }
 
     public static Class<?> boxedToPrimitive(Class<?> clazz) {
         return WRAPPERS_TO_PRIMITIVES.get(clazz);
