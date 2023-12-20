@@ -123,8 +123,6 @@ class ArrayArgumentTest extends LiteTestSpec {
         platform.execute("test Integer 1 a b")
             .assertFailure();
 
-        // string cannot be invalid
-
         platform.execute("test Duration 10m 1h2m3s Invalid 1d3h 2d 1h")
             .assertFailure();
 
@@ -188,71 +186,69 @@ class ArrayArgumentTest extends LiteTestSpec {
     }
 
     @Test
-    void testSuggest() {
+    void testSuggestInt() {
         platform.suggest("test int ")
             .assertSuggest("0", "1", "5", "10", "50", "100", "500");
-
         platform.suggest("test int 1 ")
             .assertSuggest("0", "1", "5", "10", "50", "100", "500");
-
         platform.suggest("test int 5")
             .assertSuggest("5", "500", "50.0", "50");
+    }
 
+    @Test
+    void testSuggestInteger() {
         platform.suggest("test Integer ")
             .assertSuggest("0", "1", "5", "10", "50", "100", "500");
-
         platform.suggest("test Integer 1 ")
             .assertSuggest("0", "1", "5", "10", "50", "100", "500");
-
         platform.suggest("test Integer 5")
             .assertSuggest("5", "500", "50.0", "50");
+    }
 
+    @Test
+    void testSuggestString() {
         platform.suggest("test String ")
             .assertSuggest("<argument>");
-
         platform.suggest("test String <argument>")
             .assertSuggest("<argument>");
-
         platform.suggest("test String text ")
             .assertSuggest("<argument>");
-
         platform.suggest("test String text")
             .assertSuggest("text");
+    }
 
+    @Test
+    void testSuggestDuration() {
         platform.suggest("test Duration ")
             .assertSuggest("1s", "1d", "1h", "1m", "30d", "10h", "7d", "10m", "30m", "5h", "10s", "30s", "5m", "5s", "1m30s");
-
         platform.suggest("test Duration 10m ")
             .assertSuggest("1s", "1d", "1h", "1m", "30d", "10h", "7d", "10m", "30m", "5h", "10s", "30s", "5m", "5s", "1m30s");
-
         platform.suggest("test Duration 10")
             .assertSuggest("10s", "10m", "10h");
+    }
 
+    @Test
+    void testSuggestInstant() {
         platform.suggest("test Instant ")
-            .assertNotEmpty()
-            .assertCorrect(suggestion -> platform.execute("test Instant " + suggestion.multilevel()).assertSuccess());
+            .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + suggestion.multilevel()).assertSuccess());
 
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         String tomorrowFormat = tomorrow.getYear() + "-" + tomorrow.getMonthValue() + "-" + tomorrow.getDayOfMonth();
 
         platform.suggest("test Instant " + tomorrow.getYear())
-            .assertNotEmpty()
-            .assertCorrect(suggestion -> platform.execute("test Instant " + suggestion.multilevel()).assertSuccess());
-
+            .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + suggestion.multilevel()).assertSuccess());
         platform.suggest("test Instant " + tomorrowFormat + " ")
-            .assertNotEmpty()
-            .assertCorrect(suggestion -> platform.execute("test Instant " + tomorrowFormat + " " + suggestion.multilevel()).assertSuccess());
-
+            .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + tomorrowFormat + " " + suggestion.multilevel()).assertSuccess());
         platform.suggest("test Instant 2021-01-01 00:05:50 2023-04-17 11:03:00 " + tomorrowFormat + " ")
-            .assertNotEmpty()
-            .assertCorrect(suggestion -> platform.execute("test Instant " + tomorrowFormat + " " + suggestion.multilevel()).assertSuccess());
+            .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + tomorrowFormat + " " + suggestion.multilevel()).assertSuccess());
+    }
 
+    @Test
+    void testSuggestEnum() {
         platform.suggest("test enum ")
             .assertSuggest("FIRST", "SECOND", "THIRD", "FOURTH");
-
         platform.suggest("test enum FIRST ")
             .assertSuggest("FIRST", "SECOND", "THIRD", "FOURTH");
-
         platform.suggest("test enum FIRST")
             .assertSuggest("FIRST");
     }
