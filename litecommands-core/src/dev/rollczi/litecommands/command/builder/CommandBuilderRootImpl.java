@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
-    private final Meta meta = Meta.create();
+    private Meta meta = Meta.create();
     private final Map<String, Meta> childrenMeta = new HashMap<>();
 
     @Override
@@ -42,12 +42,12 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
 
     @Override
     public boolean isNameOrAlias(String name) {
-        return name.isEmpty();
+        return false;
     }
 
     @Override
     public boolean hasSimilarNames(CommandBuilder<SENDER> context) {
-        return context.name().isEmpty();
+        return false;
     }
 
     @Override
@@ -87,7 +87,8 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
 
     @Override
     public CommandBuilder<SENDER> applyMeta(UnaryOperator<Meta> operator) {
-        throw new UnsupportedOperationException("Cannot apply meta to root command");
+        meta = operator.apply(meta);
+        return this;
     }
 
     @Override
@@ -166,6 +167,11 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     @Override
     public @Nullable CommandBuilder<SENDER> parent() {
         return null;
+    }
+
+    @Override
+    public boolean isRoot() {
+        return true;
     }
 
     @Override

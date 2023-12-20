@@ -23,7 +23,7 @@ public interface Scope {
                 return false;
             }
 
-            return meta.get(Meta.COMMAND_ORIGIN_TYPE).equals(type);
+            return meta.get(Meta.COMMAND_ORIGIN_TYPE).contains(type);
         };
     }
 

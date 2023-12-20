@@ -27,6 +27,12 @@ public class EditorService<SENDER> {
             }
         }
 
+        if (context.isRoot()) {
+            for (CommandBuilder<SENDER> child : context.children()) {
+                context.editChild(child.name(), commandBuilder -> edit(commandBuilder));
+            }
+        }
+
         return context;
     }
 
