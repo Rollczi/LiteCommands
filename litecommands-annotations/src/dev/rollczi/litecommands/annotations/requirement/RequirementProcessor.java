@@ -31,7 +31,7 @@ public abstract class RequirementProcessor<SENDER, A extends Annotation> impleme
             return invoker.onRequirement(annotationClass, (holder, builder) -> {
                 TypeToken<?> typeToken = holder.getFormat().parsedType();
 
-                if (parsedType == Object.class || typeToken.isInstanceOf(parsedType)) {
+                if (typeToken.isInstanceOf(parsedType)) {
                     return Optional.of(create(holder));
                 }
 

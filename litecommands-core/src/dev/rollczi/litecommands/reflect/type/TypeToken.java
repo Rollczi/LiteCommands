@@ -59,7 +59,7 @@ public abstract class TypeToken<T> {
     }
 
     public boolean isInstanceOf(Class<?> parsedType) {
-        return parsedType.isAssignableFrom(rawType);
+        return parsedType == Object.class || parsedType.isAssignableFrom(getRawType());
     }
 
     public TypeToken<?> getParameterized() {

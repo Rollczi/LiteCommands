@@ -12,6 +12,8 @@ import java.util.Queue;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 
 class TypeRangeTest {
 
@@ -57,11 +59,21 @@ class TypeRangeTest {
     }
 
     @Test
-    void testDownwardsTypes() {
+    @EnabledForJreRange(max = JRE.JAVA_17)
+    void testDownwardsTypes17() {
         TypeRange<?> range = TypeRange.downwards(List.class, Object.class);
 
         assertThat(range.getTypesInRange(ArrayList.class))
             .containsExactlyInAnyOrder(List.class, Iterable.class, Collection.class);
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_21)
+    void testDownwardsTypes21() throws ClassNotFoundException {
+        TypeRange<?> range = TypeRange.downwards(List.class, Object.class);
+
+        assertThat(range.getTypesInRange(ArrayList.class))
+            .containsExactlyInAnyOrder(List.class, Iterable.class, Collection.class, Class.forName("java.util.SequencedCollection"));
     }
 
     @Test
