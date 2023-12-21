@@ -20,7 +20,6 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,8 +71,8 @@ public class ExamplePlugin extends JavaPlugin {
             .argument(GameMode.class, new GameModeArgument())
 
             // Suggestions, if you want you can override default argument suggesters
-            .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
+            .argumentSuggestion(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             .message(LiteBukkitMessages.PLAYER_ONLY, "&cOnly player can execute this command!")
             .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> "&cPlayer &7" + input + " &cnot found!")

@@ -28,7 +28,7 @@ public class ValidatorResult {
     }
 
     public Object getInvalidResult() {
-        Preconditions.checkState(!valid, "Command is valid");
+        Preconditions.checkArgument(!valid, "Command is valid");
         Preconditions.notNull(invalidResult, "invalid result");
 
         return invalidResult;

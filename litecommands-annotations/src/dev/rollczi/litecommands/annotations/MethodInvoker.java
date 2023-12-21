@@ -72,6 +72,10 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
                 continue;
             }
 
+            if (methodDefinition.hasRequirement(index)) {
+                continue;
+            }
+
             Optional<Requirement<?>> requirementOptional = listener.call(createHolder(parameterAnnotation, parameter), commandBuilder);
 
             if (requirementOptional.isPresent()) {

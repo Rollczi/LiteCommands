@@ -68,7 +68,8 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
         @SuppressWarnings("unchecked")
         private <SENDER, INPUT, PARSED> ParseResult<PARSED> parseInput(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet, INPUT input) {
             Class<INPUT> inputType = (Class<INPUT>) input.getClass();
-            Parser<SENDER, INPUT, PARSED> parser = parserSet.getParser(inputType)
+            Parser<SENDER, INPUT, PARSED> parser = parserSet.getParsers(inputType).stream()
+                .findFirst()
                 .orElseThrow(() -> new LiteCommandsException("No parser for input type " + inputType.getName()));
 
             return parser.parse(invocation, argument, input);

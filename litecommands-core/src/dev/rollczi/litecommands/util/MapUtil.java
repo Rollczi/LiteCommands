@@ -39,7 +39,7 @@ public final class MapUtil {
             return option;
         }
 
-        for (Class<?> anInterface : type.getInterfaces()) {
+        for (Class<?> anInterface : ReflectUtil.getInterfaces(type)) {
             E element = map.get(anInterface);
 
             if (element != null) {
@@ -77,7 +77,7 @@ public final class MapUtil {
             return optional;
         }
 
-        for (Class<?> anInterface : componentType.getInterfaces()) {
+        for (Class<?> anInterface : ReflectUtil.getInterfaces(componentType)) {
             Class<?> arrayType = ReflectUtil.getArrayType(anInterface);
             E element = map.get(arrayType);
 

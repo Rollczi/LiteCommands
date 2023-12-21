@@ -5,8 +5,11 @@ import dev.rollczi.litecommands.LiteCommandsException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class ReflectUtil {
@@ -116,6 +119,47 @@ public final class ReflectUtil {
 
             throw new LiteCommandsReflectException(String.format("Unable to find method %s(%s) in %s", methodName, Arrays.toString(params), clazz));
         }
+    }
+
+    public static List<Class<?>> getAllTypes(Class<?> type) {
+        List<Class<?>> superTypes = new ArrayList<>();
+
+        superTypes.add(type);
+        superTypes.addAll(getInterfaces(type));
+        superTypes.addAll(getSuperClasses(type));
+
+        return superTypes;
+    }
+
+    public static List<Class<?>> getInterfaces(Class<?> type) {
+        Class<?>[] current = type.getInterfaces();
+
+        if (current.length == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Class<?>> interfaces = new ArrayList<>();
+
+        for (Class<?> anInterface : type.getInterfaces()) {
+            interfaces.add(anInterface);
+            interfaces.addAll(getInterfaces(anInterface));
+        }
+
+        return interfaces;
+    }
+
+    public static List<Class<?>> getSuperClasses(Class<?> type) {
+        Class<?> superclass = type.getSuperclass();
+
+        if (superclass == null || superclass == Object.class) {
+            return Collections.emptyList();
+        }
+
+        List<Class<?>> superClasses = new ArrayList<>();
+        superClasses.add(superclass);
+        superClasses.addAll(getSuperClasses(superclass));
+
+        return superClasses;
     }
 
     @SuppressWarnings("unchecked")

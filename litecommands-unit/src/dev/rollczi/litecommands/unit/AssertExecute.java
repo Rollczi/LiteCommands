@@ -47,9 +47,27 @@ public class AssertExecute {
             throw new AssertionError("Command result is empty");
         }
 
-        assertThat(object).isEqualTo(object);
+        assertThat(object).isEqualTo(expected);
 
         return this;
+    }
+
+    public <T> T assertSuccessAs(Class<T> type) {
+        if (result.isThrown()) {
+            throw new AssertionError("Command was thrown", result.getThrowable());
+        }
+
+        if (result.isFailed()) {
+            throw new AssertionError("Command was not successful executed " + result.getError());
+        }
+
+        Object object = result.getResult();
+
+        if (object == null) {
+            throw new AssertionError("Command result is empty");
+        }
+
+        return assertInstanceOf(type, object);
     }
 
     public AssertExecute assertThrows(Class<? extends Throwable> exception) {

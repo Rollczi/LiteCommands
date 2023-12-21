@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.argument.resolver.array;
+package dev.rollczi.litecommands.argument.resolver.collector;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.SimpleArgument;
@@ -18,35 +18,35 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
 
-public class ArrayArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER, Object, ArrayArgument> {
+public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> extends TypedArgumentResolver<SENDER, COLLECTION, CollectorArgument<COLLECTION>> {
 
     private final ParserRegistry<SENDER> parserRegistry;
     private final SuggesterRegistry<SENDER> suggesterRegistry;
 
-    public ArrayArgumentResolver(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry) {
-        super(ArrayArgument.class);
+    public AbstractCollectorArgumentResolver(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry) {
+        super(CollectorArgument.class);
         this.parserRegistry = parserRegistry;
         this.suggesterRegistry = suggesterRegistry;
     }
 
     @Override
-    public ParseResult<Object> parseTyped(Invocation<SENDER> invocation, ArrayArgument context, RawInput rawInput) {
-        return parse(this.getType(context), rawInput, context, invocation);
+    public ParseResult<COLLECTION> parseTyped(Invocation<SENDER> invocation, CollectorArgument<COLLECTION> context, RawInput rawInput) {
+        return parse(this.getElementType(context, invocation), rawInput, context, invocation);
     }
 
-    private <T> ParseResult<Object> parse(Class<T> componentType, RawInput rawInput, ArrayArgument arrayArgument, Invocation<SENDER> invocation) {
-        Argument<T> argument = new SimpleArgument<>(arrayArgument.getKeyName(), WrapFormat.notWrapped(componentType));
+    private ParseResult<COLLECTION> parse(Class<E> componentType, RawInput rawInput, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
+        Argument<E> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
 
-        ParserSet<SENDER, T> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
-        Parser<SENDER, RawInput, T> parser = parserSet.getParser(RawInput.class)
+        ParserSet<SENDER, E> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
+        Parser<SENDER, RawInput, E> parser = parserSet.getParsers(RawInput.class).stream()
+            .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Cannot find parser for " + componentType.getName()));
 
-        List<T> values = new ArrayList<>();
-
+        List<E> values = new ArrayList<>();
 
         while (rawInput.hasNext()) {
             int count = rawInput.seeAll().size();
@@ -56,7 +56,7 @@ public class ArrayArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER,
                 return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
             }
 
-            ParseResult<T> parsedResult = parser.parse(invocation, argument, rawInput);
+            ParseResult<E> parsedResult = parser.parse(invocation, argument, rawInput);
 
             if (parsedResult.isFailed()) {
                 return ParseResult.failure(parsedResult.getFailedReason());
@@ -65,30 +65,30 @@ public class ArrayArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER,
             values.add(parsedResult.getSuccess());
         }
 
-        Object array = Array.newInstance(componentType, values.size());
+        Collector<E, ?, ? extends COLLECTION> collector = getCollector(collectorArgument, invocation);
+        COLLECTION result = values.stream().collect(collector);
 
-        for (int i = 0; i < values.size(); i++) {
-            Array.set(array, i, values.get(i));
-        }
-
-        return ParseResult.success(array);
+        return ParseResult.success(result);
     }
 
+    abstract Collector<E, ?, ? extends COLLECTION> getCollector(CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation);
+
     @Override
-    public Range getTypedRange(ArrayArgument argument) {
+    public Range getTypedRange(CollectorArgument<COLLECTION> argument) {
         return Range.moreThan(0);
     }
 
     @Override
-    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, ArrayArgument argument, SuggestionContext context) {
-        return suggest(this.getType(argument), context, argument, invocation);
+    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, CollectorArgument<COLLECTION> argument, SuggestionContext context) {
+        return suggest(this.getElementType(argument, invocation), context, argument, invocation);
     }
 
-    private <T> SuggestionResult suggest(Class<T> componentType, SuggestionContext context, ArrayArgument arrayArgument, Invocation<SENDER> invocation) {
-        Argument<T> argument = new SimpleArgument<>(arrayArgument.getKeyName(), WrapFormat.notWrapped(componentType));
+    private <T> SuggestionResult suggest(Class<T> componentType, SuggestionContext context, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
+        Argument<T> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
 
         ParserSet<SENDER, T> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
-        Parser<SENDER, RawInput, T> parser = parserSet.getParser(RawInput.class)
+        Parser<SENDER, RawInput, T> parser = parserSet.getParsers(RawInput.class).stream()
+            .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Cannot find parser for " + componentType.getName()));
 
         Suggester<SENDER, T> suggester = suggesterRegistry.getSuggester(componentType, argument.getKey());
@@ -128,25 +128,6 @@ public class ArrayArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER,
         return result;
     }
 
-    private Class<Object> getType(ArrayArgument context) {
-        Class<Object> arrayType = context.getWrapperFormat().getParsedType();
-
-        if (!arrayType.isArray()) {
-            throw new IllegalArgumentException("ArrayArgumentResolver can only parse arrays");
-        }
-
-        Class<Object> componentType = (Class<Object>) arrayType.getComponentType();
-
-        if (componentType == null) {
-            throw new IllegalArgumentException("ArrayArgumentResolver cannot parse array of null");
-        }
-
-        return componentType;
-    }
-
-    @Override
-    public boolean canParse(Invocation<SENDER> invocation, Argument<Object> argument, RawInput rawInput) {
-        return argument.getWrapperFormat().getParsedType().isArray();
-    }
+    abstract protected Class<E> getElementType(CollectorArgument<COLLECTION> context, Invocation<SENDER> invocation);
 
 }

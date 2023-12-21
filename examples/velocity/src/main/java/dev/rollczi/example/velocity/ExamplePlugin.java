@@ -51,9 +51,9 @@ public class ExamplePlugin {
             .argument(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
 
             // Suggestions, if you want you can override default argument suggesters
-            .argumentSuggester(String.class, SuggestionResult.of("name", "argument"))
-            .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(String.class, SuggestionResult.of("name", "argument"))
+            .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
+            .argumentSuggestion(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             // Context resolvers @Context
             .context(Player.class, new VelocityOnlyPlayerContextual<>("&cOnly player can execute this command!"))

@@ -17,13 +17,13 @@ public class CommandExecutorMatchResult {
     }
 
     public CommandExecuteResult executeCommand() {
-        Preconditions.checkState(preparedExecutor != null, "Cannot execute command when it failed");
+        Preconditions.checkArgument(preparedExecutor != null, "Cannot execute command when it failed");
 
         return this.preparedExecutor.get();
     }
 
     public FailedReason getFailedReason() {
-        Preconditions.checkState(isFailed(), "Cannot get failed reason when command was successful");
+        Preconditions.checkArgument(isFailed(), "Cannot get failed reason when command was successful");
 
         return this.failedReason;
     }

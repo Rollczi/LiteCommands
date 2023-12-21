@@ -60,9 +60,10 @@ public class RawInputAnalyzer {
     }
 
     public <SENDER, T> boolean isNextOptional(ParserSet<SENDER, T> parserSet, Argument<T> argument) {
-        return parserSet.getParser(RawInput.class)
+        return parserSet.getParsers(RawInput.class).stream()
             .map(parser -> parser.getRange(argument))
             .map(range -> range.getMin() == 0)
+            .findFirst()
             .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
     }
 
@@ -79,7 +80,8 @@ public class RawInputAnalyzer {
             ParserSet<SENDER, T> parserSet
         ) {
             this.argument = argument;
-            this.parser = parserSet.getParser(RawInput.class)
+            this.parser = parserSet.getParsers(RawInput.class).stream()
+                .findFirst()
                 .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
 
             Range range = parser.getRange(argument);

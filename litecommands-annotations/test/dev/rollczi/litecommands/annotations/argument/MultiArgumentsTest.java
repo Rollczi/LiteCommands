@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 class MultiArgumentsTest extends LiteTestSpec {
 
     static LiteConfig config = builder -> builder
-            .argumentSuggester(String.class, SuggestionResult.of("suggestion"))
+            .argumentSuggestion(String.class, SuggestionResult.of("suggestion"))
             .argument(Position.class, new PositionArg<>());
 
     static class PositionArg<S> implements MultipleArgumentResolver<S, Position> {

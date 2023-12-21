@@ -90,7 +90,8 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         @SuppressWarnings("unchecked")
         private <SENDER, INPUT, OUT> ParseResult<OUT> parseInput(Invocation<SENDER> invocation, Argument<OUT> argument, ParserSet<SENDER, OUT> parserSet, INPUT input) {
             Class<INPUT> inputType = (Class<INPUT>) input.getClass();
-            Parser<SENDER, INPUT, OUT> parser = parserSet.getParser(inputType)
+            Parser<SENDER, INPUT, OUT> parser = parserSet.getParsers(inputType).stream()
+                .findFirst()
                 .orElseThrow(() -> new LiteJDAParseException("No parser for input type " + inputType.getName()));
 
             return parser.parse(invocation, argument, input);
