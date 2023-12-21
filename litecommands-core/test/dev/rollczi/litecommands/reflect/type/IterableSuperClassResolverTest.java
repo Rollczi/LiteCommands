@@ -1,14 +1,17 @@
 package dev.rollczi.litecommands.reflect.type;
 
+import dev.rollczi.litecommands.argument.parser.Parser;
+import dev.rollczi.litecommands.argument.parser.TypedParser;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
+import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.AbstractCollectorArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.StackArgumentResolver;
+import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
+import dev.rollczi.litecommands.range.Rangeable;
 import dev.rollczi.litecommands.reflect.IterableSuperClassResolver;
-import java.io.Serializable;
-import java.util.AbstractCollection;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.RandomAccess;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import org.junit.jupiter.api.Test;
 
@@ -18,22 +21,21 @@ class IterableSuperClassResolverTest {
     void test() {
         List<Class<?>> classes = new LinkedList<>();
 
-        for (Class<?> clazz : new IterableSuperClassResolver(ArrayList.class)) {
+        for (Class<?> clazz : new IterableSuperClassResolver(StackArgumentResolver.class)) {
             classes.add(clazz);
         }
 
         assertThat(classes)
-            .containsExactly(
-                ArrayList.class,
-                AbstractList.class,
-                AbstractCollection.class,
-                Object.class,
-                List.class,
-                RandomAccess.class,
-                Cloneable.class,
-                Serializable.class,
-                Collection.class,
-                Iterable.class
+            .containsExactlyInAnyOrder(
+                StackArgumentResolver.class,
+                AbstractCollectorArgumentResolver.class,
+                TypedArgumentResolver.class,
+                ArgumentResolverBase.class,
+                TypedParser.class,
+                Parser.class,
+                TypedSuggester.class,
+                Suggester.class,
+                Rangeable.class
             );
     }
 

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 public class TypeIndex<T> {
 
@@ -81,7 +82,7 @@ public class TypeIndex<T> {
         }
 
         @Override
-        public Iterator<T> iterator() {
+        public @NotNull Iterator<T> iterator() {
             return new TypeIterator(type);
         }
 
