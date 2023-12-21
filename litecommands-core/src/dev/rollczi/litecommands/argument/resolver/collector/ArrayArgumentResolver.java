@@ -44,7 +44,7 @@ public class ArrayArgumentResolver<SENDER> extends AbstractCollectorArgumentReso
     }
 
     @Override
-    public boolean canParse(Invocation<SENDER> invocation, Argument<Object> argument, RawInput rawInput) {
+    public boolean canParse(Invocation<SENDER> invocation, Argument<Object> argument, Class<RawInput> inputType) {
         return argument.getWrapperFormat().getParsedType().isArray();
     }
 

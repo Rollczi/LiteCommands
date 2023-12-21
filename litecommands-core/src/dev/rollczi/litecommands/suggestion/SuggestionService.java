@@ -106,7 +106,7 @@ public class SuggestionService<SENDER> {
         ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(parsedType, argument.getKey());
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.getKey());
 
-        boolean nextOptional = matcher.isNextOptional(argument, parserSet);
+        boolean nextOptional = matcher.isNextOptional(invocation, argument, parserSet);
         SuggestionInputResult result = matcher.nextArgument(invocation, argument, parserSet, suggester);
 
         if (result.isEnd() && nextOptional) {

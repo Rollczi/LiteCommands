@@ -1,33 +1,34 @@
 package dev.rollczi.litecommands.argument.parser;
 
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 public interface ParserSet<SENDER, PARSED> {
 
-    <INPUT> List<Parser<SENDER, INPUT, PARSED>> getParsers(Class<INPUT> inType);
+    default <INPUT> Parser<SENDER, INPUT, PARSED> getValidParserOrThrow(
+        Class<INPUT> input,
+        Invocation<SENDER> invocation,
+        Argument<PARSED> argument
+    ) {
+        Parser<SENDER, INPUT, PARSED> parser = this.getValidParser(input, invocation, argument);
 
-    /**
-     * @deprecated use {@link #getParsers(Class)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
-    @Deprecated
-    default <INPUT> Optional<Parser<SENDER, INPUT, PARSED>> getParser(Class<INPUT> inType) {
-        return getParsers(inType).stream().findFirst();
+        if (parser == null) {
+            String simpleName = argument.getWrapperFormat().parsedType().getRawType().getSimpleName();
+            throw new IllegalArgumentException("No parser found for argument " + simpleName);
+        }
+
+        return parser;
     }
 
-    /**
-     * @deprecated use {@link #getParsers(Class)} instead
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
-    default Collection<Parser<SENDER, ?, PARSED>> getParsers() {
-        return new ArrayList<>(this.getParsers(Object.class));
-    }
+    @Nullable
+    <INPUT> Parser<SENDER, INPUT, PARSED> getValidParser(
+        Class<INPUT> input,
+        Invocation<SENDER> invocation,
+        Argument<PARSED> argument
+    );
 
     /**
      * @deprecated use {@link #of(TypeRange, Parser)} instead

@@ -81,8 +81,6 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
         return CommandExecutorMatchResult.success(() -> {
             try {
-                this.method.setAccessible(true);
-
                 return CommandExecuteResult.success(this, this.method.invoke(this.instance, objects));
             }
             catch (IllegalAccessException exception) {

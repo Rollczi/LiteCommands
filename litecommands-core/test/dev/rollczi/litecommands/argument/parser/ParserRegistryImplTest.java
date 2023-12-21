@@ -27,7 +27,7 @@ class ParserRegistryImplTest {
         registry.registerParser(String.class, ArgumentKey.of(), new NamedResolver("universal"));
 
         ParserSet<TestSender, String> universal = registry.getParserSet(String.class, ArgumentKey.of());
-        Parser<TestSender, RawInput, String> universalParser = assertOne(universal.getParsers(RawInput.class));
+        Parser<TestSender, RawInput, String> universalParser = universal.getValidParserOrThrow(RawInput.class, null, Argument.of("universal", STRING_FORMAT));
 
         assertThat(universalParser.parse(null, Argument.of("universal", STRING_FORMAT), RawInput.of("in")))
             .isEqualTo(ParseResult.success("universal"));
@@ -44,9 +44,9 @@ class ParserRegistryImplTest {
         ParserSet<TestSender, String> universal = registry.getParserSet(String.class, ArgumentKey.of());
         ParserSet<TestSender, String> missing = registry.getParserSet(String.class, ArgumentKey.of("missing"));
 
-        Parser<TestSender, RawInput, String> customParser = assertOne(custom.getParsers(RawInput.class));
-        Parser<TestSender, RawInput, String> universalParser = assertOne(universal.getParsers(RawInput.class));
-        Parser<TestSender, RawInput, String> missingParser = assertOne(missing.getParsers(RawInput.class));
+        Parser<TestSender, RawInput, String> customParser = assertNotNull(custom.getValidParser(RawInput.class, null, Argument.of("custom", STRING_FORMAT)));
+        Parser<TestSender, RawInput, String> universalParser = assertNotNull(universal.getValidParser(RawInput.class, null, Argument.of("universal", STRING_FORMAT)));
+        Parser<TestSender, RawInput, String> missingParser = assertNotNull(missing.getValidParser(RawInput.class, null, Argument.of("missing", STRING_FORMAT)));
 
         assertThat(customParser.parse(null, Argument.of("custom", STRING_FORMAT), RawInput.of("in")))
             .isEqualTo(ParseResult.success("custom"));
@@ -66,8 +66,8 @@ class ParserRegistryImplTest {
         ParserSet<TestSender, Number> number = registry.getParserSet(Number.class, ArgumentKey.of());
         ParserSet<TestSender, Integer> integer = registry.getParserSet(Integer.class, ArgumentKey.of());
 
-        Parser<TestSender, RawInput, Number> numberParser = assertOne(number.getParsers(RawInput.class));
-        Parser<TestSender, RawInput, Integer> integerParser = assertOne(integer.getParsers(RawInput.class));
+        Parser<TestSender, RawInput, Number> numberParser = assertNotNull(number.getValidParser(RawInput.class, null, Argument.of("number", NUMBER_FORMAT)));
+        Parser<TestSender, RawInput, Integer> integerParser = assertNotNull(integer.getValidParser(RawInput.class, null, Argument.of("integer", INTEGER_FORMAT)));
 
         assertThat(numberParser.parse(null, Argument.of("number", NUMBER_FORMAT), RawInput.of("1")))
             .isEqualTo(ParseResult.success(1));
@@ -76,9 +76,9 @@ class ParserRegistryImplTest {
             .isEqualTo(ParseResult.success(1));
     }
 
-    private <T> T assertOne(List<T> list) {
-        assertThat(list).hasSize(1);
-        return list.get(0);
+    private <T> T assertNotNull(T list) {
+        assertThat(list).isNotNull();
+        return list;
     }
 
     static class NamedResolver extends ArgumentResolver<TestSender, String> {

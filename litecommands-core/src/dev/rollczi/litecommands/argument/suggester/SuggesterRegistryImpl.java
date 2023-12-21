@@ -32,12 +32,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
     @Override
     @SuppressWarnings("unchecked")
     public <PARSED> List<Suggester<SENDER, PARSED>> getSuggesters(Class<PARSED> parsedClass, ArgumentKey key) {
-        List<BucketByArgument<?>> typedBuckets = buckets.get(parsedClass);
-
-        if (typedBuckets.isEmpty()) {
-            return Collections.emptyList();
-        }
-
+        Iterable<BucketByArgument<?>> typedBuckets = buckets.get(parsedClass);
         List<Suggester<SENDER, PARSED>> suggesters = new ArrayList<>();
 
         for (BucketByArgument<?> typedBucket : typedBuckets) {

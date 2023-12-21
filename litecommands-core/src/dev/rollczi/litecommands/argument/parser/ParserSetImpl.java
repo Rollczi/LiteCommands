@@ -1,11 +1,12 @@
 package dev.rollczi.litecommands.argument.parser;
 
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 
 import dev.rollczi.litecommands.reflect.type.TypeRange;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
 
@@ -16,12 +17,23 @@ class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
         this.parsedType = parsedType;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <INPUT> List<Parser<SENDER, INPUT, PARSED>> getParsers(Class<INPUT> inType) {
-        return this.parsers.get(inType).stream()
-            .map(parser -> (Parser<SENDER, INPUT, PARSED>) parser)
-            .collect(Collectors.toList());
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <INPUT> Parser<SENDER, INPUT, PARSED> getValidParser(
+        Class<INPUT> input,
+        Invocation<SENDER> invocation,
+        Argument<PARSED> argument
+    ) {
+        for (Parser<SENDER, ?, PARSED> parser : this.parsers.get(input)) {
+            Parser<SENDER, INPUT, PARSED> castedParser = (Parser<SENDER, INPUT, PARSED>) parser;
+
+            if (castedParser.canParse(invocation, argument, input)) {
+                return castedParser;
+            }
+        }
+
+        return null;
     }
 
     @Deprecated

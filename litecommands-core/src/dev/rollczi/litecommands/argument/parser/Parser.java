@@ -8,7 +8,7 @@ public interface Parser<SENDER, INPUT, PARSED> extends Rangeable<Argument<PARSED
 
     ParseResult<PARSED> parse(Invocation<SENDER> invocation, Argument<PARSED> argument, INPUT input);
 
-    default boolean canParse(Invocation<SENDER> invocation, Argument<PARSED> argument, INPUT rawInput) {
+    default boolean canParse(Invocation<SENDER> invocation, Argument<PARSED> argument, Class<INPUT> inputType) {
         return true;
     }
 

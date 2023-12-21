@@ -42,9 +42,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         Argument<E> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
 
         ParserSet<SENDER, E> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
-        Parser<SENDER, RawInput, E> parser = parserSet.getParsers(RawInput.class).stream()
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Cannot find parser for " + componentType.getName()));
+        Parser<SENDER, RawInput, E> parser = parserSet.getValidParserOrThrow(RawInput.class, invocation, argument);
 
         List<E> values = new ArrayList<>();
 
@@ -87,9 +85,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         Argument<T> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
 
         ParserSet<SENDER, T> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
-        Parser<SENDER, RawInput, T> parser = parserSet.getParsers(RawInput.class).stream()
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Cannot find parser for " + componentType.getName()));
+        Parser<SENDER, RawInput, T> parser = parserSet.getValidParserOrThrow(RawInput.class, invocation, argument);
 
         Suggester<SENDER, T> suggester = suggesterRegistry.getSuggester(componentType, argument.getKey());
 

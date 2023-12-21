@@ -1,9 +1,10 @@
 package dev.rollczi.litecommands.reflect.type;
 
-import dev.rollczi.litecommands.reflect.ReflectUtil;
+import dev.rollczi.litecommands.reflect.IterableSuperClassResolver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -37,36 +38,8 @@ public class TypeIndex<T> {
         }
     }
 
-    public List<T> get(Class<?> type) {
-        List<T> values = new ArrayList<>();
-
-        T value = sameIndex.get(type);
-
-        if (value != null) {
-            values.add(value);
-        }
-
-        T t = downwardIndex.get(type);
-
-        if (t != null) {
-            values.add(t);
-        }
-
-        for (Class<?> allType : ReflectUtil.getAllTypes(type)) {
-            T t1 = upwardIndex.get(allType);
-
-            if (t1 != null) {
-                values.add(t1);
-            }
-        }
-
-        T object = upwardIndex.get(Object.class);
-
-        if (object != null) {
-            values.add(object);
-        }
-
-        return values;
+    public Iterable<T> get(Class<?> type) {
+        return new TypeIterable(type);
     }
 
     public List<T> computeIfAbsent(TypeRange<?> range, Supplier<T> supplier) {
@@ -97,6 +70,87 @@ public class TypeIndex<T> {
         }
 
         return Collections.emptyList();
+    }
+
+    private class TypeIterable implements Iterable<T> {
+
+        private final Class<?> type;
+
+        private TypeIterable(Class<?> type) {
+            this.type = type;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new TypeIterator(type);
+        }
+
+    }
+
+    private class TypeIterator implements Iterator<T> {
+
+        private final Class<?> type;
+        private boolean sameType = true;
+        private boolean downwardsType = true;
+        private boolean upwardsType = true;
+        private Iterator<Class<?>> upwardIterator;
+
+        private T next;
+
+        private TypeIterator(Class<?> type) {
+            this.type = type;
+            this.next();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public T next() {
+            T next = this.next;
+            this.next = null;
+
+            if (sameType) {
+                sameType = false;
+
+                T t = sameIndex.get(type);
+
+                if (t != null) {
+                    this.next = t;
+                    return next;
+                }
+            }
+
+            if (downwardsType) {
+                downwardsType = false;
+
+                T t = downwardIndex.get(type);
+
+                if (t != null) {
+                    this.next = t;
+                    return next;
+                }
+            }
+
+            if (upwardsType) {
+                upwardsType = false;
+                upwardIterator = new IterableSuperClassResolver(type).iterator();
+            }
+
+            while (upwardIterator.hasNext()) {
+                Class<?> nextType = upwardIterator.next();
+                T t = upwardIndex.get(nextType);
+
+                if (t != null) {
+                    this.next = t;
+                    return next;
+                }
+            }
+
+            return next;
+        }
     }
 
 }

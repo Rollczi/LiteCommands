@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import dev.rollczi.litecommands.util.StringUtil;
-import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,22 +30,10 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
     @SuppressWarnings("unchecked")
     @NotNull
     public <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parserType, ArgumentKey key) {
-        List<BucketByArgument<?>> typedBuckets = buckets.get(parserType);
-        List<ParserSet<SENDER, PARSED>> parserSets = new ArrayList<>();
-
-        for (BucketByArgument<?> typedBucket : typedBuckets) {
-            BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) typedBucket;
-            ParserSet<SENDER, PARSED> parserSet = bucket.getParserSet(key);
-
-            if (!(parserSet instanceof EmptyParserSetImpl)) {
-                parserSets.add(parserSet);
-            }
-        }
-
-        return new MergedParserSetImpl<>(parserSets);
+        return new MergedParserSetImpl<>(buckets.get(parserType));
     }
 
-    private class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
+    class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
 
         private final BucketByArgumentUniversal<PARSED> universalTypedBucket = new BucketByArgumentUniversal<>(true);
 
@@ -65,7 +52,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         @Override
-        @NotNull
+        @Nullable
         ParserSet<SENDER, PARSED> getParserSet(ArgumentKey key) {
             ParserSet<SENDER, PARSED> bucket = super.getParserSet(key);
 

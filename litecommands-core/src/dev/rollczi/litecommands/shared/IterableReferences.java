@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class IterableReferences<E> implements Iterable<E> {
 
