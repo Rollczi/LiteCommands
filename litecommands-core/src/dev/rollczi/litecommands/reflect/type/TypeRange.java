@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.reflect.type;
 
-import dev.rollczi.litecommands.reflect.ReflectUtil;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,10 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public interface TypeRange<T> {
-
-    Class<T> getBaseType();
-
-    Set<Class<?>> getTypesInRange(Class<?> referenceType);
 
     boolean isInRange(Class<?> type);
 
@@ -48,20 +43,6 @@ public interface TypeRange<T> {
         }
 
         @Override
-        public Class<T> getBaseType() {
-            return null;
-        }
-
-        @Override
-        public Set<Class<?>> getTypesInRange(Class<?> referenceType) {
-            if (type == referenceType) {
-                return Collections.singleton(type);
-            }
-
-            return Collections.emptySet();
-        }
-
-        @Override
         public boolean isInRange(Class<?> type) {
             return this.type == type;
         }
@@ -78,24 +59,6 @@ public interface TypeRange<T> {
 
         public Class<?> getType() {
             return type;
-        }
-
-        @Override
-        public Class<T> getBaseType() {
-            return type;
-        }
-
-        @Override
-        public Set<Class<?>> getTypesInRange(Class<?> referenceType) {
-            Set<Class<?>> types = new HashSet<>();
-
-            for (Class<?> superType : ReflectUtil.getAllTypes(referenceType)) {
-                if (type.isAssignableFrom(superType)) {
-                    types.add(superType);
-                }
-            }
-
-            return types;
         }
 
         @Override
@@ -117,16 +80,6 @@ public interface TypeRange<T> {
 
         public Set<Class<?>> getInclude() {
             return include;
-        }
-
-        @Override
-        public Class<T> getBaseType() {
-            return type;
-        }
-
-        @Override
-        public Set<Class<?>> getTypesInRange(Class<?> referenceType) {
-            return Collections.unmodifiableSet(include);
         }
 
         @Override

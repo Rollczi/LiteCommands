@@ -34,14 +34,6 @@ class TypeRangeTest {
     }
 
     @Test
-    void testIncludeTypes() {
-        TypeRange<?> range = TypeRange.upwards(List.class);
-
-        assertThat(range.getTypesInRange(LinkedList.class))
-            .containsExactlyInAnyOrder(List.class, LinkedList.class, AbstractSequentialList.class, AbstractList.class);
-    }
-
-    @Test
     void testUpwards() {
         TypeRange<?> range = TypeRange.upwards(List.class);
 
@@ -59,24 +51,6 @@ class TypeRangeTest {
     }
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_17)
-    void testDownwardsTypes17() {
-        TypeRange<?> range = TypeRange.downwards(List.class, Object.class);
-
-        assertThat(range.getTypesInRange(ArrayList.class))
-            .containsExactlyInAnyOrder(List.class, Iterable.class, Collection.class);
-    }
-
-    @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
-    void testDownwardsTypes21() throws ClassNotFoundException {
-        TypeRange<?> range = TypeRange.downwards(List.class, Object.class);
-
-        assertThat(range.getTypesInRange(ArrayList.class))
-            .containsExactlyInAnyOrder(List.class, Iterable.class, Collection.class, Class.forName("java.util.SequencedCollection"));
-    }
-
-    @Test
     void testSame() {
         TypeRange<?> range = TypeRange.same(List.class);
 
@@ -84,14 +58,6 @@ class TypeRangeTest {
         assertFalse(range.isInRange(LinkedList.class));
         assertFalse(range.isInRange(Collection.class));
         assertFalse(range.isInRange(Object.class));
-    }
-
-    @Test
-    void testSameTypes() {
-        TypeRange<?> range = TypeRange.same(List.class);
-
-        assertThat(range.getTypesInRange(List.class))
-            .containsExactlyInAnyOrder(List.class);
     }
 
 }

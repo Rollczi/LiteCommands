@@ -12,7 +12,6 @@ public interface SuggesterRegistry<SENDER> {
 
     <T> void registerSuggester(TypeRange<T> type, ArgumentKey key, Suggester<SENDER, T> suggester);
 
-    @Deprecated
     default <PARSED> Suggester<SENDER, PARSED> getSuggester(Class<PARSED> parsedClass, ArgumentKey key) {
         return getSuggesters(parsedClass, key).stream()
             .findFirst()

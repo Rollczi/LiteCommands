@@ -24,23 +24,11 @@ public interface ParserSet<SENDER, PARSED> {
     }
 
     @Nullable
-    <INPUT> Parser<SENDER, INPUT, PARSED> getValidParser(
-        Class<INPUT> input,
-        Invocation<SENDER> invocation,
-        Argument<PARSED> argument
-    );
+    <INPUT> Parser<SENDER, INPUT, PARSED>
+    getValidParser(Class<INPUT> input, Invocation<SENDER> invocation, Argument<PARSED> argument);
 
-    /**
-     * @deprecated use {@link #of(TypeRange, Parser)} instead
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
-    static <SENDER, PARSED, IN> ParserSet<SENDER, PARSED> of(Class<PARSED> parsedClass, Parser<SENDER, IN, PARSED> parser) {
-        return of(TypeRange.downwards(parsedClass), parser);
-    }
-
-    static <SENDER, PARSED, IN> ParserSet<SENDER, PARSED> of(TypeRange<PARSED> parsedRange, Parser<SENDER, IN, PARSED> parser) {
-        ParserSetImpl<SENDER, PARSED> parserSet = new ParserSetImpl<>(parsedRange);
+    static <SENDER, PARSED, IN> ParserSet<SENDER, PARSED> of(Parser<SENDER, IN, PARSED> parser) {
+        ParserSetImpl<SENDER, PARSED> parserSet = new ParserSetImpl<>();
 
         parserSet.registerParser(parser);
         return parserSet;

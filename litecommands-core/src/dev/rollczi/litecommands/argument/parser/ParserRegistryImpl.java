@@ -81,7 +81,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
-            ParserSetImpl<SENDER, PARSED> bucket = buckets.computeIfAbsent(key.getKey(), key.getNamespace(), (k1, k2) -> new ParserSetImpl<>(parsedType));
+            ParserSetImpl<SENDER, PARSED> bucket = buckets.computeIfAbsent(key.getKey(), key.getNamespace(), (k1, k2) -> new ParserSetImpl<>());
 
             bucket.registerParser(parser);
         }

@@ -121,16 +121,6 @@ public final class ReflectUtil {
         }
     }
 
-    public static List<Class<?>> getAllTypes(Class<?> type) {
-        List<Class<?>> superTypes = new ArrayList<>();
-
-        superTypes.add(type);
-        superTypes.addAll(getInterfaces(type));
-        superTypes.addAll(getSuperClasses(type));
-
-        return superTypes;
-    }
-
     public static List<Class<?>> getInterfaces(Class<?> type) {
         Class<?>[] current = type.getInterfaces();
 
@@ -146,20 +136,6 @@ public final class ReflectUtil {
         }
 
         return interfaces;
-    }
-
-    public static List<Class<?>> getSuperClasses(Class<?> type) {
-        Class<?> superclass = type.getSuperclass();
-
-        if (superclass == null || superclass == Object.class) {
-            return Collections.emptyList();
-        }
-
-        List<Class<?>> superClasses = new ArrayList<>();
-        superClasses.add(superclass);
-        superClasses.addAll(getSuperClasses(superclass));
-
-        return superClasses;
     }
 
     @SuppressWarnings("unchecked")
