@@ -7,12 +7,12 @@ import dev.rollczi.litecommands.extension.LiteExtension;
 
 import java.util.function.UnaryOperator;
 
-public class LiteJakartaExtension<SENDER> implements LiteExtension<SENDER, JakartaSettings> {
+public class LiteJakartaExtension<SENDER> implements LiteExtension<SENDER, JakartaSettings<SENDER>> {
 
-    private final JakartaSettings settings = new JakartaSettings();
+    private final JakartaSettings<SENDER> settings = new JakartaSettings<>();
 
     @Override
-    public void configure(LiteConfigurator<JakartaSettings> configurer) {
+    public void configure(LiteConfigurator<JakartaSettings<SENDER>> configurer) {
         configurer.configure(settings);
     }
 
@@ -21,15 +21,16 @@ public class LiteJakartaExtension<SENDER> implements LiteExtension<SENDER, Jakar
         builder
             .result(JakartaResult.class,
                 new JakartaResultHandler<>(
-                    settings.locale,
+                    settings.localeProvider,
                     internal.getMessageRegistry(),
                     settings.validatorFactory.getMessageInterpolator(),
-                    settings.constraintViolationDelimiter))
+                    settings.constraintViolationDelimiter,
+                    settings.constrainsViolationMessage))
             .annotations(configuration -> configuration
                 .methodValidator(new JakartaMethodValidator<>(settings.validatorFactory.getValidator())));
     }
 
-    public LiteJakartaExtension<SENDER> settings(UnaryOperator<JakartaSettings> settings) {
+    public LiteJakartaExtension<SENDER> settings(UnaryOperator<JakartaSettings<SENDER>> settings) {
         settings.apply(this.settings);
         return this;
     }
