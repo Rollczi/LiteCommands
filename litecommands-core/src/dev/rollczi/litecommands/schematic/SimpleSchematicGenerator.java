@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SENDER> {
+public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SENDER>, SchematicFormatProvider {
 
     private static final String SEPARATOR = " ";
 
@@ -32,6 +32,11 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
             .collect(Collectors.toList());
 
         return new Schematic(schematics);
+    }
+
+    @Override
+    public SchematicFormat getFormat() {
+        return format;
     }
 
     protected Stream<String> generateRaw(SchematicInput<SENDER> schematicInput) {
@@ -83,5 +88,4 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
     protected boolean isOptional(SchematicInput<SENDER> input, Argument<?> argument) {
         return wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty() || argument.hasDefaultValue();
     }
-
 }

@@ -48,6 +48,7 @@ public class LiteChatGptExtension<SENDER> implements LiteExtension<SENDER, ChatG
             );
     }
 
+    @Deprecated
     public LiteChatGptExtension<SENDER> settings(UnaryOperator<ChatGptSettings> settings) {
         settings.apply(this.settings);
         return this;

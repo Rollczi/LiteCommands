@@ -112,8 +112,8 @@ class LiteJakartaExtensionTest {
 
     @Test
     void sizeValidationShouldFail() {
-        JakartaResult testText = platform.execute("test size text")
-            .assertFailedAs(JakartaResult.class);
+        JakartaRawResult testText = platform.execute("test size text")
+            .assertFailedAs(JakartaRawResult.class);
 
         assertThat(testText.getViolations()).hasSize(1);
     }
@@ -127,7 +127,7 @@ class LiteJakartaExtensionTest {
     @Test
     void rangeValidationShouldFail() {
         platform.execute("test range 100")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -139,7 +139,7 @@ class LiteJakartaExtensionTest {
     @Test
     void maxValidationShouldFail() {
         platform.execute("test max 2")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -151,7 +151,7 @@ class LiteJakartaExtensionTest {
     @Test
     void minValidationShouldFail() {
         platform.execute("test min 0")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -163,7 +163,7 @@ class LiteJakartaExtensionTest {
     @Test
     void negativeValidationShouldFail() {
         platform.execute("test negative 1")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -181,7 +181,7 @@ class LiteJakartaExtensionTest {
     @Test
     void negativeOrZeroValidationShouldFail() {
         platform.execute("test negative-or-zero 1")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -193,7 +193,7 @@ class LiteJakartaExtensionTest {
     @Test
     void pastValidationShouldFail() {
         platform.execute(format("test past %s", normalizeInstant(Instant.now().plus(1, ChronoUnit.MINUTES))))
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -205,7 +205,7 @@ class LiteJakartaExtensionTest {
     @Test
     void pastOrPresentValidationShouldFail() {
         platform.execute(format("test past-or-present %s", normalizeInstant(Instant.now().plus(1, MINUTES))))
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     private String normalizeInstant(Instant instant) {
@@ -224,7 +224,7 @@ class LiteJakartaExtensionTest {
     @Test
     void positiveValidationShouldFail() {
         platform.execute("test positive -1")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -236,7 +236,7 @@ class LiteJakartaExtensionTest {
     @Test
     void positiveOrZeroValidationShouldFail() {
         platform.execute("test positive-or-zero -1")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -248,7 +248,7 @@ class LiteJakartaExtensionTest {
     @Test
     void patternValidationShouldFail() {
         platform.execute("test pattern 123")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -260,7 +260,7 @@ class LiteJakartaExtensionTest {
     @Test
     void decimalMaxValidationShouldFail() {
         platform.execute("test decimal-max 1.1")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -272,7 +272,7 @@ class LiteJakartaExtensionTest {
     @Test
     void decimalMinValidationShouldFail() {
         platform.execute("test decimal-min 0.9")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -284,7 +284,7 @@ class LiteJakartaExtensionTest {
     @Test
     void digitValidationShouldFail() {
         platform.execute("test digits 1.123")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -296,7 +296,7 @@ class LiteJakartaExtensionTest {
     @Test
     void emailValidationShouldFail() {
         platform.execute("test email for_sure_not_email")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -308,7 +308,7 @@ class LiteJakartaExtensionTest {
     @Test
     void futureValidationShouldFail() {
         platform.execute(format("test future %s", normalizeInstant(Instant.now().minus(1, MINUTES))))
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -320,7 +320,7 @@ class LiteJakartaExtensionTest {
     @Test
     void futureOrPresentValidationShouldFail() {
         platform.execute(format("test future-or-present %s", normalizeInstant(Instant.now().minus(1, MINUTES))))
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -332,7 +332,7 @@ class LiteJakartaExtensionTest {
     @Test
     void assertFalseValidationShouldFail() {
         platform.execute("test assert-false true")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
     @Test
@@ -344,7 +344,7 @@ class LiteJakartaExtensionTest {
     @Test
     void assertTrueValidationShouldFail() {
         platform.execute("test assert-true false")
-            .assertFailedAs(JakartaResult.class);
+            .assertFailedAs(JakartaRawResult.class);
     }
 
 }
