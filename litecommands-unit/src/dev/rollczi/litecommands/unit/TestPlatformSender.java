@@ -1,15 +1,19 @@
 package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.identifier.Identifier;
+import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class TestPlatformSender extends AbstractPlatformSender {
+
+    public static final MetaKey<Locale> LOCALE = MetaKey.of("locale", Locale.class);
 
     private final List<String> permissions = new ArrayList<>();
     private boolean permittedAll = false;
@@ -35,6 +39,12 @@ public class TestPlatformSender extends AbstractPlatformSender {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static PlatformSender locale(Locale locale) {
+        return builder()
+            .locale(locale)
+            .build();
     }
 
     public static PlatformSender permittedAll() {
@@ -65,6 +75,11 @@ public class TestPlatformSender extends AbstractPlatformSender {
 
         public Builder permissions(List<String> permissions) {
             this.sender.permissions.addAll(permissions);
+            return this;
+        }
+
+        public Builder locale(Locale locale) {
+            this.sender.putProperty(TestPlatformSender.LOCALE, () -> locale);
             return this;
         }
 

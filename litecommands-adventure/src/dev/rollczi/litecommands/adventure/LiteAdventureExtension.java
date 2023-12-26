@@ -23,10 +23,10 @@ public class LiteAdventureExtension<SENDER> implements LiteExtension<SENDER, Lit
         this.adventureAudienceProvider = AdventureAudienceProvider.simple();
     }
 
+    @Deprecated
     public static <T> LiteAdventureExtension<T> create() {
         return new LiteAdventureExtension<>();
     }
-
 
     @Override
     public void configure(LiteConfigurator<Settings> configurer) {

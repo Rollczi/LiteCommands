@@ -72,7 +72,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             objects[parameterIndex] = unwrapped;
         }
 
-        ValidatorResult result = validatorService.validate(new MethodValidatorContext<>(results.getInvocation(), instance, method, objects));
+        ValidatorResult result = validatorService.validate(new MethodValidatorContext<>(results, definition, instance, method, objects));
 
         if (result.isInvalid()) {
             return CommandExecutorMatchResult.failed(result.getInvalidResult());
