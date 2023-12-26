@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.annotations.validator.method.MethodValidator;
 import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorContext;
 import dev.rollczi.litecommands.validator.ValidatorResult;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.executable.ExecutableValidator;
 
@@ -14,8 +13,8 @@ class JakartaMethodValidator<SENDER> implements MethodValidator<SENDER> {
 
     private final Validator validator;
 
-    public JakartaMethodValidator() {
-        this.validator = Validation.buildDefaultValidatorFactory().getValidator();
+    public JakartaMethodValidator(Validator validator) {
+        this.validator = validator;
     }
 
     @Override

@@ -19,10 +19,14 @@ public class LiteJakartaExtension<SENDER> implements LiteExtension<SENDER, Jakar
     @Override
     public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal) {
         builder
-            .result(JakartaResult.class, new JakartaResultHandler<>())
+            .result(JakartaResult.class,
+                new JakartaResultHandler<>(
+                    settings.locale,
+                    internal.getMessageRegistry(),
+                    settings.validatorFactory.getMessageInterpolator(),
+                    settings.constraintViolationDelimiter))
             .annotations(configuration -> configuration
-                .methodValidator(new JakartaMethodValidator<>())
-            );
+                .methodValidator(new JakartaMethodValidator<>(settings.validatorFactory.getValidator())));
     }
 
     public LiteJakartaExtension<SENDER> settings(UnaryOperator<JakartaSettings> settings) {
