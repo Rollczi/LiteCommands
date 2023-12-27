@@ -5,29 +5,21 @@ import dev.rollczi.litecommands.LiteCommandsInternal;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteExtension;
 
-import java.util.function.UnaryOperator;
+public class LiteJakartaExtension<SENDER> implements LiteExtension<SENDER, JakartaSettings<SENDER>> {
 
-public class LiteJakartaExtension<SENDER> implements LiteExtension<SENDER, JakartaSettings> {
-
-    private final JakartaSettings settings = new JakartaSettings();
+    private final JakartaSettings<SENDER> settings = new JakartaSettings<>();
 
     @Override
-    public void configure(LiteConfigurator<JakartaSettings> configurer) {
+    public void configure(LiteConfigurator<JakartaSettings<SENDER>> configurer) {
         configurer.configure(settings);
     }
 
     @Override
     public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal) {
         builder
-            .result(JakartaResult.class, new JakartaResultHandler<>())
+            .result(JakartaRawResult.class, new JakartaRawResultHandler<>(settings, internal.getSchematicGenerator()))
             .annotations(configuration -> configuration
-                .methodValidator(new JakartaMethodValidator<>())
-            );
-    }
-
-    public LiteJakartaExtension<SENDER> settings(UnaryOperator<JakartaSettings> settings) {
-        settings.apply(this.settings);
-        return this;
+                .methodValidator(new JakartaMethodValidator<>(settings.validatorFactory.getValidator())));
     }
 
 }
