@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.bukkit.argument.WorldArgument;
 import dev.rollczi.litecommands.bukkit.context.WorldContext;
 import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
+import dev.rollczi.litecommands.bukkit.tabcomplete.TabComplete;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.util.StringUtil;
 import org.bukkit.Bukkit;
@@ -17,8 +18,11 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+
+import java.util.Locale;
 
 public final class LiteCommandsBukkit {
 
@@ -26,7 +30,10 @@ public final class LiteCommandsBukkit {
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder() {
-        return builder(StringUtil.EMPTY);
+        JavaPlugin providingPlugin = JavaPlugin.getProvidingPlugin(LiteCommandsBukkit.class);
+        PluginDescriptionFile description = providingPlugin.getDescription();
+
+        return builder(description.getName().toLowerCase(Locale.ROOT));
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(String fallbackPrefix) {

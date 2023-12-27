@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.bukkit;
+package dev.rollczi.litecommands.bukkit.tabcomplete;
 
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
@@ -13,7 +13,10 @@ import org.bukkit.plugin.PluginManager;
 import java.lang.reflect.Method;
 import java.util.List;
 
-class TabCompletePaperAsync extends TabComplete implements Listener {
+/**
+ * Tab completer for Paper 1.12 - current
+ */
+class TabCompletePaperAsync extends AbstractAsyncTabComplete implements Listener {
 
     public TabCompletePaperAsync(Plugin plugin) {
         PluginManager pluginManager = plugin.getServer().getPluginManager();
@@ -31,6 +34,7 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
          tabCompleteEvent.setCompletions(result);
     }
 
+    @Override
     public void close() {
         super.close();
         HandlerList.unregisterAll(this);

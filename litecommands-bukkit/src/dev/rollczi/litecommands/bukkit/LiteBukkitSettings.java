@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.bukkit;
 
+import dev.rollczi.litecommands.bukkit.tabcomplete.TabComplete;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import org.bukkit.Server;
 

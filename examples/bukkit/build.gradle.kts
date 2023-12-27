@@ -13,6 +13,7 @@ repositories {
     mavenCentral()
     maven { url = uri("https://repo.panda-lang.org/releases/") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
+    maven("https://libraries.minecraft.net/") // brigadier
 }
 
 dependencies {
@@ -36,11 +37,11 @@ bukkit {
 tasks.withType<ShadowJar> {
     archiveFileName.set("$pluginName v${project.version}.jar")
 
-    listOf(
-        "panda",
-        "org.panda_lang",
-        "dev.rollczi.litecommands",
-    ).forEach { relocate(it, "$packageName.libs.$it") }
+//    listOf(
+//        "panda",
+//        "org.panda_lang",
+//        "dev.rollczi.litecommands",
+//    ).forEach { relocate(it, "$packageName.libs.$it") }
 }
 
 tasks.withType<JavaCompile> {

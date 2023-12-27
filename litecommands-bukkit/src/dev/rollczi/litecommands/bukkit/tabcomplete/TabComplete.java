@@ -1,5 +1,7 @@
-package dev.rollczi.litecommands.bukkit;
+package dev.rollczi.litecommands.bukkit.tabcomplete;
 
+import dev.rollczi.litecommands.bukkit.BukkitCommand;
+import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.scheduler.Scheduler;
@@ -21,7 +23,7 @@ public abstract class TabComplete {
 
     protected Map<String, BukkitCommand> listeners = new HashMap<>();
 
-    void register(String fallbackPrefix, BukkitCommand command) {
+    public void register(String fallbackPrefix, BukkitCommand command, CommandRoute<?> commandRoute) {
         for (String alias : command.getAliases()) {
             listeners.put(alias, command);
             listeners.put(fallbackPrefix + FALLBACK_SEPARATOR + alias, command);
@@ -31,7 +33,7 @@ public abstract class TabComplete {
         listeners.put(fallbackPrefix + FALLBACK_SEPARATOR + command.getName(), command);
     }
 
-    void unregister(String commandName) {
+    public void unregister(String commandName) {
         listeners.remove(commandName);
     }
 
@@ -43,7 +45,7 @@ public abstract class TabComplete {
         }
     }
 
-    void close() {
+    protected void close() {
         this.unregisterAll();
     }
 
@@ -70,7 +72,13 @@ public abstract class TabComplete {
         }
     }
 
-    static TabComplete create(Scheduler scheduler, Plugin plugin) {
+    public static TabComplete create(Scheduler scheduler, Plugin plugin) {
+        try {
+            Class.forName("com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent");
+            return new BrigadierTabComplete(plugin);
+        }
+        catch (ClassNotFoundException ignored) {}
+
         try {
             Class.forName("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent");
             return new TabCompletePaperAsync(plugin);

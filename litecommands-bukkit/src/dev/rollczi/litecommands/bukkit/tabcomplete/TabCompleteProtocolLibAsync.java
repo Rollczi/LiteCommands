@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.bukkit;
+package dev.rollczi.litecommands.bukkit.tabcomplete;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import dev.rollczi.litecommands.bukkit.BukkitCommand;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
@@ -23,10 +24,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-class TabCompleteProtocolLibAsync extends TabCompleteSync {
+/**
+ * Tab completer for spigot 1.8 - 1.12 (with protocolib)
+ */
+class TabCompleteProtocolLibAsync extends AbstractAsyncTabComplete {
 
     private final static ProtocolManager MANAGER = ProtocolLibrary.getProtocolManager();
 
@@ -42,7 +44,6 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
                 handlePacket(event);
             }
         });
-
     }
 
     private void tryReplaceConsoleTabCompleter(Server server) {

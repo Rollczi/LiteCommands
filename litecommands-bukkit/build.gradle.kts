@@ -8,6 +8,7 @@ plugins {
 dependencies {
     api(project(":litecommands-framework"))
 
+    api("me.lucko:commodore:2.2")
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")

@@ -28,7 +28,7 @@ public class BukkitCommand extends Command {
     private final CommandRoute<CommandSender> commandRoute;
     private final PlatformInvocationListener<CommandSender> invocationHook;
     private final PlatformSuggestionListener<CommandSender> suggestionHook;
-    private boolean syncTabComplete = false;
+    private boolean isBasicSuggestions = true;
 
     BukkitCommand(LiteBukkitSettings settings, CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
         super(commandRoute.getName(), "", "/" + commandRoute.getName(), commandRoute.getAliases());
@@ -38,8 +38,12 @@ public class BukkitCommand extends Command {
         this.suggestionHook = suggestionHook;
     }
 
-    public void setSyncTabComplete(boolean syncTabComplete) {
-        this.syncTabComplete = syncTabComplete;
+    public void disableBasicSuggestions() {
+        this.isBasicSuggestions = false;
+    }
+
+    public void enableBasicSuggestions() {
+        this.isBasicSuggestions = true;
     }
 
     @Override
@@ -53,26 +57,26 @@ public class BukkitCommand extends Command {
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        if (this.syncTabComplete) {
-            CompletableFuture<List<String>> future = this.suggest(sender, alias, args);
-
-            try {
-                return future.get(0, TimeUnit.MILLISECONDS);
-            }
-            catch (TimeoutException exception) {
-                if (settings.syncSuggestionWarning()) {
-                    LOGGER.warning("Asynchronous tab completions are not supported on current server version.");
-                    LOGGER.warning("Use server 1.12+ Paper version or install ProtocolLib plugin.");
-                }
-
-                return Collections.emptyList();
-            }
-            catch (InterruptedException | ExecutionException exception) {
-                throw new RuntimeException(exception);
-            }
+        if (!this.isBasicSuggestions) {
+            return Collections.emptyList();
         }
 
-        return Collections.emptyList();
+        CompletableFuture<List<String>> future = this.suggest(sender, alias, args);
+
+        try {
+            return future.get(0, TimeUnit.MILLISECONDS);
+        }
+        catch (TimeoutException exception) {
+            if (settings.syncSuggestionWarning()) {
+                LOGGER.warning("Asynchronous tab completions are not supported on current server version.");
+                LOGGER.warning("Use server 1.12+ Paper version or install ProtocolLib plugin.");
+            }
+
+            return Collections.emptyList();
+        }
+        catch (InterruptedException | ExecutionException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     public CompletableFuture<List<String>> suggest(CommandSender sender, String alias, String[] args) {
