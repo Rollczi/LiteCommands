@@ -11,6 +11,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.rollczi.example.velocity.argument.PlayerArgument;
 import dev.rollczi.example.velocity.argument.RegisteredServerArgument;
+import dev.rollczi.example.velocity.command.MsgCommand;
 import dev.rollczi.example.velocity.command.SendCommand;
 import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
@@ -43,7 +44,8 @@ public class ExamplePlugin {
 
             // Commands
             .commands(
-                new SendCommand()
+                new SendCommand(),
+                new MsgCommand()
             )
 
             // Arguments @Arg
