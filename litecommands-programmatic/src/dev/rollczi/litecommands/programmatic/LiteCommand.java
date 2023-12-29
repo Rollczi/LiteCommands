@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommand<SENDER> {
 
@@ -28,7 +30,7 @@ public class LiteCommand<SENDER> {
     protected final List<String> aliases;
     protected final Meta meta = Meta.create();
 
-    protected Consumer<LiteContext<SENDER>> executor = liteContext -> {};
+    protected Function<LiteContext<SENDER>, Object> executor = liteContext -> null;
     protected final List<Argument<?>> arguments = new ArrayList<>();
     protected final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
     protected final List<BindRequirement<?>> bindRequirements = new ArrayList<>();
@@ -115,12 +117,22 @@ public class LiteCommand<SENDER> {
     }
 
     public final LiteCommand<SENDER> onExecute(Consumer<LiteContext<SENDER>> executor) {
+        this.executor = liteContext -> {
+            executor.accept(liteContext);
+            return null;
+        };
+        return this;
+    }
+
+    @ApiStatus.Experimental
+    public final LiteCommand<SENDER> onExecute(Function<LiteContext<SENDER>, Object> executor) {
         this.executor = executor;
         return this;
     }
 
     protected void execute(LiteContext<SENDER> context) {
-        this.executor.accept(context);
+        Object object = this.executor.apply(context);
+        context.returnResult(object);
     }
 
     @SafeVarargs
