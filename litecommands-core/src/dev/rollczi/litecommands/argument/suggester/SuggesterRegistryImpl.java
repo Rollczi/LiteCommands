@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> {
 
-    private final Suggester<SENDER, ?> noneSuggester = new SuggesterNoneImpl<>();
+    private final Suggester<SENDER, ?> noneSuggester = new SuggesterNone<>();
 
     private final Map<Class<?>, BucketByArgument<?>> buckets = new HashMap<>();
 

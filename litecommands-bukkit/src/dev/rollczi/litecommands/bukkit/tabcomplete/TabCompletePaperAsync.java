@@ -25,13 +25,13 @@ class TabCompletePaperAsync extends AbstractAsyncTabComplete implements Listener
 
     private void executeListener(Event event) {
         PaperAsyncTabCompleteEvent tabCompleteEvent = new PaperAsyncTabCompleteEvent(event);
-            List<String> result = this.callListener(tabCompleteEvent.getSender(), tabCompleteEvent.getBuffer());
+        List<String> result = this.callListener(tabCompleteEvent.getSender(), tabCompleteEvent.getBuffer());
 
         if (result == null) {
             return;
         }
 
-         tabCompleteEvent.setCompletions(result);
+        tabCompleteEvent.setCompletions(result);
     }
 
     @Override

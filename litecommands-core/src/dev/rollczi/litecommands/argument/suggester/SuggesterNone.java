@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
-class SuggesterNoneImpl<SENDER, T> implements Suggester<SENDER, T> {
+public final class SuggesterNone<SENDER, T> implements Suggester<SENDER, T> {
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context) {

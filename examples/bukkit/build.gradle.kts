@@ -14,9 +14,11 @@ repositories {
     maven { url = uri("https://repo.panda-lang.org/releases/") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven("https://libraries.minecraft.net/") // brigadier
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
     // implementation("dev.rollczi:litecommands-bukkit:3.2.2") // <-- uncomment in your project

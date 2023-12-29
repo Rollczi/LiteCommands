@@ -7,6 +7,7 @@ import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
+import dev.rollczi.example.bukkit.command.TestCommand;
 import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
 import dev.rollczi.example.bukkit.validator.IsNotOp;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
@@ -43,7 +44,8 @@ public class ExamplePlugin extends JavaPlugin {
                 new KickCommand(),
                 new MuteCommand(),
                 new TeleportCommand(),
-                new FlyCommand()
+                new FlyCommand(),
+                new TestCommand()
             )
 
             // Custom annotation validators

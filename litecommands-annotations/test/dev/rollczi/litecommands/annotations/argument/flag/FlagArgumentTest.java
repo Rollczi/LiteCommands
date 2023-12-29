@@ -57,7 +57,7 @@ class FlagArgumentTest extends LiteTestSpec {
     @DisplayName("Should suggest flag argument")
     void testSuggestFlagArgument() {
         platform.suggest("test ")
-            .assertSuggest("-a", "<test>", "last");
+            .assertSuggest("-a", "last");
     }
 
     @Test

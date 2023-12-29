@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.bukkit.tabcomplete;
 
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.bukkit.BukkitCommand;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.raw.RawCommand;
@@ -72,10 +74,10 @@ public abstract class TabComplete {
         }
     }
 
-    public static TabComplete create(Scheduler scheduler, Plugin plugin) {
+    public static TabComplete create(Scheduler scheduler, Plugin plugin, SuggesterRegistry<CommandSender> suggesterRegistry, ParserRegistry<CommandSender> parserRegistry) {
         try {
             Class.forName("com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent");
-            return new BrigadierTabComplete(plugin);
+            return new BrigadierTabComplete(plugin, suggesterRegistry, parserRegistry);
         }
         catch (ClassNotFoundException ignored) {}
 

@@ -9,4 +9,8 @@ public interface Suggester<SENDER, PARSED> {
 
     SuggestionResult suggest(Invocation<SENDER> invocation, Argument<PARSED> argument, SuggestionContext context);
 
+    static <SENDER, PARSED> SuggesterNone<SENDER, PARSED> none() {
+        return new SuggesterNone<>();
+    }
+
 }

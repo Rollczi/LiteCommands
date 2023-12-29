@@ -10,7 +10,7 @@ import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.bukkit.tabcomplete.TabComplete;
 import dev.rollczi.litecommands.message.MessageRegistry;
-import dev.rollczi.litecommands.util.StringUtil;
+import dev.rollczi.litecommands.suggestion.SuggestionService;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -61,7 +61,7 @@ public final class LiteCommandsBukkit {
 
                 .scheduler(new BukkitSchedulerImpl(server.getScheduler(), plugin))
 
-                .settings(bukkitSettings -> bukkitSettings.tabCompleter(TabComplete.create(internal.getScheduler(), plugin)))
+                .settings(bukkitSettings -> bukkitSettings.tabCompleter(TabComplete.create(internal.getScheduler(), plugin, internal.getSuggesterRegistry(), internal.getParserRegistry())))
 
                 .argument(Player.class, new PlayerArgument(server, messageRegistry))
                 .argument(World.class, new WorldArgument(server, messageRegistry))
