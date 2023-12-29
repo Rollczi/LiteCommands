@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.util.StringUtil;
+import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -26,7 +27,10 @@ public final class LiteCommandsBukkit {
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder() {
-        return builder(StringUtil.EMPTY);
+        JavaPlugin plugin = JavaPlugin.getProvidingPlugin(LiteCommandsBukkit.class);
+        String name = plugin.getDescription().getName();
+
+        return builder(name.toLowerCase(Locale.ROOT).replace(" ", "-"), plugin, plugin.getServer());
     }
 
     public static LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder(String fallbackPrefix) {
