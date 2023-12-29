@@ -1,45 +1,39 @@
 package dev.rollczi.litecommands.argument.parser;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
-import dev.rollczi.litecommands.util.MapUtil;
+import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import dev.rollczi.litecommands.util.StringUtil;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
 
-    private final Map<Class<?>, BucketByArgument<?>> buckets = new HashMap<>();
+    private final TypeIndex<BucketByArgument<?>> buckets = new TypeIndex<>();
 
     @Override
     @SuppressWarnings("unchecked")
-    public <PARSED> void registerParser(Class<PARSED> parserType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
-        BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) buckets.computeIfAbsent(parserType, k -> new BucketByArgument<>());
+    @NotNull
+    public <PARSED> void registerParser(TypeRange<PARSED> typeRange, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
+        List<BucketByArgument<?>> arguments = buckets.computeIfAbsent(typeRange, () -> new BucketByArgument<>());
 
-        bucket.registerParser(parserType, key, parser);
+        for (BucketByArgument<?> argument : arguments) {
+            BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) argument;
+            bucket.registerParser(typeRange, key, parser);
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     @NotNull
     public <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parserType, ArgumentKey key) {
-        Optional<BucketByArgument<?>> argumentOptional = MapUtil.findBySuperTypeOf(parserType, buckets);
-
-        if (argumentOptional.isPresent()) {
-            BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) argumentOptional.get();
-
-            return bucket.getParserSet(key);
-        }
-
-        return new EmptyParserSetImpl<>();
+        return new MergedParserSetImpl<>(buckets.get(parserType));
     }
 
-    private class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
+    class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
 
         private final BucketByArgumentUniversal<PARSED> universalTypedBucket = new BucketByArgumentUniversal<>(true);
 
@@ -48,7 +42,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         @Override
-        void registerParser(Class<PARSED> parsedType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
+        void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
             if (key.isUniversal()) {
                 this.universalTypedBucket.registerParser(parsedType, key, parser);
                 return;
@@ -58,7 +52,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         @Override
-        @NotNull
+        @Nullable
         ParserSet<SENDER, PARSED> getParserSet(ArgumentKey key) {
             ParserSet<SENDER, PARSED> bucket = super.getParserSet(key);
 
@@ -86,8 +80,8 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
             this.ignoreNamespace = ignoreNamespace;
         }
 
-        void registerParser(Class<PARSED> parsedType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
-            ParserSetImpl<SENDER, PARSED> bucket = buckets.computeIfAbsent(key.getKey(), key.getNamespace(), (k1, k2) -> new ParserSetImpl<>(parsedType));
+        void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
+            ParserSetImpl<SENDER, PARSED> bucket = buckets.computeIfAbsent(key.getKey(), key.getNamespace(), (k1, k2) -> new ParserSetImpl<>());
 
             bucket.registerParser(parser);
         }

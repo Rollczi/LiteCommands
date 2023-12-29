@@ -23,4 +23,5 @@ public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, A
 
         return new SimpleArgument<>(name, holder.getFormat());
     }
+
 }

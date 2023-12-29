@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
@@ -68,8 +67,7 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
         @SuppressWarnings("unchecked")
         private <SENDER, INPUT, PARSED> ParseResult<PARSED> parseInput(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet, INPUT input) {
             Class<INPUT> inputType = (Class<INPUT>) input.getClass();
-            Parser<SENDER, INPUT, PARSED> parser = parserSet.getParser(inputType)
-                .orElseThrow(() -> new LiteCommandsException("No parser for input type " + inputType.getName()));
+            Parser<SENDER, INPUT, PARSED> parser = parserSet.getValidParserOrThrow(inputType, invocation, argument);
 
             return parser.parse(invocation, argument, input);
         }

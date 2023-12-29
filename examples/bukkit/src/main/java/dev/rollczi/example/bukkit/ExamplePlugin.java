@@ -1,11 +1,14 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.example.bukkit.command.GiveCommand;
+import dev.rollczi.example.bukkit.command.KickAllCommand;
 import dev.rollczi.example.bukkit.command.MuteCommand;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
+import dev.rollczi.example.bukkit.command.RandomItemCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
 import dev.rollczi.example.bukkit.validator.IsNotOp;
@@ -41,9 +44,12 @@ public class ExamplePlugin extends JavaPlugin {
                 new ConvertCommand(),
                 new GameModeCommand(),
                 new KickCommand(),
+                new KickAllCommand(),
                 new MuteCommand(),
                 new TeleportCommand(),
-                new FlyCommand()
+                new FlyCommand(),
+                new GiveCommand(),
+                new RandomItemCommand()
             )
 
             // Custom annotation validators
@@ -69,8 +75,8 @@ public class ExamplePlugin extends JavaPlugin {
             .argument(GameMode.class, new GameModeArgument())
 
             // Suggestions, if you want you can override default argument suggesters
-            .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
+            .argumentSuggestion(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             .message(LiteBukkitMessages.PLAYER_ONLY, "&cOnly player can execute this command!")
             .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> "&cPlayer &7" + input + " &cnot found!")

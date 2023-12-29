@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.shared.Preconditions;
@@ -37,10 +36,11 @@ public class RawInputAnalyzer {
     }
 
     public <SENDER, T> Context<SENDER, T> toContext(
+        Invocation<SENDER> invocation,
         Argument<T> argument,
         ParserSet<SENDER, T> parserSet
     ) {
-        return new Context<>(argument, parserSet);
+        return new Context<>(invocation, argument, parserSet);
     }
 
     public String showNextRoute() {
@@ -59,11 +59,11 @@ public class RawInputAnalyzer {
         return pivotPosition == rawArguments.size() - 1;
     }
 
-    public <SENDER, T> boolean isNextOptional(ParserSet<SENDER, T> parserSet, Argument<T> argument) {
-        return parserSet.getParser(RawInput.class)
-            .map(parser -> parser.getRange(argument))
-            .map(range -> range.getMin() == 0)
-            .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
+    public <SENDER, T> boolean isNextOptional(ParserSet<SENDER, T> parserSet, Invocation<SENDER> invocation, Argument<T> argument) {
+        Parser<SENDER, RawInput, T> validParser = parserSet.getValidParserOrThrow(RawInput.class, null, argument);
+        Range range = validParser.getRange(argument);
+
+        return range.getMin() == 0;
     }
 
     public class Context<SENDER, T> {
@@ -75,13 +75,12 @@ public class RawInputAnalyzer {
         private final boolean potentialLastArgument;
 
         public Context(
+            Invocation<SENDER> invocation,
             Argument<T> argument,
             ParserSet<SENDER, T> parserSet
         ) {
             this.argument = argument;
-            this.parser = parserSet.getParser(RawInput.class)
-                .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
-
+            this.parser = parserSet.getValidParserOrThrow(RawInput.class, invocation, argument);
             Range range = parser.getRange(argument);
 
             this.argumentMaxCount = range.getMin() + pivotPosition;

@@ -1,16 +1,34 @@
 package dev.rollczi.litecommands.argument.parser;
 
-import java.util.Collection;
-import java.util.Optional;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 public interface ParserSet<SENDER, PARSED> {
 
-    <INPUT> Optional<Parser<SENDER, INPUT, PARSED>> getParser(Class<INPUT> inType);
+    default <INPUT> Parser<SENDER, INPUT, PARSED> getValidParserOrThrow(
+        Class<INPUT> input,
+        Invocation<SENDER> invocation,
+        Argument<PARSED> argument
+    ) {
+        Parser<SENDER, INPUT, PARSED> parser = this.getValidParser(input, invocation, argument);
 
-    Collection<Parser<SENDER, ?, PARSED>> getParsers();
+        if (parser == null) {
+            String simpleName = argument.getWrapperFormat().parsedType().getRawType().getSimpleName();
+            throw new IllegalArgumentException("No parser found for argument " + simpleName);
+        }
 
-    static <SENDER, PARSED, IN> ParserSet<SENDER, PARSED> of(Class<PARSED> parsedClass, Parser<SENDER, IN, PARSED> parser) {
-        ParserSetImpl<SENDER, PARSED> parserSet = new ParserSetImpl<>(parsedClass);
+        return parser;
+    }
+
+    @Nullable
+    <INPUT> Parser<SENDER, INPUT, PARSED>
+    getValidParser(Class<INPUT> input, Invocation<SENDER> invocation, Argument<PARSED> argument);
+
+    static <SENDER, PARSED, IN> ParserSet<SENDER, PARSED> of(Parser<SENDER, IN, PARSED> parser) {
+        ParserSetImpl<SENDER, PARSED> parserSet = new ParserSetImpl<>();
 
         parserSet.registerParser(parser);
         return parserSet;

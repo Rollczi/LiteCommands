@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class Suggestion {
 
@@ -39,20 +42,55 @@ public class Suggestion {
         return this.multiSuggestion.size();
     }
 
-    public Suggestion slashLevel(int level) {
-        if (level == 0) {
+    public Suggestion deleteLeft(int levels) {
+        if (levels == 0) {
             return this;
         }
 
-        if (this.multiSuggestion.isEmpty()) {
-            throw new UnsupportedOperationException();
+        if (levels > this.multiSuggestion.size()) {
+            throw new IllegalArgumentException("Levels cannot be greater than suggestion size " + levels + " > " + this.multiSuggestion.size());
         }
 
-        if (level > this.multiSuggestion.size()) {
-            throw new IllegalArgumentException("Level cannot be greater than suggestion size " + level + " > " + this.multiSuggestion.size());
+        return Suggestion.from(this.multiSuggestion.subList(levels, this.multiSuggestion.size()));
+    }
+
+    public Suggestion deleteRight(int levels) {
+        if (levels == 0) {
+            return this;
         }
 
-        return Suggestion.from(this.multiSuggestion.subList(level, this.multiSuggestion.size()));
+        if (levels > this.multiSuggestion.size()) {
+            throw new IllegalArgumentException("Levels cannot be greater than suggestion size " + levels + " > " + this.multiSuggestion.size());
+        }
+
+        return Suggestion.from(this.multiSuggestion.subList(0, this.multiSuggestion.size() - levels));
+    }
+
+    public Suggestion appendLeft(String... left) {
+        return Suggestion.of(String.join(" ", left) + " " + this.suggestion);
+    }
+
+    public Suggestion appendLeft(Iterable<String> left) {
+        List<String> list = Stream.concat(
+            StreamSupport.stream(left.spliterator(), false),
+            this.multiSuggestion.stream()
+        ).collect(Collectors.toList());
+
+
+        return new Suggestion(String.join(" ", list), list);
+    }
+
+    public Suggestion appendRight(String... right) {
+        return Suggestion.of(this.suggestion + " " + String.join(" ", right));
+    }
+
+    public Suggestion appendRight(Iterable<String> right) {
+        return Suggestion.of(this.suggestion + " " + String.join(" ", right));
+    }
+
+    @Deprecated
+    public Suggestion slashLevel(int level) {
+        return this.deleteLeft(level);
     }
 
     public Suggestion appendLevel(String levelPart) {
@@ -63,10 +101,6 @@ public class Suggestion {
     }
 
     public static Suggestion from(List<String> suggestion) {
-        if (suggestion.isEmpty()) {
-            throw new IllegalArgumentException("Suggestion cannot be empty");
-        }
-
         return new Suggestion(String.join(" ", suggestion), new ArrayList<>(suggestion));
     }
 

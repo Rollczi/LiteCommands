@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
 
 @SuppressWarnings("rawtypes")
 public abstract class TypedArgumentResolver<SENDER, TYPE, ARG extends Argument<TYPE>> implements
+    ArgumentResolverBase<SENDER, RawInput, TYPE>,
     TypedParser<SENDER, RawInput, TYPE, ARG>,
     TypedSuggester<SENDER, TYPE, ARG>
 {

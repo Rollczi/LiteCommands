@@ -115,6 +115,9 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
         SuggestionResult suggestionResult = suggester.suggest(invocation, argument, context);
 
         for (Suggestion suggestion : suggestionResult.getSuggestions()) {
+            if (suggestion.equals(context.getCurrent())) {
+                continue;
+            }
             newResult.add(Suggestion.of(quoteString + suggestion.multilevel() + quoteString));
 
             if (suggestion.lengthMultilevel() == 1) {

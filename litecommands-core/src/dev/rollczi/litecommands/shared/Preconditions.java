@@ -9,10 +9,10 @@ public final class Preconditions {
     private Preconditions() {
     }
 
-    @Contract("false, _ -> fail")
-    public static void checkState(boolean value, String message) {
+    @Contract("false, _, _ -> fail")
+    public static void checkArgument(boolean value, String message, Object... args) {
         if (!value)
-            throw new IllegalStateException(message);
+            throw new IllegalStateException(String.format(message, args));
     }
 
     @Contract("null, _ -> fail")

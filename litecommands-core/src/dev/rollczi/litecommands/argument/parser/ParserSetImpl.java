@@ -1,58 +1,37 @@
 package dev.rollczi.litecommands.argument.parser;
 
-import dev.rollczi.litecommands.util.MapUtil;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.reflect.type.TypeIndex;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
+import org.jetbrains.annotations.Nullable;
 
 class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
 
-    private final Class<PARSED> parsedType;
-    private final Map<Class<?>, Parser<SENDER, ?, PARSED>> parsers = new HashMap<>();
-    private final ParserSet<SENDER, PARSED> parent;
+    private final TypeIndex<Parser<SENDER, ?, PARSED>> parsers = new TypeIndex<>();
 
-    public ParserSetImpl(Class<PARSED> parsedType) {
-        this.parsedType = parsedType;
-        this.parent = new EmptyParserSetImpl();
-    }
-
-    public ParserSetImpl(Class<PARSED> parsedType, ParserSet<SENDER, PARSED> parent) {
-        this.parsedType = parsedType;
-        this.parent = parent;
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    public <INPUT> Optional<Parser<SENDER, INPUT, PARSED>> getParser(Class<INPUT> inType) {
-        Optional<Parser<SENDER, INPUT, PARSED>> parserOptional = MapUtil.findBySuperTypeOf(inType, this.parsers)
-            .map(senderparsedArgumentParser -> (Parser<SENDER, INPUT, PARSED>) senderparsedArgumentParser);
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <INPUT> Parser<SENDER, INPUT, PARSED> getValidParser(
+        Class<INPUT> input,
+        Invocation<SENDER> invocation,
+        Argument<PARSED> argument
+    ) {
+        for (Parser<SENDER, ?, PARSED> parser : this.parsers.get(input)) {
+            Parser<SENDER, INPUT, PARSED> castedParser = (Parser<SENDER, INPUT, PARSED>) parser;
 
-        if (parserOptional.isPresent()) {
-            return parserOptional;
+            if (castedParser.canParse(invocation, argument, input)) {
+                return castedParser;
+            }
         }
 
-        return parent.getParser(inType);
-    }
-
-    @Override
-    public Collection<Parser<SENDER, ?, PARSED>> getParsers() {
-        ArrayList<Parser<SENDER, ?, PARSED>> list = new ArrayList<>(parsers.values());
-
-        list.addAll(parent.getParsers());
-
-        return Collections.unmodifiableList(list);
-    }
-
-    public Class<PARSED> getParsedType() {
-        return parsedType;
+        return null;
     }
 
     void registerParser(Parser<SENDER, ?, PARSED> parser) {
-        parsers.put(parser.getInputType(), parser);
+        parsers.put(TypeRange.upwards(parser.getInputType()), parser);
     }
 
 }

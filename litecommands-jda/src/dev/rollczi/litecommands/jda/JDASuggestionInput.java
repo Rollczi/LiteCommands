@@ -39,7 +39,7 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
         }
 
         @Override
-        public <SENDER, T> boolean isNextOptional(Argument<T> argument, ParserSet<SENDER, T> parserSet) {
+        public <SENDER, T> boolean isNextOptional(Invocation<SENDER> invocation, Argument<T> argument, ParserSet<SENDER, T> parserSet) {
             return false;
         }
 

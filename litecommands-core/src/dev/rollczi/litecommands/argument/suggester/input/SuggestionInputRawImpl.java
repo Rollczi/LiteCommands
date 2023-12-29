@@ -67,8 +67,8 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
         }
 
         @Override
-        public <SENDER, T> boolean isNextOptional(Argument<T> argument, ParserSet<SENDER, T> parserSet) {
-            return rawInputAnalyzer.isNextOptional(parserSet, argument) || argument.hasDefaultValue();
+        public <SENDER, T> boolean isNextOptional(Invocation<SENDER> invocation, Argument<T> argument, ParserSet<SENDER, T> parserSet) {
+            return rawInputAnalyzer.isNextOptional(parserSet, invocation, argument) || argument.hasDefaultValue();
         }
 
         @Override
@@ -78,7 +78,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
             ParserSet<SENDER, T> parserSet,
             Suggester<SENDER, T> suggester
         ) {
-            RawInputAnalyzer.Context<SENDER, T> context = rawInputAnalyzer.toContext(argument, parserSet);
+            RawInputAnalyzer.Context<SENDER, T> context = rawInputAnalyzer.toContext(invocation, argument, parserSet);
 
             if (context.isMissingFullArgument()) {
                 Suggestion current = Suggestion.of(rawInputAnalyzer.getLastArgument());

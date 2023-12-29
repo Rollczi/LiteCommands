@@ -66,12 +66,14 @@ class MetaImpl implements Meta {
     }
 
     public <T> @NotNull T get(MetaKey<T> key, T defaultValue) {
-        try {
-            return this.get(key);
+        Object value = this.meta.get(key);
+
+        if (value != null) {
+            MetaType<T> type = key.getType();
+            return type.out(type.cast(value));
         }
-        catch (NoSuchElementException ignored) {
-            return defaultValue;
-        }
+
+        return defaultValue;
     }
 
     @Override

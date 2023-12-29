@@ -18,15 +18,6 @@ public abstract class ArgumentResolver<SENDER, TYPE> implements MultipleArgument
     }
 
     @Override
-    public final boolean canParse(Invocation<SENDER> invocation, Argument<TYPE> argument, RawInput rawInput) {
-        if (!rawInput.hasNext()) {
-            throw new IllegalArgumentException("To parse argument, you need to provide at least one argument.");
-        }
-
-        return this.canParse(invocation, argument, rawInput.next());
-    }
-
-    @Override
     public final Range getRange(Argument<TYPE> argument) {
         return Range.ONE;
     }

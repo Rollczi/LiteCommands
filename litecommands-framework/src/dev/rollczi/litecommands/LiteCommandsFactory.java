@@ -1,6 +1,17 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.resolver.collector.CollectionArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.CollectorArgument;
+import dev.rollczi.litecommands.argument.resolver.collector.ArrayArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.LinkedHashSetArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.LinkedListArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.ArrayListArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.SetArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.TreeSetArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.StackArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.VectorArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BooleanArgumentResolver;
@@ -37,11 +48,23 @@ import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.flag.FlagArgumentResolver;
 import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
+import static dev.rollczi.litecommands.reflect.type.TypeRange.downwards;
+import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeSet;
+import java.util.Vector;
 import panda.std.Option;
 
 import java.lang.reflect.InvocationTargetException;
@@ -65,7 +88,10 @@ public final class LiteCommandsFactory {
         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).selfProcessor((builder, internal) -> {
             Scheduler scheduler = internal.getScheduler();
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
-            SuggesterRegistry<SENDER> suggesterRegistry = internal.getSuggesterRegistry();
+            ParserRegistry<SENDER> parser = internal.getParserRegistry();
+            SuggesterRegistry<SENDER> suggester = internal.getSuggesterRegistry();
+
+            List<Class<?>> excluded = Arrays.asList(Cloneable.class, Serializable.class, Object.class);
 
             builder
                 .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
@@ -92,16 +118,28 @@ public final class LiteCommandsFactory {
                 .argument(short.class, NumberArgumentResolver.ofShort())
                 .argument(Duration.class, new DurationArgumentResolver<>())
                 .argument(Period.class, new PeriodArgumentResolver<>())
-                .argument(Enum.class, new EnumArgumentResolver<>())
                 .argument(BigInteger.class, new BigIntegerArgumentResolver<>(messageRegistry))
                 .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(messageRegistry))
                 .argument(Instant.class, new InstantArgumentResolver<>(messageRegistry))
                 .argument(LocalDateTime.class, new LocalDateTimeArgumentResolver<>(messageRegistry))
 
-                .argument(String.class, ArgumentKey.of(QuotedStringArgumentResolver.KEY), new QuotedStringArgumentResolver<>(suggesterRegistry))
+                .argument(upwards(Enum.class), new EnumArgumentResolver<>())
+
+                .argument(String.class, ArgumentKey.of(QuotedStringArgumentResolver.KEY), new QuotedStringArgumentResolver<>(suggester))
                 .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
                 .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
                 .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
+
+                .argument(downwards(LinkedHashSet.class, excluded), CollectorArgument.KEY, new LinkedHashSetArgumentResolver<>(parser, suggester))
+                .argument(downwards(TreeSet.class, excluded), CollectorArgument.KEY, new TreeSetArgumentResolver<>(parser, suggester))
+                .argument(downwards(Set.class, excluded), CollectorArgument.KEY, new SetArgumentResolver<>(parser, suggester))
+                .argument(downwards(Stack.class, excluded), CollectorArgument.KEY, new StackArgumentResolver<>(parser, suggester))
+                .argument(downwards(Vector.class, excluded), CollectorArgument.KEY, new VectorArgumentResolver<>(parser, suggester))
+                .argument(downwards(LinkedList.class, excluded), CollectorArgument.KEY, new LinkedListArgumentResolver<>(parser, suggester))
+                .argument(downwards(ArrayList.class, excluded), CollectorArgument.KEY, new ArrayListArgumentResolver<>(parser, suggester))
+                .argument(downwards(Collection.class, excluded), CollectorArgument.KEY, new CollectionArgumentResolver<>(parser, suggester))
+
+                .argument(upwards(Object.class), CollectorArgument.KEY, new ArrayArgumentResolver<>(parser, suggester))
 
                 .wrapper(new OptionWrapper())
                 .wrapper(new OptionalWrapper())
