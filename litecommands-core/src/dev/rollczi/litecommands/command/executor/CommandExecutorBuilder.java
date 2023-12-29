@@ -89,9 +89,10 @@ public class CommandExecutorBuilder<SENDER> {
 
             return CommandExecutorMatchResult.success(() -> {
                 try {
-                    executor.accept(new LiteContext<>(result));
+                    LiteContext<SENDER> context = new LiteContext<>(result);
+                    executor.accept(context);
 
-                    return CommandExecuteResult.success(this, null);
+                    return CommandExecuteResult.success(this, context.getReturnResult());
                 }
                 catch (Exception exception) {
                     return CommandExecuteResult.failed(this, exception);

@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class LiteContext<SENDER> {
 
     private final RequirementsResult<SENDER> result;
+    private Object returnResult;
 
     public LiteContext(RequirementsResult<SENDER> result) {
         this.result = result;
@@ -80,6 +82,16 @@ public class LiteContext<SENDER> {
         }
 
         return (OUT) unwrap;
+    }
+
+    @ApiStatus.Experimental
+    public void returnResult(Object returnResult) {
+        this.returnResult = returnResult;
+    }
+
+    @ApiStatus.Experimental
+    Object getReturnResult() {
+        return returnResult;
     }
 
 }
