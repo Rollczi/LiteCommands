@@ -52,24 +52,24 @@ class VelocityCommand implements SimpleCommand {
     public void execute(Invocation invocation) {
         ParseableInput<?> raw = ParseableInput.raw(invocation.arguments());
 
-        this.executeListener.execute(this.newInvocation(invocation, raw, false), raw);
+        this.executeListener.execute(this.newInvocation(invocation, raw), raw);
     }
 
     @Override
     public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-        SuggestionInput<?> input = SuggestionInput.raw(invocation.arguments());
-
-        return CompletableFuture.supplyAsync(() -> this.suggestionListener.suggest(this.newInvocation(invocation, input, true), input)
-            .asMultiLevelList());
-    }
-
-    private dev.rollczi.litecommands.invocation.Invocation<CommandSource> newInvocation(Invocation invocation, Input<?> input, boolean suggest) {
         List<String> arguments = new ArrayList<>(Arrays.asList(invocation.arguments()));
 
-        if (suggest && arguments.isEmpty()) {
+        if (arguments.isEmpty()) {
             arguments.add(StringUtil.EMPTY);
         }
 
+        SuggestionInput<?> input = SuggestionInput.raw(arguments.toArray(new String[0]));
+
+        return CompletableFuture.supplyAsync(() -> this.suggestionListener.suggest(this.newInvocation(invocation, input), input)
+            .asMultiLevelList());
+    }
+
+    private dev.rollczi.litecommands.invocation.Invocation<CommandSource> newInvocation(Invocation invocation, Input<?> input) {
         return new dev.rollczi.litecommands.invocation.Invocation<>(
             invocation.source(),
             new VelocitySender(invocation.source()),

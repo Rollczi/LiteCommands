@@ -62,7 +62,7 @@ class MetaImpl implements Meta {
             return type.out(key.getDefaultValue());
         }
 
-        throw new NoSuchElementException();
+        throw new NoSuchElementException("MetaKey '" + key.getKey() + "' not found");
     }
 
     public <T> @NotNull T get(MetaKey<T> key, T defaultValue) {

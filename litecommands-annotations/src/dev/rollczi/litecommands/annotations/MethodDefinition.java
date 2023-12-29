@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-class MethodDefinition {
+public class MethodDefinition {
 
     private final Method method;
     private final Map<Integer, Argument<?>> arguments = new HashMap<>();
@@ -24,7 +24,7 @@ class MethodDefinition {
         this.method = method;
     }
 
-    Requirement<?> getRequirement(int parameterIndex) {
+    public Requirement<?> getRequirement(int parameterIndex) {
         Argument<?> argument = arguments.get(parameterIndex);
 
         if (argument != null) {

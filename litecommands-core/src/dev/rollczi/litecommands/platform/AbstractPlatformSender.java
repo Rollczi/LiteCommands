@@ -24,7 +24,13 @@ public abstract class AbstractPlatformSender implements PlatformSender {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(MetaKey<T> key) {
-        return (T) metaMap.get(key).get();
+        Supplier<?> supplier = metaMap.get(key);
+
+        if (supplier == null) {
+            return null;
+        }
+
+        return (T) supplier.get();
     }
 
     protected <T> void putProperty(MetaKey<T> key, Supplier<T> supplier) {

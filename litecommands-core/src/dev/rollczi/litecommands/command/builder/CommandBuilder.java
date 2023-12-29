@@ -99,6 +99,10 @@ public interface CommandBuilder<SENDER> extends Scopeable, MetaHolder {
     @Nullable
     CommandBuilder<SENDER> parent();
 
+    default boolean isRoot() {
+        return false;
+    }
+
     @ApiStatus.Internal
     Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent);
 
