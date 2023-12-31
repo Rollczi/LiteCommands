@@ -62,7 +62,7 @@ public class ExamplePlugin extends JavaPlugin {
                 new LiteCommand<CommandSender>("ban")
                     .permissions("example.ban")
                     .argument("player", Player.class)
-                    .onExecute(context -> {
+                    .execute(context -> {
                         Player player = context.argument("player", Player.class);
                         player.kickPlayer("You have been banned!");
                     })

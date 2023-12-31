@@ -116,7 +116,15 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
+    /**
+     * @deprecated Use {@link #execute(Consumer)} instead
+     */
+    @Deprecated
     public final LiteCommand<SENDER> onExecute(Consumer<LiteContext<SENDER>> executor) {
+        return this.execute(executor);
+    }
+
+    public final LiteCommand<SENDER> execute(Consumer<LiteContext<SENDER>> executor) {
         this.executor = liteContext -> {
             executor.accept(liteContext);
             return null;
@@ -125,7 +133,7 @@ public class LiteCommand<SENDER> {
     }
 
     @ApiStatus.Experimental
-    public final LiteCommand<SENDER> onExecute(Function<LiteContext<SENDER>, Object> executor) {
+    public final LiteCommand<SENDER> executeReturn(Function<LiteContext<SENDER>, Object> executor) {
         this.executor = executor;
         return this;
     }

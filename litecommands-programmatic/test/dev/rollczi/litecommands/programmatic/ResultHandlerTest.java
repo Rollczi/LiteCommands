@@ -15,7 +15,7 @@ public class ResultHandlerTest {
         new LiteCommand<TestSender>("ban")
             .argument("player", String.class)
             .argumentNullable("reason", String.class)
-            .onExecute(context -> {
+            .executeReturn(context -> {
                 String player = context.argument("player", String.class);
                 String reason = context.argumentNullable("reason", String.class);
 

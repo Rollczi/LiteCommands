@@ -12,7 +12,7 @@ public class QuotedStringTest {
             .argument("before", String.class)
             .argumentQuoted("message")
             .argument("after", String.class)
-            .onExecute(context -> {
+            .execute(context -> {
                 TestSender sender = context.invocation().sender();
 
                 String before = context.argument("before", String.class);
