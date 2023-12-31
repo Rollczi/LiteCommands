@@ -14,7 +14,7 @@ public class NullableArgTest {
         new LiteCommand<TestSender>("ban")
             .argument("player", String.class)
             .argumentNullable("reason", String.class)
-            .onExecute(context -> {
+            .execute(context -> {
                 TestSender sender = context.invocation().sender();
                 String player = context.argument("player", String.class);
                 String reason = context.argumentNullable("reason", String.class);

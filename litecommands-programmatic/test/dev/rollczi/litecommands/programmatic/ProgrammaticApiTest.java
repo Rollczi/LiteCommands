@@ -21,7 +21,7 @@ public class ProgrammaticApiTest {
         new LiteCommand<TestSender>("ban")
             .permissions(PERMISSION)
             .argument("player", String.class)
-            .onExecute(context -> {
+            .execute(context -> {
                 TestSender sender = context.invocation().sender();
                 sender.sendMessage("banned");
             })
