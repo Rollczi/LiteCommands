@@ -7,9 +7,12 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
 
 class ArrayArgumentTest extends LiteTestSpec {
+
+    private final static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     enum TestEnum {
         FIRST,
@@ -233,7 +236,7 @@ class ArrayArgumentTest extends LiteTestSpec {
             .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + suggestion.multilevel()).assertSuccess());
 
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        String tomorrowFormat = tomorrow.getYear() + "-" + tomorrow.getMonthValue() + "-" + tomorrow.getDayOfMonth();
+        String tomorrowFormat = DATE_FORMAT.format(tomorrow);
 
         platform.suggest("test Instant " + tomorrow.getYear())
             .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + suggestion.multilevel()).assertSuccess());
