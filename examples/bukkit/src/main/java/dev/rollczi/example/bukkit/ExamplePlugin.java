@@ -8,6 +8,7 @@ import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
+import dev.rollczi.example.bukkit.command.NumberCommand;
 import dev.rollczi.example.bukkit.command.RandomItemCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
@@ -49,7 +50,8 @@ public class ExamplePlugin extends JavaPlugin {
                 new TeleportCommand(),
                 new FlyCommand(),
                 new GiveCommand(),
-                new RandomItemCommand()
+                new RandomItemCommand(),
+                new NumberCommand()
             )
 
             // Custom annotation validators

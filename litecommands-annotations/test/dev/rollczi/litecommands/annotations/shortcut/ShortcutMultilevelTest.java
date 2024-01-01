@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import org.junit.jupiter.api.Test;
 import panda.std.Option;
 
@@ -84,7 +85,7 @@ class ShortcutMultilevelTest extends LiteTestSpec {
         platform.suggest(permitted("team.manage", "team.manage.add"), "team-add ")
             .assertSuggest("<player>");
         platform.suggest(permitted("team.manage", "team.manage.remove"), "team remove ")
-            .assertSuggest("1", "100", "5", "500", "50", "10", "0");
+            .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
         platform.suggest(permitted("team.manage", "team.manage.info"), "team info ")
             .assertSuggest();
     }
@@ -94,7 +95,7 @@ class ShortcutMultilevelTest extends LiteTestSpec {
         platform.suggest(permitted("team.manage", "team.manage.add"), "team manage add ")
             .assertSuggest("<player>");
         platform.suggest(permitted("team.manage", "team.manage.remove"), "team manage remove ")
-            .assertSuggest("1", "100", "5", "500", "50", "10", "0");
+            .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
         platform.suggest(permitted("team.manage", "team.manage.info"), "team manage info ")
             .assertSuggest();
     }
