@@ -137,7 +137,7 @@ public class NumberArgumentResolver<SENDER, T extends Number> extends ArgumentRe
     public static <SENDER> ArgumentResolver<SENDER, Byte> ofByte() {
         return NumberArgumentResolver.of(
             Byte::parseByte,
-            IntStream.range(-128, 127)
+            IntStream.rangeClosed(Byte.MIN_VALUE, Byte.MAX_VALUE)
                 .mapToObj(i -> (byte) i)
                 .collect(Collectors.toList()),
             false
