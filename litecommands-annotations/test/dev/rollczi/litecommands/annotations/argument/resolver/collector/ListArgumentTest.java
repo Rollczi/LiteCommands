@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -180,11 +181,11 @@ class ListArgumentTest extends LiteTestSpec {
     @Test
     void testSuggestInteger() {
         platform.suggest("test Integer ")
-            .assertSuggest("0", "1", "5", "10", "50", "100", "500");
+            .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
         platform.suggest("test Integer 1 ")
-            .assertSuggest("0", "1", "5", "10", "50", "100", "500");
+            .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
         platform.suggest("test Integer 5")
-            .assertSuggest("5", "500", "50.0", "50");
+            .assertAsSuggester(NumberArgumentResolver.ofInteger(), "5");
     }
 
     @Test

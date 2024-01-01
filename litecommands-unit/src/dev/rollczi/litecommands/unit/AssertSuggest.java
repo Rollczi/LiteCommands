@@ -1,6 +1,10 @@
 package dev.rollczi.litecommands.unit;
 
+import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -21,10 +25,35 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(String... suggestions) {
-        assertThat(suggest.getSuggestions().stream()
-            .map(suggestion -> suggestion.multilevel())
+        return assertSuggest(Arrays.asList(suggestions));
+    }
+
+    /**
+     * Simulates the suggester and asserts the result
+     * Can be used for testing other things than suggesters (e.g. array resolvers)
+     */
+    public AssertSuggest assertAsSuggester(Suggester<TestSender, ?> suggester, String input) {
+        Suggestion suggestion = Suggestion.of(input);
+        SuggestionInput<?> suggestionInput = SuggestionInput.raw(suggestion.multilevelList().toArray(new String[0]));
+        Invocation<TestSender> invocation = new Invocation<>(new TestSender(), TestPlatformSender.permittedAll(), "-", "-", suggestionInput);
+        SuggestionResult suggestionResult = suggester.suggest(invocation, null, new SuggestionContext(suggestion));
+
+        SuggestionResult result = suggestionResult
+            .filterBy(suggestion);
+
+        return assertSuggest(result);
+    }
+
+    public AssertSuggest assertSuggest(SuggestionResult suggestions) {
+        return assertSuggest(suggestions.asMultiLevelList());
+    }
+
+    public AssertSuggest assertSuggest(Collection<String> suggestions) {
+        assertThat(suggest.getSuggestions()
+            .stream()
+            .map(Suggestion::multilevel)
             .filter(suggestion -> !suggestion.isEmpty())
-        ).containsExactlyInAnyOrderElementsOf(Arrays.asList(suggestions));
+        ).containsExactlyInAnyOrderElementsOf(suggestions);
         return this;
     }
 
