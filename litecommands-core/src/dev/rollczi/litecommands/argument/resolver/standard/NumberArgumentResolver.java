@@ -10,25 +10,37 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
+import dev.rollczi.litecommands.util.StringUtil;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class NumberArgumentResolver<SENDER, T extends Number> extends ArgumentResolver<SENDER, T> {
 
+    private static final String DECIMAL_SEPARATOR = ".";
+    private static final String MINUS_SYMBOL = "-";
+
+    private static final String[] SMALL_NUMBERS_SUGGESTIONS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    private static final String[] BIG_NUMBERS_SUGGESTIONS = {"0", "1", "5"};
+    private static final Pattern VALID_NUMBER_PATTERN = Pattern.compile("^-?\\d*(\\.?\\d*)?$");
+
     private final Function<String, T> parser;
     private final SuggestionResult suggestions;
     private final boolean generateSuggestions;
+    private final boolean withDecimal;
 
-    protected NumberArgumentResolver(Function<String, T> parser, List<T> suggestions, boolean generateSuggestions) {
+    protected NumberArgumentResolver(Function<String, T> parser, List<T> suggestions, boolean generateSuggestions, boolean withDecimal) {
         this.parser = parser;
         this.suggestions = suggestions.stream()
             .map(Object::toString)
             .collect(SuggestionResult.collector());
 
         this.generateSuggestions = generateSuggestions;
+        this.withDecimal = withDecimal;
     }
 
     @Override
@@ -37,8 +49,7 @@ public class NumberArgumentResolver<SENDER, T extends Number> extends ArgumentRe
             T applied = parser.apply(argument);
 
             return ParseResult.success(applied);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return ParseResult.failure(this.failedReason(invocation, context, argument));
         }
     }
@@ -53,52 +64,74 @@ public class NumberArgumentResolver<SENDER, T extends Number> extends ArgumentRe
             return this.suggestions;
         }
 
-        try {
-            String input = context.getCurrent().lastLevel();
+        String input = context.getCurrent().lastLevel();
 
-            T apply = parser.apply(input);
-            double upper = apply.doubleValue() * 10;
-
-            SuggestionResult result = SuggestionResult.from(this.suggestions.getSuggestions());
-
-            IntStream.of(1, 2, 5)
-                .mapToObj(i -> i * upper)
-                .map(Object::toString)
-                .forEach(numberText -> result.add(Suggestion.of(numberText)));
-
-            return result;
-        }
-        catch (NumberFormatException ignored) {
+        if (!isPotentialNumber(input)) {
             return this.suggestions;
         }
+
+        SuggestionResult generated = SuggestionResult.from(this.suggestions.getSuggestions());
+
+        if (input.isEmpty()) {
+            generated.add(Suggestion.of(MINUS_SYMBOL));
+        }
+
+        if (withDecimal && !input.contains(DECIMAL_SEPARATOR)) {
+            generated.add(Suggestion.of(input + DECIMAL_SEPARATOR));
+        }
+
+        String[] numberSuggestions = isBigNumber(input) ? BIG_NUMBERS_SUGGESTIONS : SMALL_NUMBERS_SUGGESTIONS;
+
+        for (String numberSuggestion : numberSuggestions) {
+            generated.add(Suggestion.of(input + numberSuggestion));
+        }
+
+        return generated;
+    }
+
+    private static boolean isBigNumber(String input) {
+        int realLength = input
+            .replace(DECIMAL_SEPARATOR, StringUtil.EMPTY)
+            .replace(MINUS_SYMBOL, StringUtil.EMPTY)
+            .length();
+
+        return realLength > 1;
+    }
+
+    private boolean isPotentialNumber(String argument) {
+        return VALID_NUMBER_PATTERN.matcher(argument).matches();
     }
 
     public static <SENDER, T extends Number> ArgumentResolver<SENDER, T> of(Function<String, T> parser, List<T> suggestions) {
-        return new NumberArgumentResolver<>(parser, suggestions, true);
+        return new NumberArgumentResolver<>(parser, suggestions, true, false);
     }
 
     public static <SENDER, T extends Number> ArgumentResolver<SENDER, T> of(Function<String, T> parser, List<T> suggestions, boolean generateSuggestions) {
-        return new NumberArgumentResolver<>(parser, suggestions, generateSuggestions);
+        return new NumberArgumentResolver<>(parser, suggestions, generateSuggestions, false);
+    }
+
+    public static <SENDER, T extends Number> ArgumentResolver<SENDER, T> of(Function<String, T> parser, List<T> suggestions, boolean generateSuggestions, boolean withDecimal) {
+        return new NumberArgumentResolver<>(parser, suggestions, generateSuggestions, withDecimal);
     }
 
     public static <SENDER> ArgumentResolver<SENDER, Integer> ofInteger() {
-        return NumberArgumentResolver.of(Integer::parseInt, Arrays.asList(0, 1, 5, 10, 50, 100, 500));
+        return NumberArgumentResolver.of(Integer::parseInt, Arrays.asList(10, 50, 100, 500));
     }
 
     public static <SENDER> ArgumentResolver<SENDER, Double> ofDouble() {
-        return NumberArgumentResolver.of(Double::parseDouble, Arrays.asList(0.0, 0.5, 1.0, 1.5, 5.5));
+        return NumberArgumentResolver.of(Double::parseDouble, Collections.emptyList(), true, true);
     }
 
     public static <SENDER> ArgumentResolver<SENDER, Float> ofFloat() {
-        return NumberArgumentResolver.of(Float::parseFloat, Arrays.asList(0.0f, 0.5f, 1.0f, 1.5f, 5.5f));
+        return NumberArgumentResolver.of(Float::parseFloat, Collections.emptyList(), true, true);
     }
 
     public static <SENDER> ArgumentResolver<SENDER, Long> ofLong() {
-        return NumberArgumentResolver.of(Long::parseLong, Arrays.asList(0L, 1L, 5L, 10L, 50L, 100L, 500L));
+        return NumberArgumentResolver.of(Long::parseLong, Arrays.asList(10L, 50L, 100L, 500L));
     }
 
     public static <SENDER> ArgumentResolver<SENDER, Short> ofShort() {
-        return NumberArgumentResolver.of(Short::parseShort, Arrays.asList((short) 0, (short) 1, (short) 5, (short) 10, (short) 50, (short) 100, (short) 500));
+        return NumberArgumentResolver.of(Short::parseShort, Arrays.asList((short) 10, (short) 50, (short) 100, (short) 500));
     }
 
     public static <SENDER> ArgumentResolver<SENDER, Byte> ofByte() {
