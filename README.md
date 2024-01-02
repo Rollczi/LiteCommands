@@ -134,17 +134,35 @@ Maven
 
 
 <div align="center">
+    <br><br><br>
     <h3>Also thanks to our partners!</h3>
-    <p>
-        <b>JetBrains - supports us with a free license for the most intelligent Java IDE - <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA Ultimate</a></b>
-    </p>
     <a  href="https://www.jetbrains.com/idea/">
         <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" alt="JetBrains" width="20%"/>
     </a>
     <p>
-        <b>Reposilite - provides us with a Maven repository for our artifacts - <a href="https://repo.panda-lang.org/">repo.panda-lang.org</a></b>
+        <b>JetBrains</b><br>
+        Supports us with a free license for the most intelligent Java IDE - <b><a href="https://www.jetbrains.com/idea/">IntelliJ IDEA Ultimate</a></b>
     </p>
+    <br>
+    <br>
+    <br>
     <a  href="https://reposilite.com/">
         <img src="https://avatars.githubusercontent.com/u/88636591" alt="Reposilite" width="15%"/>
     </a>
+    <br>
+    <p>
+        <b>Reposilite</b><br>
+        Provides us with a Maven repository for our artifacts - <b><a href="https://repo.panda-lang.org/">Reposilite Repository</a></b>
+    </p>
+    <br>
+    <br>
+    <br>
+    <a href="https://www.yourkit.com/java/profiler/">
+        <img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" width="25%"/>
+    </a>
+    <br>
+    <p>
+        <b>YourKit</b><br>
+        Supports us with a innovative and intelligent tools for monitoring and profiling - <b><a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a></b>
+    </p>
 </div>
