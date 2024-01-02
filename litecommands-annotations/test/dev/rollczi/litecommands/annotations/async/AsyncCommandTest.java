@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -24,11 +25,14 @@ import static org.awaitility.Awaitility.await;
 
 class AsyncCommandTest extends LiteTestSpec {
 
+    private static final int DELAY = 800;
+    private static final int MARGIN = 350;
+
     static LiteConfig config = builder -> builder
         .scheduler(new SchedulerExecutorPoolImpl("test", 1))
         .context(Date.class, invocation -> ContextResult.ok(() -> {
             try {
-                Thread.sleep(800);
+                Thread.sleep(DELAY);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -104,7 +108,13 @@ class AsyncCommandTest extends LiteTestSpec {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args first second");
 
         await()
-            .atLeast(300, TimeUnit.MILLISECONDS)
+            .atLeast(0, TimeUnit.MILLISECONDS)
+            .atMost(DELAY, TimeUnit.MILLISECONDS)
+            .until(() -> !result.isDone());
+
+        await()
+            .atLeast(DELAY - MARGIN, TimeUnit.MILLISECONDS)
+            .atMost(DELAY + MARGIN, TimeUnit.MILLISECONDS)
             .until(() -> result.isDone());
 
         result.join()
@@ -116,7 +126,13 @@ class AsyncCommandTest extends LiteTestSpec {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args-and-method first second");
 
         await()
-            .atLeast(300, TimeUnit.MILLISECONDS)
+            .atLeast(0, TimeUnit.MILLISECONDS)
+            .atMost(DELAY, TimeUnit.MILLISECONDS)
+            .until(() -> !result.isDone());
+
+        await()
+            .atLeast(DELAY - MARGIN, TimeUnit.MILLISECONDS)
+            .atMost(DELAY + MARGIN, TimeUnit.MILLISECONDS)
             .until(() -> result.isDone());
 
         result.join()
