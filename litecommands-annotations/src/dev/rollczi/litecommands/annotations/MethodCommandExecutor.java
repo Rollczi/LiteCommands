@@ -53,7 +53,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
         for (Requirement<?> requirement : definition.getRequirements()) {
             String name = requirement.getName();
 
-            RequirementMatch<?, ?> requirementMatch = results.get(name);
+            RequirementMatch requirementMatch = results.get(name);
 
             if (requirementMatch == null) {
                 return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved, missing " + name));
