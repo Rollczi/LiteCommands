@@ -22,6 +22,7 @@ import java.lang.reflect.Parameter;
 class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
     private final Method method;
+    private final Parameter[] parameters;
     private final Object instance;
     private final MethodDefinition definition;
     private final MethodValidatorService<SENDER> validatorService;
@@ -37,6 +38,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
         super(parent, definition.getArguments(), definition.getContextRequirements(), definition.getBindRequirements());
         this.method = method;
         this.method.setAccessible(true);
+        this.parameters = method.getParameters();
         this.instance = instance;
         this.definition = definition;
         this.validatorService = validatorService;
@@ -47,17 +49,18 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     public CommandExecutorMatchResult match(RequirementsResult<SENDER> results) {
         Object[] objects = new Object[method.getParameterCount()];
 
-        for (int parameterIndex = 0; parameterIndex < method.getParameterCount(); parameterIndex++) {
-            Requirement<?> requirement = definition.getRequirement(parameterIndex);
+        int parameterIndex = 0;
+        for (Requirement<?> requirement : definition.getRequirements()) {
             String name = requirement.getName();
 
-            if (!results.has(name)) {
+            RequirementMatch<?, ?> requirementMatch = results.get(name);
+
+            if (requirementMatch == null) {
                 return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved, missing " + name));
             }
 
-            RequirementMatch<?, ?> requirementMatch = results.get(name);
             Object unwrapped = requirementMatch.getResult().unwrap();
-            Parameter parameter = method.getParameters()[parameterIndex];
+            Parameter parameter = parameters[parameterIndex];
             Class<?> type = parameter.getType();
 
             if (unwrapped == null && type.isPrimitive()) {
@@ -71,6 +74,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             }
 
             objects[parameterIndex] = unwrapped;
+            parameterIndex++;
         }
 
         ValidatorResult result = validatorService.validate(new MethodValidatorContext<>(results, definition, instance, method, objects));

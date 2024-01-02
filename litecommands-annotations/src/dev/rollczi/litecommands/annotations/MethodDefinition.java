@@ -9,8 +9,10 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MethodDefinition {
@@ -20,11 +22,29 @@ public class MethodDefinition {
     private final Map<Integer, ContextRequirement<?>> contextRequirements = new HashMap<>();
     private final Map<Integer, BindRequirement<?>> bindRequirements = new HashMap<>();
 
+    private List<Requirement<?>> indexedRequirements;
+
     MethodDefinition(Method method) {
         this.method = method;
     }
 
     public Requirement<?> getRequirement(int parameterIndex) {
+        return getRequirements().get(parameterIndex);
+    }
+
+    public List<Requirement<?>> getRequirements() {
+        if (indexedRequirements == null) {
+            indexedRequirements = new ArrayList<>();
+
+            for (int i = 0; i < method.getParameterCount(); i++) {
+                indexedRequirements.add(getRequirement0(i));
+            }
+        }
+
+        return indexedRequirements;
+    }
+
+    private Requirement<?> getRequirement0(int parameterIndex) {
         Argument<?> argument = arguments.get(parameterIndex);
 
         if (argument != null) {

@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.wrapper;
 
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 
-@Deprecated
 class WrapFormatClass<PARSED, OUT> implements WrapFormat<PARSED, OUT> {
 
     private final Class<PARSED> parsedType;

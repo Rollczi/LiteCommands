@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Parameter;
@@ -34,7 +35,8 @@ public interface Meta {
 
     @NotNull <T> T get(MetaKey<T> key);
 
-    @NotNull <T> T get(MetaKey<T> key, T defaultValue);
+    @Contract("_, !null -> !null")
+    <T> T get(MetaKey<T> key, T defaultValue);
 
     <T> Meta put(MetaKey<T> key, T value);
 

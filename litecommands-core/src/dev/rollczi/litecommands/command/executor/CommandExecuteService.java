@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
@@ -15,18 +16,17 @@ import dev.rollczi.litecommands.requirement.RequirementResult;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
-import dev.rollczi.litecommands.scheduler.ScheduledChainException;
 import dev.rollczi.litecommands.schematic.Schematic;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SchematicInput;
+import dev.rollczi.litecommands.shared.BiHashMap;
+import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.scheduler.ScheduledChain;
-import dev.rollczi.litecommands.scheduler.ScheduledChainLink;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.ValidatorResult;
@@ -36,6 +36,7 @@ import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import java.util.ArrayList;
 import org.jetbrains.annotations.Nullable;
 import panda.std.Result;
 
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.function.Supplier;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -57,6 +57,8 @@ public class CommandExecuteService<SENDER> {
     private final ContextRegistry<SENDER> contextRegistry;
     private final WrapperRegistry wrapperRegistry;
     private final BindRegistry bindRegistry;
+
+    private final BiMap<Class<?>, ArgumentKey, ParserSet<SENDER, ?>> cachedParserSets = new BiHashMap<>();
 
     public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry) {
         this.validatorService = validatorService;
@@ -203,85 +205,81 @@ public class CommandExecuteService<SENDER> {
         return CommandExecuteResult.thrown(executor, throwable);
     }
 
-    // TODO: Refactor this method :/ (and all methods in this class)
     private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecutorMatchResult> match(
         CommandExecutor<SENDER> executor,
         Invocation<SENDER> invocation,
         MATCHER matcher
     ) {
-        ScheduledChain.Builder<ScheduledRequirement<?>, RequirementResult<?>> builder = ScheduledChain.builder();
+        List<CompletableFuture<ScheduledRequirement<?>>> requirements = new ArrayList<>();
 
         for (Argument<?> argument : executor.getArguments()) {
-            builder.link(new ScheduledRequirement<>(argument, () -> matchArgument(argument, invocation, matcher)));
+            requirements.add(scheduler.supply(argument.meta().get(Meta.POLL_TYPE), () -> new ScheduledRequirement<>(argument, matchArgument(argument, invocation, matcher))));
         }
 
         for (ContextRequirement<?> contextRequirement : executor.getContextRequirements()) {
-            builder.link(new ScheduledRequirement<>(contextRequirement, () -> matchContext(contextRequirement, invocation)));
+            requirements.add(scheduler.supply(contextRequirement.meta().get(Meta.POLL_TYPE), () -> new ScheduledRequirement<>(contextRequirement, matchContext(contextRequirement, invocation))));
         }
 
         for (BindRequirement<?> bindRequirement : executor.getBindRequirements()) {
-            builder.link(new ScheduledRequirement<>(bindRequirement, () -> matchBind(bindRequirement)));
+            requirements.add(scheduler.supply(bindRequirement.meta().get(Meta.POLL_TYPE), () -> new ScheduledRequirement<>(bindRequirement, matchBind(bindRequirement))));
         }
 
-        return builder.build((scheduledRequirement, requirementResult) -> {
-            Requirement<?> requirement = scheduledRequirement.requirement;
-            WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
+        return CompletableFuture.allOf(requirements.toArray(new CompletableFuture[0])).thenApply(unused -> {
+            List<RequirementMatch<? extends Requirement<?>, ?>> matches = new ArrayList<>();
 
-            if (requirementResult.isFailed()) {
-                return this.handleFailed(requirementResult, wrapperFormat, requirement);
-            }
+            for (CompletableFuture<ScheduledRequirement<?>> completableFuture : requirements) {
+                ScheduledRequirement<?> scheduledRequirement = completableFuture.join();
+                Requirement requirement = scheduledRequirement.requirement;
 
-            if (requirementResult.isSuccessfulNull()) {
-                return toMatch(requirement, null);
-            }
+                if (scheduledRequirement.getMatch().isFailed()) {
+                    WrapFormat wrapperFormat = requirement.getWrapperFormat();
+                    Object failedReason = scheduledRequirement.getMatch().getFailedReason();
+                    Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapperFormat);
 
-            Object success = requirementResult.getSuccess();
-            List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
+                    if (failedReason == Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
+                        Wrap<?> wrap = wrapper.createEmpty(wrapperFormat);
 
-            for (RequirementValidator<?, ?> validator : validators) {
-                ValidatorResult validatorResult = validateRequirement(invocation, executor, requirement, success, validator);
+                        matches.add(new RequirementMatch<>(requirement, wrap));
+                        continue;
+                    }
 
-                if (validatorResult.isInvalid()) {
-                    throw new ScheduledChainException(validatorResult.getInvalidResult());
+                    return CommandExecutorMatchResult.failed(failedReason);
                 }
-            }
 
-            return toMatch(requirement, success);
-        })
-        .collectChain(scheduler)
-        .thenCompose(result -> {
-            if (result.isFailure()) {
-                return completedFuture(CommandExecutorMatchResult.failed(result.getFailure()));
+                if (scheduledRequirement.getMatch().isSuccessfulNull()) {
+                    matches.add(toMatch(requirement, null));
+                    continue;
+                }
+
+                Object success = scheduledRequirement.getMatch().getSuccess();
+
+                List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
+
+                for (RequirementValidator<?, ?> validator : validators) {
+                    ValidatorResult validatorResult = validateRequirement(invocation, executor, requirement, success, validator);
+
+                    if (validatorResult.isInvalid()) {
+                        return CommandExecutorMatchResult.failed(validatorResult.getInvalidResult());
+                    }
+                }
+
+                matches.add(toMatch(requirement, success));
             }
 
             ParseableInputMatcher.EndResult endResult = matcher.endMatch();
 
             if (!endResult.isSuccessful()) {
-                return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
+                return CommandExecutorMatchResult.failed(endResult.getFailedReason());
             }
 
             RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
 
-            for (RequirementMatch<? extends Requirement<?>, ?> success : result.getSuccess()) {
+            for (RequirementMatch<? extends Requirement<?>, ?> success : matches) {
                 restulrBuilder.add(success.getRequirement().getName(), success);
             }
 
-            return completedFuture(executor.match(restulrBuilder.build()));
+            return executor.match(restulrBuilder.build());
         });
-    }
-
-    @SuppressWarnings("unchecked")
-    private <R extends Requirement<? extends T>, T> RequirementMatch<R, T> handleFailed(RequirementResult<?> requirementResult, WrapFormat<?, ?> wrapperFormat, R requirement) {
-        Object failedReason = requirementResult.getFailedReason();
-        Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapperFormat);
-
-        if (failedReason == Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
-            Wrap<T> wrap = (Wrap<T>) wrapper.createEmpty(wrapperFormat);
-
-            return new RequirementMatch<>(requirement, wrap);
-        }
-
-        throw new ScheduledChainException(failedReason);
     }
 
     @SuppressWarnings("unchecked")
@@ -306,30 +304,35 @@ public class CommandExecuteService<SENDER> {
         return new RequirementMatch<>(requirement, wrap);
     }
 
-    private static class ScheduledRequirement<T> implements ScheduledChainLink<RequirementResult<?>> {
+    private static class ScheduledRequirement<T> {
 
         private final Requirement<T> requirement;
-        private final Supplier<RequirementResult<?>> match;
+        private final RequirementResult<?> match;
 
-        public ScheduledRequirement(Requirement<T> requirement, Supplier<RequirementResult<?>> match) {
+        public ScheduledRequirement(Requirement<T> requirement, RequirementResult<?> match) {
             this.requirement = requirement;
             this.match = match;
         }
 
-        @Override
-        public RequirementResult<?> call() {
-            return match.get();
+        public RequirementResult<?> getMatch() {
+            return match;
         }
 
-        @Override
         public SchedulerPoll type() {
             return requirement.meta().get(Meta.POLL_TYPE);
         }
+
     }
 
+    @SuppressWarnings("unchecked")
     private <PARSED, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementResult<PARSED> matchArgument(Argument<PARSED> argument, Invocation<SENDER> invocation, MATCHER matcher) {
         WrapFormat<PARSED, ?> wrapFormat = argument.getWrapperFormat();
-        ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(wrapFormat.getParsedType(), argument.getKey());
+        ParserSet<SENDER, PARSED> parserSet = (ParserSet<SENDER, PARSED>) cachedParserSets.get(wrapFormat.getParsedType(), argument.getKey());
+
+        if (parserSet == null) {
+            parserSet = parserRegistry.getParserSet(wrapFormat.getParsedType(), argument.getKey());
+            cachedParserSets.put(wrapFormat.getParsedType(), argument.getKey(), parserSet);
+        }
 
         return matcher.nextArgument(invocation, argument, parserSet);
     }

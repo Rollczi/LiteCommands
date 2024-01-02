@@ -41,11 +41,12 @@ public class RequirementsResult<SENDER> {
         }
 
         public Builder<SENDER> add(String name, RequirementMatch<?, ?> match) {
-            if (matches.containsKey(name)) {
-                throw new IllegalArgumentException("Duplicate requirements name: " + name);
+            RequirementMatch<?, ?> replacedMatch = matches.put(name, match);
+
+            if (replacedMatch != null) {
+                throw new IllegalStateException("Requirement match already exists: " + name);
             }
 
-            matches.put(name, match);
             return this;
         }
 
