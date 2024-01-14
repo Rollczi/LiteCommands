@@ -14,6 +14,9 @@ public class SimpleArgument<T> implements Argument<T> {
     private final WrapFormat<T, ?> wrapperFormat;
     private final Meta meta = Meta.create();
     private final boolean nullable;
+    // cache last argument
+    private String lastKeyName;
+    private ArgumentKey lastKey;
 
     public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat, boolean nullable) {
         this.name = name;
@@ -30,6 +33,17 @@ public class SimpleArgument<T> implements Argument<T> {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ArgumentKey getKey() {
+        String keyName = this.getKeyName();
+        if (lastKeyName == null || !lastKeyName.equals(keyName)) {
+            lastKeyName = keyName;
+            lastKey = Argument.super.getKey();
+        }
+
+        return lastKey;
     }
 
     @Override

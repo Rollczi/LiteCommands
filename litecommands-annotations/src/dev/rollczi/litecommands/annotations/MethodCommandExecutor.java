@@ -18,6 +18,7 @@ import dev.rollczi.litecommands.validator.ValidatorResult;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.function.Supplier;
 
 class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
@@ -83,23 +84,31 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             return CommandExecutorMatchResult.failed(result.getInvalidResult());
         }
 
-        return CommandExecutorMatchResult.success(() -> {
+        return CommandExecutorMatchResult.success(new FinalCommandExecutor(objects));
+    }
+
+    private class FinalCommandExecutor implements Supplier<CommandExecuteResult> {
+        private final Object[] objects;
+
+        public FinalCommandExecutor(Object[] objects) {
+            this.objects = objects;
+        }
+
+        @Override
+        public CommandExecuteResult get() {
             try {
-                return CommandExecuteResult.success(this, this.method.invoke(this.instance, objects));
-            }
-            catch (IllegalAccessException exception) {
-                throw new LiteCommandsReflectInvocationException(this.method, "Cannot access method", exception);
-            }
-            catch (InvocationTargetException exception) {
+                return CommandExecuteResult.success(MethodCommandExecutor.this, MethodCommandExecutor.this.method.invoke(MethodCommandExecutor.this.instance, objects));
+            } catch (IllegalAccessException exception) {
+                throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Cannot access method", exception);
+            } catch (InvocationTargetException exception) {
                 Throwable targetException = exception.getTargetException();
 
                 if (targetException instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
-                    return CommandExecuteResult.failed(this, ((InvalidUsageException) targetException).getErrorResult());
+                    return CommandExecuteResult.failed(MethodCommandExecutor.this, ((InvalidUsageException) targetException).getErrorResult());
                 }
 
-                throw new LiteCommandsReflectInvocationException(this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
+                throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }
-        });
+        }
     }
-
 }

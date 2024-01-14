@@ -9,6 +9,8 @@ import java.util.Objects;
 
 public class ParseResult<EXPECTED> implements RequirementResult<EXPECTED> {
 
+    private static final ParseResult<?> NULL_SUCCESS = new ParseResult<>(null, null, true);
+
     private final @Nullable EXPECTED successfulResult;
     private final @Nullable FailedReason failedResult;
     private final boolean nullable;
@@ -64,8 +66,9 @@ public class ParseResult<EXPECTED> implements RequirementResult<EXPECTED> {
         return new ParseResult<>(parsed, null, false);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> ParseResult<T> successNull() {
-        return new ParseResult<>(null, null, true);
+        return (ParseResult<T>) NULL_SUCCESS;
     }
 
     public static <EXPECTED> ParseResult<EXPECTED> failure(FailedReason failedReason) {
