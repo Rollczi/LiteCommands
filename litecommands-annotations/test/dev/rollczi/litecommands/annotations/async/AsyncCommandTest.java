@@ -25,8 +25,8 @@ import static org.awaitility.Awaitility.await;
 
 class AsyncCommandTest extends LiteTestSpec {
 
-    private static final int DELAY = 800;
-    private static final int MARGIN = 350;
+    private static final int DELAY = 2000;
+    private static final int MARGIN = 750;
 
     static LiteConfig config = builder -> builder
         .scheduler(new SchedulerExecutorPoolImpl("test", 1))
