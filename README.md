@@ -1,33 +1,33 @@
 <div align="center"><img src="https://github.com/Rollczi/LiteCommands/assets/49173834/a5a1de27-af53-4d19-86e7-3f3306695e9a" alt="banner" width="50%"/></div>
 
-# ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
+# 🌠 LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
 
 #### Annotation-based Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and future implementations :D.
 
-#### Helpful links:
+### 📌 Helpful links
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
-- [GitHub issues](https://github.com/Rollczi/LiteCommands/issues)
+- [Bugs & issues report](https://github.com/Rollczi/LiteCommands/issues)
 - [Documentation 3.x](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)
 - [Documentation 2.x](https://docs.rollczi.dev/)
 
-#### Features
-- Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html), Flags [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html) and Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
-- Support for argument parsers: int, double, Duration, LocalDateTime, Location, Player [and more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)
-- Asynchronous commands, argument parsing and completion. @Async
-- Support for collection types: List, Set, TreeSet, Stack, Queue, traditional java array T[] and more!
-- Auto argument joiner [@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html)
-- Support for multilevel argument parsing and suggestions e.g. LocalDateTime `yyyy-MM-dd HH:mm`
-- [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) for LiteCommands provides annotation inspections, syntax highlighting and a command viewer.
-- Custom annotation validators [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
-- Programmatic API for creating more dynamic commands. [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
-- Jakarta EE annotation validation. [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
-- ChatGPT suggestions [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
-- Adventure Kyori support
-- and many more! ✨
+### ✨ Features
+- ☑️ Simple Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html) & Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
+- 🚩 Flags [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html)
+- ⛓️ Joiner [@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html)
+- 🔀 Asynchronous commands, argument parsing and completion. @Async
+- ✉️ Support for basic types: int, double, Duration, LocalDateTime, Location, Player [and more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)
+- 💌 Support for collection types: List, Set, TreeSet, Stack, Queue, traditional java array T[] and more!
+- 🔖 Multilevel argument parsing and suggestions e.g. LocalDateTime `yyyy-MM-dd HH:mm`
+- 🔌 [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) for LiteCommands provides annotation inspections, syntax highlighting and a command viewer.
+- 🛡️ Custom annotation validators [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
+- ✒️ Programmatic API for creating more dynamic commands. [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
+- ✅ Jakarta EE annotation validation. [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
+- 🤖 ChatGPT suggestions [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
+- 🌈 Adventure Kyori support
+- ✨ and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)! 
 
-### Command Example
-`/hello <name> <amount>`  
-`/hello message <text...>`  
+## 💡 Command Example
+This is an example of `/hello <name> <amount>` command:
 
 ```java
 @Command(name = "hello")
@@ -40,25 +40,18 @@ public class HelloCommand {
             sender.sendMessage("Hello " + name);
         }
     }
-    
-    @Execute(name = "message")
-    void subcommand(@Context CommandSender sender, @Join String text) {
-        sender.sendMessage(text);
-    }
-
 }
 ```
-
-Register your first command in plugin main class: (in this case for Bukkit)
+Then we need to register the command in plugin main class: (in this case for Bukkit)
 ```java
 this.liteCommands = LiteBukkitFactory.builder("example-plugin")
-    .commands(
-        new HelloWorldCommand()
-    )
+    .commands(new HelloCommand())
     .build();
 ```
 
-### Add Panda Repository ❤️
+## 🚀 Get Started!
+
+#### ➕ Add Panda Repository ❤️
 ```kts
 maven("https://repo.panda-lang.org/releases")
 ```
@@ -69,7 +62,7 @@ maven("https://repo.panda-lang.org/releases")
 </repository>
 ```
 
-### Add LiteCommands to dependencies
+#### ➕ Add LiteCommands to dependencies
 ```kts
 implementation("dev.rollczi:{artifact}:3.2.2")
 ```
@@ -80,44 +73,15 @@ implementation("dev.rollczi:{artifact}:3.2.2")
     <version>3.2.2</version>
 </dependency>
 ```
-`{artifact}` replace with [platform artifact](https://github.com/Rollczi/LiteCommands#platform-artifacts)
+⚠️ Replace `{artifact}` with [platform artifact](https://litedevelopers.github.io/LiteDevelopers-documentation/platforms.html)
 
-### Platform artifacts
+> Add `-parameters` flag to your compiler to use all features [(read more)](https://litedevelopers.github.io/LiteDevelopers-documentation/parameters-compile-flag.html)
 
-| Artifact                  | Platform                      | Adventure Support |
-|---------------------------|-------------------------------|-------------------|
-| `litecommands-velocity`   | Velocity                      | yes               |
-| `litecommands-bukkit`     | Bukkit, Spigot, Paper, Purpur | no                |
-| `litecommands-bungeecord` | BungeeCord, Waterfall         | no                |
-| `litecommands-minestom`   | Minestom                      | yes               |
-| `litecommands-jda`        | JDA (Java Discord API)        | -                 |
-
-### Add `-parameters` to your compiler to use all features of LiteCommands (optional)
-Gradle KTS
-```kotlin
-tasks.withType<JavaCompile> {
-    options.compilerArgs.add("-parameters")
-}
-```
-Gradle
-```groovy
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-parameters"
-}
-```
-Maven
-```xml
-<plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-compiler-plugin</artifactId>
-  <version>3.11.0</version>
-  <configuration>
-    <compilerArgs>
-      <arg>-parameters</arg>
-    </compilerArgs>
-  </configuration>
-</plugin>
-```
+## 🔌 Install LiteCommands IntelliJ IDEA Plugin!
+With LiteCommands plugin, you can easily develop your commands within the **IntelliJ IDEA** environment. 
+The plugin provides **annotation inspections**, **tools** for creating new command classes, **syntax highlighting**, **code completion**, 
+and other useful features to make your development experience smoother and more efficient. How to [install](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin?tab=readme-ov-file#installation)? 
+![litecommandsbanner-intellij](https://github.com/Rollczi/LiteCommands/assets/49173834/dafd034e-4dab-4ab0-9984-489ae6808d8d)
 
 #### Examples:
 - [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
