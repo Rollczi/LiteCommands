@@ -2,7 +2,7 @@
 
 # ☄️ LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
 
-#### Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and your other implementations.
+#### Annotation-based Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and future implementations :D.
 
 #### Helpful links:
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
@@ -10,13 +10,55 @@
 - [Documentation 3.x](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)
 - [Documentation 2.x](https://docs.rollczi.dev/)
 
-#### Examples:
-- [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
-- [Velocity Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/velocity)
-- [ChatGPT Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-chatgpt)
-- [Bukkit (with Adventure Platform)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-adventure-platform)
+#### Features
+- Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html), Flags [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html) and Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
+- Support for argument parsers: int, double, Duration, LocalDateTime, Location, Player [and more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)
+- Asynchronous commands, argument parsing and completion. @Async
+- Support for collection types: List, Set, TreeSet, Stack, Queue, traditional java array T[] and more!
+- Auto argument joiner [@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html)
+- Support for multilevel argument parsing and suggestions e.g. LocalDateTime `yyyy-MM-dd HH:mm`
+- [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) for LiteCommands provides annotation inspections, syntax highlighting and a command viewer.
+- Custom annotation validators [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
+- Programmatic API for creating more dynamic commands. [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
+- Jakarta EE annotation validation. [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
+- ChatGPT suggestions [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
+- Adventure Kyori support
+- and many more! ✨
 
-### Panda Repository ❤️
+### Command Example
+`/hello <name> <amount>`  
+`/hello message <text...>`  
+
+```java
+@Command(name = "hello")
+@Permission("dev.rollczi.helloworld")
+public class HelloCommand {
+
+    @Execute
+    void command(@Context CommandSender sender, @Arg String name, @Arg int amount) {
+        for (int i = 0; i < amount; i++) {
+            sender.sendMessage("Hello " + name);
+        }
+    }
+    
+    @Execute(name = "message")
+    void subcommand(@Context CommandSender sender, @Join String text) {
+        sender.sendMessage(text);
+    }
+
+}
+```
+
+Register your first command in plugin main class: (in this case for Bukkit)
+```java
+this.liteCommands = LiteBukkitFactory.builder("example-plugin")
+    .commands(
+        new HelloWorldCommand()
+    )
+    .build();
+```
+
+### Add Panda Repository ❤️
 ```kts
 maven("https://repo.panda-lang.org/releases")
 ```
@@ -27,7 +69,7 @@ maven("https://repo.panda-lang.org/releases")
 </repository>
 ```
 
-### Dependency
+### Add LiteCommands to dependencies
 ```kts
 implementation("dev.rollczi:{artifact}:3.2.2")
 ```
@@ -40,39 +82,6 @@ implementation("dev.rollczi:{artifact}:3.2.2")
 ```
 `{artifact}` replace with [platform artifact](https://github.com/Rollczi/LiteCommands#platform-artifacts)
 
-### First Simple Command
-`/hello-world <name> <amount>`  
-`/hello-world message <text...>`  
-
-```java
-@Command(name = "hello-world")
-@Permission("dev.rollczi.helloworld")
-public class HelloWorldCommand {
-
-    @Execute
-    public void command(@Context CommandSender sender, @Arg String name, @Arg int amount) {
-        for (int i = 0; i < amount; i++) {
-            sender.sendMessage("Hello " + name);
-        }
-    }
-    
-    @Execute(name = "message")
-    public void subcommand(@Context CommandSender sender, @Join String text) {
-        sender.sendMessage(text);
-    }
-
-}
-```
-
-Register your first command in plugin main class: (in this case for Bukkit)
-```java
-this.liteCommands = LiteBukkitFactory.builder("example-plugin")
-    .commands(LiteCommandsAnnotations.of(
-        new HelloWorldCommand()
-    ))
-    .build();
-```
-
 ### Platform artifacts
 
 | Artifact                  | Platform                      | Adventure Support |
@@ -83,14 +92,7 @@ this.liteCommands = LiteBukkitFactory.builder("example-plugin")
 | `litecommands-minestom`   | Minestom                      | yes               |
 | `litecommands-jda`        | JDA (Java Discord API)        | -                 |
 
-### Extension artifacts
-| Artifact                          | Extension          | For platforms                                                                            |
-|-----------------------------------|--------------------|------------------------------------------------------------------------------------------|
-| `litecommands-adventure`          | Adventure          | with [Native Adventure support](https://docs.advntr.dev/platform/native.html) e.g. Paper |
-| `litecommands-adventure-platform` | Adventure Platform | with [Adventure Platform](https://docs.advntr.dev/platform/index.html) e.g. Bukkit       |
-| `litecommands-chatgpt`            | ChatGPT OpenAI API | all                                                                                      |
-
-### Add `-parameters` to your compiler to use all features of LiteCommands
+### Add `-parameters` to your compiler to use all features of LiteCommands (optional)
 Gradle KTS
 ```kotlin
 tasks.withType<JavaCompile> {
@@ -117,14 +119,20 @@ Maven
 </plugin>
 ```
 
-#### Dependencies used
-- [panda-lang/expressible](https://github.com/panda-lang/expressible)
-- [JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
+#### Examples:
+- [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
+- [Velocity Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/velocity)
+- [ChatGPT Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-chatgpt)
+- [Bukkit (with Adventure Platform)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-adventure-platform)
 
 #### Plugins that use LiteCommands:
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
+
+#### Dependencies used
+- [panda-lang/expressible](https://github.com/panda-lang/expressible)
+- [JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
 
 <div align="center">
     <h3>Thanks to all sponsors!</h3>
