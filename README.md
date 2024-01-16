@@ -12,7 +12,7 @@
 
 # LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=LiteDevelopers%20Discord)](https://discord.gg/6cUhkj6uZJ)
 
-#### Annotation-based Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and future implementations :D.
+#### Annotation-based Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom JDA and future implementations.
 
 ### 📌 Helpful links
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
@@ -89,6 +89,12 @@ implementation("dev.rollczi:{artifact}:3.2.2")
 
 <br>
 
+<h2>💖 GitHub Sponsors</h2>
+<div align="center">
+    <p>Special thanks to all sponsors for supporting me and my projects! ❤️</p>
+    <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://github.com/rchomczyk.png" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://github.com/SfenKer.png" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://github.com/P1otrulla.png" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
+</div>
+
 ## ⚡🔌 Official IntelliJ Plugin
 
 With LiteCommands plugin, you can easily develop your commands within the **IntelliJ IDEA** environment. 
@@ -108,15 +114,8 @@ and other useful features to make your development experience smoother and more 
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
 
+<h2>Thanks for our partners! 💖</h2>
 <div align="center">
-    <h2>Thanks to all sponsors and partners! 💖</h2>
-    <p>Special thanks to all sponsors for supporting me and my projects! ❤️</p>
-    <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://github.com/rchomczyk.png" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://github.com/SfenKer.png" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://github.com/P1otrulla.png" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
-</div>
-
-
-<div align="center">
-    <br><br>
     <a  href="https://www.jetbrains.com/idea/">
         <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" alt="JetBrains" width="20%"/>
     </a>
@@ -151,6 +150,6 @@ and other useful features to make your development experience smoother and more 
 </div>
 
 
-#### Dependencies used
+## 🔐 Dependencies used
 - [panda-lang/expressible](https://github.com/panda-lang/expressible)
 - [JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
