@@ -92,15 +92,12 @@ implementation("dev.rollczi:{artifact}:3.2.2")
 > Add `-parameters` flag to your compiler to use all features [(read more)](https://litedevelopers.github.io/LiteDevelopers-documentation/parameters-compile-flag.html)
 
 <h2> 💖 GitHub Sponsors</h2>
-
-<div align="centfer">
     
 ```diff
 @@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
 ```
 
 <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://images.weserv.nl/?url=https://github.com/rchomczyk.png?v=4&mask=circle" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://images.weserv.nl/?url=https://github.com/SfenKer.png?v=4&mask=circle" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
-</div>
 
 ## 🔮 Official IntelliJ Plugin
 
@@ -121,8 +118,9 @@ and other useful features to make your development experience smoother and more 
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
 
-<h2>💖 Thanks for our partners!</h2>
+
 <div>
+    <h2>💖 Thanks for our partners!</h2>
     <a  href="https://www.jetbrains.com/idea/">
         <img src="https://github.com/Rollczi/LiteCommands/assets/49173834/44190624-9da5-4f2c-ac43-dcb5caab1c62" alt="JetBrains" width="7%"/>
     </a>
@@ -138,7 +136,7 @@ and other useful features to make your development experience smoother and more 
         Provides us with a Maven repository for our artifacts - <b><a href="https://repo.panda-lang.org/">Reposilite Repository</a></b>
     </p>
     <a href="https://www.yourkit.com/java/profiler/">
-        <img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" width="10%"/>
+        <img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" width="15%"/>
     </a>
     <p>
         <b>YourKit</b><br>
