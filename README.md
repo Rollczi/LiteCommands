@@ -21,20 +21,20 @@
 - [Documentation 2.x](https://docs.rollczi.dev/)
 
 ### ✨ Features
-- ☑️ Simple Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html) & Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
-- 🚩 Flags - [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html)
-- ⛓️ Joiner - _[@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html) remaining arguments into a string_
-- 🔀 Asynchronous commands, argument parsing and completion. [@Async](https://github.com/Rollczi/minecraft-lista-plugin/blob/master/src/main/java/dev/rollczi/minecraftlista/MinecraftListaCommand.java#L19C10-L19C10)
-- ✂️ Command shortcuts [@Shortcut](https://github.com/Rollczi/LiteCommands/blob/master/litecommands-annotations/test/dev/rollczi/litecommands/annotations/shortcut/ShortcutMultilevelTest.java#L21C13-L21C13)
-- ✉️ Support for basic types: int, `double`, `Duration`, `LocalDateTime`, `Location` and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)!
-- 💌 Support for collection types: `List`, `Set`, `TreeSet`, `Queue`, java array `T[]` and many others!
-- ⚡ [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) that provides annotation inspections, syntax highlighting and [more](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin)!
-- 🛡️ Custom annotation validators. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
-- ✒️ Programmatic API for creating more dynamic commands. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
-- ✅ Jakarta EE annotation validation. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
-- 🤖 ChatGPT suggestions. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
-- 🌈 Adventure Kyori support. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/adventure-kyori.html)
-- ✨ and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)! 
+- Simple Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html) & Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
+- Flags - [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html)
+- Joiner - _[@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html) remaining arguments into a string_
+- Asynchronous commands, argument parsing and completion. [@Async](https://github.com/Rollczi/minecraft-lista-plugin/blob/master/src/main/java/dev/rollczi/minecraftlista/MinecraftListaCommand.java#L19C10-L19C10)
+- Command shortcuts [@Shortcut](https://github.com/Rollczi/LiteCommands/blob/master/litecommands-annotations/test/dev/rollczi/litecommands/annotations/shortcut/ShortcutMultilevelTest.java#L21C13-L21C13)
+- Support for basic types: `int`, `double`, `Duration`, `LocalDateTime`, `Location` and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)!
+- Support for collection types: `List`, `Set`, `TreeSet`, `Queue`, java array `T[]` and many others!
+- [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) that provides annotation inspections, syntax highlighting and [more](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin)!
+- Custom annotation validators. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
+- Programmatic API for creating more dynamic commands. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
+- Jakarta EE annotation validation. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
+- ChatGPT suggestions. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
+- Adventure Kyori support. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/adventure-kyori.html) 
+- and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)! ✨
 
 ## 💡 Command Example
 This is an example of `/hello <name> <amount>` command:
@@ -87,15 +87,13 @@ implementation("dev.rollczi:{artifact}:3.2.2")
 
 > Add `-parameters` flag to your compiler to use all features [(read more)](https://litedevelopers.github.io/LiteDevelopers-documentation/parameters-compile-flag.html)
 
-<br>
-
-<h2>💖 GitHub Sponsors</h2>
-<div align="center">
+<h2> 💖 GitHub Sponsors</h2>
+<div>
     <p>Special thanks to all sponsors for supporting me and my projects! ❤️</p>
     <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://github.com/rchomczyk.png" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://github.com/SfenKer.png" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://github.com/P1otrulla.png" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 </div>
 
-## ⚡🔌 Official IntelliJ Plugin
+## 🔮 Official IntelliJ Plugin
 
 With LiteCommands plugin, you can easily develop your commands within the **IntelliJ IDEA** environment. 
 The plugin provides **annotation inspections**, **tools** for creating new command classes, **syntax highlighting**, **code completion**, 
@@ -114,8 +112,8 @@ and other useful features to make your development experience smoother and more 
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
 
-<h2>Thanks for our partners! 💖</h2>
-<div align="center">
+<h2>💖 Thanks for our partners!</h2>
+<div>
     <a  href="https://www.jetbrains.com/idea/">
         <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" alt="JetBrains" width="20%"/>
     </a>
