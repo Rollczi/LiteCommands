@@ -1,8 +1,7 @@
 
 <div align="right">
-
-[![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=LiteDevelopers%20Discord)](https://discord.gg/6cUhkj6uZJ)
-
+    
+[![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=9372f9&name=Version)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands)  
 </div>
 
 <div align="center">
@@ -65,7 +64,7 @@ this.liteCommands = LiteBukkitFactory.builder("example-plugin")
     .build();
 ```
 
-## 🚀 Get Started
+## 🚀 Get Started 
 
 #### ➕ Add Panda Repository ❤️
 ```kts
