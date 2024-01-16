@@ -93,11 +93,12 @@ implementation("dev.rollczi:{artifact}:3.2.2")
 
 <h2> 💖 GitHub Sponsors</h2>
 
+<div align="centfer">
+    
 ```diff
 @@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
 ```
 
-<div>
 <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://images.weserv.nl/?url=https://github.com/rchomczyk.png?v=4&mask=circle" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://images.weserv.nl/?url=https://github.com/SfenKer.png?v=4&mask=circle" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 </div>
 
