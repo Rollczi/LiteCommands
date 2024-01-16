@@ -1,6 +1,16 @@
-<div align="center"><img src="https://github.com/Rollczi/LiteCommands/assets/49173834/a5a1de27-af53-4d19-86e7-3f3306695e9a" alt="banner" width="50%"/></div>
+<div align="center">
 
-# 🌠 LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/NDejlich) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=Lite%20Discord)
+<img src="https://github.com/Rollczi/LiteCommands/assets/49173834/a5a1de27-af53-4d19-86e7-3f3306695e9a" alt="banner" width="50%"/>
+<br><br>
+
+[![Discord](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/social/discord-plural_vector.svg)](https://discord.gg/6cUhkj6uZJ)
+[![Sponsor](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/donate/ghsponsors-singular_vector.svg)](https://github.com/sponsors/Rollczi)
+[![Gradle](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/gradle_vector.svg)](https://gradle.org/)
+[![Java](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/java8_vector.svg)](https://www.java.com/)
+
+</div>
+
+# LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=LiteDevelopers%20Discord)](https://discord.gg/6cUhkj6uZJ)
 
 #### Annotation-based Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, JDA and future implementations :D.
 
@@ -12,18 +22,18 @@
 
 ### ✨ Features
 - ☑️ Simple Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html) & Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
-- 🚩 Flags [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html)
-- ⛓️ Joiner [@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html)
-- 🔀 Asynchronous commands, argument parsing and completion. @Async
-- ✉️ Support for basic types: int, double, Duration, LocalDateTime, Location, Player [and more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)
-- 💌 Support for collection types: List, Set, TreeSet, Stack, Queue, traditional java array T[] and more!
-- 🔖 Multilevel argument parsing and suggestions e.g. LocalDateTime `yyyy-MM-dd HH:mm`
-- 🔌 [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) for LiteCommands provides annotation inspections, syntax highlighting and a command viewer.
-- 🛡️ Custom annotation validators [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
-- ✒️ Programmatic API for creating more dynamic commands. [see example](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
-- ✅ Jakarta EE annotation validation. [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
-- 🤖 ChatGPT suggestions [see the extension](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
-- 🌈 Adventure Kyori support
+- 🚩 Flags - [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html)
+- ⛓️ Joiner - _[@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html) remaining arguments into a string_
+- 🔀 Asynchronous commands, argument parsing and completion. [@Async](https://github.com/Rollczi/minecraft-lista-plugin/blob/master/src/main/java/dev/rollczi/minecraftlista/MinecraftListaCommand.java#L19C10-L19C10)
+- ✂️ Command shortcuts [@Shortcut](https://github.com/Rollczi/LiteCommands/blob/master/litecommands-annotations/test/dev/rollczi/litecommands/annotations/shortcut/ShortcutMultilevelTest.java#L21C13-L21C13)
+- ✉️ Support for basic types: int, `double`, `Duration`, `LocalDateTime`, `Location` and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)!
+- 💌 Support for collection types: `List`, `Set`, `TreeSet`, `Queue`, java array `T[]` and many others!
+- ⚡ [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) that provides annotation inspections, syntax highlighting and [more](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin)!
+- 🛡️ Custom annotation validators. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
+- ✒️ Programmatic API for creating more dynamic commands. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
+- ✅ Jakarta EE annotation validation. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
+- 🤖 ChatGPT suggestions. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
+- 🌈 Adventure Kyori support. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/adventure-kyori.html)
 - ✨ and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)! 
 
 ## 💡 Command Example
@@ -49,7 +59,7 @@ this.liteCommands = LiteBukkitFactory.builder("example-plugin")
     .build();
 ```
 
-## 🚀 Get Started!
+## 🚀 Get Started
 
 #### ➕ Add Panda Repository ❤️
 ```kts
@@ -77,37 +87,36 @@ implementation("dev.rollczi:{artifact}:3.2.2")
 
 > Add `-parameters` flag to your compiler to use all features [(read more)](https://litedevelopers.github.io/LiteDevelopers-documentation/parameters-compile-flag.html)
 
-## 🔌 Install LiteCommands IntelliJ IDEA Plugin!
+<br>
+
+## ⚡🔌 Official IntelliJ Plugin
+
 With LiteCommands plugin, you can easily develop your commands within the **IntelliJ IDEA** environment. 
 The plugin provides **annotation inspections**, **tools** for creating new command classes, **syntax highlighting**, **code completion**, 
 and other useful features to make your development experience smoother and more efficient. How to [install](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin?tab=readme-ov-file#installation)? 
 ![litecommandsbanner-intellij](https://github.com/Rollczi/LiteCommands/assets/49173834/dafd034e-4dab-4ab0-9984-489ae6808d8d)
 
-#### Examples:
+## 🌍 More Examples
+#### ➕ Official examples
 - [Bukkit Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit)
 - [Velocity Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/velocity)
 - [ChatGPT Example](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-chatgpt)
 - [Bukkit (with Adventure Platform)](https://github.com/Rollczi/LiteCommands/tree/master/examples/bukkit-adventure-platform)
 
-#### Plugins that use LiteCommands:
+#### ➕ Plugins that use LiteCommands!
 - [EternalCore](https://github.com/EternalCodeTeam/EternalCore)
 - [EternalCombat](https://github.com/EternalCodeTeam/EternalCombat)
 - [ChatFormatter](https://github.com/EternalCodeTeam/ChatFormatter)
 
-#### Dependencies used
-- [panda-lang/expressible](https://github.com/panda-lang/expressible)
-- [JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
-
 <div align="center">
-    <h3>Thanks to all sponsors!</h3>
+    <h2>Thanks to all sponsors and partners! 💖</h2>
     <p>Special thanks to all sponsors for supporting me and my projects! ❤️</p>
     <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://github.com/rchomczyk.png" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://github.com/SfenKer.png" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://github.com/P1otrulla.png" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 </div>
 
 
 <div align="center">
-    <br><br><br>
-    <h3>Also thanks to our partners!</h3>
+    <br><br>
     <a  href="https://www.jetbrains.com/idea/">
         <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" alt="JetBrains" width="20%"/>
     </a>
@@ -122,6 +131,7 @@ and other useful features to make your development experience smoother and more 
         <img src="https://avatars.githubusercontent.com/u/88636591" alt="Reposilite" width="15%"/>
     </a>
     <br>
+    <br>
     <p>
         <b>Reposilite</b><br>
         Provides us with a Maven repository for our artifacts - <b><a href="https://repo.panda-lang.org/">Reposilite Repository</a></b>
@@ -133,8 +143,14 @@ and other useful features to make your development experience smoother and more 
         <img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit" width="25%"/>
     </a>
     <br>
+    <br>
     <p>
         <b>YourKit</b><br>
         Supports us with a innovative and intelligent tools for monitoring and profiling - <b><a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a></b>
     </p>
 </div>
+
+
+#### Dependencies used
+- [panda-lang/expressible](https://github.com/panda-lang/expressible)
+- [JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
