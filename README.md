@@ -1,3 +1,10 @@
+
+<div align="right">
+
+[![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=LiteDevelopers%20Discord)](https://discord.gg/6cUhkj6uZJ)
+
+</div>
+
 <div align="center">
 
 <img src="https://github.com/Rollczi/LiteCommands/assets/49173834/a5a1de27-af53-4d19-86e7-3f3306695e9a" alt="banner" width="50%"/>
@@ -8,11 +15,10 @@
 [![Gradle](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/gradle_vector.svg)](https://gradle.org/)
 [![Java](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/java8_vector.svg)](https://www.java.com/)
 
+### LiteCommands
+Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom JDA and future implementations.
+
 </div>
-
-# LiteCommands [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=53a2f9&name=LiteCommands)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands) [![Discord](https://img.shields.io/discord/896933084983877662?color=8f79f4&label=LiteDevelopers%20Discord)](https://discord.gg/6cUhkj6uZJ)
-
-#### Annotation-based Command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom JDA and future implementations.
 
 ### 📌 Helpful links
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
@@ -83,13 +89,16 @@ implementation("dev.rollczi:{artifact}:3.2.2")
     <version>3.2.2</version>
 </dependency>
 ```
-⚠️ Replace `{artifact}` with [platform artifact](https://litedevelopers.github.io/LiteDevelopers-documentation/platforms.html)
-
+> ⚠️ Replace `{artifact}` with [platform artifact](https://litedevelopers.github.io/LiteDevelopers-documentation/platforms.html)  
 > Add `-parameters` flag to your compiler to use all features [(read more)](https://litedevelopers.github.io/LiteDevelopers-documentation/parameters-compile-flag.html)
 
 <h2> 💖 GitHub Sponsors</h2>
+
+```diff
+@@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
+```
+
 <div>
-    <p>Special thanks to all sponsors for supporting me and my projects! ❤️</p>
     <!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://images.weserv.nl/?url=https://github.com/rchomczyk.png?v=4&mask=circle" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://github.com/SfenKer.png" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://github.com/P1otrulla.png" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 </div>
 
