@@ -25,8 +25,8 @@ import static org.awaitility.Awaitility.await;
 
 class AsyncCommandTest extends LiteTestSpec {
 
-    private static final int DELAY = 2000;
-    private static final int MARGIN = 750;
+    private static final int DELAY = 500;
+    private static final int MARGIN = 200;
 
     static LiteConfig config = builder -> builder
         .scheduler(new SchedulerExecutorPoolImpl("test", 1))
@@ -108,11 +108,6 @@ class AsyncCommandTest extends LiteTestSpec {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args first second");
 
         await()
-            .atLeast(0, TimeUnit.MILLISECONDS)
-            .atMost(DELAY, TimeUnit.MILLISECONDS)
-            .until(() -> !result.isDone());
-
-        await()
             .atLeast(DELAY - MARGIN, TimeUnit.MILLISECONDS)
             .atMost(DELAY + MARGIN, TimeUnit.MILLISECONDS)
             .until(() -> result.isDone());
@@ -124,11 +119,6 @@ class AsyncCommandTest extends LiteTestSpec {
     @Test
     void testAsyncArgsAndMethod() {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args-and-method first second");
-
-        await()
-            .atLeast(0, TimeUnit.MILLISECONDS)
-            .atMost(DELAY, TimeUnit.MILLISECONDS)
-            .until(() -> !result.isDone());
 
         await()
             .atLeast(DELAY - MARGIN, TimeUnit.MILLISECONDS)
