@@ -39,8 +39,8 @@ public class SimpleArgument<T> implements Argument<T> {
     public ArgumentKey getKey() {
         String keyName = this.getKeyName();
         if (lastKeyName == null || !lastKeyName.equals(keyName)) {
-            lastKeyName = keyName;
             lastKey = Argument.super.getKey();
+            lastKeyName = keyName;
         }
 
         return lastKey;

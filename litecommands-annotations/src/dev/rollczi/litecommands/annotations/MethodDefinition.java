@@ -34,11 +34,14 @@ public class MethodDefinition {
 
     public List<Requirement<?>> getRequirements() {
         if (indexedRequirements == null) {
-            indexedRequirements = new ArrayList<>();
+            List<Requirement<?>> indexedRequirements = new ArrayList<>();
 
             for (int i = 0; i < method.getParameterCount(); i++) {
                 indexedRequirements.add(getRequirement0(i));
             }
+
+            this.indexedRequirements = indexedRequirements;
+            return indexedRequirements;
         }
 
         return indexedRequirements;

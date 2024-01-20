@@ -224,7 +224,7 @@ public class CommandExecuteService<SENDER> {
 
         ScheduledRequirement<?> scheduledRequirement = requirementIterator.next();
 
-        return scheduledRequirement.getMatch().thenCompose((requirementResult) -> {
+        return scheduledRequirement.runMatch().thenCompose((requirementResult) -> {
             Requirement<?> requirement = scheduledRequirement.getRequirement();
 
             if (requirementResult.isFailed()) {

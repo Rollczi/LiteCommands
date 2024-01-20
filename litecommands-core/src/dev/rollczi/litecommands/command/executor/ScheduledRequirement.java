@@ -21,7 +21,7 @@ class ScheduledRequirement<T> {
         return requirement;
     }
 
-    public CompletableFuture<RequirementResult<?>> getMatch() {
+    public CompletableFuture<RequirementResult<?>> runMatch() {
         return match.get();
     }
 
