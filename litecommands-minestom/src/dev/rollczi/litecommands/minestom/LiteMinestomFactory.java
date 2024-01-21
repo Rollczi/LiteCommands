@@ -22,17 +22,18 @@ public final class LiteMinestomFactory {
     private LiteMinestomFactory() {
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteMinestomSettings, ?> builder() {
+    public static <B extends LiteCommandsBuilder<CommandSender, LiteMinestomSettings, B>> B builder() {
         return builder(MinecraftServer.getServer(), MinecraftServer.getInstanceManager(), MinecraftServer.getConnectionManager(), MinecraftServer.getCommandManager());
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteMinestomSettings, ?> builder(
+    @SuppressWarnings("unchecked")
+    public static <B extends LiteCommandsBuilder<CommandSender, LiteMinestomSettings, B>> B builder(
         Server server,
         InstanceManager instanceManager,
         ConnectionManager connectionManager,
         CommandManager commandManager
     ) {
-        return LiteCommandsFactory.builder(CommandSender.class, new MinestomPlatform(commandManager)).selfProcessor((builder, internal) -> {
+        return (B) LiteCommandsFactory.builder(CommandSender.class, new MinestomPlatform(commandManager)).selfProcessor((builder, internal) -> {
             MessageRegistry<CommandSender> messageRegistry = internal.getMessageRegistry();
 
             builder
