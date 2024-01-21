@@ -14,12 +14,13 @@ public final class LiteBungeeFactory {
     private LiteBungeeFactory() {
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteBungeeSettings, ?> builder(Plugin plugin) {
+    public static <B extends LiteCommandsBuilder<CommandSender, LiteBungeeSettings, B>> B builder(Plugin plugin) {
         return builder(plugin, new LiteBungeeSettings());
     }
 
-    public static LiteCommandsBuilder<CommandSender, LiteBungeeSettings, ?> builder(Plugin plugin, LiteBungeeSettings liteBungeeSettings) {
-        return LiteCommandsFactory.builder(CommandSender.class, new BungeePlatform(plugin, liteBungeeSettings))
+    @SuppressWarnings("unchecked")
+    public static <B extends LiteCommandsBuilder<CommandSender, LiteBungeeSettings, B>> B builder(Plugin plugin, LiteBungeeSettings liteBungeeSettings) {
+        return (B) LiteCommandsFactory.builder(CommandSender.class, new BungeePlatform(plugin, liteBungeeSettings))
             .bind(ProxyServer.class, plugin::getProxy)
             .context(ProxiedPlayer.class, new BungeeOnlyPlayerContextual<>("Only players can use this command! (Set this message in LiteBungeeFactory)"))
 
