@@ -24,6 +24,7 @@ include("litecommands-jda", JavaVersion.VERSION_17)
 include(":examples:bukkit")
 include(":examples:bukkit-adventure-platform")
 include(":examples:bukkit-chatgpt", JavaVersion.VERSION_11)
+include(":examples:minestom", JavaVersion.VERSION_17)
 include(":examples:velocity", JavaVersion.VERSION_11)
 
 fun include(projectPath: String, version: JavaVersion) {

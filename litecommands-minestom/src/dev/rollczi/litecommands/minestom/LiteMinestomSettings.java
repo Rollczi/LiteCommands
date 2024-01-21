@@ -1,18 +1,14 @@
 package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.platform.PlatformSettings;
+import org.jetbrains.annotations.ApiStatus;
 
 public class LiteMinestomSettings implements PlatformSettings {
 
-    private boolean nativePermission = false;
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.4.0")
     public LiteMinestomSettings nativePermission(boolean nativePermission) {
-        this.nativePermission = nativePermission;
         return this;
-    }
-
-    boolean isNativePermission() {
-        return nativePermission;
     }
 
 }
