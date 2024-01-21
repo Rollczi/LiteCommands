@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
+import dev.rollczi.litecommands.util.StringUtil;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
@@ -38,6 +39,11 @@ class MinestomCommand extends Command {
             SuggestionInput<?> input = SuggestionInput.raw(args);
             Invocation<CommandSender> invocation = this.createInvocation(sender, alias, input);
             Set<Suggestion> suggestions = this.suggestionListener.suggest(invocation, input).getSuggestions();
+
+            if (suggestions.isEmpty()) {
+                suggestionCallback.addEntry(new SuggestionEntry(StringUtil.EMPTY));
+                return;
+            }
 
             for (Suggestion suggestion : suggestions) {
                 suggestionCallback.addEntry(new SuggestionEntry(suggestion.multilevel(), Component.empty()));

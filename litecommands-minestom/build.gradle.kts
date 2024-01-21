@@ -8,9 +8,10 @@ plugins {
 
 dependencies {
     api(project(":litecommands-framework"))
+    api(project(":litecommands-adventure"))
     testImplementation(project(":litecommands-annotations"))
-    compileOnly("dev.hollowcube:minestom-ce:438338381e")
-    testImplementation("dev.hollowcube:minestom-ce:438338381e")
+    compileOnly("dev.hollowcube:minestom-ce:5347c0b11f")
+    testImplementation("dev.hollowcube:minestom-ce:5347c0b11f")
 }
 
 litecommandsPublish {

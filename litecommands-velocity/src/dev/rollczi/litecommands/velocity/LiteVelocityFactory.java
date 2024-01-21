@@ -14,7 +14,9 @@ public final class LiteVelocityFactory {
 
     public static LiteCommandsBuilder<CommandSource, LiteVelocitySettings, ?> builder(ProxyServer proxy) {
         return LiteCommandsFactory.builder(CommandSource.class, new VelocityPlatform(proxy.getCommandManager(), new LiteVelocitySettings()))
-            .extension(new LiteAdventureExtension<>())
+            .extension(new LiteAdventureExtension<>(), configuration -> configuration
+                .legacyColor(true)
+            )
 
             .bind(ProxyServer.class, () -> proxy)
             .bind(CommandManager.class, proxy::getCommandManager);
