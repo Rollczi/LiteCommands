@@ -107,14 +107,14 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B argumentSuggestion(TypeRange<T> type, ArgumentKey key, SuggestionResult suggestion);
 
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.4.0")
     default <T>
     B argumentSuggester(Class<T> type, SuggestionResult suggestion) {
         return argumentSuggestion(type, suggestion);
     }
 
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.3.0")
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.4.0")
     default <T>
     B argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestion) {
         return argumentSuggestion(type, key, suggestion);
