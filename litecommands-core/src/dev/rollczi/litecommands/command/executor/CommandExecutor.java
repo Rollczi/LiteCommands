@@ -11,17 +11,27 @@ import dev.rollczi.litecommands.scope.Scopeable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.jetbrains.annotations.Unmodifiable;
 
+/**
+ * CommandExecutor is a node of the command tree.
+ * Argument, ContextRequirement and BindRequirement are used to match the command.
+ * @see CommandExecutor#match(RequirementsResult)
+ */
 public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER> {
 
+    @Unmodifiable
     List<Argument<?>> getArguments();
 
+    @Unmodifiable
     List<ContextRequirement<?>> getContextRequirements();
 
+    @Unmodifiable
     List<BindRequirement<?>> getBindRequirements();
 
     CommandExecutorMatchResult match(RequirementsResult<SENDER> result);
 
+    @Unmodifiable
     @Override
     default Collection<String> names() {
         return Collections.emptySet();
@@ -30,4 +40,5 @@ public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER> 
     static <SENDER> CommandExecutorBuilder<SENDER> builder(CommandRoute<SENDER> parent) {
         return new CommandExecutorBuilder<>(parent);
     }
+
 }
