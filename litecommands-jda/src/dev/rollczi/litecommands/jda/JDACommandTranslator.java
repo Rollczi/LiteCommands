@@ -38,6 +38,8 @@ import java.util.stream.Stream;
 
 class JDACommandTranslator {
 
+    private static final String DESCRIPTION_DEFAULT = "none";
+
     private final WrapperRegistry wrapperRegistry;
 
     private final Map<Class<?>, JDAType<?>> jdaSupportedTypes = new HashMap<>();
@@ -132,13 +134,20 @@ class JDACommandTranslator {
     }
 
     private String getDescription(MetaHolder holder) {
-        String joined = String.join(", ", holder.meta().get(Meta.DESCRIPTION));
+        List<List<String>> descriptions = holder.metaCollector().collect(Meta.DESCRIPTION);
 
-        if (joined.isEmpty()) {
-            return "none"; // Discord doesn't allow empty description
+        if (descriptions.isEmpty()) {
+            return DESCRIPTION_DEFAULT; // Discord doesn't allow empty description
         }
 
-        return joined;
+        List<String> descriptionList = descriptions.get(0);
+        String description = String.join(", ", descriptionList);
+
+        if (description.isEmpty()) {
+            return DESCRIPTION_DEFAULT; // Discord doesn't allow empty description
+        }
+
+        return description;
     }
 
     private List<Permission> getPermissions(MetaHolder holder) {
