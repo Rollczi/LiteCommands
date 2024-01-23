@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import panda.std.Result;
 
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Supplier;
@@ -130,15 +130,15 @@ public class CommandExecuteService<SENDER> {
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
-        return this.execute(commandRoute.getExecutors().listIterator(), invocation, matcher, commandRoute, null);
+        return this.execute(commandRoute.getExecutors().iterator(), invocation, matcher, commandRoute, null);
     }
 
     private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
-        ListIterator<CommandExecutor<SENDER>> executors,
+        Iterator<CommandExecutor<SENDER>> executors,
         Invocation<SENDER> invocation,
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute,
-        @Nullable FailedReason last
+        @Nullable CommandExecuteResult last
     ) {
         // Handle failed
         if (!executors.hasNext()) {
@@ -148,14 +148,11 @@ public class CommandExecuteService<SENDER> {
                 return completedFuture(CommandExecuteResult.failed(null, validate.getReason()));
             }
 
-            // continue handle failed
-            CommandExecutor<SENDER> executor = executors.hasPrevious() ? executors.previous() : null;
-
-            if (last != null && last.hasResult()) {
-                return completedFuture(CommandExecuteResult.failed(executor, last));
+            if (last != null) {
+                return completedFuture(last);
             }
 
-            return completedFuture(CommandExecuteResult.failed(executor, InvalidUsage.Cause.UNKNOWN_COMMAND));
+            return completedFuture(CommandExecuteResult.failed(null, InvalidUsage.Cause.UNKNOWN_COMMAND));
         }
 
         CommandExecutor<SENDER> executor = executors.next();
@@ -165,7 +162,7 @@ public class CommandExecuteService<SENDER> {
                 FailedReason current = match.getFailedReason();
 
                 if (current.hasResult()) {
-                    return this.execute(executors, invocation, matcher, commandRoute, current);
+                    return this.execute(executors, invocation, matcher, commandRoute, CommandExecuteResult.failed(executor, current));
                 }
 
                 return this.execute(executors, invocation, matcher, commandRoute, last);
@@ -179,7 +176,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             if (flow.isStopCurrent()) {
-                return this.execute(executors, invocation, matcher, commandRoute, flow.failedReason());
+                return this.execute(executors, invocation, matcher, commandRoute, CommandExecuteResult.failed(executor, flow.failedReason()));
             }
 
             // Execution

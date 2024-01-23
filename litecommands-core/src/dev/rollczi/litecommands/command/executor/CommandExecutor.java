@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.command.executor;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandNode;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.priority.Prioritized;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Unmodifiable;
  * Argument, ContextRequirement and BindRequirement are used to match the command.
  * @see CommandExecutor#match(RequirementsResult)
  */
-public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER> {
+public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER>, Prioritized {
 
     @Unmodifiable
     List<Argument<?>> getArguments();
