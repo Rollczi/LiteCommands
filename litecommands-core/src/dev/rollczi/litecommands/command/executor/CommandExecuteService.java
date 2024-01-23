@@ -224,50 +224,50 @@ public class CommandExecuteService<SENDER> {
         }
 
         return builder.build((scheduledRequirement, requirementResult) -> {
-                Requirement<?> requirement = scheduledRequirement.requirement;
-                WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
+            Requirement<?> requirement = scheduledRequirement.requirement;
+            WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
 
-                if (requirementResult.isFailed()) {
-                    return this.handleFailed(requirementResult, wrapperFormat, requirement);
+            if (requirementResult.isFailed()) {
+                return this.handleFailed(requirementResult, wrapperFormat, requirement);
+            }
+
+            if (requirementResult.isSuccessfulNull()) {
+                return toMatch(requirement, null);
+            }
+
+            Object success = requirementResult.getSuccess();
+            List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
+
+            for (RequirementValidator<?, ?> validator : validators) {
+                ValidatorResult validatorResult = validateRequirement(invocation, executor, requirement, success, validator);
+
+                if (validatorResult.isInvalid()) {
+                    throw new ScheduledChainException(validatorResult.getInvalidResult());
                 }
+            }
 
-                if (requirementResult.isSuccessfulNull()) {
-                    return toMatch(requirement, null);
-                }
+            return toMatch(requirement, success);
+        })
+        .collectChain(scheduler)
+        .thenCompose(result -> {
+            if (result.isFailure()) {
+                return completedFuture(CommandExecutorMatchResult.failed(result.getFailure()));
+            }
 
-                Object success = requirementResult.getSuccess();
-                List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
+            ParseableInputMatcher.EndResult endResult = matcher.endMatch();
 
-                for (RequirementValidator<?, ?> validator : validators) {
-                    ValidatorResult validatorResult = validateRequirement(invocation, executor, requirement, success, validator);
+            if (!endResult.isSuccessful()) {
+                return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
+            }
 
-                    if (validatorResult.isInvalid()) {
-                        throw new ScheduledChainException(validatorResult.getInvalidResult());
-                    }
-                }
+            RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
 
-                return toMatch(requirement, success);
-            })
-            .collectChain(scheduler)
-            .thenCompose(result -> {
-                if (result.isFailure()) {
-                    return completedFuture(CommandExecutorMatchResult.failed(result.getFailure()));
-                }
+            for (RequirementMatch<? extends Requirement<?>, ?> success : result.getSuccess()) {
+                restulrBuilder.add(success.getRequirement().getName(), success);
+            }
 
-                ParseableInputMatcher.EndResult endResult = matcher.endMatch();
-
-                if (!endResult.isSuccessful()) {
-                    return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
-                }
-
-                RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
-
-                for (RequirementMatch<? extends Requirement<?>, ?> success : result.getSuccess()) {
-                    restulrBuilder.add(success.getRequirement().getName(), success);
-                }
-
-                return completedFuture(executor.match(restulrBuilder.build()));
-            });
+            return completedFuture(executor.match(restulrBuilder.build()));
+        });
     }
 
     @SuppressWarnings("unchecked")
