@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.priority.Priority;
+import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.meta.Meta;
@@ -64,7 +64,7 @@ public abstract class AbstractCommandExecutor<SENDER> implements CommandExecutor
     }
 
     @Override
-    public Priority getPriority()  {
+    public PriorityLevel getPriority()  {
         return meta().get(Meta.PRIORITY);
     }
 

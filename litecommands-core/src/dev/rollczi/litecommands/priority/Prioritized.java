@@ -6,6 +6,6 @@ import org.jetbrains.annotations.ApiStatus;
 public interface Prioritized {
 
     @ApiStatus.Experimental
-    Priority getPriority();
+    PriorityLevel getPriority();
 
 }
