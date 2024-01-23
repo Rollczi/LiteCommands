@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import panda.std.Result;
 
 import java.util.List;
-import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Supplier;
@@ -130,15 +130,15 @@ public class CommandExecuteService<SENDER> {
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
-        return this.execute(commandRoute.getExecutors().iterator(), invocation, matcher, commandRoute, null);
+        return this.execute(commandRoute.getExecutors().listIterator(), invocation, matcher, commandRoute, null);
     }
 
     private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
-        Iterator<CommandExecutor<SENDER>> executors,
+        ListIterator<CommandExecutor<SENDER>> executors,
         Invocation<SENDER> invocation,
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute,
-        @Nullable CommandExecuteResult last
+        @Nullable FailedReason last
     ) {
         // Handle failed
         if (!executors.hasNext()) {
@@ -148,11 +148,14 @@ public class CommandExecuteService<SENDER> {
                 return completedFuture(CommandExecuteResult.failed(null, validate.getReason()));
             }
 
-            if (last != null) {
-                return completedFuture(last);
+            // continue handle failed
+            CommandExecutor<SENDER> executor = executors.hasPrevious() ? executors.previous() : null;
+
+            if (last != null && last.hasResult()) {
+                return completedFuture(CommandExecuteResult.failed(executor, last));
             }
 
-            return completedFuture(CommandExecuteResult.failed(null, InvalidUsage.Cause.UNKNOWN_COMMAND));
+            return completedFuture(CommandExecuteResult.failed(executor, InvalidUsage.Cause.UNKNOWN_COMMAND));
         }
 
         CommandExecutor<SENDER> executor = executors.next();
@@ -162,7 +165,7 @@ public class CommandExecuteService<SENDER> {
                 FailedReason current = match.getFailedReason();
 
                 if (current.hasResult()) {
-                    return this.execute(executors, invocation, matcher, commandRoute, CommandExecuteResult.failed(executor, current));
+                    return this.execute(executors, invocation, matcher, commandRoute, current);
                 }
 
                 return this.execute(executors, invocation, matcher, commandRoute, last);
@@ -176,7 +179,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             if (flow.isStopCurrent()) {
-                return this.execute(executors, invocation, matcher, commandRoute, CommandExecuteResult.failed(executor, flow.failedReason()));
+                return this.execute(executors, invocation, matcher, commandRoute, flow.failedReason());
             }
 
             // Execution
@@ -221,50 +224,50 @@ public class CommandExecuteService<SENDER> {
         }
 
         return builder.build((scheduledRequirement, requirementResult) -> {
-            Requirement<?> requirement = scheduledRequirement.requirement;
-            WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
+                Requirement<?> requirement = scheduledRequirement.requirement;
+                WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
 
-            if (requirementResult.isFailed()) {
-                return this.handleFailed(requirementResult, wrapperFormat, requirement);
-            }
-
-            if (requirementResult.isSuccessfulNull()) {
-                return toMatch(requirement, null);
-            }
-
-            Object success = requirementResult.getSuccess();
-            List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
-
-            for (RequirementValidator<?, ?> validator : validators) {
-                ValidatorResult validatorResult = validateRequirement(invocation, executor, requirement, success, validator);
-
-                if (validatorResult.isInvalid()) {
-                    throw new ScheduledChainException(validatorResult.getInvalidResult());
+                if (requirementResult.isFailed()) {
+                    return this.handleFailed(requirementResult, wrapperFormat, requirement);
                 }
-            }
 
-            return toMatch(requirement, success);
-        })
-        .collectChain(scheduler)
-        .thenCompose(result -> {
-            if (result.isFailure()) {
-                return completedFuture(CommandExecutorMatchResult.failed(result.getFailure()));
-            }
+                if (requirementResult.isSuccessfulNull()) {
+                    return toMatch(requirement, null);
+                }
 
-            ParseableInputMatcher.EndResult endResult = matcher.endMatch();
+                Object success = requirementResult.getSuccess();
+                List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
 
-            if (!endResult.isSuccessful()) {
-                return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
-            }
+                for (RequirementValidator<?, ?> validator : validators) {
+                    ValidatorResult validatorResult = validateRequirement(invocation, executor, requirement, success, validator);
 
-            RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
+                    if (validatorResult.isInvalid()) {
+                        throw new ScheduledChainException(validatorResult.getInvalidResult());
+                    }
+                }
 
-            for (RequirementMatch<? extends Requirement<?>, ?> success : result.getSuccess()) {
-                restulrBuilder.add(success.getRequirement().getName(), success);
-            }
+                return toMatch(requirement, success);
+            })
+            .collectChain(scheduler)
+            .thenCompose(result -> {
+                if (result.isFailure()) {
+                    return completedFuture(CommandExecutorMatchResult.failed(result.getFailure()));
+                }
 
-            return completedFuture(executor.match(restulrBuilder.build()));
-        });
+                ParseableInputMatcher.EndResult endResult = matcher.endMatch();
+
+                if (!endResult.isSuccessful()) {
+                    return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
+                }
+
+                RequirementsResult.Builder<SENDER> restulrBuilder = RequirementsResult.builder(invocation);
+
+                for (RequirementMatch<? extends Requirement<?>, ?> success : result.getSuccess()) {
+                    restulrBuilder.add(success.getRequirement().getName(), success);
+                }
+
+                return completedFuture(executor.match(restulrBuilder.build()));
+            });
     }
 
     @SuppressWarnings("unchecked")

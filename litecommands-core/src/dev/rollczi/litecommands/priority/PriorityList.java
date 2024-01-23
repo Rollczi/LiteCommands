@@ -1,7 +1,9 @@
 package dev.rollczi.litecommands.priority;
 
+import java.util.ListIterator;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Experimental
 public interface PriorityList<E> extends Iterable<E> {
@@ -22,6 +24,9 @@ public interface PriorityList<E> extends Iterable<E> {
     Stream<E> stream();
 
     @ApiStatus.Experimental
+    @NotNull ListIterator<E> listIterator();
+
+    @ApiStatus.Experimental
     @SafeVarargs
     static <E extends Prioritized> PriorityList<E> of(E... elements) {
         MutablePriorityList<E> set = new MutablePriorityList<>();
@@ -30,5 +35,4 @@ public interface PriorityList<E> extends Iterable<E> {
         }
         return set;
     }
-
 }
