@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 class JDACommandTranslator {
 
     private static final String DESCRIPTION_DEFAULT = "none";
+    private static final String DESCRIPTION_NO_GENERATED = "no generated description";
 
     private final WrapperRegistry wrapperRegistry;
 
@@ -60,20 +61,24 @@ class JDACommandTranslator {
     }
 
     <SENDER> JDALiteCommand translate(
-        String name,
         CommandRoute<SENDER> commandRoute
     ) {
-        CommandDataImpl commandData = new CommandDataImpl(name, this.getDescription(commandRoute));
+        CommandDataImpl commandData = new CommandDataImpl(commandRoute.getName(), this.getDescription(commandRoute));
         commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
 
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
-        // Single command
         if (!commandRoute.getExecutors().isEmpty()) {
+            if (!commandRoute.getChildren().isEmpty()) {
+                throw new IllegalArgumentException("Discord command cannot have subcommands and executor in same route");
+            }
+
             CommandExecutor<SENDER> executor = this.translateExecutor(commandRoute, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                 commandData.addOption(optionType, argName, description, isRequired, autocomplete);
                 jdaLiteCommand.addTypeMapper(new JDARoute(argName), mapper);
             });
+
+            commandData.setDescription(this.getDescription(executor));
 
             List<Permission> permissions = getPermissions(executor);
 
@@ -91,12 +96,13 @@ class JDACommandTranslator {
         // group command and subcommands
         for (CommandRoute<SENDER> child : commandRoute.getChildren()) {
             if (!child.getExecutors().isEmpty()) {
-                SubcommandData subcommandData = new SubcommandData(child.getName(), this.getDescription(child));
-
-                this.translateExecutor(child, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
+                SubcommandData subcommandData = new SubcommandData(child.getName(), DESCRIPTION_NO_GENERATED);
+                CommandExecutor<SENDER> executor = this.translateExecutor(child, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
                     jdaLiteCommand.addTypeMapper(new JDARoute(child.getName(), argName), mapper);
                 });
+
+                subcommandData.setDescription(this.getDescription(executor));
                 commandData.addSubcommands(subcommandData);
             }
 
@@ -111,13 +117,13 @@ class JDACommandTranslator {
                     continue;
                 }
 
-                SubcommandData subcommandData = new SubcommandData(childChild.getName(), this.getDescription(childChild));
-
-                this.translateExecutor(childChild, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
+                SubcommandData subcommandData = new SubcommandData(childChild.getName(), DESCRIPTION_NO_GENERATED);
+                CommandExecutor<SENDER> executor = this.translateExecutor(childChild, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
                     jdaLiteCommand.addTypeMapper(new JDARoute(child.getName(), childChild.getName(), argName), mapper);
                 });
 
+                subcommandData.setDescription(this.getDescription(executor));
                 subcommandGroupData.addSubcommands(subcommandData);
             }
 
