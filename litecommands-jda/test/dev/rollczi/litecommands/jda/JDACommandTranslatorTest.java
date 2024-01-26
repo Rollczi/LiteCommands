@@ -41,7 +41,7 @@ class JDACommandTranslatorTest {
 
         siema.appendExecutor(simpleExecutor(siema));
 
-        JDACommandTranslator.JDALiteCommand translated = translator.translate(COMMAND, siema);
+        JDACommandTranslator.JDALiteCommand translated = translator.translate(siema);
         SlashCommandData slashCommandData = translated.jdaCommandData();
 
         assertEquals(COMMAND, slashCommandData.getName());
@@ -76,7 +76,7 @@ class JDACommandTranslatorTest {
         subCommand.appendChildren(nestedSubCommand);
         nestedSubCommand.appendExecutor(simpleExecutor(subCommand));
 
-        JDACommandTranslator.JDALiteCommand translated = translator.translate(COMMAND, command);
+        JDACommandTranslator.JDALiteCommand translated = translator.translate(command);
         SlashCommandData slashCommandData = translated.jdaCommandData();
 
         assertEquals(COMMAND, slashCommandData.getName());

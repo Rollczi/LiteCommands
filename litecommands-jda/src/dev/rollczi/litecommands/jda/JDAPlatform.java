@@ -40,7 +40,7 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
 
     @Override
     protected void hook(CommandRoute<User> commandRoute, PlatformInvocationListener<User> invocationHook, PlatformSuggestionListener<User> suggestionHook) {
-        JDACommandTranslator.JDALiteCommand translated = settings.translator().translate(commandRoute.getName(), commandRoute);
+        JDACommandTranslator.JDALiteCommand translated = settings.translator().translate(commandRoute);
 
         for (String name : commandRoute.names()) {
             this.jda.upsertCommand(translated.jdaCommandData().setName(name))
