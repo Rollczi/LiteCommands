@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface Identifier {
 
-    Identifier CONSOLE = of(Arrays.asList(new UUID(0, 0), 0, 0L));
+    Identifier CONSOLE = of(new UUID(0, 0), 0, 0L);
 
     <T> Optional<T> getIdentifier(Class<T> type);
 
