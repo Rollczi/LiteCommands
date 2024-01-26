@@ -18,7 +18,7 @@ dependencies {
     implementation("dev.hollowcube:minestom-ce:5347c0b11f")
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
 
-    // implementation("dev.rollczi:litecommands-minestom:3.3.2") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-minestom:3.3.3") // <-- uncomment in your project
     implementation(project(":litecommands-minestom")) // don't use this line in your build.gradle
 }
 
