@@ -33,13 +33,13 @@ public class MutablePriorityList<E extends Prioritized> implements PriorityList<
     @ApiStatus.Experimental
     public void add(E element) {
         priorities.add(element);
-        priorities.sort(Comparator.comparing(Prioritized::getPriority));
+        this.sort();
     }
 
     @ApiStatus.Experimental
     public void remove(E element) {
         priorities.remove(element);
-        priorities.sort(Comparator.comparing(Prioritized::getPriority));
+        this.sort();
     }
 
     @ApiStatus.Experimental
@@ -154,6 +154,10 @@ public class MutablePriorityList<E extends Prioritized> implements PriorityList<
             }
 
         };
+    }
+
+    private void sort() {
+        priorities.sort(Comparator.<E, PriorityLevel>comparing(e -> e.getPriority()).reversed());
     }
 
 }
