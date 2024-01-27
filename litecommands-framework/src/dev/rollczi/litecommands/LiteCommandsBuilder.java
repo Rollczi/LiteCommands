@@ -89,13 +89,13 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B commands(Object... commands);
 
     <T>
-    B argumentParser(Class<T> type, Parser<SENDER, ?, T> parser);
+    B argumentParser(Class<T> type, Parser<SENDER, T> parser);
 
     <T>
-    B argumentParser(Class<T> type, ArgumentKey key, Parser<SENDER, ?, T> parser);
+    B argumentParser(Class<T> type, ArgumentKey key, Parser<SENDER, T> parser);
 
     <T>
-    B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, ?, T> parser);
+    B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, T> parser);
 
     <T>
     B argumentSuggestion(Class<T> type, SuggestionResult suggestion);
@@ -138,7 +138,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @return this builder
      */
     <T>
-    B argument(Class<T> type, ArgumentResolverBase<SENDER, ?, T> resolver);
+    B argument(Class<T> type, ArgumentResolverBase<SENDER, T> resolver);
 
     /**
      * [Keyed Argument Parser and Suggester]
@@ -152,13 +152,13 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @return this builder
      */
     <T>
-    B argument(Class<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, ?, T> resolver);
+    B argument(Class<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
 
     <T>
-    B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, ?, T> resolver);
+    B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, T> resolver);
 
     <T>
-    B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, ?, T> resolver);
+    B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
 
     <T>
     B context(Class<T> on, ContextProvider<SENDER, T> bind);

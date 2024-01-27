@@ -4,6 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
+import dev.rollczi.litecommands.input.raw.RawCommand;
+import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
@@ -61,15 +63,10 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
             }
 
             consumedArguments.add(argument.getName());
-            return this.parseInput(invocation, argument, parserSet, input);
-        }
 
-        @SuppressWarnings("unchecked")
-        private <SENDER, INPUT, PARSED> ParseResult<PARSED> parseInput(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet, INPUT input) {
-            Class<INPUT> inputType = (Class<INPUT>) input.getClass();
-            Parser<SENDER, INPUT, PARSED> parser = parserSet.getValidParserOrThrow(inputType, invocation, argument);
+            Parser<SENDER, PARSED> parser = parserSet.getValidParserOrThrow(invocation, argument);
 
-            return parser.parse(invocation, argument, input);
+            return parser.parse(invocation, argument, RawInput.of(input.split(RawCommand.COMMAND_SEPARATOR)));
         }
 
         @Override

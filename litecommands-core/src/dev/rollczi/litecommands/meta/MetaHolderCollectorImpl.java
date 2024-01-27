@@ -79,8 +79,9 @@ class MetaHolderCollectorImpl implements MetaCollector {
 
         private void findNext() {
             while (current != null) {
-                if (current.meta().has(key)) {
-                    next = current.meta().get(key);
+                T t = current.meta().get(key, null);
+                if (t != null) {
+                    next = t;
                     current = current.parentMeta();
                     return;
                 }

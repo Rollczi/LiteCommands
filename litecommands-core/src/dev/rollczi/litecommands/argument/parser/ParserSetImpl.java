@@ -2,36 +2,31 @@ package dev.rollczi.litecommands.argument.parser;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.reflect.type.TypeIndex;
 
-import dev.rollczi.litecommands.reflect.type.TypeRange;
+import java.util.LinkedList;
 import org.jetbrains.annotations.Nullable;
 
 class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
 
-    private final TypeIndex<Parser<SENDER, ?, PARSED>> parsers = new TypeIndex<>();
+    private final LinkedList<Parser<SENDER, PARSED>> parsers = new LinkedList<>();
 
     @Override
-    @SuppressWarnings("unchecked")
     @Nullable
-    public <INPUT> Parser<SENDER, INPUT, PARSED> getValidParser(
-        Class<INPUT> input,
+    public Parser<SENDER, PARSED> getValidParser(
         Invocation<SENDER> invocation,
         Argument<PARSED> argument
     ) {
-        for (Parser<SENDER, ?, PARSED> parser : this.parsers.get(input)) {
-            Parser<SENDER, INPUT, PARSED> castedParser = (Parser<SENDER, INPUT, PARSED>) parser;
-
-            if (castedParser.canParse(invocation, argument, input)) {
-                return castedParser;
+        for (Parser<SENDER, PARSED> parser : parsers) {
+            if (parser.canParse(invocation, argument)) {
+                return parser;
             }
         }
 
         return null;
     }
 
-    void registerParser(Parser<SENDER, ?, PARSED> parser) {
-        parsers.put(TypeRange.upwards(parser.getInputType()), parser);
+    void registerParser(Parser<SENDER, PARSED> parser) {
+        parsers.addFirst(parser);
     }
 
 }

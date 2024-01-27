@@ -18,10 +18,12 @@ import dev.rollczi.litecommands.validator.ValidatorResult;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.function.Supplier;
 
 class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
     private final Method method;
+    private final Parameter[] parameters;
     private final Object instance;
     private final MethodDefinition definition;
     private final MethodValidatorService<SENDER> validatorService;
@@ -37,6 +39,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
         super(parent, definition.getArguments(), definition.getContextRequirements(), definition.getBindRequirements());
         this.method = method;
         this.method.setAccessible(true);
+        this.parameters = method.getParameters();
         this.instance = instance;
         this.definition = definition;
         this.validatorService = validatorService;
@@ -47,17 +50,18 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     public CommandExecutorMatchResult match(RequirementsResult<SENDER> results) {
         Object[] objects = new Object[method.getParameterCount()];
 
-        for (int parameterIndex = 0; parameterIndex < method.getParameterCount(); parameterIndex++) {
-            Requirement<?> requirement = definition.getRequirement(parameterIndex);
+        int parameterIndex = 0;
+        for (Requirement<?> requirement : definition.getRequirements()) {
             String name = requirement.getName();
 
-            if (!results.has(name)) {
+            RequirementMatch requirementMatch = results.get(name);
+
+            if (requirementMatch == null) {
                 return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved, missing " + name));
             }
 
-            RequirementMatch<?, ?> requirementMatch = results.get(name);
             Object unwrapped = requirementMatch.getResult().unwrap();
-            Parameter parameter = method.getParameters()[parameterIndex];
+            Parameter parameter = parameters[parameterIndex];
             Class<?> type = parameter.getType();
 
             if (unwrapped == null && type.isPrimitive()) {
@@ -71,6 +75,7 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             }
 
             objects[parameterIndex] = unwrapped;
+            parameterIndex++;
         }
 
         ValidatorResult result = validatorService.validate(new MethodValidatorContext<>(results, definition, instance, method, objects));
@@ -79,23 +84,31 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             return CommandExecutorMatchResult.failed(result.getInvalidResult());
         }
 
-        return CommandExecutorMatchResult.success(() -> {
+        return CommandExecutorMatchResult.success(new FinalCommandExecutor(objects));
+    }
+
+    private class FinalCommandExecutor implements Supplier<CommandExecuteResult> {
+        private final Object[] objects;
+
+        public FinalCommandExecutor(Object[] objects) {
+            this.objects = objects;
+        }
+
+        @Override
+        public CommandExecuteResult get() {
             try {
-                return CommandExecuteResult.success(this, this.method.invoke(this.instance, objects));
-            }
-            catch (IllegalAccessException exception) {
-                throw new LiteCommandsReflectInvocationException(this.method, "Cannot access method", exception);
-            }
-            catch (InvocationTargetException exception) {
+                return CommandExecuteResult.success(MethodCommandExecutor.this, MethodCommandExecutor.this.method.invoke(MethodCommandExecutor.this.instance, objects));
+            } catch (IllegalAccessException exception) {
+                throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Cannot access method", exception);
+            } catch (InvocationTargetException exception) {
                 Throwable targetException = exception.getTargetException();
 
                 if (targetException instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
-                    return CommandExecuteResult.failed(this, ((InvalidUsageException) targetException).getErrorResult());
+                    return CommandExecuteResult.failed(MethodCommandExecutor.this, ((InvalidUsageException) targetException).getErrorResult());
                 }
 
-                throw new LiteCommandsReflectInvocationException(this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
+                throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }
-        });
+        }
     }
-
 }

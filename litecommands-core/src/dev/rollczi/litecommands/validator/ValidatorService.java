@@ -33,11 +33,11 @@ public class ValidatorService<SENDER> {
     }
 
     /* Kinda shitty, but I don't know how to do it better without losing performance https://github.com/Rollczi/LiteCommands/commit/3ac889d82e3e4d39fea27eee91cf5b01adacb412 */
-    public Flow validate(Invocation<SENDER> invocation, Scopeable metaHolder) {
+    public Flow validate(Invocation<SENDER> invocation, Scopeable scopeable) {
         Flow lastStopped = null;
 
         for (Validator<SENDER> validator : commandGlobalValidators) {
-            Flow flow = validator.validate(invocation, metaHolder);
+            Flow flow = validator.validate(invocation, scopeable);
 
             switch (flow.status()) {
                 case CONTINUE: continue;
@@ -46,7 +46,7 @@ public class ValidatorService<SENDER> {
             }
         }
 
-        for (List<Class<? extends Validator<?>>> validators : metaHolder.metaCollector().iterable(Meta.VALIDATORS)) {
+        for (List<Class<? extends Validator<?>>> validators : scopeable.metaCollector().iterable(Meta.VALIDATORS)) {
             for (Class<? extends Validator<?>> validatorType : validators) {
                 Validator<SENDER> validator = validatorsByClass.get(validatorType);
 
@@ -54,7 +54,7 @@ public class ValidatorService<SENDER> {
                     throw new IllegalStateException("Validator " + validatorType + " not found");
                 }
 
-                Flow flow = validator.validate(invocation, metaHolder);
+                Flow flow = validator.validate(invocation, scopeable);
 
                 switch (flow.status()) {
                     case CONTINUE: continue;
@@ -65,11 +65,11 @@ public class ValidatorService<SENDER> {
         }
 
         for (Map.Entry<Scope, Validator<SENDER>> entry : commandValidators.entrySet()) {
-            if (!entry.getKey().isApplicable(metaHolder)) {
+            if (!entry.getKey().isApplicable(scopeable)) {
                 continue;
             }
 
-            Flow flow = entry.getValue().validate(invocation, metaHolder);
+            Flow flow = entry.getValue().validate(invocation, scopeable);
 
             switch (flow.status()) {
                 case CONTINUE: continue;

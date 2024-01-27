@@ -59,7 +59,7 @@ public class LiteContext<SENDER> {
 
     @SuppressWarnings("unchecked")
     private <PARSED, OUT> OUT get(String name, WrapFormat<PARSED, OUT> format) {
-        RequirementMatch<?, ?> match = result.get(name);
+        RequirementMatch match = result.get(name);
 
         if (match == null) {
             throw new IllegalArgumentException("Argument with name '" + name + "' not found");

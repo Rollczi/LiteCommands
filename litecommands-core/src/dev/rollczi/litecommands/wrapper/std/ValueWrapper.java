@@ -14,7 +14,19 @@ public class ValueWrapper extends AbstractWrapper<Object> implements Wrapper {
 
     @Override
     protected <EXPECTED> Supplier<Object> wrapValue(@Nullable EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
-        return () -> valueToWrap;
+        return new WrapperImpl<>(valueToWrap);
     }
 
+    private static class WrapperImpl<EXPECTED> implements Supplier<Object> {
+        private final @Nullable EXPECTED valueToWrap;
+
+        public WrapperImpl(@Nullable EXPECTED valueToWrap) {
+            this.valueToWrap = valueToWrap;
+        }
+
+        @Override
+        public Object get() {
+            return valueToWrap;
+        }
+    }
 }

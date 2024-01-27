@@ -60,7 +60,7 @@ public class RawInputAnalyzer {
     }
 
     public <SENDER, T> boolean isNextOptional(ParserSet<SENDER, T> parserSet, Invocation<SENDER> invocation, Argument<T> argument) {
-        Parser<SENDER, RawInput, T> validParser = parserSet.getValidParserOrThrow(RawInput.class, null, argument);
+        Parser<SENDER, T> validParser = parserSet.getValidParserOrThrow(null, argument);
         Range range = validParser.getRange(argument);
 
         return range.getMin() == 0;
@@ -68,7 +68,7 @@ public class RawInputAnalyzer {
 
     public class Context<SENDER, T> {
 
-        private final Parser<SENDER, RawInput, T> parser;
+        private final Parser<SENDER, T> parser;
         private final Argument<T> argument;
         private final int argumentMinCount;
         private final int argumentMaxCount;
@@ -81,7 +81,7 @@ public class RawInputAnalyzer {
             ParserSet<SENDER, T> parserSet
         ) {
             this.argument = argument;
-            this.parser = parserSet.getValidParserOrThrow(RawInput.class, invocation, argument);
+            this.parser = parserSet.getValidParserOrThrow(invocation, argument);
             Range range = parser.getRange(argument);
 
             this.argumentMinCount = range.getMin() + pivotPosition;

@@ -63,11 +63,14 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
                 return ParseResult.success((PARSED) input);
             }
 
+            Parser<SENDER, PARSED> parser = parserSet.getValidParserOrThrow(invocation, argument);
+
             try {
-                return this.parseInput(invocation, argument, parserSet, input);
+                //TODO: implement parse custom Input to PARSED
+                throw new LiteJDAParseException("Cannot parse input");
             }
             catch (LiteJDAParseException exception) {
-                return this.parseInput(invocation, argument, parserSet, RawInput.of(optionMapping.getAsString().split(" ")));
+                return parser.parse(invocation, argument, RawInput.of(optionMapping.getAsString().split(" ")));
             }
         }
 
@@ -85,14 +88,6 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
             }
 
             throw new IllegalArgumentException("Cannot convert to route");
-        }
-
-        @SuppressWarnings("unchecked")
-        private <SENDER, INPUT, OUT> ParseResult<OUT> parseInput(Invocation<SENDER> invocation, Argument<OUT> argument, ParserSet<SENDER, OUT> parserSet, INPUT input) {
-            Class<INPUT> inputType = (Class<INPUT>) input.getClass();
-            Parser<SENDER, INPUT, OUT> parser = parserSet.getValidParserOrThrow(inputType, invocation, argument);
-
-            return parser.parse(invocation, argument, input);
         }
 
         @Override
