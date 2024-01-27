@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
-import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.bind.BindRegistry;
@@ -74,8 +74,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final Class<SENDER> senderClass;
     protected final Platform<SENDER, C> platform;
 
-    protected final Set<LiteBuilderProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
-    protected final Set<LiteBuilderProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
+    protected final Set<LiteBuilderAction<SENDER, C>> preProcessors = new LinkedHashSet<>();
+    protected final Set<LiteBuilderAction<SENDER, C>> postProcessors = new LinkedHashSet<>();
 
     protected final List<LiteExtension<SENDER, ?>> extensions = new ArrayList<>();
     protected final List<LiteCommandsProviderExtension<SENDER, ?>> commandsProviderExtensions = new ArrayList<>();
@@ -223,7 +223,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      * @param commandsProvider provider of commands.
      */
     private void preProcessExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
-        this.preProcessor((builder, internal) -> {
+        this.beforeBuild((builder, internal) -> {
             for (LiteCommandsProviderExtension<SENDER, ?> extension : commandsProviderExtensions) {
                 extension.extendCommandsProvider(this, this, commandsProvider);
             }
@@ -433,19 +433,19 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public B selfProcessor(LiteBuilderProcessor<SENDER, C> processor) {
+    public B self(LiteBuilderAction<SENDER, C> processor) {
         processor.process(this, this);
         return this.self();
     }
 
     @Override
-    public B preProcessor(LiteBuilderProcessor<SENDER, C> preProcessor) {
+    public B beforeBuild(LiteBuilderAction<SENDER, C> preProcessor) {
         this.preProcessors.add(preProcessor);
         return this.self();
     }
 
     @Override
-    public B postProcessor(LiteBuilderProcessor<SENDER, C> postProcessor) {
+    public B afterBuild(LiteBuilderAction<SENDER, C> postProcessor) {
         this.postProcessors.add(postProcessor);
         return this.self();
     }
@@ -485,7 +485,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             throw new IllegalStateException("No platform was set");
         }
 
-        for (LiteBuilderProcessor<SENDER, C> processor : preProcessors) {
+        for (LiteBuilderAction<SENDER, C> processor : preProcessors) {
             processor.process(this, this);
         }
 
@@ -511,7 +511,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             commandManager.register(mergedCommand);
         }
 
-        for (LiteBuilderProcessor<SENDER, C> processor : postProcessors) {
+        for (LiteBuilderAction<SENDER, C> processor : postProcessors) {
             processor.process(this, this);
         }
 

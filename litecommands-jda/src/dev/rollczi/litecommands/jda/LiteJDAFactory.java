@@ -34,7 +34,7 @@ public final class LiteJDAFactory {
     public static <B extends LiteCommandsBuilder<User, LiteJDASettings, B>> B builder(JDA jda) {
         JDAPlatform platform = new JDAPlatform(new LiteJDASettings(), jda);
 
-        return (B) LiteCommandsFactory.builder(User.class, platform).selfProcessor((builder, internal) -> builder
+        return (B) LiteCommandsFactory.builder(User.class, platform).self((builder, internal) -> builder
             .settings(settings -> settings.translator(createTranslator(internal.getWrapperRegistry())))
             .bind(JDA.class, () -> jda)
             .result(String.class, new StringHandler())

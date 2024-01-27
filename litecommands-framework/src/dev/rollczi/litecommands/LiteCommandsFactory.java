@@ -85,7 +85,7 @@ public final class LiteCommandsFactory {
     }
 
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
-        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).selfProcessor((builder, internal) -> {
+        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).self((builder, internal) -> {
             Scheduler scheduler = internal.getScheduler();
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
             ParserRegistry<SENDER> parser = internal.getParserRegistry();
