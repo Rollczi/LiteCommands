@@ -115,7 +115,8 @@ public class AssertExecute {
             throw new AssertionError("Failed reason is empty");
         }
 
-        return assertInstanceOf(type, error);
+        assertThat(error).isInstanceOf(type);
+        return type.cast(error);
     }
 
     public AssertExecute assertFailure(Object reason) {

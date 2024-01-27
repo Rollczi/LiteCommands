@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean test clean build
         env:
           GIT_BRANCH: ${{ github.ref }}
           GIT_COMMIT: ${{ github.sha }}

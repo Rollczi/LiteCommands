@@ -2,21 +2,21 @@ package dev.rollczi.litecommands.requirement;
 
 import dev.rollczi.litecommands.wrapper.Wrap;
 
-public class RequirementMatch<REQUIREMENT extends Requirement<? extends T>, T> {
+public class RequirementMatch {
 
-    private final REQUIREMENT requirement;
-    private final Wrap<T> result;
+    private final Requirement<?> requirement;
+    private final Wrap<?> result;
 
-    public RequirementMatch(REQUIREMENT requirement, Wrap<T> result) {
+    public RequirementMatch(Requirement<?> requirement, Wrap<?> result) {
         this.requirement = requirement;
         this.result = result;
     }
 
-    public REQUIREMENT getRequirement() {
+    public Requirement<?> getRequirement() {
         return requirement;
     }
 
-    public Wrap<T> getResult() {
+    public Wrap<?> getResult() {
         return result;
     }
 

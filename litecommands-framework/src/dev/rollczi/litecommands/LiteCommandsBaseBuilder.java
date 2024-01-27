@@ -231,18 +231,18 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <T> B argumentParser(Class<T> type, Parser<SENDER, ?, T> parser) {
+    public <T> B argumentParser(Class<T> type, Parser<SENDER, T> parser) {
         return argumentParser(TypeRange.same(type), ArgumentKey.of(), parser);
     }
 
     @Override
     public <PARSED>
-    B argumentParser(Class<PARSED> type, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
+    B argumentParser(Class<PARSED> type, ArgumentKey key, Parser<SENDER, PARSED> parser) {
         return argumentParser(TypeRange.same(type), key, parser);
     }
 
     @Override
-    public <T> B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, ?, T> parser) {
+    public <T> B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, T> parser) {
         this.parserRegistry.registerParser(type, key, parser);
         return this.self();
     }
@@ -283,23 +283,23 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <T>
-    B argument(Class<T> type, ArgumentResolverBase<SENDER, ?, T> resolver) {
+    B argument(Class<T> type, ArgumentResolverBase<SENDER, T> resolver) {
         return argument(TypeRange.same(type), ArgumentKey.of(), resolver);
     }
 
     @Override
     public <PARSED>
-    B argument(Class<PARSED> type, ArgumentKey key, ArgumentResolverBase<SENDER, ?, PARSED> resolver) {
+    B argument(Class<PARSED> type, ArgumentKey key, ArgumentResolverBase<SENDER, PARSED> resolver) {
         return argument(TypeRange.same(type), key, resolver);
     }
 
     @Override
-    public <T> B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, ?, T> resolver) {
+    public <T> B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, T> resolver) {
         return argument(type, ArgumentKey.of(), resolver);
     }
 
     @Override
-    public <T> B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, ?, T> resolver) {
+    public <T> B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver) {
         this.argumentParser(type, key, resolver);
         this.argumentSuggester(type, key, resolver);
         return this.self();

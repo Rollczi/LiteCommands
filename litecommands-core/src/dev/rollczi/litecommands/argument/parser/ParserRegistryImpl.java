@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import dev.rollczi.litecommands.util.StringUtil;
+import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,8 +17,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
 
     @Override
     @SuppressWarnings("unchecked")
-    @NotNull
-    public <PARSED> void registerParser(TypeRange<PARSED> typeRange, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
+    public <PARSED> void registerParser(TypeRange<PARSED> typeRange, ArgumentKey key, Parser<SENDER, PARSED> parser) {
         List<BucketByArgument<?>> arguments = buckets.computeIfAbsent(typeRange, () -> new BucketByArgument<>());
 
         for (BucketByArgument<?> argument : arguments) {
@@ -27,10 +27,20 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @NotNull
     public <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parserType, ArgumentKey key) {
-        return new MergedParserSetImpl<>(buckets.get(parserType));
+        List<ParserSet<SENDER, PARSED>> parserSets = new ArrayList<>();
+
+        for (BucketByArgument<?> argument : buckets.get(parserType)) {
+            BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) argument;
+            ParserSet<SENDER, PARSED> parserSet = bucket.getParserSet(key);
+
+            if (parserSet != null) {
+                parserSets.add(parserSet);
+            }
+        }
+
+        return new MergedParserSetImpl<>(parserSets);
     }
 
     class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
@@ -42,7 +52,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         @Override
-        void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
+        void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, PARSED> parser) {
             if (key.isUniversal()) {
                 this.universalTypedBucket.registerParser(parsedType, key, parser);
                 return;
@@ -80,7 +90,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
             this.ignoreNamespace = ignoreNamespace;
         }
 
-        void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, ?, PARSED> parser) {
+        void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, PARSED> parser) {
             ParserSetImpl<SENDER, PARSED> bucket = buckets.computeIfAbsent(key.getKey(), key.getNamespace(), (k1, k2) -> new ParserSetImpl<>());
 
             bucket.registerParser(parser);

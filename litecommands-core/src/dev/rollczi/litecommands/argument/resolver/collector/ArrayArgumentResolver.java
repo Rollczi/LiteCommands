@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.argument.resolver.collector;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
-import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class ArrayArgumentResolver<SENDER> extends AbstractCollectorArgumentReso
     }
 
     @Override
-    public boolean canParse(Invocation<SENDER> invocation, Argument<Object> argument, Class<RawInput> inputType) {
+    public boolean canParse(Invocation<SENDER> invocation, Argument<Object> argument) {
         return argument.getWrapperFormat().getParsedType().isArray();
     }
 
