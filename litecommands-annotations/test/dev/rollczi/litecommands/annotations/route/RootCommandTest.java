@@ -44,7 +44,7 @@ class RootCommandTest extends LiteTestSpec {
     @Test
     void testExecuteRootRouteCommands() {
         platform.execute("first")
-            .assertMissingPermission("test.permission");
+            .assertSuccess();
 
         platform.execute("second")
             .assertSuccess();
@@ -56,7 +56,7 @@ class RootCommandTest extends LiteTestSpec {
             .assertMissingPermission("test.permission", "test.permission.execute");
 
         platform.execute("first one two")
-            .assertMissingPermission("test.permission", "test.permission.execute.two");
+            .assertMissingPermission("test.permission.execute.two");
 
         platform.execute("third")
             .assertMissingPermission("test.permission");

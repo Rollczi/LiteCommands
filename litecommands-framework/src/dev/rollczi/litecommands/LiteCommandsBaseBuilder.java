@@ -1,13 +1,17 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
-import dev.rollczi.litecommands.argument.parser.TypedParser;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.command.CommandMerger;
+import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
+import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
+import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -28,15 +32,18 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
+import dev.rollczi.litecommands.programmatic.LiteCommand;
+import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
+import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.suggestion.SuggestionService;
-import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistryImpl;
 import dev.rollczi.litecommands.shared.Preconditions;
@@ -54,11 +61,11 @@ import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -70,22 +77,22 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final Set<LiteBuilderProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
     protected final Set<LiteBuilderProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
 
-    protected final List<LiteExtension<SENDER>> extensions = new ArrayList<>();
-    protected final List<LiteCommandsProviderExtension<SENDER>> commandsProviderExtensions = new ArrayList<>();
+    protected final List<LiteExtension<SENDER, ?>> extensions = new ArrayList<>();
+    protected final List<LiteCommandsProviderExtension<SENDER, ?>> commandsProviderExtensions = new ArrayList<>();
 
-    protected final EditorService<SENDER> editorService = new EditorService<>();
-    protected final ValidatorService<SENDER> validatorService = new ValidatorService<>();
-    protected final ParserRegistry<SENDER> parserRegistry = new ParserRegistryImpl<>();
-    protected final SuggesterRegistry<SENDER> suggesterRegistry = new SuggesterRegistryImpl<>();
-    protected final BindRegistry bindRegistry = new BindRegistry();
-    protected final ContextRegistry<SENDER> contextRegistry = new ContextRegistry<>();
-    protected final ResultHandleService<SENDER> resultHandleService = new ResultHandleServiceImpl<>();
-    protected final CommandBuilderCollector<SENDER> commandBuilderCollector = new CommandBuilderCollector<>();
-    protected final MessageRegistry<SENDER> messageRegistry = new MessageRegistry<SENDER>();
-    protected final WrapperRegistry wrapperRegistry = new WrapperRegistry();
+    protected final EditorService<SENDER> editorService;
+    protected final ValidatorService<SENDER> validatorService;
+    protected final ParserRegistry<SENDER> parserRegistry;
+    protected final SuggesterRegistry<SENDER> suggesterRegistry;
+    protected final BindRegistry bindRegistry;
+    protected final ContextRegistry<SENDER> contextRegistry;
+    protected final ResultHandleService<SENDER> resultHandleService;
+    protected final CommandBuilderCollector<SENDER> commandBuilderCollector;
+    protected final MessageRegistry<SENDER> messageRegistry;
+    protected final WrapperRegistry wrapperRegistry;
 
-    protected Scheduler scheduler = new SchedulerSameThreadImpl();
-    protected SchematicGenerator<SENDER> schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+    protected Scheduler scheduler;
+    protected SchematicGenerator<SENDER> schematicGenerator;
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -94,302 +101,377 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      * @param platform platform
      */
     public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+        this(
+            senderClass,
+            platform,
+            new EditorService<>(),
+            new ValidatorService<>(),
+            new ParserRegistryImpl<>(),
+            new SuggesterRegistryImpl<>(),
+            new BindRegistry(),
+            new ContextRegistry<>(),
+            new ResultHandleServiceImpl<>(),
+            new CommandBuilderCollector<>(),
+            new MessageRegistry<>(),
+            new WrapperRegistry()
+        );
+    }
+
+    /**
+     * Copy constructor
+     */
+    @ApiStatus.Experimental
+    public LiteCommandsBaseBuilder(
+        Class<SENDER> senderClass,
+        Platform<SENDER, C> platform,
+
+        EditorService<SENDER> editorService,
+        ValidatorService<SENDER> validatorService,
+        ParserRegistry<SENDER> parserRegistry,
+        SuggesterRegistry<SENDER> suggesterRegistry,
+        BindRegistry bindRegistry,
+        ContextRegistry<SENDER> contextRegistry,
+        ResultHandleService<SENDER> resultHandleService,
+        CommandBuilderCollector<SENDER> commandBuilderCollector,
+        MessageRegistry<SENDER> messageRegistry,
+        WrapperRegistry wrapperRegistry
+    ) {
         this.senderClass = senderClass;
         this.platform = platform;
+
+        this.editorService = editorService;
+        this.validatorService = validatorService;
+        this.parserRegistry = parserRegistry;
+        this.suggesterRegistry = suggesterRegistry;
+        this.bindRegistry = bindRegistry;
+        this.contextRegistry = contextRegistry;
+        this.resultHandleService = resultHandleService;
+        this.commandBuilderCollector = commandBuilderCollector;
+        this.messageRegistry = messageRegistry;
+        this.wrapperRegistry = wrapperRegistry;
+
+        this.scheduler = new SchedulerSameThreadImpl();
+        this.schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> settings(PlatformSettingsConfigurator<C> configurator) {
+    public B settings(PlatformSettingsConfigurator<C> configurator) {
         C newConfig = configurator.apply(this.platform.getConfiguration());
         Preconditions.notNull(newConfig, "configuration");
 
         this.platform.setConfiguration(newConfig);
 
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> commands(LiteCommandsProvider<SENDER> commandsProvider) {
+    public B commands(LiteCommandsProvider<SENDER> commandsProvider) {
         this.preProcessExtensionsOnProvider(commandsProvider);
         this.commandBuilderCollector.add(commandsProvider.toInternalProvider(this));
-        return this;
+        return this.self();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public B commands(Object... commands) {
+        List<LiteCommandsProvider<SENDER>> providers = new ArrayList<>();
+        Collection<LiteCommand<SENDER>> programmatic = new ArrayList<>();
+        List<Class<?>> classes = new ArrayList<>();
+        List<Object> instances = new ArrayList<>();
+
+        for (Object command : commands) {
+            if (command instanceof LiteCommandsProvider) {
+                providers.add((LiteCommandsProvider<SENDER>) command);
+                continue;
+            }
+
+            if (command instanceof LiteCommand) {
+                programmatic.add((LiteCommand<SENDER>) command);
+                continue;
+            }
+
+            if (command instanceof Class) {
+                classes.add((Class<?>) command);
+                continue;
+            }
+
+            instances.add(command);
+        }
+
+        for (LiteCommandsProvider<SENDER> provider : providers) {
+            this.commands(provider);
+        }
+
+        if (!programmatic.isEmpty()) {
+            this.commands(LiteCommandsProgrammatic.of(programmatic));
+        }
+
+        if (!classes.isEmpty() || !instances.isEmpty()) {
+            this.commands(LiteCommandsAnnotations.<SENDER>create()
+                .load(instances.toArray(new Object[0]))
+                .loadClasses(classes.toArray(new Class<?>[0]))
+            );
+        }
+
+        return this.self();
     }
 
     /**
-     * Pre-process extensions on provider before executing {@link CommandBuilderCollector#collectAndMergeCommands()}
+     * Pre-process extensions on provider before executing {@link CommandBuilderCollector#collectCommands()}
      * Kinda magic, but it works.
      *
      * @param commandsProvider provider of commands.
      */
     private void preProcessExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
         this.preProcessor((builder, internal) -> {
-            for (LiteCommandsProviderExtension<SENDER> extension : commandsProviderExtensions) {
+            for (LiteCommandsProviderExtension<SENDER, ?> extension : commandsProviderExtensions) {
                 extension.extendCommandsProvider(this, this, commandsProvider);
             }
         });
     }
 
     @Override
-    public <IN, T, PARSER extends Parser<SENDER, IN, T>> LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<T> type, PARSER parser) {
-        this.parserRegistry.registerParser(type, ArgumentKey.of(), parser);
-        return this;
+    public <T> B argumentParser(Class<T> type, Parser<SENDER, T> parser) {
+        return argumentParser(TypeRange.same(type), ArgumentKey.of(), parser);
     }
 
     @Override
-    public <IN, PARSED, PARSER extends Parser<SENDER, IN, PARSED>>
-    LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<PARSED> type, ArgumentKey key, PARSER parser) {
+    public <PARSED>
+    B argumentParser(Class<PARSED> type, ArgumentKey key, Parser<SENDER, PARSED> parser) {
+        return argumentParser(TypeRange.same(type), key, parser);
+    }
+
+    @Override
+    public <T> B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, T> parser) {
         this.parserRegistry.registerParser(type, key, parser);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<T> type, TypedParser<SENDER, IN, T, ARGUMENT> parser) {
-        this.parserRegistry.registerParser(type, ArgumentKey.typed(parser.getArgumentType()), parser);
-        return this;
+    public <T> B argumentSuggestion(Class<T> type, SuggestionResult suggestion) {
+        return argumentSuggestion(TypeRange.same(type), ArgumentKey.of(), suggestion);
     }
 
     @Override
-    public <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentParser(Class<T> type, ArgumentKey key, TypedParser<SENDER, IN, T, ARGUMENT> parser) {
-        this.parserRegistry.registerParser(type, key.withNamespace(parser.getArgumentType()), parser);
-        return this;
+    public <T> B argumentSuggestion(Class<T> type, ArgumentKey key, SuggestionResult suggestion) {
+        return argumentSuggestion(TypeRange.same(type), key, suggestion);
     }
 
     @Override
-    public <T> LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, SuggestionResult suggestionResult) {
-        this.suggesterRegistry.registerSuggester(type, ArgumentKey.of(), (invocation, argument, context) -> suggestionResult);
-        return this;
+    public <T> B argumentSuggestion(TypeRange<T> type, ArgumentKey key, SuggestionResult suggestion) {
+        this.suggesterRegistry.registerSuggester(type, key, (invocation, argument, context) -> suggestion);
+        return this.self();
     }
 
     @Override
-    public <T> LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestionResult) {
-        this.suggesterRegistry.registerSuggester(type, key, (invocation, argument, context) -> suggestionResult);
-        return this;
+    public <T>
+    B argumentSuggester(Class<T> type, Suggester<SENDER, T> suggester) {
+        return argumentSuggester(TypeRange.same(type), ArgumentKey.of(), suggester);
     }
 
     @Override
-    public <T, SUGGESTER extends Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, SUGGESTER suggester) {
-        this.suggesterRegistry.registerSuggester(type, ArgumentKey.of(), suggester);
-        return this;
+    public <T>
+    B argumentSuggester(Class<T> type, ArgumentKey key, Suggester<SENDER, T> suggester) {
+        return argumentSuggester(TypeRange.same(type), key, suggester);
     }
 
     @Override
-    public <T, SUGGESTER extends Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, ArgumentKey key, SUGGESTER suggester) {
+    public <T> B argumentSuggester(TypeRange<T> type, ArgumentKey key, Suggester<SENDER, T> suggester) {
         this.suggesterRegistry.registerSuggester(type, key, suggester);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, TypedSuggester<SENDER, T, ARGUMENT> suggester) {
-        this.suggesterRegistry.registerSuggester(type, ArgumentKey.typed(suggester.getArgumentType()), suggester);
-        return this;
+    public <T>
+    B argument(Class<T> type, ArgumentResolverBase<SENDER, T> resolver) {
+        return argument(TypeRange.same(type), ArgumentKey.of(), resolver);
     }
 
     @Override
-    public <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, C, B> argumentSuggester(Class<T> type, ArgumentKey key, TypedSuggester<SENDER, T, ARGUMENT> suggester) {
-        this.suggesterRegistry.registerSuggester(type, key.withNamespace(suggester.getArgumentType()), suggester);
-        return this;
+    public <PARSED>
+    B argument(Class<PARSED> type, ArgumentKey key, ArgumentResolverBase<SENDER, PARSED> resolver) {
+        return argument(TypeRange.same(type), key, resolver);
     }
 
     @Override
-    public <IN, T, RESOLVER extends Parser<SENDER, IN, T> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver) {
-        this.argumentParser(type, resolver);
-        this.argumentSuggester(type, resolver);
-        return this;
+    public <T> B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, T> resolver) {
+        return argument(type, ArgumentKey.of(), resolver);
     }
 
     @Override
-    public <IN, PARSED, RESOLVER extends Parser<SENDER, IN, PARSED> & Suggester<SENDER, PARSED>>
-    LiteCommandsBuilder<SENDER, C, B> argument(Class<PARSED> type, ArgumentKey key, RESOLVER resolver) {
+    public <T> B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver) {
         this.argumentParser(type, key, resolver);
         this.argumentSuggester(type, key, resolver);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, RESOLVER resolver) {
-        this.argumentParser(type, resolver);
-        this.argumentSuggester(type, resolver);
-        return this;
-    }
-
-    @Override
-    public <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, C, B> argument(Class<T> type, ArgumentKey key, RESOLVER resolver) {
-        this.argumentParser(type, key, resolver);
-        this.argumentSuggester(type, key, resolver);
-        return this;
-    }
-
-    @Override
-    public <T> LiteCommandsBuilder<SENDER, C, B> context(Class<T> on, ContextProvider<SENDER, T> bind) {
+    public <T> B context(Class<T> on, ContextProvider<SENDER, T> bind) {
         this.contextRegistry.registerProvider(on, bind);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <T> LiteCommandsBuilder<SENDER, C, B> bind(Class<T> on, BindProvider<T> bindProvider) {
+    public <T> B bind(Class<T> on, BindProvider<T> bindProvider) {
         this.bindRegistry.bindInstance(on, bindProvider);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <T> LiteCommandsBuilder<SENDER, C, B> bind(Class<T> on, Supplier<T> bind) {
+    public <T> B bind(Class<T> on, Supplier<T> bind) {
         this.bindRegistry.bindInstance(on, bind);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> bindUnsafe(Class<?> on, Supplier<?> bind) {
+    public B bindUnsafe(Class<?> on, Supplier<?> bind) {
         this.bindRegistry.bindInstanceUnsafe(on, bind);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> scheduler(Scheduler scheduler) {
+    public B scheduler(Scheduler scheduler) {
         this.scheduler.shutdown();
         this.scheduler = scheduler;
-        return this;
+        return this.self();
     }
 
     @Override
-    public <T, CONTEXT> LiteCommandsBuilder<SENDER, C, B> message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message) {
+    public <T, CONTEXT> B message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message) {
         this.messageRegistry.register(key, message);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <T, CONTEXT> LiteCommandsBuilder<SENDER, C, B> message(MessageKey<CONTEXT> key, InvokedMessage<SENDER, T, CONTEXT> message) {
+    public <T, CONTEXT> B message(MessageKey<CONTEXT> key, InvokedMessage<SENDER, T, CONTEXT> message) {
         this.messageRegistry.register(key, message);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <T, CONTEXT> LiteCommandsBuilder<SENDER, C, B> message(MessageKey<CONTEXT> key, T message) {
+    public <T, CONTEXT> B message(MessageKey<CONTEXT> key, T message) {
         this.messageRegistry.register(key, context -> message);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> editorGlobal(Editor<SENDER> editor) {
+    public B editorGlobal(Editor<SENDER> editor) {
         this.editorService.editorGlobal(editor);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> editor(Scope scope, Editor<SENDER> editor) {
+    public B editor(Scope scope, Editor<SENDER> editor) {
         this.editorService.editor(scope, editor);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> validatorGlobal(Validator<SENDER> validator) {
+    public B validatorGlobal(Validator<SENDER> validator) {
         this.validatorService.registerValidatorGlobal(validator);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> validator(Scope scope, Validator<SENDER> validator) {
+    public B validator(Scope scope, Validator<SENDER> validator) {
         this.validatorService.registerValidator(scope, validator);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <T> LiteCommandsBuilder<SENDER, C, B> result(Class<T> resultType, ResultHandler<SENDER, ? extends T> handler) {
+    public <T> B result(Class<T> resultType, ResultHandler<SENDER, ? extends T> handler) {
         this.resultHandleService.registerHandler(resultType, handler);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> resultUnexpected(ResultHandler<SENDER, Object> handler) {
+    public B resultUnexpected(ResultHandler<SENDER, Object> handler) {
         this.resultHandleService.registerHandler(Object.class, handler);
-        return this;
+        return this.self();
     }
 
     @Override
-    public <E extends Throwable> LiteCommandsBuilder<SENDER, C, B> exception(Class<E> exceptionType, ExceptionHandler<SENDER, ? extends E> handler) {
+    public <E extends Throwable> B exception(Class<E> exceptionType, ExceptionHandler<SENDER, ? extends E> handler) {
         this.resultHandleService.registerHandler(exceptionType, handler);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> exceptionUnexpected(ExceptionHandler<SENDER, Throwable> handler) {
+    public B exceptionUnexpected(ExceptionHandler<SENDER, Throwable> handler) {
         this.resultHandleService.registerHandler(Throwable.class, handler);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> missingPermission(MissingPermissionsHandler<SENDER> handler) {
+    public B missingPermission(MissingPermissionsHandler<SENDER> handler) {
         this.resultHandleService.registerHandler(MissingPermissions.class, handler);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> invalidUsage(InvalidUsageHandler<SENDER> handler) {
+    public B invalidUsage(InvalidUsageHandler<SENDER> handler) {
         this.resultHandleService.registerHandler(InvalidUsage.class, handler);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> schematicGenerator(SchematicGenerator<SENDER> schematicGenerator) {
+    public B schematicGenerator(SchematicGenerator<SENDER> schematicGenerator) {
         this.schematicGenerator = schematicGenerator;
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> schematicGenerator(SchematicFormat format) {
-        this.schematicGenerator = SchematicGenerator.from(format, validatorService, wrapperRegistry);
-        return this;
+    public B schematicGenerator(SchematicFormat format) {
+        this.schematicGenerator = new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry);
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> wrapper(Wrapper wrapper) {
+    public B wrapper(Wrapper wrapper) {
         this.wrapperRegistry.registerFactory(wrapper);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> selfProcessor(LiteBuilderProcessor<SENDER, C> processor) {
+    public B selfProcessor(LiteBuilderProcessor<SENDER, C> processor) {
         processor.process(this, this);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> preProcessor(LiteBuilderProcessor<SENDER, C> preProcessor) {
+    public B preProcessor(LiteBuilderProcessor<SENDER, C> preProcessor) {
         this.preProcessors.add(preProcessor);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> postProcessor(LiteBuilderProcessor<SENDER, C> postProcessor) {
+    public B postProcessor(LiteBuilderProcessor<SENDER, C> postProcessor) {
         this.postProcessors.add(postProcessor);
-        return this;
+        return this.self();
     }
 
     @Override
-    public LiteCommandsBuilder<SENDER, C, B> extension(LiteExtension<SENDER> extension) {
-        return this.extension(extension, UnaryOperator.identity());
+    public <CONFIGURATION> B extension(LiteExtension<SENDER, CONFIGURATION> extension) {
+        return this.extension(extension, configuration -> {});
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends LiteExtension<SENDER>> LiteCommandsBuilder<SENDER, C, B> extension(E extension, UnaryOperator<E> configuration) {
-        extension = configuration.apply(extension);
+    public <CONFIGURATION, E extends LiteExtension<SENDER, CONFIGURATION>> B extension(E extension, LiteConfigurator<CONFIGURATION> configurator) {
+        extension.configure(configurator);
         extension.extend(this, this);
         extensions.add(extension);
 
         if (extension instanceof LiteCommandsProviderExtension) {
-            commandsProviderExtensions.add((LiteCommandsProviderExtension<SENDER>) extension);
+            commandsProviderExtensions.add((LiteCommandsProviderExtension<SENDER, CONFIGURATION>) extension);
         }
 
-        return this;
+        return this.self();
+    }
+
+    @Override
+    public B annotations(LiteConfigurator<AnnotationsExtension<SENDER>> configuration) {
+        return this.extension(new LiteAnnotationsProcessorExtension<>(), configuration);
     }
 
     @Override
@@ -411,23 +493,29 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 
-        List<CommandBuilder<SENDER>> collectedContexts = this.commandBuilderCollector.collectAndMergeCommands();
+        CommandMerger<SENDER> commandMerger = new CommandMerger<>();
 
-        for (CommandBuilder<SENDER> context : collectedContexts) {
-            if (!context.buildable()) {
+        for (CommandBuilder<SENDER> collected : this.commandBuilderCollector.collectCommands()) {
+            CommandBuilder<SENDER> edited = editorService.edit(collected);
+
+            if (!edited.buildable()) {
                 continue;
             }
 
-            for (CommandRoute<SENDER> commandRoute : context.build(commandManager.getRoot())) {
-                commandManager.register(commandRoute);
+            for (CommandRoute<SENDER> commandRoute : edited.build(commandManager.getRoot())) {
+                commandMerger.merge(commandRoute);
             }
+        }
+
+        for (CommandRoute<SENDER> mergedCommand : commandMerger.getMergedCommands()) {
+            commandManager.register(mergedCommand);
         }
 
         for (LiteBuilderProcessor<SENDER, C> processor : postProcessors) {
             processor.process(this, this);
         }
 
-        LiteCommandsImpl<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager);
+        LiteCommands<SENDER> liteCommand = new LiteCommandsImpl<>(commandManager, this);
 
         if (register) {
             liteCommand.register();
@@ -456,6 +544,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public Scheduler getScheduler() {
         return this.scheduler;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public SchematicGenerator<SENDER> getSchematicGenerator() {
+        return this.schematicGenerator;
     }
 
     @Override
@@ -516,6 +610,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public WrapperRegistry getWrapperRegistry() {
         return this.wrapperRegistry;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected B self() {
+        return (B) this;
     }
 
 }

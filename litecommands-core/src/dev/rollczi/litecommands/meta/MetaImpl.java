@@ -17,6 +17,7 @@ class MetaImpl implements Meta {
 
     private final Map<MetaKey<?>, Object> meta = new HashMap<>();
 
+    @Override
     public <T> Meta put(MetaKey<T> key, T value) {
         this.meta.put(key, key.getType().in(value));
         return this;
@@ -61,16 +62,18 @@ class MetaImpl implements Meta {
             return type.out(key.getDefaultValue());
         }
 
-        throw new NoSuchElementException();
+        throw new NoSuchElementException("MetaKey '" + key.getKey() + "' not found");
     }
 
     public <T> @NotNull T get(MetaKey<T> key, T defaultValue) {
-        try {
-            return this.get(key);
+        Object value = this.meta.get(key);
+
+        if (value != null) {
+            MetaType<T> type = key.getType();
+            return type.out(type.cast(value));
         }
-        catch (NoSuchElementException ignored) {
-            return defaultValue;
-        }
+
+        return defaultValue;
     }
 
     @Override

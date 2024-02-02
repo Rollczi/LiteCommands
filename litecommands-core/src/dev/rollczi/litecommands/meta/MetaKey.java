@@ -61,7 +61,7 @@ public class MetaKey<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(key);
+        return key.hashCode();
     }
 
 }

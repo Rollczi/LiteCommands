@@ -2,6 +2,7 @@ package dev.rollczi.example.bukkit.command;
 
 import dev.rollczi.example.bukkit.util.ChatUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.bind.Bind;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.join.Join;
 import dev.rollczi.litecommands.annotations.permission.Permission;
@@ -14,7 +15,7 @@ import org.bukkit.entity.Player;
 public class KickCommand {
 
     @Execute
-    public void kickPlayer(Server server, @Arg("target") Player target, @Join("reason") String reason) {
+    public void kickPlayer(@Bind Server server, @Arg("target") Player target, @Join("reason") String reason) {
         target.kickPlayer(ChatUtil.color(reason));
         server.broadcastMessage(ChatUtil.color("&cPlayer &7" + target.getName() + " &chas been kicked!"));
     }

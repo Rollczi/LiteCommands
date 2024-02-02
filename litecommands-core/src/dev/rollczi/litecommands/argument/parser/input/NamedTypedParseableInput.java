@@ -4,7 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.LiteCommandsException;
+import dev.rollczi.litecommands.input.raw.RawCommand;
+import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
@@ -70,16 +71,10 @@ class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInpu
                 return ParseResult.success((PARSED) input);
             }
 
-            return this.parseInput(invocation, argument, parserSet, input);
-        }
+            Parser<SENDER, PARSED> parser = parserSet.getValidParserOrThrow(invocation, argument);
+            RawInput rawInput = RawInput.of(input.toString().split(RawCommand.COMMAND_SEPARATOR));
 
-        @SuppressWarnings("unchecked")
-        private <SENDER, INPUT, OUT> ParseResult<OUT> parseInput(Invocation<SENDER> invocation, Argument<OUT> argument, ParserSet<SENDER, OUT> parserSet, INPUT input) {
-            Class<INPUT> inputType = (Class<INPUT>) input.getClass();
-            Parser<SENDER, INPUT, OUT> parser = parserSet.getParser(inputType)
-                .orElseThrow(() -> new LiteCommandsException("No parser for input type " + inputType.getName()));
-
-            return parser.parse(invocation, argument, input);
+            return parser.parse(invocation, argument, rawInput);
         }
 
         @Override

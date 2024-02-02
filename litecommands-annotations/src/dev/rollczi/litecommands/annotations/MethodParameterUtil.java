@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.prettyprint.PrettyPrintParameter;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
@@ -18,19 +19,19 @@ final class MethodParameterUtil {
         Class<?> outParameterType = parameter.getType();
 
         if (wrapperRegistry.isWrapper(outParameterType)) {
-            Optional<Class<?>> optionGenericType = extractFirstType(parameter);
+            Optional<Type> optionGenericType = extractFirstType(parameter);
 
             if (!optionGenericType.isPresent()) {
                 throw new IllegalArgumentException("Cannot extract expected type from parameter " + PrettyPrintParameter.formatParameter(parameter));
             }
 
-            return WrapFormat.of(optionGenericType.get(), outParameterType);
+            return WrapFormat.of(TypeToken.of(optionGenericType.get()), TypeToken.of(parameter.getParameterizedType()));
         }
 
-        return WrapFormat.notWrapped(outParameterType);
+        return WrapFormat.notWrapped(TypeToken.of(parameter.getParameterizedType()));
     }
 
-    private static Optional<Class<?>> extractFirstType(Parameter parameter) {
+    private static Optional<Type> extractFirstType(Parameter parameter) {
         Type parameterizedType = parameter.getParameterizedType();
 
         if (parameterizedType instanceof ParameterizedType) {
@@ -41,13 +42,7 @@ final class MethodParameterUtil {
                 return Optional.empty();
             }
 
-            Type type = arguments[0];
-
-            if (!(type instanceof Class)) {
-                return Optional.empty();
-            }
-
-            return Optional.of((Class<?>) type);
+            return Optional.of(arguments[0]);
         }
 
         return Optional.empty();

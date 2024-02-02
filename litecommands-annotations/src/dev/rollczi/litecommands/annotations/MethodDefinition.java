@@ -9,22 +9,45 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-class MethodDefinition {
+public class MethodDefinition {
 
     private final Method method;
     private final Map<Integer, Argument<?>> arguments = new HashMap<>();
     private final Map<Integer, ContextRequirement<?>> contextRequirements = new HashMap<>();
     private final Map<Integer, BindRequirement<?>> bindRequirements = new HashMap<>();
 
+    private List<Requirement<?>> indexedRequirements;
+
     MethodDefinition(Method method) {
         this.method = method;
     }
 
-    Requirement<?> getRequirement(int parameterIndex) {
+    public Requirement<?> getRequirement(int parameterIndex) {
+        return getRequirements().get(parameterIndex);
+    }
+
+    public List<Requirement<?>> getRequirements() {
+        if (indexedRequirements == null) {
+            List<Requirement<?>> indexedRequirements = new ArrayList<>();
+
+            for (int i = 0; i < method.getParameterCount(); i++) {
+                indexedRequirements.add(getRequirement0(i));
+            }
+
+            this.indexedRequirements = indexedRequirements;
+            return indexedRequirements;
+        }
+
+        return indexedRequirements;
+    }
+
+    private Requirement<?> getRequirement0(int parameterIndex) {
         Argument<?> argument = arguments.get(parameterIndex);
 
         if (argument != null) {
@@ -44,6 +67,10 @@ class MethodDefinition {
         }
 
         throw new IllegalArgumentException("Cannot find requirement for parameter index " + parameterIndex);
+    }
+
+    boolean hasRequirement(int parameterIndex) {
+        return arguments.containsKey(parameterIndex) || contextRequirements.containsKey(parameterIndex) || bindRequirements.containsKey(parameterIndex);
     }
 
     public Collection<Argument<?>> getArguments() {
@@ -69,7 +96,7 @@ class MethodDefinition {
 
         if (requirement instanceof Argument) {
             if (arguments.containsKey(parameterIndex)) {
-                throw new IllegalArgumentException("Cannot put argument on index " + parameterIndex + " because it is already occupied!");
+                throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put argument on index " + parameterIndex + " because it is already occupied!");
             }
 
             arguments.put(parameterIndex, (Argument<?>) requirement);
@@ -78,7 +105,7 @@ class MethodDefinition {
 
         if (requirement instanceof ContextRequirement) {
             if (contextRequirements.containsKey(parameterIndex)) {
-                throw new IllegalArgumentException("Cannot put context requirement on index " + parameterIndex + " because it is already occupied!");
+                throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put context requirement on index " + parameterIndex + " because it is already occupied!");
             }
 
             contextRequirements.put(parameterIndex, (ContextRequirement<?>) requirement);
@@ -87,14 +114,14 @@ class MethodDefinition {
 
         if (requirement instanceof BindRequirement) {
             if (bindRequirements.containsKey(parameterIndex)) {
-                throw new IllegalArgumentException("Cannot put bind requirement on index " + parameterIndex + " because it is already occupied!");
+                throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put bind requirement on index " + parameterIndex + " because it is already occupied!");
             }
 
             bindRequirements.put(parameterIndex, (BindRequirement<?>) requirement);
             return;
         }
 
-        throw new IllegalArgumentException("Cannot put requirement on index " + parameterIndex + " because it is not supported!");
+        throw new LiteCommandsReflectInvocationException(method, parameter, "Cannot put requirement on index " + parameterIndex + " because it is not supported!");
     }
 
 }

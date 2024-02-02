@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.shared.Preconditions;
@@ -37,10 +36,11 @@ public class RawInputAnalyzer {
     }
 
     public <SENDER, T> Context<SENDER, T> toContext(
+        Invocation<SENDER> invocation,
         Argument<T> argument,
         ParserSet<SENDER, T> parserSet
     ) {
-        return new Context<>(argument, parserSet);
+        return new Context<>(invocation, argument, parserSet);
     }
 
     public String showNextRoute() {
@@ -59,40 +59,35 @@ public class RawInputAnalyzer {
         return pivotPosition == rawArguments.size() - 1;
     }
 
-    public <SENDER, T> boolean isNextOptional(ParserSet<SENDER, T> parserSet, Argument<T> argument) {
-        return parserSet.getParser(RawInput.class)
-            .map(parser -> parser.getRange(argument))
-            .map(range -> range.getMin() == 0)
-            .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
+    public <SENDER, T> boolean isNextOptional(ParserSet<SENDER, T> parserSet, Invocation<SENDER> invocation, Argument<T> argument) {
+        Parser<SENDER, T> validParser = parserSet.getValidParserOrThrow(null, argument);
+        Range range = validParser.getRange(argument);
+
+        return range.getMin() == 0;
     }
 
     public class Context<SENDER, T> {
 
-        private final Parser<SENDER, RawInput, T> parser;
+        private final Parser<SENDER, T> parser;
         private final Argument<T> argument;
+        private final int argumentMinCount;
         private final int argumentMaxCount;
         private final int realArgumentMaxCount;
-        private final boolean potentialLastArgument;
+        private final int realArgumentMinCount;
 
         public Context(
+            Invocation<SENDER> invocation,
             Argument<T> argument,
             ParserSet<SENDER, T> parserSet
         ) {
             this.argument = argument;
-            this.parser = parserSet.getParser(RawInput.class)
-                .orElseThrow(() -> new LiteCommandsException("No parser for RawInput -> " + argument.getWrapperFormat().getParsedType().getName()));
-
+            this.parser = parserSet.getValidParserOrThrow(invocation, argument);
             Range range = parser.getRange(argument);
 
-            this.argumentMaxCount = range.getMin() + pivotPosition;
-            this.realArgumentMaxCount = calculateMaxArguments(rawArguments, range, pivotPosition);
-            int potentialMax = range.getMax() + pivotPosition;
-
-            if (potentialMax < 0) { // because Integer.MAX_VALUE + x = Integer.MIN_VALUE (x > 0)
-                potentialMax = Integer.MAX_VALUE;
-            }
-
-            this.potentialLastArgument = this.realArgumentMaxCount < potentialMax;
+            this.argumentMinCount = range.getMin() + pivotPosition;
+            this.argumentMaxCount = calculateMaxCount(range);
+            this.realArgumentMinCount = Math.min(argumentMinCount, rawArguments.size());
+            this.realArgumentMaxCount = calculateRealMaxCount(rawArguments, range, pivotPosition);
         }
 
         public ParseResult<T> parseArgument(Invocation<SENDER> invocation) {
@@ -106,23 +101,23 @@ public class RawInputAnalyzer {
         }
 
         public boolean isLastRawArgument() {
-            return pivotPosition == rawArguments.size() - 1 || argumentMaxCount == rawArguments.size();
-        }
-
-        public boolean isParsedLast() {
-            return pivotPosition == rawArguments.size();
+            return pivotPosition == rawArguments.size() - 1 || realArgumentMaxCount >= rawArguments.size();
         }
 
         public boolean isMissingFullArgument() {
-            return !hasNextRoute() && argumentMaxCount > rawArguments.size();
+            return isNoMoreArguments() && isMissingPartOfArgument();
+        }
+
+        public boolean isNoMoreArguments() {
+            return pivotPosition >= rawArguments.size();
         }
 
         public boolean isMissingPartOfArgument() {
-            return argumentMaxCount > rawArguments.size();
+            return argumentMinCount != realArgumentMinCount;
         }
 
         public boolean isPotentialLastArgument() {
-            return potentialLastArgument;
+            return this.realArgumentMaxCount < this.argumentMaxCount;
         }
 
         public List<String> getAllNotConsumedArguments() {
@@ -131,12 +126,20 @@ public class RawInputAnalyzer {
 
     }
 
-    private static int calculateMaxArguments(List<String> rawArguments, Range range, int routePosition) {
+    private static int calculateRealMaxCount(List<String> rawArguments, Range range, int routePosition) {
         int maxArguments = range.getMax() == Integer.MAX_VALUE
             ? rawArguments.size()
             : routePosition + range.getMax();
 
         return Math.min(maxArguments, rawArguments.size());
+    }
+
+    private int calculateMaxCount(Range range) {
+        if (range.getMax() == Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+
+        return range.getMax() + pivotPosition;
     }
 
 }

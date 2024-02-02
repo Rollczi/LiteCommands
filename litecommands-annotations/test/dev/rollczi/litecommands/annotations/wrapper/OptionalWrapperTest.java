@@ -13,19 +13,21 @@ class OptionalWrapperTest extends LiteTestSpec {
     @Command(name = "test")
     static class TestCommand {
         @Execute
-        public void test(@Arg Optional<Long> arg) {}
+        public Long test(@Arg Optional<Long> arg) {
+            return arg.orElse(-1L);
+        }
     }
 
     @Test
     void testWithoutArguments() {
         platform.execute("test")
-            .assertSuccess();
+            .assertSuccess(-1L);
     }
 
     @Test
     void testWithArgument() {
         platform.execute("test 123")
-            .assertSuccess();
+            .assertSuccess(123L);
     }
 
     @Test

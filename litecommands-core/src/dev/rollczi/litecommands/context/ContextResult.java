@@ -1,10 +1,12 @@
 package dev.rollczi.litecommands.context;
 
+import dev.rollczi.litecommands.requirement.RequirementResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class ContextResult<T> {
+public class ContextResult<T> implements RequirementResult<T> {
 
     private final @Nullable Supplier<T> result;
     private final Object error;
@@ -14,24 +16,33 @@ public class ContextResult<T> {
         this.error = error;
     }
 
-    public @Nullable T getResult() {
+    @Override
+    public @NotNull T getSuccess() {
         if (result == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Cannot get success result from failed result");
         }
 
         return result.get();
     }
 
-    public Object getError() {
+    @Override
+    public @NotNull Object getFailedReason() {
         return error;
     }
 
-    public boolean hasError() {
+    @Override
+    public boolean isFailed() {
         return error != null;
     }
 
-    public boolean hasResult() {
+    @Override
+    public boolean isSuccessful() {
         return result != null;
+    }
+
+    @Override
+    public boolean isSuccessfulNull() {
+        return false;
     }
 
     public static <T> ContextResult<T> ok(Supplier<T> supplier) {

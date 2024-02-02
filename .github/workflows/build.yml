@@ -1,7 +1,4 @@
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
-name: LiteCommands CI
+name: LiteCommands CI Build
 
 on:
   push:
@@ -14,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        jdk: [ 8, 11, 17 ]
+        jdk: [ 8, 11, 17, 21 ]
     steps:
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v4
 
       - name: Set up JDK
@@ -30,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean test clean build
         env:
           GIT_BRANCH: ${{ github.ref }}
           GIT_COMMIT: ${{ github.sha }}

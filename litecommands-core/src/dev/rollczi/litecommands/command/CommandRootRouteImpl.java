@@ -85,6 +85,11 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
+    public CommandRoute<SENDER> merge(CommandRoute<SENDER> toMerge) {
+        throw new UnsupportedOperationException("Can not merge root route");
+    }
+
+    @Override
     public @Nullable MetaHolder parentMeta() {
         return null;
     }

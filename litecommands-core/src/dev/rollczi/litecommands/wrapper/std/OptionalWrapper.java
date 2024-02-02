@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.wrapper.std;
 
 import dev.rollczi.litecommands.wrapper.WrapFormat;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -13,7 +14,7 @@ public class OptionalWrapper extends AbstractWrapper<Optional> {
     }
 
     @Override
-    protected <EXPECTED> Supplier<Optional> wrapValue(EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
+    protected <EXPECTED> Supplier<Optional> wrapValue(@Nullable EXPECTED valueToWrap, WrapFormat<EXPECTED, ?> info) {
         return () -> Optional.ofNullable(valueToWrap);
     }
 

@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE})
 public @interface Description {
 
-    String value();
+    String[] value();
 
 }

@@ -11,11 +11,11 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.rollczi.example.velocity.argument.PlayerArgument;
 import dev.rollczi.example.velocity.argument.RegisteredServerArgument;
+import dev.rollczi.example.velocity.command.MsgCommand;
 import dev.rollczi.example.velocity.command.SendCommand;
 import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -43,18 +43,19 @@ public class ExamplePlugin {
             )
 
             // Commands
-            .commands(LiteCommandsAnnotations.of(
-                new SendCommand()
-            ))
+            .commands(
+                new SendCommand(),
+                new MsgCommand()
+            )
 
             // Arguments @Arg
             .argument(Player.class, new PlayerArgument(this.proxyServer))
             .argument(RegisteredServer.class, new RegisteredServerArgument(this.proxyServer))
 
             // Suggestions, if you want you can override default argument suggesters
-            .argumentSuggester(String.class, SuggestionResult.of("name", "argument"))
-            .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(String.class, SuggestionResult.of("name", "argument"))
+            .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
+            .argumentSuggestion(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             // Context resolvers @Context
             .context(Player.class, new VelocityOnlyPlayerContextual<>("&cOnly player can execute this command!"))

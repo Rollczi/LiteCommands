@@ -67,8 +67,8 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
         }
 
         @Override
-        public <SENDER, T> boolean isNextOptional(Argument<T> argument, ParserSet<SENDER, T> parserSet) {
-            return rawInputAnalyzer.isNextOptional(parserSet, argument) || argument.hasDefaultValue();
+        public <SENDER, T> boolean isNextOptional(Invocation<SENDER> invocation, Argument<T> argument, ParserSet<SENDER, T> parserSet) {
+            return rawInputAnalyzer.isNextOptional(parserSet, invocation, argument) || argument.hasDefaultValue();
         }
 
         @Override
@@ -78,7 +78,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
             ParserSet<SENDER, T> parserSet,
             Suggester<SENDER, T> suggester
         ) {
-            RawInputAnalyzer.Context<SENDER, T> context = rawInputAnalyzer.toContext(argument, parserSet);
+            RawInputAnalyzer.Context<SENDER, T> context = rawInputAnalyzer.toContext(invocation, argument, parserSet);
 
             if (context.isMissingFullArgument()) {
                 Suggestion current = Suggestion.of(rawInputAnalyzer.getLastArgument());
@@ -89,13 +89,25 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 return SuggestionInputResult.endWith(result);
             }
 
-            if (context.isMissingPartOfArgument() || context.isLastRawArgument() || context.isPotentialLastArgument()) {
+            if (context.isMissingPartOfArgument()) {
                 Suggestion current = Suggestion.from(context.getAllNotConsumedArguments());
                 SuggestionContext suggestionContext = new SuggestionContext(current);
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
                     .filterBy(current);
 
                 return SuggestionInputResult.endWith(result);
+            }
+
+            if (context.isLastRawArgument() || context.isPotentialLastArgument()) {
+                Suggestion current = Suggestion.from(context.getAllNotConsumedArguments());
+                SuggestionContext suggestionContext = new SuggestionContext(current);
+                SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
+                    .filterBy(current);
+
+                int consumed = suggestionContext.getConsumed();
+                if (consumed == current.lengthMultilevel()) {
+                    return SuggestionInputResult.endWith(result);
+                }
             }
 
             ParseResult<T> result = context.parseArgument(invocation);

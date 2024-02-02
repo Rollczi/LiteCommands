@@ -18,6 +18,7 @@ public interface SuggestionInputMatcher<SELF extends SuggestionInputMatcher<SELF
     String showNextRoute();
 
     <SENDER, T> boolean isNextOptional(
+        Invocation<SENDER> invocation,
         Argument<T> argument,
         ParserSet<SENDER, T> parserSet
     );

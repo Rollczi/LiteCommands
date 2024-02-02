@@ -1,9 +1,11 @@
 package dev.rollczi.litecommands.annotations;
 
+import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorService;
 import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
@@ -24,13 +26,15 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
     private final CommandExecutorProvider<SENDER> executorProvider;
     private final Meta meta = Meta.create();
 
-    public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, WrapperRegistry wrapperRegistry, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
+    private boolean isExecutorStructure = false;
+
+    public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, MethodValidatorService<SENDER> validatorService, WrapperRegistry wrapperRegistry, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
         this.annotationProcessorService = annotationProcessorService;
         this.wrapperRegistry = wrapperRegistry;
         this.method = method;
         this.commandBuilder = commandBuilder;
         this.methodDefinition = new MethodDefinition(method);
-        this.executorProvider = parent -> new MethodCommandExecutor<>(parent, method, instance, methodDefinition, meta);
+        this.executorProvider = parent -> new MethodCommandExecutor<>(parent, method, instance, methodDefinition, meta, validatorService);
     }
 
     @Override
@@ -53,7 +57,8 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
             return this;
         }
 
-        commandBuilder = listener.call(methodAnnotation, commandBuilder, executorProvider);
+        listener.call(methodAnnotation, commandBuilder, executorProvider);
+        isExecutorStructure = true;
         return this;
     }
 
@@ -67,11 +72,16 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
                 continue;
             }
 
+            if (methodDefinition.hasRequirement(index)) {
+                continue;
+            }
+
             Optional<Requirement<?>> requirementOptional = listener.call(createHolder(parameterAnnotation, parameter), commandBuilder);
 
             if (requirementOptional.isPresent()) {
                 Requirement<?> requirement = requirementOptional.get();
 
+                requirement.meta().put(Meta.REQUIREMENT_PARAMETER, parameter);
                 methodDefinition.putRequirement(index, requirement);
                 annotationProcessorService.process(new ParameterInvoker<>(wrapperRegistry, commandBuilder, parameter, requirement));
             }
@@ -82,6 +92,25 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
     @Override
     public CommandBuilder<SENDER> getResult() {
+        if (!isExecutorStructure) {
+            return commandBuilder;
+        }
+
+        Parameter[] parameters = method.getParameters();
+
+        for (int index = 0; index < parameters.length; index++) {
+            if (methodDefinition.hasRequirement(index)) {
+                continue;
+            }
+
+            Parameter parameter = parameters[index];
+            throw new LiteCommandsReflectInvocationException(
+                method,
+                parameter,
+                "Parameter '" + parameter.getName() + "' needs @Arg, @Flag, @Join, @Context or @Bind annotation for define requirement!"
+            );
+        }
+
         return commandBuilder;
     }
 

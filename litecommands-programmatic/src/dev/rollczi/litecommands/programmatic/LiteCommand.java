@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
+import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
@@ -20,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommand<SENDER> {
 
@@ -27,7 +30,7 @@ public class LiteCommand<SENDER> {
     protected final List<String> aliases;
     protected final Meta meta = Meta.create();
 
-    protected Consumer<LiteContext<SENDER>> executor = liteContext -> {};
+    protected Function<LiteContext<SENDER>, Object> executor = liteContext -> null;
     protected final List<Argument<?>> arguments = new ArrayList<>();
     protected final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
     protected final List<BindRequirement<?>> bindRequirements = new ArrayList<>();
@@ -48,7 +51,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argument(String name, Class<?> type) {
-        this.arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type)));
+        this.arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type), false));
         return this;
     }
 
@@ -57,7 +60,19 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
+    public LiteCommand<SENDER> argumentQuoted(String name) {
+        Argument<String> argument = new SimpleArgument<>(name, WrapFormat.notWrapped(String.class));
+        argument.meta().put(Meta.ARGUMENT_KEY, QuotedStringArgumentResolver.KEY);
+
+        return this.argument(argument);
+    }
+
     public LiteCommand<SENDER> argumentOptional(String name, Class<?> type) {
+        this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
+        return this;
+    }
+
+    public LiteCommand<SENDER> argumentNullable(String name, Class<?> type) {
         this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
         return this;
     }
@@ -101,13 +116,31 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
-    public LiteCommand<SENDER> onExecute(Consumer<LiteContext<SENDER>> executor) {
+    /**
+     * @deprecated Use {@link #execute(Consumer)} instead
+     */
+    @Deprecated
+    public final LiteCommand<SENDER> onExecute(Consumer<LiteContext<SENDER>> executor) {
+        return this.execute(executor);
+    }
+
+    public final LiteCommand<SENDER> execute(Consumer<LiteContext<SENDER>> executor) {
+        this.executor = liteContext -> {
+            executor.accept(liteContext);
+            return null;
+        };
+        return this;
+    }
+
+    @ApiStatus.Experimental
+    public final LiteCommand<SENDER> executeReturn(Function<LiteContext<SENDER>, Object> executor) {
         this.executor = executor;
         return this;
     }
 
-    protected void execute(LiteContext<SENDER> liteContext) {
-        this.executor.accept(liteContext);
+    protected void execute(LiteContext<SENDER> context) {
+        Object object = this.executor.apply(context);
+        context.returnResult(object);
     }
 
     @SafeVarargs
@@ -121,6 +154,7 @@ public class LiteCommand<SENDER> {
             .routeName(name)
             .routeAliases(aliases)
             .applyMeta(meta -> meta.apply(this.meta))
+            .applyMeta(meta -> meta.listEditor(Meta.COMMAND_ORIGIN_TYPE).add(this.getClass()).apply())
             .appendExecutor(root -> CommandExecutor.builder(root)
                 .executor(liteContext -> execute(liteContext))
                 .arguments(arguments)

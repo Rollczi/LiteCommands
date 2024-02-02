@@ -22,7 +22,7 @@ class SchematicGeneratorTest {
 
     static WrapperRegistry wrapperRegistry = new WrapperRegistry();
     static ValidatorService validatorService = new ValidatorService();
-    static SchematicGenerator schematicGenerator = SchematicGenerator.from(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+    static SchematicGenerator schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
 
     @BeforeAll
     static void beforeAll() {
@@ -99,10 +99,12 @@ class SchematicGeneratorTest {
         );
 
         assertSchematic(subTest2Command, executorSubTest2_1,
-            "/test subtest2 <first>"
+            "/test subtest2 <first>",
+            "/test subtest2 <first> <second>"
         );
 
         assertSchematic(subTest2Command, executorSubTest2_2,
+            "/test subtest2 <first>",
             "/test subtest2 <first> <second>"
         );
 

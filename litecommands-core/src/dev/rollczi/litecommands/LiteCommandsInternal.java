@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
+import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
@@ -26,6 +27,9 @@ public interface LiteCommandsInternal<SENDER, C extends PlatformSettings> {
 
     @ApiStatus.Internal
     Scheduler getScheduler();
+
+    @ApiStatus.Internal
+    SchematicGenerator<SENDER> getSchematicGenerator();
 
     @ApiStatus.Internal
     EditorService<SENDER> getEditorService();

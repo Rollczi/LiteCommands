@@ -42,13 +42,12 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
 
         @Override
         public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet) {
-            RawInputAnalyzer.Context<SENDER, PARSED> context = rawInputAnalyzer.toContext(argument, parserSet);
+            RawInputAnalyzer.Context<SENDER, PARSED> context = rawInputAnalyzer.toContext(invocation, argument, parserSet);
 
             if (context.isMissingFullArgument()) {
-                Optional<PARSED> optional = argument.defaultValue();
+                Optional<ParseResult<PARSED>> optional = argument.defaultValue();
 
                 return optional
-                    .map(ParseResult::success)
                     .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT));
             }
 

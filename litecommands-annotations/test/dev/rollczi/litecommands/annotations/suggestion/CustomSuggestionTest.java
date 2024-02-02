@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 public class CustomSuggestionTest extends LiteTestSpec {
 
     static LiteConfig config = builder -> builder
-        .argumentSuggester(String.class, SuggestionResult.of("default-suggestion"))
-        .argumentSuggester(String.class, ArgumentKey.of("custom"), SuggestionResult.of("custom-suggestion"));
+        .argumentSuggestion(String.class, SuggestionResult.of("default-suggestion"))
+        .argumentSuggestion(String.class, ArgumentKey.of("custom"), SuggestionResult.of("custom-suggestion"));
 
     @Command(name = "test")
     static class TestCommand {
@@ -26,6 +26,16 @@ public class CustomSuggestionTest extends LiteTestSpec {
     @DisplayName("should suggest default suggestion")
     void testDefault() {
         platform.suggest("test ")
+            .assertSuggest("default-suggestion");
+    }
+
+    @Test
+    @DisplayName("should suggest default suggestion with ignore case")
+    void testIgnoreCase() {
+        platform.suggest("test D")
+            .assertSuggest("default-suggestion");
+
+        platform.suggest("test DEFAULT-SUGGESTION")
             .assertSuggest("default-suggestion");
     }
 

@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.validator.ValidatorService;
 
 public class SuggestionService<SENDER> {
@@ -64,7 +65,7 @@ public class SuggestionService<SENDER> {
 
         for (CommandRoute<SENDER> child : commandRoute.getChildren()) {
             for (String name : child.names()) {
-                if (!name.startsWith(current)) {
+                if (!StringUtil.startsWithIgnoreCase(name, current)) {
                     continue;
                 }
 
@@ -105,7 +106,7 @@ public class SuggestionService<SENDER> {
         ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(parsedType, argument.getKey());
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.getKey());
 
-        boolean nextOptional = matcher.isNextOptional(argument, parserSet);
+        boolean nextOptional = matcher.isNextOptional(invocation, argument, parserSet);
         SuggestionInputResult result = matcher.nextArgument(invocation, argument, parserSet, suggester);
 
         if (result.isEnd() && nextOptional) {

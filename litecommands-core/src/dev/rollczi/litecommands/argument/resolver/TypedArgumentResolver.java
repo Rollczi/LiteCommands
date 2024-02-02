@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.argument.resolver;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
 
 @SuppressWarnings("rawtypes")
 public abstract class TypedArgumentResolver<SENDER, TYPE, ARG extends Argument<TYPE>> implements
-    TypedParser<SENDER, RawInput, TYPE, ARG>,
+    ArgumentResolverBase<SENDER, TYPE>,
+    TypedParser<SENDER, TYPE, ARG>,
     TypedSuggester<SENDER, TYPE, ARG>
 {
 
@@ -20,11 +20,6 @@ public abstract class TypedArgumentResolver<SENDER, TYPE, ARG extends Argument<T
     @Override
     public Class<? extends Argument> getArgumentType() {
         return argumentType;
-    }
-
-    @Override
-    public Class<RawInput> getInputType() {
-        return RawInput.class;
     }
 
 }

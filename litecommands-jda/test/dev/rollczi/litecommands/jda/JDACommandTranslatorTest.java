@@ -34,10 +34,14 @@ class JDACommandTranslatorTest {
     void test() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> siema = CommandRoute.create(root, COMMAND, List.of());
-        siema.meta().put(Meta.DESCRIPTION, DESCRIPTION);
+        siema.meta()
+            .listEditor(Meta.DESCRIPTION)
+            .add(DESCRIPTION)
+            .apply();
+
         siema.appendExecutor(simpleExecutor(siema));
 
-        JDACommandTranslator.JDALiteCommand translated = translator.translate(COMMAND, siema);
+        JDACommandTranslator.JDALiteCommand translated = translator.translate(siema);
         SlashCommandData slashCommandData = translated.jdaCommandData();
 
         assertEquals(COMMAND, slashCommandData.getName());
@@ -59,7 +63,10 @@ class JDACommandTranslatorTest {
     void subcommandsAndGroup() {
         CommandRoute<TestSender> root = CommandRoute.createRoot();
         CommandRoute<TestSender> command = CommandRoute.create(root, COMMAND, List.of());
-        command.meta().put(Meta.DESCRIPTION, DESCRIPTION);
+        command.meta()
+            .listEditor(Meta.DESCRIPTION)
+            .add(DESCRIPTION)
+            .apply();
 
         CommandRoute<TestSender> subCommand = CommandRoute.create(command, SUB_COMMAND, List.of());
         command.appendChildren(subCommand);
@@ -69,7 +76,7 @@ class JDACommandTranslatorTest {
         subCommand.appendChildren(nestedSubCommand);
         nestedSubCommand.appendExecutor(simpleExecutor(subCommand));
 
-        JDACommandTranslator.JDALiteCommand translated = translator.translate(COMMAND, command);
+        JDACommandTranslator.JDALiteCommand translated = translator.translate(command);
         SlashCommandData slashCommandData = translated.jdaCommandData();
 
         assertEquals(COMMAND, slashCommandData.getName());

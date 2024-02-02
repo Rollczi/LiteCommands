@@ -28,17 +28,17 @@ public class ExampleAdventurePlugin extends JavaPlugin {
 
             // register additional Kyori Adventure features
             // more: https://docs.advntr.dev/minimessage/format.html
-            .extension(new LiteAdventurePlatformExtension<CommandSender>(this.audienceProvider)
+            .extension(new LiteAdventurePlatformExtension<>(this.audienceProvider), configuration -> configuration
                 .miniMessage(true) // (<red>, <gradient:red:blue>, <#ff0000>, etc.)
                 .legacyColor(true) // (&c, &a, etc.)
                 .colorizeArgument(true) // colorize (@Arg Component)
                 .serializer(this.miniMessage) // custom serializer
             )
 
-            .commands(LiteCommandsAnnotations.of(
+            .commands(
                 new TeleportCommand(),
                 new NoticeCommand(audienceProvider)
-            ))
+            )
 
             .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> "<gradient:red:blue>Player " + input + "not found!")
             .message(LiteBukkitMessages.PLAYER_ONLY, "<red>Only player can execute this command!")

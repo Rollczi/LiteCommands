@@ -36,6 +36,14 @@ public class InvocationContext {
             return this;
         }
 
+        public Builder put(Object value) {
+            if (value == null) {
+                return this;
+            }
+
+            return putUnsafe(value.getClass(), value);
+        }
+
         public InvocationContext build() {
             return context;
         }

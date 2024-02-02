@@ -8,9 +8,9 @@ import java.util.Map;
 public class RequirementsResult<SENDER> {
 
     private final Invocation<SENDER> invocation;
-    private final Map<String, RequirementMatch<?, ?>> matches;
+    private final Map<String, RequirementMatch> matches;
 
-    private RequirementsResult(Invocation<SENDER> invocation, Map<String, RequirementMatch<?, ?>> matches) {
+    private RequirementsResult(Invocation<SENDER> invocation, Map<String, RequirementMatch> matches) {
         this.invocation = invocation;
         this.matches = matches;
     }
@@ -19,7 +19,7 @@ public class RequirementsResult<SENDER> {
         return matches.containsKey(name);
     }
 
-    public RequirementMatch<?, ?> get(String name) {
+    public RequirementMatch get(String name) {
         return matches.get(name);
     }
 
@@ -34,18 +34,19 @@ public class RequirementsResult<SENDER> {
     public static class Builder<SENDER> {
 
         private final Invocation<SENDER> invocation;
-        private final Map<String, RequirementMatch<?, ?>> matches = new HashMap<>();
+        private final Map<String, RequirementMatch> matches = new HashMap<>();
 
         public Builder(Invocation<SENDER> invocation) {
             this.invocation = invocation;
         }
 
-        public Builder<SENDER> add(String name, RequirementMatch<?, ?> match) {
-            if (matches.containsKey(name)) {
-                throw new IllegalArgumentException("Duplicate requirements name: " + name);
+        public Builder<SENDER> add(String name, RequirementMatch match) {
+            RequirementMatch replacedMatch = matches.put(name, match);
+
+            if (replacedMatch != null) {
+                throw new IllegalStateException("Requirement match already exists: " + name);
             }
 
-            matches.put(name, match);
             return this;
         }
 

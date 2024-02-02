@@ -1,18 +1,24 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.example.bukkit.command.GiveCommand;
+import dev.rollczi.example.bukkit.command.KickAllCommand;
+import dev.rollczi.example.bukkit.command.MuteCommand;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
+import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
+import dev.rollczi.example.bukkit.command.NumberCommand;
+import dev.rollczi.example.bukkit.command.RandomItemCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
+import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
+import dev.rollczi.example.bukkit.validator.IsNotOp;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
-import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -35,21 +41,34 @@ public class ExamplePlugin extends JavaPlugin {
             )
 
             // Commands
-            .commands(LiteCommandsAnnotations.of(
+            .commands(
                 new ConvertCommand(),
                 new GameModeCommand(),
                 new KickCommand(),
-                new TeleportCommand()
-            ))
-            .commands(LiteCommandsProgrammatic.of(
+                new KickAllCommand(),
+                new MuteCommand(),
+                new TeleportCommand(),
+                new FlyCommand(),
+                new GiveCommand(),
+                new RandomItemCommand(),
+                new NumberCommand()
+            )
+
+            // Custom annotation validators
+            .annotations(configuration -> configuration
+                .validator(Player.class, IsNotOp.class, new IsNotOpValidator())
+            )
+
+            // Programmatic commands
+            .commands(
                 new LiteCommand<CommandSender>("ban")
                     .permissions("example.ban")
                     .argument("player", Player.class)
-                    .onExecute(context -> {
+                    .execute(context -> {
                         Player player = context.argument("player", Player.class);
                         player.kickPlayer("You have been banned!");
                     })
-            ))
+            )
 
             // change default messages
             .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> "&cInvalid location format: &7" + input)
@@ -58,8 +77,8 @@ public class ExamplePlugin extends JavaPlugin {
             .argument(GameMode.class, new GameModeArgument())
 
             // Suggestions, if you want you can override default argument suggesters
-            .argumentSuggester(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggester(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
+            .argumentSuggestion(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             .message(LiteBukkitMessages.PLAYER_ONLY, "&cOnly player can execute this command!")
             .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> "&cPlayer &7" + input + " &cnot found!")

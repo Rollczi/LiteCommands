@@ -11,6 +11,7 @@ include(":litecommands-unit")
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform")
 include(":litecommands-chatgpt", JavaVersion.VERSION_11)
+include(":litecommands-jakarta", JavaVersion.VERSION_11)
 
 // platforms
 include(":litecommands-velocity", JavaVersion.VERSION_11)
@@ -24,6 +25,7 @@ include("litecommands-sponge")
 include(":examples:bukkit")
 include(":examples:bukkit-adventure-platform")
 include(":examples:bukkit-chatgpt", JavaVersion.VERSION_11)
+include(":examples:minestom", JavaVersion.VERSION_17)
 include(":examples:velocity", JavaVersion.VERSION_11)
 include(":examples:sponge")
 

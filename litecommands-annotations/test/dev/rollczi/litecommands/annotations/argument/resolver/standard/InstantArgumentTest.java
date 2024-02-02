@@ -46,12 +46,8 @@ class InstantArgumentTest extends LiteTestSpec {
 
     @Test
     void testSuggestions() {
-        Collection<Suggestion> suggestions = platform.suggest("test ").getSuggestions();
-
-        assertThat(suggestions).hasSize(InstantArgumentResolver.DAY_COUNT_TO_SUGGESTIONS);
-
-        suggestions.stream()
-            .map(Suggestion::multilevel)
-            .forEach(suggestion -> platform.execute("test " + suggestion).assertSuccess());
+        platform.suggest("test ")
+            .assertNotEmpty()
+            .assertCorrect(suggestion -> platform.execute("test " + suggestion.multilevel()).assertSuccess());
     }
 }

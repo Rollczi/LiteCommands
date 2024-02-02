@@ -13,7 +13,7 @@ public class CommandBuilderCollector<SENDER> {
         this.providers.add(provider);
     }
 
-    public List<CommandBuilder<SENDER>> collectAndMergeCommands() {
+    public List<CommandBuilder<SENDER>> collectCommands() {
         List<CommandBuilder<SENDER>> collectedBuilders = new ArrayList<>();
 
         for (CommandBuilderProvider<SENDER> provider : this.providers) {

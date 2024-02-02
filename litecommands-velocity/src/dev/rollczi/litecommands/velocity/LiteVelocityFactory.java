@@ -12,9 +12,12 @@ public final class LiteVelocityFactory {
     private LiteVelocityFactory() {
     }
 
-    public static LiteCommandsBuilder<CommandSource, LiteVelocitySettings, ?> builder(ProxyServer proxy) {
-        return LiteCommandsFactory.builder(CommandSource.class, new VelocityPlatform(proxy.getCommandManager(), new LiteVelocitySettings()))
-            .extension(new LiteAdventureExtension<>())
+    @SuppressWarnings("unchecked")
+    public static <B extends LiteCommandsBuilder<CommandSource, LiteVelocitySettings, B>> B builder(ProxyServer proxy) {
+        return (B) LiteCommandsFactory.builder(CommandSource.class, new VelocityPlatform(proxy.getCommandManager(), new LiteVelocitySettings()))
+            .extension(new LiteAdventureExtension<>(), configuration -> configuration
+                .legacyColor(true)
+            )
 
             .bind(ProxyServer.class, () -> proxy)
             .bind(CommandManager.class, proxy::getCommandManager);

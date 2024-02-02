@@ -149,7 +149,7 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
             throw new IllegalArgumentException("Input is empty");
         }
 
-        Duration total = Duration.ZERO;
+        T total = this.getZero();
         boolean negative = false;
 
         StringBuilder number = new StringBuilder();
@@ -180,9 +180,9 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
             }
 
             if (i == input.length() - 1 || Character.isDigit(input.charAt(i + 1))) {
-                Duration duration = this.parseDuration(number.toString(), unit.toString());
+                TemporalEntry temporalEntry = this.parseTemporal(number.toString(), unit.toString());
 
-                total = total.plus(duration);
+                total = this.plus(this.baseForTimeEstimation, total, temporalEntry);
 
                 number.setLength(0);
                 unit.setLength(0);
@@ -194,15 +194,19 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
         }
 
         if (negative) {
-            total = total.negated();
+            total = this.negate(total);
         }
 
-        return this.toTemporalAmount(this.baseForTimeEstimation, total);
+        return total;
     }
 
-    protected abstract T toTemporalAmount(LocalDateTimeProvider baseForTimeEstimation, Duration duration);
+    protected abstract T plus(LocalDateTimeProvider baseForTimeEstimation, T temporalAmount, TemporalEntry temporalEntry);
 
-    private Duration parseDuration(String number, String unit) {
+    protected abstract T negate(T temporalAmount);
+
+    protected abstract T getZero();
+
+    private TemporalEntry parseTemporal(String number, String unit) {
         if (number.isEmpty()) {
             throw new IllegalArgumentException("Missing number before unit " + unit);
         }
@@ -216,16 +220,27 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
         try {
             long count = Long.parseLong(number);
 
-            if (chronoUnit.isDurationEstimated()) {
-                LocalDateTime localDate = this.baseForTimeEstimation.get();
-                LocalDateTime estimatedDate = localDate.plus(count, chronoUnit);
-
-                return Duration.between(localDate, estimatedDate);
-            }
-
-            return Duration.of(count, chronoUnit);
+            return new TemporalEntry(count, chronoUnit);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid number " + number);
+        }
+    }
+
+    protected static class TemporalEntry {
+        private final long count;
+        private final ChronoUnit unit;
+
+        public TemporalEntry(long count, ChronoUnit unit) {
+            this.count = count;
+            this.unit = unit;
+        }
+
+        public long getCount() {
+            return count;
+        }
+
+        public ChronoUnit getUnit() {
+            return unit;
         }
     }
 

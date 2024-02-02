@@ -2,17 +2,24 @@ package dev.rollczi.litecommands.command.builder;
 
 import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.CommandRoutePath;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
@@ -21,6 +28,8 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     protected final List<CommandExecutorProvider<SENDER>> executors = new ArrayList<>();
     protected boolean enabled = true;
     protected Meta meta = Meta.create();
+
+    protected final Map<CommandExecutorProvider<SENDER>, List<CommandRoutePath>> shortRoutes = new HashMap<>();
 
     protected CommandBuilderDummyPrefix<SENDER> dummyPrefix;
 
@@ -156,7 +165,7 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     @ApiStatus.Internal
     public CommandBuilder<SENDER> routeAliases(List<String> aliases) {
         if (aliases.isEmpty()) {
-            return this;
+            return getFirstRoute();
         }
 
         int countDummy = this.countDummy(aliases.get(0));
@@ -220,6 +229,37 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
+    public CommandBuilder<SENDER> shortcuts(List<String> shortcuts) {
+        List<CommandRoutePath> paths = shortcuts.stream()
+            .map(CommandRoutePath::from)
+            .collect(Collectors.toList());
+
+        for (CommandExecutorProvider<SENDER> executor : this.executors) {
+            this.shortRoutes.put(executor, paths);
+        }
+
+        return this;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public CommandBuilder<SENDER> shortcuts(CommandExecutorProvider<SENDER> executorProvider, List<String> shortcuts) {
+        for (CommandExecutorProvider<SENDER> executor : this.executors) {
+            if (!executor.equals(executorProvider)) {
+                continue;
+            }
+
+            this.shortRoutes.put(executor, shortcuts.stream()
+                .map(paths -> CommandRoutePath.from(paths))
+                .collect(Collectors.toList()));
+
+            return this;
+        }
+
+        throw new IllegalArgumentException("Cannot find executor provider for shortcuts: " + String.join(", ", shortcuts));
+    }
+
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -236,13 +276,21 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
     }
 
     @Override
-    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
-        CommandRoute<SENDER> route = CommandRoute.create(parent, this.name, this.aliases);
+    public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parentRoute) {
+        Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
+        CommandRoute<SENDER> route = CommandRoute.create(parentRoute, this.name, this.aliases);
 
         route.meta().apply(this.meta);
 
-        for (CommandExecutorProvider<SENDER> executor : this.executors) {
-            route.appendExecutor(executor.provide(route));
+        for (CommandExecutorProvider<SENDER> executorProvider : this.executors) {
+            CommandExecutor<SENDER> executor = executorProvider.provide(route);
+            route.appendExecutor(executor);
+
+            List<CommandRoutePath> paths = shortRoutes.getOrDefault(executorProvider, Collections.emptyList());
+
+            for (CommandRoutePath path : paths) {
+                routes.add(path.createReference(executor));
+            }
         }
 
         for (CommandBuilder<SENDER> child : this.children()) {
@@ -251,11 +299,18 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
             }
 
             for (CommandRoute<SENDER> childRoute : child.build(route)) {
+                if (childRoute.isReference()) {
+                    routes.add(childRoute);
+                    continue;
+                }
+
                 route.appendChildren(childRoute);
             }
         }
 
-        return Collections.singleton(route);
+        routes.add(route);
+
+        return routes;
     }
 
     @Override
@@ -284,6 +339,21 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
             this.appendChild(childToMeagre);
         }
 
+    }
+
+    @Nullable
+    protected CommandBuilderBase<SENDER> getFirstRoute() {
+        if (this.dummyPrefix == null) {
+            return this;
+        }
+
+        CommandBuilderBase<SENDER> prefix = this.dummyPrefix.getFirstRoute();
+
+        if (prefix == null) {
+            return this.dummyPrefix;
+        }
+
+        return prefix;
     }
 
 }

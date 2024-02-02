@@ -1,10 +1,11 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.TypedParser;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
+import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.extension.LiteExtension;
@@ -19,19 +20,19 @@ import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.argument.suggester.TypedSuggester;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
 import dev.rollczi.litecommands.wrapper.Wrapper;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * Builder for {@link LiteCommands}.
@@ -51,161 +52,235 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @param configurator configurator for platform settings
      * @return this builder
      */
-    LiteCommandsBuilder<SENDER, SETTINGS, B> settings(PlatformSettingsConfigurator<SETTINGS> configurator);
+    B settings(PlatformSettingsConfigurator<SETTINGS> configurator);
 
     /**
      * Register commands from given provider.
      *
+     * @see LiteCommandsBuilder#commands(Object...)
      * @see LiteCommandsProvider
      * @param commandsProvider provider of commands
      * @return this builder
      */
-    LiteCommandsBuilder<SENDER, SETTINGS, B> commands(LiteCommandsProvider<SENDER> commandsProvider);
+    B commands(LiteCommandsProvider<SENDER> commandsProvider);
 
-    <IN, T, PARSER extends Parser<SENDER, IN, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, PARSER parser);
-
-    <IN, T, PARSER extends Parser<SENDER, IN, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, ArgumentKey key, PARSER parser);
-
-    <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, TypedParser<SENDER, IN, T, ARGUMENT> parser);
-
-    <IN, T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentParser(Class<T> type, ArgumentKey key, TypedParser<SENDER, IN, T, ARGUMENT> parser);
+    /**
+     * This method is used to register additional commands.
+     * There are several types of objects that can be registered:
+     * <b>Using annotations:</b>
+     * <ul>
+     *     <li>An instance annotated with {@link dev.rollczi.litecommands.annotations.command.Command}</li>
+     *     <li>An instance annotated with {@link dev.rollczi.litecommands.annotations.command.RootCommand}</li>
+     *     <li>A class annotated with {@link dev.rollczi.litecommands.annotations.command.Command}</li>
+     *     <li>A class annotated with {@link dev.rollczi.litecommands.annotations.command.RootCommand}</li>
+     * </ul>
+     * <b>Programmatically:</b>
+     * <ul>
+     *     <li>An instance of {@link dev.rollczi.litecommands.programmatic.LiteCommand}</li>
+     * </ul>
+     * Please note that this method is experimental and may be deprecated or removed in the future.
+     *
+     * @see LiteCommandsBuilder#commands(LiteCommandsProvider)
+     * @param commands commands to register
+     * @return This method returns the current LiteCommand builder instance
+     * This allows you to chain multiple calls together, using the builder design pattern.
+     */
+    @ApiStatus.Experimental
+    B commands(Object... commands);
 
     <T>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, SuggestionResult suggestionResult);
+    B argumentParser(Class<T> type, Parser<SENDER, T> parser);
 
     <T>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestionResult);
+    B argumentParser(Class<T> type, ArgumentKey key, Parser<SENDER, T> parser);
 
-    <T, SUGGESTER extends Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, SUGGESTER suggester);
+    <T>
+    B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, T> parser);
 
-    <T, SUGGESTER extends Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, ArgumentKey key, SUGGESTER suggester);
+    <T>
+    B argumentSuggestion(Class<T> type, SuggestionResult suggestion);
 
-    <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, TypedSuggester<SENDER, T, ARGUMENT> suggester);
+    <T>
+    B argumentSuggestion(Class<T> type, ArgumentKey key, SuggestionResult suggestion);
 
-    <T, ARGUMENT extends Argument<T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argumentSuggester(Class<T> type, ArgumentKey key, TypedSuggester<SENDER, T, ARGUMENT> suggester);
+    <T>
+    B argumentSuggestion(TypeRange<T> type, ArgumentKey key, SuggestionResult suggestion);
+
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.4.0")
+    default <T>
+    B argumentSuggester(Class<T> type, SuggestionResult suggestion) {
+        return argumentSuggestion(type, suggestion);
+    }
+
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.4.0")
+    default <T>
+    B argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestion) {
+        return argumentSuggestion(type, key, suggestion);
+    }
+
+    <T>
+    B argumentSuggester(Class<T> type, Suggester<SENDER, T> suggester);
+
+    <T>
+    B argumentSuggester(Class<T> type, ArgumentKey key, Suggester<SENDER, T> suggester);
+
+    <T>
+    B argumentSuggester(TypeRange<T> type, ArgumentKey key, Suggester<SENDER, T> suggester);
 
     /**
      * [Argument Parser and Suggester]
      * Register argument parser and suggester for given type.
      *
      * @param type type of argument
-     * @param resolver parser and suggester for given type
+     * @param resolver parser and suggester for a given type
      * @return this builder
      */
-    <IN, T, RESOLVER extends Parser<SENDER, IN, T> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, RESOLVER resolver);
+    <T>
+    B argument(Class<T> type, ArgumentResolverBase<SENDER, T> resolver);
 
     /**
      * [Keyed Argument Parser and Suggester]
-     * Register argument parser and suggester for given type and key.
+     * Register argument parser and suggester for a given type and key.
      * Key is used to define namespace for given parser. It is used to identify which parsers with same type should be used.
      * Argument type is used to define what type is compatible with given parser.
      *
      * @param type type of argument
      * @param key key of argument
-     * @param resolver parser and suggester for given type
+     * @param resolver parser and suggester for a given type
      * @return this builder
      */
-    <IN, T, RESOLVER extends Parser<SENDER, IN, T> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, ArgumentKey key, RESOLVER resolver);
-
-    /**
-     * [Typed Argument Parser and Suggester]
-     * Register argument parser and suggester for given type.
-     *
-     * @param type type of argument
-     * @param resolver parser and suggester for given type
-     * @return this builder
-     */
-    <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, RESOLVER resolver);
-
-    /**
-     * [Typed Keyed Argument Parser and Suggester]
-     * Register argument parser and suggester for given type and key.
-     * Key is used to define namespace for given parser. It is used to identify which parsers with same type should be used.
-     * Argument type is used to define what type is compatible with given parser.
-     *
-     * @param type type of argument
-     * @param key key of argument
-     * @param resolver parser and suggester for given type
-     * @return this builder
-     */
-    <IN, T, ARGUMENT extends Argument<T>, RESOLVER extends TypedParser<SENDER, IN, T, ARGUMENT> & Suggester<SENDER, T>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> argument(Class<T> type, ArgumentKey key, RESOLVER resolver);
+    <T>
+    B argument(Class<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
 
     <T>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> context(Class<T> on, ContextProvider<SENDER, T> bind);
+    B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, T> resolver);
 
     <T>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> bind(Class<T> on, BindProvider<T> bindProvider);
+    B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
 
     <T>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> bind(Class<T> on, Supplier<T> bind);
+    B context(Class<T> on, ContextProvider<SENDER, T> bind);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> bindUnsafe(Class<?> on, Supplier<?> bind);
+    <T>
+    B bind(Class<T> on, BindProvider<T> bindProvider);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> scheduler(Scheduler scheduler);
+    <T>
+    B bind(Class<T> on, Supplier<T> bind);
+
+    B bindUnsafe(Class<?> on, Supplier<?> bind);
+
+    B scheduler(Scheduler scheduler);
 
     <T, CONTEXT>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message);
+    B message(MessageKey<CONTEXT> key, Message<T, CONTEXT> message);
 
     <T, CONTEXT>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, InvokedMessage<SENDER, T, CONTEXT> message);
+    B message(MessageKey<CONTEXT> key, InvokedMessage<SENDER, T, CONTEXT> message);
 
     <T, CONTEXT>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> message(MessageKey<CONTEXT> key, T message);
+    B message(MessageKey<CONTEXT> key, T message);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> editorGlobal(Editor<SENDER> editor);
+    B editorGlobal(Editor<SENDER> editor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> editor(Scope scope, Editor<SENDER> editor);
+    B editor(Scope scope, Editor<SENDER> editor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> validatorGlobal(Validator<SENDER> validator);
+    B validatorGlobal(Validator<SENDER> validator);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> validator(Scope scope, Validator<SENDER> validator);
+    B validator(Scope scope, Validator<SENDER> validator);
 
-    default LiteCommandsBuilder<SENDER, SETTINGS, B> validatorMarked(Validator<SENDER> validator) {
+    default B validatorMarked(Validator<SENDER> validator) {
         return validator(ValidatorScope.of(validator.getClass()), validator);
     }
 
     <T>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> result(Class<T> resultType, ResultHandler<SENDER, ? extends T> handler);
+    B result(Class<T> resultType, ResultHandler<SENDER, ? extends T> handler);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> resultUnexpected(ResultHandler<SENDER, Object> handler);
+    B resultUnexpected(ResultHandler<SENDER, Object> handler);
 
     <E extends Throwable>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> exception(Class<E> exceptionType, ExceptionHandler<SENDER, ? extends E> handler);
+    B exception(Class<E> exceptionType, ExceptionHandler<SENDER, ? extends E> handler);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> exceptionUnexpected(ExceptionHandler<SENDER, Throwable> handler);
+    B exceptionUnexpected(ExceptionHandler<SENDER, Throwable> handler);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> missingPermission(MissingPermissionsHandler<SENDER> handler);
+    B missingPermission(MissingPermissionsHandler<SENDER> handler);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> invalidUsage(InvalidUsageHandler<SENDER> handler);
+    B invalidUsage(InvalidUsageHandler<SENDER> handler);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> wrapper(Wrapper wrapper);
+    B wrapper(Wrapper wrapper);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> schematicGenerator(SchematicGenerator<SENDER> schematicGenerator);
+    B schematicGenerator(SchematicGenerator<SENDER> schematicGenerator);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> schematicGenerator(SchematicFormat format);
+    B schematicGenerator(SchematicFormat format);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> selfProcessor(LiteBuilderProcessor<SENDER, SETTINGS> processor);
+    B selfProcessor(LiteBuilderProcessor<SENDER, SETTINGS> processor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> preProcessor(LiteBuilderProcessor<SENDER, SETTINGS> preProcessor);
+    B preProcessor(LiteBuilderProcessor<SENDER, SETTINGS> preProcessor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> postProcessor(LiteBuilderProcessor<SENDER, SETTINGS> postProcessor);
+    B postProcessor(LiteBuilderProcessor<SENDER, SETTINGS> postProcessor);
 
-    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(LiteExtension<SENDER> extension);
 
-    <E extends LiteExtension<SENDER>>
-    LiteCommandsBuilder<SENDER, SETTINGS, B> extension(E extension, UnaryOperator<E> configuration);
+    /**
+     * Register extension for this builder.
+     * @param extension extension to register
+     * <b>Example:</b>
+     * <pre>
+     *  {@code
+     *  .extension(new LiteAdventureExtension<>())
+     *  }
+     * </pre>
+     * @return this builder
+     * @param <CONFIGURATION> type of configuration
+     */
+    <CONFIGURATION>
+    B extension(LiteExtension<SENDER, CONFIGURATION> extension);
+
+    /**
+     * Register extension for this builder with configurator.
+     *
+     * @param extension extension to register
+     * @param configurator configurator for extension
+     * <b>Example:</b>
+     * <pre>
+     *  {@code
+     *  .extension(new LiteAdventureExtension<>(), configuration -> configuration
+     *    .colorizeArgument(true)
+     *    .miniMessage(true)
+     *    .legacyColor(true)
+     *    .serializer(ComponentSerializer.miniMessage())
+     *  )
+     *  }
+     * </pre>
+     *
+     * @return this builder
+     * @param <CONFIGURATION> type of configuration
+     */
+    <CONFIGURATION, E extends LiteExtension<SENDER, CONFIGURATION>>
+    B extension(E extension, LiteConfigurator<CONFIGURATION> configurator);
+
+    /**
+     * [Experimental]
+     * Register extension for annotations processing/
+     * Please note that this method is experimental and may be deprecated or removed in the future.
+     * @param configurator configurator for extension
+     * <ul>
+     *  <li>processor - register new annotation processor</li>
+     *  <li>validator - register new validator for requirement</li>
+     * </ul>
+     * <b>Example:</b>
+     * <pre>
+     * {@code
+     * .extensionAnnotation(extension -> extension
+     *     .processor(new MyAnnotationProcessor())
+     *     .validator(String.class, IsValid.class, new StringValidator())
+     * )
+     * }
+     * </pre>
+     * @return this builder
+     */
+    @ApiStatus.Experimental
+    B annotations(LiteConfigurator<AnnotationsExtension<SENDER>> configurator);
 
     LiteCommands<SENDER> build();
 

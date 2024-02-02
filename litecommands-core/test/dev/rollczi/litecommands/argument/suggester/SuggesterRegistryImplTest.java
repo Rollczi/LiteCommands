@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.argument.suggester;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
@@ -52,7 +53,7 @@ class SuggesterRegistryImplTest {
     void registerGenericSuggester() {
         SuggesterRegistryImpl<TestSender> registry = new SuggesterRegistryImpl<>();
 
-        registry.registerSuggester(Number.class, ArgumentKey.of(), new NumberSuggester());
+        registry.registerSuggester(TypeRange.upwards(Number.class), ArgumentKey.of(), new NumberSuggester());
 
         Suggester<TestSender, Number> universal = registry.getSuggester(Number.class, ArgumentKey.of());
         Suggester<TestSender, Integer> integer = registry.getSuggester(Integer.class, ArgumentKey.of());

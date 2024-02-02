@@ -1,46 +1,50 @@
 package dev.rollczi.litecommands.argument.suggester;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.reflect.type.TypeIndex;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
-import dev.rollczi.litecommands.util.MapUtil;
 import dev.rollczi.litecommands.util.StringUtil;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> {
 
     private final Suggester<SENDER, ?> noneSuggester = new SuggesterNoneImpl<>();
 
-    private final Map<Class<?>, BucketByArgument<?>> buckets = new HashMap<>();
+    private final TypeIndex<BucketByArgument<?>> buckets = new TypeIndex<>();
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> void registerSuggester(Class<T> type, ArgumentKey key, Suggester<SENDER, T> suggester) {
-        BucketByArgument<T> bucket = (BucketByArgument<T>) buckets.computeIfAbsent(type, k -> new BucketByArgument<>());
+    public <T> void registerSuggester(TypeRange<T> type, ArgumentKey key, Suggester<SENDER, T> suggester) {
+        List<BucketByArgument<?>> bucketByArguments = buckets.computeIfAbsent(type, () -> new BucketByArgument<>());
 
-        bucket.registerSuggester(type, key, suggester);
+        for (BucketByArgument<?> bucketByArgument : bucketByArguments) {
+            BucketByArgument<T> bucket = (BucketByArgument<T>) bucketByArgument;
+            bucket.registerSuggester(type, key, suggester);
+        }
+
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <PARSED> Suggester<SENDER, PARSED> getSuggester(Class<PARSED> parsedClass, ArgumentKey key) {
-        Optional<BucketByArgument<?>> optional = MapUtil.findBySuperTypeOf(parsedClass, buckets);
+    public <PARSED> List<Suggester<SENDER, PARSED>> getSuggesters(Class<PARSED> parsedClass, ArgumentKey key) {
+        Iterable<BucketByArgument<?>> typedBuckets = buckets.get(parsedClass);
+        List<Suggester<SENDER, PARSED>> suggesters = new ArrayList<>();
 
-        if (!optional.isPresent()) {
-            return (Suggester<SENDER, PARSED>) noneSuggester;
+        for (BucketByArgument<?> typedBucket : typedBuckets) {
+            BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) typedBucket;
+            Suggester<SENDER, PARSED> suggester = bucket.getSuggester(key);
+
+            if (suggester != null) {
+                suggesters.add(suggester);
+            }
         }
 
-        BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) optional.get();
-        Suggester<SENDER, PARSED> suggester = bucket.getSuggester(key);
-
-        if (suggester == null) {
-            return (Suggester<SENDER, PARSED>) noneSuggester;
-        }
-
-        return suggester;
+        return suggesters;
     }
 
     private class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
@@ -52,7 +56,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
         }
 
         @Override
-        void registerSuggester(Class<PARSED> parsedType, ArgumentKey key, Suggester<SENDER, PARSED> parser) {
+        void registerSuggester(TypeRange<PARSED> parsedType, ArgumentKey key, Suggester<SENDER, PARSED> parser) {
             if (key.isUniversal()) {
                 this.universalTypedBucket.registerSuggester(parsedType, key, parser);
                 return;
@@ -62,6 +66,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
         }
 
         @Override
+        @Nullable
         Suggester<SENDER, PARSED> getSuggester(ArgumentKey key) {
             Suggester<SENDER, PARSED> bucket = super.getSuggester(key);
 
@@ -83,10 +88,11 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
             this.ignoreNamespace = ignoreNamespace;
         }
 
-        void registerSuggester(Class<PARSED> parsedType, ArgumentKey key, Suggester<SENDER, PARSED> parser) {
+        void registerSuggester(TypeRange<PARSED> parsedType, ArgumentKey key, Suggester<SENDER, PARSED> parser) {
             buckets.put(key.getKey(), key.getNamespace(), parser);
         }
 
+        @Nullable
         Suggester<SENDER, PARSED> getSuggester(ArgumentKey key) {
             String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
             Suggester<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);

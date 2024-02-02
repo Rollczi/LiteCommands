@@ -4,7 +4,12 @@ import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsInternal;
 import dev.rollczi.litecommands.LiteCommandsProvider;
 
-public interface LiteCommandsProviderExtension<SENDER> extends LiteExtension<SENDER> {
+/**
+ * A generic interface for configuring {@link LiteCommandsProvider}.
+ *
+ * @param <SENDER> the type of the sender
+ */
+public interface LiteCommandsProviderExtension<SENDER, CONFIGURATION> extends LiteExtension<SENDER, CONFIGURATION> {
 
     void extendCommandsProvider(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal, LiteCommandsProvider<SENDER> provider);
 

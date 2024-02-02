@@ -6,9 +6,14 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
+import dev.rollczi.litecommands.jda.visibility.Visibility;
+import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
+import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -16,6 +21,7 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandAutoCompleteInteraction;
 import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -31,6 +37,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class JDACommandTranslator {
+
+    private static final String DESCRIPTION_DEFAULT = "none";
+    private static final String DESCRIPTION_NO_GENERATED = "no generated description";
 
     private final WrapperRegistry wrapperRegistry;
 
@@ -52,19 +61,30 @@ class JDACommandTranslator {
     }
 
     <SENDER> JDALiteCommand translate(
-        String name,
         CommandRoute<SENDER> commandRoute
     ) {
-        CommandDataImpl commandData = new CommandDataImpl(name, commandRoute.meta().get(Meta.DESCRIPTION));
-        commandData.setGuildOnly(true);
+        CommandDataImpl commandData = new CommandDataImpl(commandRoute.getName(), this.getDescription(commandRoute));
+        commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
+
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
-        // Single command
         if (!commandRoute.getExecutors().isEmpty()) {
-            this.translateExecutor(commandRoute, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
+            if (!commandRoute.getChildren().isEmpty()) {
+                throw new IllegalArgumentException("Discord command cannot have subcommands and executor in same route");
+            }
+
+            CommandExecutor<SENDER> executor = this.translateExecutor(commandRoute, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                 commandData.addOption(optionType, argName, description, isRequired, autocomplete);
                 jdaLiteCommand.addTypeMapper(new JDARoute(argName), mapper);
             });
+
+            commandData.setDescription(this.getDescription(executor));
+
+            List<Permission> permissions = getPermissions(executor);
+
+            if (!permissions.isEmpty()) {
+                commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+            }
 
             return jdaLiteCommand;
         }
@@ -76,13 +96,13 @@ class JDACommandTranslator {
         // group command and subcommands
         for (CommandRoute<SENDER> child : commandRoute.getChildren()) {
             if (!child.getExecutors().isEmpty()) {
-                SubcommandData subcommandData = new SubcommandData(child.getName(), child.meta().get(Meta.DESCRIPTION));
-
-                this.translateExecutor(child, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
+                SubcommandData subcommandData = new SubcommandData(child.getName(), DESCRIPTION_NO_GENERATED);
+                CommandExecutor<SENDER> executor = this.translateExecutor(child, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
                     jdaLiteCommand.addTypeMapper(new JDARoute(child.getName(), argName), mapper);
                 });
 
+                subcommandData.setDescription(this.getDescription(executor));
                 commandData.addSubcommands(subcommandData);
             }
 
@@ -90,30 +110,59 @@ class JDACommandTranslator {
                 continue;
             }
 
-            SubcommandGroupData subcommandGroupData = new SubcommandGroupData(child.getName(), child.meta().get(Meta.DESCRIPTION));
+            SubcommandGroupData subcommandGroupData = new SubcommandGroupData(child.getName(), this.getDescription(child));
 
             for (CommandRoute<SENDER> childChild : child.getChildren()) {
                 if (childChild.getExecutors().isEmpty()) {
                     continue;
                 }
 
-                SubcommandData subcommandData = new SubcommandData(childChild.getName(), childChild.meta().get(Meta.DESCRIPTION));
-
-                this.translateExecutor(childChild, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
+                SubcommandData subcommandData = new SubcommandData(childChild.getName(), DESCRIPTION_NO_GENERATED);
+                CommandExecutor<SENDER> executor = this.translateExecutor(childChild, (optionType, mapper, argName, description, isRequired, autocomplete) -> {
                     subcommandData.addOption(optionType, argName, description, isRequired, autocomplete);
                     jdaLiteCommand.addTypeMapper(new JDARoute(child.getName(), childChild.getName(), argName), mapper);
                 });
 
+                subcommandData.setDescription(this.getDescription(executor));
                 subcommandGroupData.addSubcommands(subcommandData);
             }
 
             commandData.addSubcommandGroups(subcommandGroupData);
         }
 
+        List<Permission> permissions = getPermissions(commandRoute);
+
+        if (!permissions.isEmpty()) {
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+        }
+
         return jdaLiteCommand;
     }
 
-    private <SENDER> void translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
+    private String getDescription(MetaHolder holder) {
+        List<List<String>> descriptions = holder.metaCollector().collect(Meta.DESCRIPTION);
+
+        if (descriptions.isEmpty()) {
+            return DESCRIPTION_DEFAULT; // Discord doesn't allow empty description
+        }
+
+        List<String> descriptionList = descriptions.get(0);
+        String description = String.join(", ", descriptionList);
+
+        if (description.isEmpty()) {
+            return DESCRIPTION_DEFAULT; // Discord doesn't allow empty description
+        }
+
+        return description;
+    }
+
+    private List<Permission> getPermissions(MetaHolder holder) {
+        return holder.metaCollector().collect(DiscordPermission.META_KEY).stream()
+            .flatMap(List::stream)
+            .toList();
+    }
+
+    private <SENDER> CommandExecutor<SENDER> translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
         List<CommandExecutor<SENDER>> executors = route.getExecutors();
         if (executors.size() != 1) {
             throw new IllegalArgumentException("Discrod command cannot have more than one executor in same route");
@@ -123,7 +172,7 @@ class JDACommandTranslator {
 
         for (Argument<?> argument : executor.getArguments()) {
             String argumentName = argument.getName();
-            String description = argument.meta().get(Meta.DESCRIPTION);
+            String description = this.getDescription(argument);
             boolean isRequired = !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
 
             Class<?> parsedType = argument.getWrapperFormat().getParsedType();
@@ -145,6 +194,8 @@ class JDACommandTranslator {
 
             consumer.translate(OptionType.STRING, option -> option.getAsString(), argumentName, description, isRequired, true);
         }
+
+        return executor;
     }
 
     private interface TranslateExecutorConsumer {
@@ -175,15 +226,15 @@ class JDACommandTranslator {
 
     Invocation<User> translateInvocation(CommandRoute<User> route, Input<?> arguments, CommandInteractionPayload interaction) {
         InvocationContext context = InvocationContext.builder()
-            .putUnsafe(interaction.getClass(), interaction)
-            .put(MessageChannelUnion.class, (MessageChannelUnion) interaction.getChannel())
-            .put(Guild.class, interaction.getGuild())
-            .put(Member.class, interaction.getMember())
+            .put(interaction)
+            .put(interaction.getChannel())
+            .put(interaction.getGuild())
+            .put(interaction.getMember())
             .build();
 
         return new Invocation<>(
             interaction.getUser(),
-            new JDAPlatformSender(interaction.getUser()),
+            new JDAPlatformSender(interaction.getUser(), interaction.getMember()),
             route.getName(),
             interaction.getName(),
             arguments,

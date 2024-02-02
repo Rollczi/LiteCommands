@@ -1,20 +1,16 @@
 package dev.rollczi.litecommands.command.builder;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
 @Deprecated //TODO Remove this implementation and replace with "current context of route"
 class CommandBuilderDummyPrefix<SENDER> extends CommandBuilderBase<SENDER> implements CommandBuilder<SENDER> {
 
-    protected CommandBuilder<SENDER> children;
+    protected CommandBuilder<SENDER> nativeDummyChildren;
 
-    public CommandBuilderDummyPrefix(CommandBuilder<SENDER> children) {
-        this.children = children;
+    public CommandBuilderDummyPrefix(CommandBuilder<SENDER> nativeDummyChildren) {
+        this.nativeDummyChildren = nativeDummyChildren;
+        this.appendChild(nativeDummyChildren);
     }
 
     CommandBuilder<SENDER> dummyName(String name) {
@@ -26,46 +22,24 @@ class CommandBuilderDummyPrefix<SENDER> extends CommandBuilderBase<SENDER> imple
     }
 
     @Override
-    public Collection<CommandBuilder<SENDER>> children() {
-        List<CommandBuilder<SENDER>> children = new ArrayList<>(super.children());
-        children.add(this.children);
-
-        return Collections.unmodifiableCollection(children);
-    }
-
-    @Override
     public CommandBuilder<SENDER> routeName(String name) {
-        return this.children.routeName(name);
+        return this.nativeDummyChildren.routeName(name);
     }
 
     @Override
     public CommandBuilder<SENDER> routeAliases(List<String> aliases) {
-        if (aliases.isEmpty()) {
-            return this;
-        }
-
-        return this.children.routeAliases(aliases);
-    }
-
-    @Override
-    public @NotNull CommandBuilder<SENDER> editChild(String name, UnaryOperator<CommandBuilder<SENDER>> operator) {
-        if (this.children.name().equals(name)) {
-            this.children = operator.apply(this.children);
-            return this;
-        }
-
-        throw new IllegalArgumentException("Child with name " + name + " not found");
+        return this.nativeDummyChildren.routeAliases(aliases);
     }
 
     @Override
     public CommandBuilder<SENDER> applyOnRoute(UnaryOperator<CommandBuilder<SENDER>> apply) {
-        this.children = this.children.applyOnRoute(apply);
+        this.nativeDummyChildren = this.nativeDummyChildren.applyOnRoute(apply);
         return this;
     }
 
     @Override
     public CommandBuilder<SENDER> getRealRoute() {
-        return this.children.getRealRoute();
+        return this.nativeDummyChildren.getRealRoute();
     }
 
 }

@@ -18,7 +18,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre23") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.3.3") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 }
 
@@ -41,6 +41,10 @@ tasks.withType<ShadowJar> {
         "org.panda_lang",
         "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
 }
 
 sourceSets.test {

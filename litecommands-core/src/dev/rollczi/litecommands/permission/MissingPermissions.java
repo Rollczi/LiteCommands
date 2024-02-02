@@ -1,8 +1,5 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.CommandRouteUtils;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.platform.PlatformSender;
@@ -11,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MissingPermissions {
 

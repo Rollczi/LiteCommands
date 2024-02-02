@@ -1,14 +1,15 @@
 package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.minestom.test.RegisterCommand;
 import dev.rollczi.litecommands.minestom.test.TestPlayer;
-import dev.rollczi.litecommands.minestom.tools.MinestomOnlyPlayerContext;
+import dev.rollczi.litecommands.minestom.test.TestPlayerConnection;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.entity.Player;
+import net.minestom.server.network.ConnectionManager;
+import net.minestom.server.utils.debug.DebugUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -47,9 +48,11 @@ public class MineStomIntegrationSpec {
             commands.put(field, command);
         }
 
-        liteCommands = LiteMinestomFactory.builder(MinecraftServer.getServer(), MinecraftServer.getCommandManager())
-            .commands(LiteCommandsAnnotations.of(commands.values().toArray()))
-            .context(Player.class, new MinestomOnlyPlayerContext<>(""))
+        DebugUtils.INSIDE_TEST = true;
+        MinecraftServer.getConnectionManager().setPlayerProvider((uuid, s, playerConnection) -> new TestPlayer(uuid, s));
+
+        liteCommands = LiteMinestomFactory.builder()
+            .commands(commands.values().toArray())
             .build();
     }
 
@@ -64,12 +67,13 @@ public class MineStomIntegrationSpec {
         }
     }
 
-    protected static Player player(String name) {
-        return new TestPlayer(UUID.nameUUIDFromBytes(name.getBytes()), name);
-    }
+    protected static TestPlayer player(String name) {
+        ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
+        Player player = connectionManager.createPlayer(new TestPlayerConnection(), UUID.nameUUIDFromBytes(name.getBytes()), name);
+        connectionManager.transitionConfigToPlay(player);
+        connectionManager.tick(0);
 
-    protected static Player player() {
-        return player("Rollczi");
+        return (TestPlayer) player;
     }
 
     protected static ConsoleSender console() {

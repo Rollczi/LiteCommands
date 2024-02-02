@@ -2,15 +2,20 @@ package dev.rollczi.litecommands.reflect;
 
 import dev.rollczi.litecommands.LiteCommandsException;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class ReflectUtil {
 
     private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVES = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> PRIMITIVES_TO_BOXED = new HashMap<>();
 
     static {
         WRAPPERS_TO_PRIMITIVES.put(Boolean.class, boolean.class);
@@ -22,9 +27,31 @@ public final class ReflectUtil {
         WRAPPERS_TO_PRIMITIVES.put(Long.class, long.class);
         WRAPPERS_TO_PRIMITIVES.put(Short.class, short.class);
         WRAPPERS_TO_PRIMITIVES.put(Void.class, void.class);
+
+        PRIMITIVES_TO_BOXED.put(boolean.class, Boolean.class);
+        PRIMITIVES_TO_BOXED.put(byte.class, Byte.class);
+        PRIMITIVES_TO_BOXED.put(char.class, Character.class);
+        PRIMITIVES_TO_BOXED.put(double.class, Double.class);
+        PRIMITIVES_TO_BOXED.put(float.class, Float.class);
+        PRIMITIVES_TO_BOXED.put(int.class, Integer.class);
+        PRIMITIVES_TO_BOXED.put(long.class, Long.class);
+        PRIMITIVES_TO_BOXED.put(short.class, Short.class);
+        PRIMITIVES_TO_BOXED.put(void.class, Void.class);
     }
 
     private ReflectUtil() {}
+
+    public static Class<?> getArrayType(Class<?> componentType) {
+        return Array.newInstance(componentType, 0).getClass();
+    }
+
+    public static Class<?> boxedToPrimitive(Class<?> clazz) {
+        return WRAPPERS_TO_PRIMITIVES.get(clazz);
+    }
+
+    public static Class<?> primitiveToBoxed(Class<?> clazz) {
+        return PRIMITIVES_TO_BOXED.get(clazz);
+    }
 
     public static boolean instanceOf(Object obj, Class<?> instanceOf) {
         return instanceOf(obj.getClass(), instanceOf);
@@ -92,6 +119,23 @@ public final class ReflectUtil {
 
             throw new LiteCommandsReflectException(String.format("Unable to find method %s(%s) in %s", methodName, Arrays.toString(params), clazz));
         }
+    }
+
+    public static List<Class<?>> getInterfaces(Class<?> type) {
+        Class<?>[] current = type.getInterfaces();
+
+        if (current.length == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Class<?>> interfaces = new ArrayList<>();
+
+        for (Class<?> anInterface : type.getInterfaces()) {
+            interfaces.add(anInterface);
+            interfaces.addAll(getInterfaces(anInterface));
+        }
+
+        return interfaces;
     }
 
     @SuppressWarnings("unchecked")
