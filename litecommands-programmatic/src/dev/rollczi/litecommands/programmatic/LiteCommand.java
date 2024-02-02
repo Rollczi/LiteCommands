@@ -31,6 +31,7 @@ public class LiteCommand<SENDER> {
     protected final Meta meta = Meta.create();
 
     protected Function<LiteContext<SENDER>, Object> executor = liteContext -> null;
+    protected boolean withExecutor = true;
     protected final List<Argument<?>> arguments = new ArrayList<>();
     protected final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
     protected final List<BindRequirement<?>> bindRequirements = new ArrayList<>();
@@ -138,6 +139,16 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
+    /**
+     * Disables the executor for this command. Useful when you want to use subcommands only.
+     */
+    @ApiStatus.Experimental
+    public LiteCommand<SENDER> withoutExecutor() {
+        this.executor = liteContext -> null;
+        this.withExecutor = false;
+        return this;
+    }
+
     protected void execute(LiteContext<SENDER> context) {
         Object object = this.executor.apply(context);
         context.returnResult(object);
@@ -154,14 +165,17 @@ public class LiteCommand<SENDER> {
             .routeName(name)
             .routeAliases(aliases)
             .applyMeta(meta -> meta.apply(this.meta))
-            .applyMeta(meta -> meta.listEditor(Meta.COMMAND_ORIGIN_TYPE).add(this.getClass()).apply())
-            .appendExecutor(root -> CommandExecutor.builder(root)
+            .applyMeta(meta -> meta.listEditor(Meta.COMMAND_ORIGIN_TYPE).add(this.getClass()).apply());
+
+        if (withExecutor) {
+            builder.appendExecutor(root -> CommandExecutor.builder(root)
                 .executor(liteContext -> execute(liteContext))
                 .arguments(arguments)
                 .contextRequirements(contextRequirements)
                 .bindRequirements(bindRequirements)
                 .build()
             );
+        }
 
         for (LiteCommand<SENDER> subCommand : subCommands) {
             builder.appendChild(subCommand.toRoute());
