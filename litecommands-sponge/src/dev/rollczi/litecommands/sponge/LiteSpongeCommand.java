@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandCompletion;
@@ -71,13 +72,16 @@ public class LiteSpongeCommand implements Command.Raw {
     @Override
     public boolean canExecute(CommandCause sender) {
         MissingPermissions missingPermissions = MissingPermissions.check(new LiteSpongeSender(sender), this.commandRoute);
-        System.err.println(missingPermissions.asJoinedText());
         return missingPermissions.isPermitted();
     }
 
     @Override
     public Optional<Component> shortDescription(CommandCause cause) {
-        return Optional.of(Component.text(commandRoute.meta().get(Meta.DESCRIPTION, "")));
+        List<Component> description = commandRoute.meta().get(Meta.DESCRIPTION).stream()
+            .map(string -> Component.text(string))
+            .collect(Collectors.toList());
+
+        return Optional.of(Component.join(JoinConfiguration.newlines(), description));
     }
 
     @Override
