@@ -1,10 +1,12 @@
 package dev.rollczi.litecommands.command.executor;
 
+import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
@@ -175,7 +177,15 @@ public class CommandExecuteService<SENDER> {
             return scheduler.supply(type, () -> {
                 try {
                     return match.executeCommand();
-                } catch (Throwable error) {
+                }
+                catch (LiteCommandsException exception) {
+                    if (exception.getCause() instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
+                        return CommandExecuteResult.failed(executor, ((InvalidUsageException) exception.getCause()).getErrorResult());
+                    }
+
+                    return CommandExecuteResult.thrown(executor, exception);
+                }
+                catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);
                 }
             });
