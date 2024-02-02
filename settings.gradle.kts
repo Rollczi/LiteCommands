@@ -25,6 +25,7 @@ include(":examples:bukkit")
 include(":examples:bukkit-adventure-platform")
 include(":examples:bukkit-chatgpt", JavaVersion.VERSION_11)
 include(":examples:velocity", JavaVersion.VERSION_11)
+include(":examples:sponge")
 
 fun include(projectPath: String, version: JavaVersion) {
     if (!JavaVersion.current().isCompatibleWith(version)) {

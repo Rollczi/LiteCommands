@@ -1,0 +1,62 @@
+import org.spongepowered.gradle.plugin.config.PluginLoaders
+import org.spongepowered.plugin.metadata.model.PluginDependency
+
+plugins {
+    id("java")
+    id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("org.spongepowered.gradle.plugin") version "2.2.0"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+    maven { url = uri("https://repo.panda-lang.org/releases/") }
+    maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
+}
+
+dependencies {
+    // implementation("dev.rollczi:litecommands-sponge:3.0.0-BETA-pre23") // <-- uncomment in your project
+    implementation(project(":litecommands-sponge")) // don't use this line in your build.gradle
+}
+
+val packageName = "dev.rollczi.example.sponge"
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveFileName.set("ExampleSpongePlugin v${project.version}.jar")
+
+    listOf(
+        "panda",
+        "org.panda_lang",
+        "dev.rollczi.litecommands",
+    ).forEach { relocate(it, "$packageName.libs.$it") }
+}
+
+sourceSets.test {
+    java.setSrcDirs(emptyList<String>())
+    resources.setSrcDirs(emptyList<String>())
+}
+
+group = "${project.group}"
+version = "${project.version}"
+
+sponge {
+    apiVersion("8.2.0")
+    license("Apache License 2.0")
+    loader {
+        name(PluginLoaders.JAVA_PLAIN)
+        version("${project.version}")
+    }
+    plugin("litecommands_example") {
+        displayName("LiteCommands Example")
+        entrypoint("$packageName.ExamplePlugin")
+        description("LiteCommands example plugin")
+        dependency("spongeapi") {
+            loadOrder(PluginDependency.LoadOrder.AFTER)
+            optional(false)
+        }
+    }
+}

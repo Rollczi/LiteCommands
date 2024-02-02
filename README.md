@@ -112,6 +112,7 @@ implementation("dev.rollczi:litecommands-bukkit:3.0.0-BETA-pre23")
 - BungeeCord `litecommands-bungee`
 - Minestom `litecommands-minestom`
 - JDA `litecommands-jda`
+- Sponge 8 `litecommands-sponge`
 
 #### Extensions:
 - Adventure `litecommands-adventure`

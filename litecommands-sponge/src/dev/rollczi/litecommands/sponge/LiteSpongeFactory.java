@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.sponge;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.sponge.internal.LiteSpongePlatform;
+import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.plugin.PluginContainer;
 
@@ -16,7 +16,7 @@ public class LiteSpongeFactory {
     }
 
     public static LiteCommandsBuilder<CommandCause, LiteSpongeSettings, ?> builder(PluginContainer plugin, LiteSpongeSettings liteBungeeSettings) {
-        return LiteCommandsFactory.builder(CommandCause.class, new LiteSpongePlatform(plugin, liteBungeeSettings));
-        // TODO
+        return LiteCommandsFactory.builder(CommandCause.class, new LiteSpongePlatform(plugin, liteBungeeSettings))
+            .extension(new LiteAdventureExtension<>(invocation -> invocation.sender().audience()));
     }
 }

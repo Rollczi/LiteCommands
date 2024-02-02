@@ -7,8 +7,9 @@ plugins {
 
 dependencies {
     api(project(":litecommands-framework"))
-    compileOnly("org.spongepowered:spongeapi:8.2.0")
+    api(project(":litecommands-adventure"))
 
+    compileOnly("org.spongepowered:spongeapi:8.2.0")
 }
 
 val bukkitArtifact: String by extra
