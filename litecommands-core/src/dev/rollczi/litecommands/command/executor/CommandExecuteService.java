@@ -4,7 +4,11 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.executor.event.CandidateExecutorFoundEvent;
+import dev.rollczi.litecommands.command.executor.event.CandidateExecutorMatchEvent;
+import dev.rollczi.litecommands.command.executor.event.CommandExecutionCompletionEvent;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.event.EventHandler;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
@@ -46,13 +50,15 @@ public class CommandExecuteService<SENDER> {
     private final SchematicGenerator<SENDER> schematicGenerator;
     private final ScheduledRequirementResolver<SENDER> scheduledRequirementResolver;
     private final WrapperRegistry wrapperRegistry;
+    private final EventHandler eventHandler;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry, EventHandler eventHandler) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.scheduler = scheduler;
         this.schematicGenerator = schematicGenerator;
         this.wrapperRegistry = wrapperRegistry;
+        this.eventHandler = eventHandler;
         this.scheduledRequirementResolver = new ScheduledRequirementResolver<>(contextRegistry, parserRegistry, bindRegistry, scheduler);
     }
 
@@ -146,8 +152,15 @@ public class CommandExecuteService<SENDER> {
         }
 
         CommandExecutor<SENDER> executor = executors.next();
+
+        // TODO Call event CandidateExecutorFoundEvent
+        eventHandler.publish(new CandidateExecutorFoundEvent(invocation, executor));
+
         // Handle matching arguments
         return this.match(executor, invocation, matcher.copy()).thenCompose(match -> {
+            // TODO Call event ArgumentMatchEvent
+            eventHandler.publish(new CandidateExecutorMatchEvent(invocation, executor, match));
+
             if (match.isFailed()) {
                 FailedReason current = match.getFailedReason();
 
@@ -157,6 +170,9 @@ public class CommandExecuteService<SENDER> {
 
                 return this.execute(executors, invocation, matcher, commandRoute, last);
             }
+
+            // TODO Call event CommandExecutionEvent
+            eventHandler.publish(new CommandExecutionCompletionEvent(invocation, executor));
 
             // Handle validation
             Flow flow = this.validatorService.validate(invocation, executor);
@@ -177,6 +193,9 @@ public class CommandExecuteService<SENDER> {
                     return match.executeCommand();
                 } catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);
+                } finally {
+                    // TODO Call event CommandExecutionCompletionEvent
+                    eventHandler.publish(new CommandExecutionCompletionEvent(invocation, executor));
                 }
             });
         }).exceptionally(throwable -> toThrown(executor, throwable));
