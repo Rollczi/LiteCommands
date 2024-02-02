@@ -44,15 +44,6 @@ public class LiteMessages {
         input -> "Invalid date format '" + input + "'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)"
     );
 
-    /**
-     * Default message key for invalid Instant format.
-     * It's used in {@link InstantArgumentResolver}
-     */
-    public static final MessageKey<String> INSTANT_INVALID_FORMAT = MessageKey.of(
-        "instant-invalid-format",
-        input -> "&cInvalid date format '" + input + "'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)"
-    );
-
     protected LiteMessages() {
     }
 
