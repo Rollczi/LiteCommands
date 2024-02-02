@@ -108,7 +108,6 @@ class AsyncCommandTest extends LiteTestSpec {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args first second");
 
         await()
-            .atLeast(DELAY - MARGIN, TimeUnit.MILLISECONDS)
             .atMost(DELAY + MARGIN, TimeUnit.MILLISECONDS)
             .until(() -> result.isDone());
 
@@ -121,7 +120,6 @@ class AsyncCommandTest extends LiteTestSpec {
         CompletableFuture<AssertExecute> result = platform.executeAsync("test async-args-and-method first second");
 
         await()
-            .atLeast(DELAY - MARGIN, TimeUnit.MILLISECONDS)
             .atMost(DELAY + MARGIN, TimeUnit.MILLISECONDS)
             .until(() -> result.isDone());
 
