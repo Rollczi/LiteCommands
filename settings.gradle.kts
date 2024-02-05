@@ -19,6 +19,7 @@ include(":litecommands-bungee")
 include(":litecommands-bukkit")
 include(":litecommands-minestom", JavaVersion.VERSION_17)
 include("litecommands-jda", JavaVersion.VERSION_17)
+include(":litecommands-sponge")
 
 // examples
 include(":examples:bukkit")
@@ -26,6 +27,7 @@ include(":examples:bukkit-adventure-platform")
 include(":examples:bukkit-chatgpt", JavaVersion.VERSION_11)
 include(":examples:minestom", JavaVersion.VERSION_17)
 include(":examples:velocity", JavaVersion.VERSION_11)
+include(":examples:sponge")
 
 fun include(projectPath: String, version: JavaVersion) {
     if (!JavaVersion.current().isCompatibleWith(version)) {

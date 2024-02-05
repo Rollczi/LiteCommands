@@ -11,4 +11,5 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // spigot
     maven("https://jitpack.io/") // minestom
     maven("https://repo.panda-lang.org/releases/") // expressible
+    maven("https://repo.spongepowered.org/repository/maven-releases/") // sponge
 }
