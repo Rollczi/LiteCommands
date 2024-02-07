@@ -40,8 +40,8 @@ public class ServerPlayerArgument extends ArgumentResolver<CommandCause, ServerP
             return SuggestionResult.empty();
         }
 
-        try (SuggestionStream<ServerPlayer> stream = SuggestionStream.of(game.server().onlinePlayers())) {
-            return stream.collect(player -> player.name());
-        }
+        return game.server().onlinePlayers().stream()
+            .map(player -> player.name())
+            .collect(SuggestionResult.collector());
     }
 }
