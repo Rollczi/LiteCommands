@@ -15,14 +15,10 @@ import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class LiteSpongeCommand implements Command.Raw {
@@ -37,36 +33,32 @@ public class LiteSpongeCommand implements Command.Raw {
         this.suggestionHook = suggestionHook;
     }
 
-    public UUID getUniqueId() {
-        return commandRoute.getUniqueId();
-    }
-
-    public String getMainAlias() {
-        return commandRoute.getName();
-    }
-
-    public Set<String> getAllAliases() {
-        return new HashSet<>(commandRoute.names());
+    public CommandRoute<CommandCause> getCommandRoute() {
+        return commandRoute;
     }
 
     @Override
-    public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) throws CommandException {
-        ParseableInput<?> input = ParseableInput.raw(arguments.immutable().input().split(RawCommand.COMMAND_SEPARATOR));
-        Invocation<CommandCause> invocation = new Invocation<>(cause, new LiteSpongeSender(cause), getMainAlias(), getMainAlias(), input);
+    public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) {
+        ParseableInput<?> input = rawCommand(arguments).toParseableInput();
+        Invocation<CommandCause> invocation = new Invocation<>(cause, new LiteSpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
         this.executeHook.execute(invocation, input);
         return CommandResult.success();
     }
 
     @Override
-    public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments) throws CommandException {
-        SuggestionInput<?> input = SuggestionInput.raw(arguments.immutable().input().split(RawCommand.COMMAND_SEPARATOR));
-        Invocation<CommandCause> invocation = new Invocation<>(cause, new LiteSpongeSender(cause), getMainAlias(), getMainAlias(), input);
+    public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments) {
+        SuggestionInput<?> input = rawCommand(arguments).toSuggestionInput();
+        Invocation<CommandCause> invocation = new Invocation<>(cause, new LiteSpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
 
         return this.suggestionHook.suggest(invocation, input)
             .getSuggestions()
             .stream()
             .map(suggestion -> CommandCompletion.of(suggestion.multilevel()))
             .collect(Collectors.toList());
+    }
+
+    private RawCommand rawCommand(ArgumentReader.Mutable arguments) {
+        return RawCommand.from(RawCommand.COMMAND_SLASH + commandRoute.getName() + RawCommand.COMMAND_SEPARATOR + arguments.input());
     }
 
     @Override

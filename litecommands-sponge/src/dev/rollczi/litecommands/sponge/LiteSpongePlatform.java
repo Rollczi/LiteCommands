@@ -4,7 +4,9 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import org.jetbrains.annotations.NotNull;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCause;
@@ -12,15 +14,12 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.plugin.PluginContainer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 public class LiteSpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSettings> {
 
     private final PluginContainer plugin;
-    private final Collection<LiteSpongeCommand> commands = new ArrayList<>();
+    private final Map<UUID, LiteSpongeCommand> commands = new HashMap<>();
 
-    public LiteSpongePlatform(PluginContainer plugin, @NotNull LiteSpongeSettings settings) {
+    public LiteSpongePlatform(PluginContainer plugin, LiteSpongeSettings settings) {
         super(settings);
         this.plugin = plugin;
         Sponge.eventManager().registerListeners(plugin, this);
@@ -28,18 +27,19 @@ public class LiteSpongePlatform extends AbstractPlatform<CommandCause, LiteSpong
 
     @Override
     protected void hook(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> invocationHook, PlatformSuggestionListener<CommandCause> suggestionHook) {
-        commands.add(new LiteSpongeCommand(commandRoute, invocationHook, suggestionHook));
+        commands.put(commandRoute.getUniqueId(), new LiteSpongeCommand(commandRoute, invocationHook, suggestionHook));
     }
 
     @Override
     protected void unhook(CommandRoute<CommandCause> commandRoute) {
-        commands.removeIf(spongeCommand -> spongeCommand.getUniqueId().equals(commandRoute.getUniqueId()));
+        commands.remove(commandRoute.getUniqueId());
     }
 
     @Listener
     public void onRegisterRawCommands(RegisterCommandEvent<Command.Raw> event) {
-        for (LiteSpongeCommand command : commands) {
-            event.register(plugin, command, command.getMainAlias(), command.getAllAliases().toArray(new String[0]));
+        for (LiteSpongeCommand command : commands.values()) {
+            CommandRoute<CommandCause> commandRoute = command.getCommandRoute();
+            event.register(plugin, command, commandRoute.getName(), commandRoute.getAliases().toArray(new String[0]));
         }
     }
 }
