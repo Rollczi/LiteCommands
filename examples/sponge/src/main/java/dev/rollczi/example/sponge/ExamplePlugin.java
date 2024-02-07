@@ -12,7 +12,9 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.plugin.PluginContainer;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
+@Plugin("litecommands-example")
 public class ExamplePlugin {
 
     @Inject

@@ -14,12 +14,12 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.panda-lang.org/releases/") }
-    maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
+    maven("https://repo.panda-lang.org/releases/")
+    maven("https://repo.spongepowered.org/repository/maven-releases/")
 }
 
 dependencies {
-    // implementation("dev.rollczi:litecommands-sponge:3.0.0-BETA-pre23") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-sponge:3.3.3") // <-- uncomment in your project
     implementation(project(":litecommands-sponge")) // don't use this line in your build.gradle
 }
 
@@ -30,8 +30,7 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
 
     listOf(
         "panda",
-        "org.panda_lang",
-        "dev.rollczi.litecommands",
+//        "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }
 
@@ -40,9 +39,6 @@ sourceSets.test {
     resources.setSrcDirs(emptyList<String>())
 }
 
-group = "${project.group}"
-version = "${project.version}"
-
 sponge {
     apiVersion("8.2.0")
     license("Apache License 2.0")
@@ -50,7 +46,7 @@ sponge {
         name(PluginLoaders.JAVA_PLAIN)
         version("${project.version}")
     }
-    plugin("litecommands_example") {
+    plugin("litecommands-example") {
         displayName("LiteCommands Example")
         entrypoint("$packageName.ExamplePlugin")
         description("LiteCommands example plugin")
