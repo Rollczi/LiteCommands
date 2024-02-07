@@ -14,7 +14,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.plugin.PluginContainer;
 
-class SpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSettings> {
+public class SpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSettings> {
 
     private final PluginContainer plugin;
     private final Map<UUID, SpongeCommand> commands = new HashMap<>();
