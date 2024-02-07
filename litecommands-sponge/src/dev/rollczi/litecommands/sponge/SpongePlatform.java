@@ -14,12 +14,12 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.plugin.PluginContainer;
 
-public class LiteSpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSettings> {
+class SpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSettings> {
 
     private final PluginContainer plugin;
-    private final Map<UUID, LiteSpongeCommand> commands = new HashMap<>();
+    private final Map<UUID, SpongeCommand> commands = new HashMap<>();
 
-    public LiteSpongePlatform(PluginContainer plugin, LiteSpongeSettings settings) {
+    public SpongePlatform(PluginContainer plugin, LiteSpongeSettings settings) {
         super(settings);
         this.plugin = plugin;
         Sponge.eventManager().registerListeners(plugin, this);
@@ -27,7 +27,7 @@ public class LiteSpongePlatform extends AbstractPlatform<CommandCause, LiteSpong
 
     @Override
     protected void hook(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> invocationHook, PlatformSuggestionListener<CommandCause> suggestionHook) {
-        commands.put(commandRoute.getUniqueId(), new LiteSpongeCommand(commandRoute, invocationHook, suggestionHook));
+        commands.put(commandRoute.getUniqueId(), new SpongeCommand(commandRoute, invocationHook, suggestionHook));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class LiteSpongePlatform extends AbstractPlatform<CommandCause, LiteSpong
 
     @Listener
     public void onRegisterRawCommands(RegisterCommandEvent<Command.Raw> event) {
-        for (LiteSpongeCommand command : commands.values()) {
+        for (SpongeCommand command : commands.values()) {
             CommandRoute<CommandCause> commandRoute = command.getCommandRoute();
             event.register(plugin, command, commandRoute.getName(), commandRoute.getAliases().toArray(new String[0]));
         }

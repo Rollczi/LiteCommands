@@ -24,7 +24,7 @@ public class LiteSpongeFactory {
 
     @SuppressWarnings("unchecked")
     public static <B extends LiteCommandsBuilder<CommandCause, LiteSpongeSettings, B>> B builder(PluginContainer plugin, Game game, LiteSpongeSettings settings) {
-        return (B) LiteCommandsFactory.builder(CommandCause.class, new LiteSpongePlatform(plugin, settings)).selfProcessor((builder, internal) -> {
+        return (B) LiteCommandsFactory.builder(CommandCause.class, new SpongePlatform(plugin, settings)).selfProcessor((builder, internal) -> {
             MessageRegistry<CommandCause> messageRegistry = internal.getMessageRegistry();
 
             builder

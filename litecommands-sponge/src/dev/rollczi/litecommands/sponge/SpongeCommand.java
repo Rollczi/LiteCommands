@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class LiteSpongeCommand implements Command.Raw {
+class SpongeCommand implements Command.Raw {
 
     private final CommandRoute<CommandCause> commandRoute;
     private final PlatformInvocationListener<CommandCause> executeHook;
     private final PlatformSuggestionListener<CommandCause> suggestionHook;
 
-    public LiteSpongeCommand(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> executeHook, PlatformSuggestionListener<CommandCause> suggestionHook) {
+    public SpongeCommand(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> executeHook, PlatformSuggestionListener<CommandCause> suggestionHook) {
         this.commandRoute = commandRoute;
         this.executeHook = executeHook;
         this.suggestionHook = suggestionHook;
@@ -40,7 +40,7 @@ public class LiteSpongeCommand implements Command.Raw {
     @Override
     public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) {
         ParseableInput<?> input = rawCommand(arguments).toParseableInput();
-        Invocation<CommandCause> invocation = new Invocation<>(cause, new LiteSpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
+        Invocation<CommandCause> invocation = new Invocation<>(cause, new SpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
         this.executeHook.execute(invocation, input);
         return CommandResult.success();
     }
@@ -48,7 +48,7 @@ public class LiteSpongeCommand implements Command.Raw {
     @Override
     public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments) {
         SuggestionInput<?> input = rawCommand(arguments).toSuggestionInput();
-        Invocation<CommandCause> invocation = new Invocation<>(cause, new LiteSpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
+        Invocation<CommandCause> invocation = new Invocation<>(cause, new SpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
 
         return this.suggestionHook.suggest(invocation, input)
             .getSuggestions()
@@ -63,7 +63,7 @@ public class LiteSpongeCommand implements Command.Raw {
 
     @Override
     public boolean canExecute(CommandCause sender) {
-        MissingPermissions missingPermissions = MissingPermissions.check(new LiteSpongeSender(sender), this.commandRoute);
+        MissingPermissions missingPermissions = MissingPermissions.check(new SpongeSender(sender), this.commandRoute);
         return missingPermissions.isPermitted();
     }
 

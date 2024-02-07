@@ -5,11 +5,11 @@ import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.Player;
 
-public class LiteSpongeSender extends AbstractPlatformSender {
+public class SpongeSender extends AbstractPlatformSender {
 
     private final CommandCause handle;
 
-    public LiteSpongeSender(CommandCause handle) {
+    public SpongeSender(CommandCause handle) {
         this.handle = handle;
     }
 
