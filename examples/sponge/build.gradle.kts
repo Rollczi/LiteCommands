@@ -25,12 +25,12 @@ dependencies {
 
 val packageName = "dev.rollczi.example.sponge"
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.shadowJar {
     archiveFileName.set("ExampleSpongePlugin v${project.version}.jar")
 
     listOf(
-        "panda",
-//        "dev.rollczi.litecommands",
+        "panda.std",
+        "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }
 
