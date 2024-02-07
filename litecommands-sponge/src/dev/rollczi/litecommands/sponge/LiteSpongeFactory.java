@@ -5,8 +5,10 @@ import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.sponge.argument.ServerPlayerArgument;
-import dev.rollczi.litecommands.sponge.contextual.ServerPlayerOnlyContextual;
+import dev.rollczi.litecommands.sponge.context.ServerPlayerOnlyContext;
+import org.spongepowered.api.Client;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.plugin.PluginContainer;
@@ -26,8 +28,13 @@ public class LiteSpongeFactory {
             MessageRegistry<CommandCause> messageRegistry = internal.getMessageRegistry();
 
             builder
+                .bind(Server.class, () -> game.server())
+                .bind(Client.class, () -> game.client())
+                .bind(Game.class, () -> game)
+                .bind(PluginContainer.class, () -> plugin)
+
                 .argument(ServerPlayer.class, new ServerPlayerArgument(game, messageRegistry))
-                .context(ServerPlayer.class, new ServerPlayerOnlyContextual(messageRegistry))
+                .context(ServerPlayer.class, new ServerPlayerOnlyContext(messageRegistry))
 
                 .extension(new LiteAdventureExtension<>(invocation -> invocation.sender().audience()));
         });

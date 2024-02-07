@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.sponge.contextual;
+package dev.rollczi.litecommands.sponge.context;
 
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.context.ContextResult;
@@ -6,14 +6,13 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.sponge.LiteSpongeMessages;
 import org.spongepowered.api.command.CommandCause;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
-public class ServerPlayerOnlyContextual implements ContextProvider<CommandCause, ServerPlayer> {
+public class ServerPlayerOnlyContext implements ContextProvider<CommandCause, ServerPlayer> {
 
     private final MessageRegistry<CommandCause> messageRegistry;
 
-    public ServerPlayerOnlyContextual(MessageRegistry<CommandCause> messageRegistry) {
+    public ServerPlayerOnlyContext(MessageRegistry<CommandCause> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
