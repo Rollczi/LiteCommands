@@ -32,7 +32,7 @@ public class LiteSpongePlatform extends AbstractPlatform<CommandCause, LiteSpong
 
     @Override
     protected void unhook(CommandRoute<CommandCause> commandRoute) {
-        commands.remove(commandRoute.getUniqueId());
+        // Sponge doesn't provide a way to unregister commands (TODO: check if it's possible by reflections)
     }
 
     @Listener

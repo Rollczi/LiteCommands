@@ -10,9 +10,11 @@ import org.spongepowered.api.command.CommandCause;
 
 public class PermissionMessage implements MissingPermissionsHandler<CommandCause> {
 
+    public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
     @Override
     public void handle(Invocation<CommandCause> invocation, MissingPermissions missingPermissions, ResultHandlerChain<CommandCause> chain) {
-        invocation.sender().audience().sendMessage(MiniMessage.miniMessage().deserialize(
+        invocation.sender().audience().sendMessage(MINI_MESSAGE.deserialize(
             "<red>You don't have permission to use this command! (<permission>)",
             Placeholder.unparsed("permission", missingPermissions.asJoinedText())
         ));

@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.schematic.Schematic;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.spongepowered.api.command.CommandCause;
 
-public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandCause> {
+public class InvalidUsageMessage implements InvalidUsageHandler<CommandCause> {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 

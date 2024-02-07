@@ -3,7 +3,7 @@ package dev.rollczi.example.sponge;
 import com.google.inject.Inject;
 import dev.rollczi.example.sponge.command.KickCommand;
 import dev.rollczi.example.sponge.command.TeleportCommand;
-import dev.rollczi.example.sponge.handler.InvalidUsageHandlerImpl;
+import dev.rollczi.example.sponge.handler.InvalidUsageMessage;
 import dev.rollczi.example.sponge.handler.PermissionMessage;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -36,7 +36,7 @@ public class ExamplePlugin {
 
             // Handlers for missing permissions and invalid usage
             .missingPermission(new PermissionMessage())
-            .invalidUsage(new InvalidUsageHandlerImpl())
+            .invalidUsage(new InvalidUsageMessage())
 
             // Schematic generator is used to generate schematic for command, for example, when you run invalid command.
             .schematicGenerator(SchematicFormat.angleBrackets())
