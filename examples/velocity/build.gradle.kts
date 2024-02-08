@@ -26,12 +26,11 @@ dependencies {
 val pluginName = "ExampleVelocityPlugin"
 val packageName = "dev.rollczi.example.velocity"
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.shadowJar {
     archiveFileName.set("$pluginName v${project.version}.jar")
 
     listOf(
-        "panda",
-        "org.panda_lang",
+        "panda.std",
         "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }

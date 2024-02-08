@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":litecommands-minestom")) // don't use this line in your build.gradle
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.shadowJar {
     archiveFileName.set("ExampleMinestom v${project.version}.jar")
 }
 

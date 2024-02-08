@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -38,12 +36,11 @@ bukkit {
     version = "${project.version}"
 }
 
-tasks.withType<ShadowJar> {
+tasks.shadowJar {
     archiveFileName.set("$packageName v${project.version}.jar")
 
     listOf(
-        "panda",
-        "org.panda_lang",
+        "panda.std",
         "dev.rollczi.litecommands",
         "net.kyori",
     ).forEach { relocate(it, "$packageName.libs.$it") }
