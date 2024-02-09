@@ -15,7 +15,7 @@
 [![Java](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/java8_vector.svg)](https://www.java.com/)
 
 ### LiteCommands
-Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom JDA and future implementations.
+Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, Sponge, JDA and future implementations.
 
 </div>
 
