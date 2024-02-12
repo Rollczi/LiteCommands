@@ -17,7 +17,7 @@ public final class MapUtil {
 
         for (Map.Entry<Class<?>, E> entry : map.entrySet()) {
             if (type.isAssignableFrom(entry.getKey())) {
-                return Optional.of(entry.getValue());
+                return Optional.ofNullable(entry.getValue());
             }
         }
 
