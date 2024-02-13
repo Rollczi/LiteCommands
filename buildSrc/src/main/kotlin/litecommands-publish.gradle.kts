@@ -65,6 +65,8 @@ fun RepositoryHandler.maven(
         return
     }
 
+    logger.lifecycle("Publishing to $name ($url) with ${if (isSnapshot) "snapshots" else "releases"} ($version)")
+
     this.maven {
         this.name =
             if (isSnapshot) "${name}Snapshots"
