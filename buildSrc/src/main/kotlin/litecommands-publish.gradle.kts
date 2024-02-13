@@ -1,10 +1,11 @@
 plugins {
     id("java-library")
     id("maven-publish")
+    id("pl.allegro.tech.build.axion-release")
 }
 
 group = "dev.rollczi"
-version = "3.3.4"
+version = scmVersion.version
 
 java {
     withSourcesJar()
