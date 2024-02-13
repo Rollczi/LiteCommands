@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -18,7 +16,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.3.3") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.3.4") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 }
 
@@ -33,12 +31,11 @@ bukkit {
     version = "${project.version}"
 }
 
-tasks.withType<ShadowJar> {
+tasks.shadowJar {
     archiveFileName.set("$pluginName v${project.version}.jar")
 
     listOf(
-        "panda",
-        "org.panda_lang",
+        "panda.std",
         "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }

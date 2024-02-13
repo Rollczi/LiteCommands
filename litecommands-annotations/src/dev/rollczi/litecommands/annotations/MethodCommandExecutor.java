@@ -103,10 +103,6 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
             } catch (InvocationTargetException exception) {
                 Throwable targetException = exception.getTargetException();
 
-                if (targetException instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
-                    return CommandExecuteResult.failed(MethodCommandExecutor.this, ((InvalidUsageException) targetException).getErrorResult());
-                }
-
                 throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }
         }

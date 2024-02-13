@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command.executor;
 
+import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.requirement.BindRequirement;
@@ -94,8 +95,8 @@ public class CommandExecutorBuilder<SENDER> {
 
                     return CommandExecuteResult.success(this, context.getReturnResult());
                 }
-                catch (Exception exception) {
-                    return CommandExecuteResult.failed(this, exception);
+                catch (Throwable exception) {
+                    throw new LiteCommandsException("An error occurred while executing -> " + parent.getName(), exception);
                 }
             });
         }

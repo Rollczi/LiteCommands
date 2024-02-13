@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.command.executor;
 
+import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.bind.BindRegistry;
@@ -10,6 +11,7 @@ import dev.rollczi.litecommands.command.executor.event.CommandExecutionCompletio
 import dev.rollczi.litecommands.command.executor.event.CommandExecutionEvent;
 import dev.rollczi.litecommands.command.executor.flow.ExecuteFlow;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
@@ -200,7 +202,15 @@ public class CommandExecuteService<SENDER> {
             return scheduler.supply(type, () -> {
                 try {
                     return match.executeCommand();
-                } catch (Throwable error) {
+                }
+                catch (LiteCommandsException exception) {
+                    if (exception.getCause() instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
+                        return CommandExecuteResult.failed(executor, ((InvalidUsageException) exception.getCause()).getErrorResult());
+                    }
+
+                    return CommandExecuteResult.thrown(executor, exception);
+                }
+                catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);
                 } finally {
                     //TODO catch results

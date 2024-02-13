@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -18,8 +16,8 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.3.3") // <-- uncomment in your project
-    // implementation("dev.rollczi:litecommands-adventure-platform:3.3.3") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.3.4") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-adventure-platform:3.3.4") // <-- uncomment in your project
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
@@ -38,12 +36,11 @@ bukkit {
     version = "${project.version}"
 }
 
-tasks.withType<ShadowJar> {
+tasks.shadowJar {
     archiveFileName.set("$packageName v${project.version}.jar")
 
     listOf(
-        "panda",
-        "org.panda_lang",
+        "panda.std",
         "dev.rollczi.litecommands",
         "net.kyori",
     ).forEach { relocate(it, "$packageName.libs.$it") }

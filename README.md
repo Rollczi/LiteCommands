@@ -15,7 +15,7 @@
 [![Java](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/java8_vector.svg)](https://www.java.com/)
 
 ### LiteCommands
-Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom JDA and future implementations.
+Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, Sponge, JDA and future implementations.
 
 </div>
 
@@ -79,13 +79,13 @@ maven("https://repo.panda-lang.org/releases")
 
 #### ➕ Add LiteCommands to dependencies
 ```kts
-implementation("dev.rollczi:{artifact}:3.3.3")
+implementation("dev.rollczi:{artifact}:3.3.4")
 ```
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>{artifact}</artifactId>
-    <version>3.3.3</version>
+    <version>3.3.4</version>
 </dependency>
 ```
 > ⚠️ Replace `{artifact}` with [platform artifact](https://litedevelopers.github.io/LiteDevelopers-documentation/platforms.html)  
@@ -97,7 +97,7 @@ implementation("dev.rollczi:{artifact}:3.3.3")
 @@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
 ```
 
-<!-- sponsors --><a href="https://github.com/rchomczyk"><img src="https://images.weserv.nl/?url=https://github.com/rchomczyk.png?v=4&mask=circle" width="60px" alt="Rafał Chomczyk" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/SfenKer"><img src="https://images.weserv.nl/?url=https://github.com/SfenKer.png?v=4&mask=circle" width="60px" alt="Hubert Kuliniak" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 
 ## 🔮 Official IntelliJ Plugin
 

@@ -19,19 +19,18 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-velocity:3.3.3") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-velocity:3.3.4") // <-- uncomment in your project
     implementation(project(":litecommands-velocity")) // don't use this line in your build.gradle
 }
 
 val pluginName = "ExampleVelocityPlugin"
 val packageName = "dev.rollczi.example.velocity"
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.shadowJar {
     archiveFileName.set("$pluginName v${project.version}.jar")
 
     listOf(
-        "panda",
-        "org.panda_lang",
+        "panda.std",
         "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }

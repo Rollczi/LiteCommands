@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.LiteCommandsInternal;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
@@ -47,9 +48,11 @@ public class LiteAdventureExtension<SENDER> implements LiteExtension<SENDER, Lit
         AdventureJoinComponentResolver<SENDER> joinRaw = AdventureJoinComponentResolver.raw();
 
         builder
-            .argument(Component.class, settings.colorizeArgument ? colored : raw)
-            .argument(Component.class, ArgumentKey.of("raw"), raw)
-            .argument(Component.class, ArgumentKey.of("color"), colored)
+            .argumentParser(Component.class, settings.colorizeArgument ? colored : raw)
+            .argumentParser(Component.class, ArgumentKey.of("raw"), raw)
+            .argumentParser(Component.class, ArgumentKey.of("color"), colored)
+
+            .argumentSuggester(Component.class, (invocation, argument, context) -> SuggestionResult.of("<" + argument.getName() + ">"))
 
             .argumentParser(Component.class, JoinArgument.KEY, settings.colorizeArgument ? joinColor : joinRaw)
             .argumentParser(Component.class, JoinArgument.KEY.withKey("raw"), joinRaw)
