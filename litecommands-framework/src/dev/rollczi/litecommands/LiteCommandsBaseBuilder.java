@@ -9,8 +9,9 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
-import dev.rollczi.litecommands.event.EventHandler;
+import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.event.EventListener;
+import dev.rollczi.litecommands.event.SimpleEventPublisher;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
@@ -94,6 +95,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final WrapperRegistry wrapperRegistry;
 
     protected Scheduler scheduler;
+    protected EventPublisher eventPublisher;
     protected SchematicGenerator<SENDER> schematicGenerator;
 
     /**
@@ -153,6 +155,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.wrapperRegistry = wrapperRegistry;
 
         this.scheduler = new SchedulerSameThreadImpl();
+        this.eventPublisher = new SimpleEventPublisher();
         this.schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
     }
 
@@ -491,18 +494,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry, new EventHandler() {
-            // TODO implement this wip
-            @Override
-            public <E> E publish(E event) {
-                return event;
-            }
-
-            @Override
-            public <E> void subscribe(Class<E> eventClass, EventListener<E> listener) {
-
-            }
-        });
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry, eventPublisher);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
         CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
 

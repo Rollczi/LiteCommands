@@ -7,8 +7,10 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.event.CandidateExecutorFoundEvent;
 import dev.rollczi.litecommands.command.executor.event.CandidateExecutorMatchEvent;
 import dev.rollczi.litecommands.command.executor.event.CommandExecutionCompletionEvent;
+import dev.rollczi.litecommands.command.executor.event.CommandExecutionEvent;
+import dev.rollczi.litecommands.command.executor.flow.ExecuteFlow;
 import dev.rollczi.litecommands.context.ContextRegistry;
-import dev.rollczi.litecommands.event.EventHandler;
+import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
@@ -50,15 +52,15 @@ public class CommandExecuteService<SENDER> {
     private final SchematicGenerator<SENDER> schematicGenerator;
     private final ScheduledRequirementResolver<SENDER> scheduledRequirementResolver;
     private final WrapperRegistry wrapperRegistry;
-    private final EventHandler eventHandler;
+    private final EventPublisher eventPublisher;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry, EventHandler eventHandler) {
+    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry, EventPublisher eventPublisher) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.scheduler = scheduler;
         this.schematicGenerator = schematicGenerator;
         this.wrapperRegistry = wrapperRegistry;
-        this.eventHandler = eventHandler;
+        this.eventPublisher = eventPublisher;
         this.scheduledRequirementResolver = new ScheduledRequirementResolver<>(contextRegistry, parserRegistry, bindRegistry, scheduler);
     }
 
@@ -153,13 +155,25 @@ public class CommandExecuteService<SENDER> {
 
         CommandExecutor<SENDER> executor = executors.next();
 
-        // TODO Call event CandidateExecutorFoundEvent
-        eventHandler.publish(new CandidateExecutorFoundEvent(invocation, executor));
+        CandidateExecutorFoundEvent foundEvent = eventPublisher.publish(new CandidateExecutorFoundEvent(invocation, executor));
+        if (foundEvent.getFlow() == ExecuteFlow.TERMINATE) {
+            return completedFuture(CommandExecuteResult.failed(executor, foundEvent.getFlowResult()));
+        }
+
+        if (foundEvent.getFlow() == ExecuteFlow.SKIP) {
+            return this.execute(executors, invocation, matcher, commandRoute, foundEvent.getFlowResult());
+        }
 
         // Handle matching arguments
         return this.match(executor, invocation, matcher.copy()).thenCompose(match -> {
-            // TODO Call event ArgumentMatchEvent
-            eventHandler.publish(new CandidateExecutorMatchEvent(invocation, executor, match));
+            CandidateExecutorMatchEvent matchEvent = eventPublisher.publish(new CandidateExecutorMatchEvent(invocation, executor, match));
+            if (matchEvent.getFlow() == ExecuteFlow.TERMINATE) {
+                return completedFuture(CommandExecuteResult.failed(executor, matchEvent.getFlowResult()));
+            }
+
+            if (matchEvent.getFlow() == ExecuteFlow.SKIP) {
+                return this.execute(executors, invocation, matcher, commandRoute, matchEvent.getFlowResult());
+            }
 
             if (match.isFailed()) {
                 FailedReason current = match.getFailedReason();
@@ -171,10 +185,16 @@ public class CommandExecuteService<SENDER> {
                 return this.execute(executors, invocation, matcher, commandRoute, last);
             }
 
-            // TODO Call event CommandExecutionEvent
-            eventHandler.publish(new CommandExecutionCompletionEvent(invocation, executor));
+            CommandExecutionEvent executionEvent = eventPublisher.publish(new CommandExecutionEvent(invocation, executor));
+            if (executionEvent.getFlow() == ExecuteFlow.TERMINATE) {
+                return completedFuture(CommandExecuteResult.failed(executor, executionEvent.getFlowResult()));
+            }
 
-            // Handle validation
+            if (executionEvent.getFlow() == ExecuteFlow.SKIP) {
+                return this.execute(executors, invocation, matcher, commandRoute, executionEvent.getFlowResult());
+            }
+
+            // Handle validation TODO move as event
             Flow flow = this.validatorService.validate(invocation, executor);
 
             if (flow.isTerminate()) {
@@ -194,8 +214,8 @@ public class CommandExecuteService<SENDER> {
                 } catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);
                 } finally {
-                    // TODO Call event CommandExecutionCompletionEvent
-                    eventHandler.publish(new CommandExecutionCompletionEvent(invocation, executor));
+                    //TODO catch results
+                    this.eventPublisher.publish(new CommandExecutionCompletionEvent(invocation, executor));
                 }
             });
         }).exceptionally(throwable -> toThrown(executor, throwable));
