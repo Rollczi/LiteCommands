@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.event.Event;
+import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -213,6 +215,10 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B schematicGenerator(SchematicGenerator<SENDER> schematicGenerator);
 
     B schematicGenerator(SchematicFormat format);
+
+    @ApiStatus.Experimental
+    <E extends Event>
+    B listener(Class<E> eventType, EventListener<E> listener);
 
     /**
      * @deprecated use {@link LiteCommandsBuilder#self(LiteBuilderAction)} instead

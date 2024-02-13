@@ -14,14 +14,14 @@ public class SimpleEventPublisher implements EventPublisher {
     @Override
     @SuppressWarnings("unchecked")
     public <E extends Event> E publish(E event) {
-        Set<? extends EventListener<E>> eventListeners = (Set<? extends EventListener<E>>) listeners.get(event.getClass());
+        Set<EventListener<?>> eventListeners = listeners.get(event.getClass());
 
         if (eventListeners == null) {
             return event;
         }
 
-        for (EventListener<E> eventListener : eventListeners) {
-            eventListener.onEvent(event);
+        for (EventListener<?> eventListener : eventListeners) {
+            ((EventListener<E>) eventListener).onEvent(event);
         }
 
         return event;

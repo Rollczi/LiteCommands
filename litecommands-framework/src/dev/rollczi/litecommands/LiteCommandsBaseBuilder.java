@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.event.Event;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.event.SimpleEventPublisher;
@@ -428,6 +429,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @Override
     public B schematicGenerator(SchematicFormat format) {
         this.schematicGenerator = new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry);
+        return this.self();
+    }
+
+    @Override
+    public <E extends Event> B listener(Class<E> eventType, EventListener<E> listener) {
+        this.eventPublisher.subscribe(eventType, listener);
         return this.self();
     }
 

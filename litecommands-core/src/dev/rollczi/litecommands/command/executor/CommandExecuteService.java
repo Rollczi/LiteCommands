@@ -194,17 +194,6 @@ public class CommandExecuteService<SENDER> {
                 return this.execute(executors, invocation, matcher, commandRoute, executionEvent.getFlowResult());
             }
 
-            // Handle validation TODO move as event
-            Flow flow = this.validatorService.validate(invocation, executor);
-
-            if (flow.isTerminate()) {
-                return completedFuture(CommandExecuteResult.failed(executor, flow.getReason()));
-            }
-
-            if (flow.isStopCurrent()) {
-                return this.execute(executors, invocation, matcher, commandRoute, flow.failedReason());
-            }
-
             // Execution
             SchedulerPoll type = executor.meta().get(Meta.POLL_TYPE);
 
