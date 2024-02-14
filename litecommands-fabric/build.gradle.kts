@@ -5,13 +5,6 @@ plugins {
     id("fabric-loom") version "1.5-SNAPSHOT"
 }
 
-repositories {
-    maven {
-        name = "Fabric"
-        url = uri("https://maven.fabricmc.net/")
-    }
-}
-
 val minecraft_version: String by project
 val yarn_mappings: String by project
 val loader_version: String by project
