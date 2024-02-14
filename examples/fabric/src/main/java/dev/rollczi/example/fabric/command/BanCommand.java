@@ -10,12 +10,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-/**
- * 2024/2/13<br>
- * LiteCommands<br>
- *
- * @author huanmeng_qwq
- */
+
 @Command(name = "ban")
 public class BanCommand {
     @Execute

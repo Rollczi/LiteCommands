@@ -10,35 +10,24 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.minecraft.server.command.ServerCommandSource;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
-/**
- * 2024/2/13<br>
- * LiteCommands<br>
- *
- * @author huanmeng_qwq
- */
 public class FabricCommand {
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
 
-    static List<FabricCommand> INSTANCES = new ArrayList<>();
     private final CommandRoute<ServerCommandSource> baseRoute;
     private final PlatformInvocationListener<ServerCommandSource> invocationHook;
     private final PlatformSuggestionListener<ServerCommandSource> suggestionHook;
@@ -49,7 +38,6 @@ public class FabricCommand {
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
         this.routeUUID = baseRoute.getUniqueId();
-        INSTANCES.add(this);
     }
 
     public UUID routeUUID() {
@@ -74,17 +62,10 @@ public class FabricCommand {
         RequiredArgumentBuilder<ServerCommandSource, String> arguments = RequiredArgumentBuilder.argument("[...]", StringArgumentType.greedyString());
         arguments.executes(context -> {
             String input = context.getInput();
-            String rootName = input;
-            String[] args = {};
-            int index = input.indexOf(" ");
-            if (index != -1) {
-                rootName = input.substring(0, index);
-                String argLine = input.substring(index + 1);
-                args = argLine.split(" ");
-            }
-            ParseableInput<?> parseableInput = ParseableInput.raw(args);
+            RawCommand rawCommand = RawCommand.from(input);
+            ParseableInput<?> parseableInput = rawCommand.toParseableInput();
             FabricSender platformSender = new FabricSender(context.getSource());
-            Invocation<ServerCommandSource> invocation = new Invocation<>(context.getSource(), platformSender, this.baseRoute.getName(), rootName, parseableInput);
+            Invocation<ServerCommandSource> invocation = new Invocation<>(context.getSource(), platformSender, this.baseRoute.getName(), rawCommand.getLabel(), parseableInput);
 
             invocationHook.execute(invocation, parseableInput);
             return 1;
@@ -110,19 +91,13 @@ public class FabricCommand {
         @Override
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
             String input = context.getInput();
-            String rootName = input;
-            String[] args = {""};
-            int index = input.indexOf(" ");
-            if (index != -1) {
-                rootName = input.substring(0, index);
-                String argLine = input.substring(index + 1);
-                args = PATTERN_ON_SPACE.split(argLine, -1);
-            }
-            SuggestionInput<?> suggestionInput = SuggestionInput.raw(args);
+            RawCommand rawCommand = RawCommand.from(input);
+            SuggestionInput<?> suggestionInput = rawCommand.toSuggestionInput();
             FabricSender platformSender = new FabricSender(context.getSource());
-            Invocation<ServerCommandSource> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rootName, suggestionInput);
+            Invocation<ServerCommandSource> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
 
             SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);
+            String[] args = rawCommand.getArgs().toArray(new String[0]);
             for (String s : suggest.asMultiLevelList()) {
                 if (s.isBlank()) {
                     continue;
@@ -134,15 +109,5 @@ public class FabricCommand {
             }
             return builder.buildFuture();
         }
-    }
-
-    private static StringArgumentType argumentType(Argument<?> argument) {
-        if (QuotedStringArgumentResolver.KEY.equals(argument.getKeyName())) {
-            return StringArgumentType.string();
-        }
-        if (argument instanceof JoinArgument) {
-            return StringArgumentType.greedyString();
-        }
-        return StringArgumentType.word();
     }
 }

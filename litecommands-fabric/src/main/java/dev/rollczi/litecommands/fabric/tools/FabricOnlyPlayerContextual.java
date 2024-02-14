@@ -2,29 +2,18 @@ package dev.rollczi.litecommands.fabric.tools;
 
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.fabric.LiteFabricMessages;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 
-import java.util.function.Supplier;
-
-/**
- * 2024/2/13<br>
- * LiteCommands<br>
- *
- * @author huanmeng_qwq
- */
 public class FabricOnlyPlayerContextual<P extends PlayerEntity> implements ContextProvider<ServerCommandSource, P> {
-    private final Supplier<Text> onlyPlayerMessage;
+    private final MessageRegistry<ServerCommandSource> messageRegistry;
 
-    public FabricOnlyPlayerContextual(Supplier<Text> onlyPlayerMessage) {
-        this.onlyPlayerMessage = onlyPlayerMessage;
-    }
-
-    public FabricOnlyPlayerContextual(Text onlyPlayerMessage) {
-        this(() -> onlyPlayerMessage);
+    public FabricOnlyPlayerContextual(MessageRegistry<ServerCommandSource> messageRegistry) {
+        this.messageRegistry = messageRegistry;
     }
 
     @SuppressWarnings("unchecked")
@@ -35,6 +24,6 @@ public class FabricOnlyPlayerContextual<P extends PlayerEntity> implements Conte
             return ContextResult.ok(() -> (P) player);
         }
 
-        return ContextResult.error(onlyPlayerMessage.get());
+        return ContextResult.error(messageRegistry.getInvoked(LiteFabricMessages.PLAYER_ONLY, invocation));
     }
 }

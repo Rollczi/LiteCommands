@@ -43,10 +43,7 @@ fun include(projectPath: String, version: JavaVersion) {
 if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
     pluginManagement {
         repositories {
-            maven {
-                name = "Fabric"
-                url = uri("https://maven.fabricmc.net/")
-            }
+            maven("https://maven.fabricmc.net/")
             mavenCentral()
             gradlePluginPortal()
         }

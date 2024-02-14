@@ -10,6 +10,10 @@ val yarn_mappings: String by project
 val loader_version: String by project
 val fabric_version: String by project
 
+repositories {
+    maven("https://libraries.minecraft.net")
+}
+
 dependencies {
     include(project(":litecommands-framework"))
     modApi("dev.rollczi:litecommands-framework:3.3.4")

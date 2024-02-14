@@ -4,12 +4,6 @@ import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import net.minecraft.server.command.ServerCommandSource;
 
-/**
- * 2024/2/13<br>
- * LiteCommands<br>
- *
- * @author huanmeng_qwq
- */
 public class FabricSender extends AbstractPlatformSender {
     private final ServerCommandSource source;
 
