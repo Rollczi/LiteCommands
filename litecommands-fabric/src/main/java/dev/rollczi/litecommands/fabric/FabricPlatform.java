@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 class FabricPlatform extends AbstractPlatform<ServerCommandSource, PlatformSettings> implements Platform<ServerCommandSource, PlatformSettings> {
-    static List<FabricCommand> fabricCommands = new ArrayList<>();
+    private final List<FabricCommand> fabricCommands = new ArrayList<>();
 
     static {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
