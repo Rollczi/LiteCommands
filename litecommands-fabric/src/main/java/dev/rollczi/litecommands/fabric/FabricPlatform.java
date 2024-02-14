@@ -16,16 +16,13 @@ import java.util.Objects;
 class FabricPlatform extends AbstractPlatform<ServerCommandSource, PlatformSettings> implements Platform<ServerCommandSource, PlatformSettings> {
     private final List<FabricCommand> fabricCommands = new ArrayList<>();
 
-    static {
+    FabricPlatform(PlatformSettings settings) {
+        super(settings);
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             for (FabricCommand instance : fabricCommands) {
                 instance.register(dispatcher);
             }
         });
-    }
-
-    FabricPlatform(PlatformSettings settings) {
-        super(settings);
     }
 
     @Override
