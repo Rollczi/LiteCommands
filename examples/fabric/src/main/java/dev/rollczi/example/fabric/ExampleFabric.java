@@ -14,6 +14,7 @@ public class ExampleFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         LiteFabricFactory.create()
-            .commands(new BanCommand()).build();
+            .commands(new BanCommand())
+            .build();
     }
 }
