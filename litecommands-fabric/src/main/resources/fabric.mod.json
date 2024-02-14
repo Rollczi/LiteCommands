@@ -1,0 +1,18 @@
+{
+    "schemaVersion": 1,
+    "id": "litecommands",
+    "version": "3.3.4",
+    "name": "LiteCommands",
+    "description": "A simple command framework for Fabric.",
+    "authors": [
+        "Rollczi","huanmeng_qwq"
+    ],
+    "contact": {
+        "homepage": "https://github.com/Rollczi/LiteCommands",
+        "issues": "https://github.com/Rollczi/LiteCommands/issues"
+    },
+    "license": "MIT",
+    "icon": "assets/litecommands/icon.png",
+    "entrypoints": {
+    }
+}
