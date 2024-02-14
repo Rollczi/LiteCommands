@@ -21,16 +21,9 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:0.15.6")
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.96.1+1.20.4")
 
-
     // modImplementation("dev.rollczi:litecommands-minestom:3.3.4+minecraft_version") // <-- uncomment in your project
-    modImplementation(project(":litecommands-fabric")){
-        isTransitive = true
-    }
+    implementation(project(path = ":litecommands-fabric", configuration = "namedElements"))
 
-}
-
-tasks.ideaSyncTask {
-    dependsOn(":litecommands-fabric:build")
 }
 
 sourceSets.test {

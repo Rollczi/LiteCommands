@@ -20,11 +20,10 @@ import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -72,38 +71,27 @@ public class FabricCommand {
 
     private void appendExecutor(ArgumentBuilder<ServerCommandSource, ?> baseArgument, CommandRoute<ServerCommandSource> route, CommandExecutor<ServerCommandSource> executor) {
         ArgumentBuilder<ServerCommandSource, ?> literal = route == baseRoute ? baseArgument : LiteralArgumentBuilder.literal(route.getName());
-        List<RequiredArgumentBuilder<ServerCommandSource, String>> arguments = arguments(executor.getArguments());
-        if (arguments != null) {
-            for (RequiredArgumentBuilder<ServerCommandSource, String> argument : arguments) {
-                argument.suggests(new SuggestionProviderImpl(executor));
+        RequiredArgumentBuilder<ServerCommandSource, String> arguments = RequiredArgumentBuilder.argument("[...]", StringArgumentType.greedyString());
+        arguments.executes(context -> {
+            String input = context.getInput();
+            String rootName = input;
+            String[] args = {};
+            int index = input.indexOf(" ");
+            if (index != -1) {
+                rootName = input.substring(0, index);
+                String argLine = input.substring(index + 1);
+                args = argLine.split(" ");
             }
-            arguments.get(arguments.size() - 1).executes(context -> {
-                String input = context.getInput();
-                String rootName = input;
-                String[] args = {};
-                int index = input.indexOf(" ");
-                if (index != -1) {
-                    rootName = input.substring(0, index);
-                    String argLine = input.substring(index + 1);
-                    args = argLine.split(" ");
-                }
-                ParseableInput<?> parseableInput = ParseableInput.raw(args);
-                FabricSender platformSender = new FabricSender(context.getSource());
-                Invocation<ServerCommandSource> invocation = new Invocation<>(context.getSource(), platformSender, this.baseRoute.getName(), rootName, parseableInput);
+            ParseableInput<?> parseableInput = ParseableInput.raw(args);
+            FabricSender platformSender = new FabricSender(context.getSource());
+            Invocation<ServerCommandSource> invocation = new Invocation<>(context.getSource(), platformSender, this.baseRoute.getName(), rootName, parseableInput);
 
-                invocationHook.execute(invocation, parseableInput);
-                return 1;
-            });
-            Iterator<RequiredArgumentBuilder<ServerCommandSource, String>> iterator = arguments.iterator();
-            RequiredArgumentBuilder<ServerCommandSource, String> first = iterator.next();
-            RequiredArgumentBuilder<ServerCommandSource, String> last = first;
-            while (iterator.hasNext()) {
-                RequiredArgumentBuilder<ServerCommandSource, String> next = iterator.next();
-                last.then(next);
-                last = next;
-            }
-            literal.then(first);
-        }
+            invocationHook.execute(invocation, parseableInput);
+            return 1;
+        });
+        arguments.suggests(new SuggestionProviderImpl(executor));
+
+        literal.then(arguments);
         for (CommandRoute<ServerCommandSource> child : route.getChildren()) {
             appendRoute(child, literal);
         }
@@ -134,29 +122,18 @@ public class FabricCommand {
             FabricSender platformSender = new FabricSender(context.getSource());
             Invocation<ServerCommandSource> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rootName, suggestionInput);
 
-            for (String s : suggestionHook.suggest(invocation, suggestionInput).asMultiLevelList()) {
-                builder.suggest(s);
+            SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);
+            for (String s : suggest.asMultiLevelList()) {
+                if (s.isBlank()) {
+                    continue;
+                }
+                int start = input.length() - args[args.length - 1].length();
+                SuggestionsBuilder suggestionsBuilder = new SuggestionsBuilder(builder.getInput(), builder.getInput().toLowerCase(), start);
+                suggestionsBuilder.suggest(s);
+                builder.add(suggestionsBuilder);
             }
             return builder.buildFuture();
         }
-    }
-
-    private List<RequiredArgumentBuilder<ServerCommandSource, String>> arguments(List<Argument<?>> arguments) {
-        Iterator<Argument<?>> iterator = arguments.iterator();
-        if (!iterator.hasNext()) {
-            return null;
-        }
-        List<RequiredArgumentBuilder<ServerCommandSource, String>> list = new ArrayList<>();
-        Argument<?> root = iterator.next();
-
-        RequiredArgumentBuilder<ServerCommandSource, String> first = RequiredArgumentBuilder.argument(root.getName(), argumentType(root));
-        list.add(first);
-        while (iterator.hasNext()) {
-            Argument<?> argument1 = iterator.next();
-            RequiredArgumentBuilder<ServerCommandSource, String> argument = RequiredArgumentBuilder.argument(argument1.getName(), argumentType(argument1));
-            list.add(argument);
-        }
-        return list;
     }
 
     private static StringArgumentType argumentType(Argument<?> argument) {
@@ -167,18 +144,5 @@ public class FabricCommand {
             return StringArgumentType.greedyString();
         }
         return StringArgumentType.word();
-    }
-
-    private static LiteralArgumentBuilder<ServerCommandSource> namesLiteral(Collection<String> names) {
-        Iterator<String> iterator = names.iterator();
-        if (!iterator.hasNext()) {
-            return null;
-        }
-        String root = iterator.next();
-        LiteralArgumentBuilder<ServerCommandSource> literal = LiteralArgumentBuilder.literal(root);
-        while (iterator.hasNext()) {
-            literal.then(LiteralArgumentBuilder.literal(iterator.next()));
-        }
-        return literal;
     }
 }
