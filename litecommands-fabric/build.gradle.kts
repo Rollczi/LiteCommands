@@ -16,8 +16,8 @@ repositories {
 
 dependencies {
     // LiteCommands
+    api(project(":litecommands-framework"))
     include(project(":litecommands-framework"))
-    modApi("dev.rollczi:litecommands-framework:${project.version}")
 
     // Minecraft and mappings
     minecraft("com.mojang:minecraft:${minecraft_version}")
