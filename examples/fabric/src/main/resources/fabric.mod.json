@@ -12,7 +12,7 @@
         "homepage": "https://github.com/Rollczi/LiteCommands",
         "issues": "https://github.com/Rollczi/LiteCommands/issues"
     },
-    "license": "MIT",
+    "license": "Apache-2.0",
     "icon": "assets/litecommands/icon.png",
     "entrypoints": {
         "main": [
