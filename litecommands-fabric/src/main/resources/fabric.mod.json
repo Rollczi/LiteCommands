@@ -16,6 +16,13 @@
     "icon": "assets/litecommands/icon.svg",
     "entrypoints": {
     },
+    "custom": {
+        "modmenu": {
+            "badges": [
+                "library"
+            ]
+        }
+    },
     "depends": {
         "fabricloader": ">=0.14.0",
         "fabric-api-base": "*",
