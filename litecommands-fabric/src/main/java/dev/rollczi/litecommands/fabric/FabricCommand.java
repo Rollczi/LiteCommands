@@ -23,11 +23,8 @@ import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
 
 public class FabricCommand {
-    private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
-
     private final CommandRoute<ServerCommandSource> baseRoute;
     private final PlatformInvocationListener<ServerCommandSource> invocationHook;
     private final PlatformSuggestionListener<ServerCommandSource> suggestionHook;
