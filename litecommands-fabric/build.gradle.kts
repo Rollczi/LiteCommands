@@ -7,24 +7,25 @@ plugins {
 
 val minecraft_version: String by project
 val yarn_mappings: String by project
-val loader_version: String by project
-val fabric_version: String by project
+val fabric_loader_version: String by project
+val fabric_api_version: String by project
 
 repositories {
     maven("https://libraries.minecraft.net")
 }
 
 dependencies {
+    // LiteCommands
     include(project(":litecommands-framework"))
-    modApi("dev.rollczi:litecommands-framework:3.3.4")
+    modApi("dev.rollczi:litecommands-framework:${project.version}")
 
-    // To change the versions see the gradle.properties file
+    // Minecraft and mappings
     minecraft("com.mojang:minecraft:${minecraft_version}")
     mappings("net.fabricmc:yarn:${yarn_mappings}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${loader_version}")
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+    // Fabric loader and API
+    modImplementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")
 }
 
 litecommandsPublish {
