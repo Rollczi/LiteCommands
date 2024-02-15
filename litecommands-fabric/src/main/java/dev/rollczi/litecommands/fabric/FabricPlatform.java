@@ -9,30 +9,32 @@ import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.server.command.ServerCommandSource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 class FabricPlatform extends AbstractPlatform<ServerCommandSource, PlatformSettings> implements Platform<ServerCommandSource, PlatformSettings> {
-    private final List<FabricCommand> fabricCommands = new ArrayList<>();
+
+    private final Map<UUID, FabricCommand> fabricCommands = new HashMap<>();
 
     FabricPlatform(PlatformSettings settings) {
         super(settings);
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            for (FabricCommand instance : fabricCommands) {
-                instance.register(dispatcher);
+            for (FabricCommand fabricCommand : fabricCommands.values()) {
+                dispatcher.register(fabricCommand.toLiteral());
             }
         });
     }
 
     @Override
     protected void hook(CommandRoute<ServerCommandSource> commandRoute, PlatformInvocationListener<ServerCommandSource> invocationHook, PlatformSuggestionListener<ServerCommandSource> suggestionHook) {
-        fabricCommands.add(new FabricCommand(commandRoute, invocationHook, suggestionHook));
+        fabricCommands.put(commandRoute.getUniqueId(), new FabricCommand(commandRoute, invocationHook, suggestionHook));
     }
 
     @Override
     protected void unhook(CommandRoute<ServerCommandSource> commandRoute) {
-        fabricCommands.removeIf(instance -> Objects.equals(instance.routeUUID(), commandRoute.getUniqueId()));
+        fabricCommands.remove(commandRoute.getUniqueId());
+        // TODO: unregister command from dispatcher
     }
 
 }

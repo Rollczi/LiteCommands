@@ -13,8 +13,15 @@
         "issues": "https://github.com/Rollczi/LiteCommands/issues"
     },
     "license": "Apache-2.0",
-    "icon": "assets/litecommands/icon.svg",
+    "icon": "assets/litecommands/icon.png",
     "entrypoints": {
+    },
+    "custom": {
+        "modmenu": {
+            "badges": [
+                "library"
+            ]
+        }
     },
     "depends": {
         "fabricloader": ">=0.14.0",
