@@ -45,9 +45,9 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 - Velocity
 - Bukkit, Spigot, Paper
 - BungeeCord, Waterfall
-- Minestom (by [Codestech1](https://github.com/Codestech1))
-- Sponge (by [BlackBaroness]())
-- Fabric (by [huanmeng_qwq](https://github.com/huanmeng-qwq))
+- Minestom _(by [Codestech1](https://github.com/Codestech1))_
+- Sponge _(by [BlackBaroness](https://github.com/BlackBaroness))_
+- Fabric _(by [huanmeng_qwq](https://github.com/huanmeng-qwq))_
 - JDA
 
 ## 💡 Command Example
