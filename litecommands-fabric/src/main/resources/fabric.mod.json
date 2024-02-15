@@ -3,7 +3,7 @@
     "id": "litecommands",
     "version": "3.3.4",
     "name": "LiteCommands",
-    "description": "A simple command framework for Fabric.",
+    "description": "Annotation based command framework for Fabric.",
     "authors": [
         "Rollczi",
         "huanmeng_qwq"
