@@ -30,5 +30,4 @@ dependencies {
 
 litecommandsPublish {
     artifactId = "litecommands-fabric"
-    version = "$version+$minecraft_version"
 }
