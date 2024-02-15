@@ -3,7 +3,7 @@
     "id": "litecommands_example",
     "version": "3.3.4",
     "name": "LiteCommands Fabric Example",
-    "description": "A simple command framework for Fabric.",
+    "description": "Annotation based command framework for Fabric.",
     "authors": [
         "Rollczi",
         "huanmeng_qwq"
@@ -12,7 +12,7 @@
         "homepage": "https://github.com/Rollczi/LiteCommands",
         "issues": "https://github.com/Rollczi/LiteCommands/issues"
     },
-    "license": "MIT",
+    "license": "Apache-2.0",
     "icon": "assets/litecommands/icon.png",
     "entrypoints": {
         "main": [
