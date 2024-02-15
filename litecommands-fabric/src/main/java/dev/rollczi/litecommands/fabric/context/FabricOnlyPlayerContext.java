@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.fabric.tools;
+package dev.rollczi.litecommands.fabric.context;
 
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.context.ContextResult;
@@ -9,10 +9,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class FabricOnlyPlayerContextual<P extends PlayerEntity> implements ContextProvider<ServerCommandSource, P> {
+public class FabricOnlyPlayerContext<P extends PlayerEntity> implements ContextProvider<ServerCommandSource, P> {
+
     private final MessageRegistry<ServerCommandSource> messageRegistry;
 
-    public FabricOnlyPlayerContextual(MessageRegistry<ServerCommandSource> messageRegistry) {
+    public FabricOnlyPlayerContext(MessageRegistry<ServerCommandSource> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
@@ -26,4 +27,5 @@ public class FabricOnlyPlayerContextual<P extends PlayerEntity> implements Conte
 
         return ContextResult.error(messageRegistry.getInvoked(LiteFabricMessages.PLAYER_ONLY, invocation));
     }
+
 }
