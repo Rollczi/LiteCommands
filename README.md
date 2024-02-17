@@ -41,6 +41,15 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 - Adventure Kyori support. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/adventure-kyori.html) 
 - and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)! ✨
 
+## 📦 Platforms
+- Velocity
+- Bukkit, Spigot, Paper
+- BungeeCord, Waterfall
+- Minestom _(by [Codestech1](https://github.com/Codestech1))_
+- Sponge _(by [BlackBaroness](https://github.com/BlackBaroness))_
+- Fabric _(by [huanmeng_qwq](https://github.com/huanmeng-qwq))_
+- JDA
+
 ## 💡 Command Example
 This is an example of `/hello <name> <amount>` command:
 

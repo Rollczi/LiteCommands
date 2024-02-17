@@ -17,6 +17,11 @@ public class StringArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Str
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> objectStringArgument, SuggestionContext context) {
         String first = context.getCurrent().multilevel();
+
+        if (first.isEmpty()) {
+            return SuggestionResult.of("<" + objectStringArgument.getName() + ">");
+        }
+
         return SuggestionResult.of("<" + objectStringArgument.getName() + ">", first);
     }
     
