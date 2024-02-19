@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 public class JoinArgument<EXPECTED> extends SimpleArgument<EXPECTED> {
 
     public static final String DEFAULT_SEPARATOR = " ";
-    public static final int DEFAULT_LIMIT = -1;
+    public static final int DEFAULT_LIMIT = Integer.MAX_VALUE;
 
     public static final ArgumentKey KEY = ArgumentKey.typed(JoinArgument.class);
 
