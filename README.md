@@ -106,7 +106,7 @@ implementation("dev.rollczi:{artifact}:3.4.0")
 @@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
 ```
 
-<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/q1zZu"><img src="https://images.weserv.nl/?url=https://github.com/q1zZu.png?v=4&mask=circle" width="60px" alt="q1zZ" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 
 ## 🔮 Official IntelliJ Plugin
 
