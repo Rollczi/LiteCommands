@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
+        with:
+          lfs: true
 
       - name: Generate Sponsors 💖
         uses: JamesIves/github-sponsors-readme-action@v1
