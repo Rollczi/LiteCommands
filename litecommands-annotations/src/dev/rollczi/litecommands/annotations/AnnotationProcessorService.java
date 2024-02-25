@@ -19,6 +19,7 @@ import dev.rollczi.litecommands.annotations.permission.PermissionsAnnotationReso
 import dev.rollczi.litecommands.annotations.quoted.QuotedAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.shortcut.ShortcutCommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.validator.ValidateAnnotationResolver;
+import dev.rollczi.litecommands.annotations.varargs.VarargsArgumentProcessor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ public class AnnotationProcessorService<SENDER> {
             .register(new QuotedAnnotationProcessor<>())
             // argument processors
             .register(new FlagArgumentProcessor<>())
+            .register(new VarargsArgumentProcessor<>())
             .register(new ArgCollectionArgumentProcessor<>())
             .register(new ArgArgumentProcessor<>())
             .register(new OptionalArgArgumentProcessor<>())

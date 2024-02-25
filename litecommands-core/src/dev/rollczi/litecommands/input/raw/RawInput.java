@@ -95,6 +95,10 @@ public class RawInput {
         return seeNext(rawArgumentsToConsume.size());
     }
 
+    public int size() {
+        return rawArgumentsToConsume.size();
+    }
+
     int consumedCount() {
         return this.consumed;
     }
