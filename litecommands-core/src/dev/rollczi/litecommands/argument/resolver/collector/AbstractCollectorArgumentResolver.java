@@ -79,11 +79,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
             for (int i = 0; i < input.size(); i++) {
                 String next = input.get(i);
 
-                if (i != 0) {
-                    buffer.append(RawCommand.COMMAND_SEPARATOR);
-                }
-
-                buffer.append(next);
+                buffer.append(next).append(" ");
                 current++;
                 level++;
 
@@ -120,6 +116,10 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
             }
 
             if (!input.isEmpty()) {
+                if (buffer.toString().endsWith(" ")) {
+                    buffer.deleteCharAt(buffer.length() - 1);
+                }
+
                 int count = rawInput.size() + level; // +level because we need to add the last element from the buffer
 
                 if (range.isBelowRange(count)) {
