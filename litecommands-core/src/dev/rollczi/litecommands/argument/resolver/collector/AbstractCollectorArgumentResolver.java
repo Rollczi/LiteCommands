@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
+import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -19,6 +20,7 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collector;
 
@@ -27,7 +29,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
     private final ParserRegistry<SENDER> parserRegistry;
     private final SuggesterRegistry<SENDER> suggesterRegistry;
 
-    public AbstractCollectorArgumentResolver(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry) {
+    protected AbstractCollectorArgumentResolver(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry) {
         super(CollectorArgument.class);
         this.parserRegistry = parserRegistry;
         this.suggesterRegistry = suggesterRegistry;
@@ -43,28 +45,141 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
 
         ParserSet<SENDER, E> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
         Parser<SENDER, E> parser = parserSet.getValidParserOrThrow(invocation, argument);
+        Range range = parser.getRange(argument);
+        String delimiter = collectorArgument.getDelimiter();
 
         List<E> values = new ArrayList<>();
 
-        while (rawInput.hasNext()) {
-            int count = rawInput.seeAll().size();
-            Range range = parser.getRange(argument);
+        // If the delimiter is a space
+        if (delimiter.equals(RawCommand.COMMAND_SEPARATOR)) {
+            while (rawInput.hasNext()) {
+                int count = rawInput.seeAll().size();
 
-            if (range.isBelowRange(count)) {
-                return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
+                if (range.isBelowRange(count)) {
+                    return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
+                }
+
+                ParseResult<E> parsedResult = parser.parse(invocation, argument, rawInput);
+
+                if (parsedResult.isFailed()) {
+                    return ParseResult.failure(parsedResult.getFailedReason());
+                }
+
+                values.add(parsedResult.getSuccess());
             }
-
-            ParseResult<E> parsedResult = parser.parse(invocation, argument, rawInput);
-
-            if (parsedResult.isFailed()) {
-                return ParseResult.failure(parsedResult.getFailedReason());
-            }
-
-            values.add(parsedResult.getSuccess());
         }
+
+        // If the delimiter is not a space
+        else {
+            List<String> input = new ArrayList<>(rawInput.seeAll());
+            StringBuilder buffer = new StringBuilder();
+            int current = 0;
+            int level = 0;
+
+            for (int i = 0; i < input.size(); i++) {
+                String next = input.get(i);
+
+                if (i != 0) {
+                    buffer.append(RawCommand.COMMAND_SEPARATOR);
+                }
+
+                buffer.append(next);
+                current++;
+                level++;
+
+                if (level < range.getMin()) {
+                    continue;
+                }
+
+                if (!buffer.toString().contains(delimiter)) {
+                    if (range.getMin() == level) {
+                        break;
+                    }
+
+                    continue;
+                }
+
+                ParseResult<List<E>> parseResult = process(delimiter, buffer, range.getMin(), invocation, argument, parser);
+
+                if (parseResult.isFailed()) {
+                    return ParseResult.failure(parseResult.getFailedReason());
+                }
+
+                values.addAll(parseResult.getSuccess());
+
+                for (int j = 0; j < current; j++) {
+                    rawInput.next();
+                }
+
+                current = 0;
+                level = 1;
+            }
+
+            for (int j = 0; j < current; j++) {
+                rawInput.next();
+            }
+
+            if (!input.isEmpty()) {
+                int count = rawInput.size() + level; // +level because we need to add the last element from the buffer
+
+                if (range.isBelowRange(count)) {
+                    return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
+                }
+
+                List<String> list = new ArrayList<>();
+
+                list.addAll(Arrays.asList(buffer.toString().split(RawCommand.COMMAND_SEPARATOR)));
+                list.addAll(rawInput.seeAll());
+
+                RawInput currentInput = RawInput.of(list);
+
+                ParseResult<E> parseResult = parser.parse(invocation, argument, currentInput);
+
+                if (parseResult.isFailed()) {
+                    return ParseResult.failure(parseResult.getFailedReason());
+                }
+
+                values.add(parseResult.getSuccess());
+
+                int toPurge = Math.max(0, list.size() - currentInput.size() - level);
+
+                for (int i = 0; i < toPurge; i++) {
+                    rawInput.next();
+                }
+            }
+        }
+
 
         Collector<E, ?, ? extends COLLECTION> collector = getCollector(collectorArgument, invocation);
         COLLECTION result = values.stream().collect(collector);
+
+        return ParseResult.success(result);
+    }
+
+    public ParseResult<List<E>> process(String delimiter, StringBuilder buffer, int range, Invocation<SENDER> invocation, Argument<E> argument, Parser<SENDER, E> parser) {
+        int length = delimiter.length();
+        List<E> result = new ArrayList<>();
+
+        do {
+            int index = buffer.indexOf(delimiter);
+
+            if (index == -1) {
+                break;
+            }
+
+            String substring = buffer.substring(0, index);
+            RawInput rawInput = RawInput.of(substring.split(RawCommand.COMMAND_SEPARATOR));
+            ParseResult<E> parseResult = parser.parse(invocation, argument, rawInput);
+
+            if (parseResult.isFailed()) {
+                return ParseResult.failure(parseResult.getFailedReason());
+            }
+
+            result.add(parseResult.getSuccess());
+
+            buffer.delete(0, index + length);
+        }
+        while (buffer.length() > 0);
 
         return ParseResult.success(result);
     }
