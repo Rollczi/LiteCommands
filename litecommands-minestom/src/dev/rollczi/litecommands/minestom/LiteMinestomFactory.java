@@ -33,7 +33,7 @@ public final class LiteMinestomFactory {
         ConnectionManager connectionManager,
         CommandManager commandManager
     ) {
-        return (B) LiteCommandsFactory.builder(CommandSender.class, new MinestomPlatform(commandManager)).selfProcessor((builder, internal) -> {
+        return (B) LiteCommandsFactory.builder(CommandSender.class, new MinestomPlatform(commandManager)).self((builder, internal) -> {
             MessageRegistry<CommandSender> messageRegistry = internal.getMessageRegistry();
 
             builder

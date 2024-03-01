@@ -23,6 +23,7 @@ import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolve
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
+import dev.rollczi.litecommands.command.executor.event.CommandExecutionEvent;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
@@ -52,6 +53,7 @@ import static dev.rollczi.litecommands.reflect.type.TypeRange.downwards;
 import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.validator.ValidatorExecutionController;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
@@ -85,7 +87,7 @@ public final class LiteCommandsFactory {
     }
 
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
-        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).selfProcessor((builder, internal) -> {
+        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).self((builder, internal) -> {
             Scheduler scheduler = internal.getScheduler();
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
             ParserRegistry<SENDER> parser = internal.getParserRegistry();
@@ -156,6 +158,8 @@ public final class LiteCommandsFactory {
                 .result(Collection.class, new CollectionHandler<>())
                 .result(MissingPermissions.class, new MissingPermissionResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
+
+                .listener(CommandExecutionEvent.class, new ValidatorExecutionController<>(internal.getValidatorService()))
                 ;
         });
     }

@@ -5,8 +5,10 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.event.Event;
+import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
-import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.editor.Editor;
@@ -214,12 +216,39 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     B schematicGenerator(SchematicFormat format);
 
-    B selfProcessor(LiteBuilderProcessor<SENDER, SETTINGS> processor);
+    @ApiStatus.Experimental
+    <E extends Event>
+    B listener(Class<E> eventType, EventListener<E> listener);
 
-    B preProcessor(LiteBuilderProcessor<SENDER, SETTINGS> preProcessor);
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#self(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B selfProcessor(LiteBuilderAction<SENDER, SETTINGS> processor) {
+        return self(processor);
+    }
 
-    B postProcessor(LiteBuilderProcessor<SENDER, SETTINGS> postProcessor);
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#beforeBuild(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B preProcessor(LiteBuilderAction<SENDER, SETTINGS> preProcessor) {
+        return beforeBuild(preProcessor);
+    }
 
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#afterBuild(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B postProcessor(LiteBuilderAction<SENDER, SETTINGS> postProcessor) {
+        return afterBuild(postProcessor);
+    }
+
+    B self(LiteBuilderAction<SENDER, SETTINGS> processor);
+
+    B beforeBuild(LiteBuilderAction<SENDER, SETTINGS> preProcessor);
+
+    B afterBuild(LiteBuilderAction<SENDER, SETTINGS> postProcessor);
 
     /**
      * Register extension for this builder.

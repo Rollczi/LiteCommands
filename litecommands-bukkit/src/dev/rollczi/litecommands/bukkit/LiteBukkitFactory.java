@@ -51,7 +51,7 @@ public final class LiteBukkitFactory {
 
     @SuppressWarnings("unchecked")
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(Plugin plugin, Server server, LiteBukkitSettings settings) {
-        return (B) LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings)).selfProcessor((builder, internal) -> {
+        return (B) LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings)).self((builder, internal) -> {
             MessageRegistry<CommandSender> messageRegistry = internal.getMessageRegistry();
 
             builder

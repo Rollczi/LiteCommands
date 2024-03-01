@@ -42,7 +42,7 @@ class MissingPermissionValidatorTest {
                 .appendExecutor(parent -> new TestExecutor<>(parent).onMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply()))));
 
         CommandRoute<TestSender> sub = assertPresent(test.getChild("sub"));
-        CommandExecutor<TestSender> executor = sub.getExecutors().get(0);
+        CommandExecutor<TestSender> executor = sub.getExecutors().first();
 
         Flow result = validator.validate(invocation, executor);
 
