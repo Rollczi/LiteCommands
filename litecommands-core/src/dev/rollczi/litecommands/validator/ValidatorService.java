@@ -22,6 +22,11 @@ public class ValidatorService<SENDER> {
     }
 
     public void registerValidator(Scope scope, Validator<SENDER> validator) {
+        if (Scope.GLOBAL_SCOPE.equals(scope)) {
+            commandGlobalValidators.add(validator);
+            return;
+        }
+
         if (scope instanceof ValidatorScope) {
             ValidatorScope validatorScope = (ValidatorScope) scope;
 
