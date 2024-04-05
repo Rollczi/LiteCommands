@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.validator.requirment;
+package dev.rollczi.litecommands.validator.requirement;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.invocation.Invocation;

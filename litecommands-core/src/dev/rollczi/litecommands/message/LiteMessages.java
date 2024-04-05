@@ -1,8 +1,10 @@
 package dev.rollczi.litecommands.message;
 
 import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
+import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.time.DurationParser;
 
 public class LiteMessages {
 
@@ -42,6 +44,16 @@ public class LiteMessages {
     public static final MessageKey<String> INSTANT_INVALID_FORMAT = MessageKey.of(
         "instant-invalid-format",
         input -> "Invalid date format '" + input + "'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)"
+    );
+
+    /**
+     * Command cooldown message.
+     * e. g. when user uses the command too frequently.
+     * @see dev.rollczi.litecommands.cooldown.CooldownStateResultHandler
+     */
+    public static final MessageKey<CooldownState> COMMAND_COOLDOWN = MessageKey.of(
+        "command-cooldown",
+        state -> "You are on cooldown! Remaining time: " + DurationParser.DATE_TIME_UNITS.format(state.getRemainingDuration()) + " (COMMAND_COOLDOWN)"
     );
 
     protected LiteMessages() {

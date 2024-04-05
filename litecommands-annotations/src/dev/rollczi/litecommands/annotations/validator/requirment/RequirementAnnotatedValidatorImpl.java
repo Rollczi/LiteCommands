@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.validator.ValidatorResult;
-import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
+import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
 
 import java.lang.annotation.Annotation;
 
