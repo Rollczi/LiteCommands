@@ -24,6 +24,9 @@ import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolve
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.cooldown.CooldownState;
+import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
+import dev.rollczi.litecommands.cooldown.CooldownStateValidator;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
@@ -100,6 +103,7 @@ public final class LiteCommandsFactory {
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
                 .validator(Scope.global(), new MissingPermissionValidator<>())
+                .validator(Scope.global(), new CooldownStateValidator<>())
 
                 .argument(String.class, new StringArgumentResolver<>())
                 .argument(Boolean.class, new BooleanArgumentResolver<>())
@@ -155,6 +159,7 @@ public final class LiteCommandsFactory {
                 .result(CompletionStage.class, new CompletionStageHandler<>())
                 .result(Collection.class, new CollectionHandler<>())
                 .result(MissingPermissions.class, new MissingPermissionResultHandler<>(messageRegistry))
+                .result(CooldownState.class, new CooldownStateResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
                 ;
         });
