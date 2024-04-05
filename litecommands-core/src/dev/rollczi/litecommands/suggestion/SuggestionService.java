@@ -40,6 +40,12 @@ public class SuggestionService<SENDER> {
         CommandRoute<SENDER> commandRoute
     ) {
         if (matcher.hasNoNextRouteAndArguments()) {
+            Flow flow = this.validatorService.validate(invocation, commandRoute);
+
+            if (flow.isTerminate() || flow.isStopCurrent()) {
+                return SuggestionResult.empty();
+            }
+
             return SuggestionResult.of(commandRoute.names());
         }
 
@@ -64,6 +70,10 @@ public class SuggestionService<SENDER> {
         String current = matcher.showNextRoute();
 
         for (CommandRoute<SENDER> child : commandRoute.getChildren()) {
+            if (!this.isAnyExecutorValid(invocation, child)) {
+                continue;
+            }
+
             for (String name : child.names()) {
                 if (!StringUtil.startsWithIgnoreCase(name, current)) {
                     continue;
@@ -74,6 +84,32 @@ public class SuggestionService<SENDER> {
         }
 
         return all;
+    }
+
+    private boolean isAnyExecutorValid(Invocation<SENDER> invocation, CommandRoute<SENDER> route) {
+        Flow flow = this.validatorService.validate(invocation, route);
+
+        if (flow.isTerminate() || flow.isStopCurrent()) {
+            return false;
+        }
+
+        for (CommandExecutor<SENDER> executor : route.getExecutors()) {
+            Flow flowExecutor = this.validatorService.validate(invocation, executor);
+
+            if (flowExecutor.isTerminate() || flowExecutor.isStopCurrent()) {
+                continue;
+            }
+
+            return true;
+        }
+
+        for (CommandRoute<SENDER> child : route.getChildren()) {
+            if (this.isAnyExecutorValid(invocation, child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggestExecutor(

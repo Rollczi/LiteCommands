@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations.permission;
 
 import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import org.junit.jupiter.api.Test;
@@ -12,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PermissionAnnotationTest extends LiteTestSpec {
 
-    @dev.rollczi.litecommands.annotations.command.Command(name = "test")
+    @Command(name = "test")
     @Permission("test.permission")
-    static class Command {
+    static class TestCommand {
 
         @Execute
         @Permission("test.permission.execute")
