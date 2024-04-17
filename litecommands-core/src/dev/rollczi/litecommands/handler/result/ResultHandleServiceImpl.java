@@ -33,7 +33,7 @@ public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SEND
         }
 
         if (typedAs.isArray() && typedAs.getComponentType().isPrimitive()) {
-            result = (T) MapUtil.getBoxedArrayFromPrimitiveArray(result);
+            result = (T) MapUtil.getGenericCopyOfPrimitiveArray(result);
         }
 
         handler.handle(invocation, result, chain);

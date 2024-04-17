@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public final class MapUtil {
 
+    private static final Object[] EMPTY_GENERIC_ARRAY = new Object[0];
+
     private MapUtil() {}
 
     public static <E> Optional<E> findByInstanceOf(Class<?> type, Map<Class<?>, E> map) {
@@ -111,9 +113,9 @@ public final class MapUtil {
         return Optional.empty();
     }
 
-    public static Object[] getBoxedArrayFromPrimitiveArray(Object result) {
+    public static Object[] getGenericCopyOfPrimitiveArray(Object result) {
         if (result == null || !result.getClass().isArray()) {
-            return new Object[0];
+            return EMPTY_GENERIC_ARRAY;
         }
 
         int length = Array.getLength(result);
