@@ -23,12 +23,17 @@ public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SEND
         this.resolve(invocation, result, (Class<T>) result.getClass(), chain);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> void resolve(Invocation<SENDER> invocation, T result, Class<? super T> typedAs, ResultHandlerChain<SENDER> chain) {
         ResultHandler<SENDER, ? super T> handler = this.getHandler(typedAs);
 
         if (handler == null) {
             throw new LiteCommandsException("Cannot find handler for result type " + typedAs.getName());
+        }
+
+        if (typedAs.isArray() && typedAs.getComponentType().isPrimitive()) {
+            result = (T) MapUtil.getBoxedArrayFromPrimitiveArray(result);
         }
 
         handler.handle(invocation, result, chain);

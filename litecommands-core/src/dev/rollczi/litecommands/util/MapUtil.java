@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.util;
 
 import dev.rollczi.litecommands.reflect.ReflectUtil;
+import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.Optional;
 
@@ -108,6 +109,21 @@ public final class MapUtil {
         }
 
         return Optional.empty();
+    }
+
+    public static Object[] getBoxedArrayFromPrimitiveArray(Object result) {
+        if (result == null || !result.getClass().isArray()) {
+            return new Object[0];
+        }
+
+        int length = Array.getLength(result);
+
+        Object[] output = new Object[length];
+        for (int i = 0; i < length; i++) {
+            output[i] = Array.get(result, i);
+        }
+
+        return output;
     }
 
 }
