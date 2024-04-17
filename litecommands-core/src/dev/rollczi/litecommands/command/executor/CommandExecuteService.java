@@ -187,20 +187,18 @@ public class CommandExecuteService<SENDER> {
                 catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);
                 }
-            }).thenCompose((result -> {
+            }).thenCompose(result -> {
                 Object resultValue = result.getResult();
                 if (!(resultValue instanceof CompletableFuture<?>)) {
                     return CompletableFuture.completedFuture(result);
                 }
-                return ((CompletableFuture<?>) resultValue)
-                    .thenApply(value -> {
-                        if (value instanceof FailedReason) {
-                            return CommandExecuteResult.failed(executor, (FailedReason) value);
-                        }
-                        return CommandExecuteResult.success(executor, value);
-                    })
-                    .exceptionally(error -> CommandExecuteResult.thrown(executor, error));
-            }));
+                return ((CompletableFuture<?>) resultValue).thenApply(value -> {
+                    if (value instanceof FailedReason) {
+                        return CommandExecuteResult.failed(executor, (FailedReason) value);
+                    }
+                    return CommandExecuteResult.success(executor, value);
+                });
+            });
         }).exceptionally(throwable -> toThrown(executor, throwable));
     }
 
