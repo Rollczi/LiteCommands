@@ -63,7 +63,6 @@ public class CommandExecuteService<SENDER> {
             .thenApply(commandExecuteResult -> mapResult(commandRoute, commandExecuteResult, invocation))
             .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> {
                 this.handleResult(invocation, executeResult);
-
                 return executeResult;
             }))
             .exceptionally(new LastExceptionHandler<>(resultResolver, invocation));
@@ -188,7 +187,20 @@ public class CommandExecuteService<SENDER> {
                 catch (Throwable error) {
                     return CommandExecuteResult.thrown(executor, error);
                 }
-            });
+            }).thenCompose((result -> {
+                Object resultValue = result.getResult();
+                if (!(resultValue instanceof CompletableFuture<?>)) {
+                    return CompletableFuture.completedFuture(result);
+                }
+                return ((CompletableFuture<?>) resultValue)
+                    .thenApply(value -> {
+                        if (value instanceof FailedReason) {
+                            return CommandExecuteResult.failed(executor, (FailedReason) value);
+                        }
+                        return CommandExecuteResult.success(executor, value);
+                    })
+                    .exceptionally(error -> CommandExecuteResult.thrown(executor, error));
+            }));
         }).exceptionally(throwable -> toThrown(executor, throwable));
     }
 
