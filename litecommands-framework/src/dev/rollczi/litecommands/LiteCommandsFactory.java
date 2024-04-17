@@ -30,6 +30,7 @@ import dev.rollczi.litecommands.cooldown.CooldownStateValidator;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
+import dev.rollczi.litecommands.handler.result.standard.ArrayHandler;
 import dev.rollczi.litecommands.handler.result.standard.CollectionHandler;
 import dev.rollczi.litecommands.handler.result.standard.CompletionStageHandler;
 import dev.rollczi.litecommands.handler.result.standard.OptionHandler;
@@ -154,6 +155,7 @@ public final class LiteCommandsFactory {
                 .exception(InvocationTargetException.class, new InvocationTargetExceptionHandler<>())
                 .exception(LiteCommandsException.class, new LiteCommandsExceptionHandler<>())
 
+                .result(Object[].class, new ArrayHandler<>())
                 .result(Optional.class, new OptionalHandler<>())
                 .result(Option.class, new OptionHandler<>())
                 .result(CompletionStage.class, new CompletionStageHandler<>())
