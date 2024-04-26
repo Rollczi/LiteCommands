@@ -1,8 +1,11 @@
 package dev.rollczi.litecommands.util;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public final class ObjectsUtil {
+
+    private static final Object[] EMPTY_GENERIC_ARRAY = new Object[0];
 
     private ObjectsUtil() {}
 
@@ -41,6 +44,21 @@ public final class ObjectsUtil {
         }
 
         return a.equals(b);
+    }
+
+    public static Object[] getGenericCopyOfPrimitiveArray(Object result) {
+        if (result == null || !result.getClass().isArray()) {
+            return EMPTY_GENERIC_ARRAY;
+        }
+
+        int length = Array.getLength(result);
+
+        Object[] output = new Object[length];
+        for (int i = 0; i < length; i++) {
+            output[i] = Array.get(result, i);
+        }
+
+        return output;
     }
 
 }
