@@ -1,13 +1,10 @@
 package dev.rollczi.litecommands.util;
 
 import dev.rollczi.litecommands.reflect.ReflectUtil;
-import java.lang.reflect.Array;
 import java.util.Map;
 import java.util.Optional;
 
 public final class MapUtil {
-
-    private static final Object[] EMPTY_GENERIC_ARRAY = new Object[0];
 
     private MapUtil() {}
 
@@ -111,21 +108,6 @@ public final class MapUtil {
         }
 
         return Optional.empty();
-    }
-
-    public static Object[] getGenericCopyOfPrimitiveArray(Object result) {
-        if (result == null || !result.getClass().isArray()) {
-            return EMPTY_GENERIC_ARRAY;
-        }
-
-        int length = Array.getLength(result);
-
-        Object[] output = new Object[length];
-        for (int i = 0; i < length; i++) {
-            output[i] = Array.get(result, i);
-        }
-
-        return output;
     }
 
 }

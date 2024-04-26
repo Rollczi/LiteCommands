@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.util.MapUtil;
 
+import dev.rollczi.litecommands.util.ObjectsUtil;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SEND
         }
 
         if (typedAs.isArray() && typedAs.getComponentType().isPrimitive()) {
-            result = (T) MapUtil.getGenericCopyOfPrimitiveArray(result);
+            result = (T) ObjectsUtil.getGenericCopyOfPrimitiveArray(result);
         }
 
         handler.handle(invocation, result, chain);
