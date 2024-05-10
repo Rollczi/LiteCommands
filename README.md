@@ -6,7 +6,7 @@
 
 <div align="center">
 
-<img src="https://github.com/Rollczi/LiteCommands/assets/49173834/a5a1de27-af53-4d19-86e7-3f3306695e9a" alt="banner" width="50%"/>
+<img src="https://github.com/Rollczi/LiteCommands/assets/49173834/4c297b16-eacd-4c89-ba34-2767b114e391" alt="banner" width="65%"/>
 <br><br>
 
 [![Discord](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/social/discord-plural_vector.svg)](https://discord.gg/6cUhkj6uZJ)
@@ -113,7 +113,7 @@ implementation("dev.rollczi:{artifact}:3.4.1")
 With LiteCommands plugin, you can easily develop your commands within the **IntelliJ IDEA** environment. 
 The plugin provides **annotation inspections**, **tools** for creating new command classes, **syntax highlighting**, **code completion**, 
 and other useful features to make your development experience smoother and more efficient. How to [install](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin?tab=readme-ov-file#installation)? 
-![litecommandsbanner-intellij](https://github.com/Rollczi/LiteCommands/assets/49173834/dafd034e-4dab-4ab0-9984-489ae6808d8d)
+![litecommandsbanner-intellij](https://github.com/Rollczi/LiteCommands/assets/49173834/fea96613-af58-42bb-b32d-ffd6946ba4cc)
 
 ## 🌍 More Examples
 #### ➕ Official examples
