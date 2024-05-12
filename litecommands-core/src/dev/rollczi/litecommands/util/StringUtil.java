@@ -1,5 +1,8 @@
 package dev.rollczi.litecommands.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class StringUtil {
 
     public static final String EMPTY = "";
@@ -14,6 +17,21 @@ public final class StringUtil {
         }
 
         return builder.toString();
+    }
+
+    public static List<String> spilt(String text, String delimiter) {
+        List<String> list = new ArrayList<>();
+
+        int index = 0;
+        int nextIndex;
+
+        while ((nextIndex = text.indexOf(delimiter, index)) != -1) {
+            list.add(text.substring(index, nextIndex));
+            index = nextIndex + delimiter.length();
+        }
+
+        list.add(text.substring(index));
+        return list;
     }
 
     public static boolean startsWithIgnoreCase(String text, String prefix) {

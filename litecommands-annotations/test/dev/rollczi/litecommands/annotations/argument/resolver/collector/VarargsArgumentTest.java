@@ -148,6 +148,12 @@ class VarargsArgumentTest extends LiteTestSpec {
 
         platform.execute("test enum FIRST,SECOND,THIRD,FOURTH,1")
             .assertFailure();
+
+        platform.execute("test Instant 2021-01-01 00:05:50,2023-04-17 11:03:00,2016-12-31 ")
+            .assertFailure();
+
+        platform.execute("test Instant 2021-01-01 00:05:50,2023-04-17 11:03:00,")
+            .assertFailure();
     }
 
 
