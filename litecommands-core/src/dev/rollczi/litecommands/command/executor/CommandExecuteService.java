@@ -24,7 +24,7 @@ import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.ValidatorResult;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
+import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrapper;

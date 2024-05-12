@@ -20,6 +20,10 @@ public class AssertExecute {
         this.invocation = invocation;
     }
 
+    public boolean isSuccessful() {
+        return !result.isFailed() && !result.isThrown();
+    }
+
     public AssertExecute assertSuccess() {
         if (result.isThrown()) {
             throw new AssertionError("Command was thrown ", result.getThrowable());
