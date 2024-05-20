@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.message;
 
 import dev.rollczi.litecommands.argument.resolver.standard.InstantArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.UUIDArgumentResolver;
 import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.permission.MissingPermissions;
@@ -54,6 +55,15 @@ public class LiteMessages {
     public static final MessageKey<CooldownState> COMMAND_COOLDOWN = MessageKey.of(
         "command-cooldown",
         state -> "You are on cooldown! Remaining time: " + DurationParser.DATE_TIME_UNITS.format(state.getRemainingDuration()) + " (COMMAND_COOLDOWN)"
+    );
+
+    /**
+     * Invalid UUID format.
+     * @see UUIDArgumentResolver
+     */
+    public static final MessageKey<String> UUID_INVALID_FORMAT = MessageKey.of(
+        "uuid-invalid-format",
+        input -> "Invalid UUID format '" + input + "'! Use: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx (dashes are optional) (UUID_INVALID_FORMAT)"
     );
 
     protected LiteMessages() {
