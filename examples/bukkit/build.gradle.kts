@@ -36,7 +36,7 @@ tasks.shadowJar {
 
     listOf(
         "panda.std",
-        "dev.rollczi.litecommands",
+//        "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }
 
@@ -50,5 +50,6 @@ sourceSets.test {
 }
 
 tasks.runServer {
-    minecraftVersion("1.20.4")
+    minecraftVersion("1.20.1")
+    jvmArgs(listOf("-XX:+AllowEnhancedClassRedefinition"))
 }

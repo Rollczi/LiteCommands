@@ -6,7 +6,7 @@ public class RawInputViewImpl implements RawInputView {
 
     private final String sourceContent;
     private final char[] content;
-    private final boolean[] claimedIndexes;
+    protected final boolean[] claimedIndexes;
     private final StringBuilder notClaimedContent;
 
     public RawInputViewImpl(String content) {
@@ -71,6 +71,20 @@ public class RawInputViewImpl implements RawInputView {
         return this.notClaimedContent.toString();
     }
 
+    @Override
+    public int countOf(char character) {
+        int count = 0;
+
+        for (char c : notClaimedContent.toString().toCharArray()) {
+            if (c == character) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    @Override
     public String sourceContent() {
         return this.sourceContent;
     }
@@ -78,8 +92,8 @@ public class RawInputViewImpl implements RawInputView {
     @Override
     public String claim() {
         String claimedContent = this.notClaimedContent.toString();
-        this.notClaimedContent.delete(0, this.notClaimedContent.length());
-        Arrays.fill(this.claimedIndexes, true);
+        StringBuilder deleted = this.notClaimedContent.delete(0, this.notClaimedContent.length());
+        this.claimAllChars();
 
         return claimedContent;
     }
@@ -105,10 +119,16 @@ public class RawInputViewImpl implements RawInputView {
         StringBuilder builder = new StringBuilder();
 
         int realIndex = 0;
-        for (int i = baseStart; i < baseEnd; i++) {
+        int claimedBefore = 0;
+        for (int i = 0; i < baseEnd; i++) {
             boolean isClaimed = this.claimedIndexes[i];
 
             if (isClaimed) {
+                claimedBefore++;
+                continue;
+            }
+
+            if (baseStart > i) {
                 continue;
             }
 
@@ -122,12 +142,21 @@ public class RawInputViewImpl implements RawInputView {
             }
 
             builder.append(this.content[i]);
-            this.claimedIndexes[i] = true;
-            this.notClaimedContent.deleteCharAt(baseStart + startInclusive);
+            this.claimChar(i);
+            this.notClaimedContent.deleteCharAt(i - claimedBefore);
+            claimedBefore++;
             realIndex++;
         }
 
         return builder.toString();
+    }
+
+    protected void claimChar(int index) {
+        this.claimedIndexes[index] = true;
+    }
+
+    protected void claimAllChars() {
+        Arrays.fill(this.claimedIndexes, true);
     }
 
     private class RawInputSubView implements RawInputView {
@@ -163,6 +192,28 @@ public class RawInputViewImpl implements RawInputView {
             }
 
             return builder.toString();
+        }
+
+        @Override
+        public int countOf(char character) {
+            int count = 0;
+
+            for (int i = this.internalFrom; i < this.internalTo; i++) {
+                if (claimedIndexes[i]) {
+                    continue;
+                }
+
+                if (content[i] == character) {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        @Override
+        public String sourceContent() {
+            return sourceContent.substring(internalFrom, internalTo);
         }
 
         @Override

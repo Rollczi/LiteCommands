@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.input.raw;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,10 @@ class RawInputViewTest {
     @Test
     void testSub() {
         RawInputView view = RawInputView.of("<L>, <test [inside]>, <last>");
+        RawInputView last = view.sub(20);
+
+        assertThat(last.content())
+            .isEqualTo(", <last>");
 
         {
             String content = view.content();
@@ -53,9 +58,10 @@ class RawInputViewTest {
         assertEquals(", <last>", view.content());
         assertEquals("", view.claim(0, 0));
 
-        assertEquals(", <last>", view.content());
-        assertEquals(", <last>", view.claim());
+        assertEquals(", <last>", last.content());
+        assertEquals(", <last>", last.claim());
 
+        assertEquals("", last.content());
         assertEquals("", view.content());
     }
 

@@ -34,6 +34,10 @@ public final class StringUtil {
         return list;
     }
 
+    public static List<String> splitBySpace(String text) {
+        return spilt(text, " ");
+    }
+
     public static boolean startsWithIgnoreCase(String text, String prefix) {
         return text.regionMatches(true, 0, prefix, 0, prefix.length());
     }
@@ -43,4 +47,15 @@ public final class StringUtil {
         return str.regionMatches(true, str.length() - suffixLength, suffix, 0, suffixLength);
     }
 
+    public static int countOf(String sourceContent, char character) {
+
+        int count = 0;
+        for (char c : sourceContent.toCharArray()) {
+            if (c == character) {
+                count++;
+            }
+        }
+
+        return count;
+    }
 }

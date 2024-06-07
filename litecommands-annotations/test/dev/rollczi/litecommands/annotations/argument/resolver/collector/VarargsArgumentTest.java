@@ -11,14 +11,21 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+import static java.util.Collections.*;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import panda.std.Pair;
 
 class VarargsArgumentTest extends LiteTestSpec {
 
     private final static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public static final String COMMAND = "test";
 
     enum TestEnum {
         FIRST,
@@ -27,7 +34,7 @@ class VarargsArgumentTest extends LiteTestSpec {
         FOURTH
     }
 
-    @Command(name = "test")
+    @Command(name = COMMAND)
     static class TestCommand {
 
         @Execute(name = "Integer")
@@ -65,13 +72,13 @@ class VarargsArgumentTest extends LiteTestSpec {
     @Test
     void test() {
         platform.execute("test Integer 1,2,3,4,5")
-            .assertSuccess(Arrays.asList(1, 2, 3, 4, 5));
+            .assertSuccess(asList(1, 2, 3, 4, 5));
 
         platform.execute("test String text1,text2,text3,text4,text5")
-            .assertSuccess(Arrays.asList("text1", "text2", "text3", "text4", "text5"));
+            .assertSuccess(asList("text1", "text2", "text3", "text4", "text5"));
 
         platform.execute("test Duration 10m,1h2m3s,1h,1d3h,2d")
-            .assertSuccess(Arrays.asList(
+            .assertSuccess(asList(
                 Duration.ofMinutes(10),
                 Duration.ofHours(1).plusMinutes(2).plusSeconds(3),
                 Duration.ofHours(1),
@@ -80,21 +87,21 @@ class VarargsArgumentTest extends LiteTestSpec {
             ));
 
         platform.execute("test Instant 2021-01-01 00:05:50,2023-04-17 11:03:00,2016-12-31 23:59:59")
-            .assertSuccess(Arrays.asList(
+            .assertSuccess(asList(
                 Instant.parse("2021-01-01T00:05:50Z"),
                 Instant.parse("2023-04-17T11:03:00Z"),
                 Instant.parse("2016-12-31T23:59:59Z")
             ));
 
         platform.execute("test Instant-special 2021-01-01 00:05:50,2023-04-17 11:03:00,2016-12-31 23:59:59 5")
-            .assertSuccess(Pair.of(Arrays.asList(
+            .assertSuccess(Pair.of(asList(
                 Instant.parse("2021-01-01T00:05:50Z"),
                 Instant.parse("2023-04-17T11:03:00Z"),
                 Instant.parse("2016-12-31T23:59:59Z")
             ), 5));
 
         platform.execute("test enum FIRST,SECOND,THIRD,FOURTH")
-            .assertSuccess(Arrays.asList(
+            .assertSuccess(asList(
                 TestEnum.FIRST,
                 TestEnum.SECOND,
                 TestEnum.THIRD,
@@ -105,19 +112,19 @@ class VarargsArgumentTest extends LiteTestSpec {
     @Test
     void testSingle() {
         platform.execute("test Integer 1")
-            .assertSuccess(Arrays.asList(1));
+            .assertSuccess(asList(1));
 
         platform.execute("test String text")
-            .assertSuccess(Arrays.asList("text"));
+            .assertSuccess(asList("text"));
 
         platform.execute("test Duration 1h")
-            .assertSuccess(Arrays.asList(Duration.ofHours(1)));
+            .assertSuccess(asList(Duration.ofHours(1)));
 
         platform.execute("test Instant 2021-01-01 00:05:50")
-            .assertSuccess(Arrays.asList(Instant.parse("2021-01-01T00:05:50Z")));
+            .assertSuccess(asList(Instant.parse("2021-01-01T00:05:50Z")));
 
         platform.execute("test enum FIRST")
-            .assertSuccess(Arrays.asList(TestEnum.FIRST));
+            .assertSuccess(asList(TestEnum.FIRST));
     }
 
     @Test
@@ -160,43 +167,44 @@ class VarargsArgumentTest extends LiteTestSpec {
     @Test
     void testEmpty() {
         platform.execute("test Integer")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(asList());
 
         platform.execute("test Integer ")
-            .assertFailure();
+            .assertSuccess(emptyList());
 
         platform.execute("test String")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test String ")
-            .assertSuccess(Arrays.asList(""));
+            .assertSuccess(emptyList());
 
         platform.execute("test Duration")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test Duration ")
-            .assertFailure();
+            .assertSuccess(emptyList());
 
         platform.execute("test Instant")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test Instant ")
-            .assertFailure();
+            .assertSuccess(emptyList());
 
         platform.execute("test enum")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test enum ")
-            .assertFailure();
+            .assertSuccess(emptyList());
     }
 
     @Test
     void testSuggestInteger() {
         platform.suggest("test Integer ")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
-        platform.suggest("test Integer 1 ")
-            .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
+        platform.suggest("test Integer 1,")
+            .assertAsSuggester(NumberArgumentResolver.ofInteger(), suggest -> "1," + suggest, "");
         platform.suggest("test Integer 5")
+            .assertSuggestAndFlush("5,", "5")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "5");
     }
 
@@ -205,22 +213,53 @@ class VarargsArgumentTest extends LiteTestSpec {
         platform.suggest("test String ")
             .assertSuggest("<argument>");
         platform.suggest("test String <argument>")
-            .assertSuggest("<argument>");
-        platform.suggest("test String text ")
-            .assertSuggest("<argument>");
+            .assertSuggest("<argument>", "<argument>,");
+        platform.suggest("test String text,")
+            .assertSuggest("text,", "text,<argument>");
         platform.suggest("test String text")
-            .assertSuggest("text");
+            .assertSuggest("text", "text,");
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideDurationArgs")
+    void testSuggestDuration(String input, List<String> expectedSuggestions) {
+        platform.suggest(input).assertSuggest(expectedSuggestions.toArray(new String[0]));
+    }
+
+    private static Stream<Arguments> provideDurationArgs() {
+        return Stream.of(
+            Arguments.of("test Duration ", asList("1s", "1d", "1h", "1m", "30d", "10h", "7d", "10m", "30m", "5h", "10s", "30s", "5m", "5s", "1m30s")),
+            Arguments.of("test Duration 10", asList("10s", "10m", "10h")),
+            Arguments.of("test Duration 1m", asList( "1m", "1m,", "1m30s")),
+            Arguments.of("test Duration 10h,", asList("10h,1s", "10h,1m", "10h,1d", "10h,1h", "10h,30d", "10h,10h", "10h,7d", "10h,10m", "10h,30m", "10h,5h", "10h,10s", "10h,30s", "10h,5m", "10h,5s", "10h,1m30s")),
+            Arguments.of("test Duration 10h,1", asList("10h,1s", "10h,1m", "10h,1d", "10h,1h", "10h,10h", "10h,10m", "10h,10s", "10h,1m30s")),
+            Arguments.of("test Duration 10h,1m", asList("10h,1m", "10h,1m,", "10h,1m30s")),
+            Arguments.of("test Duration 10h,1m,", asList("10h,1m,1s", "10h,1m,1m", "10h,1m,1d", "10h,1m,1h", "10h,1m,30d", "10h,1m,10h", "10h,1m,7d", "10h,1m,10m", "10h,1m,30m", "10h,1m,5h", "10h,1m,10s", "10h,1m,30s", "10h,1m,5m", "10h,1m,5s", "10h,1m,1m30s")),
+            Arguments.of("test Duration 10h,1m,1", asList("10h,1m,1s", "10h,1m,10s", "10h,1m,1m", "10h,1m,1d", "10h,1m,1h", "10h,1m,10h", "10h,1m,10m", "10h,1m,1m30s")),
+            Arguments.of("test Duration 10h,1m,2m", asList("10h,1m,2m", "10h,1m,2m,"))
+        );
     }
 
     @Test
-    void testSuggestDuration() {
-        platform.suggest("test Duration ")
-            .assertSuggest("1s", "1d", "1h", "1m", "30d", "10h", "7d", "10m", "30m", "5h", "10s", "30s", "5m", "5s", "1m30s");
-        platform.suggest("test Duration 10m ")
-            .assertSuggest("1s", "1d", "1h", "1m", "30d", "10h", "7d", "10m", "30m", "5h", "10s", "30s", "5m", "5s", "1m30s");
-        platform.suggest("test Duration 10")
-            .assertSuggest("10s", "10m", "10h");
+    void testSuggestInstantSpecial() {
+        platform.suggest("test Instant-special ")
+            .assertNotEmpty()
+            .assertCorrect(suggestion -> {
+                String multilevel = suggestion.multilevel();
+
+                if (multilevel.equals("-")) {
+                    return;
+                }
+
+                if (multilevel.chars().allMatch(codePoint -> Character.isDigit(codePoint))) {
+                    platform.execute("test Instant-special " + multilevel).assertSuccess();
+                    return;
+                }
+
+                platform.execute("test Instant-special " + multilevel + " 5").assertSuccess();
+            });
     }
+
 
     @Test
     void testSuggestInstant() {
@@ -234,7 +273,7 @@ class VarargsArgumentTest extends LiteTestSpec {
             .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + suggestion.multilevel()).assertSuccess());
         platform.suggest("test Instant " + tomorrowFormat + " ")
             .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + tomorrowFormat + " " + suggestion.multilevel()).assertSuccess());
-        platform.suggest("test Instant 2021-01-01 00:05:50 2023-04-17 11:03:00 " + tomorrowFormat + " ")
+        platform.suggest("test Instant 2021-01-01 00:05:50,2023-04-17 11:03:00," + tomorrowFormat + " ")
             .assertNotEmpty().assertCorrect(suggestion -> platform.execute("test Instant " + tomorrowFormat + " " + suggestion.multilevel()).assertSuccess());
     }
 
@@ -242,10 +281,10 @@ class VarargsArgumentTest extends LiteTestSpec {
     void testSuggestEnum() {
         platform.suggest("test enum ")
             .assertSuggest("FIRST", "SECOND", "THIRD", "FOURTH");
-        platform.suggest("test enum FIRST ")
-            .assertSuggest("FIRST", "SECOND", "THIRD", "FOURTH");
+        platform.suggest("test enum FIRST,")
+            .assertSuggest("FIRST,FIRST", "FIRST,SECOND", "FIRST,THIRD", "FIRST,FOURTH");
         platform.suggest("test enum FIRST")
-            .assertSuggest("FIRST");
+            .assertSuggest("FIRST,", "FIRST");
     }
 
 

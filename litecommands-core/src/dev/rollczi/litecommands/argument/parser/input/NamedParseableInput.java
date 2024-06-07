@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.argument.parser.input;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
@@ -55,7 +54,7 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
         }
 
         @Override
-        public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, ParserSet<SENDER, PARSED> parserSet) {
+        public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, Parser<SENDER, PARSED> parser) {
             String input = namedArguments.get(argument.getName());
 
             if (input == null) {
@@ -63,8 +62,6 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
             }
 
             consumedArguments.add(argument.getName());
-
-            Parser<SENDER, PARSED> parser = parserSet.getValidParserOrThrow(invocation, argument);
 
             return parser.parse(invocation, argument, RawInput.of(input.split(RawCommand.COMMAND_SEPARATOR)));
         }
