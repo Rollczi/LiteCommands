@@ -194,4 +194,20 @@ public final class ReflectUtil {
     }
 
 
+    public static List<Method> getMethods(Class<?> type) {
+        List<Method> methods = new ArrayList<>();
+
+        for (Method declaredMethod : type.getDeclaredMethods()) {
+            methods.add(declaredMethod);
+        }
+
+        Class<?> superclass = type.getSuperclass();
+
+        if (superclass != Object.class) {
+            methods.addAll(getMethods(superclass));
+        }
+
+        return methods;
+    }
+
 }
