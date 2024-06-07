@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.annotations;
 import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorService;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.reflect.Method;
@@ -31,7 +32,7 @@ class InstanceSourceProcessor<SENDER> {
         AnnotationInvoker<SENDER> classInvoker = new ClassInvoker<>(type, context);
         context = annotationProcessorService.process(classInvoker);
 
-        for (Method method : type.getDeclaredMethods()) {
+        for (Method method : ReflectUtil.getMethods(type)) {
             MethodInvoker<SENDER> methodInvoker = new MethodInvoker<>(annotationProcessorService, validatorService, wrapperRegistry, instance, method, context);
 
             context = annotationProcessorService.process(methodInvoker);
