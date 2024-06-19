@@ -11,6 +11,9 @@ import dev.rollczi.example.bukkit.command.KickCommand;
 import dev.rollczi.example.bukkit.command.NumberCommand;
 import dev.rollczi.example.bukkit.command.RandomItemCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
+import dev.rollczi.example.bukkit.command.currency.CurrencyBalanceCommand;
+import dev.rollczi.example.bukkit.command.currency.CurrencyCommand;
+import dev.rollczi.example.bukkit.command.currency.CurrencyService;
 import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
 import dev.rollczi.example.bukkit.validator.IsNotOp;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
@@ -33,6 +36,9 @@ public class ExamplePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // [!] you don't have to use this service, it's just for demonstration [!]
+        CurrencyService currencyService = new CurrencyService();
+
         this.liteCommands = LiteCommandsBukkit.builder()
             // configure bukkit platform
             .settings(settings -> settings
@@ -51,7 +57,9 @@ public class ExamplePlugin extends JavaPlugin {
                 new FlyCommand(),
                 new GiveCommand(),
                 new RandomItemCommand(),
-                new NumberCommand()
+                new NumberCommand(),
+                new CurrencyCommand(currencyService),
+                new CurrencyBalanceCommand(currencyService)
             )
 
             // Custom annotation validators
