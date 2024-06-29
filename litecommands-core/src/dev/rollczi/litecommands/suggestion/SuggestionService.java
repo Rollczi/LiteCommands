@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputMatcher;
@@ -140,12 +141,13 @@ public class SuggestionService<SENDER> {
     ) {
         Class<PARSED> parsedType = argument.getWrapperFormat().getParsedType();
         ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(parsedType, argument.getKey());
+        Parser<SENDER, PARSED> parser = parserSet.getValidParserOrThrow(invocation, argument);
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.getKey());
 
-        boolean nextOptional = matcher.isNextOptional(invocation, argument, parserSet);
-        SuggestionInputResult result = matcher.nextArgument(invocation, argument, parserSet, suggester);
+        SuggestionInputResult result = matcher.nextArgument(invocation, argument, parser, suggester);
+        boolean isOptional = matcher.isOptionalArgument(invocation, argument, parser);
 
-        if (result.isEnd() && nextOptional) {
+        if (result.isEnd() && isOptional) {
             return SuggestionInputResult.continueWith(result);
         }
 

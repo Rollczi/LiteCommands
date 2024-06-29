@@ -12,6 +12,7 @@ public class RawCommand {
 
     public static final String COMMAND_SLASH = "/";
     public static final String COMMAND_SEPARATOR = " ";
+    public static final char COMMAND_SEPARATOR_CHAR = ' ';
 
     private final String label;
     private final List<String> args;

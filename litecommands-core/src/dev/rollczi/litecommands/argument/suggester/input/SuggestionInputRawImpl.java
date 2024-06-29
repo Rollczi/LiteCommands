@@ -1,12 +1,13 @@
 package dev.rollczi.litecommands.argument.suggester.input;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.input.raw.RawInputAnalyzer;
-import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
@@ -67,21 +68,27 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
         }
 
         @Override
-        public <SENDER, T> boolean isNextOptional(Invocation<SENDER> invocation, Argument<T> argument, ParserSet<SENDER, T> parserSet) {
-            return rawInputAnalyzer.isNextOptional(parserSet, invocation, argument) || argument.hasDefaultValue();
+        public <SENDER, T> boolean isOptionalArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> parser) {
+            Range range = parser.getRange(argument);
+
+            if (range.getMin() == 0) {
+                return true;
+            }
+
+            return argument.hasDefaultValue();
         }
 
         @Override
         public <SENDER, T> SuggestionInputResult nextArgument(
             Invocation<SENDER> invocation,
             Argument<T> argument,
-            ParserSet<SENDER, T> parserSet,
+            Parser<SENDER, T> parser,
             Suggester<SENDER, T> suggester
         ) {
-            RawInputAnalyzer.Context<SENDER, T> context = rawInputAnalyzer.toContext(invocation, argument, parserSet);
+            RawInputAnalyzer.Context<SENDER, T> context = rawInputAnalyzer.toContext(argument, parser);
 
             if (context.isMissingFullArgument()) {
-                Suggestion current = Suggestion.of(rawInputAnalyzer.getLastArgument());
+                Suggestion current = Suggestion.from(rawInputAnalyzer.getLastArgumentsBeforePivotMove());
                 SuggestionContext suggestionContext = new SuggestionContext(current);
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
                     .filterBy(current);
@@ -106,6 +113,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
 
                 int consumed = suggestionContext.getConsumed();
                 if (consumed == current.lengthMultilevel()) {
+                    context.consumeAll();
                     return SuggestionInputResult.endWith(result);
                 }
             }
