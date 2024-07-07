@@ -7,9 +7,10 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Arrays;
@@ -59,10 +60,14 @@ public class AssertSuggest {
      * Can be used for testing other things than suggesters (e.g. array resolvers)
      */
     public AssertSuggest assertAsSuggester(Suggester<TestSender, ?> suggester, Function<String, String> mapper, String input) {
+        return assertAsSuggester(suggester, null, mapper, input);
+    }
+
+    public AssertSuggest assertAsSuggester(Suggester<TestSender, ?> suggester, Argument<?> argument, Function<String, String> mapper, String input) {
         Suggestion suggestion = Suggestion.of(input);
         SuggestionInput<?> suggestionInput = SuggestionInput.raw(suggestion.multilevelList().toArray(new String[0]));
         Invocation<TestSender> invocation = new Invocation<>(new TestSender(), TestPlatformSender.permittedAll(), "-", "-", suggestionInput);
-        SuggestionResult suggestionResult = suggester.suggest(invocation, null, new SuggestionContext(suggestion));
+        SuggestionResult suggestionResult = suggester.suggest(invocation, (Argument) argument, new SuggestionContext(suggestion));
 
         SuggestionResult result = suggestionResult
             .filterBy(suggestion);
@@ -108,4 +113,23 @@ public class AssertSuggest {
     public @Unmodifiable Collection<Suggestion> getSuggestions() {
         return Collections.unmodifiableCollection(suggest.getSuggestions());
     }
+
+    public AssertSuggest mapIf(boolean contains, @NotNull Function<String, String> mapper) {
+        if (contains) {
+            Set<Suggestion> set = suggest.getSuggestions().stream()
+                .map(suggestion -> suggestion.multilevel())
+                .map(mapper)
+                .map(suggestion -> Suggestion.of(suggestion))
+                .collect(Collectors.toSet());
+
+            suggest.clear();
+
+            for (Suggestion suggestion : set) {
+                suggest.add(suggestion);
+            }
+        }
+
+        return this;
+    }
+
 }

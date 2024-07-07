@@ -5,14 +5,16 @@ import dev.rollczi.litecommands.annotations.argument.Arg
 import dev.rollczi.litecommands.annotations.command.Command
 import dev.rollczi.litecommands.annotations.execute.Execute
 import dev.rollczi.litecommands.annotations.varargs.Varargs
+import dev.rollczi.litecommands.argument.Argument
+import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResolver
+import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver
 import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause
 import dev.rollczi.litecommands.suggestion.Suggestion
 import dev.rollczi.litecommands.unit.AssertExecute
+import dev.rollczi.litecommands.wrapper.WrapFormat
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -26,7 +28,7 @@ import java.util.Optional
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class VarargsArgumentTest : LiteTestSpec() {
+internal class VarargsArgumentTest : LiteTestSpec() {
 
     private val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -40,6 +42,8 @@ class VarargsArgumentTest : LiteTestSpec() {
             )
         }
     }
+
+    val TEST_ENUM_ARGUMENT = Argument.of("test", WrapFormat.notWrapped(TestEnum::class.java))
 
     enum class TestEnum {
         FIRST,
@@ -302,15 +306,8 @@ class VarargsArgumentTest : LiteTestSpec() {
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "")
 
         platform.suggest("$command Integer 1$delimiter")
-            .assertAsSuggester(NumberArgumentResolver.ofInteger(), { suggest: String ->
-                var suggestion = "1$delimiter$suggest"
-
-                if (delimiter.contains(" ")) { // TODO Currently, LiteCommands filters all completions on the left side of the space character. Add option to disable this behavior.
-                    suggestion = suggestion.substring(suggestion.lastIndexOf(" ") + 1)
-                }
-
-                suggestion
-            }, "")
+            .mapIf(delimiter.contains(" ")) { "1$delimiter$it" } // if delimiter contains space, add the rest of the argument
+            .assertAsSuggester(NumberArgumentResolver.ofInteger(), { "1$delimiter$it" }, "")
 
         platform.suggest("$command Integer 5")
             .assertSuggestAndFlush("5$delimiter", "5")
@@ -319,7 +316,6 @@ class VarargsArgumentTest : LiteTestSpec() {
 
     @ParameterizedTest
     @MethodSource("delimiters")
-    @Disabled
     @DisplayName("Test suggest string with different delimiters")
     fun testSuggestString(command: String, delimiter: String) {
         platform.suggest("$command String ")
@@ -327,98 +323,68 @@ class VarargsArgumentTest : LiteTestSpec() {
         platform.suggest("$command String <argument>")
             .assertSuggest("<argument>", "<argument>$delimiter")
         platform.suggest("$command String text$delimiter")
+            .mapIf(delimiter.contains(" ")) { "text$delimiter$it" }
             .assertSuggest("text$delimiter", "text$delimiter<argument>")
+
         platform.suggest("$command String text")
             .assertSuggest("text", "text$delimiter")
     }
 
     @ParameterizedTest
-    @MethodSource("provideDurationArgs")
-    @Disabled
-    fun testSuggestDuration(input: String, expectedSuggestions: List<String>) {
-        platform.suggest(input).assertSuggest(expectedSuggestions)
+    @MethodSource("delimiters")
+    @DisplayName("Test suggest Duration with different delimiters")
+    fun testSuggestDuration(command: String, del: String) {
+        // ''
+        platform.suggest("$command Duration ")
+            .assertAsSuggester(DurationArgumentResolver(), "")
+
+        // '10'
+        platform.suggest("$command Duration 10")
+            .assertAsSuggester(DurationArgumentResolver(), "10")
+
+        // '1m'
+        platform.suggest("$command Duration 1m")
+            .assertSuggestAndFlush("1m$del")
+            .assertAsSuggester(DurationArgumentResolver(), "1m")
+
+        // '10h,'
+        platform.suggest("$command Duration 10h$del")
+            .mapIf(del.contains(" ")) { "10h$del$it" }
+            .assertAsSuggester(DurationArgumentResolver(), { "10h$del$it" }, "")
+
+        // '10h,1'
+        platform.suggest("$command Duration 10h${del}1")
+            .mapIf(del.contains(" ")) { "10h$del$it" }
+            .assertAsSuggester(DurationArgumentResolver(), { "10h$del$it" }, "1")
+
+        // '10h,1m'
+        platform.suggest("$command Duration 10h${del}1m")
+            .mapIf(del.contains(" ")) { "10h${del}$it" }
+            .assertSuggestAndFlush("10h${del}1m$del")
+            .assertAsSuggester(DurationArgumentResolver(), { "10h$del$it" }, "1m")
+
+        // '10h,1m,'
+        platform.suggest("$command Duration 10h${del}1m$del")
+            .mapIf(del.contains(" ")) { "10h${del}1m$del$it" }
+            .assertAsSuggester(DurationArgumentResolver(), { "10h${del}1m${del}$it" }, "")
+
+        // '10h,1m,1'
+        platform.suggest("$command Duration 10h${del}1m${del}1")
+            .mapIf(del.contains(" ")) { "10h${del}1m$del$it" }
+            .assertAsSuggester(DurationArgumentResolver(), { "10h${del}1m$del$it" }, "1")
+
+        // '10h,1m,2m'
+        platform.suggest("$command Duration 10h${del}1m${del}5m")
+            .mapIf(del.contains(" ")) { "10h${del}1m${del}$it" }
+            .assertSuggestAndFlush("10h${del}1m${del}5m$del")
+            .assertAsSuggester(DurationArgumentResolver(), { "10h${del}1m${del}$it" }, "5m")
     }
 
-    private fun provideDurationArgs(): Stream<Arguments> {
-        return Stream.of(
-            Arguments.of("test Duration ", listOf("1s", "1d", "1h", "1m", "30d", "10h", "7d", "10m", "30m", "5h", "10s", "30s", "5m", "5s", "1m30s")),
-            Arguments.of("test Duration 10", listOf("10s", "10m", "10h")),
-            Arguments.of("test Duration 1m", listOf("1m", "1m,", "1m30s")),
-            Arguments.of(
-                "test Duration 10h,",
-                listOf(
-                    "10h,1s",
-                    "10h,1m",
-                    "10h,1d",
-                    "10h,1h",
-                    "10h,30d",
-                    "10h,10h",
-                    "10h,7d",
-                    "10h,10m",
-                    "10h,30m",
-                    "10h,5h",
-                    "10h,10s",
-                    "10h,30s",
-                    "10h,5m",
-                    "10h,5s",
-                    "10h,1m30s"
-                )
-            ),
-            Arguments.of(
-                "test Duration 10h,1",
-                listOf(
-                    "10h,1s",
-                    "10h,1m",
-                    "10h,1d",
-                    "10h,1h",
-                    "10h,10h",
-                    "10h,10m",
-                    "10h,10s",
-                    "10h,1m30s"
-                )
-            ),
-            Arguments.of("test Duration 10h,1m", listOf("10h,1m", "10h,1m,", "10h,1m30s")),
-            Arguments.of(
-                "test Duration 10h,1m,",
-                listOf(
-                    "10h,1m,1s",
-                    "10h,1m,1m",
-                    "10h,1m,1d",
-                    "10h,1m,1h",
-                    "10h,1m,30d",
-                    "10h,1m,10h",
-                    "10h,1m,7d",
-                    "10h,1m,10m",
-                    "10h,1m,30m",
-                    "10h,1m,5h",
-                    "10h,1m,10s",
-                    "10h,1m,30s",
-                    "10h,1m,5m",
-                    "10h,1m,5s",
-                    "10h,1m,1m30s"
-                )
-            ),
-            Arguments.of(
-                "test Duration 10h,1m,1",
-                listOf(
-                    "10h,1m,1s",
-                    "10h,1m,10s",
-                    "10h,1m,1m",
-                    "10h,1m,1d",
-                    "10h,1m,1h",
-                    "10h,1m,10h",
-                    "10h,1m,10m",
-                    "10h,1m,1m30s"
-                )
-            ),
-            Arguments.of("test Duration 10h,1m,2m", listOf("10h,1m,2m", "10h,1m,2m,"))
-        )
-    }
-
-    @Test
-    @Disabled
-    fun testSuggestInstantSpecial() {
-        platform.suggest("test Instant-special ")
+    @ParameterizedTest
+    @MethodSource("delimiters")
+    @DisplayName("Test suggest Instant with different delimiters with additional int argument at the end of the command")
+    fun testSuggestInstantSpecial(command: String, del: String) {
+        platform.suggest("$command Instant-special ")
             .assertNotEmpty()
             .assertCorrect { suggestion: Suggestion ->
                 val multilevel = suggestion.multilevel()
@@ -427,56 +393,51 @@ class VarargsArgumentTest : LiteTestSpec() {
                 }
 
                 if (multilevel.chars().allMatch { codePoint: Int -> Character.isDigit(codePoint) }) {
-                    platform.execute("test Instant-special $multilevel").assertSuccess()
+                    platform.execute("$command Instant-special $multilevel").assertSuccess()
                     return@assertCorrect
                 }
-                platform.execute("test Instant-special $multilevel 5").assertSuccess()
+                platform.execute("$command Instant-special $multilevel 5").assertSuccess()
             }
     }
 
 
-    @Test
-    @Disabled
-    fun testSuggestInstant() {
-        platform.suggest("test Instant ")
-            .assertNotEmpty().assertCorrect { suggestion: Suggestion ->
-                platform.execute(
-                    "test Instant " + suggestion.multilevel()
-                ).assertSuccess()
-            }
+    @ParameterizedTest
+    @MethodSource("delimiters")
+    @DisplayName("Test suggest Instant with different delimiters")
+    fun testSuggestInstant(command: String, del: String) {
+        platform.suggest("$command Instant ")
+            .assertNotEmpty()
+            .assertCorrect { platform.execute("$command Instant " + it.multilevel()).assertSuccess() }
 
         val tomorrow = LocalDate.now().plusDays(1)
         val tomorrowFormat = dateFormat.format(tomorrow)
 
-        platform.suggest("test Instant " + tomorrow.year)
-            .assertNotEmpty().assertCorrect { suggestion: Suggestion ->
-                platform.execute(
-                    "test Instant " + suggestion.multilevel()
-                ).assertSuccess()
-            }
-        platform.suggest("test Instant $tomorrowFormat ")
-            .assertNotEmpty().assertCorrect { suggestion: Suggestion ->
-                platform.execute(
-                    "test Instant " + tomorrowFormat + " " + suggestion.multilevel()
-                ).assertSuccess()
-            }
-        platform.suggest("test Instant 2021-01-01 00:05:50,2023-04-17 11:03:00,$tomorrowFormat ")
-            .assertNotEmpty().assertCorrect { suggestion: Suggestion ->
-                platform.execute(
-                    "test Instant " + tomorrowFormat + " " + suggestion.multilevel()
-                ).assertSuccess()
-            }
+        platform.suggest("$command Instant " + tomorrow.year)
+            .assertNotEmpty()
+            .assertCorrect { platform.execute("$command Instant " + it.multilevel()).assertSuccess() }
+
+        platform.suggest("$command Instant $tomorrowFormat ")
+            .assertNotEmpty()
+            .assertCorrect { platform.execute("$command Instant " + tomorrowFormat + " " + it.multilevel()).assertSuccess() }
+
+        platform.suggest("$command Instant 2021-01-01 00:05:50${del}2023-04-17 11:03:00${del}$tomorrowFormat ")
+            .assertNotEmpty()
+            .assertCorrect { platform.execute("$command Instant " + tomorrowFormat + " " + it.multilevel()).assertSuccess() }
     }
 
-    @Test
-    @Disabled
-    fun testSuggestEnum() {
-        platform.suggest("test enum ")
+    @ParameterizedTest
+    @MethodSource("delimiters")
+    @DisplayName("Test suggest enum with different delimiters")
+    fun testSuggestEnum(command: String, del: String) {
+        platform.suggest("$command enum ")
             .assertSuggest("FIRST", "SECOND", "THIRD", "FOURTH")
-        platform.suggest("test enum FIRST,")
-            .assertSuggest("FIRST,FIRST", "FIRST,SECOND", "FIRST,THIRD", "FIRST,FOURTH")
-        platform.suggest("test enum FIRST")
-            .assertSuggest("FIRST,", "FIRST")
+
+        platform.suggest("$command enum FIRST${del}")
+            .mapIf(del.contains(" ")) { "FIRST$del$it" }
+            .assertAsSuggester(EnumArgumentResolver(), TEST_ENUM_ARGUMENT, { "FIRST$del$it" }, "")
+
+        platform.suggest("$command enum FIRST")
+            .assertSuggest("FIRST$del", "FIRST")
     }
 
 }

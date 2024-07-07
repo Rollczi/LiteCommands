@@ -64,4 +64,12 @@ public class MetaKey<T> {
         return key.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "MetaKey{" +
+            "key='" + key + '\'' +
+            ", type=" + type +
+            ", defaultValue=" + defaultValue +
+            '}';
+    }
 }

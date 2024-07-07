@@ -27,8 +27,14 @@ public class SuggestionResult {
         this.suggestions.add(suggestion);
     }
 
+    @ApiStatus.Internal
     public void remove(Suggestion suggestion) {
         this.suggestions.remove(suggestion);
+    }
+
+    @ApiStatus.Internal
+    public void clear() {
+        this.suggestions.clear();
     }
 
     public void addAll(SuggestionResult result) {
