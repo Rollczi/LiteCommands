@@ -336,7 +336,8 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
             lastDelimiterIndex += delimiterLength;
 
             RawInputView sub = rawInputView.sub(0, lastDelimiterIndex);
-            int argumentCount = BASE_ARGUMENT_COUNT + sub.countOf(RawCommand.COMMAND_SEPARATOR_CHAR);
+            RawInputView subWithoutDelimiter = rawInputView.sub(0, lastDelimiterIndex - delimiterLength);
+            int argumentCount = BASE_ARGUMENT_COUNT + subWithoutDelimiter.countOf(RawCommand.COMMAND_SEPARATOR_CHAR);
 
             if (argumentCount > max) {
                 return null;
