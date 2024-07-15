@@ -23,6 +23,7 @@ import panda.std.Pair
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.stream.Stream
@@ -31,6 +32,8 @@ import java.util.stream.Stream
 internal class VarargsArgumentTest : LiteTestSpec() {
 
     private val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        .withZone(ZoneOffset.UTC)
 
     companion object {
         @JvmStatic
@@ -84,6 +87,11 @@ internal class VarargsArgumentTest : LiteTestSpec() {
         fun testTestEnum(@Varargs(delimiter = ",") test: List<TestEnum>): List<TestEnum> {
             return test
         }
+
+        @Execute(name = "durations-instant")
+        fun testInstantDuration(@Varargs(delimiter = ",") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
+            return Pair.of(durations, instant)
+        }
     }
 
     @Command(name = "test with-space")
@@ -118,6 +126,11 @@ internal class VarargsArgumentTest : LiteTestSpec() {
         fun testTestEnum(@Varargs(delimiter = ", ") test: List<TestEnum>): List<TestEnum> {
             return test
         }
+
+        @Execute(name = "durations-instant")
+        fun testInstantDuration(@Varargs(delimiter = ", ") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
+            return Pair.of(durations, instant)
+        }
     }
 
     @Command(name = "test custom")
@@ -151,6 +164,11 @@ internal class VarargsArgumentTest : LiteTestSpec() {
         @Execute(name = "enum")
         fun testTestEnum(@Varargs(delimiter = " | ") test: List<TestEnum>): List<TestEnum> {
             return test
+        }
+
+        @Execute(name = "durations-instant")
+        fun testInstantDuration(@Varargs(delimiter = " | ") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
+            return Pair.of(durations, instant)
         }
     }
 
@@ -382,7 +400,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
 
     @ParameterizedTest
     @MethodSource("delimiters")
-    @DisplayName("Test suggest Instant with different delimiters with additional int argument at the end of the command")
+    @DisplayName("Test suggest Instant list with different delimiters with additional int argument at the end of the command")
     fun testSuggestInstantSpecial(command: String, del: String) {
         platform.suggest("$command Instant-special ")
             .assertNotEmpty()
@@ -397,6 +415,33 @@ internal class VarargsArgumentTest : LiteTestSpec() {
                     return@assertCorrect
                 }
                 platform.execute("$command Instant-special $multilevel 5").assertSuccess()
+            }
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("delimiters")
+    @DisplayName("Test suggest Duration list with different delimiters with additional Instant argument at the end of the command")
+    fun testSuggestDurationInstant(command: String, del: String) {
+        platform.suggest("$command durations-instant ")
+            .assertNotEmpty()
+            .assertSuggestAndFlush(DurationArgumentResolver.SUGGESTIONS_LIST)
+            .assertCorrect { suggestion: Suggestion ->
+                val multilevel = suggestion.multilevel()
+                if (multilevel == "-") {
+                    return@assertCorrect
+                }
+
+                val instant = Instant.from(dateTimeFormatter.parse(multilevel))
+
+                platform.execute("$command durations-instant $multilevel")
+                    .assertSuccess(Pair.of(listOf<Duration>(), instant))
+
+                platform.execute("$command durations-instant 10s $multilevel")
+                    .assertSuccess(Pair.of(listOf(Duration.ofSeconds(10)), instant))
+
+                platform.execute("$command durations-instant 10s${del}31m $multilevel")
+                    .assertSuccess(Pair.of(listOf(Duration.ofSeconds(10), Duration.ofMinutes(31)), instant))
             }
     }
 

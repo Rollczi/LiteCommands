@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.requirement.Requirement;
+import dev.rollczi.litecommands.requirement.RequirementCondition;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
@@ -31,6 +32,7 @@ import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -270,7 +272,17 @@ public class CommandExecuteService<SENDER> {
             }
 
             matches.add(toMatch(requirement, success));
-            return match(invocation, executor, matches, requirementIterator, matcher);
+            return match(invocation, executor, matches, requirementIterator, matcher).thenApply(executorMatchResult -> {
+                for (RequirementCondition condition : requirementResult.getConditions()) {
+                    Optional<FailedReason> failedReason = condition.check(invocation, executorMatchResult);
+
+                    if (failedReason.isPresent()) {
+                        return CommandExecutorMatchResult.failed(failedReason.get());
+                    }
+                }
+
+                return executorMatchResult;
+            });
         });
     }
 

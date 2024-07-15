@@ -29,6 +29,10 @@ public class AssertSuggest {
         this.suggest = suggest;
     }
 
+    public AssertSuggest assertSuggestAndFlush(Collection<String> suggestions) {
+        return assertSuggestAndFlush(suggestions.toArray(new String[0]));
+    }
+
     public AssertSuggest assertSuggestAndFlush(String... suggestions) {
         assertThat(suggest.getSuggestions()
             .stream()

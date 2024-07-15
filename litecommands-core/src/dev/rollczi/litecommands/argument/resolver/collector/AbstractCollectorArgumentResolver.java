@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
+import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.input.raw.RawInputView;
@@ -16,6 +17,8 @@ import dev.rollczi.litecommands.input.raw.RawInputViewLegacyAdapter;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.requirement.RequirementCondition;
+import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
@@ -25,7 +28,9 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> extends TypedArgumentResolver<SENDER, COLLECTION, CollectorArgument<COLLECTION>> {
@@ -49,12 +54,14 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
 
     private ParseResult<COLLECTION> parse(Class<E> componentType, RawInput rawInput, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
         ParseResult<List<E>> parseResult = parseToList(componentType, rawInput, collectorArgument, invocation);
+        Collector<E, ?, ? extends COLLECTION> collector = getCollector(collectorArgument, invocation);
 
         if (parseResult.isFailed()) {
-            return ParseResult.failure(parseResult.getFailedReason());
+            COLLECTION empty = Stream.<E>empty().collect(collector);
+
+            return ParseResult.conditional(empty, new SuccessRequirementCondition(parseResult.getFailedReason()));
         }
 
-        Collector<E, ?, ? extends COLLECTION> collector = getCollector(collectorArgument, invocation);
         COLLECTION result = parseResult.getSuccess().stream()
             .collect(collector);
 
@@ -81,7 +88,10 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         RawInputViewLegacyAdapter view = new RawInputViewLegacyAdapter(rawInput);
         ParseResult<List<E>> result = parseWithNoSpaceDelimiter(view, range, delimiter, invocation, argument, parser);
 
-        view.applyChanges();
+        if (result.isSuccessful()) {
+            view.applyChanges();
+        }
+
         return result;
     }
 
@@ -352,5 +362,22 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
     }
 
     abstract protected Class<E> getElementType(CollectorArgument<COLLECTION> context, Invocation<SENDER> invocation);
+
+    private static class SuccessRequirementCondition implements RequirementCondition {
+        private final Object failedReason;
+
+        private SuccessRequirementCondition(Object failedReason) {
+            this.failedReason = failedReason;
+        }
+
+        @Override
+        public Optional<FailedReason> check(Invocation<?> ignored, CommandExecutorMatchResult result) {
+            if (result.isSuccessful()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(FailedReason.of(failedReason));
+        }
+    }
 
 }
