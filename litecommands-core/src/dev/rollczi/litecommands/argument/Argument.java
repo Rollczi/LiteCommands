@@ -37,4 +37,8 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
         return new SimpleArgument<>(name, format, nullable);
     }
 
+    static <T, U> Argument<U> of(Argument<T> argument, Class<U> type) {
+        return new SimpleArgument<>(argument.getName(),WrapFormat.notWrapped(type));
+    }
+
 }
