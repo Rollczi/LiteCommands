@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
@@ -307,6 +308,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public <T> B context(Class<T> on, ContextProvider<SENDER, T> bind) {
+        this.contextRegistry.registerProvider(on, bind);
+        return this.self();
+    }
+
+    @Override
+    public <T> B context(Class<T> on, ContextChainedProvider<SENDER, T> bind) {
         this.contextRegistry.registerProvider(on, bind);
         return this.self();
     }
