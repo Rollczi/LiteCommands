@@ -19,8 +19,10 @@ import org.junit.jupiter.api.Test;
 public class ContextProviderTest extends LiteTestSpec {
 
     static LiteConfig config = builder -> builder
-        .context(User.class, new UserProvider<>())
-        .context(Guild.class, new GuildProvider<>());
+        .context(User.class, new UserContextual<>())
+        .context(Guild.class, new GuildContextual<>())
+        .context(Integer.class, new IntegerContextual<>())
+        .context(Double.class, new DoubleContextual<>());
 
     static Map<String, User> USERS = new ConcurrentHashMap<>();
 
@@ -65,7 +67,7 @@ public class ContextProviderTest extends LiteTestSpec {
 
     }
 
-    static class UserProvider<S> implements ContextProvider<S, User> {
+    static class UserContextual<S> implements ContextProvider<S, User> {
 
         @Override
         public ContextResult<User> provide(Invocation<S> invocation) {
@@ -75,7 +77,7 @@ public class ContextProviderTest extends LiteTestSpec {
 
     }
 
-    static class GuildProvider<S> implements ContextChainedProvider<S, Guild> {
+    static class GuildContextual<S> implements ContextChainedProvider<S, Guild> {
 
         @Override
         public ContextResult<Guild> provide(Invocation<S> invocation, ContextChainAccessor<S> accessor) {
@@ -94,48 +96,73 @@ public class ContextProviderTest extends LiteTestSpec {
 
     }
 
-    @Command(name = "user")
-    static class UserCommand {
+    static class IntegerContextual<S> implements ContextChainedProvider<S, Integer> {
 
-        @Execute
-        void execute(@Context User user) {
-            user.getName();
+        @Override
+        public ContextResult<Integer> provide(Invocation<S> invocation, ContextChainAccessor<S> accessor) {
+            ContextResult<Double> doubleContext = accessor.provideContext(Double.class, invocation);
+            if (doubleContext.isFailed()) {
+                return ContextResult.error(doubleContext);
+            }
+            return ContextResult.ok(() -> doubleContext.getSuccess().intValue());
         }
 
     }
 
-    @Command(name = "guild")
-    static class GuildCommand {
+    static class DoubleContextual<S> implements ContextProvider<S, Double> {
 
-        @Execute(name = "get")
+        @Override
+        public ContextResult<Double> provide(Invocation<S> invocation) {
+            return ContextResult.error("Double always fails");
+        }
+
+    }
+
+    @Command(name = "command")
+    static class TestCommand {
+
+        @Execute(name = "user")
+        void execute(@Context User user) {}
+
+        @Execute(name = "guild get")
         void execute(@Context Guild guild) {}
 
-        @Execute(name = "set")
+        @Execute(name = "guild set")
         void execute(@Context User user, @Arg String guildName) {
             user.setGuild(new Guild(guildName));
             USERS.put(user.getName(), user);
         }
+
+        @Execute(name = "failed")
+        void execute(@Context Integer integer) {}
 
     }
 
     @Test
     @DisplayName("Should provide user context")
     void testUserContext() {
-        platform.execute("user")
+        platform.execute("command user")
             .assertSuccess();
     }
 
     @Test
     @DisplayName("Should provide guild context")
     void testGuildContext() {
-        platform.execute("guild get")
+        platform.execute("command guild get")
             .assertFailure();
 
-        platform.execute("guild set test")
+        platform.execute("command guild set test")
             .assertSuccess();
 
-        platform.execute("guild get")
+        platform.execute("command guild get")
             .assertSuccess();
+    }
+
+    @Test
+    @DisplayName("Should fail providing context")
+    void testFailedContext() {
+        platform.execute("command failed")
+            .assertFailure("Double always fails");
     }
 
 
