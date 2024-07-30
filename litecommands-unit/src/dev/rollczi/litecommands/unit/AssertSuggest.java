@@ -136,4 +136,9 @@ public class AssertSuggest {
         return this;
     }
 
+    public AssertSuggest assertEmpty() {
+        assertThat(suggest.getSuggestions()).isEmpty();
+        return this;
+    }
+
 }

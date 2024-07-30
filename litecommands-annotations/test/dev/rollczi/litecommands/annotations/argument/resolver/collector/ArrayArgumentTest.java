@@ -156,13 +156,13 @@ class ArrayArgumentTest extends LiteTestSpec {
             .assertSuccess(new int[]{});
 
         platform.execute("test int ")
-            .assertFailure();
+            .assertSuccess(new int[]{});
 
         platform.execute("test Integer")
             .assertSuccess(new Integer[]{});
 
         platform.execute("test Integer ")
-            .assertFailure();
+            .assertSuccess(new Integer[]{});
 
         platform.execute("test String")
             .assertSuccess(new String[]{});
@@ -174,19 +174,19 @@ class ArrayArgumentTest extends LiteTestSpec {
             .assertSuccess(new Duration[]{});
 
         platform.execute("test Duration ")
-            .assertFailure();
+            .assertSuccess(new Duration[]{});
 
         platform.execute("test Instant")
             .assertSuccess(new Instant[]{});
 
         platform.execute("test Instant ")
-            .assertFailure();
+            .assertSuccess(new Instant[]{});
 
         platform.execute("test enum")
             .assertSuccess(new TestEnum[]{});
 
         platform.execute("test enum ")
-            .assertFailure();
+            .assertSuccess(new TestEnum[]{});
     }
 
     @Test

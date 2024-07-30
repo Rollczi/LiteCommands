@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.time.DateTimeException;
@@ -70,8 +71,22 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<UNIT> argument, SuggestionContext context) {
+        Suggestion suggestion = context.getCurrent();
+        int lengthMultilevel = suggestion.lengthMultilevel();
+
+        suggestion = suggestion.deleteRight(Math.max(lengthMultilevel - 2, 0));
+        String left = suggestion.multilevel();
+
         return this.suggestions.get().stream()
-            .map(this.formatter::format)
+            .map(temporal -> left + this.formatter.format(temporal).substring(left.length()))
+            .filter(text -> {
+                try {
+                    this.formatter.parse(text, query);
+                    return true;
+                } catch (DateTimeException exception) {
+                    return false;
+                }
+            })
             .collect(SuggestionResult.collector());
     }
 

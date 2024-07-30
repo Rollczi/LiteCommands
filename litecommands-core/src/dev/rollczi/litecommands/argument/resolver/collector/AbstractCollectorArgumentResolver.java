@@ -70,20 +70,25 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
 
     private ParseResult<List<E>> parseToList(Class<E> componentType, RawInput rawInput, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
         Argument<E> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
-
         ParserSet<SENDER, E> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
         Parser<SENDER, E> parser = parserSet.getValidParserOrThrow(invocation, argument);
-        Range range = parser.getRange(argument);
-        String delimiter = collectorArgument.getDelimiter();
-
-        if (delimiter.equals(RawCommand.COMMAND_SEPARATOR)) {
-            return parseWithSpaceDelimiter(rawInput, invocation, range, parser, argument);
-        }
 
         if (rawInput.hasNext() && rawInput.seeNext().isEmpty()) {
-            rawInput.next();
+            String next = rawInput.next();
+
+            if (parser.getRange(argument).isInRange(1)) {
+                ParseResult<E> result = parser.parse(invocation, argument, RawInput.of(next));
+
+                if (result.isSuccessful()) {
+                    return ParseResult.success(Collections.singletonList(result.getSuccess()));
+                }
+            }
+
             return ParseResult.success(Collections.emptyList());
         }
+
+        Range range = parser.getRange(argument);
+        String delimiter = collectorArgument.getDelimiter();
 
         RawInputViewLegacyAdapter view = new RawInputViewLegacyAdapter(rawInput);
         ParseResult<List<E>> result = parseWithNoSpaceDelimiter(view, range, delimiter, invocation, argument, parser);
@@ -93,28 +98,6 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         }
 
         return result;
-    }
-
-    private static <SENDER, E> ParseResult<List<E>> parseWithSpaceDelimiter(RawInput rawInput, Invocation<SENDER> invocation, Range range, Parser<SENDER, E> parser, Argument<E> argument) {
-        List<E> results = new ArrayList<>();
-
-        while (rawInput.hasNext()) {
-            int count = rawInput.seeAll().size();
-
-            if (range.isBelowRange(count)) {
-                return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
-            }
-
-            ParseResult<E> parsedResult = parser.parse(invocation, argument, rawInput);
-
-            if (parsedResult.isFailed()) {
-                return ParseResult.failure(parsedResult.getFailedReason());
-            }
-
-            results.add(parsedResult.getSuccess());
-        }
-
-        return ParseResult.success(results);
     }
 
     private ParseResult<List<E>> parseWithNoSpaceDelimiter(RawInputView view, Range range, String delimiter, Invocation<SENDER> invocation, Argument<E> argument, Parser<SENDER, E> parser) {

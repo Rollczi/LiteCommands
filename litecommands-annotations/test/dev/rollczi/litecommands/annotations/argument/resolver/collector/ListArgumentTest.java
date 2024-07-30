@@ -11,6 +11,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
+import static java.util.Collections.*;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -144,38 +146,35 @@ class ListArgumentTest extends LiteTestSpec {
 
     @Test
     void testEmpty() {
-        platform.execute("test int ")
-            .assertFailure();
-
         platform.execute("test Integer")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test Integer ")
-            .assertFailure();
+            .assertSuccess(emptyList());
 
         platform.execute("test String")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test String ")
-            .assertSuccess(Arrays.asList(""));
+            .assertSuccess(singletonList(""));
 
         platform.execute("test Duration")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test Duration ")
-            .assertFailure();
+            .assertSuccess(emptyList());
 
         platform.execute("test Instant")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test Instant ")
-            .assertFailure();
+            .assertSuccess(emptyList());
 
         platform.execute("test enum")
-            .assertSuccess(Arrays.asList());
+            .assertSuccess(emptyList());
 
         platform.execute("test enum ")
-            .assertFailure();
+            .assertSuccess(emptyList());
     }
 
     @Test

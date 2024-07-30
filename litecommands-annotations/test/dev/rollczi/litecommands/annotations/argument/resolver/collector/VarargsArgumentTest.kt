@@ -77,7 +77,6 @@ internal class VarargsArgumentTest : LiteTestSpec() {
             return test
         }
 
-
         @Execute(name = "Instant-special")
         fun testInstantSpecial(@Varargs(delimiter = ",") test: List<Instant>, @Arg a: Int): Pair<List<Instant>, Int> {
             return Pair.of(test, a)
@@ -91,6 +90,11 @@ internal class VarargsArgumentTest : LiteTestSpec() {
         @Execute(name = "durations-instant")
         fun testInstantDuration(@Varargs(delimiter = ",") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
             return Pair.of(durations, instant)
+        }
+
+        @Execute(name = "instants-duration")
+        fun testDurationInstant(@Varargs(delimiter = ",") instants: List<Instant>, @Arg duration: Duration): Pair<List<Instant>, Duration> {
+            return Pair.of(instants, duration)
         }
     }
 
@@ -116,7 +120,6 @@ internal class VarargsArgumentTest : LiteTestSpec() {
             return test
         }
 
-
         @Execute(name = "Instant-special")
         fun testInstantSpecial(@Varargs(delimiter = ", ") test: List<Instant>, @Arg a: Int): Pair<List<Instant>, Int> {
             return Pair.of(test, a)
@@ -130,6 +133,11 @@ internal class VarargsArgumentTest : LiteTestSpec() {
         @Execute(name = "durations-instant")
         fun testInstantDuration(@Varargs(delimiter = ", ") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
             return Pair.of(durations, instant)
+        }
+
+        @Execute(name = "instants-duration")
+        fun testDurationInstant(@Varargs(delimiter = ", ") instants: List<Instant>, @Arg duration: Duration): Pair<List<Instant>, Duration> {
+            return Pair.of(instants, duration)
         }
     }
 
@@ -155,7 +163,6 @@ internal class VarargsArgumentTest : LiteTestSpec() {
             return test
         }
 
-
         @Execute(name = "Instant-special")
         fun testInstantSpecial(@Varargs(delimiter = " | ") test: List<Instant>, @Arg a: Int): Pair<List<Instant>, Int> {
             return Pair.of(test, a)
@@ -169,6 +176,11 @@ internal class VarargsArgumentTest : LiteTestSpec() {
         @Execute(name = "durations-instant")
         fun testInstantDuration(@Varargs(delimiter = " | ") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
             return Pair.of(durations, instant)
+        }
+
+        @Execute(name = "instants-duration")
+        fun testDurationInstant(@Varargs(delimiter = " | ") instants: List<Instant>, @Arg duration: Duration): Pair<List<Instant>, Duration> {
+            return Pair.of(instants, duration)
         }
     }
 
@@ -295,7 +307,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
             .assertSuccess(emptyList<Any>())
 
         platform.execute("$command String ")
-            .assertSuccess(emptyList<Any>())
+            .assertSuccess(listOf(""))
 
         platform.execute("$command Duration")
             .assertSuccess(emptyList<Any>())
@@ -443,6 +455,52 @@ internal class VarargsArgumentTest : LiteTestSpec() {
                 platform.execute("$command durations-instant 10s${del}31m $multilevel")
                     .assertSuccess(Pair.of(listOf(Duration.ofSeconds(10), Duration.ofMinutes(31)), instant))
             }
+
+        platform.suggest("$command durations-instant 10s${del}")
+            .mapIf(del.contains(" ")) { "10s$del$it" }
+            .assertAsSuggester(DurationArgumentResolver(), { "10s${del}${it}" }, "")
+
+        platform.suggest("$command durations-instant 10s${del}31m ")
+            .assertNotEmpty()
+            .assertCorrect { suggestion: Suggestion ->
+                val multilevel = suggestion.multilevel()
+                val instant = Instant.from(dateTimeFormatter.parse(multilevel))
+
+                platform.execute("$command durations-instant 10s${del}31m $multilevel")
+                    .assertSuccess(Pair.of(listOf(Duration.ofSeconds(10), Duration.ofMinutes(31)), instant))
+            }
+    }
+
+    @ParameterizedTest
+    @MethodSource("delimiters")
+    @DisplayName("Test suggest Instant list with different delimiters with additional Duration argument at the end of the command")
+    fun testSuggestInstantDuration(command: String, del: String) {
+        platform.suggest("$command instants-duration ")
+            .assertSuggestAndFlush(DurationArgumentResolver.SUGGESTIONS_LIST)
+            .assertNotEmpty()
+            .assertCorrect { suggestion: Suggestion ->
+                val multilevel = suggestion.multilevel()
+                val instant = Instant.from(dateTimeFormatter.parse(multilevel))
+                platform.execute("$command instants-duration $multilevel 10s")
+                    .assertSuccess(Pair.of(listOf(instant), Duration.ofSeconds(10)))
+
+                platform.execute("$command instants-duration $multilevel$del$multilevel 10s")
+                    .assertSuccess(Pair.of(listOf(instant, instant), Duration.ofSeconds(10)))
+            }
+
+        platform.suggest("$command instants-duration 2021-01-01 ")
+            .assertNotEmpty()
+            .assertCorrect { suggestion: Suggestion ->
+                val multilevel = suggestion.multilevel()
+                val instant = Instant.from(dateTimeFormatter.parse("2021-01-01 $multilevel"))
+
+                platform.execute("$command instants-duration 2021-01-01 $multilevel 10s")
+                    .assertSuccess(Pair.of(listOf(instant), Duration.ofSeconds(10)))
+            }
+
+        platform.suggest("$command instants-duration 2021-01-01 00:05:50 ")
+            .assertNotEmpty()
+            .assertAsSuggester(DurationArgumentResolver(), "")
     }
 
 

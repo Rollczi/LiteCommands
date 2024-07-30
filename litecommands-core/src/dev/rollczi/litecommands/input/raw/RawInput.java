@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface RawInput {
+
     static RawInput of(List<String> rawArguments) {
         return new RawInputImpl(new ArrayList<>(rawArguments));
     }
