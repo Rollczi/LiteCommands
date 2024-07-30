@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.context;
 
 import dev.rollczi.litecommands.requirement.RequirementResult;
+import java.util.function.Function;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,24 @@ public class ContextResult<T> implements RequirementResult<T> {
     @Override
     public boolean isSuccessfulNull() {
         return false;
+    }
+
+    @ApiStatus.Experimental
+    public <R> ContextResult<R> map(Function<T, R> mapper) {
+        if (this.isFailed()) {
+            return ContextResult.error(error);
+        }
+
+        return ContextResult.ok(() -> mapper.apply(getSuccess()));
+    }
+
+    @ApiStatus.Experimental
+    public <R> ContextResult<R> flatMap(Function<T, ContextResult<R>> mapper) {
+        if (this.isFailed()) {
+            return ContextResult.error(error);
+        }
+
+        return mapper.apply(getSuccess());
     }
 
     public static <T> ContextResult<T> ok(Supplier<T> supplier) {

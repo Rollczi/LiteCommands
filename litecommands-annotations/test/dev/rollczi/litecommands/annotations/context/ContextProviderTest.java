@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ContextProviderTest extends LiteTestSpec {
+class ContextProviderTest extends LiteTestSpec {
 
     static LiteConfig config = builder -> builder
         .context(User.class, new UserContextual<>())
@@ -30,10 +30,6 @@ public class ContextProviderTest extends LiteTestSpec {
 
         private final String name;
         private Guild guild;
-
-        User(String name, @Nullable Guild guild) {
-            this.name = name;
-        }
 
         User(String name) {
             this.name = name;
@@ -81,32 +77,21 @@ public class ContextProviderTest extends LiteTestSpec {
 
         @Override
         public ContextResult<Guild> provide(Invocation<S> invocation, ContextChainAccessor<S> accessor) {
-            ContextResult<User> userContext = accessor.provideContext(User.class, invocation);
-            if (userContext.isFailed()) {
-                return ContextResult.error(userContext);
-            }
-            User user = userContext.getSuccess();
-
-            Guild guild = user.getGuild();
-            if (guild == null) {
-                return ContextResult.error("User is not in a guild");
-            }
-            return ContextResult.ok(() -> guild);
+            return accessor.provideContext(User.class, invocation)
+                .flatMap(user -> user.getGuild() == null
+                    ? ContextResult.error("User is not in a guild")
+                    : ContextResult.ok(() -> user.getGuild())
+                );
         }
 
     }
 
     static class IntegerContextual<S> implements ContextChainedProvider<S, Integer> {
-
         @Override
         public ContextResult<Integer> provide(Invocation<S> invocation, ContextChainAccessor<S> accessor) {
-            ContextResult<Double> doubleContext = accessor.provideContext(Double.class, invocation);
-            if (doubleContext.isFailed()) {
-                return ContextResult.error(doubleContext);
-            }
-            return ContextResult.ok(() -> doubleContext.getSuccess().intValue());
+            return accessor.provideContext(Double.class, invocation)
+                .map(value -> value.intValue());
         }
-
     }
 
     static class DoubleContextual<S> implements ContextProvider<S, Double> {

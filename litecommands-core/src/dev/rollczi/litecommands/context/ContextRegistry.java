@@ -21,14 +21,7 @@ public class ContextRegistry<SENDER> implements ContextChainAccessor<SENDER>  {
         Optional<ContextChainedProvider<SENDER, ?>> bindContextual = MapUtil.findByInstanceOf(clazz, this.contextualBindings);
 
         if (bindContextual.isPresent()) {
-            ContextResult<T> result = (ContextResult<T>) bindContextual.get().provide(invocation, this);
-
-            Object failedReason = result.getFailedReason();
-            if (failedReason instanceof ContextResult<?>) {
-                return ContextResult.error(((ContextResult<?>) failedReason).getFailedReason());
-            }
-
-            return result;
+            return (ContextResult<T>) bindContextual.get().provide(invocation, this);
         }
 
         return ContextResult.error("Cannot find binding for " + clazz.getName());
