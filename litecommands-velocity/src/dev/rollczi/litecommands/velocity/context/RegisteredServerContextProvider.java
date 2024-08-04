@@ -22,7 +22,7 @@ import dev.rollczi.litecommands.velocity.LiteVelocityMessages;
  * </pre></blockquote>
  * or with the lambda function:
  * <blockquote><pre>
- * builder.message(LiteVelocityMessages.NOT_CONNECTED_TO_ANY_SERVER, (invocation, player) -> "Hello, " + player.getUsername() + "! You are not connected to any server!");
+ * builder.message(LiteVelocityMessages.NOT_CONNECTED_TO_ANY_SERVER, (invocation, player) -&gt; "Hello, " + player.getUsername() + "! You are not connected to any server!");
  * </pre></blockquote>
  */
 public class RegisteredServerContextProvider implements ContextProvider<CommandSource, RegisteredServer> {
