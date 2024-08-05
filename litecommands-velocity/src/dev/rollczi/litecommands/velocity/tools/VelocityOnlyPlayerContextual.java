@@ -19,7 +19,7 @@ import dev.rollczi.litecommands.velocity.LiteVelocityMessages;
  * </pre></blockquote>
  * or with the lambda function:
  * <blockquote><pre>
- * builder.message(LiteVelocityMessages.PLAYER_ONLY, (invocation, __) -> "Your custom message here");
+ * builder.message(LiteVelocityMessages.PLAYER_ONLY, (invocation, __) -&gt; "Your custom message here");
  * </pre></blockquote>
  */
 @Deprecated
