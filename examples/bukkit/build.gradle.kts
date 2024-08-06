@@ -50,6 +50,6 @@ sourceSets.test {
 }
 
 tasks.runServer {
-    minecraftVersion("1.20.4")
+    minecraftVersion("1.21")
     jvmArgs(listOf("-XX:+AllowEnhancedClassRedefinition"))
 }

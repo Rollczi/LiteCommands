@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.requirement.RequirementCondition;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
@@ -118,13 +119,13 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 }
             }
 
-            ParseResult<T> result = context.parseArgument(invocation);
+            boolean isMatch = context.matchParseArgument(invocation);
 
-            if (result.isFailed()) {
-                return SuggestionInputResult.fail();
+            if (isMatch) {
+                return SuggestionInputResult.continueWithout();
             }
 
-            return SuggestionInputResult.continueWithout();
+            return SuggestionInputResult.fail();
         }
 
         @Override

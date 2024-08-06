@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.shared.Preconditions;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
@@ -90,6 +91,17 @@ public class RawInputAnalyzer {
             pivotPosition += input.consumedCount();
 
             return parsed;
+        }
+
+        @ApiStatus.Experimental
+        public boolean matchParseArgument(Invocation<SENDER> invocation) {
+            List<String> arguments = rawArguments.subList(pivotPosition, realArgumentMaxCount);
+            RawInput input = RawInput.of(arguments);
+            boolean parse = parser.matchParse(invocation, argument, input);
+
+            pivotPosition += input.consumedCount();
+
+            return parse;
         }
 
         public boolean isLastRawArgument() {

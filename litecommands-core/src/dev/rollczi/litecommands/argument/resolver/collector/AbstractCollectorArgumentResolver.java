@@ -287,7 +287,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
             return result;
         }
 
-        if (range.isInRange(count) && isValid(parser, argument, invocation, rest)) {
+        if (range.isInRange(count) && this.isMatch(parser, argument, invocation, rest)) {
             result.add(Suggestion.of(base));
 
             if (!rest.isEmpty()) {
@@ -303,8 +303,8 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         return result;
     }
 
-    private <T> boolean isValid(Parser<SENDER, T> parser, Argument<T> argument, Invocation<SENDER> invocation, String rawArgument) {
-        return parser.matchParse(invocation, argument, RawInput.of(rawArgument));
+    private <T> boolean isMatch(Parser<SENDER, T> parser, Argument<T> argument, Invocation<SENDER> invocation, String rawArgument) {
+        return parser.matchParse(invocation, argument, RawInput.of(StringUtil.spilt(rawArgument, RawCommand.COMMAND_SEPARATOR)));
     }
 
     @Nullable

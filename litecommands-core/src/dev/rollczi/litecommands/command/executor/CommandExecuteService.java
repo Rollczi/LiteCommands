@@ -51,7 +51,16 @@ public class CommandExecuteService<SENDER> {
     private final ScheduledRequirementResolver<SENDER> scheduledRequirementResolver;
     private final WrapperRegistry wrapperRegistry;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry) {
+    public CommandExecuteService(
+        ValidatorService<SENDER> validatorService,
+        ResultHandleService<SENDER> resultResolver,
+        Scheduler scheduler,
+        SchematicGenerator<SENDER> schematicGenerator,
+        ParserRegistry<SENDER> parserRegistry,
+        ContextRegistry<SENDER> contextRegistry,
+        WrapperRegistry wrapperRegistry,
+        BindRegistry bindRegistry
+    ) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.scheduler = scheduler;
@@ -63,15 +72,11 @@ public class CommandExecuteService<SENDER> {
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute)
             .thenApply(commandExecuteResult -> mapResult(commandRoute, commandExecuteResult, invocation))
-            .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> {
-                this.handleResult(invocation, executeResult);
-
-                return executeResult;
-            }))
+            .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> this.handleResult(invocation, executeResult)))
             .exceptionally(new LastExceptionHandler<>(resultResolver, invocation));
     }
 
-    private void handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
+    private CommandExecuteResult handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
         Throwable throwable = executeResult.getThrowable();
         if (throwable != null) {
             resultResolver.resolve(invocation, throwable);
@@ -86,6 +91,8 @@ public class CommandExecuteService<SENDER> {
         if (error != null) {
             resultResolver.resolve(invocation, error);
         }
+
+        return executeResult;
     }
 
     // TODO Support mapping of result in result resolver
