@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -162,6 +163,10 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     <T>
     B context(Class<T> on, ContextProvider<SENDER, T> bind);
+
+    @ApiStatus.Experimental
+    <T>
+    B context(Class<T> on, ContextChainedProvider<SENDER, T> bind);
 
     <T>
     B bind(Class<T> on, BindProvider<T> bindProvider);
