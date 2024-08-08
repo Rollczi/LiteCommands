@@ -32,7 +32,7 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
 
     @ApiStatus.Experimental
     default <NEW> Argument<NEW> withType(Class<NEW> type, boolean nullable) {
-        return new SimpleArgument<>(this.getName(), WrapFormat.notWrapped(type), this.meta().copy(), nullable);
+        return new SimpleArgument<>(this.getKeyName(), WrapFormat.notWrapped(type), this.meta().copy(), nullable);
     }
 
     @ApiStatus.Experimental
