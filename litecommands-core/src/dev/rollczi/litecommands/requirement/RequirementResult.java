@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.requirement;
 
+import java.util.List;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public interface RequirementResult<PARSED> {
@@ -15,5 +17,9 @@ public interface RequirementResult<PARSED> {
 
     @NotNull
     Object getFailedReason();
+
+    @NotNull
+    @ApiStatus.Experimental
+    List<RequirementCondition> getConditions();
 
 }

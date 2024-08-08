@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,10 @@ public interface MetaType<T> {
             return this.type.cast(value);
         }
 
+        @Override
+        public String toString() {
+            return type.getTypeName();
+        }
     }
 
     class MetaTypeList<T> implements MetaType<List<T>> {
@@ -62,6 +67,10 @@ public interface MetaType<T> {
             return new ArrayList<>(value);
         }
 
+        @Override
+        public String toString() {
+            return "List<T>";
+        }
     }
 
     class MetaTypeSet<T> implements MetaType<Set<T>> {
@@ -82,6 +91,10 @@ public interface MetaType<T> {
             return new HashSet<>(value);
         }
 
+        @Override
+        public String toString() {
+            return "Set<T>";
+        }
     }
 
 }

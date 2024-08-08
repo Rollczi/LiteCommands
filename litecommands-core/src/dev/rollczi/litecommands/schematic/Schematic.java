@@ -29,4 +29,8 @@ public class Schematic {
         return Collections.unmodifiableList(schematics);
     }
 
+    @Override
+    public String toString() {
+        return schematics.toString();
+    }
 }

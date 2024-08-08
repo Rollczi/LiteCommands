@@ -11,7 +11,7 @@ public class SuggestionContext {
     }
 
     public SuggestionContext(String single) {
-        this.current = Suggestion.of(single);
+        this(Suggestion.of(single));
     }
 
     public Suggestion getCurrent() {

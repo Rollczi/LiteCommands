@@ -1,9 +1,11 @@
 plugins {
     id("java-library")
+    id("org.jetbrains.kotlin.jvm")
 }
 
 dependencies {
     testImplementation(project(":litecommands-unit"))
+    testImplementation(kotlin("stdlib-jdk8"))
 
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
@@ -20,6 +22,10 @@ tasks.getByName<Test>("test") {
 sourceSets.test {
     java.setSrcDirs(listOf("test"))
     resources.setSrcDirs(emptyList<String>())
+}
+
+kotlin {
+    jvmToolchain(java.targetCompatibility.ordinal + 1)
 }
 
 open class TestImplementation {

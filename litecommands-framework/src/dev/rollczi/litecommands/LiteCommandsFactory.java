@@ -99,7 +99,8 @@ public final class LiteCommandsFactory {
 
             List<Class<?>> excluded = Arrays.asList(Cloneable.class, Serializable.class, Object.class);
 
-            builder
+            builder.advanced()
+
                 .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
                 .context(String[].class, invocation -> ContextResult.ok(() -> invocation.arguments().asArray()))
                 .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))

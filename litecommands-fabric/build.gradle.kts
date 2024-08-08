@@ -2,7 +2,7 @@ plugins {
     `litecommands-java-17`
     `litecommands-repositories`
     `litecommands-publish`
-    id("fabric-loom") version "1.5-SNAPSHOT"
+    id("fabric-loom") version "1.7-SNAPSHOT"
 }
 
 val minecraft_version: String by project

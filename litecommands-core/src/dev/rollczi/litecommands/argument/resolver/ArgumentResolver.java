@@ -17,15 +17,11 @@ public abstract class ArgumentResolver<SENDER, TYPE> implements MultipleArgument
         return this.parse(invocation, argument, rawInput.next());
     }
 
+    protected abstract ParseResult<TYPE> parse(Invocation<SENDER> invocation, Argument<TYPE> context, String argument);
+
     @Override
     public final Range getRange(Argument<TYPE> argument) {
         return Range.ONE;
-    }
-
-    protected abstract ParseResult<TYPE> parse(Invocation<SENDER> invocation, Argument<TYPE> context, String argument);
-
-    protected boolean canParse(Invocation<SENDER> invocation, Argument<TYPE> context, String argument) {
-        return true;
     }
 
 }

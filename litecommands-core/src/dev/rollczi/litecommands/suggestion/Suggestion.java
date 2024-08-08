@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.suggestion;
 
+import dev.rollczi.litecommands.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -105,8 +106,7 @@ public class Suggestion {
     }
 
     public static Suggestion of(String suggestion) {
-        List<String> collected = new ArrayList<>();
-        Collections.addAll(collected, suggestion.split(" "));
+        List<String> collected = StringUtil.splitBySpace(suggestion);
 
         if (suggestion.endsWith(" ") && !collected.get(collected.size() - 1).isEmpty()) {
             collected.add("");

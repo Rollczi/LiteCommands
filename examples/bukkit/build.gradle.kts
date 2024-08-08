@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("xyz.jpenilla.run-paper") version "2.2.0"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 version = "1.0.0-SNAPSHOT"
@@ -36,7 +36,7 @@ tasks.shadowJar {
 
     listOf(
         "panda.std",
-        "dev.rollczi.litecommands",
+//        "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }
 
@@ -50,5 +50,6 @@ sourceSets.test {
 }
 
 tasks.runServer {
-    minecraftVersion("1.20.4")
+    minecraftVersion("1.21")
+    jvmArgs(listOf("-XX:+AllowEnhancedClassRedefinition"))
 }

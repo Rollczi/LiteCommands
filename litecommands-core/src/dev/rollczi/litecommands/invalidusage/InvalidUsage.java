@@ -75,4 +75,12 @@ public class InvalidUsage<SENDER> {
         TOO_MANY_ARGUMENTS
     }
 
+    @Override
+    public String toString() {
+        return "InvalidUsage{" +
+            "cause=" + cause +
+            ", lastRoute=" + lastRoute +
+            ", schematic=" + schematic +
+            '}';
+    }
 }

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.ApiStatus;
 
 public class SuggestionResult {
 
@@ -26,15 +27,26 @@ public class SuggestionResult {
         this.suggestions.add(suggestion);
     }
 
+    @ApiStatus.Internal
+    public void remove(Suggestion suggestion) {
+        this.suggestions.remove(suggestion);
+    }
+
+    @ApiStatus.Internal
+    public void clear() {
+        this.suggestions.clear();
+    }
+
     public void addAll(SuggestionResult result) {
         this.suggestions.addAll(result.suggestions);
     }
 
     public SuggestionResult filterBy(Suggestion suggestion) {
         String multilevel = suggestion.multilevel();
+        int levels = suggestion.lengthMultilevel();
         Set<Suggestion> filtered = this.suggestions.stream()
             .filter(current ->  StringUtil.startsWithIgnoreCase(current.multilevel(), multilevel))
-            .map(suggestion1 -> suggestion1.deleteLeft(suggestion.lengthMultilevel() - 1))
+            .map(suggestion1 -> suggestion1.deleteLeft(levels - 1))
             .collect(Collectors.toSet());
 
         return new SuggestionResult(filtered);
@@ -72,6 +84,43 @@ public class SuggestionResult {
         return new SuggestionResult(parsedSuggestions);
     }
 
+    /**
+     * Appends the given part directly to the left of the suggestion. (without any space)
+     */
+    @ApiStatus.Experimental
+    public SuggestionResult appendLeftDirectly(String partToAppend) {
+        Set<Suggestion> parsedSuggestions = new HashSet<>();
+
+        for (Suggestion suggestion : this.suggestions) {
+            parsedSuggestions.add(Suggestion.of(partToAppend + suggestion.multilevel()));
+        }
+
+        return new SuggestionResult(parsedSuggestions);
+    }
+
+    public SuggestionResult appendRight(
+        Iterable<String> suggestions
+    ) {
+        Set<Suggestion> parsedSuggestions = new HashSet<>();
+
+        for (Suggestion suggestion : this.suggestions) {
+            parsedSuggestions.add(suggestion.appendRight(suggestions));
+        }
+
+        return new SuggestionResult(parsedSuggestions);
+    }
+
+    public SuggestionResult appendRight(
+        String... suggestions
+    ) {
+        Set<Suggestion> parsedSuggestions = new HashSet<>();
+
+        for (Suggestion suggestion : this.suggestions) {
+            parsedSuggestions.add(suggestion.appendRight(suggestions));
+        }
+
+        return new SuggestionResult(parsedSuggestions);
+    }
 
     public static SuggestionResult of(String... suggestions) {
         return of(new IterableMutableArray<>(suggestions));
