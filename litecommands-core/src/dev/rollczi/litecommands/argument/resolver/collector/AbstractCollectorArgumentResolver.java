@@ -4,10 +4,14 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.SimpleArgument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
+import dev.rollczi.litecommands.argument.parser.ParserChainAccessor;
+import dev.rollczi.litecommands.argument.parser.ParserChained;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.argument.suggester.SuggesterChainAccessor;
+import dev.rollczi.litecommands.argument.suggester.SuggesterChained;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.input.raw.RawCommand;
@@ -70,8 +74,8 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
 
     private ParseResult<List<E>> parseToList(Class<E> componentType, RawInput rawInput, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
         Argument<E> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
-        ParserSet<SENDER, E> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
-        Parser<SENDER, E> parser = parserSet.getValidParserOrThrow(invocation, argument);
+
+        Parser<SENDER, E> parser = parserRegistry.getParser(invocation, argument);
 
         if (rawInput.hasNext() && rawInput.seeNext().isEmpty()) {
             String next = rawInput.next();
@@ -181,9 +185,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
     private <T> SuggestionResult suggest(Class<T> componentType, SuggestionContext context, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
         Argument<T> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
 
-        ParserSet<SENDER, T> parserSet = parserRegistry.getParserSet(componentType, argument.getKey());
-        Parser<SENDER, T> parser = parserSet.getValidParserOrThrow(invocation, argument);
-
+        Parser<SENDER, T> parser = parserRegistry.getParser(invocation, argument);
         Suggester<SENDER, T> suggester = suggesterRegistry.getSuggester(componentType, argument.getKey());
 
         Suggestion current = context.getCurrent();

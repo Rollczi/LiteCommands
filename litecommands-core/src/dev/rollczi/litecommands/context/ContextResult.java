@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.context;
 
 import dev.rollczi.litecommands.requirement.RequirementCondition;
 import dev.rollczi.litecommands.requirement.RequirementResult;
+import java.util.function.Function;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;

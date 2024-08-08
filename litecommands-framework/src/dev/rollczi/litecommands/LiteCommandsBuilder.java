@@ -3,6 +3,7 @@ package dev.rollczi.litecommands;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
+import dev.rollczi.litecommands.bind.BindChainedProvider;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.context.ContextChainedProvider;
@@ -21,7 +22,6 @@ import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
-import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
@@ -45,6 +45,13 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, B extends LiteCommandsBuilder<SENDER, SETTINGS, B>> {
+
+    /**
+     * Returns advanced builder. This builder is used to configure advanced settings.
+     */
+    @ApiStatus.Experimental
+    <A extends LiteCommandsAdvanced<SENDER, SETTINGS, A>>
+    A advanced();
 
     /**
      * Configure platform settings.
@@ -86,7 +93,6 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @return This method returns the current LiteCommand builder instance
      * This allows you to chain multiple calls together, using the builder design pattern.
      */
-    @ApiStatus.Experimental
     B commands(Object... commands);
 
     <T>
@@ -96,39 +102,16 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B argumentParser(Class<T> type, ArgumentKey key, Parser<SENDER, T> parser);
 
     <T>
-    B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, T> parser);
-
-    <T>
     B argumentSuggestion(Class<T> type, SuggestionResult suggestion);
 
     <T>
     B argumentSuggestion(Class<T> type, ArgumentKey key, SuggestionResult suggestion);
 
     <T>
-    B argumentSuggestion(TypeRange<T> type, ArgumentKey key, SuggestionResult suggestion);
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.5.0")
-    default <T>
-    B argumentSuggester(Class<T> type, SuggestionResult suggestion) {
-        return argumentSuggestion(type, suggestion);
-    }
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.5.0")
-    default <T>
-    B argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestion) {
-        return argumentSuggestion(type, key, suggestion);
-    }
-
-    <T>
     B argumentSuggester(Class<T> type, Suggester<SENDER, T> suggester);
 
     <T>
     B argumentSuggester(Class<T> type, ArgumentKey key, Suggester<SENDER, T> suggester);
-
-    <T>
-    B argumentSuggester(TypeRange<T> type, ArgumentKey key, Suggester<SENDER, T> suggester);
 
     /**
      * [Argument Parser and Suggester]
@@ -147,29 +130,23 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * Key is used to define namespace for given parser. It is used to identify which parsers with same type should be used.
      * Argument type is used to define what type is compatible with given parser.
      *
-     * @param type type of argument
-     * @param key key of argument
+     * @param type     type of argument
+     * @param key      key of argument
      * @param resolver parser and suggester for a given type
      * @return this builder
      */
     <T>
     B argument(Class<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
 
-    <T>
-    B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, T> resolver);
+    default <T> B context(Class<T> on, ContextProvider<SENDER, T> bind) {
+        this.advanced().context(on, (ContextChainedProvider<SENDER, T>) bind);
+        return (B) this;
+    }
 
-    <T>
-    B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
-
-    <T>
-    B context(Class<T> on, ContextProvider<SENDER, T> bind);
-
-    @ApiStatus.Experimental
-    <T>
-    B context(Class<T> on, ContextChainedProvider<SENDER, T> bind);
-
-    <T>
-    B bind(Class<T> on, BindProvider<T> bindProvider);
+    default <T> B bind(Class<T> on, BindProvider<T> bindProvider) {
+        this.advanced().bind(on, (BindChainedProvider<T>) bindProvider);
+        return (B) this;
+    }
 
     <T>
     B bind(Class<T> on, Supplier<T> bind);

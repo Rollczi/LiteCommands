@@ -20,14 +20,14 @@ public interface SuggestionInputMatcher<SELF extends SuggestionInputMatcher<SELF
     <SENDER, T> boolean isOptionalArgument(
         Invocation<SENDER> invocation,
         Argument<T> argument,
-        Parser<SENDER, T> parserSet
+        Parser<SENDER, T> parser
     );
 
     <SENDER, T> SuggestionInputResult nextArgument(
         Invocation<SENDER> invocation,
         Argument<T> argument,
         Parser<SENDER, T> parser,
-        Suggester<SENDER, T> suggesterSet
+        Suggester<SENDER, T> suggester
     );
 
     SELF copy();

@@ -40,12 +40,12 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
         }
 
         @Override
-        public <SENDER, T> boolean isOptionalArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> parserSet) {
+        public <SENDER, T> boolean isOptionalArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> suggesterSet) {
             return false;
         }
 
         @Override
-        public <SENDER, T> SuggestionInputResult nextArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> parserSet, Suggester<SENDER, T> suggesterSet) {
+        public <SENDER, T> SuggestionInputResult nextArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> parser, Suggester<SENDER, T> suggesterSet) {
             if (!argument.getName().equals(currentOption.getName())) {
                 return SuggestionInputResult.continueWithout();
             }
