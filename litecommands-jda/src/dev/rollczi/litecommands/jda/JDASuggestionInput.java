@@ -2,11 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.ParserChainAccessor;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
-import dev.rollczi.litecommands.argument.suggester.SuggesterChainAccessor;
-import dev.rollczi.litecommands.argument.suggester.SuggesterChained;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
@@ -44,12 +40,12 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
         }
 
         @Override
-        public <SENDER, T> boolean isOptionalArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> parser) {
+        public <SENDER, T> boolean isOptionalArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> suggesterSet) {
             return false;
         }
 
         @Override
-        public <SENDER, T> SuggestionInputResult nextArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> parser, Suggester<SENDER, T> suggester) {
+        public <SENDER, T> SuggestionInputResult nextArgument(Invocation<SENDER> invocation, Argument<T> argument, Parser<SENDER, T> parser, Suggester<SENDER, T> suggesterSet) {
             if (!argument.getName().equals(currentOption.getName())) {
                 return SuggestionInputResult.continueWithout();
             }
@@ -57,7 +53,7 @@ class JDASuggestionInput extends AbstractJDAInput<JDASuggestionInput.JDASuggesti
             String current = currentOption.getValue();
             Suggestion suggestion = Suggestion.of(current);
             SuggestionContext context = new SuggestionContext(suggestion);
-            SuggestionResult result = suggester.suggest(invocation, argument, context);
+            SuggestionResult result = suggesterSet.suggest(invocation, argument, context);
 
             return SuggestionInputResult.endWith(result);
         }
