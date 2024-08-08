@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class SuggestionTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder
+    static LiteConfig config = builder -> builder.advanced()
         .argumentParser(LiteTestUser.class, new DummyParser<>())
         .argumentParser(LiteTestGuild.class, new DummyParser<>())
         .argumentSuggester(LiteTestUser.class, new UserSuggester<>())

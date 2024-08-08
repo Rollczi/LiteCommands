@@ -72,7 +72,8 @@ import java.util.function.Supplier;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
-    LiteCommandsInternal<SENDER, C> {
+    LiteCommandsInternal<SENDER, C>,
+    LiteCommandsAdvanced<SENDER, C, B> {
 
     protected final Class<SENDER> senderClass;
     protected final Platform<SENDER, C> platform;
@@ -155,6 +156,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
         this.scheduler = new SchedulerSameThreadImpl();
         this.schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+    }
+
+    @Override
+    public <A extends LiteCommandsAdvanced<SENDER, C, A>> A advanced() {
+        return (A) this;
     }
 
     @Override
@@ -377,6 +383,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     public <T> B bind(Class<T> on, BindChainedProvider<T> bindProvider) {
         this.bindRegistry.bindInstance(on, bindProvider);
         return this.self();
+    }
+
+    @Override
+    public LiteCommandsInternal<SENDER, C> internal() {
+        return this;
     }
 
     @Override

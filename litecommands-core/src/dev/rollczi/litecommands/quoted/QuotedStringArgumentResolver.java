@@ -84,7 +84,6 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
         Suggestion current = context.getCurrent();
-
         ParseResult<String> parsedResult = parse(invocation, argument, RawInput.of(current.multilevelList()));
 
         if (parsedResult.isFailed()) {

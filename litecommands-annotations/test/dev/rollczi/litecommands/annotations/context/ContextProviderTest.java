@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 class ContextProviderTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder
+    static LiteConfig config = builder -> builder.advanced()
         .context(LiteTestUser.class, new UserContextual<>())
         .context(LiteTestGuild.class, new GuildContextual<>());
 

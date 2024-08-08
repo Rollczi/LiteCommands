@@ -2,10 +2,7 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.ParserChained;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
-import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBaseChained;
-import dev.rollczi.litecommands.argument.suggester.SuggesterChained;
 import dev.rollczi.litecommands.bind.BindChainedProvider;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
@@ -25,7 +22,6 @@ import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
-import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
@@ -49,6 +45,13 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, B extends LiteCommandsBuilder<SENDER, SETTINGS, B>> {
+
+    /**
+     * Returns advanced builder. This builder is used to configure advanced settings.
+     */
+    @ApiStatus.Experimental
+    <A extends LiteCommandsAdvanced<SENDER, SETTINGS, A>>
+    A advanced();
 
     /**
      * Configure platform settings.
@@ -90,29 +93,13 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * @return This method returns the current LiteCommand builder instance
      * This allows you to chain multiple calls together, using the builder design pattern.
      */
-    @ApiStatus.Experimental
     B commands(Object... commands);
 
     <T>
     B argumentParser(Class<T> type, Parser<SENDER, T> parser);
 
-    @ApiStatus.Experimental
-    <T>
-    B argumentParser(Class<T> type, ParserChained<SENDER, T> parser);
-
     <T>
     B argumentParser(Class<T> type, ArgumentKey key, Parser<SENDER, T> parser);
-
-    @ApiStatus.Experimental
-    <T>
-    B argumentParser(Class<T> type, ArgumentKey key, ParserChained<SENDER, T> parser);
-
-    <T>
-    B argumentParser(TypeRange<T> type, ArgumentKey key, Parser<SENDER, T> parser);
-
-    @ApiStatus.Experimental
-    <T>
-    B argumentParser(TypeRange<T> type, ArgumentKey key, ParserChained<SENDER, T> parser);
 
     <T>
     B argumentSuggestion(Class<T> type, SuggestionResult suggestion);
@@ -121,42 +108,10 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B argumentSuggestion(Class<T> type, ArgumentKey key, SuggestionResult suggestion);
 
     <T>
-    B argumentSuggestion(TypeRange<T> type, ArgumentKey key, SuggestionResult suggestion);
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.5.0")
-    default <T>
-    B argumentSuggester(Class<T> type, SuggestionResult suggestion) {
-        return argumentSuggestion(type, suggestion);
-    }
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.5.0")
-    default <T>
-    B argumentSuggester(Class<T> type, ArgumentKey key, SuggestionResult suggestion) {
-        return argumentSuggestion(type, key, suggestion);
-    }
-
-    <T>
     B argumentSuggester(Class<T> type, Suggester<SENDER, T> suggester);
-
-    @ApiStatus.Experimental
-    <T>
-    B argumentSuggester(Class<T> type, SuggesterChained<SENDER, T> suggester);
 
     <T>
     B argumentSuggester(Class<T> type, ArgumentKey key, Suggester<SENDER, T> suggester);
-
-    @ApiStatus.Experimental
-    <T>
-    B argumentSuggester(Class<T> type, ArgumentKey key, SuggesterChained<SENDER, T> suggester);
-
-    <T>
-    B argumentSuggester(TypeRange<T> type, ArgumentKey key, Suggester<SENDER, T> suggester);
-
-    @ApiStatus.Experimental
-    <T>
-    B argumentSuggester(TypeRange<T> type, ArgumentKey key, SuggesterChained<SENDER, T> suggester);
 
     /**
      * [Argument Parser and Suggester]
@@ -168,10 +123,6 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      */
     <T>
     B argument(Class<T> type, ArgumentResolverBase<SENDER, T> resolver);
-
-    @ApiStatus.Experimental
-    <T>
-    B argument(Class<T> type, ArgumentResolverBaseChained<SENDER, T> resolver);
 
     /**
      * [Keyed Argument Parser and Suggester]
@@ -187,39 +138,15 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     <T>
     B argument(Class<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
 
-    @ApiStatus.Experimental
-    <T>
-    B argument(Class<T> type, ArgumentKey key, ArgumentResolverBaseChained<SENDER, T> resolver);
-
-    <T>
-    B argument(TypeRange<T> type, ArgumentResolverBase<SENDER, T> resolver);
-
-    @ApiStatus.Experimental
-    <T>
-    B argument(TypeRange<T> type, ArgumentResolverBaseChained<SENDER, T> resolver);
-
-    <T>
-    B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBase<SENDER, T> resolver);
-
-    @ApiStatus.Experimental
-    <T>
-    B argument(TypeRange<T> type, ArgumentKey key, ArgumentResolverBaseChained<SENDER, T> resolver);
-
     default <T> B context(Class<T> on, ContextProvider<SENDER, T> bind) {
-        return context(on, (ContextChainedProvider<SENDER, T>) bind);
+        this.advanced().context(on, (ContextChainedProvider<SENDER, T>) bind);
+        return (B) this;
     }
-
-    @ApiStatus.Experimental
-    <T>
-    B context(Class<T> on, ContextChainedProvider<SENDER, T> bind);
 
     default <T> B bind(Class<T> on, BindProvider<T> bindProvider) {
-        return bind(on, (BindChainedProvider<T>) bindProvider);
+        this.advanced().bind(on, (BindChainedProvider<T>) bindProvider);
+        return (B) this;
     }
-
-    @ApiStatus.Experimental
-    <T>
-    B bind(Class<T> on, BindChainedProvider<T> bindProvider);
 
     <T>
     B bind(Class<T> on, Supplier<T> bind);

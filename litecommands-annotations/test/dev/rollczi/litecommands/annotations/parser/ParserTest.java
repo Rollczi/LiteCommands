@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 class ParserTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder
+    static LiteConfig config = builder -> builder.advanced()
         .argumentParser(LiteTestUser.class, new UserParser<>())
         .argumentParser(LiteTestGuild.class, new GuildParser<>());
 
