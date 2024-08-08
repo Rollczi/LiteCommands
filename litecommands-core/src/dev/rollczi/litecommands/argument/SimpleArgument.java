@@ -21,16 +21,22 @@ public class SimpleArgument<T> implements Argument<T> {
     public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat, Meta meta, boolean nullable) {
         this.name = name;
         this.wrapperFormat = wrapperFormat;
-        this.meta = meta;
+        this.meta = meta.copy();
         this.nullable = nullable;
     }
 
     public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat, boolean nullable) {
-        this(name, wrapperFormat, Meta.create(), nullable);
+        this.name = name;
+        this.wrapperFormat = wrapperFormat;
+        this.meta = Meta.create();
+        this.nullable = nullable;
     }
 
     public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat) {
-        this(name, wrapperFormat, false);
+        this.name = name;
+        this.wrapperFormat = wrapperFormat;
+        this.meta = Meta.create();
+        this.nullable = false;
     }
 
     @Override
