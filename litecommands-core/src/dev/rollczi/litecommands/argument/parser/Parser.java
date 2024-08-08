@@ -27,7 +27,7 @@ public interface Parser<SENDER, PARSED> extends Rangeable<Argument<PARSED>> {
      */
     @ApiStatus.Experimental
     default boolean matchParse(Invocation<SENDER> invocation, Argument<PARSED> argument, RawInput input) {
-        ParseResult<PARSED> parsed = parse(invocation, argument, RawInput.of(input.seeAll()));
+        ParseResult<PARSED> parsed = parse(invocation, argument, input);
 
         return parsed.isSuccessful() || parsed.isSuccessfulNull();
     }
