@@ -1,11 +1,8 @@
 package dev.rollczi.litecommands.argument.parser.input;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.ParserChained;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.parser.ParserChainAccessor;
-import dev.rollczi.litecommands.argument.parser.ParserSet;
+import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
@@ -74,6 +71,7 @@ class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInpu
             }
 
             RawInput rawInput = RawInput.of(input.toString().split(RawCommand.COMMAND_SEPARATOR));
+
             return parser.parse(invocation, argument, rawInput);
         }
 
