@@ -22,6 +22,7 @@ import dev.rollczi.litecommands.argument.resolver.standard.LocalDateTimeArgument
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.UUIDArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.cooldown.CooldownState;
@@ -68,6 +69,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.Vector;
 import panda.std.Option;
 
@@ -127,6 +129,7 @@ public final class LiteCommandsFactory {
                 .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(messageRegistry))
                 .argument(Instant.class, new InstantArgumentResolver<>(messageRegistry))
                 .argument(LocalDateTime.class, new LocalDateTimeArgumentResolver<>(messageRegistry))
+                .argument(UUID.class, new UUIDArgumentResolver<>(messageRegistry))
 
                 .argument(upwards(Enum.class), new EnumArgumentResolver<>())
 

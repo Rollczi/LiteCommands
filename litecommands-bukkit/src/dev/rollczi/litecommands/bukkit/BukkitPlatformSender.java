@@ -2,10 +2,12 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
+import dev.rollczi.litecommands.platform.PlatformReceiver;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-class BukkitPlatformSender extends AbstractPlatformSender {
+class BukkitPlatformSender extends AbstractPlatformSender implements PlatformReceiver {
 
     private final CommandSender handle;
 
@@ -38,7 +40,18 @@ class BukkitPlatformSender extends AbstractPlatformSender {
             return Identifier.of(((Player) this.handle).getUniqueId());
         }
 
+        if (this.handle instanceof RemoteConsoleCommandSender) {
+            RemoteConsoleCommandSender commandSender = (RemoteConsoleCommandSender) this.handle;
+            return Identifier.of(RemoteConsoleCommandSender.class, commandSender.getName());
+        }
+
         return Identifier.CONSOLE;
+    }
+
+    @Override
+    public Comparable<Void> sendMessage(String message) {
+        this.handle.sendMessage(message);
+        return null;
     }
 
 }
