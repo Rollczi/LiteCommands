@@ -12,22 +12,25 @@ public class SimpleArgument<T> implements Argument<T> {
 
     private final String name;
     private final WrapFormat<T, ?> wrapperFormat;
-    private final Meta meta = Meta.create();
+    private final Meta meta;
     private final boolean nullable;
     // cache last argument
     private String lastKeyName;
     private ArgumentKey lastKey;
 
-    public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat, boolean nullable) {
+    public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat, Meta meta, boolean nullable) {
         this.name = name;
         this.wrapperFormat = wrapperFormat;
+        this.meta = meta;
         this.nullable = nullable;
     }
 
+    public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat, boolean nullable) {
+        this(name, wrapperFormat, Meta.create(), nullable);
+    }
+
     public SimpleArgument(String name, WrapFormat<T, ?> wrapperFormat) {
-        this.name = name;
-        this.wrapperFormat = wrapperFormat;
-        this.nullable = false;
+        this(name, wrapperFormat, false);
     }
 
     @Override

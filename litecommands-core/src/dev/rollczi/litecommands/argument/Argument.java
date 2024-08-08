@@ -29,16 +29,20 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
         return this.meta().get(Meta.ARGUMENT_KEY, this.getName());
     }
 
+    default <NEW> Argument<NEW> withType(Class<NEW> type, boolean nullable) {
+        return new SimpleArgument<>(this.getName(), WrapFormat.notWrapped(type), this.meta().copy(), nullable);
+    }
+
+    default <NEW> Argument<NEW> withType(Class<NEW> type) {
+        return withType(type, false);
+    }
+
     static <T> Argument<T> of(String name, WrapFormat<T, ?> format) {
         return new SimpleArgument<>(name, format, false);
     }
 
     static <T> Argument<T> of(String name, WrapFormat<T, ?> format, boolean nullable) {
         return new SimpleArgument<>(name, format, nullable);
-    }
-
-    static <T, U> Argument<U> of(Argument<T> argument, Class<U> type) {
-        return new SimpleArgument<>(argument.getName(),WrapFormat.notWrapped(type));
     }
 
 }

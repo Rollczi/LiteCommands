@@ -57,7 +57,7 @@ public class SuggestionTest extends LiteTestSpec {
 
         @Override
         public SuggestionResult suggest(Invocation<S> invocation, Argument<LiteTestGuild> argument, SuggestionContext context, SuggesterChainAccessor<S> chainAccessor) {
-            return chainAccessor.suggest(invocation, Argument.of(argument, LiteTestUser.class), context);
+            return chainAccessor.suggest(invocation, argument.withType(LiteTestUser.class), context);
         }
 
     }

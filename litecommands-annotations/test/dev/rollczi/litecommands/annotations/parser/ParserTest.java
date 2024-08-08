@@ -47,7 +47,7 @@ class ParserTest extends LiteTestSpec {
 
         @Override
         public ParseResult<LiteTestGuild> parse(Invocation<S> invocation, Argument<LiteTestGuild> argument, RawInput input, ParserChainAccessor<S> chainAccessor) {
-            return chainAccessor.parse(invocation, Argument.of(argument, LiteTestUser.class), input)
+            return chainAccessor.parse(invocation, argument.withType(LiteTestUser.class), input)
                 .flatMap(user -> user.getGuild() == null
                     ? ParseResult.failure("User is not in a guild")
                     : ParseResult.success(user.getGuild())
