@@ -3,9 +3,6 @@ package dev.rollczi.litecommands.input.raw;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.ParserChainAccessor;
-import dev.rollczi.litecommands.argument.parser.ParserChained;
-import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.shared.Preconditions;
@@ -42,9 +39,9 @@ public class RawInputAnalyzer {
 
     public <SENDER, T> Context<SENDER, T> toContext(
         Argument<T> argument,
-        Parser<SENDER, T> parser
+        Parser<SENDER, T> parserSet
     ) {
-        return new Context<>(argument, parser);
+        return new Context<>(argument, parserSet);
     }
 
     public String showNextRoute() {
