@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.Optional;
-import org.jetbrains.annotations.ApiStatus;
 
 public interface Argument<PARSED> extends Requirement<PARSED> {
 
@@ -28,16 +27,6 @@ public interface Argument<PARSED> extends Requirement<PARSED> {
 
     default String getKeyName() {
         return this.meta().get(Meta.ARGUMENT_KEY, this.getName());
-    }
-
-    @ApiStatus.Experimental
-    default <NEW> Argument<NEW> withType(Class<NEW> type, boolean nullable) {
-        return new SimpleArgument<>(this.getKeyName(), WrapFormat.notWrapped(type), this.meta().copy(), nullable);
-    }
-
-    @ApiStatus.Experimental
-    default <NEW> Argument<NEW> withType(Class<NEW> type) {
-        return withType(type, false);
     }
 
     static <T> Argument<T> of(String name, WrapFormat<T, ?> format) {
