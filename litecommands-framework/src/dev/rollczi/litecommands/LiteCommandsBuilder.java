@@ -23,6 +23,7 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.schematic.SchematicFastFormat;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
@@ -195,6 +196,8 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B schematicGenerator(SchematicGenerator<SENDER> schematicGenerator);
 
     B schematicGenerator(SchematicFormat format);
+
+    B schematicGenerator(SchematicFastFormat format);
 
     B selfProcessor(LiteBuilderProcessor<SENDER, SETTINGS> processor);
 

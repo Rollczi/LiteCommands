@@ -88,7 +88,15 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
         String left = suggestion.multilevel();
 
         return this.suggestions.get().stream()
-            .map(temporal -> left + this.formatter.format(temporal).substring(left.length()))
+            .map(temporal -> {
+                String formatted = this.formatter.format(temporal);
+
+                if (formatted.length() <= left.length()) {
+                    return left;
+                }
+
+                return left + formatted.substring(left.length());
+            })
             .filter(text -> pattern.matcher(text).find())
             .collect(SuggestionResult.collector());
     }

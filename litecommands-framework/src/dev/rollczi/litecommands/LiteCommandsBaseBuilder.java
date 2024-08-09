@@ -41,6 +41,8 @@ import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
+import dev.rollczi.litecommands.schematic.SchematicFastFormat;
+import dev.rollczi.litecommands.schematic.SchematicFastGenerator;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
@@ -155,7 +157,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.wrapperRegistry = wrapperRegistry;
 
         this.scheduler = new SchedulerSameThreadImpl();
-        this.schematicGenerator = new SimpleSchematicGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+        this.schematicGenerator = new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
     }
 
     @Override
@@ -496,6 +498,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @Override
     public B schematicGenerator(SchematicFormat format) {
         this.schematicGenerator = new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry);
+        return this.self();
+    }
+
+    @Override
+    public B schematicGenerator(SchematicFastFormat format) {
+        this.schematicGenerator = new SchematicFastGenerator<>(format, validatorService, wrapperRegistry);
         return this.self();
     }
 
