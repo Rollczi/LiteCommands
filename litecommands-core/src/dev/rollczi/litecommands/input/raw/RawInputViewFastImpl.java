@@ -149,6 +149,18 @@ public class RawInputViewFastImpl implements RawInputView {
 
     @Override
     public RawInputView sub(int startInclusive, int endExclusive) {
+        if (startInclusive > endExclusive) {
+            throw new IllegalArgumentException("Invalid 'start' and 'end', expected: [start <= end] but got: [" + startInclusive + " <= " + endExclusive + "]");
+        }
+
+        if (startInclusive < 0) {
+            throw new IllegalArgumentException("Invalid 'start', expected: [start >= 0] but got: [" + startInclusive + "]");
+        }
+
+        if (endExclusive > sourceContentChars.length) {
+            throw new IllegalArgumentException("Invalid 'end', expected: [start <= end <= length] but got: [" + startInclusive + " <= " + endExclusive + " <= " + sourceContentChars.length + "]");
+        }
+
         int claimedBefore = claimedCount(0, startInclusive);
         int claimedInside = claimedCount(startInclusive, endExclusive);
         return new RawInputSubView(claimedBefore + startInclusive, claimedBefore + claimedInside + endExclusive);
@@ -267,9 +279,21 @@ public class RawInputViewFastImpl implements RawInputView {
 
         @Override
         public RawInputView sub(int startInclusive, int endExclusive) {
-            int claimedCount0 = claimedCount(this.internalFrom, this.internalFrom + startInclusive);
-            int claimedCount = claimedCount(this.internalFrom + startInclusive, this.internalFrom + endExclusive);
-            return new RawInputSubView(this.internalFrom + claimedCount0 + startInclusive, this.internalFrom + claimedCount0 + claimedCount + endExclusive);
+            if (startInclusive > endExclusive) {
+                throw new IllegalArgumentException("Invalid 'start' and 'end', expected: [start <= end] but got: [" + startInclusive + " <= " + endExclusive + "]");
+            }
+
+            if (startInclusive < 0) {
+                throw new IllegalArgumentException("Invalid 'start', expected: [start >= 0] but got: [" + startInclusive + "]");
+            }
+
+            if (endExclusive > this.internalTo - this.internalFrom) {
+                throw new IllegalArgumentException("Invalid 'end', expected: [start <= end <= length] but got: [" + startInclusive + " <= " + endExclusive + " <= " + (this.internalTo - this.internalFrom) + "]");
+            }
+
+            int claimedBefore = claimedCount(this.internalFrom, this.internalFrom + startInclusive);
+            int claimedInside = claimedCount(this.internalFrom + startInclusive, this.internalFrom + endExclusive);
+            return new RawInputSubView(this.internalFrom + claimedBefore + startInclusive, this.internalFrom + claimedBefore + claimedInside + endExclusive);
         }
 
         @Override

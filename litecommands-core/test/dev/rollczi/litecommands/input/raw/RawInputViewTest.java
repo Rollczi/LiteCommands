@@ -95,15 +95,13 @@ class RawInputViewTest {
 
         assertThatThrownBy(() -> view.sub(0, 11))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Invalid 'end', expected: [start < end <= length] but got: [0 < 11 <= 10]");
+            .hasMessage("Invalid 'end', expected: [start <= end <= length] but got: [0 <= 11 <= 10]");
 
         assertThatThrownBy(() -> view.sub(9, 8))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Invalid 'start' and 'end', expected: [start < end] but got: [9 < 8]");
+            .hasMessage("Invalid 'start' and 'end', expected: [start <= end] but got: [9 <= 8]");
 
-        assertThatThrownBy(() -> view.sub(10, 10))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Invalid 'start' and 'end', expected: [start < end] but got: [10 < 10]");
+        assertThat(view.sub(10, 10));
 
         assertThatThrownBy(() -> view.sub(-1, 10))
             .isInstanceOf(IllegalArgumentException.class)
