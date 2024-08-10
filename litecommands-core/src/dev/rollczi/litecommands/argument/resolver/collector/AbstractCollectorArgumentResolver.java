@@ -111,7 +111,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         while (elementView != null) {
             String elementWithDelimiter = elementView.claim();
             String element = elementWithDelimiter.substring(0, elementWithDelimiter.length() - delimiter.length());
-            List<String> arguments = StringUtil.spilt(element, RawCommand.COMMAND_SEPARATOR);
+            List<String> arguments = StringUtil.splitBySpace(element);
 
             if (range.isBelowRange(arguments.size())) {
                 return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
@@ -138,7 +138,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         }
 
         String rest = view.claim(0, lastIndex + 1);
-        List<String> arguments = StringUtil.spilt(rest, RawCommand.COMMAND_SEPARATOR);
+        List<String> arguments = StringUtil.splitBySpace(rest);
         ParseResult<E> parsedResult = parser.parse(invocation, argument, RawInput.of(arguments));
 
         if (parsedResult.isFailed()) {
@@ -218,6 +218,10 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
                 if (parsedResult.isFailed()) {
                     return SuggestionResult.empty();
                 }
+
+                if (count == rawInput.seeAll().size()) {
+                    throw new IllegalStateException("Suggester did not consume any input: " + suggester.getClass().getName() + " for: " + argument.getKey() + " invocation: " + invocation);
+                }
             }
 
             return SuggestionResult.empty();
@@ -246,7 +250,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
             String element = elementWithDelimiter
                 .substring(0, elementWithDelimiter.length() - delimiter.length());
 
-            List<String> arguments = StringUtil.spilt(element, RawCommand.COMMAND_SEPARATOR);
+            List<String> arguments = StringUtil.splitBySpace(element);
 
             if (!range.isInRange(arguments.size())) {
                 return SuggestionResult.empty(); // invalid argument count
@@ -306,7 +310,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
     }
 
     private <T> boolean isMatch(Parser<SENDER, T> parser, Argument<T> argument, Invocation<SENDER> invocation, String rawArgument) {
-        return parser.matchParse(invocation, argument, RawInput.of(StringUtil.spilt(rawArgument, RawCommand.COMMAND_SEPARATOR)));
+        return parser.matchParse(invocation, argument, RawInput.of(StringUtil.splitBySpace(rawArgument)));
     }
 
     @Nullable

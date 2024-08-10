@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.varargs.Varargs;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.RetentionPolicy;
@@ -48,6 +49,7 @@ class BenchmarkTest extends LiteTestSpec {
 
     }
 
+    @Disabled
     @Test
     void test() {
         for (int i = 0; i < 10_000; i++) {

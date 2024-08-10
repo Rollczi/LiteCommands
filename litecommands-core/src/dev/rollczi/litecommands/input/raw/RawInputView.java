@@ -11,7 +11,6 @@ public interface RawInputView {
 
     String content();
 
-    @ApiStatus.Experimental
     int countOf(char character);
 
     String sourceContent();
@@ -21,7 +20,7 @@ public interface RawInputView {
     String claim(int startInclusive, int endExclusive);
 
     static RawInputView of(String content) {
-        return new RawInputViewImpl(content);
+        return new RawInputViewFastImpl(content);
     }
 
     default int indexOf(String string) {
@@ -30,23 +29,6 @@ public interface RawInputView {
 
     default int indexOf(String string, int fromIndex) {
         return content().indexOf(string, fromIndex);
-    }
-
-    default int indexOfWithSkip(String space, int countToSkip) {
-        String content = content();
-        int index = -1;
-
-        for (int i = 0; i < countToSkip; i++) {
-            int indexOf = content.indexOf(space, index + 1);
-
-            if (indexOf == -1) {
-                return -1;
-            }
-
-            index = indexOf;
-        }
-
-        return index;
     }
 
     default int length() {

@@ -36,7 +36,7 @@ class ViewBasedRawInputImpl implements RawInput {
 
         int spaceCount = 0;
         int indexToClaim = 0;
-        for (String element : StringUtil.spilt(content, RawCommand.COMMAND_SEPARATOR)) {
+        for (String element : StringUtil.splitBySpace(content)) {
             if (spaceCount >= count) {
                 break;
             }
@@ -56,7 +56,7 @@ class ViewBasedRawInputImpl implements RawInput {
 
     @Override
     public List<String> nextAll() {
-        return StringUtil.spilt(this.rawInputView.claim(), RawCommand.COMMAND_SEPARATOR);
+        return StringUtil.splitBySpace(this.rawInputView.claim());
     }
 
     @Override
@@ -77,7 +77,7 @@ class ViewBasedRawInputImpl implements RawInput {
         String content = this.rawInputView.content();
 
         int spaceCount = 0;
-        for (String element : StringUtil.spilt(content, RawCommand.COMMAND_SEPARATOR)) {
+        for (String element : StringUtil.splitBySpace(content)) {
             if (spaceCount >= count) {
                 break;
             }
@@ -95,7 +95,7 @@ class ViewBasedRawInputImpl implements RawInput {
 
     @Override
     public List<String> seeAll() {
-        return StringUtil.spilt(this.rawInputView.content(), RawCommand.COMMAND_SEPARATOR);
+        return StringUtil.splitBySpace(this.rawInputView.content());
 
     }
 

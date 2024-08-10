@@ -34,8 +34,23 @@ public final class StringUtil {
         return list;
     }
 
+    public static List<String> spilt(String text, char delimiter) {
+        List<String> list = new ArrayList<>();
+
+        int index = 0;
+        int nextIndex;
+
+        while ((nextIndex = text.indexOf(delimiter, index)) != -1) {
+            list.add(text.substring(index, nextIndex));
+            index = nextIndex + 1;
+        }
+
+        list.add(text.substring(index));
+        return list;
+    }
+
     public static List<String> splitBySpace(String text) {
-        return spilt(text, " ");
+        return spilt(text, ' ');
     }
 
     public static boolean startsWithIgnoreCase(String text, String prefix) {
