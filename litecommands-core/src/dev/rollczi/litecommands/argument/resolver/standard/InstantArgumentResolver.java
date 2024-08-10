@@ -8,8 +8,11 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 public class InstantArgumentResolver<SENDER> extends TemporalAccessorArgumentResolver<SENDER, Instant> {
+
+    private static final Pattern INSTANT_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter
         .ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -21,7 +24,9 @@ public class InstantArgumentResolver<SENDER> extends TemporalAccessorArgumentRes
             INSTANT_INVALID_FORMAT,
             FORMATTER,
             Instant::from,
-            () -> allDaysOfWeek(Instant.now())
+            () -> allDaysOfWeek(Instant.now()),
+            INSTANT_PATTERN
         );
     }
+
 }

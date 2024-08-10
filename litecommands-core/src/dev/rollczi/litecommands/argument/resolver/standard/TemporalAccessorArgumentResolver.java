@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.time.DateTimeException;
@@ -20,6 +21,7 @@ import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQuery;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> implements MultipleArgumentResolver<SENDER, UNIT> {
 
@@ -31,13 +33,15 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
     private final TemporalQuery<UNIT> query;
     private final Supplier<List<UNIT>> suggestions;
     private final int argumentCount;
+    private final Pattern pattern;
 
     protected TemporalAccessorArgumentResolver(
         MessageRegistry<SENDER> messageRegistry,
         MessageKey<String> invalidFormatMessage,
         DateTimeFormatter formatter,
         TemporalQuery<UNIT> query,
-        Supplier<List<UNIT>> suggestions
+        Supplier<List<UNIT>> suggestions,
+        Pattern pattern
     ) {
         this.messageRegistry = messageRegistry;
         this.invalidFormatMessage = invalidFormatMessage;
@@ -45,6 +49,7 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
         this.query = query;
         this.suggestions = suggestions;
         this.argumentCount = getElementCount(formatter);
+        this.pattern = pattern;
     }
 
     protected TemporalAccessorArgumentResolver(
@@ -52,9 +57,10 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
         MessageKey<String> invalidFormatMessage,
         String formatterPattern,
         TemporalQuery<UNIT> query,
-        Supplier<List<UNIT>> suggestions
+        Supplier<List<UNIT>> suggestions,
+        Pattern pattern
     ) {
-        this(messageRegistry, invalidFormatMessage, DateTimeFormatter.ofPattern(formatterPattern), query, suggestions);
+        this(messageRegistry, invalidFormatMessage, DateTimeFormatter.ofPattern(formatterPattern), query, suggestions, pattern);
     }
 
     @Override
@@ -69,9 +75,29 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
     }
 
     @Override
+    public boolean matchParse(Invocation<SENDER> invocation, Argument<UNIT> argument, RawInput input) {
+        return pattern.matcher(String.join(" ", input.seeAll())).find();
+    }
+
+    @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<UNIT> argument, SuggestionContext context) {
+        Suggestion suggestion = context.getCurrent();
+        int lengthMultilevel = suggestion.lengthMultilevel();
+
+        suggestion = suggestion.deleteRight(Math.max(lengthMultilevel - 2, 0));
+        String left = suggestion.multilevel();
+
         return this.suggestions.get().stream()
-            .map(this.formatter::format)
+            .map(temporal -> {
+                String formatted = this.formatter.format(temporal);
+
+                if (formatted.length() <= left.length()) {
+                    return left;
+                }
+
+                return left + formatted.substring(left.length());
+            })
+            .filter(text -> pattern.matcher(text).find())
             .collect(SuggestionResult.collector());
     }
 

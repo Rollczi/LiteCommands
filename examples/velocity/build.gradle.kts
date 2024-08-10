@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.0.0"
-    id("xyz.jpenilla.run-velocity") version "2.2.0"
+    id("xyz.jpenilla.run-velocity") version "2.3.0"
 }
 
 java {

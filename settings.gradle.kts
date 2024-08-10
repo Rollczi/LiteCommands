@@ -1,5 +1,10 @@
 rootProject.name = "LiteCommands"
 
+plugins {
+    // fabric-loom plugin needs it
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
 // core
 include(":litecommands-core")
 include(":litecommands-annotations")

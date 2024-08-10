@@ -30,20 +30,25 @@ public class SchematicFormat {
         return optionalArgumentFormat;
     }
 
+    @Deprecated
     public static SchematicFormat of(String prefix, String suffix, String commandFormat, String argumentFormat, String optionalArgumentFormat) {
         return new SchematicFormat(prefix, suffix, argumentFormat, optionalArgumentFormat);
     }
 
-    public static SchematicFormat angleBrackets() {
-        return new SchematicFormat("/", "", "<%s>", "[%s]");
+    public static SchematicFormat of(String prefix, String suffix, String argumentFormat, String optionalArgumentFormat) {
+        return new SchematicFormat(prefix, suffix, argumentFormat, optionalArgumentFormat);
     }
 
-    public static SchematicFormat squareBrackets() {
-        return new SchematicFormat("/", "", "[%s]", "<%s>");
+    public static SchematicFastFormat angleBrackets() {
+        return new SchematicFastFormat("/", "<", ">", "[", "]");
     }
 
-    public static SchematicFormat parentheses() {
-        return new SchematicFormat("/", "", "(%s)", "(%s)");
+    public static SchematicFastFormat squareBrackets() {
+        return new SchematicFastFormat("/", "[", "]", "<", ">");
+    }
+
+    public static SchematicFastFormat parentheses() {
+        return new SchematicFastFormat("/", "(", ")", "(", ")");
     }
 
     public static Builder builder() {

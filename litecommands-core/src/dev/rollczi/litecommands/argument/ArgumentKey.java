@@ -76,4 +76,9 @@ public class ArgumentKey {
         return Objects.hash(namespace, key);
     }
 
+    @Override
+    public String toString() {
+        return namespace + ":" + key;
+    }
+
 }

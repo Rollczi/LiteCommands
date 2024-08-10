@@ -17,7 +17,7 @@ public class JakartaSettings<SENDER> {
     ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 
     InvokedMessage<SENDER, Object, JakartaParsedResult> constraintViolationsMessage =
-        (invocation, parsedResult) -> String.format("Constraint violations: %n%s (CONSTRAINT_VIOLATIONS)", parsedResult.asJoinedString());
+        (invocation, parsedResult) -> String.format("Constraint violations: %n%s", parsedResult.asJoinedString());
 
     private InvokedMessage<SENDER, String, JakartaViolation<?>> defaultViolationMessage =
         (invocation, violation) -> String.format("%s - %s", violation.getFormattedParameterName(), violation.getMessage());

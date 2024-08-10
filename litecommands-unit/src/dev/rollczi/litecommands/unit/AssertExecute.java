@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
@@ -136,6 +137,12 @@ public class AssertExecute {
 
         assertEquals(reason, error);
 
+        return this;
+    }
+
+    public AssertExecute assertFailureInvalid(InvalidUsage.Cause reason) {
+        InvalidUsage invalidUsage = this.assertFailedAs(InvalidUsage.class);
+        assertEquals(reason, invalidUsage.getCause());
         return this;
     }
 

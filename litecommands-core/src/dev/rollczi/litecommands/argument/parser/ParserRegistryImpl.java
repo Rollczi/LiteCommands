@@ -1,17 +1,22 @@
 package dev.rollczi.litecommands.argument.parser;
 
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.input.raw.RawInput;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import dev.rollczi.litecommands.util.StringUtil;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
+public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, ParserChainAccessor<SENDER> {
 
     private final TypeIndex<BucketByArgument<?>> buckets = new TypeIndex<>();
 
@@ -24,6 +29,11 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
             BucketByArgument<PARSED> bucket = (BucketByArgument<PARSED>) argument;
             bucket.registerParser(typeRange, key, parser);
         }
+    }
+
+    @Override
+    public <PARSED> void registerParser(TypeRange<PARSED> typeRange, ArgumentKey key, ParserChained<SENDER, PARSED> parser) {
+        this.registerParser(typeRange, key, new ChainRedirectParser<>(parser));
     }
 
     @Override
@@ -41,6 +51,21 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
         }
 
         return new MergedParserSetImpl<>(parserSets);
+    }
+
+    @Override
+    public <PARSED> Parser<SENDER, PARSED> getParser(Invocation<SENDER> invocation, Argument<PARSED> argument) {
+        Class<PARSED> argumentType = argument.getWrapperFormat().getParsedType();
+        ParserSet<SENDER, PARSED> parserSet = getParserSet(argumentType, argument.getKey());
+
+        return parserSet.getValidParserOrThrow(invocation, argument);
+    }
+
+    @Override
+    public <T> ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
+        Parser<SENDER, T> parser = getParser(invocation, argument);
+
+        return parser.parse(invocation, argument, input);
     }
 
     class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
@@ -106,6 +131,31 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER> {
             }
 
             return buckets.get(StringUtil.EMPTY, namespace);
+        }
+
+    }
+
+    private class ChainRedirectParser<PARSED> implements Parser<SENDER, PARSED> {
+
+        private final ParserChained<SENDER, PARSED> parser;
+
+        private ChainRedirectParser(ParserChained<SENDER, PARSED> parser) {
+            this.parser = parser;
+        }
+
+        @Override
+        public ParseResult<PARSED> parse(Invocation<SENDER> invocation, Argument<PARSED> argument, RawInput input) {
+            return parser.parse(invocation, argument, input, ParserRegistryImpl.this);
+        }
+
+        @Override
+        public boolean canParse(Invocation<SENDER> invocation, Argument<PARSED> argument) {
+            return parser.canParse(invocation, argument);
+        }
+
+        @Override
+        public Range getRange(Argument<PARSED> argument) {
+            return parser.getRange(argument);
         }
 
     }

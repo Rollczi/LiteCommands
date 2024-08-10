@@ -1,7 +1,7 @@
 plugins {
     `litecommands-java`
     `litecommands-java-17`
-    `litecommands-java-unit-test`
+    `litecommands-unit-test`
     `litecommands-repositories`
     `litecommands-publish`
 }
@@ -9,9 +9,9 @@ plugins {
 dependencies {
     api(project(":litecommands-framework"))
 
-    compileOnly("net.dv8tion:JDA:5.0.0-beta.17")
+    compileOnly("net.dv8tion:JDA:5.0.2")
     testImplementation(project(":litecommands-annotations"))
-    testImplementation("net.dv8tion:JDA:5.0.0-beta.17")
+    testImplementation("net.dv8tion:JDA:5.0.2")
 }
 
 litecommandsPublish {

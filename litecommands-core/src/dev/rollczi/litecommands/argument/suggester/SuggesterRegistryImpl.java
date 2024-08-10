@@ -1,17 +1,22 @@
 package dev.rollczi.litecommands.argument.suggester;
 
+import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.util.StringUtil;
+import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> {
+public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER>, SuggesterChainAccessor<SENDER> {
 
     private final Suggester<SENDER, ?> noneSuggester = new SuggesterNoneImpl<>();
 
@@ -30,6 +35,11 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
     }
 
     @Override
+    public <T> void registerSuggester(TypeRange<T> type, ArgumentKey key, SuggesterChained<SENDER, T> suggester) {
+        registerSuggester(type, key, (invocation, argument, context) -> suggester.suggest(invocation, argument, context, SuggesterRegistryImpl.this));
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <PARSED> List<Suggester<SENDER, PARSED>> getSuggesters(Class<PARSED> parsedClass, ArgumentKey key) {
         Iterable<BucketByArgument<?>> typedBuckets = buckets.get(parsedClass);
@@ -45,6 +55,14 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
         }
 
         return suggesters;
+    }
+
+    @Override
+    public <T> SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context) {
+        Class<T> parsedType = argument.getWrapperFormat().getParsedType();
+        Suggester<SENDER, T> suggester = getSuggester(parsedType, argument.getKey());
+
+        return suggester.suggest(invocation, argument, context);
     }
 
     private class BucketByArgument<PARSED> extends BucketByArgumentUniversal<PARSED> {
@@ -103,6 +121,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER> 
 
             return buckets.get(StringUtil.EMPTY, namespace);
         }
+
     }
 
 }
