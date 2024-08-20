@@ -94,4 +94,8 @@ public class BukkitCommand extends Command {
         return check.isPermitted();
     }
 
+    public CommandRoute<CommandSender> getCommandRoute() {
+        return commandRoute;
+    }
+
 }
