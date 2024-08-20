@@ -106,13 +106,7 @@ public class Suggestion {
     }
 
     public static Suggestion of(String suggestion) {
-        List<String> collected = StringUtil.splitBySpace(suggestion);
-
-        if (suggestion.endsWith(" ") && !collected.get(collected.size() - 1).isEmpty()) {
-            collected.add("");
-        }
-
-        return new Suggestion(suggestion, collected);
+        return new Suggestion(suggestion, StringUtil.splitBySpace(suggestion));
     }
 
     @Override
