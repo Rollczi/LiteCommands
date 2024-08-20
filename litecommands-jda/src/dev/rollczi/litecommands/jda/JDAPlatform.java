@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.jda;
 
-
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
@@ -19,7 +18,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
 
@@ -115,28 +113,26 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             List<Command.Choice> choiceList = result.getSuggestions().stream()
                 .filter(suggestion -> !suggestion.multilevel().isEmpty())
                 .map(suggestion -> choice(event.getFocusedOption().getType(), suggestion))
-                .collect(Collectors.toList());
+                .toList();
 
             event.replyChoices(choiceList).queue();
         }
 
         private Command.Choice choice(OptionType optionType, Suggestion suggestion) {
-            if (optionType == OptionType.INTEGER) {
-                try {
-                    long parsed = Long.parseLong(suggestion.multilevel());
-                    return new Command.Choice(suggestion.multilevel(), parsed);
+            String multilevel = suggestion.multilevel();
+
+            try {
+                if (optionType == OptionType.INTEGER) {
+                    return new Command.Choice(multilevel, Long.parseLong(multilevel));
                 }
-                catch (NumberFormatException e) {
-                    long parsed = (long) Double.parseDouble(suggestion.multilevel());
-                    return new Command.Choice(String.valueOf(parsed), parsed);
+
+                if (optionType == OptionType.NUMBER) {
+                    return new Command.Choice(multilevel, Double.parseDouble(multilevel));
                 }
             }
+            catch (NumberFormatException ignored) {}
 
-            if (optionType == OptionType.NUMBER) {
-                return new Command.Choice(suggestion.multilevel(), Double.parseDouble(suggestion.multilevel()));
-            }
-
-            return new Command.Choice(suggestion.multilevel(), suggestion.multilevel());
+            return new Command.Choice(multilevel, multilevel);
         }
 
     }
