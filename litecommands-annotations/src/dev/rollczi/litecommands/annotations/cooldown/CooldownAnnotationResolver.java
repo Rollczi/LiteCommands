@@ -16,7 +16,7 @@ public class CooldownAnnotationResolver<SENDER> implements AnnotationProcessor<S
     }
 
     private CooldownContext getCooldownContext(Cooldown cooldown) {
-        return new CooldownContext(cooldown.key(), Duration.of(cooldown.count(), cooldown.unit()));
+        return new CooldownContext(cooldown.key(), Duration.of(cooldown.count(), cooldown.unit()), cooldown.bypass());
     }
 
 }

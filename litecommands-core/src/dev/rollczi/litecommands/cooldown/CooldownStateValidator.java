@@ -37,6 +37,11 @@ public class CooldownStateValidator<SENDER> implements Validator<SENDER> {
     }
 
     private Flow validateCooldown(Invocation<SENDER> invocation, CooldownContext cooldownContext) {
+        String bypassPermission = cooldownContext.getBypassPermission();
+        if (!bypassPermission.isEmpty() && invocation.platformSender().hasPermission(bypassPermission)) {
+            return Flow.continueFlow();
+        }
+
         CooldownCompositeKey compositeKey = new CooldownCompositeKey(invocation.platformSender().getIdentifier(), cooldownContext.getKey());
 
         Instant now = Instant.now();
