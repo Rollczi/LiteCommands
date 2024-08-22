@@ -6,10 +6,12 @@ public class CooldownContext {
 
     private final String key;
     private final Duration duration;
+    private final String bypassPermission;
 
-    public CooldownContext(String key, Duration duration) {
+    public CooldownContext(String key, Duration duration, String bypassPermission) {
         this.key = key;
         this.duration = duration;
+        this.bypassPermission = bypassPermission;
     }
 
     public String getKey() {
@@ -18,6 +20,10 @@ public class CooldownContext {
 
     public Duration getDuration() {
         return duration;
+    }
+
+    public String getBypassPermission() {
+        return bypassPermission;
     }
 
 }

@@ -16,4 +16,9 @@ public @interface Cooldown {
 
     ChronoUnit unit();
 
+    /**
+     * Permission, which will be used to bypass that cooldown.
+     */
+    String bypass() default "";
+
 }
