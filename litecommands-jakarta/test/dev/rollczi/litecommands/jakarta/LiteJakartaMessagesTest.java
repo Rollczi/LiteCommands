@@ -54,9 +54,6 @@ class LiteJakartaMessagesTest {
                     : Locale.ENGLISH;
             })
 
-            // constraint violations message
-            .constraintViolationsMessage((invocation, parsedResult) -> "Constraint violations: " + parsedResult.asJoinedString())
-
             // global violation message
             .violationMessage((invocation, violation) -> "Invalid value for " + violation.getFormattedParameterName())
 
@@ -76,6 +73,8 @@ class LiteJakartaMessagesTest {
                     : format("[Other] Range must be between %d and %d", range.min(), range.max());
             })
 
+            // violation message for @Max annotation
+            .violationMessage(Max.class, Integer.class, (invocation, violation) -> "Invalid value: " + violation.getInvalidValue() + " for " + violation.getParameterName())
         )
     );
 
@@ -83,31 +82,31 @@ class LiteJakartaMessagesTest {
     @DisplayName("should return configured message specific for @Size annotation")
     void size() {
         platform.execute("test size 1234")
-            .assertMessage("Constraint violations: Size must be between 5 and 10 for text");
+            .assertMessage("Size must be between 5 and 10 for text");
     }
 
     @Test
     @DisplayName("should return configured message specific for @Range annotation and locale")
     void range() {
         platform.execute(TestPlatformSender.locale(Locale.ENGLISH), "test range 4")
-            .assertMessage("Constraint violations: [English] Range must be between 5 and 10");
+            .assertMessage("[English] Range must be between 5 and 10");
 
         platform.execute(TestPlatformSender.locale(Locale.GERMAN), "test range 4")
-            .assertMessage("Constraint violations: [Other] Range must be between 5 and 10");
+            .assertMessage("[Other] Range must be between 5 and 10");
     }
 
     @Test
     @DisplayName("should return configured message specific for @Max annotation")
     void max() {
         platform.execute("test max 2")
-            .assertMessage("Constraint violations: Invalid value for <number>");
+            .assertMessage("Invalid value: 2 for number");
     }
 
     @Test
-    @DisplayName("should return configured message specific for @Min annotation")
+    @DisplayName("should return configured message")
     void min() {
         platform.execute("test min 0")
-            .assertMessage("Constraint violations: Invalid value for <number>");
+            .assertMessage("Invalid value for <number>");
     }
 
 }
