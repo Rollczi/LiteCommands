@@ -35,7 +35,7 @@ publishing {
 
         maven(
             name ="minecodes",
-            url = "https://repository.minecodes.pl",
+            url = "https://maven.minecodes.pl",
             username = "MINE_CODES_MAVEN_USERNAME",
             password = "MINE_CODES_MAVEN_PASSWORD",
             snapshots = true,
