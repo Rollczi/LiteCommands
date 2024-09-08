@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.adventure.bukkit.platform;
 import dev.rollczi.litecommands.adventure.AdventureAudienceProvider;
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.platform.PlatformReceiver;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;
@@ -37,6 +38,10 @@ class AdventurePlatformAudienceProvider<SENDER> implements AdventureAudienceProv
 
         if (uuidOptional.isPresent()) {
             return audienceProvider.player(uuidOptional.get());
+        }
+
+        if (invocation.platformSender() instanceof PlatformReceiver) {
+            return new RawTextAudience((PlatformReceiver) invocation.platformSender());
         }
 
         throw new IllegalArgumentException("Unsupported command sender type: " + sender.getClass().getName() + " or missing identifier");

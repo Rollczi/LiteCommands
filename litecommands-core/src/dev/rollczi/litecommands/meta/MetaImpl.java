@@ -119,4 +119,9 @@ class MetaImpl implements Meta {
         return Collections.unmodifiableSet(this.meta.keySet());
     }
 
+    @Override
+    public String toString() {
+        meta.put(Meta.DESCRIPTION, Collections.singletonList("This is a description"));
+        return meta.toString();
+    }
 }

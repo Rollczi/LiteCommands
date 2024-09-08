@@ -20,6 +20,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -70,6 +72,8 @@ public final class LiteJDAFactory {
             .type(Role.class, OptionType.ROLE, option -> option.getAsRole())
             .type(IMentionable.class, OptionType.MENTIONABLE, option -> option.getAsMentionable())
             .type(Channel.class, OptionType.CHANNEL, option -> option.getAsChannel())
+            .type(GuildChannel.class, OptionType.CHANNEL, option -> option.getAsChannel())
+            .type(GuildChannelUnion.class, OptionType.CHANNEL, option -> option.getAsChannel())
 
             .typeOverlay(Float.class, OptionType.NUMBER, option -> option.getAsString())
             .typeOverlay(float.class, OptionType.NUMBER, option -> option.getAsString())

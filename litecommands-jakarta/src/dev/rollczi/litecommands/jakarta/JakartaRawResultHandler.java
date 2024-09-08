@@ -26,31 +26,30 @@ class JakartaRawResultHandler<SENDER> implements ResultHandler<SENDER, JakartaRa
 
     @Override
     public void handle(Invocation<SENDER> invocation, JakartaRawResult result, ResultHandlerChain<SENDER> chain) {
-        List<String> list = result.getViolations().stream()
+        List<Object> list = result.getViolations().stream()
             .map(entry -> getViolation(entry, settings.localeProvider.apply(invocation)))
             .map(violation -> settings.toMessage(invocation, violation))
             .collect(Collectors.toList());
 
-        Object message = settings.constraintViolationsMessage.get(invocation, new JakartaParsedResult(list));
-
-        chain.resolve(invocation, message);
+        chain.resolve(invocation, list);
     }
 
-    private JakartaViolation<?> getViolation(JakartaRawResult.Entry entry, Locale locale) {
-        ConstraintViolation<Object> constraintViolation = entry.getViolation();
+    private JakartaViolation<?, ?> getViolation(JakartaRawResult.Entry entry, Locale locale) {
+        ConstraintViolation<Object> violation = entry.getViolation();
 
         return new JakartaViolation<>(
-            constraintViolation.getConstraintDescriptor().getAnnotation().annotationType(),
-            constraintViolation,
+            violation.getConstraintDescriptor().getAnnotation().annotationType(),
+            violation.getInvalidValue(),
+            violation,
             entry.getRequirement(),
-            getInterpolatedMessage(constraintViolation, locale),
+            getInterpolatedMessage(violation, locale),
             entry.getRequirement().getName(),
             schematicFormat, locale
         );
     }
 
     private String getInterpolatedMessage(ConstraintViolation<Object> violation, Locale locale) {
-        return settings.validatorFactory.getMessageInterpolator().interpolate(
+        return settings.getOrCreateValidatorFactory().getMessageInterpolator().interpolate(
             violation.getMessageTemplate(), new JakartaConstraintViolationContext(violation), locale);
     }
 

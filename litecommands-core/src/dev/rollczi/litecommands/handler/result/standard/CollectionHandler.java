@@ -5,7 +5,6 @@ import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.Collection;
-import java.util.concurrent.CompletionStage;
 
 public class CollectionHandler<SENDER> implements ResultHandler<SENDER, Collection> {
 
@@ -15,4 +14,5 @@ public class CollectionHandler<SENDER> implements ResultHandler<SENDER, Collecti
             chain.resolve(invocation, object);
         }
     }
+
 }

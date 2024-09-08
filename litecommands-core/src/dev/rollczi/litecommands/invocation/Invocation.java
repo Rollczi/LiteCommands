@@ -54,4 +54,9 @@ public class Invocation<SENDER> {
         return context;
     }
 
+    @Override
+    public String toString() {
+        return "Invocation{'" + platformSender.getName() + "'" +
+            " executed '/" + command + " " + String.join(" ", arguments.asList()) + "'}";
+    }
 }

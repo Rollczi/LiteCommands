@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("xyz.jpenilla.run-paper") version "2.2.0"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 version = "1.0.0-SNAPSHOT"
@@ -16,8 +16,8 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.3.4") // <-- uncomment in your project
-    // implementation("dev.rollczi:litecommands-adventure-platform:3.3.4") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.5.0") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-adventure-platform:3.5.0") // <-- uncomment in your project
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 

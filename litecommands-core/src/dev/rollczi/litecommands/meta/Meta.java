@@ -1,9 +1,10 @@
 package dev.rollczi.litecommands.meta;
 
+import dev.rollczi.litecommands.cooldown.CooldownContext;
 import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.Validator;
-import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
+import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ public interface Meta {
     MetaKey<List<Class>> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", MetaType.list(), Collections.emptyList());
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
     MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
+    MetaKey<CooldownContext> COOLDOWN = MetaKey.of("cooldown", CooldownContext.class);
 
     /**
      * LiteCommands Annotation API

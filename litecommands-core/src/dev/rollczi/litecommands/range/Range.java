@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.range;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public class Range {
 
     public static final Range ZERO_POINT = new Range(0, 0);
@@ -35,6 +37,16 @@ public class Range {
 
     public boolean isInRange(int count) {
         return count >= min && count <= max;
+    }
+
+    @ApiStatus.Experimental
+    public boolean isInRangeOrAbove(int count) {
+        return count >= min;
+    }
+
+    @ApiStatus.Experimental
+    public boolean isInRangeOrBelow(int count) {
+        return count <= max;
     }
 
     public boolean isOutOfRange(int count) {

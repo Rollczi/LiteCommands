@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.requirement.Requirement;
+import dev.rollczi.litecommands.requirement.RequirementCondition;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
@@ -30,13 +31,14 @@ import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.validator.ValidatorResult;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.validator.requirment.RequirementValidator;
+import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
 import dev.rollczi.litecommands.wrapper.Wrap;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import dev.rollczi.litecommands.wrapper.Wrapper;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -56,7 +58,17 @@ public class CommandExecuteService<SENDER> {
     private final WrapperRegistry wrapperRegistry;
     private final EventPublisher eventPublisher;
 
-    public CommandExecuteService(ValidatorService<SENDER> validatorService, ResultHandleService<SENDER> resultResolver, Scheduler scheduler, SchematicGenerator<SENDER> schematicGenerator, ParserRegistry<SENDER> parserRegistry, ContextRegistry<SENDER> contextRegistry, WrapperRegistry wrapperRegistry, BindRegistry bindRegistry, EventPublisher eventPublisher) {
+    public CommandExecuteService(
+        ValidatorService<SENDER> validatorService,
+        ResultHandleService<SENDER> resultResolver,
+        Scheduler scheduler,
+        SchematicGenerator<SENDER> schematicGenerator,
+        ParserRegistry<SENDER> parserRegistry,
+        ContextRegistry<SENDER> contextRegistry,
+        WrapperRegistry wrapperRegistry,
+        BindRegistry bindRegistry,
+        EventPublisher eventPublisher
+    ) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.scheduler = scheduler;
@@ -69,15 +81,11 @@ public class CommandExecuteService<SENDER> {
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute)
             .thenApply(commandExecuteResult -> mapResult(commandRoute, commandExecuteResult, invocation))
-            .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> {
-                this.handleResult(invocation, executeResult);
-
-                return executeResult;
-            }))
+            .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> this.handleResult(invocation, executeResult)))
             .exceptionally(new LastExceptionHandler<>(resultResolver, invocation));
     }
 
-    private void handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
+    private CommandExecuteResult handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
         Throwable throwable = executeResult.getThrowable();
         if (throwable != null) {
             resultResolver.resolve(invocation, throwable);
@@ -92,6 +100,8 @@ public class CommandExecuteService<SENDER> {
         if (error != null) {
             resultResolver.resolve(invocation, error);
         }
+
+        return executeResult;
     }
 
     // TODO Support mapping of result in result resolver
@@ -298,7 +308,17 @@ public class CommandExecuteService<SENDER> {
             }
 
             matches.add(toMatch(requirement, success));
-            return match(invocation, executor, matches, requirementIterator, matcher);
+            return match(invocation, executor, matches, requirementIterator, matcher).thenApply(executorMatchResult -> {
+                for (RequirementCondition condition : requirementResult.getConditions()) {
+                    Optional<FailedReason> failedReason = condition.check(invocation, executorMatchResult);
+
+                    if (failedReason.isPresent()) {
+                        return CommandExecutorMatchResult.failed(failedReason.get());
+                    }
+                }
+
+                return executorMatchResult;
+            });
         });
     }
 

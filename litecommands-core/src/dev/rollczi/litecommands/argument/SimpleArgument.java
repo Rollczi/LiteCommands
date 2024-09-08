@@ -70,4 +70,9 @@ public class SimpleArgument<T> implements Argument<T> {
         return Optional.empty();
     }
 
+    @Override
+    public boolean hasDefaultValue() {
+        return nullable || defaultValue().isPresent();
+    }
+
 }

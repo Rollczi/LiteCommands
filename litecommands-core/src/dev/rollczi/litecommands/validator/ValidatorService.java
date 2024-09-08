@@ -8,12 +8,14 @@ import dev.rollczi.litecommands.scope.Scopeable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ValidatorService<SENDER> {
 
-    private final Map<Scope, Validator<SENDER>> commandValidators = new HashMap<>();
+    private final Map<Scope, Set<Validator<SENDER>>> commandValidators = new HashMap<>();
     private final Map<Class<?>, Validator<SENDER>> validatorsByClass = new HashMap<>();
     private final List<Validator<SENDER>> commandGlobalValidators = new ArrayList<>();
 
@@ -22,6 +24,11 @@ public class ValidatorService<SENDER> {
     }
 
     public void registerValidator(Scope scope, Validator<SENDER> validator) {
+        if (Scope.GLOBAL_SCOPE.equals(scope)) {
+            commandGlobalValidators.add(validator);
+            return;
+        }
+
         if (scope instanceof ValidatorScope) {
             ValidatorScope validatorScope = (ValidatorScope) scope;
 
@@ -29,7 +36,7 @@ public class ValidatorService<SENDER> {
             return;
         }
 
-        this.commandValidators.put(scope, validator);
+        commandValidators.computeIfAbsent(scope, key -> new HashSet<>()).add(validator);
     }
 
     /* Kinda shitty, but I don't know how to do it better without losing performance https://github.com/Rollczi/LiteCommands/commit/3ac889d82e3e4d39fea27eee91cf5b01adacb412 */
@@ -64,17 +71,19 @@ public class ValidatorService<SENDER> {
             }
         }
 
-        for (Map.Entry<Scope, Validator<SENDER>> entry : commandValidators.entrySet()) {
+        for (Map.Entry<Scope, Set<Validator<SENDER>>> entry : commandValidators.entrySet()) {
             if (!entry.getKey().isApplicable(scopeable)) {
                 continue;
             }
 
-            Flow flow = entry.getValue().validate(invocation, scopeable);
+            for (Validator<SENDER> validator : entry.getValue()) {
+                Flow flow = validator.validate(invocation, scopeable);
 
-            switch (flow.status()) {
-                case CONTINUE: continue;
-                case TERMINATE: return flow;
-                case STOP_CURRENT: lastStopped = flow;
+                switch (flow.status()) {
+                    case CONTINUE: continue;
+                    case TERMINATE: return flow;
+                    case STOP_CURRENT: lastStopped = flow;
+                }
             }
         }
 

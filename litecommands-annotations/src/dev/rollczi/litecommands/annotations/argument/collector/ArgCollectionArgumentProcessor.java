@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.annotations.requirement.RequirementProcessor;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.SimpleArgument;
 import dev.rollczi.litecommands.argument.resolver.collector.CollectorArgument;
+import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.Collection;
@@ -30,11 +31,11 @@ public class ArgCollectionArgumentProcessor<SENDER> extends RequirementProcessor
         TypeToken<T> parsedType = format.parsedType();
 
         if (parsedType.isArray()) {
-            return new CollectorArgument<>(name, format, parsedType.getComponentTypeToken());
+            return new CollectorArgument<>(name, format, parsedType.getComponentTypeToken(), RawCommand.COMMAND_SEPARATOR);
         }
 
         if (parsedType.isInstanceOf(Collection.class)) {
-            return new CollectorArgument<>(name, format, parsedType.getParameterized());
+            return new CollectorArgument<>(name, format, parsedType.getParameterized(), RawCommand.COMMAND_SEPARATOR);
         }
 
         return new SimpleArgument<>(name, format);

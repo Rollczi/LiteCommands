@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.0.0"
-    id("xyz.jpenilla.run-velocity") version "2.2.0"
+    id("xyz.jpenilla.run-velocity") version "2.3.0"
 }
 
 java {
@@ -19,7 +19,7 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-velocity:3.3.4") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-velocity:3.5.0") // <-- uncomment in your project
     implementation(project(":litecommands-velocity")) // don't use this line in your build.gradle
 }
 

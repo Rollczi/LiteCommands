@@ -5,10 +5,12 @@ import dev.rollczi.litecommands.meta.Meta;
 @FunctionalInterface
 public interface Scope {
 
+    Scope GLOBAL_SCOPE = scopeable -> true;
+
     boolean isApplicable(Scopeable scopeable);
 
     static Scope global() {
-        return scopeable -> true;
+        return GLOBAL_SCOPE;
     }
 
     static Scope command(String name) {

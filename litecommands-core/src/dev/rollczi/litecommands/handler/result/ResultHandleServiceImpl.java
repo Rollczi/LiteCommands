@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.util.MapUtil;
 
+import dev.rollczi.litecommands.util.ObjectsUtil;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,12 +24,17 @@ public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SEND
         this.resolve(invocation, result, (Class<T>) result.getClass(), chain);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> void resolve(Invocation<SENDER> invocation, T result, Class<? super T> typedAs, ResultHandlerChain<SENDER> chain) {
         ResultHandler<SENDER, ? super T> handler = this.getHandler(typedAs);
 
         if (handler == null) {
             throw new LiteCommandsException("Cannot find handler for result type " + typedAs.getName());
+        }
+
+        if (typedAs.isArray() && typedAs.getComponentType().isPrimitive()) {
+            result = (T) ObjectsUtil.getGenericCopyOfPrimitiveArray(result);
         }
 
         handler.handle(invocation, result, chain);

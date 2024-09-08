@@ -48,7 +48,7 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
 
         Stream<String> routeScheme = generateRoute(schematicInput, schematicInput.getLastRoute(), base);
 
-        if (executor != null) {
+        if (executor != null && isVisible(schematicInput, executor)) {
             Stream<String> executorScheme = Stream.of(base + generateExecutor(schematicInput, executor));
             return Stream.concat(routeScheme, executorScheme);
         }

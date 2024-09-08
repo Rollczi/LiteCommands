@@ -6,7 +6,7 @@
 
 <div align="center">
 
-<img src="https://github.com/Rollczi/LiteCommands/assets/49173834/a5a1de27-af53-4d19-86e7-3f3306695e9a" alt="banner" width="50%"/>
+<img src="https://github.com/Rollczi/LiteCommands/assets/49173834/4c297b16-eacd-4c89-ba34-2767b114e391" alt="banner" width="65%"/>
 <br><br>
 
 [![Discord](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/social/discord-plural_vector.svg)](https://discord.gg/6cUhkj6uZJ)
@@ -40,6 +40,15 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 - ChatGPT suggestions. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
 - Adventure Kyori support. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/adventure-kyori.html) 
 - and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)! ✨
+
+## 📦 Platforms
+- Velocity
+- Bukkit, Spigot, Paper
+- BungeeCord, Waterfall
+- Minestom _(by [Codestech1](https://github.com/Codestech1))_
+- Sponge _(by [BlackBaroness](https://github.com/BlackBaroness))_
+- Fabric _(by [huanmeng_qwq](https://github.com/huanmeng-qwq))_
+- JDA
 
 ## 💡 Command Example
 This is an example of `/hello <name> <amount>` command:
@@ -79,13 +88,13 @@ maven("https://repo.panda-lang.org/releases")
 
 #### ➕ Add LiteCommands to dependencies
 ```kts
-implementation("dev.rollczi:{artifact}:3.3.4")
+implementation("dev.rollczi:{artifact}:3.5.0")
 ```
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>{artifact}</artifactId>
-    <version>3.3.4</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 > ⚠️ Replace `{artifact}` with [platform artifact](https://litedevelopers.github.io/LiteDevelopers-documentation/platforms.html)  
@@ -97,14 +106,14 @@ implementation("dev.rollczi:{artifact}:3.3.4")
 @@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
 ```
 
-<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/q1zZu"><img src="https://images.weserv.nl/?url=https://github.com/q1zZu.png?v=4&mask=circle" width="60px" alt="q1zZ" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/Nadwey"><img src="https://images.weserv.nl/?url=https://github.com/Nadwey.png?v=4&mask=circle" width="60px" alt="Nadwey" /></a>&nbsp;&nbsp;<!-- sponsors -->
 
 ## 🔮 Official IntelliJ Plugin
 
 With LiteCommands plugin, you can easily develop your commands within the **IntelliJ IDEA** environment. 
 The plugin provides **annotation inspections**, **tools** for creating new command classes, **syntax highlighting**, **code completion**, 
 and other useful features to make your development experience smoother and more efficient. How to [install](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin?tab=readme-ov-file#installation)? 
-![litecommandsbanner-intellij](https://github.com/Rollczi/LiteCommands/assets/49173834/dafd034e-4dab-4ab0-9984-489ae6808d8d)
+![litecommandsbanner-intellij](https://github.com/Rollczi/LiteCommands/assets/49173834/fea96613-af58-42bb-b32d-ffd6946ba4cc)
 
 ## 🌍 More Examples
 #### ➕ Official examples

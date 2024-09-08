@@ -168,7 +168,7 @@ public class LiteCommand<SENDER> {
             .applyMeta(meta -> meta.listEditor(Meta.COMMAND_ORIGIN_TYPE).add(this.getClass()).apply());
 
         if (withExecutor) {
-            builder.appendExecutor(root -> CommandExecutor.builder(root)
+            builder.getRealRoute().appendExecutor(root -> CommandExecutor.builder(root)
                 .executor(liteContext -> execute(liteContext))
                 .arguments(arguments)
                 .contextRequirements(contextRequirements)

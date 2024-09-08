@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class JDACommandTranslator {
+public class JDACommandTranslator {
 
     private static final String DESCRIPTION_DEFAULT = "none";
     private static final String DESCRIPTION_NO_GENERATED = "no generated description";
@@ -48,12 +48,12 @@ class JDACommandTranslator {
         this.wrapperRegistry = wrapperRegistry;
     }
 
-    <T> JDACommandTranslator type(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {
+    public <T> JDACommandTranslator type(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {
         jdaSupportedTypes.put(type, new JDAType<>(type, optionType, mapper));
         return this;
     }
 
-    <T> JDACommandTranslator typeOverlay(Class<T> type, OptionType optionType, JDATypeMapper<String> mapper) {
+    public <T> JDACommandTranslator typeOverlay(Class<T> type, OptionType optionType, JDATypeMapper<String> mapper) {
         jdaTypeOverlays.put(type, new JDATypeOverlay<>(type, optionType, mapper));
         return this;
     }
@@ -171,7 +171,7 @@ class JDACommandTranslator {
         for (Argument<?> argument : executor.getArguments()) {
             String argumentName = argument.getName();
             String description = this.getDescription(argument);
-            boolean isRequired = !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
+            boolean isRequired = isRequired(argument);
 
             Class<?> parsedType = argument.getWrapperFormat().getParsedType();
             if (jdaSupportedTypes.containsKey(parsedType)) {
@@ -194,6 +194,14 @@ class JDACommandTranslator {
         }
 
         return executor;
+    }
+
+    private boolean isRequired(Argument<?> argument) {
+        if (argument.hasDefaultValue()) {
+            return false;
+        }
+
+        return !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
     }
 
     private interface TranslateExecutorConsumer {
@@ -307,9 +315,5 @@ class JDACommandTranslator {
     record JDAType<T>(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {}
 
     record JDATypeOverlay<T>(Class<T> type, OptionType optionType, JDATypeMapper<String> mapper) {}
-
-    interface JDATypeMapper<T> {
-        T map(OptionMapping option);
-    }
 
 }

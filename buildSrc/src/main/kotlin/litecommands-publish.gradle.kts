@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.rollczi"
-version = "3.3.4"
+version = "3.5.1-SNAPSHOT"
 
 java {
     withSourcesJar()
@@ -33,14 +33,14 @@ publishing {
             beta = true,
         )
 
-        maven(
+/*        maven(
             name ="minecodes",
-            url = "https://repository.minecodes.pl",
+            url = "https://maven.minecodes.pl",
             username = "MINE_CODES_MAVEN_USERNAME",
             password = "MINE_CODES_MAVEN_PASSWORD",
             snapshots = true,
             beta = true,
-        )
+        )*/
     }
 }
 

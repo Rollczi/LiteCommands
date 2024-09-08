@@ -1,5 +1,10 @@
 rootProject.name = "LiteCommands"
 
+plugins {
+    // fabric-loom plugin needs it
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
 // core
 include(":litecommands-core")
 include(":litecommands-annotations")
@@ -20,6 +25,7 @@ include(":litecommands-bukkit")
 include(":litecommands-minestom", JavaVersion.VERSION_17)
 include("litecommands-jda", JavaVersion.VERSION_17)
 include(":litecommands-sponge")
+include(":litecommands-fabric", JavaVersion.VERSION_17)
 
 // examples
 include(":examples:bukkit")
@@ -28,6 +34,7 @@ include(":examples:bukkit-chatgpt", JavaVersion.VERSION_11)
 include(":examples:minestom", JavaVersion.VERSION_17)
 include(":examples:velocity", JavaVersion.VERSION_11)
 include(":examples:sponge")
+include(":examples:fabric", JavaVersion.VERSION_17)
 
 fun include(projectPath: String, version: JavaVersion) {
     if (!JavaVersion.current().isCompatibleWith(version)) {
@@ -36,4 +43,14 @@ fun include(projectPath: String, version: JavaVersion) {
     }
 
     include(projectPath)
+}
+
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    pluginManagement {
+        repositories {
+            maven("https://maven.fabricmc.net/")
+            mavenCentral()
+            gradlePluginPortal()
+        }
+    }
 }

@@ -7,9 +7,10 @@ import jakarta.validation.ConstraintViolation;
 import java.lang.annotation.Annotation;
 import java.util.Locale;
 
-public class JakartaViolation<A extends Annotation> {
+public class JakartaViolation<A extends Annotation, T> {
 
     private final Class<A> annotationType;
+    private final T value;
     private final ConstraintViolation<Object> violation;
     private final Requirement<?> requirement;
     private final String message;
@@ -17,14 +18,19 @@ public class JakartaViolation<A extends Annotation> {
     private final SchematicFormat schematicFormat;
     private final Locale locale;
 
-    public JakartaViolation(Class<A> annotationType, ConstraintViolation<Object> violation, Requirement<?> requirement, String message, String parameterName, SchematicFormat schematicFormat, Locale locale) {
+    public JakartaViolation(Class<A> annotationType, T value, ConstraintViolation<Object> violation, Requirement<?> requirement, String message, String parameterName, SchematicFormat schematicFormat, Locale locale) {
         this.annotationType = annotationType;
+        this.value = value;
         this.violation = violation;
         this.requirement = requirement;
         this.message = message;
         this.parameterName = parameterName;
         this.schematicFormat = schematicFormat;
         this.locale = locale;
+    }
+
+    public T getInvalidValue() {
+        return value;
     }
 
     public Class<A> getAnnotationType() {

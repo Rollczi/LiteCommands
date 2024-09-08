@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputMatcher;
@@ -40,6 +41,12 @@ public class SuggestionService<SENDER> {
         CommandRoute<SENDER> commandRoute
     ) {
         if (matcher.hasNoNextRouteAndArguments()) {
+            Flow flow = this.validatorService.validate(invocation, commandRoute);
+
+            if (flow.isTerminate() || flow.isStopCurrent()) {
+                return SuggestionResult.empty();
+            }
+
             return SuggestionResult.of(commandRoute.names());
         }
 
@@ -64,6 +71,10 @@ public class SuggestionService<SENDER> {
         String current = matcher.showNextRoute();
 
         for (CommandRoute<SENDER> child : commandRoute.getChildren()) {
+            if (!this.isAnyExecutorValid(invocation, child)) {
+                continue;
+            }
+
             for (String name : child.names()) {
                 if (!StringUtil.startsWithIgnoreCase(name, current)) {
                     continue;
@@ -74,6 +85,32 @@ public class SuggestionService<SENDER> {
         }
 
         return all;
+    }
+
+    private boolean isAnyExecutorValid(Invocation<SENDER> invocation, CommandRoute<SENDER> route) {
+        Flow flow = this.validatorService.validate(invocation, route);
+
+        if (flow.isTerminate() || flow.isStopCurrent()) {
+            return false;
+        }
+
+        for (CommandExecutor<SENDER> executor : route.getExecutors()) {
+            Flow flowExecutor = this.validatorService.validate(invocation, executor);
+
+            if (flowExecutor.isTerminate() || flowExecutor.isStopCurrent()) {
+                continue;
+            }
+
+            return true;
+        }
+
+        for (CommandRoute<SENDER> child : route.getChildren()) {
+            if (this.isAnyExecutorValid(invocation, child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public <MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionResult suggestExecutor(
@@ -103,13 +140,13 @@ public class SuggestionService<SENDER> {
         Argument<PARSED> argument
     ) {
         Class<PARSED> parsedType = argument.getWrapperFormat().getParsedType();
-        ParserSet<SENDER, PARSED> parserSet = parserRegistry.getParserSet(parsedType, argument.getKey());
+        Parser<SENDER, PARSED> parser = parserRegistry.getParser(invocation, argument);
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.getKey());
 
-        boolean nextOptional = matcher.isNextOptional(invocation, argument, parserSet);
-        SuggestionInputResult result = matcher.nextArgument(invocation, argument, parserSet, suggester);
+        SuggestionInputResult result = matcher.nextArgument(invocation, argument, parser, suggester);
+        boolean isOptional = matcher.isOptionalArgument(invocation, argument, parser);
 
-        if (result.isEnd() && nextOptional) {
+        if (result.isEnd() && isOptional) {
             return SuggestionInputResult.continueWith(result);
         }
 

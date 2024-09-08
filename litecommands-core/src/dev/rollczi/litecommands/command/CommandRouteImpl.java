@@ -160,4 +160,13 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
         this.executors.add(executor);
     }
 
+    @Override
+    public String toString() {
+        return "CommandRouteImpl{" +
+            "name='" + name + '\'' +
+            ", uniqueId=" + uniqueId +
+            ", aliases=" + aliases +
+            ", meta=" + meta +
+            '}';
+    }
 }

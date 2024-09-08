@@ -22,12 +22,17 @@ import dev.rollczi.litecommands.argument.resolver.standard.LocalDateTimeArgument
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.standard.UUIDArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.command.executor.event.CommandExecutionEvent;
 import dev.rollczi.litecommands.context.ContextResult;
+import dev.rollczi.litecommands.cooldown.CooldownState;
+import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
+import dev.rollczi.litecommands.cooldown.CooldownStateValidator;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
+import dev.rollczi.litecommands.handler.result.standard.ArrayHandler;
 import dev.rollczi.litecommands.handler.result.standard.CollectionHandler;
 import dev.rollczi.litecommands.handler.result.standard.CompletionStageHandler;
 import dev.rollczi.litecommands.handler.result.standard.OptionHandler;
@@ -66,6 +71,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.Vector;
 import panda.std.Option;
 
@@ -95,13 +101,15 @@ public final class LiteCommandsFactory {
 
             List<Class<?>> excluded = Arrays.asList(Cloneable.class, Serializable.class, Object.class);
 
-            builder
+            builder.advanced()
+
                 .context(senderClass, invocation -> ContextResult.ok(() -> invocation.sender()))
                 .context(String[].class, invocation -> ContextResult.ok(() -> invocation.arguments().asArray()))
                 .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
                 .validator(Scope.global(), new MissingPermissionValidator<>())
+                .validator(Scope.global(), new CooldownStateValidator<>())
 
                 .argument(String.class, new StringArgumentResolver<>())
                 .argument(Boolean.class, new BooleanArgumentResolver<>())
@@ -124,6 +132,7 @@ public final class LiteCommandsFactory {
                 .argument(BigDecimal.class, new BigDecimalArgumentResolver<>(messageRegistry))
                 .argument(Instant.class, new InstantArgumentResolver<>(messageRegistry))
                 .argument(LocalDateTime.class, new LocalDateTimeArgumentResolver<>(messageRegistry))
+                .argument(UUID.class, new UUIDArgumentResolver<>(messageRegistry))
 
                 .argument(upwards(Enum.class), new EnumArgumentResolver<>())
 
@@ -152,11 +161,13 @@ public final class LiteCommandsFactory {
                 .exception(InvocationTargetException.class, new InvocationTargetExceptionHandler<>())
                 .exception(LiteCommandsException.class, new LiteCommandsExceptionHandler<>())
 
+                .result(Object[].class, new ArrayHandler<>())
                 .result(Optional.class, new OptionalHandler<>())
                 .result(Option.class, new OptionHandler<>())
                 .result(CompletionStage.class, new CompletionStageHandler<>())
                 .result(Collection.class, new CollectionHandler<>())
                 .result(MissingPermissions.class, new MissingPermissionResultHandler<>(messageRegistry))
+                .result(CooldownState.class, new CooldownStateResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
 
                 .listener(CommandExecutionEvent.class, new ValidatorExecutionController<>(internal.getValidatorService()))

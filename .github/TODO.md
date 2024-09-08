@@ -14,17 +14,17 @@ TODO
 - [x] @Join String
 - [x] @Async @Arg
 - [x] @Permission
-- [ ] @Arg @Range(min = 1, max = 10) int
+- [x] @Arg @Range(min = 1, max = 10) int
 - [x] @Flag for booleans
 - [ ] @Editor
 - [x] @Arg Enum
-- [ ] @Arg List<String> // for example text, text, text
-- [ ] @Arg Set<T> // for example 1, 4, 5
+- [x] @Arg List<String> // for example text, text, text
+- [x] @Arg Set<T> // for example 1, 4, 5
 - [ ] @Arg Map<K, V> // for example key1=value1, key2=value2 // do wyrzucenia chyba
 - [ ] @Suggest
 - [ ] @Literal
 - [x] @Validate(validator = MyValidator.class)
-- [ ] @Cooldown - Określa cza s, przez który użytkownik nie może ponownie użyć danej komendy po jej wykonaniu.
+- [x] @Cooldown - Określa cza s, przez który użytkownik nie może ponownie użyć danej komendy po jej wykonaniu.
 - [ ] @Cooldown(second = 10, bypass = "myplugin.bypass.cooldown", scope = CooldownScope.GLOBAL)
 - [ ] @MaxCalls(second = 10, max = 5)
 - [ ] @Delay - Adnotacja ta może być użyta przed metodą, aby określić czas opóźnienia (w milisekundach) przed wykonaniem
@@ -37,19 +37,20 @@ TODO
 - [x] @Context
 - [ ] .debugger(true)
 - [x] .errorHandler()
-- [ ] @Arg @Regex("") String
-- [ ] @Arg @Regex("[a-zA-Z0-9_]") @Length(min = 3, max = 16) String playerName
+- [x] @Arg @Regex("") String
+- [x] @Arg @Regex("[a-zA-Z0-9_]") @Length(min = 3, max = 16) String playerName
 - [x] Return result handler
 - [x] Return result handler remapper
 - [x] Support JDA
-- [ ] Support Sponge
+- [x] Support Sponge
 - [x] Support BungeeCord
-- [ ] Support Waterfall
+- [x] Support Waterfall
 - [x] Support Velocity
 - [x] Support Bukkit
 - [ ] Support Nukkit
 - [x] Support Adventure
 - [x] Support Paper
+- [x] Support Fabric
 - [x] Add support to provide other types of arguments by platforms
 
 ### This is not a command example.  They're just concepts!
