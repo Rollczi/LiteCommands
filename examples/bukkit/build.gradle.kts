@@ -31,17 +31,22 @@ bukkit {
     version = "${project.version}"
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 tasks.shadowJar {
     archiveFileName.set("$pluginName v${project.version}.jar")
 
     listOf(
         "panda.std",
-//        "dev.rollczi.litecommands",
+        "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
+    options.release = 17
 }
 
 sourceSets.test {
@@ -51,5 +56,4 @@ sourceSets.test {
 
 tasks.runServer {
     minecraftVersion("1.21")
-    jvmArgs(listOf("-XX:+AllowEnhancedClassRedefinition"))
 }
