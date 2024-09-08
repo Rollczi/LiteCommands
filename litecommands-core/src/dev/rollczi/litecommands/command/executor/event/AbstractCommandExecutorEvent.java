@@ -11,7 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.Experimental
-class AbstractCommandExecutorEvent implements Event, CommandExecutorEvent, ExecuteFlowEvent<FailedReason> {
+abstract class AbstractCommandExecutorEvent implements Event, CommandExecutorEvent, ExecuteFlowEvent<FailedReason> {
 
     private final Invocation<?> invocation;
     private final CommandExecutor<?> executor;
@@ -54,9 +54,9 @@ class AbstractCommandExecutorEvent implements Event, CommandExecutorEvent, Execu
     }
 
     @Override
-    public void terminateFlow(FailedReason reason) {
+    public void stopFlow(FailedReason reason) {
         Preconditions.notNull(reason, "reason");
-        this.flow = ExecuteFlow.TERMINATE;
+        this.flow = ExecuteFlow.STOP;
         this.cancelReason = reason;
     }
 

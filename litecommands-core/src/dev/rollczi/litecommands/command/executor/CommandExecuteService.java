@@ -7,8 +7,8 @@ import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.event.CandidateExecutorFoundEvent;
 import dev.rollczi.litecommands.command.executor.event.CandidateExecutorMatchEvent;
-import dev.rollczi.litecommands.command.executor.event.CommandExecutionCompletionEvent;
-import dev.rollczi.litecommands.command.executor.event.CommandExecutionEvent;
+import dev.rollczi.litecommands.command.executor.event.CommandPostExecutionEvent;
+import dev.rollczi.litecommands.command.executor.event.CommandPreExecutionEvent;
 import dev.rollczi.litecommands.command.executor.flow.ExecuteFlow;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
@@ -42,7 +42,6 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -56,7 +55,7 @@ public class CommandExecuteService<SENDER> {
     private final SchematicGenerator<SENDER> schematicGenerator;
     private final ScheduledRequirementResolver<SENDER> scheduledRequirementResolver;
     private final WrapperRegistry wrapperRegistry;
-    private final EventPublisher eventPublisher;
+    private final EventPublisher publisher;
 
     public CommandExecuteService(
         ValidatorService<SENDER> validatorService,
@@ -67,14 +66,14 @@ public class CommandExecuteService<SENDER> {
         ContextRegistry<SENDER> contextRegistry,
         WrapperRegistry wrapperRegistry,
         BindRegistry bindRegistry,
-        EventPublisher eventPublisher
+        EventPublisher publisher
     ) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.scheduler = scheduler;
         this.schematicGenerator = schematicGenerator;
         this.wrapperRegistry = wrapperRegistry;
-        this.eventPublisher = eventPublisher;
+        this.publisher = publisher;
         this.scheduledRequirementResolver = new ScheduledRequirementResolver<>(contextRegistry, parserRegistry, bindRegistry, scheduler);
     }
 
@@ -167,8 +166,8 @@ public class CommandExecuteService<SENDER> {
 
         CommandExecutor<SENDER> executor = executors.next();
 
-        CandidateExecutorFoundEvent foundEvent = eventPublisher.publish(new CandidateExecutorFoundEvent(invocation, executor));
-        if (foundEvent.getFlow() == ExecuteFlow.TERMINATE) {
+        CandidateExecutorFoundEvent foundEvent = publisher.publish(new CandidateExecutorFoundEvent(invocation, executor));
+        if (foundEvent.getFlow() == ExecuteFlow.STOP) {
             return completedFuture(CommandExecuteResult.failed(executor, foundEvent.getFlowResult()));
         }
 
@@ -178,13 +177,15 @@ public class CommandExecuteService<SENDER> {
 
         // Handle matching arguments
         return this.match(executor, invocation, matcher.copy()).thenCompose(match -> {
-            CandidateExecutorMatchEvent matchEvent = eventPublisher.publish(new CandidateExecutorMatchEvent(invocation, executor, match));
-            if (matchEvent.getFlow() == ExecuteFlow.TERMINATE) {
-                return completedFuture(CommandExecuteResult.failed(executor, matchEvent.getFlowResult()));
-            }
+            if (publisher.hasSubscribers(CandidateExecutorMatchEvent.class)) {
+                CandidateExecutorMatchEvent matchEvent = publisher.publish(new CandidateExecutorMatchEvent(invocation, executor, match));
+                if (matchEvent.getFlow() == ExecuteFlow.STOP) {
+                    return completedFuture(CommandExecuteResult.failed(executor, matchEvent.getFlowResult()));
+                }
 
-            if (matchEvent.getFlow() == ExecuteFlow.SKIP) {
-                return this.execute(executors, invocation, matcher, commandRoute, matchEvent.getFlowResult());
+                if (matchEvent.getFlow() == ExecuteFlow.SKIP) {
+                    return this.execute(executors, invocation, matcher, commandRoute, matchEvent.getFlowResult());
+                }
             }
 
             if (match.isFailed()) {
@@ -197,37 +198,46 @@ public class CommandExecuteService<SENDER> {
                 return this.execute(executors, invocation, matcher, commandRoute, last);
             }
 
-            CommandExecutionEvent executionEvent = eventPublisher.publish(new CommandExecutionEvent(invocation, executor));
-            if (executionEvent.getFlow() == ExecuteFlow.TERMINATE) {
-                return completedFuture(CommandExecuteResult.failed(executor, executionEvent.getFlowResult()));
-            }
+            if (publisher.hasSubscribers(CommandPreExecutionEvent.class)) {
+                CommandPreExecutionEvent executionEvent = publisher.publish(new CommandPreExecutionEvent(invocation, executor));
+                if (executionEvent.getFlow() == ExecuteFlow.STOP) {
+                    return completedFuture(CommandExecuteResult.failed(executor, executionEvent.getFlowResult()));
+                }
 
-            if (executionEvent.getFlow() == ExecuteFlow.SKIP) {
-                return this.execute(executors, invocation, matcher, commandRoute, executionEvent.getFlowResult());
+                if (executionEvent.getFlow() == ExecuteFlow.SKIP) {
+                    return this.execute(executors, invocation, matcher, commandRoute, executionEvent.getFlowResult());
+                }
             }
 
             // Execution
             SchedulerPoll type = executor.meta().get(Meta.POLL_TYPE);
 
             return scheduler.supply(type, () -> {
-                try {
-                    return match.executeCommand();
-                }
-                catch (LiteCommandsException exception) {
-                    if (exception.getCause() instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
-                        return CommandExecuteResult.failed(executor, ((InvalidUsageException) exception.getCause()).getErrorResult());
-                    }
+                CommandExecuteResult execute = execute(match, executor);
 
-                    return CommandExecuteResult.thrown(executor, exception);
+                if (this.publisher.hasSubscribers(CommandPostExecutionEvent.class)) {
+                    this.publisher.publish(new CommandPostExecutionEvent(invocation, executor, execute));
                 }
-                catch (Throwable error) {
-                    return CommandExecuteResult.thrown(executor, error);
-                } finally {
-                    //TODO catch results
-                    this.eventPublisher.publish(new CommandExecutionCompletionEvent(invocation, executor));
-                }
+
+                return execute;
             });
         }).exceptionally(throwable -> toThrown(executor, throwable));
+    }
+
+    private CommandExecuteResult execute(CommandExecutorMatchResult match, CommandExecutor<SENDER> executor) {
+        try {
+            return match.executeCommand();
+        }
+        catch (LiteCommandsException exception) {
+            if (exception.getCause() instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
+                return CommandExecuteResult.failed(executor, ((InvalidUsageException) exception.getCause()).getErrorResult());
+            }
+
+            return CommandExecuteResult.thrown(executor, exception);
+        }
+        catch (Throwable error) {
+            return CommandExecuteResult.thrown(executor, error);
+        }
     }
 
     private CommandExecuteResult toThrown(CommandExecutor<SENDER> executor, Throwable throwable) {

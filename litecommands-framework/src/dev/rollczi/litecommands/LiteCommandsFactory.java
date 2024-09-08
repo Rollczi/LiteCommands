@@ -24,7 +24,7 @@ import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolve
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.UUIDArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
-import dev.rollczi.litecommands.command.executor.event.CommandExecutionEvent;
+import dev.rollczi.litecommands.command.executor.event.CommandPreExecutionEvent;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
@@ -170,7 +170,7 @@ public final class LiteCommandsFactory {
                 .result(CooldownState.class, new CooldownStateResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
 
-                .listener(CommandExecutionEvent.class, new ValidatorExecutionController<>(internal.getValidatorService()))
+                .listener(CommandPreExecutionEvent.class, new ValidatorExecutionController<>(internal.getValidatorService()))
                 ;
         });
     }

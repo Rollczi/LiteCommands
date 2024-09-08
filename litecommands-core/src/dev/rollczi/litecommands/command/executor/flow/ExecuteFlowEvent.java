@@ -12,7 +12,7 @@ public interface ExecuteFlowEvent<R> extends Event {
 
     void continueFlow();
 
-    void terminateFlow(R result);
+    void stopFlow(R result);
 
     void skipFlow(R result);
 

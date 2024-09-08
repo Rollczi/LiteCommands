@@ -1,18 +1,21 @@
 package dev.rollczi.litecommands.command.executor.event;
 
+import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.invocation.Invocation;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
-public class CommandExecutionCompletionEvent implements CommandExecutorEvent {
+public class CommandPostExecutionEvent implements CommandExecutorEvent {
 
     private final Invocation<?> invocation;
     private final CommandExecutor<?> executor;
+    private final CommandExecuteResult result;
 
-    public CommandExecutionCompletionEvent(Invocation<?> invocation, CommandExecutor<?> executor) {
+    public CommandPostExecutionEvent(Invocation<?> invocation, CommandExecutor<?> executor, CommandExecuteResult result) {
         this.invocation = invocation;
         this.executor = executor;
+        this.result = result;
     }
 
     @Override
@@ -23,6 +26,10 @@ public class CommandExecutionCompletionEvent implements CommandExecutorEvent {
     @Override
     public CommandExecutor<?> getExecutor() {
         return executor;
+    }
+
+    public CommandExecuteResult getResult() {
+        return result;
     }
 
 }
