@@ -49,7 +49,7 @@ class JakartaRawResultHandler<SENDER> implements ResultHandler<SENDER, JakartaRa
     }
 
     private String getInterpolatedMessage(ConstraintViolation<Object> violation, Locale locale) {
-        return settings.validatorFactory.getMessageInterpolator().interpolate(
+        return settings.getOrCreateValidatorFactory().getMessageInterpolator().interpolate(
             violation.getMessageTemplate(), new JakartaConstraintViolationContext(violation), locale);
     }
 
