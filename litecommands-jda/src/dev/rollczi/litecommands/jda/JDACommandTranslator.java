@@ -170,7 +170,7 @@ public class JDACommandTranslator {
         for (Argument<?> argument : executor.getArguments()) {
             String argumentName = argument.getName();
             String description = this.getDescription(argument);
-            boolean isRequired = !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
+            boolean isRequired = isRequired(argument);
 
             Class<?> parsedType = argument.getWrapperFormat().getParsedType();
             if (jdaSupportedTypes.containsKey(parsedType)) {
@@ -193,6 +193,14 @@ public class JDACommandTranslator {
         }
 
         return executor;
+    }
+
+    private boolean isRequired(Argument<?> argument) {
+        if (argument.hasDefaultValue()) {
+            return false;
+        }
+
+        return !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
     }
 
     private interface TranslateExecutorConsumer {
