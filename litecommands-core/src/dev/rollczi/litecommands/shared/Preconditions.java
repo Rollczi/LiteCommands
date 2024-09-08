@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.shared;
 
+
 import org.jetbrains.annotations.Contract;
 
 import java.util.Collection;
@@ -32,6 +33,20 @@ public final class Preconditions {
     public static void notEmpty(Collection<?> value, String name) {
         if (value.isEmpty()) {
             throw new IllegalArgumentException(name + " cannot be empty");
+        }
+    }
+
+    public static void notContains(Collection<?> collection, Object element, String name, String elementName) {
+        if (collection.contains(element)) {
+            throw new IllegalArgumentException("Collection " + name + " already contains " + elementName);
+        }
+    }
+
+    public static void notContains(Iterable<?> iterable, Object element, String name, String elementName) {
+        for (Object obj : iterable) {
+            if (obj.equals(element)) {
+                throw new IllegalArgumentException("Collection " + name + " already contains " + elementName);
+            }
         }
     }
 

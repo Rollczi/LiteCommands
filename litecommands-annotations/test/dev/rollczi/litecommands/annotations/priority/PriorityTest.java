@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import static dev.rollczi.litecommands.annotations.priority.Priority.*;
+import dev.rollczi.litecommands.priority.PriorityLevel;
 import org.junit.jupiter.api.Test;
 
 class PriorityTest extends LiteTestSpec {
@@ -12,25 +13,25 @@ class PriorityTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute
-        @Priority(Level.NORMAL)
+        @Priority(PriorityValue.NORMAL)
         String executeNormal() {
             return "NORMAL";
         }
 
         @Execute
-        @Priority(Level.HIGHEST)
+        @Priority(PriorityValue.HIGHEST)
         String executeHighest() {
             return "HIGHEST";
         }
 
         @Execute(name = "sub")
-        @Priority(Level.LOW)
+        @Priority(PriorityValue.LOW)
         String executeLow() {
             return "LOW";
         }
 
         @Execute(name = "sub")
-        @Priority(Level.LOWEST)
+        @Priority(PriorityValue.LOWEST)
         String executeLowest() {
             return "LOWEST";
         }

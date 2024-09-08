@@ -137,11 +137,11 @@ public class CommandExecuteService<SENDER> {
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
-        return this.execute(commandRoute.getExecutors().listIterator(), invocation, matcher, commandRoute, null);
+        return this.execute(commandRoute.getExecutors().iterator(), invocation, matcher, commandRoute, null);
     }
 
     private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
-        ListIterator<CommandExecutor<SENDER>> executors,
+        Iterator<CommandExecutor<SENDER>> executors,
         Invocation<SENDER> invocation,
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute,
@@ -156,7 +156,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             // continue handle failed
-            CommandExecutor<SENDER> executor = executors.hasPrevious() ? executors.previous() : null;
+            CommandExecutor<SENDER> executor = commandRoute.getExecutors().isEmpty() ? null : commandRoute.getExecutors().last();
 
             if (last != null && last.hasResult()) {
                 return completedFuture(CommandExecuteResult.failed(executor, last));

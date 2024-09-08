@@ -4,8 +4,9 @@ import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaCollector;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import dev.rollczi.litecommands.priority.MutablePriorityList;
-import dev.rollczi.litecommands.priority.PriorityList;
+import dev.rollczi.litecommands.priority.MutablePrioritizedList;
+import dev.rollczi.litecommands.priority.PrioritizedList;
+import dev.rollczi.litecommands.shared.Preconditions;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     private final Meta meta = Meta.create();
     private final MetaCollector metaCollector = MetaCollector.of(this);
 
-    private final MutablePriorityList<CommandExecutor<SENDER>> executors = new MutablePriorityList<>();
+    private final MutablePrioritizedList<CommandExecutor<SENDER>> executors = new MutablePrioritizedList<>();
     private final List<CommandRoute<SENDER>> childRoutes = new ArrayList<>();
     private final Map<String, CommandRoute<SENDER>> childrenByName = new HashMap<>();
 
@@ -84,7 +85,7 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public PriorityList<CommandExecutor<SENDER>> getExecutors() {
+    public PrioritizedList<CommandExecutor<SENDER>> getExecutors() {
         return this.executors;
     }
 
@@ -157,6 +158,8 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
     @Override
     public void appendExecutor(CommandExecutor<SENDER> executor) {
+        Preconditions.notNull(executor, "executor");
+        Preconditions.notContains(this.executors, executor, "executors", "executor");
         this.executors.add(executor);
     }
 

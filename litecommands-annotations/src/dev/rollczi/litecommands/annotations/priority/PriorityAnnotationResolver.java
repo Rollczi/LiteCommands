@@ -10,12 +10,7 @@ public class PriorityAnnotationResolver<SENDER> implements AnnotationProcessor<S
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         return invoker.on(Priority.class, (annotation, metaHolder) -> {
-            if (annotation.custom() != 0) {
-                metaHolder.meta().put(Meta.PRIORITY, new PriorityLevel("CUSTOM", annotation.custom()));
-                return;
-            }
-
-            metaHolder.meta().put(Meta.PRIORITY, annotation.value().toPriorityLevel());
+            metaHolder.meta().put(Meta.PRIORITY, PriorityValue.toPriorityLevel(annotation.value()));
         });
     }
 

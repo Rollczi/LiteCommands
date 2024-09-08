@@ -2,8 +2,8 @@ package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 
-import dev.rollczi.litecommands.priority.MutablePriorityList;
-import dev.rollczi.litecommands.priority.PriorityList;
+import dev.rollczi.litecommands.priority.MutablePrioritizedList;
+import dev.rollczi.litecommands.priority.PrioritizedList;
 import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.Unmodifiable;
@@ -27,8 +27,8 @@ class CommandRouteExecutorReferenceImpl<SENDER> extends CommandRouteImpl<SENDER>
     }
 
     @Override
-    public @Unmodifiable PriorityList<CommandExecutor<SENDER>> getExecutors() {
-        MutablePriorityList<CommandExecutor<SENDER>> executors = new MutablePriorityList<>();
+    public @Unmodifiable PrioritizedList<CommandExecutor<SENDER>> getExecutors() {
+        MutablePrioritizedList<CommandExecutor<SENDER>> executors = new MutablePrioritizedList<>();
 
         for (CommandExecutor<SENDER> executor : super.getExecutors()) {
             executors.add(executor);

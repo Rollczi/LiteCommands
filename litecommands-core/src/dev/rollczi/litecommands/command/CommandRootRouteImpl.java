@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.command;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.priority.PriorityList;
+import dev.rollczi.litecommands.priority.PrioritizedList;
 import dev.rollczi.litecommands.util.StringUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +73,7 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public PriorityList<CommandExecutor<SENDER>> getExecutors() {
+    public PrioritizedList<CommandExecutor<SENDER>> getExecutors() {
         throw new UnsupportedOperationException("Can not get executors from the root route");
     }
 
