@@ -72,7 +72,7 @@ public class SimpleArgument<T> implements Argument<T> {
 
     @Override
     public boolean hasDefaultValue() {
-        return nullable;
+        return nullable || defaultValue().isPresent();
     }
 
 }
