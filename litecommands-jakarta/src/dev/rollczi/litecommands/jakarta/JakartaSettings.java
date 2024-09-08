@@ -8,15 +8,13 @@ import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.function.Function;
 
 public class JakartaSettings<SENDER> {
 
     Function<Invocation<SENDER>, Locale> localeProvider = ignored -> Locale.getDefault();
-    ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private ValidatorFactory validatorFactory;
 
     private InvokedMessage<SENDER, ?, JakartaViolation<?, ?>> defaultViolationMessage =
         (invocation, violation) -> String.format("%s - %s", violation.getFormattedParameterName(), violation.getMessage());
@@ -31,6 +29,14 @@ public class JakartaSettings<SENDER> {
     public JakartaSettings<SENDER> validatorFactory(ValidatorFactory validatorFactory) {
         this.validatorFactory = validatorFactory;
         return this;
+    }
+
+    ValidatorFactory getOrCreateValidatorFactory() {
+        if (validatorFactory == null) {
+            validatorFactory = Validation.buildDefaultValidatorFactory();
+        }
+
+        return validatorFactory;
     }
 
     /**

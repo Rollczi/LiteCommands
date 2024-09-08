@@ -19,7 +19,7 @@ public class LiteJakartaExtension<SENDER> implements LiteExtension<SENDER, Jakar
         builder
             .result(JakartaRawResult.class, new JakartaRawResultHandler<>(settings, internal.getSchematicGenerator()))
             .annotations(configuration -> configuration
-                .methodValidator(new JakartaMethodValidator<>(settings.validatorFactory.getValidator())));
+                .methodValidator(new JakartaMethodValidator<>(settings.getOrCreateValidatorFactory().getValidator())));
     }
 
 }
