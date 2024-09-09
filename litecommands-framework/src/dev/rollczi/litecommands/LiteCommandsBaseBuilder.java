@@ -162,7 +162,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.wrapperRegistry = wrapperRegistry;
 
         this.scheduler = new SchedulerSameThreadImpl();
-        this.eventPublisher = new SimpleEventPublisher();
+        this.eventPublisher = new SimpleEventPublisher(bindRegistry);
         this.schematicGenerator = new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
     }
 
@@ -514,8 +514,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public <E extends Event> B listener(Class<E> eventType, EventListener<E> listener) {
-        this.eventPublisher.subscribe(eventType, listener);
+    public B listener(EventListener listener) {
+        this.eventPublisher.subscribe(listener);
         return this.self();
     }
 

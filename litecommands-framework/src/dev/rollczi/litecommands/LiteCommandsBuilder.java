@@ -202,8 +202,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B schematicGenerator(SchematicFastFormat format);
 
     @ApiStatus.Experimental
-    <E extends Event>
-    B listener(Class<E> eventType, EventListener<E> listener);
+    B listener(EventListener listener);
 
     /**
      * @deprecated use {@link LiteCommandsBuilder#self(LiteBuilderAction)} instead

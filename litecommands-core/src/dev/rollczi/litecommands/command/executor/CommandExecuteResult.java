@@ -35,7 +35,7 @@ public class CommandExecuteResult {
     }
 
     public boolean isSuccessful() {
-        return this.result != null;
+        return this.error == null && this.throwable == null;
     }
 
     public boolean isFailed() {

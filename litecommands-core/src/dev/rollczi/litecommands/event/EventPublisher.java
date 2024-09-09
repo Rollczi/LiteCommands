@@ -9,6 +9,6 @@ public interface EventPublisher {
 
     <E extends Event> E publish(E event);
 
-    <E extends Event> void subscribe(Class<E> eventClass, EventListener<E> listener);
+    void subscribe(EventListener listener);
 
 }

@@ -16,8 +16,8 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Experimental
 public interface CommandExecutorEvent extends Event {
 
-    Invocation<?> getInvocation();
+    <SENDER> Invocation<SENDER> getInvocation();
 
-    CommandExecutor<?> getExecutor();
+    <SENDER> CommandExecutor<SENDER> getExecutor();
 
 }

@@ -24,11 +24,10 @@ import dev.rollczi.litecommands.argument.resolver.standard.PeriodArgumentResolve
 import dev.rollczi.litecommands.argument.resolver.standard.StringArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.UUIDArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
-import dev.rollczi.litecommands.command.executor.event.CommandPreExecutionEvent;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
-import dev.rollczi.litecommands.cooldown.CooldownStateValidator;
+import dev.rollczi.litecommands.cooldown.CooldownStateController;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
@@ -109,7 +108,7 @@ public final class LiteCommandsFactory {
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
                 .validator(Scope.global(), new MissingPermissionValidator<>())
-                .validator(Scope.global(), new CooldownStateValidator<>())
+                .listener(new CooldownStateController<>())
 
                 .argument(String.class, new StringArgumentResolver<>())
                 .argument(Boolean.class, new BooleanArgumentResolver<>())
@@ -170,7 +169,7 @@ public final class LiteCommandsFactory {
                 .result(CooldownState.class, new CooldownStateResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
 
-                .listener(CommandPreExecutionEvent.class, new ValidatorExecutionController<>(internal.getValidatorService()))
+                .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
                 ;
         });
     }

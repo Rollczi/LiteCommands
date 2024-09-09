@@ -19,13 +19,13 @@ public class CommandPostExecutionEvent implements CommandExecutorEvent {
     }
 
     @Override
-    public Invocation<?> getInvocation() {
-        return invocation;
+    public <T> Invocation<T> getInvocation() {
+        return (Invocation<T>) invocation;
     }
 
     @Override
-    public CommandExecutor<?> getExecutor() {
-        return executor;
+    public <SENDER> CommandExecutor<SENDER> getExecutor() {
+        return (CommandExecutor<SENDER>) executor;
     }
 
     public CommandExecuteResult getResult() {

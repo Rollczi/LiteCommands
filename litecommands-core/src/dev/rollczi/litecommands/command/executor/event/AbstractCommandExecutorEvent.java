@@ -24,13 +24,13 @@ abstract class AbstractCommandExecutorEvent implements Event, CommandExecutorEve
     }
 
     @Override
-    public Invocation<?> getInvocation() {
-        return invocation;
+    public <SENDER> Invocation<SENDER> getInvocation() {
+        return (Invocation<SENDER>) invocation;
     }
 
     @Override
-    public CommandExecutor<?> getExecutor() {
-        return executor;
+    public <SENDER> CommandExecutor<SENDER> getExecutor() {
+        return (CommandExecutor<SENDER>) executor;
     }
 
     @Override
