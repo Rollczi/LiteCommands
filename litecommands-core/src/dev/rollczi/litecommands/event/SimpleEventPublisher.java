@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.event;
 
 import dev.rollczi.litecommands.bind.BindRegistry;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +15,6 @@ public class SimpleEventPublisher implements EventPublisher {
 
     private final Map<Class<?>, Set<SubscriberMethod>> listeners = new HashMap<>();
     private final BindRegistry bindRegistry;
-    private final LookupMethodReflection lookupMethodReflection = new LookupMethodReflection();
 
     public SimpleEventPublisher(BindRegistry bindRegistry) {
         this.bindRegistry = bindRegistry;
@@ -65,42 +65,44 @@ public class SimpleEventPublisher implements EventPublisher {
             }
 
             Class<?>[] bindClasses = new Class[declaredMethod.getParameterCount() - 1];
+            System.arraycopy(declaredMethod.getParameterTypes(), 1, bindClasses, 0, declaredMethod.getParameterCount() - 1);
 
-            for (int i = 1; i < declaredMethod.getParameterCount(); i++) {
-                bindClasses[i - 1] = declaredMethod.getParameterTypes()[i];
-            }
-
-            listeners.computeIfAbsent(firstEventParameter, key -> new HashSet<>()).add(new SubscriberMethod(listener, declaredMethod.getName(), bindClasses));
+            declaredMethod.setAccessible(true);
+            listeners.computeIfAbsent(firstEventParameter, key -> new HashSet<>()).add(new SubscriberMethod(listener, declaredMethod, bindClasses));
         }
     }
 
     private class SubscriberMethod {
 
-        private final Object listener;
-        private final String methodName;
+        private final EventListener listener;
+        private final Method declaredMethod;
         private final Class<?>[] bindClasses;
 
-        public SubscriberMethod(Object listener, String methodName, Class<?>[] bindClasses) {
+        public SubscriberMethod(EventListener listener, Method declaredMethod, Class<?>[] bindClasses) {
             this.listener = listener;
-            this.methodName = methodName;
+            this.declaredMethod = declaredMethod;
             this.bindClasses = bindClasses;
         }
 
         public void invoke(Event event) {
-            Object[] binds = new Object[bindClasses.length + 1];
-            binds[0] = event;
+            Object[] args = new Object[bindClasses.length + 1];
+            args[0] = event;
 
-            for (int i = 1; i < binds.length; i++) {
+            for (int i = 1; i < args.length; i++) {
                 Result<?, String> result = bindRegistry.getInstance(bindClasses[i - 1]);
 
                 if (result.isErr()) {
-                    throw new IllegalArgumentException("Cannot bind " + bindClasses[i - 1].getName() + " for " + listener.getClass().getName() + "#" + methodName);
+                    throw new IllegalArgumentException("Cannot bind " + bindClasses[i - 1].getName() + " for " + listener.getClass().getName() + "#" + declaredMethod.getName());
                 }
 
-                binds[i] = result.get();
+                args[i] = result.get();
             }
 
-            lookupMethodReflection.invoke(listener, methodName, binds);
+            try {
+                declaredMethod.invoke(listener, args);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }

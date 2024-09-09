@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
-import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.requirement.Requirement;
@@ -15,7 +14,6 @@ import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import dev.rollczi.litecommands.validator.ValidatorResult;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.function.Supplier;
@@ -38,7 +36,6 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     ) {
         super(parent, definition.getArguments(), definition.getContextRequirements(), definition.getBindRequirements());
         this.method = method;
-        this.method.setAccessible(true);
         this.parameters = method.getParameters();
         this.instance = instance;
         this.definition = definition;
@@ -98,12 +95,8 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
         public CommandExecuteResult get() {
             try {
                 return CommandExecuteResult.success(MethodCommandExecutor.this, MethodCommandExecutor.this.method.invoke(MethodCommandExecutor.this.instance, objects));
-            } catch (IllegalAccessException exception) {
+            } catch (Throwable exception) {
                 throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Cannot access method", exception);
-            } catch (InvocationTargetException exception) {
-                Throwable targetException = exception.getTargetException();
-
-                throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }
         }
     }
