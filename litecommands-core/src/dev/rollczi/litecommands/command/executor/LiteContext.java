@@ -42,7 +42,7 @@ public class LiteContext<SENDER> {
     }
 
     public boolean argumentFlag(String name) {
-        return Boolean.TRUE.equals(this.get(name, WrapFormat.notWrapped(Boolean.class)));
+        return Boolean.TRUE.equals(this.get(name, WrapFormat.notWrapped(boolean.class)));
     }
 
     public String argumentJoin(String name) {
