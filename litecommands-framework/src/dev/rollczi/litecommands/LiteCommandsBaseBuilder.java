@@ -717,6 +717,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     @ApiStatus.Internal
+    public StrictService getStrictService() {
+        return this.strictService;
+    }
+
+    @Override
+    @ApiStatus.Internal
     public WrapperRegistry getWrapperRegistry() {
         return this.wrapperRegistry;
     }
