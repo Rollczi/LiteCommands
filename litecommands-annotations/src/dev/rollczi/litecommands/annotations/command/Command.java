@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.annotations.command;
 
 import dev.rollczi.litecommands.annotations.execute.Execute;
 
+import dev.rollczi.litecommands.strict.StrictMode;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,5 +28,11 @@ public @interface Command {
      * Represents the aliases of the command.
      */
     String[] aliases() default {};
+
+    /**
+     * Disables/Enables the strict mode.
+     * If the strict mode is disabled, the method will be executed even if there are too many arguments.
+     */
+    StrictMode strict() default StrictMode.DEFAULT;
 
 }

@@ -9,7 +9,6 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -93,8 +92,8 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         }
 
         @Override
-        public EndResult endMatch(MetaHolder context) {
-            if (consumedArguments.size() != arguments.size()) {
+        public EndResult endMatch(boolean isStrict) {
+            if (consumedArguments.size() != arguments.size() && isStrict) {
                 return EndResult.failed(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 

@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.meta;
 import dev.rollczi.litecommands.cooldown.CooldownContext;
 import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
 import org.jetbrains.annotations.ApiStatus;
@@ -28,7 +29,7 @@ public interface Meta {
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
     MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
     MetaKey<CooldownContext> COOLDOWN = MetaKey.of("cooldown", CooldownContext.class);
-    MetaKey<Boolean> IGNORE_TOO_MANY_ARGUMENTS = MetaKey.of("ignore-too-many-arguments", Boolean.class, false);
+    MetaKey<StrictMode> STRICT_MODE = MetaKey.of("strict-mode", StrictMode.class, StrictMode.DEFAULT);
 
     /**
      * LiteCommands Annotation API

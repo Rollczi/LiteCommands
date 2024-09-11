@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class LiteCommand<SENDER> {
     protected final String name;
     protected final List<String> aliases;
     protected final Meta meta = Meta.create();
+    protected final Meta executorMeta = Meta.create();
 
     protected Function<LiteContext<SENDER>, Object> executor = liteContext -> null;
     protected boolean withExecutor = true;
@@ -149,6 +151,18 @@ public class LiteCommand<SENDER> {
         return this;
     }
 
+    @ApiStatus.Experimental
+    public LiteCommand<SENDER> strict(StrictMode strict) {
+        this.meta.put(Meta.STRICT_MODE, strict);
+        return this;
+    }
+
+    @ApiStatus.Experimental
+    public LiteCommand<SENDER> strictExecutor(StrictMode strict) {
+        this.executorMeta.put(Meta.STRICT_MODE, strict);
+        return this;
+    }
+
     protected void execute(LiteContext<SENDER> context) {
         Object object = this.executor.apply(context);
         context.returnResult(object);
@@ -173,6 +187,7 @@ public class LiteCommand<SENDER> {
                 .arguments(arguments)
                 .contextRequirements(contextRequirements)
                 .bindRequirements(bindRequirements)
+                .apply(commandExecutor -> commandExecutor.meta().apply(this.executorMeta))
                 .build()
             );
         }

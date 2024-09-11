@@ -18,6 +18,7 @@ public class CommandExecutorBuilder<SENDER> {
     private final List<ContextRequirement<?>> contextRequirements = new ArrayList<>();
     private final List<BindRequirement<?>> bindRequirements = new ArrayList<>();
     private Consumer<LiteContext<SENDER>> executor;
+    private Consumer<CommandExecutor<SENDER>> apply;
 
     public CommandExecutorBuilder(CommandRoute<SENDER> parent) {
         this.parent = parent;
@@ -33,7 +34,7 @@ public class CommandExecutorBuilder<SENDER> {
     }
 
     public CommandExecutorBuilder<SENDER> arguments(Iterable<Argument<?>> arguments) {
-        arguments.forEach(this::argument);
+        arguments.forEach(argument -> argument(argument));
         return this;
     }
 
@@ -57,8 +58,19 @@ public class CommandExecutorBuilder<SENDER> {
         return this;
     }
 
+    public CommandExecutorBuilder<SENDER> apply(Consumer<CommandExecutor<SENDER>> apply) {
+        this.apply = apply;
+        return this;
+    }
+
     public CommandExecutor<SENDER> build() {
-        return new SimpleCommandExecutor<>(parent, executor, arguments, contextRequirements, bindRequirements);
+        CommandExecutor<SENDER> commandExecutor = new SimpleCommandExecutor<>(parent, executor, arguments, contextRequirements, bindRequirements);
+
+        if (apply != null) {
+            apply.accept(commandExecutor);
+        }
+
+        return commandExecutor;
     }
 
     private static class SimpleCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> implements CommandExecutor<SENDER> {

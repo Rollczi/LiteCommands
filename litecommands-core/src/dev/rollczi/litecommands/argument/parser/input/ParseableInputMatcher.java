@@ -5,7 +5,6 @@ import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.input.InputMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.shared.FailedReason;
 
 public interface ParseableInputMatcher<SELF extends ParseableInputMatcher<SELF>> extends InputMatcher {
@@ -23,7 +22,7 @@ public interface ParseableInputMatcher<SELF extends ParseableInputMatcher<SELF>>
 
     SELF copy();
 
-    EndResult endMatch(MetaHolder context);
+    EndResult endMatch(boolean isStrict);
 
     class EndResult {
         private final boolean successful;

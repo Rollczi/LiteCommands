@@ -4,8 +4,10 @@ import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.command.executor.CommandExecutorDefaultReference;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.util.LiteCommandsUtil;
 
 import java.util.Arrays;
@@ -15,6 +17,12 @@ public class ExecuteAnnotationResolver<SENDER> implements AnnotationProcessor<SE
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         return invoker
+            .on(Execute.class, (annotation, metaHolder) -> {
+                if (annotation.strict() != StrictMode.DEFAULT) {
+                    metaHolder.meta().put(Meta.STRICT_MODE, annotation.strict());
+                }
+            })
+            .on(ExecuteDefault.class, (annotation, metaHolder) -> metaHolder.meta().put(Meta.STRICT_MODE, annotation.strict()))
             .onMethod(Execute.class, (method, annotation, context, executorProvider) -> {
                 boolean isNotEmpty = LiteCommandsUtil.checkConsistent(annotation.name(), annotation.aliases());
 
@@ -37,8 +45,7 @@ public class ExecuteAnnotationResolver<SENDER> implements AnnotationProcessor<SE
                         throw new LiteCommandsReflectInvocationException(method, "Default executor cannot have any arguments!");
                     }
 
-                    executor.meta().put(Meta.IGNORE_TOO_MANY_ARGUMENTS, true);
-                    return executor;
+                    return new CommandExecutorDefaultReference<>(executor);
                 })
             );
     }

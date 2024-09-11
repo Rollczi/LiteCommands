@@ -15,8 +15,8 @@ import panda.std.Option;
 public class TeleportCommand {
 
     @Execute
-    public void teleportSelf(@Context Player sender, @Arg Player to) {
-        sender.teleport(to.getLocation());
+    public void teleportSelf(@Context Player sender, @Arg Player target) {
+        sender.teleport(target.getLocation());
     }
 
     @Execute
@@ -27,8 +27,8 @@ public class TeleportCommand {
 
     @Execute
     @Permission("dev.rollczi.teleport.other")
-    public void teleportOther(@Arg("target") Player target, @Arg("to") Player to) {
-        target.teleport(to.getLocation());
+    public void teleportOther(@Arg("other") Player other, @Arg("target") Player target) {
+        other.teleport(target.getLocation());
     }
 
 }

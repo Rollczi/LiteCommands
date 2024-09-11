@@ -29,6 +29,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.validator.ValidatorResult;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
@@ -56,6 +57,7 @@ public class CommandExecuteService<SENDER> {
     private final ScheduledRequirementResolver<SENDER> scheduledRequirementResolver;
     private final WrapperRegistry wrapperRegistry;
     private final EventPublisher publisher;
+    private final StrictService strictService;
 
     public CommandExecuteService(
         ValidatorService<SENDER> validatorService,
@@ -66,7 +68,7 @@ public class CommandExecuteService<SENDER> {
         ContextRegistry<SENDER> contextRegistry,
         WrapperRegistry wrapperRegistry,
         BindRegistry bindRegistry,
-        EventPublisher publisher
+        EventPublisher publisher, StrictService strictService
     ) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
@@ -74,6 +76,7 @@ public class CommandExecuteService<SENDER> {
         this.schematicGenerator = schematicGenerator;
         this.wrapperRegistry = wrapperRegistry;
         this.publisher = publisher;
+        this.strictService = strictService;
         this.scheduledRequirementResolver = new ScheduledRequirementResolver<>(contextRegistry, parserRegistry, bindRegistry, scheduler);
     }
 
@@ -255,7 +258,7 @@ public class CommandExecuteService<SENDER> {
         ParseableInputMatcher<?> matcher
     ) {
         if (!requirementIterator.hasNext()) {
-            ParseableInputMatcher.EndResult endResult = matcher.endMatch(executor);
+            ParseableInputMatcher.EndResult endResult = matcher.endMatch(strictService.isStrict(executor));
 
             if (!endResult.isSuccessful()) {
                 return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));

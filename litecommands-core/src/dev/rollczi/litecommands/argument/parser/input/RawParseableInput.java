@@ -81,17 +81,13 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
         }
 
         @Override
-        public EndResult endMatch(MetaHolder context) {
+        public EndResult endMatch(boolean isStrict) {
 
-            if (rawInputAnalyzer.getPivotPosition() < rawArguments.size() && shouldReportTooManyArguments(context)) {
+            if (rawInputAnalyzer.getPivotPosition() < rawArguments.size() && isStrict) {
                 return EndResult.failed(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
             }
 
             return EndResult.success();
-        }
-
-        private boolean shouldReportTooManyArguments(MetaHolder context) {
-            return !context.metaCollector().findFirst(Meta.IGNORE_TOO_MANY_ARGUMENTS);
         }
 
     }

@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.annotations.execute;
 
+import dev.rollczi.litecommands.strict.StrictMode;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,4 +17,12 @@ import org.jetbrains.annotations.ApiStatus;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExecuteDefault {
+
+    /**
+     * Disables/Enables the strict mode.
+     * If the strict mode is disabled, the method will be executed even if there are too many arguments.
+     * Default is {@link StrictMode#DISABLED}
+     */
+    StrictMode strict() default StrictMode.DISABLED;
+
 }

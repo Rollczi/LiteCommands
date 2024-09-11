@@ -89,16 +89,12 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
         }
 
         @Override
-        public EndResult endMatch(MetaHolder context) {
-            if (consumedArguments.size() < namedArguments.size() && shouldReportTooManyArguments(context)) {
+        public EndResult endMatch(boolean isStrict) {
+            if (consumedArguments.size() < namedArguments.size() && isStrict) {
                 return EndResult.failed(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
             }
 
             return EndResult.success();
-        }
-
-        private boolean shouldReportTooManyArguments(MetaHolder context) {
-            return !context.metaCollector().findFirst(Meta.IGNORE_TOO_MANY_ARGUMENTS);
         }
 
     }

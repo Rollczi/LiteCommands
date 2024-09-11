@@ -13,7 +13,6 @@ import dev.rollczi.litecommands.argument.suggester.SuggesterChained;
 import dev.rollczi.litecommands.bind.BindChainedProvider;
 import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
-import dev.rollczi.litecommands.event.Event;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.event.SimpleEventPublisher;
@@ -51,6 +50,7 @@ import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.suggestion.SuggestionService;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
@@ -75,6 +75,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -100,6 +101,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector;
     protected final MessageRegistry<SENDER> messageRegistry;
     protected final WrapperRegistry wrapperRegistry;
+    protected final StrictService strictService;
 
     protected Scheduler scheduler;
     protected EventPublisher eventPublisher;
@@ -124,7 +126,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             new ResultHandleServiceImpl<>(),
             new CommandBuilderCollector<>(),
             new MessageRegistry<>(),
-            new WrapperRegistry()
+            new WrapperRegistry(),
+            new StrictService()
         );
     }
 
@@ -145,7 +148,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         ResultHandleService<SENDER> resultHandleService,
         CommandBuilderCollector<SENDER> commandBuilderCollector,
         MessageRegistry<SENDER> messageRegistry,
-        WrapperRegistry wrapperRegistry
+        WrapperRegistry wrapperRegistry,
+        StrictService strictService
     ) {
         this.senderClass = senderClass;
         this.platform = platform;
@@ -160,6 +164,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.commandBuilderCollector = commandBuilderCollector;
         this.messageRegistry = messageRegistry;
         this.wrapperRegistry = wrapperRegistry;
+        this.strictService = strictService;
 
         this.scheduler = new SchedulerSameThreadImpl();
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
@@ -582,10 +587,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry, eventPublisher);
-        SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
-        CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
-
+        CommandManager<SENDER> commandManager = this.createCommandManager();
         CommandMerger<SENDER> commandMerger = new CommandMerger<>();
 
         for (CommandBuilder<SENDER> collected : this.commandBuilderCollector.collectCommands()) {
@@ -615,6 +617,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         }
 
         return liteCommand;
+    }
+
+    protected CommandManager<SENDER> createCommandManager() {
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry, eventPublisher, strictService);
+        SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
+
+        return new CommandManager<>(this.platform, commandExecuteService, suggestionService);
     }
 
     /**
