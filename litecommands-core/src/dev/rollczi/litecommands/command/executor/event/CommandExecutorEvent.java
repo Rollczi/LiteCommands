@@ -14,10 +14,10 @@ import org.jetbrains.annotations.ApiStatus;
  * - {@link CommandPostExecutionEvent}
  */
 @ApiStatus.Experimental
-public interface CommandExecutorEvent extends Event {
+public interface CommandExecutorEvent<SENDER> extends Event {
 
-    <SENDER> Invocation<SENDER> getInvocation();
+    Invocation<SENDER> getInvocation();
 
-    <SENDER> CommandExecutor<SENDER> getExecutor();
+    CommandExecutor<SENDER> getExecutor();
 
 }

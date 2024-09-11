@@ -41,6 +41,7 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageExceptionHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageResultController;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
@@ -108,7 +109,10 @@ public final class LiteCommandsFactory {
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
                 .validator(Scope.global(), new MissingPermissionValidator<>())
+
+                .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
                 .listener(new CooldownStateController<>())
+                .listener(new InvalidUsageResultController<>(internal.getSchematicGenerator()))
 
                 .argument(String.class, new StringArgumentResolver<>())
                 .argument(Boolean.class, new BooleanArgumentResolver<>())
@@ -169,7 +173,6 @@ public final class LiteCommandsFactory {
                 .result(CooldownState.class, new CooldownStateResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
 
-                .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
                 ;
         });
     }

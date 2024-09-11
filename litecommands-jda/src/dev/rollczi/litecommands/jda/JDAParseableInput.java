@@ -6,10 +6,10 @@ import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.parser.Parser;
-import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -64,8 +64,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
             }
 
             try {
-                //TODO: implement parse custom Input to PARSED
-                throw new LiteJDAParseException("Cannot parse input");
+                throw new LiteJDAParseException("Cannot parse input to " + outType.getSimpleName() + " from " + input.getClass().getSimpleName());
             }
             catch (LiteJDAParseException exception) {
                 return parser.parse(invocation, argument, RawInput.of(optionMapping.getAsString().split(" ")));
@@ -94,7 +93,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         }
 
         @Override
-        public EndResult endMatch() {
+        public EndResult endMatch(MetaHolder context) {
             if (consumedArguments.size() != arguments.size()) {
                 return EndResult.failed(InvalidUsage.Cause.MISSING_ARGUMENT);
             }

@@ -11,26 +11,26 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.Experimental
-abstract class AbstractCommandExecutorEvent implements Event, CommandExecutorEvent, ExecuteFlowEvent<FailedReason> {
+abstract class AbstractCommandExecutorEvent<SENDER> implements Event, CommandExecutorEvent<SENDER>, ExecuteFlowEvent<FailedReason> {
 
-    private final Invocation<?> invocation;
-    private final CommandExecutor<?> executor;
+    private final Invocation<SENDER> invocation;
+    private final CommandExecutor<SENDER> executor;
     private ExecuteFlow flow = ExecuteFlow.CONTINUE;
     private FailedReason cancelReason;
 
-    public AbstractCommandExecutorEvent(Invocation<?> invocation, CommandExecutor<?> executor) {
+    protected AbstractCommandExecutorEvent(Invocation<SENDER> invocation, CommandExecutor<SENDER> executor) {
         this.invocation = invocation;
         this.executor = executor;
     }
 
     @Override
-    public <SENDER> Invocation<SENDER> getInvocation() {
-        return (Invocation<SENDER>) invocation;
+    public Invocation<SENDER> getInvocation() {
+        return invocation;
     }
 
     @Override
-    public <SENDER> CommandExecutor<SENDER> getExecutor() {
-        return (CommandExecutor<SENDER>) executor;
+    public CommandExecutor<SENDER> getExecutor() {
+        return executor;
     }
 
     @Override

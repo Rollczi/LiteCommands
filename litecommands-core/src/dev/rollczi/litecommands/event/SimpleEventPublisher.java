@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.event;
 
 import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -100,8 +101,12 @@ public class SimpleEventPublisher implements EventPublisher {
 
             try {
                 declaredMethod.invoke(listener, args);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
+            }
+            catch (IllegalAccessException exception) {
+                throw new LiteCommandsReflectInvocationException(declaredMethod, "Cannot access method", exception);
+            }
+            catch (InvocationTargetException exception) {
+                throw new LiteCommandsReflectInvocationException(declaredMethod, "Cannot invoke method", exception);
             }
         }
 

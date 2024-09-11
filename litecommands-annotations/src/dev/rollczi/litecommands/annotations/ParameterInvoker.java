@@ -23,7 +23,7 @@ class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.AnyListener<A> listener) {
         A annotation = parameter.getAnnotation(annotationType);
 
         if (annotation == null) {
@@ -35,14 +35,14 @@ class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onRequirementMeta(Class<A> annotationType, AnnotationProcessor.RequirementMetaListener<SENDER, A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> onParameterRequirement(Class<A> annotationType, AnnotationProcessor.ParameterRequirementListener<SENDER, A> listener) {
         A annotation = parameter.getAnnotation(annotationType);
 
         if (annotation == null) {
             return this;
         }
 
-        listener.call(createHolder(annotation, parameter), commandBuilder, requirement);
+        listener.call(parameter, createHolder(annotation, parameter), commandBuilder, requirement);
         return this;
     }
 

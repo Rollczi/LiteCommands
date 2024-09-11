@@ -6,11 +6,11 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
-public class CandidateExecutorMatchEvent extends AbstractCommandExecutorEvent {
+public class CandidateExecutorMatchEvent<SENDER> extends AbstractCommandExecutorEvent<SENDER> {
 
     private final CommandExecutorMatchResult matchResult;
 
-    public CandidateExecutorMatchEvent(Invocation<?> invocation, CommandExecutor<?> executor, CommandExecutorMatchResult matchResult) {
+    public CandidateExecutorMatchEvent(Invocation<SENDER> invocation, CommandExecutor<SENDER> executor, CommandExecutorMatchResult matchResult) {
         super(invocation, executor);
         this.matchResult = matchResult;
     }

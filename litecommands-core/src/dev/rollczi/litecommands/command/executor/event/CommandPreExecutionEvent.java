@@ -5,9 +5,9 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
-public class CommandPreExecutionEvent extends AbstractCommandExecutorEvent implements CommandExecutorEvent {
+public class CommandPreExecutionEvent<SENDER> extends AbstractCommandExecutorEvent<SENDER> implements CommandExecutorEvent<SENDER> {
 
-    public CommandPreExecutionEvent(Invocation<?> invocation, CommandExecutor<?> executor) {
+    public CommandPreExecutionEvent(Invocation<SENDER> invocation, CommandExecutor<SENDER> executor) {
         super(invocation, executor);
     }
 

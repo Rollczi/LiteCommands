@@ -28,6 +28,7 @@ public interface Meta {
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
     MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
     MetaKey<CooldownContext> COOLDOWN = MetaKey.of("cooldown", CooldownContext.class);
+    MetaKey<Boolean> IGNORE_TOO_MANY_ARGUMENTS = MetaKey.of("ignore-too-many-arguments", Boolean.class, false);
 
     /**
      * LiteCommands Annotation API

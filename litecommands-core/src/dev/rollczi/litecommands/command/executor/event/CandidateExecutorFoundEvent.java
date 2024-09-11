@@ -5,9 +5,9 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
-public class CandidateExecutorFoundEvent extends AbstractCommandExecutorEvent {
+public class CandidateExecutorFoundEvent<SENDER> extends AbstractCommandExecutorEvent<SENDER> {
 
-    public CandidateExecutorFoundEvent(Invocation<?> invocation, CommandExecutor<?> executor) {
+    public CandidateExecutorFoundEvent(Invocation<SENDER> invocation, CommandExecutor<SENDER> executor) {
         super(invocation, executor);
     }
 

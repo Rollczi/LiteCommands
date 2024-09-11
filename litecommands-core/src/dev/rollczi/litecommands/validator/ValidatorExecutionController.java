@@ -14,7 +14,7 @@ public class ValidatorExecutionController<SENDER> implements EventListener {
     }
 
     @Subscriber
-    public void onEvent(CommandPreExecutionEvent event) {
+    public void onEvent(CommandPreExecutionEvent<SENDER> event) {
         Flow flow = this.validatorService.validate(event.getInvocation(), event.getExecutor());
 
         if (flow.isTerminate()) {

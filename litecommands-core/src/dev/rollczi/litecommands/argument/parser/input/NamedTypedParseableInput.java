@@ -8,6 +8,8 @@ import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -96,12 +98,16 @@ class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInpu
         }
 
         @Override
-        public EndResult endMatch() {
-            if (consumedArguments.size() < namedArguments.size()) {
+        public EndResult endMatch(MetaHolder context) {
+            if (consumedArguments.size() < namedArguments.size() && shouldReportTooManyArguments(context)) {
                 return EndResult.failed(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
             }
 
             return EndResult.success();
+        }
+
+        private boolean shouldReportTooManyArguments(MetaHolder context) {
+            return !context.metaCollector().findFirst(Meta.IGNORE_TOO_MANY_ARGUMENTS);
         }
 
     }

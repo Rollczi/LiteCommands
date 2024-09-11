@@ -79,9 +79,19 @@ public class CommandExecuteService<SENDER> {
 
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute)
-            .thenApply(commandExecuteResult -> mapResult(commandRoute, commandExecuteResult, invocation))
+            .thenApply(result -> publishAndApplyEvent(invocation, commandRoute, result))
             .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> this.handleResult(invocation, executeResult)))
             .exceptionally(new LastExceptionHandler<>(resultResolver, invocation));
+    }
+
+    @SuppressWarnings("unchecked")
+    private CommandExecuteResult publishAndApplyEvent(Invocation<SENDER> invocation, CommandRoute<SENDER> route, CommandExecuteResult result) {
+        if (this.publisher.hasSubscribers(CommandPostExecutionEvent.class)) {
+            CommandExecutor<SENDER> executor = (CommandExecutor<SENDER>) result.getExecutor();
+            result = this.publisher.publish(new CommandPostExecutionEvent<>(invocation, route, executor, result)).getResult();
+        }
+
+        return result;
     }
 
     private CommandExecuteResult handleResult(Invocation<SENDER> invocation, CommandExecuteResult executeResult) {
@@ -98,21 +108,6 @@ public class CommandExecuteService<SENDER> {
         Object error = executeResult.getError();
         if (error != null) {
             resultResolver.resolve(invocation, error);
-        }
-
-        return executeResult;
-    }
-
-    // TODO Support mapping of result in result resolver
-    private CommandExecuteResult mapResult(CommandRoute<SENDER> commandRoute, CommandExecuteResult executeResult, Invocation<SENDER> invocation) {
-        Object result = executeResult.getResult();
-        if (result != null) {
-            return CommandExecuteResult.success(executeResult.getExecutor(), mapResult(result, commandRoute, executeResult, invocation));
-        }
-
-        Object error = executeResult.getError();
-        if (error != null) {
-            return CommandExecuteResult.failed(executeResult.getExecutor(), mapResult(error, commandRoute, executeResult, invocation));
         }
 
         return executeResult;
@@ -151,34 +146,37 @@ public class CommandExecuteService<SENDER> {
             // Route valid
             Flow validate = validatorService.validate(invocation, commandRoute);
             if (validate.isTerminate() || validate.isStopCurrent()) {
-                return completedFuture(CommandExecuteResult.failed(null, validate.getReason()));
+                return completedFuture(CommandExecuteResult.failed(validate.getReason()));
             }
 
-            // continue handle failed
-            CommandExecutor<SENDER> executor = commandRoute.getExecutors().isEmpty() ? null : commandRoute.getExecutors().last();
+            CommandExecutor<SENDER> executor = commandRoute.getExecutors().isEmpty()
+                ? null :
+                commandRoute.getExecutors().last();
 
             if (last != null && last.hasResult()) {
                 return completedFuture(CommandExecuteResult.failed(executor, last));
             }
 
-            return completedFuture(CommandExecuteResult.failed(executor, InvalidUsage.Cause.UNKNOWN_COMMAND));
+            return completedFuture(CommandExecuteResult.failed(InvalidUsage.Cause.UNKNOWN_COMMAND));
         }
 
         CommandExecutor<SENDER> executor = executors.next();
 
-        CandidateExecutorFoundEvent foundEvent = publisher.publish(new CandidateExecutorFoundEvent(invocation, executor));
-        if (foundEvent.getFlow() == ExecuteFlow.STOP) {
-            return completedFuture(CommandExecuteResult.failed(executor, foundEvent.getFlowResult()));
-        }
+        if (publisher.hasSubscribers(CandidateExecutorFoundEvent.class)) {
+            CandidateExecutorFoundEvent<SENDER> foundEvent = publisher.publish(new CandidateExecutorFoundEvent<>(invocation, executor));
+            if (foundEvent.getFlow() == ExecuteFlow.STOP) {
+                return completedFuture(CommandExecuteResult.failed(executor, foundEvent.getFlowResult()));
+            }
 
-        if (foundEvent.getFlow() == ExecuteFlow.SKIP) {
-            return this.execute(executors, invocation, matcher, commandRoute, foundEvent.getFlowResult());
+            if (foundEvent.getFlow() == ExecuteFlow.SKIP) {
+                return this.execute(executors, invocation, matcher, commandRoute, foundEvent.getFlowResult());
+            }
         }
 
         // Handle matching arguments
         return this.match(executor, invocation, matcher.copy()).thenCompose(match -> {
             if (publisher.hasSubscribers(CandidateExecutorMatchEvent.class)) {
-                CandidateExecutorMatchEvent matchEvent = publisher.publish(new CandidateExecutorMatchEvent(invocation, executor, match));
+                CandidateExecutorMatchEvent<SENDER> matchEvent = publisher.publish(new CandidateExecutorMatchEvent<>(invocation, executor, match));
                 if (matchEvent.getFlow() == ExecuteFlow.STOP) {
                     return completedFuture(CommandExecuteResult.failed(executor, matchEvent.getFlowResult()));
                 }
@@ -199,7 +197,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             if (publisher.hasSubscribers(CommandPreExecutionEvent.class)) {
-                CommandPreExecutionEvent executionEvent = publisher.publish(new CommandPreExecutionEvent(invocation, executor));
+                CommandPreExecutionEvent<SENDER> executionEvent = publisher.publish(new CommandPreExecutionEvent<>(invocation, executor));
                 if (executionEvent.getFlow() == ExecuteFlow.STOP) {
                     return completedFuture(CommandExecuteResult.failed(executor, executionEvent.getFlowResult()));
                 }
@@ -212,15 +210,7 @@ public class CommandExecuteService<SENDER> {
             // Execution
             SchedulerPoll type = executor.meta().get(Meta.POLL_TYPE);
 
-            return scheduler.supply(type, () -> {
-                CommandExecuteResult execute = execute(match, executor);
-
-                if (this.publisher.hasSubscribers(CommandPostExecutionEvent.class)) {
-                    this.publisher.publish(new CommandPostExecutionEvent(invocation, executor, execute));
-                }
-
-                return execute;
-            });
+            return scheduler.supply(type, () -> execute(match, executor));
         }).exceptionally(throwable -> toThrown(executor, throwable));
     }
 
@@ -265,7 +255,7 @@ public class CommandExecuteService<SENDER> {
         ParseableInputMatcher<?> matcher
     ) {
         if (!requirementIterator.hasNext()) {
-            ParseableInputMatcher.EndResult endResult = matcher.endMatch();
+            ParseableInputMatcher.EndResult endResult = matcher.endMatch(executor);
 
             if (!endResult.isSuccessful()) {
                 return completedFuture(CommandExecutorMatchResult.failed(endResult.getFailedReason()));
@@ -282,7 +272,7 @@ public class CommandExecuteService<SENDER> {
 
         ScheduledRequirement<?> scheduledRequirement = requirementIterator.next();
 
-        return scheduledRequirement.runMatch().thenCompose((requirementResult) -> {
+        return scheduledRequirement.runMatch().thenCompose(requirementResult -> {
             Requirement<?> requirement = scheduledRequirement.getRequirement();
 
             if (requirementResult.isFailed()) {

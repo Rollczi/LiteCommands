@@ -20,7 +20,7 @@ public class AnnotatedValidatorProcessor<SENDER, T, A extends Annotation> implem
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.onRequirementMeta(annotationClass, (annotationHolder, builder, requirement) -> {
+        return invoker.onParameterRequirement(annotationClass, (parameter, annotationHolder, builder, requirement) -> {
             Class<?> parsedType = requirement.getWrapperFormat().getParsedType();
 
             if (!type.isAssignableFrom(parsedType)) {
