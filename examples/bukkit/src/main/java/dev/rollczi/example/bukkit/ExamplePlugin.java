@@ -22,6 +22,7 @@ import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -97,6 +98,10 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Schematic generator is used to generate schematic for command, for example when you run invalid command.
             .schematicGenerator(SchematicFormat.angleBrackets())
+
+            // strict mode - you can enable/disable strict mode for each command (default is enabled)
+            // if strict mode is enabled, the command will fail if the user provides too many arguments
+            .strictMode(StrictMode.ENABLED)
 
             .build();
     }

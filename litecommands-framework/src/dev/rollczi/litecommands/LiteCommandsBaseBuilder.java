@@ -50,6 +50,7 @@ import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.suggestion.SuggestionService;
@@ -519,6 +520,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    public B strictMode(StrictMode strictMode) {
+        this.strictService.setDefaultMode(strictMode);
+        return this.self();
+    }
+
+    @Override
     public B listener(EventListener listener) {
         this.eventPublisher.subscribe(listener);
         return this.self();
@@ -531,20 +538,20 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
-    public B self(LiteBuilderAction<SENDER, C> processor) {
-        processor.process(this, this);
+    public B self(LiteBuilderAction<SENDER, C> action) {
+        action.process(this, this);
         return this.self();
     }
 
     @Override
-    public B beforeBuild(LiteBuilderAction<SENDER, C> preProcessor) {
-        this.preProcessors.add(preProcessor);
+    public B beforeBuild(LiteBuilderAction<SENDER, C> action) {
+        this.preProcessors.add(action);
         return this.self();
     }
 
     @Override
-    public B afterBuild(LiteBuilderAction<SENDER, C> postProcessor) {
-        this.postProcessors.add(postProcessor);
+    public B afterBuild(LiteBuilderAction<SENDER, C> action) {
+        this.postProcessors.add(action);
         return this.self();
     }
 

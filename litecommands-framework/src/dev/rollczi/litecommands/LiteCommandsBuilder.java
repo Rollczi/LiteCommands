@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.event.Event;
 import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.context.ContextChainedProvider;
+import dev.rollczi.litecommands.event.Subscriber;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -30,6 +31,7 @@ import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
@@ -201,6 +203,34 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     B schematicGenerator(SchematicFastFormat format);
 
+    /**
+     * Set the default strict mode for all commands.
+     * If strict mode is enabled, the command will fail if the user provides too many arguments.
+     */
+    @ApiStatus.Experimental
+    B strictMode(StrictMode strictMode);
+
+    /**
+     * Register event listener for the LiteCommands event system.
+     * See {@link Event}, {@link Subscriber} and {@link EventListener} for more information.
+     * Example listener:
+     * <pre>
+     *     {@code
+     *     public class MyListener implements EventListener {
+     *
+     *         @Subscriber
+     *         public void onEvent(CommandPreExecutionEvent event) {
+     *             // your code
+     *         }
+     *
+     *         @Subscriber
+     *         public void onEvent(CommandPostExecutionEvent event) {
+     *             // your code
+     *         }
+     *     }
+     *     }
+     * </pre>
+     */
     @ApiStatus.Experimental
     B listener(EventListener listener);
 
@@ -228,11 +258,11 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
         return afterBuild(postProcessor);
     }
 
-    B self(LiteBuilderAction<SENDER, SETTINGS> processor);
+    B self(LiteBuilderAction<SENDER, SETTINGS> action);
 
-    B beforeBuild(LiteBuilderAction<SENDER, SETTINGS> preProcessor);
+    B beforeBuild(LiteBuilderAction<SENDER, SETTINGS> action);
 
-    B afterBuild(LiteBuilderAction<SENDER, SETTINGS> postProcessor);
+    B afterBuild(LiteBuilderAction<SENDER, SETTINGS> action);
 
     /**
      * Register extension for this builder.
