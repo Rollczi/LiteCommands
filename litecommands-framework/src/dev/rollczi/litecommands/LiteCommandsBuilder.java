@@ -213,17 +213,17 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     /**
      * Register event listener for the LiteCommands event system.
      * See {@link Event}, {@link Subscriber} and {@link EventListener} for more information.
-     * Example listener:
+     * Example listener:&#64;
      * <pre>
      * {@code
      *     public class MyListener implements EventListener {
      *
-     *         @Subscriber
+     *         \@Subscriber
      *         public void onEvent(CommandPreExecutionEvent event) {
      *             // your code
      *         }
      *
-     *         @Subscriber
+     *         \@Subscriber
      *         public void onEvent(CommandPostExecutionEvent event) {
      *             // your code
      *         }
