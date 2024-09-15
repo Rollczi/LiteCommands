@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 import dev.rollczi.litecommands.meta.MetaKey;
 
+@Deprecated
 public class MarkMetaAnnotationResolver<SENDER> implements AnnotationProcessor<SENDER> {
 
     @Override

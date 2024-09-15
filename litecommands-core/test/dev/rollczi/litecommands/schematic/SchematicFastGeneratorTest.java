@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.validator.ValidatorService;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import java.util.Collections;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -124,10 +124,9 @@ class SchematicFastGeneratorTest {
     private void assertSchematic(CommandRoute<?> commandRoute, CommandExecutor<?> executor, String... expected) {
         Schematic schematic = schematicGenerator.generate(new SchematicInput(commandRoute, executor, TestUtil.invocation("")));
         List<String> schematicLines = schematic.all();
-        assertEquals(expected.length, schematicLines.size());
-        for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i], schematicLines.get(i));
-        }
+
+        assertThat(schematicLines)
+            .containsExactly(expected);
     }
 
 }

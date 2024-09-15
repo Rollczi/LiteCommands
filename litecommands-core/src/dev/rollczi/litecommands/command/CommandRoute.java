@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.priority.PrioritizedList;
 import dev.rollczi.litecommands.scope.Scopeable;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -52,7 +53,7 @@ public interface CommandRoute<SENDER> extends Scopeable, CommandNode<SENDER> {
     void appendExecutor(CommandExecutor<SENDER> executor);
 
     @Unmodifiable
-    List<CommandExecutor<SENDER>> getExecutors();
+    PrioritizedList<CommandExecutor<SENDER>> getExecutors();
 
     Meta meta();
 

@@ -35,7 +35,7 @@ public class CommandExecuteResult {
     }
 
     public boolean isSuccessful() {
-        return this.result != null;
+        return this.error == null && this.throwable == null;
     }
 
     public boolean isFailed() {
@@ -47,22 +47,38 @@ public class CommandExecuteResult {
     }
 
     public static CommandExecuteResult success(CommandExecutor<?> executor, Object result) {
+        Preconditions.notNull(executor, "executor");
         return new CommandExecuteResult(executor, result, null, null);
     }
 
+    public static CommandExecuteResult thrown(Throwable exception) {
+        Preconditions.notNull(exception, "exception");
+
+        return new CommandExecuteResult(null, null, exception, null);
+    }
+
     public static CommandExecuteResult thrown(CommandExecutor<?> executor, Throwable exception) {
-        Preconditions.notNull(exception, "exception cannot be null");
+        Preconditions.notNull(executor, "executor");
+        Preconditions.notNull(exception, "exception");
 
         return new CommandExecuteResult(executor, null, exception, null);
     }
 
     public static CommandExecuteResult failed(CommandExecutor<?> executor, Object error) {
-        Preconditions.notNull(error, "failed cannot be null");
+        Preconditions.notNull(executor, "executor");
+        Preconditions.notNull(error, "failed");
 
         return new CommandExecuteResult(executor, null, null, error);
     }
 
+    public static CommandExecuteResult failed(Object error) {
+        Preconditions.notNull(error, "failed cannot be null");
+
+        return new CommandExecuteResult(null, null, null, error);
+    }
+
     public static CommandExecuteResult failed(CommandExecutor<?> executor, FailedReason failedReason) {
+        Preconditions.notNull(executor, "executor");
         Preconditions.notNull(failedReason, "failed cannot be null");
 
         return new CommandExecuteResult(executor, null, null, failedReason.getReasonOr(null));

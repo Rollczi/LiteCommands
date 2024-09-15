@@ -6,7 +6,7 @@ import java.util.Map;
 
 public final class ReflectIndex {
 
-    private final static Map<Class<?>, List<Class<?>>> INTERFACE_INDEX = new HashMap<>();
+    private static final Map<Class<?>, List<Class<?>>> INTERFACE_INDEX = new HashMap<>();
 
     public static List<Class<?>> getInterfaces(Class<?> type) {
         List<Class<?>> interfaces = INTERFACE_INDEX.get(type);

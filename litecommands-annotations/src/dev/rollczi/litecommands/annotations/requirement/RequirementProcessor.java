@@ -28,7 +28,7 @@ public abstract class RequirementProcessor<SENDER, A extends Annotation> impleme
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         try {
-            return invoker.onRequirement(annotationClass, (holder, builder) -> {
+            return invoker.onParameter(annotationClass, (parameter, holder, builder) -> {
                 TypeToken<?> typeToken = holder.getFormat().parsedType();
 
                 if (typeToken.isInstanceOf(parsedType)) {

@@ -6,30 +6,32 @@ import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.requirement.Requirement;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Optional;
 
 public interface AnnotationProcessor<SENDER> {
 
     AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker);
 
-    interface Listener<A extends Annotation> {
+    interface AnyListener<A extends Annotation> {
         void call(A annotation, MetaHolder metaHolder);
     }
 
-    interface StructureListener<SENDER, A extends Annotation> {
-        CommandBuilder<SENDER> call(A annotation, CommandBuilder<SENDER> builder);
+    interface ClassListener<SENDER, A extends Annotation> {
+        CommandBuilder<SENDER> call(Class<?> classType, A annotation, CommandBuilder<SENDER> builder);
     }
 
-    interface StructureExecutorListener<SENDER, A extends Annotation> {
-        void call(A annotation, CommandBuilder<SENDER> builder, CommandExecutorProvider<SENDER> executorProvider);
+    interface MethodListener<SENDER, A extends Annotation> {
+        void call(Method method, A annotation, CommandBuilder<SENDER> builder, CommandExecutorProvider<SENDER> executorProvider);
     }
 
-    interface RequirementListener<SENDER, A extends Annotation> {
-        Optional<Requirement<?>> call(AnnotationHolder<A, ?, ?> annotationHolder, CommandBuilder<SENDER> builder);
+    interface ParameterListener<SENDER, A extends Annotation> {
+        Optional<Requirement<?>> call(Parameter parameter, AnnotationHolder<A, ?, ?> annotationHolder, CommandBuilder<SENDER> builder);
     }
 
-    interface RequirementMetaListener<SENDER, A extends Annotation> {
-        void call(AnnotationHolder<A, ?, ?> annotationHolder, CommandBuilder<SENDER> builder, Requirement<?> requirement);
+    interface ParameterRequirementListener<SENDER, A extends Annotation> {
+        void call(Parameter parameter, AnnotationHolder<A, ?, ?> annotationHolder, CommandBuilder<SENDER> builder, Requirement<?> requirement);
     }
 
 }

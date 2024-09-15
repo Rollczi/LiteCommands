@@ -32,8 +32,8 @@ class RootArgAnnotationResolverTest {
             }
 
             @Override
-            public AnnotationInvoker onStructure(Class annotationType, AnnotationProcessor.StructureListener listener) {
-                builder = listener.call(rootCommand, builder);
+            public AnnotationInvoker onClass(Class annotationType, AnnotationProcessor.ClassListener listener) {
+                builder = listener.call(Command.class, rootCommand, builder);
                 return this;
             }
         });

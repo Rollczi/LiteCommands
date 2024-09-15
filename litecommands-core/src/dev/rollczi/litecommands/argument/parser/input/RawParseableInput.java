@@ -7,6 +7,8 @@ import dev.rollczi.litecommands.input.raw.RawInputAnalyzer;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
+import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.meta.MetaHolder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -79,8 +81,9 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
         }
 
         @Override
-        public EndResult endMatch() {
-            if (rawInputAnalyzer.getPivotPosition() < rawArguments.size()) {
+        public EndResult endMatch(boolean isStrict) {
+
+            if (rawInputAnalyzer.getPivotPosition() < rawArguments.size() && isStrict) {
                 return EndResult.failed(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
             }
 

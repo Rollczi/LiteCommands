@@ -44,7 +44,7 @@ public class Suggestion {
     }
 
     public Suggestion deleteLeft(int levels) {
-        if (levels == 0) {
+        if (levels <= 0) {
             return this;
         }
 

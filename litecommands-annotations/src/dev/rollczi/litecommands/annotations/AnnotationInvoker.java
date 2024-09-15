@@ -7,27 +7,27 @@ import java.lang.annotation.Annotation;
 public interface AnnotationInvoker<SENDER> {
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
+    AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.AnyListener<A> listener) {
         return this;
     }
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onStructure(Class<A> annotationType, AnnotationProcessor.StructureListener<SENDER, A> listener) {
+    AnnotationInvoker<SENDER> onClass(Class<A> annotationType, AnnotationProcessor.ClassListener<SENDER, A> listener) {
         return this;
     }
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onExecutorStructure(Class<A> annotationType, AnnotationProcessor.StructureExecutorListener<SENDER, A> listener) {
+    AnnotationInvoker<SENDER> onMethod(Class<A> annotationType, AnnotationProcessor.MethodListener<SENDER, A> listener) {
         return this;
     }
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onRequirement(Class<A> annotationType, AnnotationProcessor.RequirementListener<SENDER, A> listener) {
+    AnnotationInvoker<SENDER> onParameter(Class<A> annotationType, AnnotationProcessor.ParameterListener<SENDER, A> listener) {
         return this;
     }
 
     default <A extends Annotation>
-    AnnotationInvoker<SENDER> onRequirementMeta(Class<A> annotationType, AnnotationProcessor.RequirementMetaListener<SENDER, A> listener) {
+    AnnotationInvoker<SENDER> onParameterRequirement(Class<A> annotationType, AnnotationProcessor.ParameterRequirementListener<SENDER, A> listener) {
         return this;
     }
 

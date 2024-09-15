@@ -7,7 +7,6 @@ import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputMatcher;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
-import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.flow.Flow;
@@ -144,9 +143,8 @@ public class SuggestionService<SENDER> {
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.getKey());
 
         SuggestionInputResult result = matcher.nextArgument(invocation, argument, parser, suggester);
-        boolean isOptional = matcher.isOptionalArgument(invocation, argument, parser);
 
-        if (result.isEnd() && isOptional) {
+        if (result.isEnd() && matcher.isOptionalArgument(invocation, argument, parser)) {
             return SuggestionInputResult.continueWith(result);
         }
 

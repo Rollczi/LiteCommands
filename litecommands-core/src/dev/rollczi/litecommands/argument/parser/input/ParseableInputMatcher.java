@@ -22,7 +22,7 @@ public interface ParseableInputMatcher<SELF extends ParseableInputMatcher<SELF>>
 
     SELF copy();
 
-    EndResult endMatch();
+    EndResult endMatch(boolean isStrict);
 
     class EndResult {
         private final boolean successful;

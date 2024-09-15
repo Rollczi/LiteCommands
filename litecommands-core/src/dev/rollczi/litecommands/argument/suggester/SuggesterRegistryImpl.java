@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.argument.suggester;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
@@ -11,14 +10,11 @@ import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.util.StringUtil;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER>, SuggesterChainAccessor<SENDER> {
-
-    private final Suggester<SENDER, ?> noneSuggester = new SuggesterNoneImpl<>();
 
     private final TypeIndex<BucketByArgument<?>> buckets = new TypeIndex<>();
 

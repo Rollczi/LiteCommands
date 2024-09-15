@@ -12,11 +12,10 @@ public class ShortcutCommandAnnotationProcessor<SENDER> implements AnnotationPro
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.onExecutorStructure(
-            Execute.class,
-            (executeAnnotation, builder, executorBuilder) -> invoker.onExecutorStructure(
+        return invoker.onMethod(Execute.class,
+            (method, executeAnnotation, builder, executorBuilder) -> invoker.onMethod(
                 Shortcut.class,
-                (shortAnnotation, shortBuilder, shortExecutorBuilder) -> resolve(executeAnnotation, shortAnnotation, builder, shortExecutorBuilder)
+                (sameMethod, shortAnnotation, shortBuilder, shortExecutorBuilder) -> resolve(executeAnnotation, shortAnnotation, builder, shortExecutorBuilder)
             )
         );
     }

@@ -27,4 +27,12 @@ public class CooldownState {
         return expirationTime;
     }
 
+    @Override
+    public String toString() {
+        return "CooldownState{" +
+            "cooldownContext=" + cooldownContext.getKey() +
+            ", remainingDuration=" + remainingDuration +
+            ", expirationTime=" + expirationTime +
+            '}';
+    }
 }

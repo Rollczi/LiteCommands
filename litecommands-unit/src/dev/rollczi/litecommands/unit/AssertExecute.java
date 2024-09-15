@@ -98,11 +98,11 @@ public class AssertExecute {
     }
 
     public AssertExecute assertFailure() {
-        if (!result.isFailed()) {
-            if (result.isThrown()) {
-                throw new AssertionError("Command was thrown", result.getThrowable());
-            }
+        if (result.isThrown()) {
+            throw new AssertionError("Command was thrown", result.getThrowable());
+        }
 
+        if (result.isSuccessful()) {
             throw new AssertionError("Command was not failed. Result: " + result.getResult());
         }
 
@@ -110,8 +110,12 @@ public class AssertExecute {
     }
 
     public <T> T assertFailedAs(Class<T> type) {
-        if (!result.isFailed()) {
-            throw new AssertionError("Command was not failed.");
+        if (result.isSuccessful()) {
+            throw new AssertionError("Command was not failed. Result: " + result.getResult());
+        }
+
+        if (result.isThrown()) {
+            throw new AssertionError("Command was thrown", result.getThrowable());
         }
 
         Object error = result.getError();

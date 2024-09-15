@@ -38,7 +38,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.AnyListener<A> listener) {
         A annotation = method.getAnnotation(annotationType);
 
         if (annotation == null) {
@@ -50,20 +50,20 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onExecutorStructure(Class<A> annotationType, AnnotationProcessor.StructureExecutorListener<SENDER, A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> onMethod(Class<A> annotationType, AnnotationProcessor.MethodListener<SENDER, A> listener) {
         A methodAnnotation = method.getAnnotation(annotationType);
 
         if (methodAnnotation == null) {
             return this;
         }
 
-        listener.call(methodAnnotation, commandBuilder, executorProvider);
+        listener.call(method, methodAnnotation, commandBuilder, executorProvider);
         isExecutorStructure = true;
         return this;
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onRequirement(Class<A> annotationType, AnnotationProcessor.RequirementListener<SENDER, A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> onParameter(Class<A> annotationType, AnnotationProcessor.ParameterListener<SENDER, A> listener) {
         for (int index = 0; index < method.getParameterCount(); index++) {
             Parameter parameter = method.getParameters()[index];
             A parameterAnnotation = parameter.getAnnotation(annotationType);
@@ -76,7 +76,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
                 continue;
             }
 
-            Optional<Requirement<?>> requirementOptional = listener.call(createHolder(parameterAnnotation, parameter), commandBuilder);
+            Optional<Requirement<?>> requirementOptional = listener.call(parameter, createHolder(parameterAnnotation, parameter), commandBuilder);
 
             if (requirementOptional.isPresent()) {
                 Requirement<?> requirement = requirementOptional.get();

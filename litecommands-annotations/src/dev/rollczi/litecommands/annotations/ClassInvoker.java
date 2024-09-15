@@ -15,7 +15,7 @@ class ClassInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.Listener<A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> on(Class<A> annotationType, AnnotationProcessor.AnyListener<A> listener) {
         A annotation = type.getAnnotation(annotationType);
 
         if (annotation == null) {
@@ -27,14 +27,14 @@ class ClassInvoker<SENDER> implements AnnotationInvoker<SENDER> {
     }
 
     @Override
-    public <A extends Annotation> AnnotationInvoker<SENDER> onStructure(Class<A> annotationType, AnnotationProcessor.StructureListener<SENDER, A> listener) {
+    public <A extends Annotation> AnnotationInvoker<SENDER> onClass(Class<A> annotationType, AnnotationProcessor.ClassListener<SENDER, A> listener) {
         A annotation = type.getAnnotation(annotationType);
 
         if (annotation == null) {
             return this;
         }
 
-        commandBuilder = listener.call(annotation, commandBuilder);
+        commandBuilder = listener.call(type, annotation, commandBuilder);
         return this;
     }
 

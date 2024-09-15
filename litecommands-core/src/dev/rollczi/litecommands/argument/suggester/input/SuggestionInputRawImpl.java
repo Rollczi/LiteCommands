@@ -4,10 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.range.Range;
-import dev.rollczi.litecommands.requirement.RequirementCondition;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
-import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.input.raw.RawInputAnalyzer;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
@@ -106,7 +104,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 return SuggestionInputResult.endWith(result);
             }
 
-            if (context.isLastRawArgument() || context.isPotentialLastArgument()) {
+            if (context.isLastArgument()) {
                 Suggestion current = Suggestion.from(context.getAllNotConsumedArguments());
                 SuggestionContext suggestionContext = new SuggestionContext(current);
                 SuggestionResult result = suggester.suggest(invocation, argument, suggestionContext)
@@ -114,7 +112,12 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
 
                 int consumed = suggestionContext.getConsumed();
                 if (consumed == current.lengthMultilevel()) {
-                    context.consumeAll();
+                    if (isOptionalArgument(invocation, argument, parser)) {
+                        rawInputAnalyzer.setLastOptionalArgument(true);
+                        return SuggestionInputResult.endWith(result);
+                    }
+
+                    rawInputAnalyzer.consumeAll();
                     return SuggestionInputResult.endWith(result);
                 }
             }

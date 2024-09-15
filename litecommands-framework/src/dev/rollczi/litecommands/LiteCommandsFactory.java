@@ -27,7 +27,7 @@ import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
-import dev.rollczi.litecommands.cooldown.CooldownStateValidator;
+import dev.rollczi.litecommands.cooldown.CooldownStateController;
 import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
@@ -41,6 +41,7 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageExceptionHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageResultController;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
@@ -57,6 +58,7 @@ import static dev.rollczi.litecommands.reflect.type.TypeRange.downwards;
 import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.validator.ValidatorExecutionController;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
@@ -91,7 +93,7 @@ public final class LiteCommandsFactory {
     }
 
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
-        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).selfProcessor((builder, internal) -> {
+        return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).self((builder, internal) -> {
             Scheduler scheduler = internal.getScheduler();
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
             ParserRegistry<SENDER> parser = internal.getParserRegistry();
@@ -107,7 +109,10 @@ public final class LiteCommandsFactory {
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
                 .validator(Scope.global(), new MissingPermissionValidator<>())
-                .validator(Scope.global(), new CooldownStateValidator<>())
+
+                .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
+                .listener(new CooldownStateController<>())
+                .listener(new InvalidUsageResultController<>(internal.getSchematicGenerator()))
 
                 .argument(String.class, new StringArgumentResolver<>())
                 .argument(Boolean.class, new BooleanArgumentResolver<>())
@@ -167,6 +172,7 @@ public final class LiteCommandsFactory {
                 .result(MissingPermissions.class, new MissingPermissionResultHandler<>(messageRegistry))
                 .result(CooldownState.class, new CooldownStateResultHandler<>(messageRegistry))
                 .result(InvalidUsage.class, new InvalidUsageHandlerImpl<>(messageRegistry))
+
                 ;
         });
     }

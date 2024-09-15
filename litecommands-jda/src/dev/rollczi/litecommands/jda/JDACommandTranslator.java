@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
 import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.priority.PrioritizedList;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.Permission;
@@ -160,12 +161,12 @@ public class JDACommandTranslator {
     }
 
     private <SENDER> CommandExecutor<SENDER> translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
-        List<CommandExecutor<SENDER>> executors = route.getExecutors();
+        PrioritizedList<CommandExecutor<SENDER>> executors = route.getExecutors();
         if (executors.size() != 1) {
             throw new IllegalArgumentException("Discrod command cannot have more than one executor in same route");
         }
 
-        CommandExecutor<SENDER> executor = executors.get(0);
+        CommandExecutor<SENDER> executor = executors.first();
 
         for (Argument<?> argument : executor.getArguments()) {
             String argumentName = argument.getName();

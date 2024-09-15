@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.function.Supplier;
 
-class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
+public class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
 
     private final Method method;
     private final Parameter[] parameters;
@@ -44,6 +44,18 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
         this.definition = definition;
         this.validatorService = validatorService;
         this.meta.apply(meta);
+    }
+
+    public Object getInstance() {
+        return instance;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public MethodDefinition getDefinition() {
+        return definition;
     }
 
     @Override
@@ -102,6 +114,10 @@ class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
                 throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Cannot access method", exception);
             } catch (InvocationTargetException exception) {
                 Throwable targetException = exception.getTargetException();
+
+                if (targetException instanceof InvalidUsageException) { //TODO: Use invalid usage handler (when InvalidUsage.Cause is mapped to InvalidUsage)
+                    return CommandExecuteResult.failed(MethodCommandExecutor.this, ((InvalidUsageException) targetException).getErrorResult());
+                }
 
                 throw new LiteCommandsReflectInvocationException(MethodCommandExecutor.this.method, "Command method threw " + targetException.getClass().getSimpleName(), targetException);
             }

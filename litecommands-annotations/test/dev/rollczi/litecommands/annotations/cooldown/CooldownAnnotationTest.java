@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.annotations.cooldown;
 
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -17,16 +19,20 @@ import org.junit.jupiter.api.Test;
 class CooldownAnnotationTest extends LiteTestSpec {
 
     @Command(name = "test")
-    @Cooldown(key = "test-cooldown", count = 1, unit = ChronoUnit.SECONDS)
+    @Cooldown(key = "test-cooldown", count = 400, unit = ChronoUnit.MILLIS)
     static class TestCommand {
 
         @Execute
         void execute() {}
 
+        @Execute(name = "with-args")
+        @Cooldown(key = "test-cooldown-with-args", count = 600, unit = ChronoUnit.MILLIS)
+        void execute(@Arg Integer arg) {}
+
     }
 
     @Command(name = "bypass-test")
-    @Cooldown(key = "bypass-test-cooldown", count = 1, unit = ChronoUnit.SECONDS, bypass = "test.bypass")
+    @Cooldown(key = "bypass-test-cooldown", count = 400, unit = ChronoUnit.MILLIS, bypass = "test.bypass")
     static class TestWithBypassCommand {
 
         @Execute
@@ -42,12 +48,38 @@ class CooldownAnnotationTest extends LiteTestSpec {
             .assertFailedAs(CooldownState.class);
 
         assertEquals("test-cooldown", cooldownState.getCooldownContext().getKey());
-        assertEquals(Duration.ofSeconds(1), cooldownState.getCooldownContext().getDuration());
+        assertEquals(Duration.ofMillis(400), cooldownState.getCooldownContext().getDuration());
         assertFalse(cooldownState.getRemainingDuration().isZero());
 
         Awaitility.await()
             .atMost(Duration.ofSeconds(3))
             .until(() -> platform.execute("test").isSuccessful());
+    }
+
+    @Test
+    void testInvalidUsage() {
+        platform.execute("test with-args invalid")
+            .assertFailureInvalid(InvalidUsage.Cause.INVALID_ARGUMENT);
+
+        platform.execute("test with-args invalid")
+            .assertFailureInvalid(InvalidUsage.Cause.INVALID_ARGUMENT);
+
+        platform.execute("test with-args invalid")
+            .assertFailureInvalid(InvalidUsage.Cause.INVALID_ARGUMENT);
+
+        platform.execute("test with-args 10")
+            .assertSuccess();
+
+        CooldownState cooldownState = platform.execute("test with-args 10")
+            .assertFailedAs(CooldownState.class);
+
+        assertEquals("test-cooldown-with-args", cooldownState.getCooldownContext().getKey());
+        assertEquals(Duration.ofMillis(600), cooldownState.getCooldownContext().getDuration());
+        assertFalse(cooldownState.getRemainingDuration().isZero());
+
+        Awaitility.await()
+            .atMost(Duration.ofSeconds(3))
+            .until(() -> platform.execute("test with-args 10").isSuccessful());
     }
 
     @Test
@@ -62,7 +94,7 @@ class CooldownAnnotationTest extends LiteTestSpec {
             .assertFailedAs(CooldownState.class);
 
         assertEquals("bypass-test-cooldown", cooldownState.getCooldownContext().getKey());
-        assertEquals(Duration.ofSeconds(1), cooldownState.getCooldownContext().getDuration());
+        assertEquals(Duration.ofMillis(400), cooldownState.getCooldownContext().getDuration());
         assertFalse(cooldownState.getRemainingDuration().isZero());
 
         Awaitility.await()

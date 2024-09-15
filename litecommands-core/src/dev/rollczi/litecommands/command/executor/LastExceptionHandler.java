@@ -29,7 +29,7 @@ public class LastExceptionHandler<SENDER> implements Function<Throwable, Command
             lastError.printStackTrace();
         }
 
-        return CommandExecuteResult.thrown(null, throwable);
+        return CommandExecuteResult.thrown(throwable);
     }
 
 }

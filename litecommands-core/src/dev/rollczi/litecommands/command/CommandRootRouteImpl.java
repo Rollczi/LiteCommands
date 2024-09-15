@@ -2,9 +2,8 @@ package dev.rollczi.litecommands.command;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.meta.MetaCollector;
+import dev.rollczi.litecommands.priority.PrioritizedList;
 import dev.rollczi.litecommands.util.StringUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
 
     private final Map<String, CommandRoute<SENDER>> children = new HashMap<>();
@@ -75,7 +73,7 @@ final class CommandRootRouteImpl<SENDER> implements CommandRoute<SENDER> {
     }
 
     @Override
-    public List<CommandExecutor<SENDER>> getExecutors() {
+    public PrioritizedList<CommandExecutor<SENDER>> getExecutors() {
         throw new UnsupportedOperationException("Can not get executors from the root route");
     }
 

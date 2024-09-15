@@ -13,11 +13,14 @@ import dev.rollczi.litecommands.argument.suggester.SuggesterChained;
 import dev.rollczi.litecommands.bind.BindChainedProvider;
 import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.event.EventPublisher;
+import dev.rollczi.litecommands.event.EventListener;
+import dev.rollczi.litecommands.event.SimpleEventPublisher;
 import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
-import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.extension.LiteExtension;
@@ -47,6 +50,8 @@ import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.strict.StrictMode;
+import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.suggestion.SuggestionService;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
@@ -71,6 +76,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -80,8 +86,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final Class<SENDER> senderClass;
     protected final Platform<SENDER, C> platform;
 
-    protected final Set<LiteBuilderProcessor<SENDER, C>> preProcessors = new LinkedHashSet<>();
-    protected final Set<LiteBuilderProcessor<SENDER, C>> postProcessors = new LinkedHashSet<>();
+    protected final Set<LiteBuilderAction<SENDER, C>> preProcessors = new LinkedHashSet<>();
+    protected final Set<LiteBuilderAction<SENDER, C>> postProcessors = new LinkedHashSet<>();
 
     protected final List<LiteExtension<SENDER, ?>> extensions = new ArrayList<>();
     protected final List<LiteCommandsProviderExtension<SENDER, ?>> commandsProviderExtensions = new ArrayList<>();
@@ -96,8 +102,10 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector;
     protected final MessageRegistry<SENDER> messageRegistry;
     protected final WrapperRegistry wrapperRegistry;
+    protected final StrictService strictService;
 
     protected Scheduler scheduler;
+    protected EventPublisher eventPublisher;
     protected SchematicGenerator<SENDER> schematicGenerator;
 
     /**
@@ -119,7 +127,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             new ResultHandleServiceImpl<>(),
             new CommandBuilderCollector<>(),
             new MessageRegistry<>(),
-            new WrapperRegistry()
+            new WrapperRegistry(),
+            new StrictService()
         );
     }
 
@@ -140,7 +149,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         ResultHandleService<SENDER> resultHandleService,
         CommandBuilderCollector<SENDER> commandBuilderCollector,
         MessageRegistry<SENDER> messageRegistry,
-        WrapperRegistry wrapperRegistry
+        WrapperRegistry wrapperRegistry,
+        StrictService strictService
     ) {
         this.senderClass = senderClass;
         this.platform = platform;
@@ -155,8 +165,10 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.commandBuilderCollector = commandBuilderCollector;
         this.messageRegistry = messageRegistry;
         this.wrapperRegistry = wrapperRegistry;
+        this.strictService = strictService;
 
         this.scheduler = new SchedulerSameThreadImpl();
+        this.eventPublisher = new SimpleEventPublisher(bindRegistry);
         this.schematicGenerator = new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
     }
 
@@ -234,7 +246,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      * @param commandsProvider provider of commands.
      */
     private void preProcessExtensionsOnProvider(LiteCommandsProvider<SENDER> commandsProvider) {
-        this.preProcessor((builder, internal) -> {
+        this.beforeBuild((builder, internal) -> {
             for (LiteCommandsProviderExtension<SENDER, ?> extension : commandsProviderExtensions) {
                 extension.extendCommandsProvider(this, this, commandsProvider);
             }
@@ -508,26 +520,38 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    public B strictMode(StrictMode strictMode) {
+        this.strictService.setDefaultMode(strictMode);
+        return this.self();
+    }
+
+    @Override
+    public B listener(EventListener listener) {
+        this.eventPublisher.subscribe(listener);
+        return this.self();
+    }
+
+    @Override
     public B wrapper(Wrapper wrapper) {
         this.wrapperRegistry.registerFactory(wrapper);
         return this.self();
     }
 
     @Override
-    public B selfProcessor(LiteBuilderProcessor<SENDER, C> processor) {
-        processor.process(this, this);
+    public B self(LiteBuilderAction<SENDER, C> action) {
+        action.process(this, this);
         return this.self();
     }
 
     @Override
-    public B preProcessor(LiteBuilderProcessor<SENDER, C> preProcessor) {
-        this.preProcessors.add(preProcessor);
+    public B beforeBuild(LiteBuilderAction<SENDER, C> action) {
+        this.preProcessors.add(action);
         return this.self();
     }
 
     @Override
-    public B postProcessor(LiteBuilderProcessor<SENDER, C> postProcessor) {
-        this.postProcessors.add(postProcessor);
+    public B afterBuild(LiteBuilderAction<SENDER, C> action) {
+        this.postProcessors.add(action);
         return this.self();
     }
 
@@ -566,14 +590,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             throw new IllegalStateException("No platform was set");
         }
 
-        for (LiteBuilderProcessor<SENDER, C> processor : preProcessors) {
+        for (LiteBuilderAction<SENDER, C> processor : preProcessors) {
             processor.process(this, this);
         }
 
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry);
-        SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
-        CommandManager<SENDER> commandManager = new CommandManager<>(this.platform, commandExecuteService, suggestionService);
-
+        CommandManager<SENDER> commandManager = this.createCommandManager();
         CommandMerger<SENDER> commandMerger = new CommandMerger<>();
 
         for (CommandBuilder<SENDER> collected : this.commandBuilderCollector.collectCommands()) {
@@ -592,7 +613,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             commandManager.register(mergedCommand);
         }
 
-        for (LiteBuilderProcessor<SENDER, C> processor : postProcessors) {
+        for (LiteBuilderAction<SENDER, C> processor : postProcessors) {
             processor.process(this, this);
         }
 
@@ -603,6 +624,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         }
 
         return liteCommand;
+    }
+
+    protected CommandManager<SENDER> createCommandManager() {
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry, eventPublisher, strictService);
+        SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
+
+        return new CommandManager<>(this.platform, commandExecuteService, suggestionService);
     }
 
     /**
@@ -685,6 +713,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public MessageRegistry<SENDER> getMessageRegistry() {
         return this.messageRegistry;
+    }
+
+    @Override
+    @ApiStatus.Internal
+    public StrictService getStrictService() {
+        return this.strictService;
     }
 
     @Override

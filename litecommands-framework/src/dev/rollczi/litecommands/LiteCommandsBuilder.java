@@ -6,9 +6,12 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.bind.BindChainedProvider;
 import dev.rollczi.litecommands.bind.BindProvider;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.event.Event;
+import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.context.ContextChainedProvider;
+import dev.rollczi.litecommands.event.Subscriber;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
-import dev.rollczi.litecommands.processor.LiteBuilderProcessor;
+import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.editor.Editor;
@@ -28,6 +31,7 @@ import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
@@ -199,12 +203,66 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     B schematicGenerator(SchematicFastFormat format);
 
-    B selfProcessor(LiteBuilderProcessor<SENDER, SETTINGS> processor);
+    /**
+     * Set the default strict mode for all commands.
+     * If strict mode is enabled, the command will fail if the user provides too many arguments.
+     */
+    @ApiStatus.Experimental
+    B strictMode(StrictMode strictMode);
 
-    B preProcessor(LiteBuilderProcessor<SENDER, SETTINGS> preProcessor);
+    /**
+     * Register event listener for the LiteCommands event system.
+     * See {@link Event}, {@link Subscriber} and {@link EventListener} for more information.
+     * Example listener:&#64;
+     * <pre>
+     * {@code
+     *     public class MyListener implements EventListener {
+     *
+     *         \@Subscriber
+     *         public void onEvent(CommandPreExecutionEvent event) {
+     *             // your code
+     *         }
+     *
+     *         \@Subscriber
+     *         public void onEvent(CommandPostExecutionEvent event) {
+     *             // your code
+     *         }
+     *     }
+     * }
+     * </pre>
+     */
+    @ApiStatus.Experimental
+    B listener(EventListener listener);
 
-    B postProcessor(LiteBuilderProcessor<SENDER, SETTINGS> postProcessor);
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#self(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B selfProcessor(LiteBuilderAction<SENDER, SETTINGS> processor) {
+        return self(processor);
+    }
 
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#beforeBuild(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B preProcessor(LiteBuilderAction<SENDER, SETTINGS> preProcessor) {
+        return beforeBuild(preProcessor);
+    }
+
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#afterBuild(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B postProcessor(LiteBuilderAction<SENDER, SETTINGS> postProcessor) {
+        return afterBuild(postProcessor);
+    }
+
+    B self(LiteBuilderAction<SENDER, SETTINGS> action);
+
+    B beforeBuild(LiteBuilderAction<SENDER, SETTINGS> action);
+
+    B afterBuild(LiteBuilderAction<SENDER, SETTINGS> action);
 
     /**
      * Register extension for this builder.

@@ -1,7 +1,9 @@
 package dev.rollczi.litecommands.meta;
 
 import dev.rollczi.litecommands.cooldown.CooldownContext;
+import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
 import org.jetbrains.annotations.ApiStatus;
@@ -19,6 +21,7 @@ public interface Meta {
 
     MetaKey<List<String>> DESCRIPTION = MetaKey.of("description", MetaType.list(), Collections.emptyList());
     MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
+    MetaKey<PriorityLevel> PRIORITY = MetaKey.of("priority", PriorityLevel.class, PriorityLevel.NORMAL);
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
     MetaKey<String> ARGUMENT_KEY = MetaKey.of("argument-key", String.class);
@@ -26,6 +29,7 @@ public interface Meta {
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
     MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
     MetaKey<CooldownContext> COOLDOWN = MetaKey.of("cooldown", CooldownContext.class);
+    MetaKey<StrictMode> STRICT_MODE = MetaKey.of("strict-mode", StrictMode.class, StrictMode.DEFAULT);
 
     /**
      * LiteCommands Annotation API
