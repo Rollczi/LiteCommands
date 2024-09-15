@@ -15,6 +15,7 @@ public class RawInputAnalyzer {
     private final List<String> rawArguments;
     private int lastPivotPosition = 0;
     private int pivotPosition = 0;
+    private boolean isLastOptionalArgument = false;
 
     public RawInputAnalyzer(List<String> rawArguments) {
         for (String rawArgument : rawArguments) {
@@ -58,6 +59,15 @@ public class RawInputAnalyzer {
 
     public boolean nextRouteIsLast() {
         return pivotPosition == rawArguments.size() - 1;
+    }
+
+    @ApiStatus.Experimental
+    public void setLastOptionalArgument(boolean setLastOptionalArgument) {
+        this.isLastOptionalArgument = setLastOptionalArgument;
+    }
+
+    public void consumeAll() {
+        setPivotPosition(rawArguments.size());
     }
 
     public class Context<SENDER, T> {
@@ -104,15 +114,15 @@ public class RawInputAnalyzer {
             return parse;
         }
 
-        public boolean isLastRawArgument() {
-            return pivotPosition == rawArguments.size() - 1 || realArgumentMaxCount >= rawArguments.size();
+        public boolean isLastArgument() {
+            return pivotPosition == rawArguments.size() - 1 || realArgumentMaxCount >= rawArguments.size() || isPotentialLastArgument() || isLastOptionalArgument;
         }
 
         public boolean isMissingFullArgument() {
             return isNoMoreArguments() && isMissingPartOfArgument();
         }
 
-        public boolean isNoMoreArguments() {
+        private boolean isNoMoreArguments() {
             return pivotPosition >= rawArguments.size();
         }
 
@@ -120,16 +130,12 @@ public class RawInputAnalyzer {
             return argumentMinCount != realArgumentMinCount;
         }
 
-        public boolean isPotentialLastArgument() {
+        private boolean isPotentialLastArgument() {
             return this.realArgumentMaxCount < this.argumentMaxCount;
         }
 
         public List<String> getAllNotConsumedArguments() {
             return rawArguments.subList(pivotPosition, rawArguments.size());
-        }
-
-        public void consumeAll() {
-            setPivotPosition(rawArguments.size());
         }
     }
 
