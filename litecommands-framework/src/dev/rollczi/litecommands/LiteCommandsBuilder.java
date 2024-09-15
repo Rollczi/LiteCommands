@@ -215,7 +215,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      * See {@link Event}, {@link Subscriber} and {@link EventListener} for more information.
      * Example listener:
      * <pre>
-     *     {@code
+     * {@code
      *     public class MyListener implements EventListener {
      *
      *         @Subscriber
@@ -228,7 +228,7 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      *             // your code
      *         }
      *     }
-     *     }
+     * }
      * </pre>
      */
     @ApiStatus.Experimental
