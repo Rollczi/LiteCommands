@@ -5,10 +5,7 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteDefault;
-import dev.rollczi.litecommands.annotations.meta.MarkMeta;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import dev.rollczi.litecommands.invalidusage.InvalidUsage;
-import dev.rollczi.litecommands.meta.Meta;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,7 +14,7 @@ import org.bukkit.entity.Player;
 @Permission("dev.rollczi.kickall")
 public class KickAllCommand {
 
-    @ExecuteDefault()
+    @ExecuteDefault
     public void commandHelp(@Context CommandSender sender) {
         sender.sendMessage("Correct usage: /kickall -all|<players...>");
     }
