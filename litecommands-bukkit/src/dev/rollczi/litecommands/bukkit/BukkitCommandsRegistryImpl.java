@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.bukkit;
 
+import dev.rollczi.litecommands.shared.Lazy;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
 import org.jetbrains.annotations.NotNull;
-import panda.std.Lazy;
 
 import java.lang.reflect.Field;
 import java.util.Map;

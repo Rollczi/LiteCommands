@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.validator.Validator;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -20,8 +21,8 @@ public class DiscordPermissionValidator implements Validator<User> {
     @Override
     public Flow validate(Invocation<User> invocation, MetaHolder metaHolder) {
         List<Permission> required = metaHolder.metaCollector().collect(DiscordPermission.META_KEY).stream()
-            .flatMap(List::stream)
-            .toList();
+            .flatMap(permissions -> permissions.stream())
+            .collect(Collectors.toList());
 
         if (required.isEmpty()) {
             return Flow.continueFlow();

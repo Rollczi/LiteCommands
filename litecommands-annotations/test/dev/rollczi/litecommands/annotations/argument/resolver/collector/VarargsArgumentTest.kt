@@ -19,7 +19,6 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import panda.std.Pair
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -79,7 +78,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
 
         @Execute(name = "Instant-special")
         fun testInstantSpecial(@Varargs(delimiter = ",") test: List<Instant>, @Arg a: Int): Pair<List<Instant>, Int> {
-            return Pair.of(test, a)
+            return Pair(test, a)
         }
 
         @Execute(name = "enum")
@@ -89,12 +88,12 @@ internal class VarargsArgumentTest : LiteTestSpec() {
 
         @Execute(name = "durations-instant")
         fun testInstantDuration(@Varargs(delimiter = ",") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
-            return Pair.of(durations, instant)
+            return Pair(durations, instant)
         }
 
         @Execute(name = "instants-duration")
         fun testDurationInstant(@Varargs(delimiter = ",") instants: List<Instant>, @Arg duration: Duration): Pair<List<Instant>, Duration> {
-            return Pair.of(instants, duration)
+            return Pair(instants, duration)
         }
     }
 
@@ -122,7 +121,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
 
         @Execute(name = "Instant-special")
         fun testInstantSpecial(@Varargs(delimiter = ", ") test: List<Instant>, @Arg a: Int): Pair<List<Instant>, Int> {
-            return Pair.of(test, a)
+            return Pair(test, a)
         }
 
         @Execute(name = "enum")
@@ -132,12 +131,12 @@ internal class VarargsArgumentTest : LiteTestSpec() {
 
         @Execute(name = "durations-instant")
         fun testInstantDuration(@Varargs(delimiter = ", ") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
-            return Pair.of(durations, instant)
+            return Pair(durations, instant)
         }
 
         @Execute(name = "instants-duration")
         fun testDurationInstant(@Varargs(delimiter = ", ") instants: List<Instant>, @Arg duration: Duration): Pair<List<Instant>, Duration> {
-            return Pair.of(instants, duration)
+            return Pair(instants, duration)
         }
     }
 
@@ -165,7 +164,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
 
         @Execute(name = "Instant-special")
         fun testInstantSpecial(@Varargs(delimiter = " | ") test: List<Instant>, @Arg a: Int): Pair<List<Instant>, Int> {
-            return Pair.of(test, a)
+            return Pair(test, a)
         }
 
         @Execute(name = "enum")
@@ -175,12 +174,12 @@ internal class VarargsArgumentTest : LiteTestSpec() {
 
         @Execute(name = "durations-instant")
         fun testInstantDuration(@Varargs(delimiter = " | ") durations: List<Duration>, @Arg instant: Instant): Pair<List<Duration>, Instant> {
-            return Pair.of(durations, instant)
+            return Pair(durations, instant)
         }
 
         @Execute(name = "instants-duration")
         fun testDurationInstant(@Varargs(delimiter = " | ") instants: List<Instant>, @Arg duration: Duration): Pair<List<Instant>, Duration> {
-            return Pair.of(instants, duration)
+            return Pair(instants, duration)
         }
     }
 
@@ -211,7 +210,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
             ))
 
         platform.execute("$command Instant-special 2021-01-01 00:05:50${del}2023-04-17 11:03:00${del}2016-12-31 23:59:59 5")
-            .assertSuccess(Pair.of(listOf(
+            .assertSuccess(Pair(listOf(
                 Instant.parse("2021-01-01T00:05:50Z"),
                 Instant.parse("2023-04-17T11:03:00Z"),
                 Instant.parse("2016-12-31T23:59:59Z")
@@ -447,13 +446,13 @@ internal class VarargsArgumentTest : LiteTestSpec() {
                 val instant = Instant.from(dateTimeFormatter.parse(multilevel))
 
                 platform.execute("$command durations-instant $multilevel")
-                    .assertSuccess(Pair.of(listOf<Duration>(), instant))
+                    .assertSuccess(Pair(listOf<Duration>(), instant))
 
                 platform.execute("$command durations-instant 10s $multilevel")
-                    .assertSuccess(Pair.of(listOf(Duration.ofSeconds(10)), instant))
+                    .assertSuccess(Pair(listOf(Duration.ofSeconds(10)), instant))
 
                 platform.execute("$command durations-instant 10s${del}31m $multilevel")
-                    .assertSuccess(Pair.of(listOf(Duration.ofSeconds(10), Duration.ofMinutes(31)), instant))
+                    .assertSuccess(Pair(listOf(Duration.ofSeconds(10), Duration.ofMinutes(31)), instant))
             }
 
         platform.suggest("$command durations-instant 10s${del}")
@@ -467,7 +466,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
                 val instant = Instant.from(dateTimeFormatter.parse(multilevel))
 
                 platform.execute("$command durations-instant 10s${del}31m $multilevel")
-                    .assertSuccess(Pair.of(listOf(Duration.ofSeconds(10), Duration.ofMinutes(31)), instant))
+                    .assertSuccess(Pair(listOf(Duration.ofSeconds(10), Duration.ofMinutes(31)), instant))
             }
     }
 
@@ -482,10 +481,10 @@ internal class VarargsArgumentTest : LiteTestSpec() {
                 val multilevel = suggestion.multilevel()
                 val instant = Instant.from(dateTimeFormatter.parse(multilevel))
                 platform.execute("$command instants-duration $multilevel 10s")
-                    .assertSuccess(Pair.of(listOf(instant), Duration.ofSeconds(10)))
+                    .assertSuccess(Pair(listOf(instant), Duration.ofSeconds(10)))
 
                 platform.execute("$command instants-duration $multilevel$del$multilevel 10s")
-                    .assertSuccess(Pair.of(listOf(instant, instant), Duration.ofSeconds(10)))
+                    .assertSuccess(Pair(listOf(instant, instant), Duration.ofSeconds(10)))
             }
 
         platform.suggest("$command instants-duration 2021-01-01 ")
@@ -495,7 +494,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
                 val instant = Instant.from(dateTimeFormatter.parse("2021-01-01 $multilevel"))
 
                 platform.execute("$command instants-duration 2021-01-01 $multilevel 10s")
-                    .assertSuccess(Pair.of(listOf(instant), Duration.ofSeconds(10)))
+                    .assertSuccess(Pair(listOf(instant), Duration.ofSeconds(10)))
             }
 
         platform.suggest("$command instants-duration 2021-01-01 00:05:50 ")

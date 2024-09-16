@@ -34,7 +34,6 @@ import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsException
 import dev.rollczi.litecommands.handler.result.standard.ArrayHandler;
 import dev.rollczi.litecommands.handler.result.standard.CollectionHandler;
 import dev.rollczi.litecommands.handler.result.standard.CompletionStageHandler;
-import dev.rollczi.litecommands.handler.result.standard.OptionHandler;
 import dev.rollczi.litecommands.handler.result.standard.OptionalHandler;
 import dev.rollczi.litecommands.handler.exception.standard.ThrowableHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
@@ -60,7 +59,6 @@ import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.validator.ValidatorExecutionController;
 import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
-import dev.rollczi.litecommands.wrapper.std.OptionWrapper;
 import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -73,7 +71,6 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
-import panda.std.Option;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -111,7 +108,7 @@ public final class LiteCommandsFactory {
                 .validator(Scope.global(), new MissingPermissionValidator<>())
 
                 .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
-                .listener(new CooldownStateController<>())
+                .listener(new CooldownStateController<>(scheduler))
                 .listener(new InvalidUsageResultController<>(internal.getSchematicGenerator()))
 
                 .argument(String.class, new StringArgumentResolver<>())
@@ -155,7 +152,6 @@ public final class LiteCommandsFactory {
 
                 .argument(upwards(Object.class), CollectorArgument.KEY, new ArrayArgumentResolver<>(parser, suggester))
 
-                .wrapper(new OptionWrapper())
                 .wrapper(new OptionalWrapper())
                 .wrapper(new CompletableFutureWrapper(scheduler))
 
@@ -166,7 +162,6 @@ public final class LiteCommandsFactory {
 
                 .result(Object[].class, new ArrayHandler<>())
                 .result(Optional.class, new OptionalHandler<>())
-                .result(Option.class, new OptionHandler<>())
                 .result(CompletionStage.class, new CompletionStageHandler<>())
                 .result(Collection.class, new CollectionHandler<>())
                 .result(MissingPermissions.class, new MissingPermissionResultHandler<>(messageRegistry))

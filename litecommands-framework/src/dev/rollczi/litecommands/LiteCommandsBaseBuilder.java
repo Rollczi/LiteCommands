@@ -43,11 +43,14 @@ import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
+import dev.rollczi.litecommands.scheduler.SchedulerReference;
 import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFastFormat;
 import dev.rollczi.litecommands.schematic.SchematicFastGenerator;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
+import dev.rollczi.litecommands.schematic.SchematicGeneratorReference;
 import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.strict.StrictMode;
@@ -103,10 +106,9 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final MessageRegistry<SENDER> messageRegistry;
     protected final WrapperRegistry wrapperRegistry;
     protected final StrictService strictService;
-
-    protected Scheduler scheduler;
-    protected EventPublisher eventPublisher;
-    protected SchematicGenerator<SENDER> schematicGenerator;
+    protected final SchedulerReference scheduler;
+    protected final EventPublisher eventPublisher;
+    protected final SchematicGeneratorReference<SENDER> schematicGenerator;
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -167,9 +169,9 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.wrapperRegistry = wrapperRegistry;
         this.strictService = strictService;
 
-        this.scheduler = new SchedulerSameThreadImpl();
+        this.scheduler = new SchedulerReference(new SchedulerExecutorPoolImpl("litecommands"));
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
-        this.schematicGenerator = new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+        this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry));
     }
 
     @Override
@@ -418,8 +420,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public B scheduler(Scheduler scheduler) {
-        this.scheduler.shutdown();
-        this.scheduler = scheduler;
+        this.scheduler.setScheduler(scheduler);
         return this.self();
     }
 
@@ -503,19 +504,19 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public B schematicGenerator(SchematicGenerator<SENDER> schematicGenerator) {
-        this.schematicGenerator = schematicGenerator;
+        this.schematicGenerator.setSchematicGenerator(schematicGenerator);
         return this.self();
     }
 
     @Override
     public B schematicGenerator(SchematicFormat format) {
-        this.schematicGenerator = new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry);
+        this.schematicGenerator.setSchematicGenerator(new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry));
         return this.self();
     }
 
     @Override
     public B schematicGenerator(SchematicFastFormat format) {
-        this.schematicGenerator = new SchematicFastGenerator<>(format, validatorService, wrapperRegistry);
+        this.schematicGenerator.setSchematicGenerator(new SchematicFastGenerator<>(format, validatorService, wrapperRegistry));
         return this.self();
     }
 

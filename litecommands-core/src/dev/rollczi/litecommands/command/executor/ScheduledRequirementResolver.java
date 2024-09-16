@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.bind.BindResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
@@ -23,7 +24,6 @@ import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import panda.std.Result;
 
 class ScheduledRequirementResolver<SENDER> {
 
@@ -85,10 +85,10 @@ class ScheduledRequirementResolver<SENDER> {
 
     private <PARSED> RequirementResult<?> matchBind(BindRequirement<PARSED> bindRequirement) {
         WrapFormat<PARSED, ?> wrapFormat = bindRequirement.getWrapperFormat();
-        Result<PARSED, String> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
+        BindResult<PARSED> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
 
         if (instance.isOk()) {
-            return ParseResult.success(instance.get());
+            return ParseResult.success(instance.getSuccess());
         }
 
         return ParseResult.failure(instance.getError());
