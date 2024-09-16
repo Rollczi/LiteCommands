@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.hollowcube:minestom-ce:5347c0b11f")
+    implementation("net.minestom:minestom-snapshots:4305006e6b")
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
 
     // implementation("dev.rollczi:litecommands-minestom:3.5.0") // <-- uncomment in your project
