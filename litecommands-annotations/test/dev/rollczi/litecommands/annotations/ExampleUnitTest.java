@@ -7,8 +7,8 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestSender;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import panda.std.Option;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,8 +32,8 @@ class ExampleUnitTest extends LiteTestSpec {
         }
 
         @Execute(name = "opt")
-        String executeOpt(@Arg String text, @Arg Option<String> test) {
-            return text + ":" + test.orElseGet("none");
+        String executeOpt(@Arg String text, @Arg Optional<String> test) {
+            return text + ":" + test.orElse("none");
         }
 
         @Execute(name = "closeExecutor")

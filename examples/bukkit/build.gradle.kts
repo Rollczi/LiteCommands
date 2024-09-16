@@ -39,7 +39,6 @@ tasks.shadowJar {
     archiveFileName.set("$pluginName v${project.version}.jar")
 
     listOf(
-        "panda.std",
         "dev.rollczi.litecommands",
     ).forEach { relocate(it, "$packageName.libs.$it") }
 }

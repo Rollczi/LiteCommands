@@ -156,8 +156,8 @@ public class JDACommandTranslator {
 
     private List<Permission> getPermissions(MetaHolder holder) {
         return holder.metaCollector().collect(DiscordPermission.META_KEY).stream()
-            .flatMap(List::stream)
-            .toList();
+            .flatMap(permissions -> permissions.stream())
+            .collect(Collectors.toList());
     }
 
     private <SENDER> CommandExecutor<SENDER> translateExecutor(CommandRoute<SENDER> route, TranslateExecutorConsumer consumer) {
@@ -298,22 +298,46 @@ public class JDACommandTranslator {
         JDARoute(String argumentName) {
             this("", "", argumentName);
         }
+    }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof JDARoute jdaRoute)) return false;
-            return Objects.equals(subcommandGroup, jdaRoute.subcommandGroup) && Objects.equals(subcommandName, jdaRoute.subcommandName) && Objects.equals(argumentName, jdaRoute.argumentName);
+    static final class JDAType<T> {
+        private final Class<T> type;
+        private final OptionType optionType;
+        private final JDATypeMapper<T> mapper;
+
+        JDAType(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {
+            this.type = type;
+            this.optionType = optionType;
+            this.mapper = mapper;
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(subcommandGroup, subcommandName, argumentName);
+        public OptionType optionType() {
+            return optionType;
+        }
+
+        public JDATypeMapper<T> mapper() {
+            return mapper;
         }
     }
 
-    record JDAType<T>(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {}
+    static final class JDATypeOverlay<T> {
+        private final Class<T> type;
+        private final OptionType optionType;
+        private final JDATypeMapper<String> mapper;
 
-    record JDATypeOverlay<T>(Class<T> type, OptionType optionType, JDATypeMapper<String> mapper) {}
+        JDATypeOverlay(Class<T> type, OptionType optionType, JDATypeMapper<String> mapper) {
+            this.type = type;
+            this.optionType = optionType;
+            this.mapper = mapper;
+        }
+
+        public OptionType optionType() {
+            return optionType;
+        }
+
+        public JDATypeMapper<String> mapper() {
+            return mapper;
+        }
+    }
 
 }

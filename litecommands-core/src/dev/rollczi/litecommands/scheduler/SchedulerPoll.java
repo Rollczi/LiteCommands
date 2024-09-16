@@ -41,11 +41,11 @@ public class SchedulerPoll {
     private final Set<SchedulerPoll> replaceable = new HashSet<>();
     private final boolean logging; //TODO logger level
 
-    private SchedulerPoll(String name, SchedulerPoll... replaceable) {
+    protected SchedulerPoll(String name, SchedulerPoll... replaceable) {
         this(name, false, replaceable);
     }
 
-    private SchedulerPoll(String name, boolean logging, SchedulerPoll... replaceable) {
+    protected SchedulerPoll(String name, boolean logging, SchedulerPoll... replaceable) {
         this.name = name;
         this.replaceable.addAll(Arrays.asList(replaceable));
         this.logging = logging;

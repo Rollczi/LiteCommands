@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.event;
 
 import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.bind.BindResult;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.ApiStatus;
-import panda.std.Result;
 
 @ApiStatus.Experimental
 public class SimpleEventPublisher implements EventPublisher {
@@ -90,13 +90,13 @@ public class SimpleEventPublisher implements EventPublisher {
             args[0] = event;
 
             for (int i = 1; i < args.length; i++) {
-                Result<?, String> result = bindRegistry.getInstance(bindClasses[i - 1]);
+                BindResult<?> result = bindRegistry.getInstance(bindClasses[i - 1]);
 
-                if (result.isErr()) {
+                if (result.isError()) {
                     throw new IllegalArgumentException("Cannot bind " + bindClasses[i - 1].getName() + " for " + listener.getClass().getName() + "#" + declaredMethod.getName());
                 }
 
-                args[i] = result.get();
+                args[i] = result.getSuccess();
             }
 
             try {

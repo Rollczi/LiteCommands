@@ -9,26 +9,27 @@ import dev.rollczi.litecommands.event.Subscriber;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.platform.PlatformSender;
+import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.shared.FailedReason;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import net.jodah.expiringmap.ExpiringMap;
+import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
 public class CooldownStateController<SENDER> implements EventListener {
 
-    private final ExpiringMap<CooldownCompositeKey, Instant> cooldowns;
+    private final Scheduler scheduler;
+    private final Map<CooldownCompositeKey, Instant> cooldowns = new HashMap<>();
 
-    public CooldownStateController() {
-        this.cooldowns = ExpiringMap.builder()
-            .variableExpiration()
-            .build();
+    public CooldownStateController(Scheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
     @Subscriber
-    public void onEvent(CommandPreExecutionEvent event) {
+    public void onEvent(CommandPreExecutionEvent<SENDER> event) {
         Invocation<SENDER> invocation = event.getInvocation();
         PlatformSender sender = invocation.platformSender();
         CooldownContext cooldownContext = getOperativeContext(event, sender);
@@ -48,7 +49,7 @@ public class CooldownStateController<SENDER> implements EventListener {
     }
 
     @Subscriber
-    public void onEvent(CommandPostExecutionEvent event) {
+    public void onEvent(CommandPostExecutionEvent<SENDER> event) {
         CommandExecuteResult result = event.getResult();
 
         if (!result.isSuccessful()) {
@@ -66,7 +67,8 @@ public class CooldownStateController<SENDER> implements EventListener {
         CooldownCompositeKey compositeKey = new CooldownCompositeKey(sender.getIdentifier(), cooldownContext.getKey());
 
         Instant now = Instant.now();
-        cooldowns.put(compositeKey, now.plus(cooldownContext.getDuration()), cooldownContext.getDuration().toNanos(), TimeUnit.NANOSECONDS);
+        cooldowns.put(compositeKey, now.plus(cooldownContext.getDuration()));
+        scheduler.supplyLater(SchedulerPoll.MAIN, cooldownContext.getDuration(), () -> cooldowns.remove(compositeKey));
     }
 
     @Nullable
