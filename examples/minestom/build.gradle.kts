@@ -4,8 +4,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -15,8 +15,8 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.hollowcube:minestom-ce:5347c0b11f")
-    implementation("net.kyori:adventure-text-minimessage:4.15.0")
+    implementation("net.minestom:minestom-snapshots:4305006e6b")
+    implementation("net.kyori:adventure-text-minimessage:4.17.0")
 
     // implementation("dev.rollczi:litecommands-minestom:3.5.0") // <-- uncomment in your project
     implementation(project(":litecommands-minestom")) // don't use this line in your build.gradle
