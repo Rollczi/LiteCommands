@@ -8,9 +8,9 @@ plugins {
 dependencies {
     api(project(":litecommands-framework"))
 
-    compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
+    compileOnly("org.spigotmc:spigot-api:${Versions.SPIGOT_API}")
+    compileOnly("org.spigotmc:spigot:${Versions.SPIGOT}")
+    compileOnly("com.comphenix.protocol:ProtocolLib:${Versions.PROTOCOL_LIB}")
 }
 
 val bukkitArtifact: String by extra

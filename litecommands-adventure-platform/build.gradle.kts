@@ -8,7 +8,7 @@ plugins {
 dependencies {
     api(project(":litecommands-adventure"))
 
-    compileOnly("net.kyori:adventure-platform-api:4.3.1")
+    compileOnly("net.kyori:adventure-platform-api:${Versions.ADVENTURE_PLATFORM_API}")
 }
 
 litecommandsPublish {

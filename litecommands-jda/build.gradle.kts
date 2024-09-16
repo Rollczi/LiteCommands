@@ -9,9 +9,9 @@ plugins {
 dependencies {
     api(project(":litecommands-framework"))
 
-    compileOnly("net.dv8tion:JDA:5.0.2")
+    compileOnly("net.dv8tion:JDA:${Versions.JDA}")
     testImplementation(project(":litecommands-annotations"))
-    testImplementation("net.dv8tion:JDA:5.0.2")
+    testImplementation("net.dv8tion:JDA:${Versions.JDA}")
 }
 
 litecommandsPublish {

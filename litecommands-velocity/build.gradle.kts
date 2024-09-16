@@ -9,7 +9,7 @@ dependencies {
     api(project(":litecommands-framework"))
     api(project(":litecommands-adventure"))
 
-    compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:${Versions.VELOCITY_API}")
 }
 
 litecommandsPublish {
