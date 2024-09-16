@@ -6,6 +6,8 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SchedulerExecutorPoolImpl implements Scheduler {
@@ -15,16 +17,15 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
 
     private final ThreadLocal<Boolean> isMainThread = ThreadLocal.withInitial(() -> false);
 
-    private final ExecutorService mainExecutor;
-    private final ExecutorService asyncExecutor;
-
+    private final ScheduledExecutorService mainExecutor;
+    private final ScheduledExecutorService asyncExecutor;
 
     public SchedulerExecutorPoolImpl(String name) {
         this(name, Runtime.getRuntime().availableProcessors());
     }
 
     public SchedulerExecutorPoolImpl(String name, int asyncThreads) {
-        this.mainExecutor = Executors.newSingleThreadExecutor(runnable -> {
+        this.mainExecutor = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(MAIN_THREAD_NAME_FORMAT, name));
 
@@ -33,7 +34,7 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         this.mainExecutor.submit(() -> isMainThread.set(true));
 
         AtomicInteger asyncCount = new AtomicInteger();
-        this.asyncExecutor = Executors.newFixedThreadPool(asyncThreads, runnable -> {
+        this.asyncExecutor = Executors.newScheduledThreadPool(asyncThreads, runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(ASYNC_THREAD_NAME_FORMAT, name, asyncCount.getAndIncrement()));
 
@@ -41,65 +42,43 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         });
     }
 
-    private <T> CompletableFuture<T> supplySync(ThrowingSupplier<T, Throwable> supplier) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-
-        if (isMainThread.get()) {
-            try {
-                future.complete(supplier.get());
-            }
-            catch (Throwable throwable) {
-                future.completeExceptionally(throwable);
-            }
-
-        }
-        else {
-            mainExecutor.submit(() -> {
-                try {
-                    future.complete(supplier.get());
-                }
-                catch (Throwable throwable) {
-                    future.completeExceptionally(throwable);
-                }
-            });
-        }
-
-        return future;
-    }
-
-    private <T> CompletableFuture<T> supplyAsync(ThrowingSupplier<T, Throwable> supplier) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-
-        asyncExecutor.submit(() -> {
-            try {
-                future.complete(supplier.get());
-            }
-            catch (Throwable throwable) {
-                future.completeExceptionally(throwable);
-            }
-        });
-
-        return future;
-    }
-
     @Override
     public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
         SchedulerPoll resolve = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
+        CompletableFuture<T> future = new CompletableFuture<>();
 
-        if (resolve.equals(SchedulerPoll.MAIN)) {
-            return supplySync(supplier);
-        }
-        else if (resolve.equals(SchedulerPoll.ASYNCHRONOUS)) {
-            return supplyAsync(supplier);
+        if (resolve.equals(SchedulerPoll.MAIN) && isMainThread.get() && delay.isZero()) {
+            return tryRun(supplier, future);
         }
 
-        throw new IllegalStateException("Cannot resolve the thread type");
+        ScheduledExecutorService executor = resolve.equals(SchedulerPoll.MAIN) ? mainExecutor : asyncExecutor;
+
+        if (delay.isZero()) {
+            executor.submit(() -> tryRun(supplier, future));
+        }
+        else {
+            executor.schedule(() -> tryRun(supplier, future), delay.toMillis(), TimeUnit.MILLISECONDS);
+        }
+
+        return future;
+    }
+
+    private static <T> CompletableFuture<T> tryRun(ThrowingSupplier<T, Throwable> supplier, CompletableFuture<T> future) {
+        try {
+            future.complete(supplier.get());
+        }
+        catch (Throwable throwable) {
+            future.completeExceptionally(throwable);
+        }
+
+        return future;
     }
 
     @Override
     public void shutdown() {
         mainExecutor.shutdown();
         asyncExecutor.shutdown();
+        isMainThread.remove();
     }
 
 }
