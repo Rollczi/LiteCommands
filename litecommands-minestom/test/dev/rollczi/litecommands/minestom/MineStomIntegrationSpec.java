@@ -9,7 +9,7 @@ import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.ConnectionManager;
-import net.minestom.server.utils.debug.DebugUtils;
+import net.minestom.server.timer.SchedulerManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -48,7 +48,6 @@ public class MineStomIntegrationSpec {
             commands.put(field, command);
         }
 
-        DebugUtils.INSIDE_TEST = true;
         MinecraftServer.getConnectionManager().setPlayerProvider((uuid, s, playerConnection) -> new TestPlayer(uuid, s));
 
         liteCommands = LiteMinestomFactory.builder()
@@ -81,7 +80,9 @@ public class MineStomIntegrationSpec {
     }
 
     protected static void executeCommand(CommandSender sender, String command) {
+        SchedulerManager connectionManager = MinecraftServer.getSchedulerManager();
         MinecraftServer.getCommandManager().execute(sender, command);
+        connectionManager.processTick(); // Process the command
     }
 
 }

@@ -7,6 +7,8 @@ import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -24,11 +26,33 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
     private final JDA jda;
     private final Map<CommandRoute<User>, JDACommandRecord> commands = new HashMap<>();
 
-    private record JDACommandRecord(
-        JDACommandTranslator.JDALiteCommand command,
-        PlatformInvocationListener<User> invocationHook,
-        PlatformSuggestionListener<User> suggestionHook
-    ) {}
+    private static final class JDACommandRecord {
+        private final JDACommandTranslator.JDALiteCommand command;
+        private final PlatformInvocationListener<User> invocationHook;
+        private final PlatformSuggestionListener<User> suggestionHook;
+
+        private JDACommandRecord(
+            JDACommandTranslator.JDALiteCommand command,
+            PlatformInvocationListener<User> invocationHook,
+            PlatformSuggestionListener<User> suggestionHook
+        ) {
+            this.command = command;
+            this.invocationHook = invocationHook;
+            this.suggestionHook = suggestionHook;
+        }
+
+        public JDACommandTranslator.JDALiteCommand command() {
+            return command;
+        }
+
+        public PlatformInvocationListener<User> invocationHook() {
+            return invocationHook;
+        }
+
+        public PlatformSuggestionListener<User> suggestionHook() {
+            return suggestionHook;
+        }
+    }
 
     JDAPlatform(LiteJDASettings settings, JDA jda) {
         super(settings);
@@ -113,7 +137,7 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             List<Command.Choice> choiceList = result.getSuggestions().stream()
                 .filter(suggestion -> !suggestion.multilevel().isEmpty())
                 .map(suggestion -> choice(event.getFocusedOption().getType(), suggestion))
-                .toList();
+                .collect(Collectors.toList());
 
             event.replyChoices(choiceList).queue();
         }

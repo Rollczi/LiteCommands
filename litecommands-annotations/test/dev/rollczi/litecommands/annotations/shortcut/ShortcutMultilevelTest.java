@@ -6,8 +6,8 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import panda.std.Option;
 
 import static dev.rollczi.litecommands.unit.TestPlatformSender.permitted;
 
@@ -20,8 +20,8 @@ class ShortcutMultilevelTest extends LiteTestSpec {
         @Execute(name = "add")
         @Shortcut("team-add")
         @Permission("team.manage.add")
-        String executeOpt(@Arg("player") String player, @Arg Option<String> test) {
-            return player + ":" + test.orElseGet("none");
+        String executeOpt(@Arg("player") String player, @Arg Optional<String> test) {
+            return player + ":" + test.orElse("none");
         }
 
         @Execute(name = "remove")

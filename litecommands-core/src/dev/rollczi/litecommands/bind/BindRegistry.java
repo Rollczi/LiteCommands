@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.bind;
 
 import dev.rollczi.litecommands.util.MapUtil;
 import java.util.function.Function;
-import panda.std.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,16 +26,16 @@ public class BindRegistry implements BindChainAccessor {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Result<T, String> getInstance(Class<T> clazz) {
+    public <T> BindResult<T> getInstance(Class<T> clazz) {
         Optional<Function<BindChainAccessor, ?>> option = MapUtil.findByInstanceOf(clazz, this.instanceBindings);
 
         if (option.isPresent()) {
             Function<BindChainAccessor, T> supplier = (Function<BindChainAccessor, T>) option.get();
 
-            return Result.ok(supplier.apply(this));
+            return BindResult.ok(supplier.apply(this));
         }
 
-        return Result.error("Cannot find binding for " + clazz.getName());
+        return BindResult.error("Cannot find binding for " + clazz.getName());
     }
 
 }

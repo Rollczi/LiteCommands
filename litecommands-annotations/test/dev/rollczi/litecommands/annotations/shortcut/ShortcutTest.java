@@ -5,8 +5,8 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import panda.std.Option;
 
 import static dev.rollczi.litecommands.unit.TestPlatformSender.permitted;
 
@@ -25,8 +25,8 @@ class ShortcutTest extends LiteTestSpec {
         @Execute(name = "executor")
         @Shortcut("short")
         @Permission("executor.permission")
-        String executeOpt(@Arg String text, @Arg Option<String> test) {
-            return text + ":" + test.orElseGet("none");
+        String executeOpt(@Arg String text, @Arg Optional<String> test) {
+            return text + ":" + test.orElse("none");
         }
 
     }

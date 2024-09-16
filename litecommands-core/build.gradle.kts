@@ -8,8 +8,6 @@ plugins {
 }
 
 dependencies {
-    api("net.jodah:expiringmap:${Versions.EXPIRING_MAP}")
-    api("org.panda-lang:expressible:${Versions.EXPRESSIBLE}")
     api("org.jetbrains:annotations:${Versions.JETBRAINS_ANNOTATIONS}")
 }
 

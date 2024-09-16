@@ -40,7 +40,6 @@ tasks.shadowJar {
     archiveFileName.set("$packageName v${project.version}.jar")
 
     listOf(
-        "panda.std",
         "dev.rollczi.litecommands",
         "net.kyori",
     ).forEach { relocate(it, "$packageName.libs.$it") }
