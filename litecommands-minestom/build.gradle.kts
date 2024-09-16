@@ -10,8 +10,8 @@ dependencies {
     api(project(":litecommands-framework"))
     api(project(":litecommands-adventure"))
     testImplementation(project(":litecommands-annotations"))
-    compileOnly("dev.hollowcube:minestom-ce:5347c0b11f")
-    testImplementation("dev.hollowcube:minestom-ce:5347c0b11f")
+    compileOnly("dev.hollowcube:minestom-ce:${Versions.MINESTOM_CE}")
+    testImplementation("dev.hollowcube:minestom-ce:${Versions.MINESTOM_CE}")
 }
 
 litecommandsPublish {

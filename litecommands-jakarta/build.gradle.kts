@@ -8,8 +8,8 @@ plugins {
 
 dependencies {
     api(project(":litecommands-framework"))
-    api("org.hibernate.validator:hibernate-validator:8.0.1.Final")
-    implementation("org.glassfish.expressly:expressly:5.0.0")
+    api("org.hibernate.validator:hibernate-validator:${Versions.HIBERNATE_VALIDATOR}")
+    implementation("org.glassfish.expressly:expressly:${Versions.EXPRESSLY}")
 }
 
 litecommandsUnit {

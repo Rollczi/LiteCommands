@@ -9,7 +9,7 @@ dependencies {
     api(project(":litecommands-framework"))
     api(project(":litecommands-adventure"))
 
-    compileOnly("org.spongepowered:spongeapi:8.2.0")
+    compileOnly("org.spongepowered:spongeapi:${Versions.SPONGE_API}")
 }
 
 litecommandsPublish {

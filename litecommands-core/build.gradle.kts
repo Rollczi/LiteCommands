@@ -8,9 +8,9 @@ plugins {
 }
 
 dependencies {
-    api("net.jodah:expiringmap:0.5.11")
-    api("org.panda-lang:expressible:1.3.6")
-    api("org.jetbrains:annotations:24.0.1")
+    api("net.jodah:expiringmap:${Versions.EXPIRING_MAP}")
+    api("org.panda-lang:expressible:${Versions.EXPRESSIBLE}")
+    api("org.jetbrains:annotations:${Versions.JETBRAINS_ANNOTATIONS}")
 }
 
 litecommandsPublish {
