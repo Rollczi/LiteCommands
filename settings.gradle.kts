@@ -23,7 +23,7 @@ include(":litecommands-velocity", JavaVersion.VERSION_11)
 include(":litecommands-bungee")
 include(":litecommands-bukkit")
 include(":litecommands-minestom", JavaVersion.VERSION_21)
-include("litecommands-jda", JavaVersion.VERSION_17)
+include("litecommands-jda", JavaVersion.VERSION_11)
 include(":litecommands-sponge")
 include(":litecommands-fabric", JavaVersion.VERSION_17)
 
