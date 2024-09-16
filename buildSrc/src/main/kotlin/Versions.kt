@@ -34,9 +34,4 @@ object Versions {
     const val ASSERTJ = "3.24.2"
     const val MOCKITO = "5.7.0"
     const val AWAITILITY = "4.2.0"
-
-
-
-
-
 }
