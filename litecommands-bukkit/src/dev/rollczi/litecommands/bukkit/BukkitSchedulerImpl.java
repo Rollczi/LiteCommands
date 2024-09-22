@@ -42,7 +42,7 @@ class BukkitSchedulerImpl implements Scheduler {
     private <T> CompletableFuture<T> supplySync(SchedulerPoll type, ThrowingSupplier<T, Throwable> supplier, Duration delay) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        if (Bukkit.isPrimaryThread()) {
+        if (Bukkit.isPrimaryThread() && delay.isZero()) {
             return tryRun(type, future, supplier);
         }
 
