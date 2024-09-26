@@ -15,7 +15,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.BindRequirement;
 import dev.rollczi.litecommands.requirement.ContextRequirement;
 import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.requirement.RequirementResult;
+import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
@@ -60,12 +60,12 @@ class ScheduledRequirementResolver<SENDER> {
         return requirements;
     }
 
-    private ScheduledRequirement<?> toScheduled(Requirement<?> requirement, ThrowingSupplier<RequirementResult<?>, Throwable> resultSupplier) {
+    private ScheduledRequirement<?> toScheduled(Requirement<?> requirement, ThrowingSupplier<RequirementFutureResult<?>, Throwable> resultSupplier) {
         return new ScheduledRequirement<>(requirement, () -> scheduler.supply(requirement.meta().get(Meta.POLL_TYPE), resultSupplier));
     }
 
     @SuppressWarnings("unchecked")
-    private <PARSED, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementResult<PARSED> matchArgument(Argument<PARSED> argument, Invocation<SENDER> invocation, MATCHER matcher) {
+    private <PARSED, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementFutureResult<PARSED> matchArgument(Argument<PARSED> argument, Invocation<SENDER> invocation, MATCHER matcher) {
         WrapFormat<PARSED, ?> wrapFormat = argument.getWrapperFormat();
         ParserSet<SENDER, PARSED> parserSet = (ParserSet<SENDER, PARSED>) cachedParserSets.get(wrapFormat.getParsedType(), argument.getKey());
 
@@ -79,11 +79,11 @@ class ScheduledRequirementResolver<SENDER> {
         return matcher.nextArgument(invocation, argument, parser);
     }
 
-    private <PARSED> RequirementResult<PARSED> matchContext(ContextRequirement<PARSED> contextRequirement, Invocation<SENDER> invocation) {
+    private <PARSED> RequirementFutureResult<PARSED> matchContext(ContextRequirement<PARSED> contextRequirement, Invocation<SENDER> invocation) {
         return contextRegistry.provideContext(contextRequirement.getWrapperFormat().getParsedType(), invocation);
     }
 
-    private <PARSED> RequirementResult<?> matchBind(BindRequirement<PARSED> bindRequirement) {
+    private <PARSED> RequirementFutureResult<?> matchBind(BindRequirement<PARSED> bindRequirement) {
         WrapFormat<PARSED, ?> wrapFormat = bindRequirement.getWrapperFormat();
         BindResult<PARSED> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
 

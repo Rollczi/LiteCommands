@@ -1,24 +1,25 @@
 package dev.rollczi.litecommands.context;
 
 import dev.rollczi.litecommands.requirement.RequirementCondition;
+import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import dev.rollczi.litecommands.requirement.RequirementResult;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class ContextResult<T> implements RequirementResult<T> {
+public class ContextResult<T> implements RequirementResult<T>, RequirementFutureResult<T> {
 
     private final @Nullable Supplier<T> result;
     private final List<RequirementCondition> conditions;
     private final Object error;
 
-    private ContextResult(@Nullable Supplier<T> result, Object error,  List<RequirementCondition> conditions) {
+    private ContextResult(@Nullable Supplier<T> result, Object error, List<RequirementCondition> conditions) {
         this.result = result;
         this.error = error;
         this.conditions = conditions;
@@ -87,6 +88,21 @@ public class ContextResult<T> implements RequirementResult<T> {
     @ApiStatus.Experimental
     public static <T> ContextResult<T> conditional(Supplier<T> supplier, List<RequirementCondition> conditions) {
         return new ContextResult<>(supplier, null, Collections.unmodifiableList(conditions));
+    }
+
+    @Override
+    public CompletableFuture<RequirementResult<T>> asFuture() {
+        return CompletableFuture.completedFuture(this);
+    }
+
+    @Override
+    public RequirementResult<T> asResultOr(RequirementResult<T> result) {
+        return this;
+    }
+
+    @Override
+    public RequirementResult<T> await() {
+        return this;
     }
 
 }

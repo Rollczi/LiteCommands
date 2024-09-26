@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.quoted;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.argument.parser.ParseCompletedResult;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
@@ -15,7 +16,7 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentResolver<SENDER, String> {
 
-    public final static String KEY = "quoted-string";
+    public static final String KEY = "quoted-string";
     public static final char QUOTE_ESCAPE = '\\';
 
     private final SuggesterRegistry<SENDER> suggesterRegistry;
@@ -33,7 +34,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
     }
 
     @Override
-    public ParseResult<String> parse(Invocation<SENDER> invocation, Argument<String> argument, RawInput rawInput) {
+    public ParseCompletedResult<String> parse(Invocation<SENDER> invocation, Argument<String> argument, RawInput rawInput) {
         if (!rawInput.hasNext()) {
             throw new IllegalArgumentException("To parse argument, you need to provide at least one argument.");
         }
@@ -84,7 +85,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
         Suggestion current = context.getCurrent();
-        ParseResult<String> parsedResult = parse(invocation, argument, RawInput.of(current.multilevelList()));
+        ParseCompletedResult<String> parsedResult = parse(invocation, argument, RawInput.of(current.multilevelList()));
 
         if (parsedResult.isFailed()) {
             return SuggestionResult.empty();

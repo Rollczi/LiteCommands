@@ -14,6 +14,10 @@ import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyBalanceCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyService;
+import dev.rollczi.example.bukkit.user.User;
+import dev.rollczi.example.bukkit.user.UserArgumentResolver;
+import dev.rollczi.example.bukkit.user.UserCommand;
+import dev.rollczi.example.bukkit.user.UserService;
 import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
 import dev.rollczi.example.bukkit.validator.IsNotOp;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
@@ -60,7 +64,8 @@ public class ExamplePlugin extends JavaPlugin {
                 new RandomItemCommand(),
                 new NumberCommand(),
                 new CurrencyCommand(currencyService),
-                new CurrencyBalanceCommand(currencyService)
+                new CurrencyBalanceCommand(currencyService),
+                new UserCommand()
             )
 
             // Custom annotation validators
@@ -84,6 +89,7 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Arguments @Arg
             .argument(GameMode.class, new GameModeArgument())
+            .argument(User.class, new UserArgumentResolver(new UserService()))
 
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))

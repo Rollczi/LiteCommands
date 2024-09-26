@@ -196,6 +196,7 @@ class ArrayArgumentTest extends LiteTestSpec {
         platform.suggest("test int 1 ")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
         platform.suggest("test int 5")
+            .assertSuggestAndFlush("5 ", "5")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "5");
     }
 
@@ -206,6 +207,7 @@ class ArrayArgumentTest extends LiteTestSpec {
         platform.suggest("test Integer 1 ")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
         platform.suggest("test Integer 5")
+            .assertSuggestAndFlush("5 ", "5")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "5");
     }
 
@@ -214,11 +216,11 @@ class ArrayArgumentTest extends LiteTestSpec {
         platform.suggest("test String ")
             .assertSuggest("<argument>");
         platform.suggest("test String <argument>")
-            .assertSuggest("<argument>");
+            .assertSuggest("<argument>", "<argument> ");
         platform.suggest("test String text ")
             .assertSuggest("<argument>");
         platform.suggest("test String text")
-            .assertSuggest("text");
+            .assertSuggest("text", "text ");
     }
 
     @Test
@@ -254,7 +256,7 @@ class ArrayArgumentTest extends LiteTestSpec {
         platform.suggest("test enum FIRST ")
             .assertSuggest("FIRST", "SECOND", "THIRD", "FOURTH");
         platform.suggest("test enum FIRST")
-            .assertSuggest("FIRST");
+            .assertSuggest("FIRST", "FIRST ");
     }
 
 

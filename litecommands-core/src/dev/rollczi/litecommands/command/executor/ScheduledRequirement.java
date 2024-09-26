@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.requirement.RequirementResult;
+import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -10,9 +10,9 @@ import java.util.function.Supplier;
 class ScheduledRequirement<T> {
 
     private final Requirement<T> requirement;
-    private final Supplier<CompletableFuture<RequirementResult<?>>> match;
+    private final Supplier<CompletableFuture<RequirementFutureResult<?>>> match;
 
-    public ScheduledRequirement(Requirement<T> requirement, Supplier<CompletableFuture<RequirementResult<?>>> match) {
+    public ScheduledRequirement(Requirement<T> requirement, Supplier<CompletableFuture<RequirementFutureResult<?>>> match) {
         this.requirement = requirement;
         this.match = match;
     }
@@ -21,7 +21,7 @@ class ScheduledRequirement<T> {
         return requirement;
     }
 
-    public CompletableFuture<RequirementResult<?>> runMatch() {
+    public CompletableFuture<RequirementFutureResult<?>> runMatch() {
         return match.get();
     }
 
