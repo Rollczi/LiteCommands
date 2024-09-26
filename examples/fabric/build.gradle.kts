@@ -21,7 +21,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:0.15.6")
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.96.1+1.20.4")
 
-//    modImplementation("dev.rollczi:litecommands-fabric:3.5.0") // <-- uncomment in your project
+//    modImplementation("dev.rollczi:litecommands-fabric:3.6.0") // <-- uncomment in your project
     implementation(project(path = ":litecommands-fabric", configuration = "namedElements"))
 
 }
