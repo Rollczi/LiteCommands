@@ -1,6 +1,5 @@
-package dev.rollczi.litecommands.requirement;
+package dev.rollczi.litecommands.argument.parser;
 
-import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.shared.FailedReason;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -10,9 +9,9 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Experimental
 public class ParseAsyncResult<EXCEPTED> implements ParseResult<EXCEPTED> {
 
-    private final CompletableFuture<ParseResult<EXCEPTED>> future;
+    private final CompletableFuture<? extends ParseResult<EXCEPTED>> future;
 
-    public ParseAsyncResult(CompletableFuture<ParseResult<EXCEPTED>> future) {
+    public ParseAsyncResult(CompletableFuture<? extends ParseResult<EXCEPTED>> future) {
         this.future = future;
     }
 
@@ -44,18 +43,8 @@ public class ParseAsyncResult<EXCEPTED> implements ParseResult<EXCEPTED> {
     }
 
     @Override
-    public CompletableFuture<RequirementResult<EXCEPTED>> asFuture() {
+    public CompletableFuture<ParseCompletedResult<EXCEPTED>> asFuture() {
         return future.thenCompose(exceptedParseResult -> exceptedParseResult.asFuture());
-    }
-
-    @Override
-    public RequirementResult<EXCEPTED> asResultOr(RequirementResult<EXCEPTED> result) {
-        return result;
-    }
-
-    @Override
-    public RequirementResult<EXCEPTED> await() {
-        return future.join().await();
     }
 
     @ApiStatus.Experimental

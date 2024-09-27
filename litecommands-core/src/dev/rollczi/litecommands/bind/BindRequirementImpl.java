@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.requirement;
+package dev.rollczi.litecommands.bind;
 
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
@@ -7,17 +7,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-class ContextRequirementImpl<T> implements ContextRequirement<T> {
+class BindRequirementImpl<T> implements BindRequirement<T> {
 
     private final Supplier<String> name;
     private final WrapFormat<T, ?> format;
     private final Meta meta = Meta.create();
 
-    ContextRequirementImpl(Supplier<String> name, WrapFormat<T, ?> format) {
+    BindRequirementImpl(Supplier<String> name, WrapFormat<T, ?> format) {
         this.name = name;
         this.format = format;
     }
-
 
     @Override
     public String getName() {

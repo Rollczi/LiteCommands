@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.argument.parser;
 
-import dev.rollczi.litecommands.requirement.ParseAsyncResult;
 import dev.rollczi.litecommands.requirement.RequirementCondition;
 import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import dev.rollczi.litecommands.shared.FailedReason;
@@ -14,6 +13,23 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface ParseResult<EXCEPTED> extends RequirementFutureResult<EXCEPTED> {
+
+    CompletableFuture<ParseCompletedResult<EXCEPTED>> asFuture();
+
+    @ApiStatus.Experimental
+    <R> ParseResult<R> map(Function<EXCEPTED, R> mapper);
+
+    @ApiStatus.Experimental
+    ParseResult<EXCEPTED> mapFailure(Function<Object, ParseResult<EXCEPTED>> mapper);
+
+    @ApiStatus.Experimental
+    <R> ParseResult<R> flatMap(Function<EXCEPTED, ParseResult<R>> mapper);
+
+    @ApiStatus.Experimental
+    ParseResult<EXCEPTED> whenSuccessful(Consumer<EXCEPTED> action);
+
+    @ApiStatus.Experimental
+    ParseResult<EXCEPTED> whenFailed(Consumer<FailedReason> action);
 
     static <PARSED> ParseCompletedResult<PARSED> success(PARSED parsed) {
         return new ParseCompletedResult<>(parsed, null, false, Collections.emptyList());
@@ -49,34 +65,19 @@ public interface ParseResult<EXCEPTED> extends RequirementFutureResult<EXCEPTED>
 
     @ApiStatus.Experimental
     @ApiStatus.Internal
-    static <EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<ParseResult<EXPECTED>> future) {
+    static <EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<? extends ParseResult<EXPECTED>> future) {
         return new ParseAsyncResult<>(future);
     }
 
     @ApiStatus.Experimental
-    static <T, EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<T> future, Function<T, ParseResult<EXPECTED>> mapper) {
+    static <T, EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<T> future, Function<T, ? extends ParseResult<EXPECTED>> mapper) {
         return new ParseAsyncResult<>(future.thenApply(mapper));
     }
 
     @ApiStatus.Experimental
     @ApiStatus.Internal
-    static <EXPECTED> ParseAsyncResult<EXPECTED> async(Supplier<ParseResult<EXPECTED>> supplier) {
+    static <EXPECTED> ParseAsyncResult<EXPECTED> async(Supplier<? extends ParseResult<EXPECTED>> supplier) {
         return new ParseAsyncResult<>(CompletableFuture.supplyAsync(supplier));
     }
-
-    @ApiStatus.Experimental
-    <R> ParseResult<R> map(Function<EXCEPTED, R> mapper);
-
-    @ApiStatus.Experimental
-    ParseResult<EXCEPTED> mapFailure(Function<Object, ParseResult<EXCEPTED>> mapper);
-
-    @ApiStatus.Experimental
-    <R> ParseResult<R> flatMap(Function<EXCEPTED, ParseResult<R>> mapper);
-
-    @ApiStatus.Experimental
-    ParseResult<EXCEPTED> whenSuccessful(Consumer<EXCEPTED> action);
-
-    @ApiStatus.Experimental
-    ParseResult<EXCEPTED> whenFailed(Consumer<FailedReason> action);
 
 }

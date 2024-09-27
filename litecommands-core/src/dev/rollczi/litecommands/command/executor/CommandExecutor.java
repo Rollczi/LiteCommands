@@ -4,8 +4,8 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandNode;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.priority.Prioritized;
-import dev.rollczi.litecommands.requirement.BindRequirement;
-import dev.rollczi.litecommands.requirement.ContextRequirement;
+import dev.rollczi.litecommands.bind.BindRequirement;
+import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 import dev.rollczi.litecommands.scope.Scopeable;
 

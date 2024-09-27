@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.command.executor;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.priority.PriorityLevel;
-import dev.rollczi.litecommands.requirement.BindRequirement;
-import dev.rollczi.litecommands.requirement.ContextRequirement;
+import dev.rollczi.litecommands.bind.BindRequirement;
+import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 

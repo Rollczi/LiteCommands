@@ -3,8 +3,8 @@ package dev.rollczi.litecommands.command.executor;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.requirement.BindRequirement;
-import dev.rollczi.litecommands.requirement.ContextRequirement;
+import dev.rollczi.litecommands.bind.BindRequirement;
+import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
 
 import java.util.ArrayList;

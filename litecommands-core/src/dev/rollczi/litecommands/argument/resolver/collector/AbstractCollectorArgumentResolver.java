@@ -159,13 +159,13 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         return ParseResult.success(rawResults);
     }
 
-    private CompletableFuture<ParseResult<List<E>>> parseRawResults(List<List<String>> rawResults, Invocation<SENDER> invocation, Argument<E> argument, Parser<SENDER, E> parser) {
-        List<CompletableFuture<RequirementResult<E>>> futures = rawResults.stream()
+    private CompletableFuture<ParseCompletedResult<List<E>>> parseRawResults(List<List<String>> rawResults, Invocation<SENDER> invocation, Argument<E> argument, Parser<SENDER, E> parser) {
+        List<CompletableFuture<ParseCompletedResult<E>>> futures = rawResults.stream()
             .map(rawResult -> parser.parse(invocation, argument, RawInput.of(rawResult)).asFuture())
             .collect(Collectors.toList());
 
         return FutureUtil.asList(futures).thenApply(requirementResults -> {
-            for (RequirementResult<E> result : requirementResults) {
+            for (ParseCompletedResult<E> result : requirementResults) {
                 if (result.isFailed()) {
                     return ParseResult.failure(result.getFailedReason());
                 }

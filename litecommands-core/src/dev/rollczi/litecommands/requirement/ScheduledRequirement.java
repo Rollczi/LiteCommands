@@ -1,8 +1,6 @@
-package dev.rollczi.litecommands.command.executor;
+package dev.rollczi.litecommands.requirement;
 
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;

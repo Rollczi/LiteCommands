@@ -1,5 +1,6 @@
-package dev.rollczi.litecommands.requirement;
+package dev.rollczi.litecommands.bind;
 
+import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.function.Supplier;

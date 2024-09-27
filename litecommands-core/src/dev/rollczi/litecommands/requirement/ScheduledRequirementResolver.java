@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.command.executor;
+package dev.rollczi.litecommands.requirement;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
@@ -8,14 +8,13 @@ import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.bind.BindRequirement;
 import dev.rollczi.litecommands.bind.BindResult;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.requirement.BindRequirement;
-import dev.rollczi.litecommands.requirement.ContextRequirement;
-import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;

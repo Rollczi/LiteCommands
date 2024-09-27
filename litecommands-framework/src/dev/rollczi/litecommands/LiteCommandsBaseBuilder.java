@@ -42,10 +42,10 @@ import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
+import dev.rollczi.litecommands.requirement.RequirementMatchService;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.scheduler.SchedulerReference;
-import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFastFormat;
 import dev.rollczi.litecommands.schematic.SchematicFastGenerator;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -79,7 +79,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -628,7 +627,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     protected CommandManager<SENDER> createCommandManager() {
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry, eventPublisher, strictService);
+        RequirementMatchService<SENDER> requirementMatchService = new RequirementMatchService<>(strictService, wrapperRegistry, contextRegistry, parserRegistry, bindRegistry, scheduler);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, requirementMatchService, eventPublisher);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
 
         return new CommandManager<>(this.platform, commandExecuteService, suggestionService);

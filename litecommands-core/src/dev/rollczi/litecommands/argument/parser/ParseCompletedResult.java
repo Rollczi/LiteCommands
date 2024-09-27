@@ -123,18 +123,8 @@ public class ParseCompletedResult<EXPECTED> implements ParseResult<EXPECTED>, Re
     }
 
     @Override
-    public CompletableFuture<RequirementResult<EXPECTED>> asFuture() {
+    public CompletableFuture<ParseCompletedResult<EXPECTED>> asFuture() {
         return CompletableFuture.completedFuture(this);
-    }
-
-    @Override
-    public RequirementResult<EXPECTED> asResultOr(RequirementResult<EXPECTED> result) {
-        return this;
-    }
-
-    @Override
-    public RequirementResult<EXPECTED> await() {
-        return this;
     }
 
     @Override
@@ -152,10 +142,15 @@ public class ParseCompletedResult<EXPECTED> implements ParseResult<EXPECTED>, Re
 
     @Override
     public String toString() {
-        return "ParseResult{" +
-            "successfulResult=" + successfulResult +
-            ", failedResult=" + failedResult +
-            '}';
+        if (this.isSuccessful()) {
+            return "ParseResult{successful=" + successfulResult + '}';
+        }
+
+        if (this.isSuccessfulNull()) {
+            return "ParseResult{successful=null}";
+        }
+
+        return "ParseResult{failed=" + failedResult + '}';
     }
 
 }
