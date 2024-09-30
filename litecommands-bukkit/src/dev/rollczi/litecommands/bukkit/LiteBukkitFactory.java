@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.bukkit;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
+import dev.rollczi.litecommands.bukkit.argument.OfflinePlayerArgument;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.bukkit.argument.WorldArgument;
 import dev.rollczi.litecommands.bukkit.context.LocationContext;
@@ -12,6 +13,7 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -26,20 +28,21 @@ public final class LiteBukkitFactory {
     }
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder() {
-        JavaPlugin plugin = JavaPlugin.getProvidingPlugin(LiteBukkitFactory.class);
-        String name = plugin.getDescription().getName()
-            .toLowerCase(Locale.ROOT)
-            .replace(" ", "-");
-
-        return builder(name, plugin, plugin.getServer());
+        Plugin plugin = JavaPlugin.getProvidingPlugin(LiteBukkitFactory.class);
+        return builder(createFallbackPrefix(plugin), plugin, plugin.getServer());
     }
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(String fallbackPrefix) {
-        return builder(fallbackPrefix, JavaPlugin.getProvidingPlugin(LiteBukkitFactory.class), Bukkit.getServer());
+        Plugin plugin = JavaPlugin.getProvidingPlugin(LiteBukkitFactory.class);
+        return builder(fallbackPrefix, plugin, plugin.getServer());
+    }
+
+    public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(Plugin plugin) {
+        return builder(createFallbackPrefix(plugin), plugin, plugin.getServer());
     }
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(String fallbackPrefix, Plugin plugin) {
-        return builder(fallbackPrefix, plugin, Bukkit.getServer());
+        return builder(fallbackPrefix, plugin, plugin.getServer());
     }
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(String fallbackPrefix, Plugin plugin, Server server) {
@@ -55,6 +58,7 @@ public final class LiteBukkitFactory {
             MessageRegistry<CommandSender> messageRegistry = internal.getMessageRegistry();
 
             builder
+                .bind(Plugin.class, () -> plugin)
                 .bind(Server.class, () -> server)
                 .bind(BukkitScheduler.class, () -> server.getScheduler())
 
@@ -65,6 +69,7 @@ public final class LiteBukkitFactory {
                 .argument(Player.class, new PlayerArgument(server, messageRegistry))
                 .argument(World.class, new WorldArgument(server, messageRegistry))
                 .argument(Location.class, new LocationArgument(messageRegistry))
+                .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, true))
 
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
                 .context(World.class, new WorldContext(messageRegistry))
@@ -74,4 +79,9 @@ public final class LiteBukkitFactory {
         });
     }
 
+    public static String createFallbackPrefix(Plugin plugin) {
+        return plugin.getName()
+            .toLowerCase(Locale.ROOT)
+            .replace(" ", "-");
+    }
 }
