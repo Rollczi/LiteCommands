@@ -9,6 +9,7 @@ import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
 import dev.rollczi.example.bukkit.command.NumberCommand;
+import dev.rollczi.example.bukkit.command.OfflineInfoCommand;
 import dev.rollczi.example.bukkit.command.RandomItemCommand;
 import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyBalanceCommand;
@@ -49,6 +50,7 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Commands
             .commands(
+                new OfflineInfoCommand(),
                 new ConvertCommand(),
                 new GameModeCommand(),
                 new KickCommand(),
