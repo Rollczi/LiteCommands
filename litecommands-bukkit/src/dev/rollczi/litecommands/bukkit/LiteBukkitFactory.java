@@ -9,9 +9,8 @@ import dev.rollczi.litecommands.bukkit.argument.WorldArgument;
 import dev.rollczi.litecommands.bukkit.context.LocationContext;
 import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.context.WorldContext;
+import dev.rollczi.litecommands.bukkit.util.BukkitFallbackPrefixUtil;
 import dev.rollczi.litecommands.message.MessageRegistry;
-import java.util.Locale;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -29,7 +28,7 @@ public final class LiteBukkitFactory {
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder() {
         Plugin plugin = JavaPlugin.getProvidingPlugin(LiteBukkitFactory.class);
-        return builder(createFallbackPrefix(plugin), plugin, plugin.getServer());
+        return builder(BukkitFallbackPrefixUtil.create(plugin), plugin, plugin.getServer());
     }
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(String fallbackPrefix) {
@@ -38,7 +37,7 @@ public final class LiteBukkitFactory {
     }
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(Plugin plugin) {
-        return builder(createFallbackPrefix(plugin), plugin, plugin.getServer());
+        return builder(BukkitFallbackPrefixUtil.create(plugin), plugin, plugin.getServer());
     }
 
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(String fallbackPrefix, Plugin plugin) {
@@ -79,9 +78,4 @@ public final class LiteBukkitFactory {
         });
     }
 
-    public static String createFallbackPrefix(Plugin plugin) {
-        return plugin.getName()
-            .toLowerCase(Locale.ROOT)
-            .replace(" ", "-");
-    }
 }
