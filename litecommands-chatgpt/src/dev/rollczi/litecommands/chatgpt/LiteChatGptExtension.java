@@ -2,10 +2,10 @@ package dev.rollczi.litecommands.chatgpt;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsInternal;
+import dev.rollczi.litecommands.annotations.join.Join;
 import dev.rollczi.litecommands.chatgpt.annotation.ChatGptAnnotationProcessor;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteExtension;
-import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.meta.MetaKey;
 
 import java.util.function.UnaryOperator;
@@ -39,10 +39,10 @@ public class LiteChatGptExtension<SENDER> implements LiteExtension<SENDER, ChatG
     @Override
     public void extend(LiteCommandsBuilder<SENDER, ?, ?> builder, LiteCommandsInternal<SENDER, ?> internal) {
         ChatGptClient chatGptClient = new ChatGptClient(settings);
-        ChatGptStringSuggester<SENDER> suggester = new ChatGptStringSuggester<>(internal.getScheduler(), chatGptClient, settings);
+        ChatGptStringArgumentResolver<SENDER> argumentResolver = new ChatGptStringArgumentResolver<>(internal.getScheduler(), chatGptClient, settings);
 
         builder
-            .argument(String.class, JoinArgument.KEY.withKey(ARGUMENT_KEY), suggester)
+            .argument(String.class, Join.KEY.withKey(ARGUMENT_KEY), argumentResolver)
             .annotations(configuration -> configuration
                 .processor(new ChatGptAnnotationProcessor<>())
             );

@@ -1,8 +1,8 @@
 package dev.rollczi.litecommands.join;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.profile.ProfiledParser;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.parser.TypedParser;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -11,16 +11,15 @@ import dev.rollczi.litecommands.range.Range;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class JoinArgumentResolver<SENDER, T> implements TypedParser<SENDER, T, JoinArgument<T>> {
+public abstract class JoinArgumentResolver<SENDER, T> extends ProfiledParser<SENDER, T, JoinProfile> {
 
-    @Override
-    public Class<? extends Argument> getArgumentType() {
-        return JoinArgument.class;
+    protected JoinArgumentResolver() {
+        super(JoinProfile.KEY);
     }
 
     @Override
-    public ParseResult<T> parseTyped(Invocation<SENDER> invocation, JoinArgument<T> argument, RawInput rawInput) {
-        int limit = argument.getLimit();
+    public ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput rawInput, JoinProfile joinProfile) {
+        int limit = joinProfile.getLimit();
         List<String> values = new ArrayList<>();
 
         if (!rawInput.hasNext()) {
@@ -32,14 +31,14 @@ public abstract class JoinArgumentResolver<SENDER, T> implements TypedParser<SEN
             limit--;
         }
 
-        return ParseResult.success(this.join(argument, values));
+        return ParseResult.success(this.join(joinProfile, values));
     }
 
-    protected abstract T join(JoinArgument<T> argument, List<String> values);
+    protected abstract T join(JoinProfile argument, List<String> values);
 
     @Override
-    public Range getTypedRange(JoinArgument<T> argument) {
-        return Range.range(1, argument.getLimit());
+    public Range getRange(Argument<T> argument, JoinProfile joinContainer) {
+        return Range.range(1, joinContainer.getLimit());
     }
 
 }

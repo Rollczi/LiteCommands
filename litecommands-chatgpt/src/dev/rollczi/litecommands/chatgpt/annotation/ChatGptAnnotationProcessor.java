@@ -9,10 +9,10 @@ public class ChatGptAnnotationProcessor<SENDER> implements AnnotationProcessor<S
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.on(ChatGpt.class, (annotation, metaHolder) -> {
-            metaHolder.meta()
-                .put(Meta.ARGUMENT_KEY, LiteChatGptExtension.ARGUMENT_KEY)
-                .put(LiteChatGptExtension.ARGUMENT_TOPIC, annotation.topic());
+        return invoker.onParameterRequirement(ChatGpt.class, (parameter, metaHolder, builder, requirement) -> {
+            requirement.meta()
+                .edit(Meta.ARGUMENT_KEY, argumentKey -> argumentKey.withKey(LiteChatGptExtension.ARGUMENT_KEY))
+                .put(LiteChatGptExtension.ARGUMENT_TOPIC, metaHolder.getAnnotation().topic());
         });
     }
 

@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsInternal;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteExtension;
-import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -54,9 +54,9 @@ public class LiteAdventureExtension<SENDER> implements LiteExtension<SENDER, Lit
 
             .argumentSuggester(Component.class, (invocation, argument, context) -> SuggestionResult.of("<" + argument.getName() + ">"))
 
-            .argumentParser(Component.class, JoinArgument.KEY, settings.colorizeArgument ? joinColor : joinRaw)
-            .argumentParser(Component.class, JoinArgument.KEY.withKey("raw"), joinRaw)
-            .argumentParser(Component.class, JoinArgument.KEY.withKey("color"), joinColor)
+            .argumentParser(Component.class, JoinProfile.KEY, settings.colorizeArgument ? joinColor : joinRaw)
+            .argumentParser(Component.class, JoinProfile.KEY.withKey("raw"), joinRaw)
+            .argumentParser(Component.class, JoinProfile.KEY.withKey("color"), joinColor)
 
             .context(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 

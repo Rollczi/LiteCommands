@@ -1,5 +1,7 @@
 package dev.rollczi.litecommands.schematic;
 
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
@@ -8,7 +10,6 @@ import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestUtil;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import java.util.Collections;
 import java.util.List;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -18,9 +19,9 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings({"rawtypes", "unchecked"})
 class SchematicFastGeneratorTest {
 
-    static WrapperRegistry wrapperRegistry = new WrapperRegistry();
     static ValidatorService validatorService = new ValidatorService();
-    static SchematicGenerator schematicGenerator = new SchematicFastGenerator(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry);
+    static ParserRegistry parserRegistry = new ParserRegistryImpl();
+    static SchematicGenerator schematicGenerator = new SchematicFastGenerator(SchematicFormat.angleBrackets(), validatorService, parserRegistry);
 
     @BeforeAll
     static void beforeAll() {

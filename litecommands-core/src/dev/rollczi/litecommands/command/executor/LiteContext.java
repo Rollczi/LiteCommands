@@ -1,11 +1,9 @@
 package dev.rollczi.litecommands.command.executor;
 
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.reflect.ReflectUtil;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.RequirementMatch;
 import dev.rollczi.litecommands.requirement.RequirementsResult;
-import dev.rollczi.litecommands.wrapper.Wrap;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +19,7 @@ public class LiteContext<SENDER> {
     }
 
     public <T> T argument(String name, Class<T> type) {
-        return this.get(name, WrapFormat.notWrapped(type));
+        return this.get(name, TypeToken.of(type));
     }
 
     public String argumentQuoted(String name) {
@@ -30,27 +28,27 @@ public class LiteContext<SENDER> {
 
     @SuppressWarnings("unchecked")
     public <T> Optional<T> argumentOptional(String name, Class<T> type) {
-        return (Optional<T>) this.get(name, WrapFormat.of(type, Optional.class));
+        return (Optional<T>) this.get(name, TypeToken.of(Optional.class));
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
     public <T> T argumentNullable(String name, Class<T> type) {
-        Optional<T> optional = this.get(name, WrapFormat.of(type, Optional.class));
+        Optional<T> optional = this.get(name, TypeToken.of(Optional.class));
 
         return optional.orElse(null);
     }
 
     public boolean argumentFlag(String name) {
-        return Boolean.TRUE.equals(this.get(name, WrapFormat.notWrapped(boolean.class)));
+        return Boolean.TRUE.equals(this.get(name, TypeToken.of(boolean.class)));
     }
 
     public String argumentJoin(String name) {
-        return this.get(name, WrapFormat.notWrapped(String.class));
+        return this.get(name, TypeToken.of(String.class));
     }
 
     public <T> T context(String name, Class<T> type) {
-        return this.get(name, WrapFormat.notWrapped(type));
+        return this.get(name, TypeToken.of(type));
     }
 
     public Invocation<SENDER> invocation() {
@@ -58,30 +56,23 @@ public class LiteContext<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    private <PARSED, OUT> OUT get(String name, WrapFormat<PARSED, OUT> format) {
+    private <T> T get(String name, TypeToken<T> format) {
         RequirementMatch match = result.get(name);
 
         if (match == null) {
             throw new IllegalArgumentException("Argument with name '" + name + "' not found");
         }
 
-        Wrap<PARSED> wrap = (Wrap<PARSED>) match.getResult();
+        Object matchResult = match.getResult();
 
-        if (wrap.getParsedType() != format.getParsedType()) {
-            throw new IllegalArgumentException("Argument with name '" + name + "' is not instance of " + format.getParsedType().getName() + " but " + wrap.getParsedType().getName());
-        }
-
-        Object unwrap = wrap.unwrap();
-
-        if (unwrap == null) {
+        if (matchResult == null) {
             return null;
         }
 
-        if (!ReflectUtil.instanceOf(unwrap, format.getOutTypeOrParsed())) {
-            throw new IllegalArgumentException("Argument with name '" + name + "' is not instance of " + format.getOutTypeOrParsed().getName() + " but " + unwrap.getClass().getName());
+        if (matchResult.getClass() != format.getRawType()) {
+            throw new IllegalArgumentException("Argument with name '" + name + "' is not instance of " + format.getRawType().getName() + " but " + matchResult.getClass().getName());
         }
-
-        return (OUT) unwrap;
+        return (T) matchResult;
     }
 
     @ApiStatus.Experimental

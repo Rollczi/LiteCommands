@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.ParserChainAccessor;
 import dev.rollczi.litecommands.input.raw.RawInput;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import org.jetbrains.annotations.ApiStatus;
@@ -14,7 +15,7 @@ public abstract class ArgumentResolverChained<SENDER, PARSED> implements Multipl
     @Override
     public ParseResult<PARSED> parse(Invocation<SENDER> invocation, Argument<PARSED> argument, RawInput input, ParserChainAccessor<SENDER> chainAccessor) {
         if (!input.hasNext()) {
-            throw new IllegalArgumentException("To parse argument, you need to provide at least one argument.");
+            return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
         }
 
         return this.parse(invocation, argument, input.next(), chainAccessor);

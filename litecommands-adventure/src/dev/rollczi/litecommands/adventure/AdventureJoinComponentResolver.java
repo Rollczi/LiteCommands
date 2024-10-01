@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.adventure;
 
-import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.join.JoinArgumentResolver;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -17,7 +17,7 @@ class AdventureJoinComponentResolver<SENDER> extends JoinArgumentResolver<SENDER
     }
 
     @Override
-    protected Component join(JoinArgument<Component> argument, List<String> values) {
+    protected Component join(JoinProfile argument, List<String> values) {
         JoinConfiguration configuration = JoinConfiguration
             .separator(serializer.deserialize(argument.getSeparator()));
 

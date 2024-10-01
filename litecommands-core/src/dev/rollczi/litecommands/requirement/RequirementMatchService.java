@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.context.ContextRegistry;
-import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scheduler.Scheduler;
@@ -14,10 +13,6 @@ import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.validator.ValidatorResult;
 import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
-import dev.rollczi.litecommands.wrapper.Wrap;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
-import dev.rollczi.litecommands.wrapper.Wrapper;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,18 +24,15 @@ public class RequirementMatchService<SENDER> {
 
     private final ScheduledRequirementResolver<SENDER> scheduledRequirementResolver;
     private final StrictService strictService;
-    private final WrapperRegistry wrapperRegistry;
 
     public RequirementMatchService(
         StrictService strictService,
-        WrapperRegistry wrapperRegistry,
         ContextRegistry<SENDER> contextRegistry,
         ParserRegistry<SENDER> parserRegistry,
         BindRegistry bindRegistry,
         Scheduler scheduler
     ) {
         this.strictService = strictService;
-        this.wrapperRegistry = wrapperRegistry;
         this.scheduledRequirementResolver = new ScheduledRequirementResolver<>(contextRegistry, parserRegistry, bindRegistry, scheduler);
     }
 
@@ -82,18 +74,7 @@ public class RequirementMatchService<SENDER> {
             Requirement<?> requirement = scheduledRequirement.getRequirement();
 
             if (requirementResult.isFailed()) {
-                WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
-                Object failedReason = requirementResult.getFailedReason();
-                Wrapper wrapper = wrapperRegistry.getWrappedExpectedFactory(wrapperFormat);
-
-                if (failedReason == InvalidUsage.Cause.MISSING_ARGUMENT && wrapper.canCreateEmpty()) {
-                    Wrap<?> wrap = wrapper.createEmpty(wrapperFormat);
-
-                    matches.add(new RequirementMatch(requirement, wrap));
-                    return match(invocation, executor, matches, requirementIterator, matcher);
-                }
-
-                return CompletableFuture.completedFuture(CommandExecutorMatchResult.failed(failedReason));
+                return CompletableFuture.completedFuture(CommandExecutorMatchResult.failed(requirementResult.getFailedReason()));
             }
 
             if (requirementResult.isSuccessfulNull()) {
@@ -145,11 +126,7 @@ public class RequirementMatchService<SENDER> {
 
     @SuppressWarnings("unchecked")
     private <R extends Requirement<? extends T>, T> RequirementMatch toMatch(R requirement, T result) {
-        WrapFormat<T, ?> wrapperFormat = (WrapFormat<T, ?>) requirement.getWrapperFormat();
-        Wrap<T> wrap = wrapperRegistry.wrap(() -> result, wrapperFormat);
-
-        return new RequirementMatch(requirement, wrap);
+        return new RequirementMatch(requirement, result);
     }
-
 
 }

@@ -19,7 +19,6 @@ import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.shared.ThrowingSupplier;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -64,27 +63,27 @@ class ScheduledRequirementResolver<SENDER> {
     }
 
     @SuppressWarnings("unchecked")
-    private <PARSED, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementFutureResult<PARSED> matchArgument(Argument<PARSED> argument, Invocation<SENDER> invocation, MATCHER matcher) {
-        WrapFormat<PARSED, ?> wrapFormat = argument.getWrapperFormat();
-        ParserSet<SENDER, PARSED> parserSet = (ParserSet<SENDER, PARSED>) cachedParserSets.get(wrapFormat.getParsedType(), argument.getKey());
+    private <T, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementFutureResult<T> matchArgument(Argument<T> argument, Invocation<SENDER> invocation, MATCHER matcher) {
+        Class<T> rawType = argument.getType().getRawType();
+        ParserSet<SENDER, T> parserSet = (ParserSet<SENDER, T>) cachedParserSets.get(rawType, argument.getKey());
 
         if (parserSet == null) {
-            parserSet = parserRegistry.getParserSet(wrapFormat.getParsedType(), argument.getKey());
-            cachedParserSets.put(wrapFormat.getParsedType(), argument.getKey(), parserSet);
+            parserSet = parserRegistry.getParserSet(rawType, argument.getKey());
+            cachedParserSets.put(rawType, argument.getKey(), parserSet);
         }
 
-        Parser<SENDER, PARSED> parser = parserSet.getValidParser(invocation, argument);
+        Parser<SENDER, T> parser = parserSet.getValidParserOrThrow(argument);
 
         return matcher.nextArgument(invocation, argument, parser);
     }
 
-    private <PARSED> RequirementFutureResult<PARSED> matchContext(ContextRequirement<PARSED> contextRequirement, Invocation<SENDER> invocation) {
-        return contextRegistry.provideContext(contextRequirement.getWrapperFormat().getParsedType(), invocation);
+    private <T> RequirementFutureResult<T> matchContext(ContextRequirement<T> contextRequirement, Invocation<SENDER> invocation) {
+        return contextRegistry.provideContext(contextRequirement.getType().getRawType(), invocation);
     }
 
-    private <PARSED> RequirementFutureResult<?> matchBind(BindRequirement<PARSED> bindRequirement) {
-        WrapFormat<PARSED, ?> wrapFormat = bindRequirement.getWrapperFormat();
-        BindResult<PARSED> instance = bindRegistry.getInstance(wrapFormat.getParsedType());
+    private <T> RequirementFutureResult<?> matchBind(BindRequirement<T> bindRequirement) {
+        Class<T> rawType = bindRequirement.getType().getRawType();
+        BindResult<T> instance = bindRegistry.getInstance(rawType);
 
         if (instance.isOk()) {
             return ParseResult.success(instance.getSuccess());

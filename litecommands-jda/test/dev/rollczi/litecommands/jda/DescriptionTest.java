@@ -5,11 +5,11 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.description.Description;
 import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -83,7 +83,7 @@ public class DescriptionTest {
 
     }
 
-    JDACommandTranslator translator = new JDACommandTranslator(new WrapperRegistry())
+    JDACommandTranslator translator = new JDACommandTranslator(new ParserRegistryImpl<>())
         .type(String.class,       OptionType.STRING, option -> option.getAsString())
         .type(Integer.class,      OptionType.INTEGER,     option -> option.getAsInt());
 

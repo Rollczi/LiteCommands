@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.argument.parser;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.invocation.Invocation;
 import org.jetbrains.annotations.Nullable;
 
 class MergedParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
@@ -14,14 +13,14 @@ class MergedParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
     }
 
     @Override
-    public @Nullable Parser<SENDER, PARSED> getValidParser(Invocation<SENDER> invocation, Argument<PARSED> argument) {
+    public @Nullable Parser<SENDER, PARSED> getValidParser(Argument<PARSED> argument) {
         for (ParserSet<SENDER, PARSED> parserSet : parserSets) {
 
             if (parserSet == null) {
                 continue;
             }
 
-            Parser<SENDER, PARSED> validParser = parserSet.getValidParser(invocation, argument);
+            Parser<SENDER, PARSED> validParser = parserSet.getValidParser(argument);
 
             if (validParser != null) {
                 return validParser;

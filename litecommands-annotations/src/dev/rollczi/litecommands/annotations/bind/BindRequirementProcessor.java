@@ -12,8 +12,8 @@ public class BindRequirementProcessor<SENDER> extends RequirementProcessor<SENDE
     }
 
     @Override
-    public <PARSED> Requirement<PARSED> create(AnnotationHolder<Bind, PARSED, ?> holder) {
-        return BindRequirement.of(() -> holder.getName(), holder.getFormat());
+    public Requirement<?> create(AnnotationHolder<Bind, ?> holder) {
+        return BindRequirement.of(() -> holder.getName(), holder.getType());
     }
 
 }

@@ -6,9 +6,8 @@ import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -19,7 +18,6 @@ import java.util.Optional;
 class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
     private final AnnotationProcessorService<SENDER> annotationProcessorService;
-    private final WrapperRegistry wrapperRegistry;
     private final Method method;
     private CommandBuilder<SENDER> commandBuilder;
     private final MethodDefinition methodDefinition;
@@ -28,9 +26,8 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
     private boolean isExecutorStructure = false;
 
-    public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, MethodValidatorService<SENDER> validatorService, WrapperRegistry wrapperRegistry, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
+    public MethodInvoker(AnnotationProcessorService<SENDER> annotationProcessorService, MethodValidatorService<SENDER> validatorService, Object instance, Method method, CommandBuilder<SENDER> commandBuilder) {
         this.annotationProcessorService = annotationProcessorService;
-        this.wrapperRegistry = wrapperRegistry;
         this.method = method;
         this.commandBuilder = commandBuilder;
         this.methodDefinition = new MethodDefinition(method);
@@ -83,7 +80,7 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
                 requirement.meta().put(Meta.REQUIREMENT_PARAMETER, parameter);
                 methodDefinition.putRequirement(index, requirement);
-                annotationProcessorService.process(new ParameterInvoker<>(wrapperRegistry, commandBuilder, parameter, requirement));
+                annotationProcessorService.process(new ParameterInvoker<>(commandBuilder, parameter, requirement));
             }
         }
 
@@ -114,10 +111,8 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
         return commandBuilder;
     }
 
-    private <A extends Annotation> AnnotationHolder<A, ?, ?> createHolder(A annotation, Parameter parameter) {
-        WrapFormat<?, ?> format = MethodParameterUtil.wrapperFormat(wrapperRegistry, parameter);
-
-        return AnnotationHolder.of(annotation, format, () -> parameter.getName());
+    private <A extends Annotation> AnnotationHolder<A, ?> createHolder(A annotation, Parameter parameter) {
+        return AnnotationHolder.of(annotation, TypeToken.ofParameter(parameter), () -> parameter.getName());
     }
 
     @Override

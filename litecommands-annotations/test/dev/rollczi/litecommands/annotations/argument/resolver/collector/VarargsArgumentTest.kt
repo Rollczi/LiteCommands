@@ -10,9 +10,9 @@ import dev.rollczi.litecommands.argument.resolver.standard.DurationArgumentResol
 import dev.rollczi.litecommands.argument.resolver.standard.EnumArgumentResolver
 import dev.rollczi.litecommands.argument.resolver.standard.NumberArgumentResolver
 import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause
+import dev.rollczi.litecommands.reflect.type.TypeToken
 import dev.rollczi.litecommands.suggestion.Suggestion
 import dev.rollczi.litecommands.unit.AssertExecute
-import dev.rollczi.litecommands.wrapper.WrapFormat
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.TestInstance
@@ -45,7 +45,7 @@ internal class VarargsArgumentTest : LiteTestSpec() {
         }
     }
 
-    val TEST_ENUM_ARGUMENT = Argument.of("test", WrapFormat.notWrapped(TestEnum::class.java))
+    val TEST_ENUM_ARGUMENT = Argument.of("test", TypeToken.of(TestEnum::class.java))
 
     enum class TestEnum {
         FIRST,

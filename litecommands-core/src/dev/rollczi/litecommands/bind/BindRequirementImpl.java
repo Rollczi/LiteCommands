@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.bind;
 
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -10,12 +10,12 @@ import java.util.function.Supplier;
 class BindRequirementImpl<T> implements BindRequirement<T> {
 
     private final Supplier<String> name;
-    private final WrapFormat<T, ?> format;
+    private final TypeToken<T> typeToken;
     private final Meta meta = Meta.create();
 
-    BindRequirementImpl(Supplier<String> name, WrapFormat<T, ?> format) {
+    BindRequirementImpl(Supplier<String> name, TypeToken<T> typeToken) {
         this.name = name;
-        this.format = format;
+        this.typeToken = typeToken;
     }
 
     @Override
@@ -24,8 +24,8 @@ class BindRequirementImpl<T> implements BindRequirement<T> {
     }
 
     @Override
-    public WrapFormat<T, ?> getWrapperFormat() {
-        return format;
+    public TypeToken<T> getType() {
+        return typeToken;
     }
 
     @Override

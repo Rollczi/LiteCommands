@@ -1,12 +1,11 @@
 package dev.rollczi.litecommands.argument.resolver.collector;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.SimpleArgument;
+import dev.rollczi.litecommands.argument.profile.ProfiledMultipleArgumentResolver;
 import dev.rollczi.litecommands.argument.parser.ParseCompletedResult;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
-import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
@@ -17,15 +16,14 @@ import dev.rollczi.litecommands.input.raw.RawInputViewLegacyAdapter;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.RequirementCondition;
-import dev.rollczi.litecommands.requirement.RequirementResult;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.util.FutureUtil;
 import dev.rollczi.litecommands.util.StringUtil;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> extends TypedArgumentResolver<SENDER, COLLECTION, CollectorArgument<COLLECTION>> {
+public abstract class AbstractCollectorArgumentResolver<SENDER, COLLECTION> extends ProfiledMultipleArgumentResolver<SENDER, COLLECTION, CollectionArgumentProfile> {
 
     private static final int BASE_ARGUMENT_COUNT = 1;
     private static final int NO_INDEX = -1;
@@ -46,20 +44,20 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
     private final SuggesterRegistry<SENDER> suggesterRegistry;
 
     protected AbstractCollectorArgumentResolver(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry) {
-        super(CollectorArgument.class);
+        super(CollectionArgumentProfile.KEY);
         this.parserRegistry = parserRegistry;
         this.suggesterRegistry = suggesterRegistry;
     }
 
     @Override
-    public ParseResult<COLLECTION> parseTyped(Invocation<SENDER> invocation, CollectorArgument<COLLECTION> context, RawInput rawInput) {
-        return parse(this.getElementType(context, invocation), rawInput, context, invocation);
+    protected ParseResult<COLLECTION> parse(Invocation<SENDER> invocation, Argument<COLLECTION> context, RawInput rawInput, CollectionArgumentProfile collectionArgument) {
+        return parse(this.getElementType(collectionArgument), rawInput, context, collectionArgument, invocation);
     }
 
-    private ParseResult<COLLECTION> parse(Class<E> componentType, RawInput rawInput, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
-        Collector<E, ?, ? extends COLLECTION> collector = getCollector(collectorArgument, invocation);
+    private <E> ParseResult<COLLECTION> parse(TypeToken<E> componentType, RawInput rawInput, Argument<COLLECTION> argument, CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+        Collector<E, ?, ? extends COLLECTION> collector = getCollector(collectionArgument, invocation);
 
-        return parseToList(componentType, rawInput, collectorArgument, invocation)
+        return parseToList(componentType, rawInput, argument, collectionArgument, invocation)
             .map(list -> (COLLECTION) list.stream().collect(collector))
             .mapFailure(failedReason -> {
                 COLLECTION empty = Stream.<E>empty().collect(collector);
@@ -69,20 +67,23 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
     }
 
     @Override
-    public boolean matchParse(Invocation<SENDER> invocation, Argument<COLLECTION> collectorArgument, RawInput input) {
+    public boolean matchParse(Invocation<SENDER> invocation, Argument<COLLECTION> context, RawInput input, CollectionArgumentProfile collectionArgument) {
+        return matchParse0(invocation, context, input, collectionArgument);
+    }
+
+    private <E> boolean matchParse0(Invocation<SENDER> invocation, Argument<COLLECTION> collectionArgument, RawInput input, CollectionArgumentProfile collectionArgumentContainer) {
         if (input.hasNext() && input.seeNext().isEmpty()) {
             input.next();
             return true;
         }
 
-        CollectorArgument<COLLECTION> collectorArg = (CollectorArgument<COLLECTION>) collectorArgument;
-        Class<E> elementType = getElementType(collectorArg, invocation);
-        Argument<E> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(elementType));
-        Parser<SENDER, E> parser = parserRegistry.getParser(invocation, argument);
+        TypeToken<E> elementType = this.getElementType(collectionArgumentContainer);
+        Argument<E> argument = collectionArgument.withType(elementType);
+        Parser<SENDER, E> parser = parserRegistry.getParser(argument);
         Range range = parser.getRange(argument);
 
         RawInputViewLegacyAdapter view = new RawInputViewLegacyAdapter(input);
-        ParseCompletedResult<List<List<String>>> result = findRawValues(view, range, collectorArg.getDelimiter());
+        ParseCompletedResult<List<List<String>>> result = findRawValues(view, range, collectionArgumentContainer.getDelimiter());
 
         if (result.isFailed()) {
             return false;
@@ -98,10 +99,10 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         return true; // because we don't want to stop a suggestion (collection can be empty)
     }
 
-    private ParseResult<List<E>> parseToList(Class<E> componentType, RawInput rawInput, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
-        Argument<E> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
+    private <E> ParseResult<List<E>> parseToList(TypeToken<E> componentType, RawInput rawInput, Argument<COLLECTION> collectionArgument, CollectionArgumentProfile collectorArgumentHolder, Invocation<SENDER> invocation) {
+        Argument<E> argument = collectionArgument.withType(componentType);
 
-        Parser<SENDER, E> parser = parserRegistry.getParser(invocation, argument);
+        Parser<SENDER, E> parser = parserRegistry.getParser(argument);
 
         if (rawInput.hasNext() && rawInput.seeNext().isEmpty()) {
             String next = rawInput.next();
@@ -116,7 +117,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         }
 
         Range range = parser.getRange(argument);
-        String delimiter = collectorArgument.getDelimiter();
+        String delimiter = collectorArgumentHolder.getDelimiter();
 
         RawInputViewLegacyAdapter view = new RawInputViewLegacyAdapter(rawInput);
 
@@ -159,7 +160,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         return ParseResult.success(rawResults);
     }
 
-    private CompletableFuture<ParseCompletedResult<List<E>>> parseRawResults(List<List<String>> rawResults, Invocation<SENDER> invocation, Argument<E> argument, Parser<SENDER, E> parser) {
+    private <E> CompletableFuture<ParseCompletedResult<List<E>>> parseRawResults(List<List<String>> rawResults, Invocation<SENDER> invocation, Argument<E> argument, Parser<SENDER, E> parser) {
         List<CompletableFuture<ParseCompletedResult<E>>> futures = rawResults.stream()
             .map(rawResult -> parser.parse(invocation, argument, RawInput.of(rawResult)).asFuture())
             .collect(Collectors.toList());
@@ -200,27 +201,27 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         return index;
     }
 
-    abstract Collector<E, ?, ? extends COLLECTION> getCollector(CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation);
+    abstract <E> Collector<E, ?, ? extends COLLECTION> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation);
 
     @Override
-    public Range getTypedRange(CollectorArgument<COLLECTION> argument) {
+    public Range getRange(Argument<COLLECTION> argument, CollectionArgumentProfile collectionArgumentContainer) {
         return Range.moreThan(0);
     }
 
     @Override
-    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, CollectorArgument<COLLECTION> argument, SuggestionContext context) {
-        return suggest(this.getElementType(argument, invocation), context, argument, invocation);
+    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<COLLECTION> argument, SuggestionContext context, CollectionArgumentProfile collectionArgumentContainer) {
+        return suggest(this.getElementType(collectionArgumentContainer), context, argument, collectionArgumentContainer, invocation);
     }
 
-    private <T> SuggestionResult suggest(Class<T> componentType, SuggestionContext context, CollectorArgument<COLLECTION> collectorArgument, Invocation<SENDER> invocation) {
-        Argument<T> argument = new SimpleArgument<>(collectorArgument.getKeyName(), WrapFormat.notWrapped(componentType));
+    private <T> SuggestionResult suggest(TypeToken<T> componentType, SuggestionContext context, Argument<COLLECTION> collectionArgument, CollectionArgumentProfile collectorArgumentHolder, Invocation<SENDER> invocation) {
+        Argument<T> argument = collectionArgument.withType(componentType);
 
-        Parser<SENDER, T> parser = parserRegistry.getParser(invocation, argument);
-        Suggester<SENDER, T> suggester = suggesterRegistry.getSuggester(componentType, argument.getKey());
+        Parser<SENDER, T> parser = parserRegistry.getParser(argument);
+        Suggester<SENDER, T> suggester = suggesterRegistry.getSuggester(componentType.getRawType(), argument.getKey());
 
         Suggestion current = context.getCurrent();
         Range range = parser.getRange(argument);
-        String delimiter = collectorArgument.getDelimiter();
+        String delimiter = collectorArgumentHolder.getDelimiter();
         RawInputView fullView = RawInputView.of(current.multilevel());
 
         return this.suggestWithDelimiter(fullView, argument, suggester, parser, range, delimiter, context, invocation);
@@ -334,7 +335,9 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, E, COLLECTION> e
         return null;
     }
 
-    abstract protected Class<E> getElementType(CollectorArgument<COLLECTION> context, Invocation<SENDER> invocation);
+    protected <E> TypeToken<E> getElementType(CollectionArgumentProfile context) {
+        return (TypeToken<E>) context.getElementTypeToken();
+    }
 
     private static class SuccessRequirementCondition implements RequirementCondition {
         private final Object failedReason;

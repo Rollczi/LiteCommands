@@ -65,7 +65,7 @@ class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInpu
                 return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 
-            Class<PARSED> outType = argument.getWrapperFormat().getParsedType();
+            Class<PARSED> outType = argument.getType().getRawType();
             consumedArguments.add(argument.getName());
 
             if (outType.isAssignableFrom(input.getClass())) {

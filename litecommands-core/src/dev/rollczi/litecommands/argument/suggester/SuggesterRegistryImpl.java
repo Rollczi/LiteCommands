@@ -55,7 +55,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER>,
 
     @Override
     public <T> SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context) {
-        Class<T> parsedType = argument.getWrapperFormat().getParsedType();
+        Class<T> parsedType = argument.getType().getRawType();
         Suggester<SENDER, T> suggester = getSuggester(parsedType, argument.getKey());
 
         return suggester.suggest(invocation, argument, context);
@@ -71,7 +71,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER>,
 
         @Override
         void registerSuggester(TypeRange<PARSED> parsedType, ArgumentKey key, Suggester<SENDER, PARSED> parser) {
-            if (key.isUniversal()) {
+            if (key.isDefaultNamespace()) {
                 this.universalTypedBucket.registerSuggester(parsedType, key, parser);
                 return;
             }
@@ -108,7 +108,7 @@ public class SuggesterRegistryImpl<SENDER> implements SuggesterRegistry<SENDER>,
 
         @Nullable
         Suggester<SENDER, PARSED> getSuggester(ArgumentKey key) {
-            String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
+            String namespace = ignoreNamespace ? ArgumentKey.DEFAULT_NAMESPACE : key.getNamespace();
             Suggester<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);
 
             if (bucket != null) {

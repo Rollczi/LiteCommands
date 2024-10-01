@@ -43,7 +43,7 @@ public class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDE
         this.instance = instance;
         this.definition = definition;
         this.validatorService = validatorService;
-        this.meta.apply(meta);
+        this.meta.putAll(meta);
     }
 
     public Object getInstance() {
@@ -72,11 +72,11 @@ public class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDE
                 return CommandExecutorMatchResult.failed(new IllegalStateException("Not all parameters are resolved, missing " + name));
             }
 
-            Object unwrapped = requirementMatch.getResult().unwrap();
+            Object result = requirementMatch.getResult();
             Parameter parameter = parameters[parameterIndex];
             Class<?> type = parameter.getType();
 
-            if (unwrapped == null && type.isPrimitive()) {
+            if (result == null && type.isPrimitive()) {
                 Class<?> primitive = ReflectUtil.primitiveToBoxed(type);
 
                 return CommandExecutorMatchResult.failed(new LiteCommandsReflectInvocationException(
@@ -86,7 +86,7 @@ public class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDE
                 ));
             }
 
-            objects[parameterIndex] = unwrapped;
+            objects[parameterIndex] = result;
             parameterIndex++;
         }
 

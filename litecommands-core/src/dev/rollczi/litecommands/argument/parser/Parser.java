@@ -3,9 +3,7 @@ package dev.rollczi.litecommands.argument.parser;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.input.raw.RawInput;
-import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.range.Rangeable;
 import dev.rollczi.litecommands.requirement.RequirementResult;
 import org.jetbrains.annotations.ApiStatus;
@@ -20,7 +18,7 @@ public interface Parser<SENDER, PARSED> extends Rangeable<Argument<PARSED>> {
     /**
      * This method is used to check if the argument can be parsed by the parser. (pre-parsing check)
      */
-    default boolean canParse(Invocation<SENDER> invocation, Argument<PARSED> argument) {
+    default boolean canParse(Argument<PARSED> argument) {
         return true;
     }
 

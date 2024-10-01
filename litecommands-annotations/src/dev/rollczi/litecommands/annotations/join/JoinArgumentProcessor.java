@@ -1,9 +1,10 @@
 package dev.rollczi.litecommands.annotations.join;
 
 import dev.rollczi.litecommands.annotations.requirement.RequirementProcessor;
-import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.annotations.AnnotationHolder;
-import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.join.JoinProfile;
+import dev.rollczi.litecommands.requirement.Requirement;
 
 public class JoinArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, Join> {
 
@@ -12,7 +13,7 @@ public class JoinArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, 
     }
 
     @Override
-    public <T> Argument<T> create(AnnotationHolder<Join, T, ?> holder) {
+    protected Requirement<?> create(AnnotationHolder<Join, ?> holder) {
         Join annotation = holder.getAnnotation();
         String name = annotation.value();
 
@@ -20,7 +21,7 @@ public class JoinArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, 
             name = holder.getName();
         }
 
-        return new JoinArgument<>(name, holder.getFormat(), annotation.separator(), annotation.limit());
+        return Argument.profiled(name, holder.getType(), new JoinProfile(annotation.separator(), annotation.limit()));
     }
 
 }

@@ -12,8 +12,8 @@ public class ContextRequirementProcessor<SENDER> extends RequirementProcessor<SE
     }
 
     @Override
-    public <PARSED> Requirement<PARSED> create(AnnotationHolder<Context, PARSED, ?> holder) {
-        return ContextRequirement.of(() -> holder.getName(), holder.getFormat());
+    protected Requirement<?> create(AnnotationHolder<Context, ?> holder) {
+        return ContextRequirement.of(() -> holder.getName(), holder.getType());
     }
 
 }

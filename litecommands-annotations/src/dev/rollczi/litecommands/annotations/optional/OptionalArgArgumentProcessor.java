@@ -1,10 +1,10 @@
 package dev.rollczi.litecommands.annotations.optional;
 
 import dev.rollczi.litecommands.annotations.AnnotationHolder;
-import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.requirement.RequirementProcessor;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.SimpleArgument;
+import dev.rollczi.litecommands.requirement.Requirement;
 
 public class OptionalArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, OptionalArg> {
 
@@ -13,7 +13,7 @@ public class OptionalArgArgumentProcessor<SENDER> extends RequirementProcessor<S
     }
 
     @Override
-    public <T> Argument<T> create(AnnotationHolder<OptionalArg, T, ?> holder) {
+    protected Requirement<?> create(AnnotationHolder<OptionalArg, ?> holder) {
         OptionalArg annotation = holder.getAnnotation();
 
         String name = annotation.value();
@@ -22,6 +22,7 @@ public class OptionalArgArgumentProcessor<SENDER> extends RequirementProcessor<S
             name = holder.getName();
         }
 
-        return new SimpleArgument<>(name, holder.getFormat(), true);
+        return Argument.of(name, holder.getType(), true);
     }
+
 }

@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 @Command(name = "user")
 public class UserCommand {
 
-    @Execute(name = "show")
+    @Execute(name = "show-async")
     void show(@Context CommandSender sender, @Arg User user) {
         sender.sendMessage("User: " + user.getUuid() + " " + user.getName());
     }

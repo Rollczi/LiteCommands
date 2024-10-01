@@ -10,7 +10,6 @@ import dev.rollczi.litecommands.shared.BiHashMap;
 import dev.rollczi.litecommands.shared.BiMap;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import dev.rollczi.litecommands.util.StringUtil;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -54,16 +53,24 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, Parse
     }
 
     @Override
-    public <PARSED> Parser<SENDER, PARSED> getParser(Invocation<SENDER> invocation, Argument<PARSED> argument) {
-        Class<PARSED> argumentType = argument.getWrapperFormat().getParsedType();
+    public <PARSED> Parser<SENDER, PARSED> getParser(Argument<PARSED> argument) {
+        Class<PARSED> argumentType = argument.getType().getRawType();
         ParserSet<SENDER, PARSED> parserSet = getParserSet(argumentType, argument.getKey());
 
-        return parserSet.getValidParserOrThrow(invocation, argument);
+        return parserSet.getValidParserOrThrow(argument);
+    }
+
+    @Override
+    public <T> Parser<SENDER, T> getParserOrNull(Argument<T> argument) {
+        Class<T> argumentType = argument.getType().getRawType();
+        ParserSet<SENDER, T> parserSet = getParserSet(argumentType, argument.getKey());
+
+        return parserSet.getValidParser(argument);
     }
 
     @Override
     public <T> ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
-        Parser<SENDER, T> parser = getParser(invocation, argument);
+        Parser<SENDER, T> parser = getParser(argument);
 
         return parser.parse(invocation, argument, input);
     }
@@ -78,7 +85,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, Parse
 
         @Override
         void registerParser(TypeRange<PARSED> parsedType, ArgumentKey key, Parser<SENDER, PARSED> parser) {
-            if (key.isUniversal()) {
+            if (key.isDefaultNamespace()) {
                 this.universalTypedBucket.registerParser(parsedType, key, parser);
                 return;
             }
@@ -123,7 +130,7 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, Parse
 
         @Nullable
         ParserSet<SENDER, PARSED> getParserSet(ArgumentKey key) {
-            String namespace = ignoreNamespace ? ArgumentKey.UNIVERSAL_NAMESPACE : key.getNamespace();
+            String namespace = ignoreNamespace ? ArgumentKey.DEFAULT_NAMESPACE : key.getNamespace();
             ParserSetImpl<SENDER, PARSED> bucket = buckets.get(key.getKey(), namespace);
 
             if (bucket != null) {
@@ -149,8 +156,8 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, Parse
         }
 
         @Override
-        public boolean canParse(Invocation<SENDER> invocation, Argument<PARSED> argument) {
-            return parser.canParse(invocation, argument);
+        public boolean canParse(Argument<PARSED> argument) {
+            return parser.canParse(argument);
         }
 
         @Override

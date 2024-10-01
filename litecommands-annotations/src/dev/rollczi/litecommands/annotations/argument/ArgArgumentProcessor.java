@@ -3,7 +3,7 @@ package dev.rollczi.litecommands.annotations.argument;
 import dev.rollczi.litecommands.annotations.AnnotationHolder;
 import dev.rollczi.litecommands.annotations.requirement.RequirementProcessor;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.SimpleArgument;
+import dev.rollczi.litecommands.requirement.Requirement;
 
 public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, Arg> {
 
@@ -12,7 +12,7 @@ public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, A
     }
 
     @Override
-    public <T> Argument<T> create(AnnotationHolder<Arg, T, ?> holder) {
+    protected Requirement<?> create(AnnotationHolder<Arg, ?> holder) {
         Arg annotation = holder.getAnnotation();
 
         String name = annotation.value();
@@ -21,7 +21,6 @@ public class ArgArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, A
             name = holder.getName();
         }
 
-        return new SimpleArgument<>(name, holder.getFormat());
+        return Argument.of(name, holder.getType());
     }
-
 }

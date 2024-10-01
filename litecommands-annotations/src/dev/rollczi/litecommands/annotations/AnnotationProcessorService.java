@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.argument.ArgArgumentProcessor;
 import dev.rollczi.litecommands.annotations.argument.KeyAnnotationResolver;
-import dev.rollczi.litecommands.annotations.argument.collector.ArgCollectionArgumentProcessor;
+import dev.rollczi.litecommands.annotations.argument.collection.ArgCollectionArgumentProcessor;
 import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
 import dev.rollczi.litecommands.annotations.bind.BindRequirementProcessor;
 import dev.rollczi.litecommands.annotations.command.CommandAnnotationProcessor;

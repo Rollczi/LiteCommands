@@ -1,20 +1,20 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
-class AnnotationHolderImpl<A extends Annotation, PARSED, OUT> implements AnnotationHolder<A, PARSED, OUT> {
+class AnnotationHolderImpl<A extends Annotation, T> implements AnnotationHolder<A, T> {
 
     private final A annotation;
     private final Supplier<String> name;
-    private final WrapFormat<PARSED, OUT> format;
+    private final TypeToken<T> typeToken;
 
-    public AnnotationHolderImpl(A annotation, Supplier<String> name, WrapFormat<PARSED, OUT> format) {
+    public AnnotationHolderImpl(A annotation, Supplier<String> name, TypeToken<T> typeToken) {
         this.annotation = annotation;
         this.name = name;
-        this.format = format;
+        this.typeToken = typeToken;
     }
 
     @Override
@@ -28,8 +28,8 @@ class AnnotationHolderImpl<A extends Annotation, PARSED, OUT> implements Annotat
     }
 
     @Override
-    public WrapFormat<PARSED, OUT> getFormat() {
-        return format;
+    public TypeToken<T> getType() {
+        return typeToken;
     }
 
 }

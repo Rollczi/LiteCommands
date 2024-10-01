@@ -138,10 +138,10 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
                 children.get(child.name()).meagre(child);
 
                 if (childrenMeta.containsKey(child.name())) {
-                    childrenMeta.get(child.name()).apply(context.meta());
+                    childrenMeta.get(child.name()).putAll(context.meta());
                 }
                 else {
-                    childrenMeta.put(child.name(), context.meta().copy().apply(this.meta));
+                    childrenMeta.put(child.name(), context.meta().copy().putAll(this.meta));
                 }
 
             }
@@ -179,7 +179,7 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
         return this.children.values().stream()
             .map(senderCommandEditorContext -> senderCommandEditorContext.build(parent))
             .flatMap(Collection::stream)
-            .peek(route -> route.meta().apply(this.childrenMeta.getOrDefault(route.getName(), this.meta)))
+            .peek(route -> route.meta().putAll(this.childrenMeta.getOrDefault(route.getName(), this.meta)))
             .collect(Collectors.toList());
     }
 

@@ -10,26 +10,26 @@ public class MetaKey<T> {
     private final MetaType<T> type;
     private final @Nullable T defaultValue;
 
-    private MetaKey(String key, MetaType<T> type, @Nullable T defaultValue) {
+    protected MetaKey(String key, MetaType<T> type, @Nullable T defaultValue) {
         this.key = key;
         this.type = type;
         this.defaultValue = defaultValue;
     }
 
-    String getKey() {
+    public String getKey() {
         return this.key;
     }
 
-    MetaType<T> getType() {
+    public MetaType<T> getType() {
         return this.type;
     }
 
     @Nullable
-    T getDefaultValue() {
+    public T getDefaultValue() {
         return this.defaultValue;
     }
 
-    boolean hasDefaultValue() {
+    public boolean hasDefaultValue() {
         return this.defaultValue != null;
     }
 

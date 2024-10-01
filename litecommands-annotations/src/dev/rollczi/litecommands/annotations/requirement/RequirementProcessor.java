@@ -29,7 +29,7 @@ public abstract class RequirementProcessor<SENDER, A extends Annotation> impleme
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         try {
             return invoker.onParameter(annotationClass, (parameter, holder, builder) -> {
-                TypeToken<?> typeToken = holder.getFormat().parsedType();
+                TypeToken<?> typeToken = holder.getType();
 
                 if (typeToken.isInstanceOf(parsedType)) {
                     return Optional.of(create(holder));
@@ -47,6 +47,6 @@ public abstract class RequirementProcessor<SENDER, A extends Annotation> impleme
         }
     }
 
-    abstract protected <PARSED> Requirement<PARSED> create(AnnotationHolder<A, PARSED, ?> holder);
+    abstract protected Requirement<?> create(AnnotationHolder<A, ?> holder);
 
 }

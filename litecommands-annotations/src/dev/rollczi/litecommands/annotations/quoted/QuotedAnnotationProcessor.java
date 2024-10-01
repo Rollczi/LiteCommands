@@ -11,7 +11,7 @@ public class QuotedAnnotationProcessor<SENDER> implements AnnotationProcessor<SE
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         return invoker.on(Quoted.class, (annotation, metaHolder) -> {
-            metaHolder.meta().put(Meta.ARGUMENT_KEY, QuotedStringArgumentResolver.KEY);
+            metaHolder.meta().edit(Meta.ARGUMENT_KEY, argumentKey -> argumentKey.profiled(QuotedStringArgumentResolver.KEY));
         });
     }
 

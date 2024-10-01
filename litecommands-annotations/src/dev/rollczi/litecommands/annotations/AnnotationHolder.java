@@ -1,19 +1,19 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.wrapper.WrapFormat;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
-public interface AnnotationHolder<A extends Annotation, PARSED, OUT> {
+public interface AnnotationHolder<A extends Annotation, T> {
 
     A getAnnotation();
 
     String getName();
 
-    WrapFormat<PARSED, OUT> getFormat();
+    TypeToken<T> getType();
 
-    static <A extends Annotation, PARSED, OUT> AnnotationHolder<A, PARSED, OUT> of(A annotation, WrapFormat<PARSED, OUT> format, Supplier<String> nameSupplier) {
+    static <A extends Annotation, T> AnnotationHolder<A, T> of(A annotation, TypeToken<T> format, Supplier<String> nameSupplier) {
         return new AnnotationHolderImpl<>(annotation, nameSupplier, format);
     }
 

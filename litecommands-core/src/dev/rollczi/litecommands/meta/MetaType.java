@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,25 +28,29 @@ public interface MetaType<T> {
     }
 
     static <T> MetaType<T> of(Class<T> type) {
+        return new MetaTypeImpl<>(TypeToken.of(type));
+    }
+
+    static <T> MetaType<T> of(TypeToken<T> type) {
         return new MetaTypeImpl<>(type);
     }
 
     class MetaTypeImpl<T> implements MetaType<T> {
 
-        private final Class<T> type;
+        private final TypeToken<T> type;
 
-        public MetaTypeImpl(Class<T> type) {
+        public MetaTypeImpl(TypeToken<T> type) {
             this.type = type;
         }
 
         @Override
         public T cast(Object value) {
-            return this.type.cast(value);
+            return this.type.getRawType().cast(value);
         }
 
         @Override
         public String toString() {
-            return type.getTypeName();
+            return this.type.getRawType().getTypeName();
         }
     }
 

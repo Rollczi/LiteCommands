@@ -5,7 +5,7 @@ import dev.rollczi.example.sponge.command.KickCommand;
 import dev.rollczi.example.sponge.command.TeleportCommand;
 import dev.rollczi.example.sponge.handler.InvalidUsageMessage;
 import dev.rollczi.example.sponge.handler.PermissionMessage;
-import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.sponge.LiteSpongeFactory;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
@@ -32,7 +32,7 @@ public class ExamplePlugin {
 
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggestion(int.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggestion(Component.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(Component.class, JoinProfile.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             // Handlers for missing permissions and invalid usage
             .missingPermission(new PermissionMessage())

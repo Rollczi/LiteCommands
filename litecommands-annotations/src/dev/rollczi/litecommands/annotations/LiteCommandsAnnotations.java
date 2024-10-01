@@ -5,7 +5,6 @@ import dev.rollczi.litecommands.LiteCommandsInternal;
 import dev.rollczi.litecommands.LiteCommandsProvider;
 import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorService;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +40,7 @@ public class LiteCommandsAnnotations<SENDER> implements LiteCommandsProvider<SEN
 
     @Override
     public List<CommandBuilder<SENDER>> provide(LiteCommandsInternal<SENDER, ?> builder) {
-        WrapperRegistry wrapperRegistry = builder.getWrapperRegistry();
-
-        InstanceSourceProcessor<SENDER> processor = new InstanceSourceProcessor<>(annotationProcessorService, validatorService, wrapperRegistry);
+        InstanceSourceProcessor<SENDER> processor = new InstanceSourceProcessor<>(annotationProcessorService, validatorService);
         Injector injector = new Injector(builder.getBindRegistry());
 
         List<Object> instances = new ArrayList<>(this.commandInstances);

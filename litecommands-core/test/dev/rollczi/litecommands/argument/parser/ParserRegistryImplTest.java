@@ -7,17 +7,17 @@ import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.unit.TestSender;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 class ParserRegistryImplTest {
 
-    static final WrapFormat<String, String> STRING_FORMAT = WrapFormat.notWrapped(String.class);
-    static final WrapFormat<Integer, Integer> INTEGER_FORMAT = WrapFormat.notWrapped(Integer.class);
-    static final WrapFormat<Number, Number> NUMBER_FORMAT = WrapFormat.notWrapped(Number.class);
+    static final TypeToken<String> STRING_FORMAT = TypeToken.of(String.class);
+    static final TypeToken<Integer> INTEGER_FORMAT = TypeToken.of(Integer.class);
+    static final TypeToken<Number> NUMBER_FORMAT = TypeToken.of(Number.class);
 
     @Test
     void registerParser() {
@@ -26,7 +26,7 @@ class ParserRegistryImplTest {
         registry.registerParser(String.class, ArgumentKey.of(), new NamedResolver("universal"));
 
         ParserSet<TestSender, String> universal = registry.getParserSet(String.class, ArgumentKey.of());
-        Parser<TestSender, String> universalParser = universal.getValidParserOrThrow(null, Argument.of("universal", STRING_FORMAT));
+        Parser<TestSender, String> universalParser = universal.getValidParserOrThrow(Argument.of("universal", STRING_FORMAT));
 
         assertThat(universalParser.parse(null, Argument.of("universal", STRING_FORMAT), RawInput.of("in")))
             .isEqualTo(ParseResult.success("universal"));
@@ -43,9 +43,9 @@ class ParserRegistryImplTest {
         ParserSet<TestSender, String> universal = registry.getParserSet(String.class, ArgumentKey.of());
         ParserSet<TestSender, String> missing = registry.getParserSet(String.class, ArgumentKey.of("missing"));
 
-        Parser<TestSender, String> customParser = assertNotNull(custom.getValidParser(null, Argument.of("custom", STRING_FORMAT)));
-        Parser<TestSender, String> universalParser = assertNotNull(universal.getValidParser(null, Argument.of("universal", STRING_FORMAT)));
-        Parser<TestSender, String> missingParser = assertNotNull(missing.getValidParser(null, Argument.of("missing", STRING_FORMAT)));
+        Parser<TestSender, String> customParser = assertNotNull(custom.getValidParser(Argument.of("custom", STRING_FORMAT)));
+        Parser<TestSender, String> universalParser = assertNotNull(universal.getValidParser(Argument.of("universal", STRING_FORMAT)));
+        Parser<TestSender, String> missingParser = assertNotNull(missing.getValidParser(Argument.of("missing", STRING_FORMAT)));
 
         assertThat(customParser.parse(null, Argument.of("custom", STRING_FORMAT), RawInput.of("in")))
             .isEqualTo(ParseResult.success("custom"));
@@ -65,8 +65,8 @@ class ParserRegistryImplTest {
         ParserSet<TestSender, Number> number = registry.getParserSet(Number.class, ArgumentKey.of());
         ParserSet<TestSender, Integer> integer = registry.getParserSet(Integer.class, ArgumentKey.of());
 
-        Parser<TestSender, Number> numberParser = assertNotNull(number.getValidParser(null, Argument.of("number", NUMBER_FORMAT)));
-        Parser<TestSender, Integer> integerParser = assertNotNull(integer.getValidParser(null, Argument.of("integer", INTEGER_FORMAT)));
+        Parser<TestSender, Number> numberParser = assertNotNull(number.getValidParser(Argument.of("number", NUMBER_FORMAT)));
+        Parser<TestSender, Integer> integerParser = assertNotNull(integer.getValidParser(Argument.of("integer", INTEGER_FORMAT)));
 
         assertThat(numberParser.parse(null, Argument.of("number", NUMBER_FORMAT), RawInput.of("1")))
             .isEqualTo(ParseResult.success(1));

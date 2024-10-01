@@ -15,6 +15,7 @@
 package dev.rollczi.litecommands.reflect.type;
 
 import dev.rollczi.litecommands.shared.Preconditions;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -30,7 +31,7 @@ public abstract class TypeToken<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private TypeToken(Type type) {
+    TypeToken(Type type) {
         this.type = type;
         this.rawType = (Class<T>) TypeUtil.getRawType(type);
     }
@@ -79,14 +80,6 @@ public abstract class TypeToken<T> {
         throw new IllegalStateException("Cannot resolve parameterized type");
     }
 
-    public static <T> TypeToken<T> of(Class<T> type) {
-        return new SimpleTypeToken<>(type);
-    }
-
-    public static <T> TypeToken<T> of(Type type) {
-        return new SimpleTypeToken<>(type);
-    }
-
     public boolean isArray() {
         return getRawType().isArray();
     }
@@ -97,6 +90,32 @@ public abstract class TypeToken<T> {
 
     public TypeToken<?> getComponentTypeToken() {
         return of(getComponentType());
+    }
+
+    public static <T> TypeToken<T> of(Class<T> type) {
+        return new SimpleTypeToken<>(type);
+    }
+
+    public static <T> TypeToken<T> of(Type type) {
+        return new SimpleTypeToken<>(type);
+    }
+
+    public static <T> TypeTokenBuilder<T> builder(Class<T> type) {
+        return new TypeTokenBuilder<>(type);
+    }
+
+    public static <T> TypeToken<T> ofParameterized(Class<T> rawType, Class<?>... parametrizedTypes) {
+        TypeTokenBuilder<T> builder = builder(rawType);
+
+        for (Class<?> parametrizedType : parametrizedTypes) {
+            builder.parametrized(parametrizedType);
+        }
+
+        return builder.build();
+    }
+
+    public static <T> TypeToken<T> ofParameter(Parameter parameter) {
+        return new SimpleTypeToken<>(parameter.getParameterizedType());
     }
 
     private static class SimpleTypeToken<T> extends TypeToken<T> {

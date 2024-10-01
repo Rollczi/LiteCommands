@@ -1,21 +1,22 @@
 package dev.rollczi.litecommands.flag;
 
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.profile.ProfiledMultipleArgumentResolver;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.resolver.TypedArgumentResolver;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 
-public class FlagArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER, Boolean, FlagArgument> {
+public class FlagArgumentResolver<SENDER> extends ProfiledMultipleArgumentResolver<SENDER, Boolean, FlagProfile> {
 
     public FlagArgumentResolver() {
-        super(FlagArgument.class);
+        super(FlagProfile.KEY);
     }
 
     @Override
-    public ParseResult<Boolean> parseTyped(Invocation<SENDER> invocation, FlagArgument argument, RawInput rawInput) {
+    public ParseResult<Boolean> parse(Invocation<SENDER> invocation, Argument<Boolean> argument, RawInput rawInput, FlagProfile meta) {
         String key = argument.getName();
 
         if (!rawInput.hasNext()) {
@@ -31,12 +32,12 @@ public class FlagArgumentResolver<SENDER> extends TypedArgumentResolver<SENDER, 
     }
 
     @Override
-    public Range getTypedRange(FlagArgument argument) {
+    public Range getRange(Argument<Boolean>  argument, FlagProfile meta) {
         return Range.range(0, 1);
     }
 
     @Override
-    public SuggestionResult suggestTyped(Invocation<SENDER> invocation, FlagArgument argument, SuggestionContext context) {
+    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Boolean>  argument, SuggestionContext context, FlagProfile meta) {
         return SuggestionResult.of(argument.getName());
     }
 

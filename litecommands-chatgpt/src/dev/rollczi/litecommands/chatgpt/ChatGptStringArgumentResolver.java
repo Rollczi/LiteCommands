@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> implements Suggester<SENDER, String>, ArgumentResolverBase<SENDER, String> {
+class ChatGptStringArgumentResolver<SENDER> extends JoinStringArgumentResolver<SENDER> implements Suggester<SENDER, String>, ArgumentResolverBase<SENDER, String> {
 
     private final Scheduler scheduler;
     private final ChatGptClient chatGptClient;
@@ -37,7 +37,7 @@ class ChatGptStringSuggester<SENDER> extends JoinStringArgumentResolver<SENDER> 
     private final Map<String, NavigableMap<String, String>> suggestions = new HashMap<>();
     private final Cache<Identifier, UUID> lastRequestPerPlayer;
 
-    ChatGptStringSuggester(Scheduler scheduler, ChatGptClient chatGptClient, ChatGptSettings settings) {
+    ChatGptStringArgumentResolver(Scheduler scheduler, ChatGptClient chatGptClient, ChatGptSettings settings) {
         this.scheduler = scheduler;
         this.chatGptClient = chatGptClient;
         this.settings = settings;

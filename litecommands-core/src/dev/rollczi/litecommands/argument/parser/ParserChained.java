@@ -11,7 +11,7 @@ public interface ParserChained<SENDER, PARSED> extends Rangeable<Argument<PARSED
 
     ParseResult<PARSED> parse(Invocation<SENDER> invocation, Argument<PARSED> argument, RawInput input, ParserChainAccessor<SENDER> chainAccessor);
 
-    default boolean canParse(Invocation<SENDER> invocation, Argument<PARSED> argument) {
+    default boolean canParse(Argument<PARSED> argument) {
         return true;
     }
 

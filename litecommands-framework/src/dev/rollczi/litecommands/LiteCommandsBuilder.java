@@ -35,7 +35,6 @@ import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
-import dev.rollczi.litecommands.wrapper.Wrapper;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
@@ -194,8 +193,6 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B missingPermission(MissingPermissionsHandler<SENDER> handler);
 
     B invalidUsage(InvalidUsageHandler<SENDER> handler);
-
-    B wrapper(Wrapper wrapper);
 
     B schematicGenerator(SchematicGenerator<SENDER> schematicGenerator);
 
