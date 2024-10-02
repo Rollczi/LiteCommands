@@ -1,6 +1,6 @@
 
 <div align="center"><img src="https://github.com/user-attachments/assets/b1b56f65-2cea-4c24-ae99-8c01f45a33cb" alt="hacktoberfest" width="85%"/></div>
-<div align="center"><h3>LiteCommands & Hacktoberfest 2023</h3></div>
+<div align="center"><h3>LiteCommands & Hacktoberfest 2024</h3></div>
 <div align="center">Register on <a href="https://hacktoberfest.com/">hacktoberfest.com</a> and start supporting open source!</div>
 <div align="center">Add/Improve/Fix features and open <a href="https://github.com/Rollczi/LiteCommands/pulls">Pull request</a>! If you don't have an idea, see  <a href="https://github.com/Rollczi/LiteCommands/issues">issues</a>!</div>
 <br>
@@ -14,15 +14,14 @@
 [![Java](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/java8_vector.svg)](https://www.java.com/)
 
 ### LiteCommands
-Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, Sponge, JDA and future implementations.
+Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, Sponge, Fabric, JDA and future implementations.
 
 </div>
 
 ### 📌 Helpful links
 - [Support Discord](https://discord.gg/6cUhkj6uZJ)
 - [Bugs & issues report](https://github.com/Rollczi/LiteCommands/issues)
-- [Documentation 3.x](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)
-- [Documentation 2.x](https://docs.rollczi.dev/)
+- [Documentation](https://docs.rollczi.dev/)
 
 ### ✨ Features
 - Simple Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html) & Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
@@ -152,7 +151,3 @@ and other useful features to make your development experience smoother and more 
     </p>
 </div>
 
-
-## 🔐 Dependencies used
-- [panda-lang/expressible](https://github.com/panda-lang/expressible)
-- [JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
