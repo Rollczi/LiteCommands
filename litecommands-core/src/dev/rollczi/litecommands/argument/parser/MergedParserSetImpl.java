@@ -7,7 +7,6 @@ class MergedParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
 
     private final Iterable<ParserSet<SENDER, PARSED>> parserSets;
 
-
     public MergedParserSetImpl(Iterable<ParserSet<SENDER, PARSED>> parserSets) {
         this.parserSets = parserSets;
     }

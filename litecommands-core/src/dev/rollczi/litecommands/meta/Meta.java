@@ -33,16 +33,17 @@ public interface Meta {
     MetaKey<StrictMode> STRICT_MODE = MetaKey.of("strict-mode", StrictMode.class, StrictMode.DEFAULT);
 
     /**
-     * LiteCommands Annotation API
+     * @deprecated Use AnnotationsMeta#REQUIREMENT_PARAMETER instead
      */
-    @ApiStatus.Experimental
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.8.0")
     MetaKey<Parameter> REQUIREMENT_PARAMETER = MetaKey.of("requirement-parameter", Parameter.class);
 
     Meta EMPTY_META = new MetaEmptyImpl();
 
     @NotNull <T> T get(MetaKey<T> key);
 
-    @Contract("_, !null -> !null")
+    @Contract("_, !null -> !null; _, null -> _")
     <T> T get(MetaKey<T> key, T defaultValue);
 
     <T> Meta put(MetaKey<T> key, T value);

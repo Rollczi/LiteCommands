@@ -22,12 +22,12 @@ public class ArrayArgumentResolver<SENDER> extends AbstractCollectorArgumentReso
     }
 
     @Override
-    <E> Collector<E, ?, Object> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+    <E> Collector<E, ?, Object> getCollector(VarargsProfile collectionArgument, Invocation<SENDER> invocation) {
         return new ArrayCollector<>(getElementType(collectionArgument));
     }
 
     @Override
-    public boolean canParse(Argument<Object> argument, CollectionArgumentProfile collectionArgument) {
+    public boolean canParse(Argument<Object> argument, VarargsProfile collectionArgument) {
         return argument.getType().isArray();
     }
 

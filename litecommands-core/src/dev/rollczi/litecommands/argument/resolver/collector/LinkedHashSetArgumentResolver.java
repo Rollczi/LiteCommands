@@ -14,7 +14,7 @@ public class LinkedHashSetArgumentResolver<SENDER> extends AbstractCollectorArgu
     }
 
     @Override
-    <E> Collector<E, ?, ? extends LinkedHashSet> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+    <E> Collector<E, ?, ? extends LinkedHashSet> getCollector(VarargsProfile varargsProfile, Invocation<SENDER> invocation) {
         return Collectors.toCollection(() -> new LinkedHashSet<>());
     }
 

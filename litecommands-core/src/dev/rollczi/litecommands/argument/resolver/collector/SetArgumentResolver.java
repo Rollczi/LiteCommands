@@ -14,7 +14,7 @@ public class SetArgumentResolver<SENDER> extends AbstractCollectorArgumentResolv
     }
 
     @Override
-    <E> Collector<E, ?, ? extends Set<E>> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+    <E> Collector<E, ?, ? extends Set<E>> getCollector(VarargsProfile varargsProfile, Invocation<SENDER> invocation) {
         return Collectors.toSet();
     }
 

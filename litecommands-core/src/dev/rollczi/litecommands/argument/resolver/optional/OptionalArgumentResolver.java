@@ -4,11 +4,14 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.ParserChainAccessor;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolverChained;
+import dev.rollczi.litecommands.argument.suggester.SuggesterChainAccessor;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.util.Optional;
 
 @SuppressWarnings("rawtypes")
@@ -38,6 +41,14 @@ public class OptionalArgumentResolver<SENDER> implements MultipleArgumentResolve
     @Override
     public Range getRange(Argument<Optional> optionalArgument) {
         return Range.range(0, 1);
+    }
+
+    @Override
+    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Optional> argument, SuggestionContext context, SuggesterChainAccessor<SENDER> chainAccessor) {
+        TypeToken<Optional> optionalType = argument.getType();
+        TypeToken<?> parameterized = optionalType.getParameterized();
+
+        return chainAccessor.suggest(invocation, Argument.of(argument.getName(), parameterized), context);
     }
 
 }

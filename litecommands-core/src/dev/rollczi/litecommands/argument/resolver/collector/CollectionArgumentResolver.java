@@ -15,7 +15,7 @@ public class CollectionArgumentResolver<SENDER> extends AbstractCollectorArgumen
     }
 
     @Override
-    <E> Collector<E, ?, ? extends ArrayList<E>> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+    <E> Collector<E, ?, ? extends ArrayList<E>> getCollector(VarargsProfile varargsProfile, Invocation<SENDER> invocation) {
         return Collectors.toCollection(() -> new ArrayList<>());
     }
 

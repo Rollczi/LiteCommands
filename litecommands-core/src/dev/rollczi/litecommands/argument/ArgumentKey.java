@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.argument;
 
-import dev.rollczi.litecommands.argument.profile.ArgumentProfileKey;
+import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
+import org.jetbrains.annotations.ApiStatus;
 
 public interface ArgumentKey {
 
@@ -80,7 +81,8 @@ public interface ArgumentKey {
         return typed(argumentType, "");
     }
 
-    default ArgumentKey profiled(ArgumentProfileKey<?> key) {
+    @ApiStatus.Experimental
+    default ArgumentKey profiled(ArgumentProfileNamespace<?> key) {
         return key.withKey(getKey());
     }
 

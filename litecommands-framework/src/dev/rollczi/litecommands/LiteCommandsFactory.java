@@ -3,7 +3,7 @@ package dev.rollczi.litecommands;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.resolver.collector.CollectionArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.ArrayArgumentResolver;
-import dev.rollczi.litecommands.argument.resolver.collector.CollectionArgumentProfile;
+import dev.rollczi.litecommands.argument.resolver.collector.VarargsProfile;
 import dev.rollczi.litecommands.argument.resolver.collector.LinkedHashSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.LinkedListArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.ArrayListArgumentResolver;
@@ -11,6 +11,8 @@ import dev.rollczi.litecommands.argument.resolver.collector.SetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.TreeSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.StackArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.VectorArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.nullable.NullableArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.nullable.NullableProfile;
 import dev.rollczi.litecommands.argument.resolver.optional.OptionalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
@@ -52,6 +54,7 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.flag.FlagArgumentResolver;
+import dev.rollczi.litecommands.quoted.QuotedProfile;
 import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
 import static dev.rollczi.litecommands.reflect.type.TypeRange.downwards;
 import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
@@ -134,22 +137,23 @@ public final class LiteCommandsFactory {
 
                 .argument(upwards(Enum.class), new EnumArgumentResolver<>())
                 .argument(Optional.class, new OptionalArgumentResolver<>())
+                .argument(upwards(Object.class), NullableProfile.NAMESPACE, new NullableArgumentResolver<>(parser, suggester))
 
-                .argument(String.class, QuotedStringArgumentResolver.KEY, new QuotedStringArgumentResolver<>(suggester))
-                .argumentParser(String.class, JoinProfile.KEY, new JoinStringArgumentResolver<>())
-                .argument(boolean.class, FlagProfile.KEY, new FlagArgumentResolver<>())
-                .argument(Boolean.class, FlagProfile.KEY, new FlagArgumentResolver<>())
+                .argument(String.class, QuotedProfile.NAMESPACE, new QuotedStringArgumentResolver<>(suggester))
+                .argumentParser(String.class, JoinProfile.NAMESPACE, new JoinStringArgumentResolver<>())
+                .argument(boolean.class, FlagProfile.NAMESPACE, new FlagArgumentResolver<>())
+                .argument(Boolean.class, FlagProfile.NAMESPACE, new FlagArgumentResolver<>())
 
-                .argument(downwards(LinkedHashSet.class, excluded), CollectionArgumentProfile.KEY, new LinkedHashSetArgumentResolver<>(parser, suggester))
-                .argument(downwards(TreeSet.class, excluded), CollectionArgumentProfile.KEY, new TreeSetArgumentResolver<>(parser, suggester))
-                .argument(downwards(Set.class, excluded), CollectionArgumentProfile.KEY, new SetArgumentResolver<>(parser, suggester))
-                .argument(downwards(Stack.class, excluded), CollectionArgumentProfile.KEY, new StackArgumentResolver<>(parser, suggester))
-                .argument(downwards(Vector.class, excluded), CollectionArgumentProfile.KEY, new VectorArgumentResolver<>(parser, suggester))
-                .argument(downwards(LinkedList.class, excluded), CollectionArgumentProfile.KEY, new LinkedListArgumentResolver<>(parser, suggester))
-                .argument(downwards(ArrayList.class, excluded), CollectionArgumentProfile.KEY, new ArrayListArgumentResolver<>(parser, suggester))
-                .argument(downwards(Collection.class, excluded), CollectionArgumentProfile.KEY, new CollectionArgumentResolver<>(parser, suggester))
+                .argument(downwards(LinkedHashSet.class, excluded), VarargsProfile.NAMESPACE, new LinkedHashSetArgumentResolver<>(parser, suggester))
+                .argument(downwards(TreeSet.class, excluded), VarargsProfile.NAMESPACE, new TreeSetArgumentResolver<>(parser, suggester))
+                .argument(downwards(Set.class, excluded), VarargsProfile.NAMESPACE, new SetArgumentResolver<>(parser, suggester))
+                .argument(downwards(Stack.class, excluded), VarargsProfile.NAMESPACE, new StackArgumentResolver<>(parser, suggester))
+                .argument(downwards(Vector.class, excluded), VarargsProfile.NAMESPACE, new VectorArgumentResolver<>(parser, suggester))
+                .argument(downwards(LinkedList.class, excluded), VarargsProfile.NAMESPACE, new LinkedListArgumentResolver<>(parser, suggester))
+                .argument(downwards(ArrayList.class, excluded), VarargsProfile.NAMESPACE, new ArrayListArgumentResolver<>(parser, suggester))
+                .argument(downwards(Collection.class, excluded), VarargsProfile.NAMESPACE, new CollectionArgumentResolver<>(parser, suggester))
 
-                .argument(upwards(Object.class), CollectionArgumentProfile.KEY, new ArrayArgumentResolver<>(parser, suggester))
+                .argument(upwards(Object.class), VarargsProfile.NAMESPACE, new ArrayArgumentResolver<>(parser, suggester))
 
                 .exception(Throwable.class, new ThrowableHandler<>())
                 .exception(InvalidUsageException.class, new InvalidUsageExceptionHandler<>())

@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class JoinArgumentResolver<SENDER, T> extends ProfiledParser<SENDER, T, JoinProfile> {
 
     protected JoinArgumentResolver() {
-        super(JoinProfile.KEY);
+        super(JoinProfile.NAMESPACE);
     }
 
     @Override

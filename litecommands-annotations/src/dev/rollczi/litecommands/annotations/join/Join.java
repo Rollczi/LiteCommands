@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations.join;
 
-import dev.rollczi.litecommands.argument.profile.ArgumentProfileKey;
+import dev.rollczi.litecommands.annotations.requirement.RequirementDefinition;
+import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
 import dev.rollczi.litecommands.join.JoinProfile;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,9 +10,10 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
+@RequirementDefinition(type = RequirementDefinition.Type.ARGUMENT, nameProviders = { "value" })
 public @interface Join {
 
-    ArgumentProfileKey<JoinProfile> KEY = JoinProfile.KEY;
+    ArgumentProfileNamespace<JoinProfile> KEY = JoinProfile.NAMESPACE;
 
     String value() default "";
 

@@ -14,7 +14,7 @@ public class VectorArgumentResolver<SENDER> extends AbstractCollectorArgumentRes
     }
 
     @Override
-    <E> Collector<E, ?, ? extends Vector<E>> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+    <E> Collector<E, ?, ? extends Vector<E>> getCollector(VarargsProfile collectionArgument, Invocation<SENDER> invocation) {
         return Collectors.toCollection(() -> new Vector<>());
     }
 

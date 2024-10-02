@@ -14,7 +14,7 @@ public class StackArgumentResolver<SENDER> extends AbstractCollectorArgumentReso
     }
 
     @Override
-    <E> Collector<E, ?, ? extends Stack<E>> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+    <E> Collector<E, ?, ? extends Stack<E>> getCollector(VarargsProfile varargsProfile, Invocation<SENDER> invocation) {
         return Collectors.toCollection(() -> new Stack<>());
     }
 

@@ -1,27 +1,19 @@
 package dev.rollczi.litecommands.annotations.join;
 
-import dev.rollczi.litecommands.annotations.requirement.RequirementProcessor;
-import dev.rollczi.litecommands.annotations.AnnotationHolder;
+import dev.rollczi.litecommands.annotations.argument.profile.ProfileAnnotationProcessor;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.join.JoinProfile;
-import dev.rollczi.litecommands.requirement.Requirement;
+import java.lang.reflect.Parameter;
 
-public class JoinArgumentProcessor<SENDER> extends RequirementProcessor<SENDER, Join> {
+public class JoinArgumentProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Join, JoinProfile> {
 
     public JoinArgumentProcessor() {
-        super(Join.class);
+        super(Join.class, JoinProfile.NAMESPACE);
     }
 
     @Override
-    protected Requirement<?> create(AnnotationHolder<Join, ?> holder) {
-        Join annotation = holder.getAnnotation();
-        String name = annotation.value();
-
-        if (name.isEmpty()) {
-            name = holder.getName();
-        }
-
-        return Argument.profiled(name, holder.getType(), new JoinProfile(annotation.separator(), annotation.limit()));
+    protected JoinProfile createProfile(Parameter parameter, Join annotation, Argument<?> argument) {
+        return new JoinProfile(annotation.separator(), annotation.limit());
     }
 
 }

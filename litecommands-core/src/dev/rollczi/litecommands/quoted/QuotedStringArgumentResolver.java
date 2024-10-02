@@ -2,24 +2,21 @@ package dev.rollczi.litecommands.quoted;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
-import dev.rollczi.litecommands.argument.profile.ArgumentProfileKey;
 import dev.rollczi.litecommands.argument.parser.ParseCompletedResult;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolver;
+import dev.rollczi.litecommands.argument.profile.ProfiledMultipleArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
-public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentResolver<SENDER, String> {
+public class QuotedStringArgumentResolver<SENDER> extends ProfiledMultipleArgumentResolver<SENDER, String, QuotedProfile> {
 
-    public static final ArgumentProfileKey<Void> KEY = ArgumentProfileKey.of(MetaKey.of("quoted-string", Void.class));
     public static final char QUOTE_ESCAPE = '\\';
 
     private final SuggesterRegistry<SENDER> suggesterRegistry;
@@ -27,6 +24,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
     private final String quoteString;
 
     public QuotedStringArgumentResolver(SuggesterRegistry<SENDER> suggesterRegistry, char quote) {
+        super(QuotedProfile.NAMESPACE);
         this.suggesterRegistry = suggesterRegistry;
         this.quote = quote;
         this.quoteString = String.valueOf(quote);
@@ -37,7 +35,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
     }
 
     @Override
-    public ParseCompletedResult<String> parse(Invocation<SENDER> invocation, Argument<String> argument, RawInput rawInput) {
+    public ParseCompletedResult<String> parse(Invocation<SENDER> invocation, Argument<String> argument, RawInput rawInput, QuotedProfile quotedProfile) {
         if (!rawInput.hasNext()) {
             return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
         }
@@ -86,9 +84,9 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
+    public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context, QuotedProfile quotedProfile) {
         Suggestion current = context.getCurrent();
-        ParseCompletedResult<String> parsedResult = parse(invocation, argument, RawInput.of(current.multilevelList()));
+        ParseCompletedResult<String> parsedResult = parse(invocation, argument, RawInput.of(current.multilevelList()), quotedProfile);
 
         if (parsedResult.isFailed()) {
             return SuggestionResult.empty();
@@ -128,7 +126,7 @@ public class QuotedStringArgumentResolver<SENDER> implements MultipleArgumentRes
     }
 
     @Override
-    public Range getRange(Argument<String> argument) {
+    public Range getRange(Argument<String> argument, QuotedProfile quotedProfile) {
         return Range.moreThan(1);
     }
 

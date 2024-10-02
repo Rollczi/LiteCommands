@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.range.Range;
 public class FlagArgumentResolver<SENDER> extends ProfiledMultipleArgumentResolver<SENDER, Boolean, FlagProfile> {
 
     public FlagArgumentResolver() {
-        super(FlagProfile.KEY);
+        super(FlagProfile.NAMESPACE);
     }
 
     @Override

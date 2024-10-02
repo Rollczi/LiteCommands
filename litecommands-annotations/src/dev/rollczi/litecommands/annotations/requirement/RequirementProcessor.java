@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.requirement.Requirement;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
+@Deprecated
 public abstract class RequirementProcessor<SENDER, A extends Annotation> implements AnnotationProcessor<SENDER> {
 
     private final Class<A> annotationClass;

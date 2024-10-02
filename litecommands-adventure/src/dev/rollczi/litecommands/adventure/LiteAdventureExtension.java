@@ -54,9 +54,9 @@ public class LiteAdventureExtension<SENDER> implements LiteExtension<SENDER, Lit
 
             .argumentSuggester(Component.class, (invocation, argument, context) -> SuggestionResult.of("<" + argument.getName() + ">"))
 
-            .argumentParser(Component.class, JoinProfile.KEY, settings.colorizeArgument ? joinColor : joinRaw)
-            .argumentParser(Component.class, JoinProfile.KEY.withKey("raw"), joinRaw)
-            .argumentParser(Component.class, JoinProfile.KEY.withKey("color"), joinColor)
+            .argumentParser(Component.class, JoinProfile.NAMESPACE, settings.colorizeArgument ? joinColor : joinRaw)
+            .argumentParser(Component.class, JoinProfile.NAMESPACE.withKey("raw"), joinRaw)
+            .argumentParser(Component.class, JoinProfile.NAMESPACE.withKey("color"), joinColor)
 
             .context(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 

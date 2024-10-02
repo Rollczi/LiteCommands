@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.annotations;
 
+import dev.rollczi.litecommands.annotations.meta.MetaAnnotationKeys;
 import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorService;
 import dev.rollczi.litecommands.command.CommandExecutorProvider;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
@@ -8,6 +9,8 @@ import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
+import java.util.function.BiFunction;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -15,11 +18,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
 
-class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
+public class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
     private final AnnotationProcessorService<SENDER> annotationProcessorService;
     private final Method method;
-    private CommandBuilder<SENDER> commandBuilder;
+    private final CommandBuilder<SENDER> commandBuilder;
     private final MethodDefinition methodDefinition;
     private final CommandExecutorProvider<SENDER> executorProvider;
     private final Meta meta = Meta.create();
@@ -75,16 +78,43 @@ class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
             Optional<Requirement<?>> requirementOptional = listener.call(parameter, createHolder(parameterAnnotation, parameter), commandBuilder);
 
-            if (requirementOptional.isPresent()) {
-                Requirement<?> requirement = requirementOptional.get();
+            registerRequirement(index, parameter, parameterAnnotation, requirementOptional);
+        }
 
-                requirement.meta().put(Meta.REQUIREMENT_PARAMETER, parameter);
-                methodDefinition.putRequirement(index, requirement);
-                annotationProcessorService.process(new ParameterInvoker<>(commandBuilder, parameter, requirement));
+        return this;
+    }
+
+    @ApiStatus.Experimental
+    public MethodInvoker<SENDER> mapParameter(BiFunction<Parameter, Annotation, Optional<Requirement<?>>> provider) {
+        for (int index = 0; index < method.getParameterCount(); index++) {
+            Parameter parameter = method.getParameters()[index];
+
+            for (Annotation annotation : parameter.getAnnotations()) {
+                Optional<Requirement<?>> requirementOptional = provider.apply(parameter, annotation);
+
+                registerRequirement(index, parameter, annotation, requirementOptional);
             }
         }
 
         return this;
+    }
+
+    private void registerRequirement(int index, Parameter parameter, Annotation annotation, Optional<Requirement<?>> requirementOptional) {
+        if (requirementOptional.isPresent()) {
+            Requirement<?> requirement = requirementOptional.get();
+            requirement.meta()
+                .put(MetaAnnotationKeys.SOURCE_PARAMETER, parameter)
+                .put(MetaAnnotationKeys.SOURCE_ANNOTATION, annotation)
+                .put(MetaAnnotationKeys.SOURCE_ANNOTATED_ELEMENT, parameter);
+
+            methodDefinition.putRequirement(index, requirement);
+            annotationProcessorService.process(new ParameterInvoker<>(commandBuilder, parameter, requirement));
+        }
+    }
+
+    @ApiStatus.Experimental
+    public Method getMethod() {
+        return method;
     }
 
     @Override

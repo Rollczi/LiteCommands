@@ -14,7 +14,7 @@ public class LinkedListArgumentResolver<SENDER> extends AbstractCollectorArgumen
     }
 
     @Override
-    <E> Collector<E, ?, ? extends LinkedList<E>> getCollector(CollectionArgumentProfile collectionArgument, Invocation<SENDER> invocation) {
+    <E> Collector<E, ?, ? extends LinkedList<E>> getCollector(VarargsProfile collectionArgument, Invocation<SENDER> invocation) {
         return Collectors.toCollection(() -> new LinkedList<>());
     }
 

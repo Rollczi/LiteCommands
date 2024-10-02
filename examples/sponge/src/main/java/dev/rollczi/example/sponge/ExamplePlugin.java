@@ -32,7 +32,7 @@ public class ExamplePlugin {
 
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggestion(int.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggestion(Component.class, JoinProfile.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(Component.class, JoinProfile.NAMESPACE, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             // Handlers for missing permissions and invalid usage
             .missingPermission(new PermissionMessage())

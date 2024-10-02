@@ -6,6 +6,6 @@ import org.jetbrains.annotations.ApiStatus;
 public interface ArgumentProfile<T extends ArgumentProfile<T>> {
 
     @ApiStatus.Experimental
-    ArgumentProfileKey<T> getKey();
+    ArgumentProfileNamespace<T> getNamespace();
 
 }

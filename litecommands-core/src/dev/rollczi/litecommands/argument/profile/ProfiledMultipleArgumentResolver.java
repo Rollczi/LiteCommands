@@ -12,69 +12,69 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
-public abstract class ProfiledMultipleArgumentResolver<SENDER, T, META> implements MultipleArgumentResolver<SENDER, T> {
+public abstract class ProfiledMultipleArgumentResolver<SENDER, T, PROFILE> implements MultipleArgumentResolver<SENDER, T> {
 
-    private final ArgumentProfileKey<META> key;
+    private final ArgumentProfileNamespace<PROFILE> namespace;
 
-    protected ProfiledMultipleArgumentResolver(ArgumentProfileKey<META> key) {
-        this.key = key;
+    protected ProfiledMultipleArgumentResolver(ArgumentProfileNamespace<PROFILE> namespace) {
+        this.namespace = namespace;
     }
 
     @Override
     public final boolean canParse(Argument<T> argument) {
         Meta meta = argument.meta();
-        boolean hasMeta = meta.has(key.asMetaKey());
+        boolean hasMeta = meta.has(namespace.asMetaKey());
 
         if (!hasMeta) {
             return false;
         }
 
-        META value = meta.get(key.asMetaKey());
-        return this.canParse(argument, value);
+        PROFILE profile = meta.get(namespace.asMetaKey());
+        return this.canParse(argument, profile);
     }
 
-    protected boolean canParse(Argument<T> argument, META value) {
+    protected boolean canParse(Argument<T> argument, PROFILE profile) {
         return MultipleArgumentResolver.super.canParse(argument);
     }
 
     @Override
     public final ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
         Meta meta = argument.meta();
-        META value = meta.get(key.asMetaKey());
+        PROFILE value = meta.get(namespace.asMetaKey());
 
         return this.parse(invocation, argument, input, value);
     }
 
-    protected abstract ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput rawInput, META meta);
+    protected abstract ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput rawInput, PROFILE profile);
 
     @Override
     public final Range getRange(Argument<T> argument) {
-        return this.getRange(argument, argument.meta().get(key.asMetaKey()));
+        return this.getRange(argument, argument.meta().get(namespace.asMetaKey()));
     }
 
-    protected abstract Range getRange(Argument<T> argument, META meta);
+    protected abstract Range getRange(Argument<T> argument, PROFILE profile);
 
     @Override
     public final SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context) {
         Meta meta = argument.meta();
-        META value = meta.get(key.asMetaKey());
+        PROFILE value = meta.get(namespace.asMetaKey());
 
         return this.suggest(invocation, argument, context, value);
     }
 
-    protected SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context, META meta) {
+    protected SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context, PROFILE profile) {
         return MultipleArgumentResolver.super.suggest(invocation, argument, context);
     }
 
     @Override
     public final boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
         Meta meta = argument.meta();
-        META value = meta.get(key.asMetaKey());
+        PROFILE value = meta.get(namespace.asMetaKey());
 
         return this.matchParse(invocation, argument, input, value);
     }
 
-    protected boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, META meta) {
+    protected boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, PROFILE profile) {
         return MultipleArgumentResolver.super.matchParse(invocation, argument, input);
     }
 

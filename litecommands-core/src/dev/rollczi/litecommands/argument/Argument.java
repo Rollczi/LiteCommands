@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.argument;
 
 import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.profile.ArgumentProfileKey;
+import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
 
@@ -15,9 +15,23 @@ public interface Argument<T> extends Requirement<T> {
 
     ArgumentKey getKey();
 
-    Optional<ParseResult<T>> defaultValue();
+    Optional<ParseResult<T>> getDefaultValue();
+
+    @Deprecated
+    default Optional<ParseResult<T>> defaultValue() {
+        return getDefaultValue();
+    }
 
     boolean hasDefaultValue();
+
+    @ApiStatus.Experimental
+    <P> Argument<T> profiled(ArgumentProfileNamespace<P> key, P value);
+
+    @ApiStatus.Experimental
+    <P extends ArgumentProfile<P>> Argument<T> profiled(P profile);
+
+    @ApiStatus.Experimental
+    <P> Optional<P> getProfile(ArgumentProfileNamespace<P> key);
 
     @ApiStatus.Experimental
     <NEW> Argument<NEW> withType(TypeToken<NEW> type);
@@ -40,21 +54,21 @@ public interface Argument<T> extends Requirement<T> {
 
     @ApiStatus.Experimental
     static <T, P extends ArgumentProfile<P>> Argument<T> profiled(String name, Class<T> type, P profile) {
-        return profiled(name, TypeToken.of(type), profile.getKey(), profile);
+        return profiled(name, TypeToken.of(type), profile.getNamespace(), profile);
     }
 
     @ApiStatus.Experimental
     static <T, P extends ArgumentProfile<P>> Argument<T> profiled(String name, TypeToken<T> type, P profile) {
-        return profiled(name, type, profile.getKey(), profile);
+        return profiled(name, type, profile.getNamespace(), profile);
     }
 
     @ApiStatus.Experimental
-    static <T, P> Argument<T> profiled(String name, Class<T> type, ArgumentProfileKey<P> key, P profile) {
+    static <T, P> Argument<T> profiled(String name, Class<T> type, ArgumentProfileNamespace<P> key, P profile) {
         return profiled(name, TypeToken.of(type), key, profile);
     }
 
     @ApiStatus.Experimental
-    static <T, P> Argument<T> profiled(String name, TypeToken<T> type, ArgumentProfileKey<P> key, P profile) {
+    static <T, P> Argument<T> profiled(String name, TypeToken<T> type, ArgumentProfileNamespace<P> key, P profile) {
         return  new SimpleArgument<>(name, type, false)
             .profiled(key, profile);
     }

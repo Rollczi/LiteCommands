@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.argument;
 
 import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
-import dev.rollczi.litecommands.argument.profile.ArgumentProfileKey;
+import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
@@ -25,18 +25,6 @@ public class SimpleArgument<T> implements Argument<T> {
         this.meta.put(Meta.ARGUMENT_KEY, ArgumentKey.of(this.getClass().getName(), name));
     }
 
-    @ApiStatus.Experimental
-    public <META_HOLDER> SimpleArgument<T> profiled(ArgumentProfileKey<META_HOLDER> key, META_HOLDER value) {
-        this.meta.put(key.asMetaKey(), value);
-        this.meta.edit(Meta.ARGUMENT_KEY, argumentKey -> argumentKey.withNamespace(key.getNamespace()));
-        return this;
-    }
-
-    @ApiStatus.Experimental
-    public <P extends ArgumentProfile<P>> SimpleArgument<T> profiled(P profile) {
-        return profiled(profile.getKey(), profile);
-    }
-
     @Override
     public String getName() {
         return name;
@@ -45,13 +33,6 @@ public class SimpleArgument<T> implements Argument<T> {
     @Override
     public ArgumentKey getKey() {
         return meta.get(Meta.ARGUMENT_KEY);
-    }
-
-    @Override
-    public <T> Argument<T> withType(TypeToken<T> type) {
-        Argument<T> argument = Argument.of(name, type, nullable);
-        argument.meta().putAll(meta);
-        return argument;
     }
 
     @Override
@@ -70,7 +51,7 @@ public class SimpleArgument<T> implements Argument<T> {
     }
 
     @Override
-    public Optional<ParseResult<T>> defaultValue() {
+    public Optional<ParseResult<T>> getDefaultValue() {
         if (nullable) {
             return Optional.of(ParseResult.successNull());
         }
@@ -80,7 +61,34 @@ public class SimpleArgument<T> implements Argument<T> {
 
     @Override
     public boolean hasDefaultValue() {
-        return nullable || defaultValue().isPresent();
+        return nullable || getDefaultValue().isPresent();
+    }
+
+    @ApiStatus.Experimental
+    @Override
+    public <META_HOLDER> SimpleArgument<T> profiled(ArgumentProfileNamespace<META_HOLDER> key, META_HOLDER value) {
+        this.meta.put(key.asMetaKey(), value);
+        this.meta.edit(Meta.ARGUMENT_KEY, argumentKey -> argumentKey.withNamespace(key.getNamespace()));
+        return this;
+    }
+
+    @ApiStatus.Experimental
+    @Override
+    public <P extends ArgumentProfile<P>> SimpleArgument<T> profiled(P profile) {
+        return profiled(profile.getNamespace(), profile);
+    }
+
+    @ApiStatus.Experimental
+    @Override
+    public <P> Optional<P> getProfile(ArgumentProfileNamespace<P> key) {
+        return Optional.ofNullable(meta.get(key.asMetaKey(), null));
+    }
+
+    @Override
+    public <NEW> Argument<NEW> withType(TypeToken<NEW> type) {
+        Argument<NEW> argument = Argument.of(name, type, nullable);
+        argument.meta().putAll(meta);
+        return argument;
     }
 
 }

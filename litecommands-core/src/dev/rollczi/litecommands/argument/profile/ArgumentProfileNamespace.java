@@ -5,12 +5,14 @@ import dev.rollczi.litecommands.meta.MetaKey;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
-public class ArgumentProfileKey<META_HOLDER> implements ArgumentKey {
+public class ArgumentProfileNamespace<META_HOLDER> implements ArgumentKey {
 
+    private final String argumentNamespace;
     private final String argumentKey;
     private final MetaKey<META_HOLDER> metaKey;
 
-    protected ArgumentProfileKey(MetaKey<META_HOLDER> metaKey, String argumentKey) {
+    protected ArgumentProfileNamespace(MetaKey<META_HOLDER> metaKey, String argumentKey) {
+        this.argumentNamespace = metaKey.getKey();
         this.argumentKey = argumentKey;
         this.metaKey = metaKey;
     }
@@ -27,12 +29,12 @@ public class ArgumentProfileKey<META_HOLDER> implements ArgumentKey {
 
     @Override
     public String getNamespace() {
-        return metaKey.getKey();
+        return argumentNamespace;
     }
 
     @Override
     public ArgumentKey withKey(String argumentKey) {
-        return new ArgumentProfileKey<>(this.metaKey, argumentKey);
+        return new ArgumentProfileNamespace<>(this.metaKey, argumentKey);
     }
 
     @Override
@@ -41,13 +43,13 @@ public class ArgumentProfileKey<META_HOLDER> implements ArgumentKey {
     }
 
     @ApiStatus.Experimental
-    public static <T> ArgumentProfileKey<T> of(MetaKey<T> metaKey) {
+    public static <T> ArgumentProfileNamespace<T> of(MetaKey<T> metaKey) {
         return of(metaKey, ArgumentKey.DEFAULT_KEY);
     }
 
     @ApiStatus.Experimental
-    public static <T> ArgumentProfileKey<T> of(MetaKey<T> metaKey, String argumentKey) {
-        return new ArgumentProfileKey<>(metaKey, argumentKey);
+    public static <T> ArgumentProfileNamespace<T> of(MetaKey<T> metaKey, String argumentKey) {
+        return new ArgumentProfileNamespace<>(metaKey, argumentKey);
     }
 
 }
