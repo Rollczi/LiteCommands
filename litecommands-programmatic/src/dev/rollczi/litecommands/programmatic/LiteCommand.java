@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.programmatic;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.SimpleArgument;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.executor.LiteContext;
@@ -9,7 +8,7 @@ import dev.rollczi.litecommands.flag.FlagProfile;
 import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
-import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
+import dev.rollczi.litecommands.quoted.QuotedProfile;
 import dev.rollczi.litecommands.bind.BindRequirement;
 import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
@@ -64,7 +63,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argumentQuoted(String name) {
-        return this.argument(Argument.profiled(name, String.class, QuotedStringArgumentResolver.KEY, null));
+        return this.argument(Argument.profiled(name, String.class, new QuotedProfile()));
     }
 
     public <T> LiteCommand<SENDER> argumentOptional(String name, Class<T> type) {

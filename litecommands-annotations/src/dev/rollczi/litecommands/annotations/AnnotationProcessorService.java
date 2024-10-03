@@ -61,7 +61,6 @@ public class AnnotationProcessorService<SENDER> {
             .register(new CooldownAnnotationResolver<>())
             // argument meta processors
             .register(new KeyAnnotationResolver<>())
-            .register(new QuotedAnnotationProcessor<>())
             // universal processor for requirements such as @Arg, @Varargs, @Flag, @Context, @Bind and more
             .register(new RequirementDefinitionProcessor<>())
             // profile processors (they apply profiles to arguments)
@@ -69,6 +68,7 @@ public class AnnotationProcessorService<SENDER> {
             .register(new VarargsArgumentProcessor<>())
             .register(new ArgCollectionArgumentProcessor<>())
             .register(new JoinArgumentProcessor<>())
+            .register(new QuotedAnnotationProcessor<>())
             .register(new NullableArgumentProcessor<>())
             .register(new OptionalArgArgumentProcessor<>())
             ;
