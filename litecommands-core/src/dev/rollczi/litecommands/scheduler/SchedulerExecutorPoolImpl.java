@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.shared.ThrowingSupplier;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +46,7 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         SchedulerPoll resolve = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        if (resolve.equals(SchedulerPoll.MAIN) && isMainThread.get() && delay.isZero()) {
+        if (resolve.equals(SchedulerPoll.MAIN) && delay.isZero() && isMainThread.get()) {
             return tryRun(supplier, future);
         }
 

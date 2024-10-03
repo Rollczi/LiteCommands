@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, ParserChainAccessor<SENDER> {
 
+    // TODO Add caches for parsers
     private final TypeIndex<ParserNamespacedIndex<SENDER, ?>> typeIndex = new TypeIndex<>();
 
     @Override
