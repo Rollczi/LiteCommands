@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestSender;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ import java.util.concurrent.Executors;
 
 class ExampleUnitTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
         .editor(Scope.command("route"), context -> context.aliases("r"))
         .bind(ExecutorService.class, () -> Executors.newFixedThreadPool(4));
 

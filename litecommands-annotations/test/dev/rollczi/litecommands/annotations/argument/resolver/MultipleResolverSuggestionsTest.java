@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.argument.resolver;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -46,7 +45,7 @@ public class MultipleResolverSuggestionsTest extends LiteTestSpec {
 
     }
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
         .argument(String.class, resolver);
 
     @Command(name = "test")

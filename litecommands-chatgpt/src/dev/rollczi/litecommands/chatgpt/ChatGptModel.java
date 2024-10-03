@@ -1,9 +1,33 @@
 package dev.rollczi.litecommands.chatgpt;
 
 /*
-  https://platform.openai.com/docs/models/gpt-3-5
+  https://platform.openai.com/docs/models/
  */
 public class ChatGptModel {
+
+    public static final ChatGptModel GPT_4o = new ChatGptModel("gpt-4o");
+    public static final ChatGptModel GPT_4o_2024_08_06 = new ChatGptModel("gpt-4o-2024-08-06");
+    public static final ChatGptModel GPT_4o_2024_05_13 = new ChatGptModel("gpt-4o-2024-05-13");
+    public static final ChatGptModel CHATGPT_4o_LATEST = new ChatGptModel("chatgpt-4o-latest");
+
+    public static final ChatGptModel GPT_4o_MINI = new ChatGptModel("gpt-4o-mini");
+    public static final ChatGptModel GPT_4o_MINI_2024_07_18 = new ChatGptModel("gpt-4o-mini-2024-07-18");
+
+    public static final ChatGptModel GPT_4o_REALTIME_PREVIEW = new ChatGptModel("gpt-4o-realtime-preview");
+    public static final ChatGptModel GPT_4o_REALTIME_PREVIEW_2024_10_01 = new ChatGptModel("gpt-4o-realtime-preview-2024-10-01");
+
+    public static final ChatGptModel O1_PREVIEW = new ChatGptModel("o1-preview");
+    public static final ChatGptModel O1_PREVIEW_2024_09_12 = new ChatGptModel("o1-preview-2024-09-12");
+
+    public static final ChatGptModel O1_MINI = new ChatGptModel("o1-mini");
+    public static final ChatGptModel O1_MINI_2024_09_12 = new ChatGptModel("o1-mini-2024-09-12");
+
+    public static final ChatGptModel GPT_4_TURBO = new ChatGptModel("gpt-4-turbo");
+    public static final ChatGptModel GPT_4_TURBO_2024_04_09 = new ChatGptModel("gpt-4-turbo-2024-04-09");
+    public static final ChatGptModel GPT_4_TURBO_PREVIEW = new ChatGptModel("gpt-4-turbo-preview");
+    public static final ChatGptModel GPT_4_0125_PREVIEW = new ChatGptModel("gpt-4-0125-preview");
+
+    @Deprecated public static final ChatGptModel GPT_4_1106_PREVIEW = new ChatGptModel("gpt-4-1106-preview");
 
     public static final ChatGptModel GPT_4 = new ChatGptModel("gpt-4");
     public static final ChatGptModel GPT_4_0613 = new ChatGptModel("gpt-4-0613");

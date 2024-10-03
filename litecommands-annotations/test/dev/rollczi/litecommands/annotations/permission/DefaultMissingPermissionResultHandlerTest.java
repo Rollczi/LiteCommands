@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.permission;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.message.LiteMessages;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DefaultMissingPermissionResultHandlerTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
         .message(LiteMessages.MISSING_PERMISSIONS, Message.of(missingPermissions -> "missing permissions " + missingPermissions.asJoinedText(", ")))
         .result(String.class, (invocation, result, chain) -> invocation.sender().sendMessage(result));
 

@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.editor;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -13,7 +12,7 @@ import org.junit.jupiter.api.Test;
 // TODO move to framework test
 class EditorTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
         .commands(new ProgrammaticToEdit())
         .commands(new NamedProgrammaticToEdit())
         .editor(Scope.command(CommandToEdit.class), context -> context.name("class-after"))

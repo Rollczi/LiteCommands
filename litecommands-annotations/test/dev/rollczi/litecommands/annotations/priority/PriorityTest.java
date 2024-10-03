@@ -1,10 +1,8 @@
 package dev.rollczi.litecommands.annotations.priority;
 
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import static dev.rollczi.litecommands.annotations.priority.Priority.*;
-import dev.rollczi.litecommands.priority.PriorityLevel;
 import org.junit.jupiter.api.Test;
 
 class PriorityTest extends LiteTestSpec {

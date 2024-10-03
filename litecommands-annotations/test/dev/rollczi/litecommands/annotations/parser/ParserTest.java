@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.parser;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -22,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 class ParserTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder.advanced()
+    static LiteTestConfig config = builder -> builder.advanced()
         .argumentParser(LiteTestUser.class, new UserParser<>())
         .argumentParser(LiteTestGuild.class, new GuildParser<>());
 

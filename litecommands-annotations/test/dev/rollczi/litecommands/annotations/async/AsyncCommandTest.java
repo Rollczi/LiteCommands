@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.async;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -28,7 +27,7 @@ class AsyncCommandTest extends LiteTestSpec {
     private static final int DELAY = 500;
     private static final int MARGIN = 200;
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
         .scheduler(new SchedulerExecutorPoolImpl("test", 1))
         .context(Date.class, invocation -> ContextResult.ok(() -> {
             try {

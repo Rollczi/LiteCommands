@@ -9,7 +9,7 @@ import java.lang.reflect.Parameter;
 public class QuotedAnnotationProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Quoted, QuotedProfile> {
 
     public QuotedAnnotationProcessor() {
-        super(Quoted.class, QuotedProfile.NAMESPACE);
+        super(Quoted.class);
     }
 
     @Override

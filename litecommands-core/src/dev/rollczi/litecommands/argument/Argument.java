@@ -25,10 +25,7 @@ public interface Argument<T> extends Requirement<T> {
     boolean hasDefaultValue();
 
     @ApiStatus.Experimental
-    <P> Argument<T> profiled(ArgumentProfileNamespace<P> key, P value);
-
-    @ApiStatus.Experimental
-    <P extends ArgumentProfile<P>> Argument<T> profiled(P profile);
+    <P extends ArgumentProfile<P>> Argument<T> addProfile(P profile);
 
     @ApiStatus.Experimental
     <P> Optional<P> getProfile(ArgumentProfileNamespace<P> key);
@@ -54,23 +51,13 @@ public interface Argument<T> extends Requirement<T> {
 
     @ApiStatus.Experimental
     static <T, P extends ArgumentProfile<P>> Argument<T> profiled(String name, Class<T> type, P profile) {
-        return profiled(name, TypeToken.of(type), profile.getNamespace(), profile);
+        return profiled(name, TypeToken.of(type), profile);
     }
 
     @ApiStatus.Experimental
     static <T, P extends ArgumentProfile<P>> Argument<T> profiled(String name, TypeToken<T> type, P profile) {
-        return profiled(name, type, profile.getNamespace(), profile);
-    }
-
-    @ApiStatus.Experimental
-    static <T, P> Argument<T> profiled(String name, Class<T> type, ArgumentProfileNamespace<P> key, P profile) {
-        return profiled(name, TypeToken.of(type), key, profile);
-    }
-
-    @ApiStatus.Experimental
-    static <T, P> Argument<T> profiled(String name, TypeToken<T> type, ArgumentProfileNamespace<P> key, P profile) {
-        return  new SimpleArgument<>(name, type, false)
-            .profiled(key, profile);
+        return new SimpleArgument<>(name, type, false)
+            .addProfile(profile);
     }
 
 }

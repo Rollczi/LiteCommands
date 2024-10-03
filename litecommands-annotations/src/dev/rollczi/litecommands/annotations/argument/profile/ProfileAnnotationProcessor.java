@@ -4,20 +4,18 @@ package dev.rollczi.litecommands.annotations.argument.profile;
 import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
+import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
 
-public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, PROFILE> implements AnnotationProcessor<SENDER> {
+public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, PROFILE extends ArgumentProfile<PROFILE>> implements AnnotationProcessor<SENDER> {
 
     private final Class<A> annotationType;
-    private final ArgumentProfileNamespace<PROFILE> key;
 
-    protected ProfileAnnotationProcessor(Class<A> annotationType, ArgumentProfileNamespace<PROFILE> key) {
+    protected ProfileAnnotationProcessor(Class<A> annotationType) {
         this.annotationType = annotationType;
-        this.key = key;
     }
 
     @Override
@@ -35,7 +33,7 @@ public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, P
                 return;
             }
 
-            argument.profiled(key, profile);
+            argument.addProfile(profile);
         });
     }
 

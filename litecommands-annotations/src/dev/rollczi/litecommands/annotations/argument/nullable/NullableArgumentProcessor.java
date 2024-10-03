@@ -9,7 +9,7 @@ import java.lang.reflect.Parameter;
 public class NullableArgumentProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Arg, NullableProfile> {
 
     public NullableArgumentProcessor() {
-        super(Arg.class, NullableProfile.NAMESPACE);
+        super(Arg.class);
     }
 
     @Override

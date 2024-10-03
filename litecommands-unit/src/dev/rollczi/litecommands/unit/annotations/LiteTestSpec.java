@@ -1,10 +1,12 @@
-package dev.rollczi.litecommands.annotations;
+package dev.rollczi.litecommands.unit.annotations;
 
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
+import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.unit.TestSettings;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -50,14 +52,14 @@ public class LiteTestSpec {
         }
 
         for (Field field : type.getDeclaredFields()) {
-            if (field.getType() != LiteConfig.class) {
+            if (field.getType() != LiteTestConfig.class) {
                 continue;
             }
 
             try {
                 field.setAccessible(true);
                 Object result = field.get(null);
-                LiteConfig configurator = (LiteConfig) result;
+                LiteTestConfig configurator = (LiteTestConfig) result;
 
                 builder = configurator.configure(builder);
             }
@@ -69,4 +71,7 @@ public class LiteTestSpec {
         return builder;
     }
 
+    public interface LiteTestConfig {
+        LiteCommandsBuilder<TestSender, TestSettings, ?> configure(LiteCommandsBuilder<TestSender, TestSettings, ?> builder);
+    }
 }

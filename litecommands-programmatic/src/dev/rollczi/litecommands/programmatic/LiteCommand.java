@@ -53,7 +53,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argument(String name, Class<?> type) {
-        this.arguments.add(Argument.of(name, type, false));
+        this.arguments.add(Argument.of(name, type));
         return this;
     }
 
@@ -67,12 +67,12 @@ public class LiteCommand<SENDER> {
     }
 
     public <T> LiteCommand<SENDER> argumentOptional(String name, Class<T> type) {
-        this.arguments.add(Argument.of(name, TypeToken.ofParameterized(Optional.class, type), false));
+        this.arguments.add(Argument.of(name, TypeToken.ofParameterized(Optional.class, type)));
         return this;
     }
 
     public <T> LiteCommand<SENDER> argumentNullable(String name, Class<T> type) {
-        this.arguments.add(Argument.of(name, TypeToken.ofParameterized(Optional.class, type), false));
+        this.arguments.add(Argument.of(name, TypeToken.ofParameterized(Optional.class, type)));
         return this;
     }
 

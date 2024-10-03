@@ -49,7 +49,9 @@ class ChatGptStringArgumentResolver<SENDER> extends JoinStringArgumentResolver<S
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
         String firstPart = context.getCurrent().multilevel();
-        String topic = argument.meta().get(LiteChatGptExtension.ARGUMENT_TOPIC);
+        String topic = argument.getProfile(ChatGptArgumentProfile.NAMESPACE)
+            .map(chatGptProfile -> chatGptProfile.getTopic())
+            .orElse("");
 
         NavigableMap<String, String> navigableSuggestions = this.suggestions.computeIfAbsent(topic, key -> new TreeMap<>());
         Collection<String> suggestions = navigableSuggestions.subMap(firstPart, firstPart + Character.MAX_VALUE).values();

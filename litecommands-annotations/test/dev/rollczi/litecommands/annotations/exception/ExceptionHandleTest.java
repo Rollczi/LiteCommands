@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.exception;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +15,7 @@ class ExceptionHandleTest extends LiteTestSpec {
 
     private static final Set<String> exceptions = new HashSet<>();
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
             .exception(IllegalArgumentException.class, (invocation, exception, chain) -> exceptions.add("IllegalArgumentException"))
             .exception(RuntimeException.class, (invocation, exception, chain) -> exceptions.add("RuntimeException"));
 

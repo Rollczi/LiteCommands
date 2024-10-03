@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.chatgpt;
 
 import java.time.Duration;
+import java.util.function.Supplier;
 
 public class ChatGptSettings {
 
@@ -15,6 +16,7 @@ public class ChatGptSettings {
     private int maxTokens = 60;
     private boolean onlyAfterSpace = false;
     private Duration cooldown = Duration.ofMillis(500);
+    private Supplier<ChatGptClient> chatGptClient = () -> new ChatGptClientImpl(this);
 
     public ChatGptSettings() {
         this.apiKey = System.getenv("OPENAI_API_KEY");
@@ -75,6 +77,11 @@ public class ChatGptSettings {
         return this;
     }
 
+    public ChatGptSettings chatGptClient(Supplier<ChatGptClient> chatGptClient) {
+        this.chatGptClient = chatGptClient;
+        return this;
+    }
+
     String apiKey() {
         return apiKey;
     }
@@ -101,6 +108,10 @@ public class ChatGptSettings {
 
     Duration cooldown() {
         return cooldown;
+    }
+
+    ChatGptClient createChatGptClient() {
+        return chatGptClient.get();
     }
 
 }

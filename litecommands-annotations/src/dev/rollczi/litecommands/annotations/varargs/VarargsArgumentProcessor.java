@@ -10,7 +10,7 @@ import java.util.Collection;
 public class VarargsArgumentProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Varargs, VarargsProfile> {
 
     public VarargsArgumentProcessor() {
-        super(Varargs.class, VarargsProfile.NAMESPACE);
+        super(Varargs.class);
     }
 
     @Override

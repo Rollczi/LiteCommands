@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.context;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -19,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 class ContextProviderTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder.advanced()
+    static LiteTestConfig config = builder -> builder.advanced()
         .context(LiteTestUser.class, new UserContextual<>())
         .context(LiteTestGuild.class, new GuildContextual<>());
 

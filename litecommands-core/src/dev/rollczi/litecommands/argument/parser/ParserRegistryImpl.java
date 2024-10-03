@@ -18,11 +18,11 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, Parse
     @Override
     @SuppressWarnings("unchecked")
     public <T> void registerParser(TypeRange<T> typeRange, ArgumentKey key, Parser<SENDER, T> parser) {
-        List<ParserNamespacedIndex<SENDER, ?>> arguments = typeIndex.computeIfAbsent(typeRange, () -> new ParserNamespacedIndex<>());
+        List<ParserNamespacedIndex<SENDER, ?>> indexList = typeIndex.computeIfAbsent(typeRange, () -> new ParserNamespacedIndex<>());
 
-        for (ParserNamespacedIndex<SENDER, ?> argument : arguments) {
-            ParserNamespacedIndex<SENDER, T> bucket = (ParserNamespacedIndex<SENDER, T>) argument;
-            bucket.registerParser(key, parser);
+        for (ParserNamespacedIndex<SENDER, ?> index : indexList) {
+            ParserNamespacedIndex<SENDER, T> typedIndex = (ParserNamespacedIndex<SENDER, T>) index;
+            typedIndex.registerParser(key, parser);
         }
     }
 

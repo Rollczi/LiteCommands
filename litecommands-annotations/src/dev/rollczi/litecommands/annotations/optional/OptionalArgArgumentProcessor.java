@@ -8,7 +8,7 @@ import java.lang.reflect.Parameter;
 public class OptionalArgArgumentProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, OptionalArg, NullableProfile> {
 
     public OptionalArgArgumentProcessor() {
-        super(OptionalArg.class, NullableProfile.NAMESPACE);
+        super(OptionalArg.class);
     }
 
     @Override

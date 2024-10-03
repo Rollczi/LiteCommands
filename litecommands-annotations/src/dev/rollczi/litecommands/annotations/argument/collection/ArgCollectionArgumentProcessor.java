@@ -12,7 +12,7 @@ import java.util.Collection;
 public class ArgCollectionArgumentProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Arg, VarargsProfile> {
 
     public ArgCollectionArgumentProcessor() {
-        super(Arg.class, VarargsProfile.NAMESPACE);
+        super(Arg.class);
     }
 
     @Override

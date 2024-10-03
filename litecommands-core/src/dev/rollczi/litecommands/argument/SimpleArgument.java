@@ -5,6 +5,8 @@ import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.priority.MutablePrioritizedList;
+import dev.rollczi.litecommands.priority.Prioritized;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -16,12 +18,21 @@ public class SimpleArgument<T> implements Argument<T> {
     private final String name;
     private final TypeToken<T> type;
     private final Meta meta = Meta.create();
+    @Deprecated
     private final boolean nullable;
+    private final MutablePrioritizedList<ArgumentProfile<?>> profiles = new MutablePrioritizedList<>();
 
-    public SimpleArgument(String name, TypeToken<T> type, boolean nullable) {
+    public SimpleArgument(String name, TypeToken<T> type, @Deprecated boolean nullable) {
         this.name = name;
         this.type = type;
         this.nullable = nullable;
+        this.meta.put(Meta.ARGUMENT_KEY, ArgumentKey.of(this.getClass().getName(), name));
+    }
+
+    public SimpleArgument(String name, TypeToken<T> type) {
+        this.name = name;
+        this.type = type;
+        this.nullable = false;
         this.meta.put(Meta.ARGUMENT_KEY, ArgumentKey.of(this.getClass().getName(), name));
     }
 
@@ -65,17 +76,17 @@ public class SimpleArgument<T> implements Argument<T> {
     }
 
     @ApiStatus.Experimental
-    @Override
-    public <META_HOLDER> SimpleArgument<T> profiled(ArgumentProfileNamespace<META_HOLDER> key, META_HOLDER value) {
-        this.meta.put(key.asMetaKey(), value);
-        this.meta.edit(Meta.ARGUMENT_KEY, argumentKey -> argumentKey.withNamespace(key.getNamespace()));
-        return this;
-    }
+    public <P extends ArgumentProfile<P>> SimpleArgument<T> addProfile(P profile) {
+        ArgumentProfileNamespace<P> namespace = profile.getNamespace();
 
-    @ApiStatus.Experimental
-    @Override
-    public <P extends ArgumentProfile<P>> SimpleArgument<T> profiled(P profile) {
-        return profiled(profile.getNamespace(), profile);
+        this.profiles.add(profile);
+        this.meta.put(namespace.asMetaKey(), profile);
+
+        if (this.profiles.first().equals(profile)) {
+            this.meta.edit(Meta.ARGUMENT_KEY, argumentKey -> argumentKey.withNamespace(namespace.getNamespace()));
+
+        }
+        return this;
     }
 
     @ApiStatus.Experimental

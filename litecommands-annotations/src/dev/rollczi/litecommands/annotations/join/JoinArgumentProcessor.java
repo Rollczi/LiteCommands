@@ -8,7 +8,7 @@ import java.lang.reflect.Parameter;
 public class JoinArgumentProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Join, JoinProfile> {
 
     public JoinArgumentProcessor() {
-        super(Join.class, JoinProfile.NAMESPACE);
+        super(Join.class);
     }
 
     @Override

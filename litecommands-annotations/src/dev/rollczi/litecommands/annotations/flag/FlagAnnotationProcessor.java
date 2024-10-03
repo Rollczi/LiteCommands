@@ -8,7 +8,7 @@ import java.lang.reflect.Parameter;
 public class FlagAnnotationProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Flag, FlagProfile> {
 
     public FlagAnnotationProcessor() {
-        super(Flag.class, FlagProfile.NAMESPACE);
+        super(Flag.class);
     }
 
     @Override

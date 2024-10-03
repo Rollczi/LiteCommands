@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.annotations;
+package dev.rollczi.litecommands.unit.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

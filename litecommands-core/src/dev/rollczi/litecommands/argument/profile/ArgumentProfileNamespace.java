@@ -48,6 +48,11 @@ public class ArgumentProfileNamespace<META_HOLDER> implements ArgumentKey {
     }
 
     @ApiStatus.Experimental
+    public static <T> ArgumentProfileNamespace<T> of(String namespace, Class<T> type) {
+        return of(MetaKey.of(namespace, type));
+    }
+
+    @ApiStatus.Experimental
     public static <T> ArgumentProfileNamespace<T> of(MetaKey<T> metaKey, String argumentKey) {
         return new ArgumentProfileNamespace<>(metaKey, argumentKey);
     }

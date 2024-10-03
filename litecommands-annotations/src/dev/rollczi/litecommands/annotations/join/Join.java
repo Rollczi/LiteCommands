@@ -13,8 +13,6 @@ import java.lang.annotation.Target;
 @RequirementDefinition(type = RequirementDefinition.Type.ARGUMENT, nameProviders = { "value" })
 public @interface Join {
 
-    ArgumentProfileNamespace<JoinProfile> KEY = JoinProfile.NAMESPACE;
-
     String value() default "";
 
     String separator() default JoinProfile.DEFAULT_SEPARATOR;

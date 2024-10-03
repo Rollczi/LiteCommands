@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.invalid;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -18,7 +17,7 @@ class InvalidHandlerTest extends LiteTestSpec {
 
     static AtomicReference<InvalidUsage<TestSender>> invalidUsage = new AtomicReference<>();
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
         .invalidUsage((invocation, result, chain) -> invalidUsage.set(result));
 
     @Command(name = "test")
