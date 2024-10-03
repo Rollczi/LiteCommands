@@ -78,6 +78,13 @@ public class SchedulerPoll {
             }
         }
 
+        for (SchedulerPoll poll : replaceable) {
+            SchedulerPoll resolve = poll.resolve(available);
+            if (resolve != null) {
+                return resolve;
+            }
+        }
+
         throw new IllegalStateException("Cannot resolve the thread type");
     }
 

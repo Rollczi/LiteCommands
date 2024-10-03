@@ -24,7 +24,7 @@ public class ParallelAsyncCommandTest extends LiteTestSpec {
     private static final int DELAY = 100;
 
     static LiteTestConfig config = builder -> builder
-        .scheduler(new SchedulerExecutorPoolImpl("test", 50))
+        .scheduler(new SchedulerExecutorPoolImpl("test"))
         .context(Date.class, invocation -> ContextResult.ok(() -> {
             try {
                 Thread.sleep(DELAY);

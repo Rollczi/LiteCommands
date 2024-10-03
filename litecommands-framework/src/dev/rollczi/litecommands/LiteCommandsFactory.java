@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.argument.resolver.collector.SetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.TreeSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.StackArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.VectorArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.completeable.CompletableFutureResolver;
 import dev.rollczi.litecommands.argument.resolver.nullable.NullableArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.nullable.NullableProfile;
 import dev.rollczi.litecommands.argument.resolver.optional.OptionalArgumentResolver;
@@ -82,6 +83,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @SuppressWarnings("Convert2MethodRef")
@@ -137,6 +139,7 @@ public final class LiteCommandsFactory {
 
                 .argument(upwards(Enum.class), new EnumArgumentResolver<>())
                 .argument(Optional.class, new OptionalArgumentResolver<>())
+                .argument(CompletableFuture.class, new CompletableFutureResolver<>(scheduler, parser))
                 .argument(upwards(Object.class), NullableProfile.NAMESPACE, new NullableArgumentResolver<>(parser, suggester))
 
                 .argument(String.class, QuotedProfile.NAMESPACE, new QuotedStringArgumentResolver<>(suggester))

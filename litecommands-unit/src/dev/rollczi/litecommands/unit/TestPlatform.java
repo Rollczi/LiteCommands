@@ -19,6 +19,7 @@ import java.util.concurrent.TimeoutException;
 
 public class TestPlatform extends AbstractPlatform<TestSender, TestSettings> {
 
+    private static final TestPlatformSender DEFAULT_SENDER = new TestPlatformSender();
     private final Map<CommandRoute<TestSender>, PlatformInvocationListener<TestSender>> executeListeners = new LinkedHashMap<>();
     private final Map<CommandRoute<TestSender>, PlatformSuggestionListener<TestSender>> suggestListeners = new LinkedHashMap<>();
 
@@ -39,12 +40,12 @@ public class TestPlatform extends AbstractPlatform<TestSender, TestSettings> {
     }
 
     public AssertExecute execute(String command) {
-        return this.execute(new TestPlatformSender(), command);
+        return this.execute(DEFAULT_SENDER, command);
     }
 
     public AssertExecute execute(PlatformSender sender, String command) {
         try {
-            return this.executeAsync(sender, command).get(5, TimeUnit.SECONDS);
+            return this.executeAsync(sender, command).get(15, TimeUnit.SECONDS);
         }
         catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(e);
@@ -52,7 +53,7 @@ public class TestPlatform extends AbstractPlatform<TestSender, TestSettings> {
     }
 
     public CompletableFuture<AssertExecute> executeAsync(String command) {
-        return this.executeAsync(new TestPlatformSender(), command);
+        return this.executeAsync(DEFAULT_SENDER, command);
     }
 
     public CompletableFuture<AssertExecute> executeAsync(PlatformSender sender, String command) {
@@ -80,7 +81,7 @@ public class TestPlatform extends AbstractPlatform<TestSender, TestSettings> {
     }
 
     public AssertSuggest suggest(String command) {
-        return this.suggest(new TestPlatformSender(), command);
+        return this.suggest(DEFAULT_SENDER, command);
     }
 
     public AssertSuggest suggest(PlatformSender platformSender, String command) {

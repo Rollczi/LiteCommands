@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.shared.ThrowingSupplier;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,14 +17,11 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
 
     private final ThreadLocal<Boolean> isMainThread = ThreadLocal.withInitial(() -> false);
 
-    private final ScheduledExecutorService mainExecutor;
-    private final ScheduledExecutorService asyncExecutor;
+    private final ExecutorService mainExecutor;
+    private final ExecutorService asyncExecutor;
+    private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
     public SchedulerExecutorPoolImpl(String name) {
-        this(name, Runtime.getRuntime().availableProcessors());
-    }
-
-    public SchedulerExecutorPoolImpl(String name, int asyncThreads) {
         this.mainExecutor = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(MAIN_THREAD_NAME_FORMAT, name));
@@ -33,7 +31,7 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         this.mainExecutor.submit(() -> isMainThread.set(true));
 
         AtomicInteger asyncCount = new AtomicInteger();
-        this.asyncExecutor = Executors.newScheduledThreadPool(asyncThreads, runnable -> {
+        this.asyncExecutor = Executors.newCachedThreadPool(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(ASYNC_THREAD_NAME_FORMAT, name, asyncCount.getAndIncrement()));
 
@@ -50,13 +48,15 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
             return tryRun(supplier, future);
         }
 
-        ScheduledExecutorService executor = resolve.equals(SchedulerPoll.MAIN) ? mainExecutor : asyncExecutor;
+        ExecutorService executor = resolve.equals(SchedulerPoll.MAIN) ? mainExecutor : asyncExecutor;
 
         if (delay.isZero()) {
             executor.submit(() -> tryRun(supplier, future));
         }
         else {
-            executor.schedule(() -> tryRun(supplier, future), delay.toMillis(), TimeUnit.MILLISECONDS);
+            scheduledExecutor.schedule(() -> {
+                executor.submit(() -> tryRun(supplier, future));
+            }, delay.toMillis(), TimeUnit.MILLISECONDS);
         }
 
         return future;

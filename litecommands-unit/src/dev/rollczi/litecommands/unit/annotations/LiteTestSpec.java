@@ -6,10 +6,11 @@ import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.command.Command;
-import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.unit.TestSettings;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
+import dev.rollczi.litecommands.unit.blocking.BlockingArgument;
+import dev.rollczi.litecommands.unit.blocking.BlockingArgumentResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 
@@ -41,6 +42,7 @@ public class LiteTestSpec {
         liteCommands = configureLiteTest(LiteCommandsFactory.builder(TestSender.class, platform)
             .commands(LiteCommandsAnnotations.ofClasses(commands))
             .exceptionUnexpected((invocation, exception, chain) -> {}), type)
+            .argument(BlockingArgument.class, new BlockingArgumentResolver<>())
             .build();
     }
 
