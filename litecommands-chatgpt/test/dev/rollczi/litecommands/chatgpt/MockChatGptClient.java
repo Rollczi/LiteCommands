@@ -4,17 +4,17 @@ public class MockChatGptClient implements ChatGptClient {
 
     @Override
     public String chat(String message) {
-        return "'Hello, World!'";
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public String chat(String context, String message) {
-        return "'Hello, World!'";
+        return "'" + context + "'";
     }
 
     @Override
     public String chat(ChatGptMessage... messages) {
-        return "'Hello, World!'";
+        throw new UnsupportedOperationException("Not implemented");
     }
 
 }

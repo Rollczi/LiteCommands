@@ -25,7 +25,7 @@ public interface Argument<T> extends Requirement<T> {
     boolean hasDefaultValue();
 
     @ApiStatus.Experimental
-    <P extends ArgumentProfile<P>> Argument<T> addProfile(P profile);
+    <P extends ArgumentProfile<P>> Argument<T> withProfile(P profile);
 
     @ApiStatus.Experimental
     <P> Optional<P> getProfile(ArgumentProfileNamespace<P> key);
@@ -57,7 +57,7 @@ public interface Argument<T> extends Requirement<T> {
     @ApiStatus.Experimental
     static <T, P extends ArgumentProfile<P>> Argument<T> profiled(String name, TypeToken<T> type, P profile) {
         return new SimpleArgument<>(name, type, false)
-            .addProfile(profile);
+            .withProfile(profile);
     }
 
 }

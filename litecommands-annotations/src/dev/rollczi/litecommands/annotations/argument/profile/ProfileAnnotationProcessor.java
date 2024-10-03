@@ -33,7 +33,7 @@ public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, P
                 return;
             }
 
-            argument.addProfile(profile);
+            argument.withProfile(profile);
         });
     }
 

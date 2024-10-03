@@ -76,7 +76,7 @@ public class SimpleArgument<T> implements Argument<T> {
     }
 
     @ApiStatus.Experimental
-    public <P extends ArgumentProfile<P>> SimpleArgument<T> addProfile(P profile) {
+    public <P extends ArgumentProfile<P>> SimpleArgument<T> withProfile(P profile) {
         ArgumentProfileNamespace<P> namespace = profile.getNamespace();
 
         this.profiles.add(profile);
