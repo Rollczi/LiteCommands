@@ -59,14 +59,14 @@ fun compatibleWith(action: String, java: JavaVersion, tests: Boolean = true, blo
         return
     }
 
-    if (isGlobalTest() && !tests) {
-        println("Skipping $action while running global tests")
+    if (isTest() && !tests) {
+        println("Skipping $action while running tests")
         return
     }
 
     block()
 }
 
-fun isGlobalTest() = settings.gradle.startParameter.taskRequests.any {
-    it.args.contains("test") && !it.args.contains("--tests")
+fun isTest() = settings.gradle.startParameter.taskRequests.any {
+    it.args.any { arg -> arg.endsWith("test") || arg.endsWith("testClasses") }
 }
