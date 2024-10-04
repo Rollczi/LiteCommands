@@ -28,7 +28,7 @@ class AsyncCommandTest extends LiteTestSpec {
     private static final int MARGIN = 200;
 
     static LiteTestConfig config = builder -> builder
-        .scheduler(new SchedulerExecutorPoolImpl("test"))
+        .scheduler(new SchedulerExecutorPoolImpl("test", 1))
         .context(Date.class, invocation -> ContextResult.ok(() -> {
             try {
                 Thread.sleep(DELAY);

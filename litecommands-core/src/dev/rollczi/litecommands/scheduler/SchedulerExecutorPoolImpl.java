@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,21 +23,28 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
     private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
     public SchedulerExecutorPoolImpl(String name) {
+        this(name, -1);
+    }
+
+    public SchedulerExecutorPoolImpl(String name, int pool) {
         this.mainExecutor = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(MAIN_THREAD_NAME_FORMAT, name));
 
             return thread;
         });
+
         this.mainExecutor.submit(() -> isMainThread.set(true));
 
         AtomicInteger asyncCount = new AtomicInteger();
-        this.asyncExecutor = Executors.newCachedThreadPool(runnable -> {
+        ThreadFactory factory = runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(ASYNC_THREAD_NAME_FORMAT, name, asyncCount.getAndIncrement()));
 
             return thread;
-        });
+        };
+
+        this.asyncExecutor = pool < 0 ? Executors.newCachedThreadPool(factory) : Executors.newFixedThreadPool(pool, factory);
     }
 
     @Override

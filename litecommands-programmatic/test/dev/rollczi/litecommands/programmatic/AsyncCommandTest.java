@@ -17,7 +17,7 @@ import static dev.rollczi.litecommands.programmatic.LiteProgrammatic.*;
 class AsyncCommandTest extends LiteTestSpec {
 
     static LiteTestConfig config = builder -> builder
-        .scheduler(new SchedulerExecutorPoolImpl("test"))
+        .scheduler(new SchedulerExecutorPoolImpl("test", 1))
         .context(Date.class, invocation -> ContextResult.ok(() -> new Date()))
         .argumentParser(String.class, new StringArgumentResolver())
         .argument(SomeClass.class, new ThrowingArgumentResolver())
