@@ -20,12 +20,12 @@ import dev.rollczi.example.bukkit.user.UserCommand;
 import dev.rollczi.example.bukkit.user.UserService;
 import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
 import dev.rollczi.example.bukkit.validator.IsNotOp;
+import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
@@ -93,7 +93,7 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggestion(String.class, JoinProfile.NAMESPACE, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(String.class, ProfileNamespaces.JOIN, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             .message(LiteBukkitMessages.PLAYER_ONLY, "&cOnly player can execute this command!")
             .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> "&cPlayer &7" + input + " &cnot found!")

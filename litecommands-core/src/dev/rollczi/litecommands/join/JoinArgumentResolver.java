@@ -1,20 +1,20 @@
 package dev.rollczi.litecommands.join;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.profile.ProfiledParser;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
+import dev.rollczi.litecommands.argument.profile.ProfiledParser;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Range;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class JoinArgumentResolver<SENDER, T> extends ProfiledParser<SENDER, T, JoinProfile> {
 
     protected JoinArgumentResolver() {
-        super(JoinProfile.NAMESPACE);
+        super(ProfileNamespaces.JOIN);
     }
 
     @Override

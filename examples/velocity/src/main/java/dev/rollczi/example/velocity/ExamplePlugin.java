@@ -16,6 +16,7 @@ import dev.rollczi.example.velocity.command.SendCommand;
 import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
 import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -55,7 +56,7 @@ public class ExamplePlugin {
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggestion(String.class, SuggestionResult.of("name", "argument"))
             .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggestion(String.class, JoinProfile.NAMESPACE, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(String.class, ProfileNamespaces.JOIN, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             // Context resolvers @Context
             .context(Player.class, new VelocityOnlyPlayerContextual<>("&cOnly player can execute this command!"))
