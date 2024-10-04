@@ -25,7 +25,7 @@ class PrettyPrintTest {
                 "public static class TestCommand {\n" +
                 "    \n" +
                 "    @Execute(name = \"test\", aliases = { \"t\", \"tt\" })\n" +
-                "    public List<String> test(@Arg(value = \"arg\") String arg0, @Arg String arg1) {\n" +
+                "    public List<String> test(@Arg(value = \"arg\") String argument, @Arg String argument2) {\n" +
                 "                             ^ error: Can not find resolver for 'String'\n" +
                 "    }\n" +
                 "}"

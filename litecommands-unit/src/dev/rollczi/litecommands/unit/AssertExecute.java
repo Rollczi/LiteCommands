@@ -50,6 +50,10 @@ public class AssertExecute {
         Object object = result.getResult();
 
         if (object == null) {
+            if (expected == null) {
+                return this;
+            }
+
             throw new AssertionError("Command result is empty");
         }
 

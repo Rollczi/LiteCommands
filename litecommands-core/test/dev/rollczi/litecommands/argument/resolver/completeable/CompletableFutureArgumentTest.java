@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.unit.blocking.Blocking;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgument;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class CompletableFutureArgumentTest extends LiteTestSpec {
     static LiteTestConfig config = builder -> builder
         .scheduler(new SchedulerExecutorPoolImpl("litecommands-test"));
 
-    public static final Class<CompletableFuture<String>> FURUTRE_TYPE = new TypeToken<CompletableFuture<String>>() {}.getRawType();
+    public static final Class<CompletableFuture<String>> FUTURE_TYPE = new TypeToken<CompletableFuture<String>>() {}.getRawType();
 
     @Command(name = "async")
     static class TestCommand {
@@ -35,17 +36,16 @@ class CompletableFutureArgumentTest extends LiteTestSpec {
 
     @Test
     void test() {
-        for (int i = 0; i < 1_000; i++) {
-            CompletableFuture<String> completableFuture = platform.executeAsync("async a b")
-                .thenCompose(assertExecute -> assertExecute.assertSuccessAs(FURUTRE_TYPE));
+        CompletableFuture<String> completableFuture = platform.executeAsync("async a b")
+            .thenCompose(assertExecute -> assertExecute.assertSuccessAs(FUTURE_TYPE));
 
-            long start = System.nanoTime();
-            await()
-                .until(() -> completableFuture.isDone());
-            long time = System.nanoTime() - start;
-            System.out.println("Time: " + TimeUnit.NANOSECONDS.toMillis(time) + "ms");
-        }
+        await()
+            .atLeast(350, TimeUnit.MILLISECONDS)
+            .atMost(1850, TimeUnit.MILLISECONDS)
+            .until(() -> completableFuture.isDone());
 
+        assertThat(completableFuture.join())
+            .isEqualTo("ab");
     }
 
 }

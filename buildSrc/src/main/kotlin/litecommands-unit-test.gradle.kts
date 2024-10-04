@@ -1,3 +1,7 @@
+import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.add
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
@@ -17,6 +21,12 @@ dependencies {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.isFork = true
+        options.compilerArgs.add("-parameters")
+    }
 }
 
 sourceSets.test {

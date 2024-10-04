@@ -1,7 +1,18 @@
+import org.gradle.api.JavaVersion.*
+
 rootProject.name = "LiteCommands"
 
+compatibleWith("fabric maven", VERSION_17, tests = false) {
+    pluginManagement {
+        repositories {
+            mavenCentral()
+            gradlePluginPortal()
+            maven("https://maven.fabricmc.net/")
+        }
+    }
+}
+
 plugins {
-    // fabric-loom plugin needs it
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
@@ -14,43 +25,48 @@ include(":litecommands-unit")
 
 // extensions
 include(":litecommands-adventure")
-include(":litecommands-adventure-platform")
-include(":litecommands-chatgpt", JavaVersion.VERSION_11)
-include(":litecommands-jakarta", JavaVersion.VERSION_11)
+include(":litecommands-adventure-platform", tests = false)
+include(":litecommands-chatgpt", VERSION_11)
+include(":litecommands-jakarta", VERSION_11)
 
 // platforms
-include(":litecommands-velocity", JavaVersion.VERSION_11)
-include(":litecommands-bungee")
-include(":litecommands-bukkit")
-include(":litecommands-minestom", JavaVersion.VERSION_21)
-include("litecommands-jda", JavaVersion.VERSION_11)
-include(":litecommands-sponge")
-include(":litecommands-fabric", JavaVersion.VERSION_17)
+include(":litecommands-velocity", VERSION_11, tests = false)
+include(":litecommands-bungee", tests = false)
+include(":litecommands-bukkit", tests = false)
+include(":litecommands-minestom", VERSION_21)
+include("litecommands-jda", VERSION_11)
+include(":litecommands-sponge", tests = false)
+include(":litecommands-fabric", VERSION_17, tests = false)
 
 // examples
-include(":examples:bukkit")
-include(":examples:bukkit-adventure-platform")
-include(":examples:bukkit-chatgpt", JavaVersion.VERSION_11)
-include(":examples:minestom", JavaVersion.VERSION_21)
-include(":examples:velocity", JavaVersion.VERSION_11)
-include(":examples:sponge")
-include(":examples:fabric", JavaVersion.VERSION_17)
+include(":examples:bukkit", tests = false)
+include(":examples:bukkit-adventure-platform", tests = false)
+include(":examples:bukkit-chatgpt", VERSION_11, tests = false)
+include(":examples:minestom", VERSION_21, tests = false)
+include(":examples:velocity", VERSION_11, tests = false)
+include(":examples:sponge", tests = false)
+include(":examples:fabric", VERSION_17, tests = false)
 
-fun include(projectPath: String, version: JavaVersion) {
-    if (!JavaVersion.current().isCompatibleWith(version)) {
-        println("Skipping $projectPath because of incompatible Java version, required: $version")
+fun include(project: String, java: JavaVersion = VERSION_1_8, tests: Boolean = true) {
+    compatibleWith("including $project", java, tests, {
+        settings.include(project)
+    })
+}
+
+fun compatibleWith(action: String, java: JavaVersion, tests: Boolean = true, block: () -> Unit) {
+    if (!current().isCompatibleWith(java)) {
+        println("Skipping $action because of incompatible Java version, required: $java")
         return
     }
 
-    include(projectPath)
+    if (isGlobalTest() && !tests) {
+        println("Skipping $action while running global tests")
+        return
+    }
+
+    block()
 }
 
-if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
-    pluginManagement {
-        repositories {
-            maven("https://maven.fabricmc.net/")
-            mavenCentral()
-            gradlePluginPortal()
-        }
-    }
+fun isGlobalTest() = settings.gradle.startParameter.taskRequests.any {
+    it.args.contains("test") && !it.args.contains("--tests")
 }
