@@ -40,7 +40,7 @@ public class LiteContext<SENDER> {
     }
 
     public boolean argumentFlag(String name) {
-        return Boolean.TRUE.equals(this.get(name, TypeToken.of(boolean.class)));
+        return Boolean.TRUE.equals(this.get(name, TypeToken.of(Boolean.class)));
     }
 
     public String argumentJoin(String name) {
@@ -49,6 +49,18 @@ public class LiteContext<SENDER> {
 
     public <T> T context(String name, Class<T> type) {
         return this.get(name, TypeToken.of(type));
+    }
+
+    public <T> T context(String name, TypeToken<T> type) {
+        return this.get(name, type);
+    }
+
+    public <T> T bind(String name, Class<T> type) {
+        return this.get(name, TypeToken.of(type));
+    }
+
+    public <T> T bind(String name, TypeToken<T> type) {
+        return this.get(name, type);
     }
 
     public Invocation<SENDER> invocation() {
@@ -60,7 +72,7 @@ public class LiteContext<SENDER> {
         RequirementMatch match = result.get(name);
 
         if (match == null) {
-            throw new IllegalArgumentException("Argument with name '" + name + "' not found");
+            throw new IllegalArgumentException("Requirement with name '" + name + "' not found");
         }
 
         Object matchResult = match.getResult();
@@ -84,5 +96,4 @@ public class LiteContext<SENDER> {
     Object getReturnResult() {
         return returnResult;
     }
-
 }

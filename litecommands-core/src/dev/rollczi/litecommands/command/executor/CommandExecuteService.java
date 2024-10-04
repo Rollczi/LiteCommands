@@ -12,7 +12,6 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.requirement.RequirementMatchService;
-import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.shared.FailedReason;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
@@ -34,7 +33,6 @@ public class CommandExecuteService<SENDER> {
     private final ValidatorService<SENDER> validatorService;
     private final ResultHandleService<SENDER> resultResolver;
     private final Scheduler scheduler;
-    private final SchematicGenerator<SENDER> schematicGenerator;
     private final RequirementMatchService<SENDER> requirementMatchService;
     private final EventPublisher publisher;
 
@@ -42,14 +40,12 @@ public class CommandExecuteService<SENDER> {
         ValidatorService<SENDER> validatorService,
         ResultHandleService<SENDER> resultResolver,
         Scheduler scheduler,
-        SchematicGenerator<SENDER> schematicGenerator,
         RequirementMatchService<SENDER> requirementMatchService,
         EventPublisher publisher
     ) {
         this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.scheduler = scheduler;
-        this.schematicGenerator = schematicGenerator;
         this.requirementMatchService = requirementMatchService;
         this.publisher = publisher;
     }
@@ -173,7 +169,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             // Execution
-            SchedulerPoll type = executor.meta().get(Meta.POLL_TYPE);
+            SchedulerPoll type = executor.metaCollector().findFirst(Meta.POLL_TYPE);
 
             return scheduler.supply(type, () -> execute(match, executor));
         }).exceptionally(throwable -> toThrown(executor, throwable));

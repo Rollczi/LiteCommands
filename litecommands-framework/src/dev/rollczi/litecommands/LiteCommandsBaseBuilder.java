@@ -616,7 +616,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     protected CommandManager<SENDER> createCommandManager() {
         RequirementMatchService<SENDER> requirementMatchService = new RequirementMatchService<>(strictService, contextRegistry, parserRegistry, bindRegistry, scheduler);
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, requirementMatchService, eventPublisher);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, requirementMatchService, eventPublisher);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
 
         return new CommandManager<>(this.platform, commandExecuteService, suggestionService);

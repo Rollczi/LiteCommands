@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.quoted.QuotedProfile;
 import dev.rollczi.litecommands.bind.BindRequirement;
 import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
+import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.strict.StrictMode;
 
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommand<SENDER> {
@@ -165,8 +167,20 @@ public class LiteCommand<SENDER> {
     }
 
     @SafeVarargs
+    @Deprecated
     public final LiteCommand<SENDER> subCommands(LiteCommand<SENDER>... subCommands) {
         this.subCommands.addAll(Arrays.asList(subCommands));
+        return this;
+    }
+
+    @SafeVarargs
+    public final LiteCommand<SENDER> subcommands(LiteCommand<SENDER>... subCommands) {
+        this.subCommands.addAll(Arrays.asList(subCommands));
+        return this;
+    }
+
+    public final LiteCommand<SENDER> subcommand(String name, UnaryOperator<LiteCommand<SENDER>> operator) {
+        this.subCommands.add(operator.apply(new LiteCommand<>(name)));
         return this;
     }
 
