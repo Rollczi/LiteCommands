@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.context;
 import dev.rollczi.litecommands.requirement.RequirementCondition;
 import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.Collections;
@@ -40,13 +41,29 @@ public interface ContextResult<T> extends RequirementFutureResult<T> {
     }
 
     @ApiStatus.Experimental
-    static <T> AsyncContextResult<T> completeableFuture(CompletableFuture<ContextResult<T>> future) {
+    static <T> ContextResult<T> conditional(Supplier<T> supplier, List<RequirementCondition> conditions) {
+        return new ContextCompletedResult<>(supplier, null, Collections.unmodifiableList(conditions));
+    }
+
+    @ApiStatus.Experimental
+    static <T> AsyncContextResult<T> completableFuture(CompletableFuture<ContextResult<T>> future) {
         return new AsyncContextResult<>(future);
     }
 
     @ApiStatus.Experimental
-    static <T> ContextResult<T> conditional(Supplier<T> supplier, List<RequirementCondition> conditions) {
-        return new ContextCompletedResult<>(supplier, null, Collections.unmodifiableList(conditions));
+    static <T, EXPECTED> AsyncContextResult<EXPECTED> completableFuture(CompletableFuture<T> future, Function<T, ? extends ContextResult<EXPECTED>> mapper) {
+        return new AsyncContextResult<>(future.thenApply(mapper));
     }
+
+    @ApiStatus.Experimental
+    static <EXPECTED> AsyncContextResult<EXPECTED> async(Supplier<? extends ContextResult<EXPECTED>> supplier) {
+        return new AsyncContextResult<>(CompletableFuture.supplyAsync(supplier));
+    }
+
+    @ApiStatus.Experimental
+    static <EXPECTED> AsyncContextResult<EXPECTED> async(Supplier<? extends ContextResult<EXPECTED>> supplier, Executor executor) {
+        return new AsyncContextResult<>(CompletableFuture.supplyAsync(supplier, executor));
+    }
+
 
 }

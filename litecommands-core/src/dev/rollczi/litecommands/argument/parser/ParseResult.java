@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -75,9 +76,13 @@ public interface ParseResult<EXCEPTED> extends RequirementFutureResult<EXCEPTED>
     }
 
     @ApiStatus.Experimental
-    @ApiStatus.Internal
     static <EXPECTED> ParseAsyncResult<EXPECTED> async(Supplier<? extends ParseResult<EXPECTED>> supplier) {
         return new ParseAsyncResult<>(CompletableFuture.supplyAsync(supplier));
+    }
+
+    @ApiStatus.Experimental
+    static <EXPECTED> ParseAsyncResult<EXPECTED> async(Supplier<? extends ParseResult<EXPECTED>> supplier, Executor executor) {
+        return new ParseAsyncResult<>(CompletableFuture.supplyAsync(supplier, executor));
     }
 
 }

@@ -10,7 +10,7 @@ public class AsyncContextResult<T> implements ContextResult<T>, RequirementFutur
 
     private final CompletableFuture<? extends ContextResult<T>> future;
 
-    public AsyncContextResult(CompletableFuture<ContextResult<T>> future) {
+    public AsyncContextResult(CompletableFuture<? extends ContextResult<T>> future) {
         this.future = future;
     }
 
