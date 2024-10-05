@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
+import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -24,6 +25,11 @@ class MetaEmptyImpl implements Meta {
     }
 
     @Override
+    public <T> Meta edit(MetaKey<T> key, UnaryOperator<T> operator) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public <T> Meta remove(MetaKey<T> key) {
         throw new UnsupportedOperationException();
     }
@@ -39,7 +45,7 @@ class MetaEmptyImpl implements Meta {
     }
 
     @Override
-    public Meta apply(Meta meta) {
+    public Meta putAll(Meta meta) {
         throw new UnsupportedOperationException();
     }
 

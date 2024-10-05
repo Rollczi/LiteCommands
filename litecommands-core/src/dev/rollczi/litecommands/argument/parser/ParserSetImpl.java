@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.argument.parser;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.invocation.Invocation;
 
 import java.util.LinkedList;
 import org.jetbrains.annotations.Nullable;
@@ -13,11 +12,10 @@ class ParserSetImpl<SENDER, PARSED> implements ParserSet<SENDER, PARSED> {
     @Override
     @Nullable
     public Parser<SENDER, PARSED> getValidParser(
-        Invocation<SENDER> invocation,
         Argument<PARSED> argument
     ) {
         for (Parser<SENDER, PARSED> parser : parsers) {
-            if (parser.canParse(invocation, argument)) {
+            if (parser.canParse(argument)) {
                 return parser;
             }
         }

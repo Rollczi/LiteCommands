@@ -1,84 +1,89 @@
 package dev.rollczi.litecommands.argument;
 
-import java.util.Objects;
+import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
+import org.jetbrains.annotations.ApiStatus;
 
-public class ArgumentKey {
+public interface ArgumentKey {
 
-    public static final String UNIVERSAL_NAMESPACE = Argument.class.getName();
+    String DEFAULT_KEY = "";
+    String DEFAULT_NAMESPACE = Argument.class.getName();
 
-    private static final ArgumentKey DEFAULT_UNIVERSAL = of("");
+    ArgumentKey DEFAULT = ArgumentKey.of(DEFAULT_NAMESPACE, DEFAULT_KEY);
 
-    private final String namespace;
-    private final String key;
+    @Deprecated
+    String UNIVERSAL_NAMESPACE = DEFAULT_NAMESPACE;
+    @Deprecated
+    ArgumentKey DEFAULT_UNIVERSAL = DEFAULT;
 
-    private ArgumentKey(String namespace, String key) {
-        this.namespace = namespace;
-        this.key = key;
+    String getKey();
+
+    String getNamespace();
+
+    ArgumentKey withKey(String key);
+
+    ArgumentKey withNamespace(String namespace);
+
+    @Deprecated
+    default  <A extends Argument<?>> ArgumentKey withNamespace(Class<A> argumentType) {
+        return withNamespace(argumentType.getName());
     }
 
-    public String getKey() {
-        return key;
+    default ArgumentKey withDefaultKey() {
+        return withKey(DEFAULT_KEY);
     }
 
-    public String getNamespace() {
-        return namespace;
+    default ArgumentKey withDefaultNamespace() {
+        return withNamespace(DEFAULT_NAMESPACE);
     }
 
-    boolean isDefault() {
-        return this.key.isEmpty();
+    default boolean isDefaultKey() {
+        return getKey().isEmpty();
     }
 
-    public ArgumentKey withKey(String key) {
-        return new ArgumentKey(this.namespace, key);
+    default boolean isDefaultNamespace() {
+        return getNamespace().equals(DEFAULT_NAMESPACE);
+    }
+
+    @Deprecated
+    default boolean isDefault() {
+        return this.isDefaultKey();
+    }
+
+    @Deprecated
+    default boolean isUniversal() {
+        return this.isDefaultNamespace();
     }
 
 
-    public <A extends Argument<?>> ArgumentKey withNamespace(Class<A> argumentType) {
-        return new ArgumentKey(argumentType.getName(), this.key);
+    static ArgumentKey of() {
+        return DEFAULT;
     }
 
-    public static ArgumentKey of(String key) {
-        return ArgumentKey.typed(Argument.class, key);
+    static ArgumentKey of(String key) {
+        return of(DEFAULT_NAMESPACE, key);
     }
 
-    public static ArgumentKey of() {
-        return DEFAULT_UNIVERSAL;
+    static ArgumentKey of(String namespace, String key) {
+        return new ArgumentKeyImpl(namespace, key);
     }
 
-    public static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType, String key) {
+    @Deprecated
+    static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType, String key) {
         if (key == null) {
             throw new NullPointerException("Key cannot be null");
         }
 
-        return new ArgumentKey(argumentType.getName(), key);
+        return new ArgumentKeyImpl(argumentType.getName(), key);
     }
 
-    public boolean isUniversal() {
-        return this.namespace.equals(UNIVERSAL_NAMESPACE);
-    }
-
-    public static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType) {
+    @Deprecated
+    static <A extends Argument<?>> ArgumentKey typed(Class<A> argumentType) {
         return typed(argumentType, "");
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        ArgumentKey that = (ArgumentKey) o;
-        return namespace.equals(that.namespace) && key.equals(that.key);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(namespace, key);
-    }
-
-    @Override
-    public String toString() {
-        return namespace + ":" + key;
+    @ApiStatus.Experimental
+    default ArgumentKey profiled(ArgumentProfileNamespace<?> key) {
+        return key.withKey(getKey());
     }
 
 }

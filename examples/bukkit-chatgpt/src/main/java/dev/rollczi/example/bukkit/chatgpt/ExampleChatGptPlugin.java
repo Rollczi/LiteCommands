@@ -2,6 +2,7 @@ package dev.rollczi.example.bukkit.chatgpt;
 
 import dev.rollczi.example.bukkit.chatgpt.command.BanCommand;
 import dev.rollczi.example.bukkit.chatgpt.command.ChatGptCommand;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.chatgpt.ChatGptModel;
 import dev.rollczi.litecommands.chatgpt.LiteChatGptExtension;
 import dev.rollczi.litecommands.LiteCommands;
@@ -17,10 +18,10 @@ public class ExampleChatGptPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.liteCommands = LiteCommandsBukkit.builder("my-chatgpt-plugin")
+        this.liteCommands = LiteBukkitFactory.builder("my-chatgpt-plugin")
             .extension(new LiteChatGptExtension<>(), configuration -> configuration
                 .apiKey("OPENAI_API_KEY") // get your api key from https://platform.openai.com/account/api-keys
-                .model(ChatGptModel.GPT_4) // get model from https://platform.openai.com/docs/models/gpt-3-5
+                .model(ChatGptModel.GPT_4) // get model from https://platform.openai.com/docs/models/
                 .temperature(1.0) // see more https://platform.openai.com/docs/guides/gpt/how-should-i-set-the-temperature-parameter
                 .tokensLimit(2, 64) // min and max tokens
                 .cooldown(Duration.ofMillis(500)) // cooldown between suggestions per player

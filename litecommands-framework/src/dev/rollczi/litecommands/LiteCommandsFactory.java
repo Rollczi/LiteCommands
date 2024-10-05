@@ -1,9 +1,8 @@
 package dev.rollczi.litecommands;
 
-import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
 import dev.rollczi.litecommands.argument.resolver.collector.CollectionArgumentResolver;
-import dev.rollczi.litecommands.argument.resolver.collector.CollectorArgument;
 import dev.rollczi.litecommands.argument.resolver.collector.ArrayArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.LinkedHashSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.LinkedListArgumentResolver;
@@ -12,6 +11,9 @@ import dev.rollczi.litecommands.argument.resolver.collector.SetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.TreeSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.StackArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.VectorArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.completeable.CompletableFutureResolver;
+import dev.rollczi.litecommands.argument.resolver.nullable.NullableArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.optional.OptionalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigDecimalArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BigIntegerArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.standard.BooleanArgumentResolver;
@@ -28,21 +30,19 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
 import dev.rollczi.litecommands.cooldown.CooldownStateController;
-import dev.rollczi.litecommands.flag.FlagArgument;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
 import dev.rollczi.litecommands.handler.result.standard.ArrayHandler;
 import dev.rollczi.litecommands.handler.result.standard.CollectionHandler;
 import dev.rollczi.litecommands.handler.result.standard.CompletionStageHandler;
-import dev.rollczi.litecommands.handler.result.standard.OptionalHandler;
 import dev.rollczi.litecommands.handler.exception.standard.ThrowableHandler;
+import dev.rollczi.litecommands.handler.result.standard.OptionalHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageExceptionHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageResultController;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
@@ -58,8 +58,6 @@ import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.validator.ValidatorExecutionController;
-import dev.rollczi.litecommands.wrapper.std.CompletableFutureWrapper;
-import dev.rollczi.litecommands.wrapper.std.OptionalWrapper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,6 +79,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @SuppressWarnings("Convert2MethodRef")
@@ -135,25 +134,25 @@ public final class LiteCommandsFactory {
                 .argument(UUID.class, new UUIDArgumentResolver<>(messageRegistry))
 
                 .argument(upwards(Enum.class), new EnumArgumentResolver<>())
+                .argument(Optional.class, new OptionalArgumentResolver<>())
+                .argument(CompletableFuture.class, new CompletableFutureResolver<>(scheduler, parser))
+                .argument(upwards(Object.class), ProfileNamespaces.NULLABLE, new NullableArgumentResolver<>(parser, suggester))
 
-                .argument(String.class, ArgumentKey.of(QuotedStringArgumentResolver.KEY), new QuotedStringArgumentResolver<>(suggester))
-                .argumentParser(String.class, JoinArgument.KEY, new JoinStringArgumentResolver<>())
-                .argument(boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
-                .argument(Boolean.class, FlagArgument.KEY, new FlagArgumentResolver<>())
+                .argument(String.class, ProfileNamespaces.QUOTED, new QuotedStringArgumentResolver<>(suggester))
+                .argumentParser(String.class, ProfileNamespaces.JOIN, new JoinStringArgumentResolver<>())
+                .argument(boolean.class, ProfileNamespaces.FLAG, new FlagArgumentResolver<>())
+                .argument(Boolean.class, ProfileNamespaces.FLAG, new FlagArgumentResolver<>())
 
-                .argument(downwards(LinkedHashSet.class, excluded), CollectorArgument.KEY, new LinkedHashSetArgumentResolver<>(parser, suggester))
-                .argument(downwards(TreeSet.class, excluded), CollectorArgument.KEY, new TreeSetArgumentResolver<>(parser, suggester))
-                .argument(downwards(Set.class, excluded), CollectorArgument.KEY, new SetArgumentResolver<>(parser, suggester))
-                .argument(downwards(Stack.class, excluded), CollectorArgument.KEY, new StackArgumentResolver<>(parser, suggester))
-                .argument(downwards(Vector.class, excluded), CollectorArgument.KEY, new VectorArgumentResolver<>(parser, suggester))
-                .argument(downwards(LinkedList.class, excluded), CollectorArgument.KEY, new LinkedListArgumentResolver<>(parser, suggester))
-                .argument(downwards(ArrayList.class, excluded), CollectorArgument.KEY, new ArrayListArgumentResolver<>(parser, suggester))
-                .argument(downwards(Collection.class, excluded), CollectorArgument.KEY, new CollectionArgumentResolver<>(parser, suggester))
+                .argument(downwards(LinkedHashSet.class, excluded), ProfileNamespaces.VARARGS, new LinkedHashSetArgumentResolver<>(parser, suggester))
+                .argument(downwards(TreeSet.class, excluded), ProfileNamespaces.VARARGS, new TreeSetArgumentResolver<>(parser, suggester))
+                .argument(downwards(Set.class, excluded), ProfileNamespaces.VARARGS, new SetArgumentResolver<>(parser, suggester))
+                .argument(downwards(Stack.class, excluded), ProfileNamespaces.VARARGS, new StackArgumentResolver<>(parser, suggester))
+                .argument(downwards(Vector.class, excluded), ProfileNamespaces.VARARGS, new VectorArgumentResolver<>(parser, suggester))
+                .argument(downwards(LinkedList.class, excluded), ProfileNamespaces.VARARGS, new LinkedListArgumentResolver<>(parser, suggester))
+                .argument(downwards(ArrayList.class, excluded), ProfileNamespaces.VARARGS, new ArrayListArgumentResolver<>(parser, suggester))
+                .argument(downwards(Collection.class, excluded), ProfileNamespaces.VARARGS, new CollectionArgumentResolver<>(parser, suggester))
 
-                .argument(upwards(Object.class), CollectorArgument.KEY, new ArrayArgumentResolver<>(parser, suggester))
-
-                .wrapper(new OptionalWrapper())
-                .wrapper(new CompletableFutureWrapper(scheduler))
+                .argument(upwards(Object.class), ProfileNamespaces.VARARGS, new ArrayArgumentResolver<>(parser, suggester))
 
                 .exception(Throwable.class, new ThrowableHandler<>())
                 .exception(InvalidUsageException.class, new InvalidUsageExceptionHandler<>())

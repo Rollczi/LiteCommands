@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,59 +15,42 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-public class ArrayArgumentResolver<SENDER> extends AbstractCollectorArgumentResolver<SENDER, Object, Object> {
+public class ArrayArgumentResolver<SENDER> extends AbstractCollectorArgumentResolver<SENDER, Object> {
 
     public ArrayArgumentResolver(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry) {
         super(parserRegistry, suggesterRegistry);
     }
 
     @Override
-    Collector<Object, ?, Object> getCollector(CollectorArgument<Object> collectorArgument, Invocation<SENDER> invocation) {
-        return new ArrayCollector(getElementType(collectorArgument, invocation));
+    <E> Collector<E, ?, Object> getCollector(VarargsProfile collectionArgument, Invocation<SENDER> invocation) {
+        return new ArrayCollector<>(getElementType(collectionArgument));
     }
 
     @Override
-    protected Class<Object> getElementType(CollectorArgument<Object> context, Invocation<SENDER> invocation) {
-        Class<Object> arrayType = context.getWrapperFormat().getParsedType();
-
-        if (!arrayType.isArray()) {
-            throw new IllegalArgumentException("ArrayArgumentResolver can only parse arrays");
-        }
-
-        Class<Object> componentType = (Class<Object>) arrayType.getComponentType();
-
-        if (componentType == null) {
-            throw new IllegalArgumentException("ArrayArgumentResolver cannot parse array of null");
-        }
-
-        return componentType;
+    public boolean canParse(Argument<Object> argument, VarargsProfile collectionArgument) {
+        return argument.getType().isArray();
     }
 
-    @Override
-    public boolean canParse(Invocation<SENDER> invocation, Argument<Object> argument) {
-        return argument.getWrapperFormat().getParsedType().isArray();
-    }
+    private static class ArrayCollector<E> implements Collector<E, ArrayList<E>, Object> {
 
-    private static class ArrayCollector implements Collector<Object, ArrayList<Object>, Object> {
+        private final TypeToken<E> componentType;
 
-        private final Class<Object> componentType;
-
-        private ArrayCollector(Class<Object> componentType) {
+        private ArrayCollector(TypeToken<E> componentType) {
             this.componentType = componentType;
         }
 
         @Override
-        public Supplier<ArrayList<Object>> supplier() {
+        public Supplier<ArrayList<E>> supplier() {
             return () -> new ArrayList<>();
         }
 
         @Override
-        public BiConsumer<ArrayList<Object>, Object> accumulator() {
+        public BiConsumer<ArrayList<E>, E> accumulator() {
             return (objects, o) -> objects.add(o);
         }
 
         @Override
-        public BinaryOperator<ArrayList<Object>> combiner() {
+        public BinaryOperator<ArrayList<E>> combiner() {
             return (objects, objects2) -> {
                 objects.addAll(objects2);
                 return objects;
@@ -74,9 +58,9 @@ public class ArrayArgumentResolver<SENDER> extends AbstractCollectorArgumentReso
         }
 
         @Override
-        public Function<ArrayList<Object>, Object> finisher() {
+        public Function<ArrayList<E>, Object> finisher() {
             return objects -> {
-                Object array = Array.newInstance(componentType, objects.size());
+                Object array = Array.newInstance(componentType.getRawType(), objects.size());
                 for (int i = 0; i < objects.size(); i++) {
                     Array.set(array, i, objects.get(i));
                 }

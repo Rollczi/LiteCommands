@@ -1,11 +1,11 @@
 package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -26,7 +26,7 @@ class JDACommandTranslatorTest {
     public static final String STRING_ARG = "name";
     public static final String INT_ARG = "age";
 
-    final JDACommandTranslator translator = new JDACommandTranslator(new WrapperRegistry())
+    final JDACommandTranslator translator = new JDACommandTranslator(new ParserRegistryImpl<>())
         .type(String.class,       OptionType.STRING,      option -> option.getAsString())
         .type(Integer.class,      OptionType.INTEGER,     option -> option.getAsInt());
 

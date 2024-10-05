@@ -280,7 +280,7 @@ abstract class CommandBuilderBase<SENDER> extends CommandBuilderChildrenBase<SEN
         Set<CommandRoute<SENDER>> routes = new LinkedHashSet<>();
         CommandRoute<SENDER> route = CommandRoute.create(parentRoute, this.name, this.aliases);
 
-        route.meta().apply(this.meta);
+        route.meta().putAll(this.meta);
 
         for (CommandExecutorProvider<SENDER> executorProvider : this.executors) {
             CommandExecutor<SENDER> executor = executorProvider.provide(route);

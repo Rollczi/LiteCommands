@@ -7,8 +7,6 @@ import dev.rollczi.litecommands.input.raw.RawInputAnalyzer;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
-import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.meta.MetaHolder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +45,7 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
             RawInputAnalyzer.Context<SENDER, PARSED> context = rawInputAnalyzer.toContext(argument, parser);
 
             if (context.isMissingFullArgument()) {
-                Optional<ParseResult<PARSED>> optional = argument.defaultValue();
+                Optional<ParseResult<PARSED>> optional = argument.getDefaultValue();
 
                 return optional
                     .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT));

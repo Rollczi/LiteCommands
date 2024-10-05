@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,29 +18,33 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
 
     private final ThreadLocal<Boolean> isMainThread = ThreadLocal.withInitial(() -> false);
 
-    private final ScheduledExecutorService mainExecutor;
-    private final ScheduledExecutorService asyncExecutor;
+    private final ExecutorService mainExecutor;
+    private final ExecutorService asyncExecutor;
+    private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
     public SchedulerExecutorPoolImpl(String name) {
-        this(name, Runtime.getRuntime().availableProcessors());
+        this(name, -1);
     }
 
-    public SchedulerExecutorPoolImpl(String name, int asyncThreads) {
+    public SchedulerExecutorPoolImpl(String name, int pool) {
         this.mainExecutor = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(MAIN_THREAD_NAME_FORMAT, name));
 
             return thread;
         });
+
         this.mainExecutor.submit(() -> isMainThread.set(true));
 
         AtomicInteger asyncCount = new AtomicInteger();
-        this.asyncExecutor = Executors.newScheduledThreadPool(asyncThreads, runnable -> {
+        ThreadFactory factory = runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format(ASYNC_THREAD_NAME_FORMAT, name, asyncCount.getAndIncrement()));
 
             return thread;
-        });
+        };
+
+        this.asyncExecutor = pool < 0 ? Executors.newCachedThreadPool(factory) : Executors.newFixedThreadPool(pool, factory);
     }
 
     @Override
@@ -47,17 +52,19 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         SchedulerPoll resolve = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        if (resolve.equals(SchedulerPoll.MAIN) && isMainThread.get() && delay.isZero()) {
+        if (resolve.equals(SchedulerPoll.MAIN) && delay.isZero() && isMainThread.get()) {
             return tryRun(supplier, future);
         }
 
-        ScheduledExecutorService executor = resolve.equals(SchedulerPoll.MAIN) ? mainExecutor : asyncExecutor;
+        ExecutorService executor = resolve.equals(SchedulerPoll.MAIN) ? mainExecutor : asyncExecutor;
 
         if (delay.isZero()) {
             executor.submit(() -> tryRun(supplier, future));
         }
         else {
-            executor.schedule(() -> tryRun(supplier, future), delay.toMillis(), TimeUnit.MILLISECONDS);
+            scheduledExecutor.schedule(() -> {
+                executor.submit(() -> tryRun(supplier, future));
+            }, delay.toMillis(), TimeUnit.MILLISECONDS);
         }
 
         return future;

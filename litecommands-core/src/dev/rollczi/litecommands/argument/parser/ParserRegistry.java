@@ -18,6 +18,13 @@ public interface ParserRegistry<SENDER> {
 
     <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parsedClass, ArgumentKey key);
 
-    <PARSED> Parser<SENDER, PARSED> getParser(Invocation<SENDER> invocation, Argument<PARSED> argument);
+    @Deprecated
+    default <PARSED> Parser<SENDER, PARSED> getParser(Invocation<SENDER> invocation, Argument<PARSED> argument) {
+        return this.getParser(argument);
+    }
+
+    <PARSED> Parser<SENDER, PARSED> getParser(Argument<PARSED> argument);
+
+    <T> Parser<SENDER,T> getParserOrNull(Argument<T> argument);
 
 }

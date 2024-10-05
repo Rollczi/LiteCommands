@@ -8,9 +8,9 @@ public final class PriorityValue {
     public static final int LOWEST = -1000;
     public static final int VERY_LOW = -500;
     public static final int LOW = -100;
-    public static final int BELOW_NORMAL = -50;
+    public static final int NORMAL_MINUS = -50;
     public static final int NORMAL = 0;
-    public static final int ABOVE_NORMAL = 50;
+    public static final int NORMAL_PLUS = 50;
     public static final int HIGH = 100;
     public static final int VERY_HIGH = 500;
     public static final int HIGHEST = 1000;
@@ -29,12 +29,12 @@ public final class PriorityValue {
                 return PriorityLevel.VERY_LOW;
             case LOW:
                 return PriorityLevel.LOW;
-            case BELOW_NORMAL:
-                return PriorityLevel.BELOW_NORMAL;
+            case NORMAL_MINUS:
+                return PriorityLevel.NORMAL_MINUS;
             case NORMAL:
                 return PriorityLevel.NORMAL;
-            case ABOVE_NORMAL:
-                return PriorityLevel.ABOVE_NORMAL;
+            case NORMAL_PLUS:
+                return PriorityLevel.NORMAL_PLUS;
             case HIGH:
                 return PriorityLevel.HIGH;
             case VERY_HIGH:

@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.annotations.context;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.TestPlatformSender;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -19,7 +19,9 @@ import org.junit.jupiter.api.Test;
 
 class ContextProviderTest extends LiteTestSpec {
 
-    static LiteConfig config = builder -> builder.advanced()
+    private static final String USER_IS_NOT_IN_A_GUILD = "User is not in a guild";
+
+    static LiteTestConfig config = builder -> builder.advanced()
         .context(LiteTestUser.class, new UserContextual<>())
         .context(LiteTestGuild.class, new GuildContextual<>());
 
@@ -29,7 +31,7 @@ class ContextProviderTest extends LiteTestSpec {
 
         @Override
         public ContextResult<LiteTestUser> provide(Invocation<S> invocation) {
-            LiteTestUser LiteTestUser = USERS.computeIfAbsent(invocation.name(), name -> new LiteTestUser(name));
+            LiteTestUser LiteTestUser = USERS.computeIfAbsent(invocation.platformSender().getName(), name -> new LiteTestUser(name));
             return ContextResult.ok(() -> LiteTestUser);
         }
 
@@ -41,7 +43,7 @@ class ContextProviderTest extends LiteTestSpec {
         public ContextResult<LiteTestGuild> provide(Invocation<S> invocation, ContextChainAccessor<S> accessor) {
             return accessor.provideContext(LiteTestUser.class, invocation)
                 .flatMap(user -> user.getGuild() == null
-                    ? ContextResult.error("User is not in a guild")
+                    ? ContextResult.error(USER_IS_NOT_IN_A_GUILD)
                     : ContextResult.ok(() -> user.getGuild())
                 );
         }
@@ -52,35 +54,49 @@ class ContextProviderTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute(name = "user")
-        void execute(@Context LiteTestUser user) {}
+        String execute(@Context LiteTestUser user) {
+            return user.getName();
+        }
 
         @Execute(name = "guild get")
-        void execute(@Context LiteTestGuild guild) {}
+        String execute(@Context LiteTestGuild guild) {
+            return guild.getName();
+        }
 
         @Execute(name = "guild set")
-        void execute(@Context LiteTestUser user, @Arg String name) {
+        String execute(@Context LiteTestUser user, @Arg String name) {
             user.setGuild(name);
+            return "Guild set: " + name;
+        }
+
+        @Execute(name = "guild clear")
+        String executeClear(@Sender LiteTestUser user) {
+            user.setGuild(null);
+            return "Guild cleared :" + user.getName();
         }
     }
 
     @Test
     @DisplayName("Should provide user context")
     void testUserContext() {
-        platform.execute("command user")
-            .assertSuccess();
+        platform.execute(TestPlatformSender.named("Rollczi"),"command user")
+            .assertSuccess("Rollczi");
     }
 
     @Test
     @DisplayName("Should provide guild context")
     void testGuildContext() {
         platform.execute("command guild get")
-            .assertFailure();
+            .assertFailure(USER_IS_NOT_IN_A_GUILD);
 
         platform.execute("command guild set test")
-            .assertSuccess();
+            .assertSuccess("Guild set: test");
 
         platform.execute("command guild get")
-            .assertSuccess();
+            .assertSuccess("test");
+
+        platform.execute(TestPlatformSender.named("Matis"), "command guild clear")
+            .assertSuccess("Guild cleared :Matis");
     }
 
 }

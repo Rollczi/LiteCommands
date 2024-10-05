@@ -14,7 +14,6 @@ import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -49,9 +48,6 @@ public interface LiteCommandsInternal<SENDER, C extends PlatformSettings> {
 
     @ApiStatus.Internal
     ContextRegistry<SENDER> getContextRegistry();
-
-    @ApiStatus.Internal
-    WrapperRegistry getWrapperRegistry();
 
     @ApiStatus.Internal
     ResultHandleService<SENDER> getResultService();

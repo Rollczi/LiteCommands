@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.validator;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.flow.Flow;
@@ -35,7 +34,7 @@ class CustomValidatorTest extends LiteTestSpec {
         }
     }
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
             .validatorMarked(new ValidValidator())
             .validatorMarked(new InvalidValidator())
             .validatorMarked(new InvalidCanBeIgnoredValidator());

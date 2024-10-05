@@ -4,7 +4,6 @@ import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorServ
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.reflect.Method;
 
@@ -12,15 +11,13 @@ class InstanceSourceProcessor<SENDER> {
 
     private final AnnotationProcessorService<SENDER> annotationProcessorService;
     private final MethodValidatorService<SENDER> validatorService;
-    private final WrapperRegistry wrapperRegistry;
 
     public InstanceSourceProcessor(
         AnnotationProcessorService<SENDER> annotationProcessorService,
-        MethodValidatorService<SENDER> validatorService, WrapperRegistry wrapperRegistry
+        MethodValidatorService<SENDER> validatorService
     ) {
         this.annotationProcessorService = annotationProcessorService;
         this.validatorService = validatorService;
-        this.wrapperRegistry = wrapperRegistry;
     }
 
     public CommandBuilder<SENDER> processBuilder(InstanceSource source) {
@@ -33,7 +30,7 @@ class InstanceSourceProcessor<SENDER> {
         context = annotationProcessorService.process(classInvoker);
 
         for (Method method : ReflectUtil.getMethods(type)) {
-            MethodInvoker<SENDER> methodInvoker = new MethodInvoker<>(annotationProcessorService, validatorService, wrapperRegistry, instance, method, context);
+            MethodInvoker<SENDER> methodInvoker = new MethodInvoker<>(annotationProcessorService, validatorService, instance, method, context);
 
             context = annotationProcessorService.process(methodInvoker);
         }

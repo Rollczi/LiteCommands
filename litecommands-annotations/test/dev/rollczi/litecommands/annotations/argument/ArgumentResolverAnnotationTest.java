@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations.argument;
 
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -22,7 +22,7 @@ class ArgumentResolverAnnotationTest extends LiteTestSpec {
     static class TestCommand {
 
         @Execute
-        void execute(@Arg String test, @Arg Date date, @Arg("other") Date other) {}
+        void execute(@Arg String test, @Arg Date myDate, @Arg("other") Date date) {}
 
     }
 
@@ -43,8 +43,8 @@ class ArgumentResolverAnnotationTest extends LiteTestSpec {
         Argument<?> second = requirements.get(1);
         Argument<?> third = requirements.get(2);
 
-        assertEquals("arg0", first.getName());
-        assertEquals("arg1", second.getName());
+        assertEquals("test", first.getName());
+        assertEquals("myDate", second.getName());
         assertEquals("other", third.getName());
     }
 

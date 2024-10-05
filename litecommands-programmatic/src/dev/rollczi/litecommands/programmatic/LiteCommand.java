@@ -1,20 +1,20 @@
 package dev.rollczi.litecommands.programmatic;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.SimpleArgument;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.executor.LiteContext;
-import dev.rollczi.litecommands.flag.FlagArgument;
-import dev.rollczi.litecommands.join.JoinArgument;
+import dev.rollczi.litecommands.flag.FlagProfile;
+import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
-import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
-import dev.rollczi.litecommands.requirement.BindRequirement;
-import dev.rollczi.litecommands.requirement.ContextRequirement;
+import dev.rollczi.litecommands.quoted.QuotedProfile;
+import dev.rollczi.litecommands.bind.BindRequirement;
+import dev.rollczi.litecommands.context.ContextRequirement;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
+import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.strict.StrictMode;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommand<SENDER> {
@@ -54,7 +55,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argument(String name, Class<?> type) {
-        this.arguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type), false));
+        this.arguments.add(Argument.of(name, type));
         return this;
     }
 
@@ -64,34 +65,31 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argumentQuoted(String name) {
-        Argument<String> argument = new SimpleArgument<>(name, WrapFormat.notWrapped(String.class));
-        argument.meta().put(Meta.ARGUMENT_KEY, QuotedStringArgumentResolver.KEY);
-
-        return this.argument(argument);
+        return this.argument(Argument.profiled(name, String.class, new QuotedProfile()));
     }
 
-    public LiteCommand<SENDER> argumentOptional(String name, Class<?> type) {
-        this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
+    public <T> LiteCommand<SENDER> argumentOptional(String name, Class<T> type) {
+        this.arguments.add(Argument.of(name, TypeToken.ofParameterized(Optional.class, type)));
         return this;
     }
 
-    public LiteCommand<SENDER> argumentNullable(String name, Class<?> type) {
-        this.arguments.add(new SimpleArgument<>(name, WrapFormat.of(type, Optional.class)));
+    public <T> LiteCommand<SENDER> argumentNullable(String name, Class<T> type) {
+        this.arguments.add(Argument.of(name, TypeToken.ofParameterized(Optional.class, type)));
         return this;
     }
 
     public LiteCommand<SENDER> argumentFlag(String name) {
-        this.arguments.add(new FlagArgument(name, WrapFormat.notWrapped(boolean.class)));
+        this.arguments.add(Argument.profiled(name, Boolean.class, new FlagProfile(name)));
         return this;
     }
 
     public LiteCommand<SENDER> argumentJoin(String name) {
-        this.arguments.add(new JoinArgument<>(name, WrapFormat.notWrapped(String.class)));
+        this.arguments.add(Argument.profiled(name, String.class, new JoinProfile()));
         return this;
     }
 
     public LiteCommand<SENDER> argumentJoin(String name, String separator, int limit) {
-        this.arguments.add(new JoinArgument<>(name, WrapFormat.notWrapped(String.class), separator, limit));
+        this.arguments.add(Argument.profiled(name, String.class, new JoinProfile(separator, limit)));
         return this;
     }
 
@@ -169,8 +167,20 @@ public class LiteCommand<SENDER> {
     }
 
     @SafeVarargs
+    @Deprecated
     public final LiteCommand<SENDER> subCommands(LiteCommand<SENDER>... subCommands) {
         this.subCommands.addAll(Arrays.asList(subCommands));
+        return this;
+    }
+
+    @SafeVarargs
+    public final LiteCommand<SENDER> subcommands(LiteCommand<SENDER>... subCommands) {
+        this.subCommands.addAll(Arrays.asList(subCommands));
+        return this;
+    }
+
+    public final LiteCommand<SENDER> subcommand(String name, UnaryOperator<LiteCommand<SENDER>> operator) {
+        this.subCommands.add(operator.apply(new LiteCommand<>(name)));
         return this;
     }
 
@@ -178,7 +188,7 @@ public class LiteCommand<SENDER> {
         CommandBuilder<SENDER> builder = CommandBuilder.<SENDER>create()
             .routeName(name)
             .routeAliases(aliases)
-            .applyMeta(meta -> meta.apply(this.meta))
+            .applyMeta(meta -> meta.putAll(this.meta))
             .applyMeta(meta -> meta.listEditor(Meta.COMMAND_ORIGIN_TYPE).add(this.getClass()).apply());
 
         if (withExecutor) {
@@ -187,7 +197,7 @@ public class LiteCommand<SENDER> {
                 .arguments(arguments)
                 .contextRequirements(contextRequirements)
                 .bindRequirements(bindRequirements)
-                .apply(commandExecutor -> commandExecutor.meta().apply(this.executorMeta))
+                .apply(commandExecutor -> commandExecutor.meta().putAll(this.executorMeta))
                 .build()
             );
         }

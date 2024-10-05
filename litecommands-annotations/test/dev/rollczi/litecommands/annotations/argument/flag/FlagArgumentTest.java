@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.annotations.argument.flag;
 
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -46,11 +46,8 @@ class FlagArgumentTest extends LiteTestSpec {
     @Test
     @DisplayName("Should not parse invalid flag argument")
     void testParseInvalidFlagArgument() {
-        InvalidUsage invalidUsage = platform.execute("test -b value")
-            .assertFailedAs(InvalidUsage.class);
-
-        assertThat(invalidUsage.getCause())
-            .isEqualByComparingTo(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
+        platform.execute("test -b value")
+            .assertFailureInvalid(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
     }
 
     @Test

@@ -1,10 +1,13 @@
 package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.Parser;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,12 +19,12 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
 
     protected final SchematicFormat format;
     protected final ValidatorService<SENDER> validatorService;
-    protected final WrapperRegistry wrapperRegistry;
+    protected final ParserRegistry<SENDER> parserRegistry;
 
-    public SimpleSchematicGenerator(SchematicFormat format, ValidatorService<SENDER> validatorService, WrapperRegistry wrapperRegistry) {
+    public SimpleSchematicGenerator(SchematicFormat format, ValidatorService<SENDER> validatorService, ParserRegistry<SENDER> parserRegistry) {
         this.format = format;
         this.validatorService = validatorService;
-        this.wrapperRegistry = wrapperRegistry;
+        this.parserRegistry = parserRegistry;
     }
 
     @Override
@@ -85,7 +88,19 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
         return validatorService.validate(input.getInvocation(), executor).isContinue();
     }
 
-    protected boolean isOptional(SchematicInput<SENDER> input, Argument<?> argument) {
-        return wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty() || argument.hasDefaultValue();
+    protected <T> boolean isOptional(SchematicInput<SENDER> input, Argument<T> argument) {
+        ParserSet<SENDER, T> parserSet = parserRegistry.getParserSet(argument.getType().getRawType(), argument.getKey());
+        Parser<SENDER, T> parser = parserSet.getValidParser(argument);
+
+        if (parser != null) {
+            Range range = parser.getRange(argument);
+
+            if (range.getMin() == 0) {
+                return true;
+            }
+        }
+
+        return  argument.hasDefaultValue();
     }
+
 }

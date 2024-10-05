@@ -1,6 +1,7 @@
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import java.time.Duration;
@@ -28,6 +29,7 @@ public class LiteBenchmark {
 
     public static void main(String[] args) {
         testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder
+            .scheduler(new SchedulerSameThreadImpl())
             .commands(
                 new TestCommand()
             )
@@ -37,25 +39,25 @@ public class LiteBenchmark {
             System.out.println("Iteration: " + count);
             Stopper stopper = new Stopper("string");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.execute("test first second");
+                testPlatform.executeAsync("test first second");
             }
             stopper.stop();
 
             stopper = new Stopper("number");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.execute("test number 1 2");
+                testPlatform.executeAsync("test number 1 2");
             }
             stopper.stop();
 
             stopper = new Stopper("sub");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.execute("test sub first");
+                testPlatform.executeAsync("test sub first");
             }
             stopper.stop();
 
             stopper = new Stopper("sub optional");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.execute("test sub first second");
+                testPlatform.executeAsync("test sub first second");
             }
             stopper.stop();
 

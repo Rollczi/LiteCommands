@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
+import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,6 +21,12 @@ class MetaImpl implements Meta {
     @Override
     public <T> Meta put(MetaKey<T> key, T value) {
         this.meta.put(key, key.getType().in(value));
+        return this;
+    }
+
+    @Override
+    public <T> Meta edit(MetaKey<T> key, UnaryOperator<T> operator) {
+        this.meta.put(key, operator.apply(this.get(key)));
         return this;
     }
 
@@ -89,7 +96,7 @@ class MetaImpl implements Meta {
     }
 
     @Override
-    public Meta apply(Meta meta) {
+    public Meta putAll(Meta meta) {
         for (MetaKey<?> key : meta.getKeys()) {
             this.meta.put(key, meta.get(key));
         }

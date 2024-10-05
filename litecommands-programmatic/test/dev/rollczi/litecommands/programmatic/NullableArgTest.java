@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class NullableArgTest {
+class NullableArgTest {
 
     TestPlatform testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder.commands(
         new LiteCommand<TestSender>("ban")

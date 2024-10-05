@@ -2,10 +2,9 @@ package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
-import dev.rollczi.litecommands.requirement.BindRequirement;
-import dev.rollczi.litecommands.requirement.ContextRequirement;
+import dev.rollczi.litecommands.bind.BindRequirement;
+import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -86,12 +85,11 @@ public class MethodDefinition {
     }
 
     void putRequirement(int parameterIndex, Requirement<?> requirement) {
-        WrapFormat<?, ?> wrapperFormat = requirement.getWrapperFormat();
-        Class<?> typeOrParsed = wrapperFormat.getOutTypeOrParsed();
+        Class<?> rawType = requirement.getType().getRawType();
         Parameter parameter = method.getParameters()[parameterIndex];
 
-        if (!typeOrParsed.isAssignableFrom(parameter.getType())) {
-            throw new LiteCommandsReflectInvocationException(method, parameter, "Parameter type is not assignable from " + typeOrParsed.getSimpleName());
+        if (!rawType.isAssignableFrom(parameter.getType())) {
+            throw new LiteCommandsReflectInvocationException(method, parameter, "Parameter type is not assignable from " + rawType.getSimpleName());
         }
 
         if (requirement instanceof Argument) {

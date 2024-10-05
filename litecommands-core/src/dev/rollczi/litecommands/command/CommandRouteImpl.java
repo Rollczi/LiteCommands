@@ -110,8 +110,8 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
             }
         };
 
-        merged.meta().apply(this.meta());
-        merged.meta().apply(toMerge.meta());
+        merged.meta().putAll(this.meta());
+        merged.meta().putAll(toMerge.meta());
 
         for (CommandExecutor<SENDER> executor : this.getExecutors()) {
             merged.appendExecutor(executor);

@@ -1,40 +1,63 @@
 package dev.rollczi.litecommands.argument;
 
+import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.Optional;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface Argument<PARSED> extends Requirement<PARSED> {
+public interface Argument<T> extends Requirement<T> {
 
     String getName();
 
-    WrapFormat<PARSED, ?> getWrapperFormat();
+    ArgumentKey getKey();
 
-    default Optional<ParseResult<PARSED>> defaultValue() {
-        return Optional.empty();
+    Optional<ParseResult<T>> getDefaultValue();
+
+    @Deprecated
+    default Optional<ParseResult<T>> defaultValue() {
+        return getDefaultValue();
     }
 
-    default boolean hasDefaultValue() {
-        return defaultValue().isPresent();
+    boolean hasDefaultValue();
+
+    @ApiStatus.Experimental
+    <P extends ArgumentProfile<P>> Argument<T> withProfile(P profile);
+
+    @ApiStatus.Experimental
+    <P> Optional<P> getProfile(ArgumentProfileNamespace<P> key);
+
+    @ApiStatus.Experimental
+    <NEW> Argument<NEW> withType(TypeToken<NEW> type);
+
+    static <T> Argument<T> of(String name, Class<T> type) {
+        return new SimpleArgument<>(name, TypeToken.of(type), false);
     }
 
-    default ArgumentKey getKey() {
-        return ArgumentKey.typed(this.getClass(), this.getKeyName());
+    static <T> Argument<T> of(String name, Class<T> type, boolean nullable) {
+        return new SimpleArgument<>(name, TypeToken.of(type), nullable);
     }
 
-    default String getKeyName() {
-        return this.meta().get(Meta.ARGUMENT_KEY, this.getName());
+    static <T> Argument<T> of(String name, TypeToken<T> type) {
+        return new SimpleArgument<>(name, type, false);
     }
 
-    static <T> Argument<T> of(String name, WrapFormat<T, ?> format) {
-        return new SimpleArgument<>(name, format, false);
+    static <T> Argument<T> of(String name, TypeToken<T> type, boolean nullable) {
+        return new SimpleArgument<>(name, type, nullable);
     }
 
-    static <T> Argument<T> of(String name, WrapFormat<T, ?> format, boolean nullable) {
-        return new SimpleArgument<>(name, format, nullable);
+    @ApiStatus.Experimental
+    static <T, P extends ArgumentProfile<P>> Argument<T> profiled(String name, Class<T> type, P profile) {
+        return profiled(name, TypeToken.of(type), profile);
+    }
+
+    @ApiStatus.Experimental
+    static <T, P extends ArgumentProfile<P>> Argument<T> profiled(String name, TypeToken<T> type, P profile) {
+        return new SimpleArgument<>(name, type, false)
+            .withProfile(profile);
     }
 
 }

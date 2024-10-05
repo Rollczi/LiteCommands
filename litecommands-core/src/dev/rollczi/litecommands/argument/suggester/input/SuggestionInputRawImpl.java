@@ -122,7 +122,7 @@ public class SuggestionInputRawImpl implements SuggestionInput<SuggestionInputRa
                 }
             }
 
-            boolean isMatch = context.matchParseArgument(invocation);
+            boolean isMatch = context.matchArgument(invocation);
 
             if (isMatch) {
                 return SuggestionInputResult.continueWithout();

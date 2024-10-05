@@ -5,7 +5,7 @@ import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.Test;
 
-public class QuotedStringTest {
+class QuotedStringTest {
 
     TestPlatform platform = LiteCommandsTestFactory.startPlatform(builder -> builder.commands(
         new LiteCommand<TestSender>("test")

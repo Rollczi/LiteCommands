@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.unit.TestSender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ResultHandlerTest {
+class ResultHandlerTest {
 
     TestPlatform testPlatform = LiteCommandsTestFactory.startPlatform(builder -> builder.commands(
         new LiteCommand<TestSender>("ban")

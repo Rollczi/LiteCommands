@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.jda.permission.DiscordMissingPermissions;
@@ -10,7 +11,6 @@ import dev.rollczi.litecommands.jda.permission.DiscordPermissionValidator;
 import dev.rollczi.litecommands.jda.permission.DiscordPermissionAnnotationProcessor;
 import dev.rollczi.litecommands.jda.visibility.VisibilityAnnotationProcessor;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -37,7 +37,7 @@ public final class LiteJDAFactory {
         JDAPlatform platform = new JDAPlatform(new LiteJDASettings(), jda);
 
         return (B) LiteCommandsFactory.builder(User.class, platform).self((builder, internal) -> builder
-            .settings(settings -> settings.translator(createTranslator(internal.getWrapperRegistry())))
+            .settings(settings -> settings.translator(createTranslator(internal.getParserRegistry())))
             .bind(JDA.class, () -> jda)
             .result(String.class, new StringHandler())
             .result(RestAction.class, new RestActionHandler())
@@ -57,7 +57,7 @@ public final class LiteJDAFactory {
         );
     }
 
-    private static JDACommandTranslator createTranslator(WrapperRegistry wrapperRegistry) {
+    private static JDACommandTranslator createTranslator(ParserRegistry<User> wrapperRegistry) {
         return new JDACommandTranslator(wrapperRegistry)
             .type(String.class, OptionType.STRING, option -> option.getAsString())
             .type(Long.class, OptionType.INTEGER, option -> option.getAsLong())

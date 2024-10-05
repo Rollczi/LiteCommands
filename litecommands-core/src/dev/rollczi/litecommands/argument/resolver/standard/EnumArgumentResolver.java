@@ -19,7 +19,7 @@ public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum>
 
     @Override
     protected ParseResult<Enum> parse(Invocation<SENDER> invocation, Argument<Enum> context, String argument) {
-        Class<Enum> enumClass = context.getWrapperFormat().getParsedType();
+        Class<Enum> enumClass = context.getType().getRawType();
 
         try {
             return ParseResult.success(getEnum(enumClass, argument));
@@ -30,7 +30,7 @@ public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum>
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Enum> argument, SuggestionContext context) {
-        Class<Enum> enumClass = argument.getWrapperFormat().getParsedType();
+        Class<Enum> enumClass = argument.getType().getRawType();
 
         return cachedEnumSuggestions.computeIfAbsent(enumClass, key -> {
             Enum[] enums = enumClass.getEnumConstants();

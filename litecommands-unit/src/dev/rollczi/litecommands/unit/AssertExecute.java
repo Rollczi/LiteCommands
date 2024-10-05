@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import org.opentest4j.AssertionFailedError;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -49,6 +50,10 @@ public class AssertExecute {
         Object object = result.getResult();
 
         if (object == null) {
+            if (expected == null) {
+                return this;
+            }
+
             throw new AssertionError("Command result is empty");
         }
 
@@ -58,6 +63,10 @@ public class AssertExecute {
     }
 
     public <T> T assertSuccessAs(Class<T> type) {
+        return assertSuccessAs(TypeToken.of(type));
+    }
+
+    public <T> T assertSuccessAs(TypeToken<T> type) {
         if (result.isThrown()) {
             throw new AssertionError("Command was thrown", result.getThrowable());
         }
@@ -72,7 +81,7 @@ public class AssertExecute {
             throw new AssertionError("Command result is empty");
         }
 
-        return assertInstanceOf(type, object);
+        return assertInstanceOf(type.getRawType(), object);
     }
 
     public AssertExecute assertThrows(Class<? extends Throwable> exception) {

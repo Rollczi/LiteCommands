@@ -1,12 +1,17 @@
 package dev.rollczi.litecommands.chatgpt;
 
-class ChatGptMessage {
+public class ChatGptMessage {
 
     private final String role;
     private final String content;
 
-    public ChatGptMessage(ChatGptRole role, String content) {
+    ChatGptMessage(ChatGptRole role, String content) {
         this.role = role.getName();
+        this.content = content;
+    }
+
+    public ChatGptMessage(String role, String content) {
+        this.role = role;
         this.content = content;
     }
 

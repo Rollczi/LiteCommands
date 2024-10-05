@@ -1,17 +1,15 @@
 package dev.rollczi.litecommands.annotations;
 
-import dev.rollczi.litecommands.annotations.argument.ArgArgumentProcessor;
 import dev.rollczi.litecommands.annotations.argument.KeyAnnotationResolver;
-import dev.rollczi.litecommands.annotations.argument.collector.ArgCollectionArgumentProcessor;
+import dev.rollczi.litecommands.annotations.argument.collection.ArgCollectionArgumentProcessor;
+import dev.rollczi.litecommands.annotations.argument.nullable.NullableArgumentProcessor;
 import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
-import dev.rollczi.litecommands.annotations.bind.BindRequirementProcessor;
 import dev.rollczi.litecommands.annotations.command.CommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.command.RootCommandAnnotationProcessor;
-import dev.rollczi.litecommands.annotations.context.ContextRequirementProcessor;
 import dev.rollczi.litecommands.annotations.cooldown.CooldownAnnotationResolver;
 import dev.rollczi.litecommands.annotations.description.DescriptionAnnotationResolver;
 import dev.rollczi.litecommands.annotations.execute.ExecuteAnnotationResolver;
-import dev.rollczi.litecommands.annotations.flag.FlagArgumentProcessor;
+import dev.rollczi.litecommands.annotations.flag.FlagAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.join.JoinArgumentProcessor;
 import dev.rollczi.litecommands.annotations.meta.MarkMetaAnnotationResolver;
 import dev.rollczi.litecommands.annotations.optional.OptionalArgArgumentProcessor;
@@ -19,6 +17,7 @@ import dev.rollczi.litecommands.annotations.permission.PermissionAnnotationResol
 import dev.rollczi.litecommands.annotations.permission.PermissionsAnnotationResolver;
 import dev.rollczi.litecommands.annotations.priority.PriorityAnnotationResolver;
 import dev.rollczi.litecommands.annotations.quoted.QuotedAnnotationProcessor;
+import dev.rollczi.litecommands.annotations.requirement.RequirementDefinitionProcessor;
 import dev.rollczi.litecommands.annotations.shortcut.ShortcutCommandAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.validator.ValidateAnnotationResolver;
 import dev.rollczi.litecommands.annotations.varargs.VarargsArgumentProcessor;
@@ -62,17 +61,17 @@ public class AnnotationProcessorService<SENDER> {
             .register(new CooldownAnnotationResolver<>())
             // argument meta processors
             .register(new KeyAnnotationResolver<>())
-            .register(new QuotedAnnotationProcessor<>())
-            // argument processors
-            .register(new FlagArgumentProcessor<>())
+            // universal processor for requirements such as @Arg, @Varargs, @Flag, @Context, @Bind and more
+            .register(new RequirementDefinitionProcessor<>())
+            // profile processors (they apply profiles to arguments)
+            .register(new FlagAnnotationProcessor<>())
             .register(new VarargsArgumentProcessor<>())
             .register(new ArgCollectionArgumentProcessor<>())
-            .register(new ArgArgumentProcessor<>())
-            .register(new OptionalArgArgumentProcessor<>())
             .register(new JoinArgumentProcessor<>())
-            // other requirements processors
-            .register(new ContextRequirementProcessor<>())
-            .register(new BindRequirementProcessor<>());
+            .register(new QuotedAnnotationProcessor<>())
+            .register(new NullableArgumentProcessor<>())
+            .register(new OptionalArgArgumentProcessor<>())
+            ;
     }
 
 }

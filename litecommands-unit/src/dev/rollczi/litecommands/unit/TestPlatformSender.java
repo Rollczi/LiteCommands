@@ -17,10 +17,17 @@ public class TestPlatformSender extends AbstractPlatformSender {
 
     private final List<String> permissions = new ArrayList<>();
     private boolean permittedAll = false;
+    private String name = "TestSender";
+
+    public static PlatformSender named(String name) {
+        return builder()
+            .name(name)
+            .build();
+    }
 
     @Override
     public String getName() {
-        return "TestSender";
+        return name;
     }
 
     @Override
@@ -92,6 +99,10 @@ public class TestPlatformSender extends AbstractPlatformSender {
             return sender;
         }
 
+        public Builder name(String name) {
+            this.sender.name = name;
+            return this;
+        }
     }
 
 }

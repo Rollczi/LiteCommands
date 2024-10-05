@@ -1,150 +1,88 @@
 package dev.rollczi.litecommands.argument.parser;
 
-import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.requirement.RequirementCondition;
-import dev.rollczi.litecommands.requirement.RequirementResult;
+import dev.rollczi.litecommands.requirement.RequirementFutureResult;
 import dev.rollczi.litecommands.shared.FailedReason;
-import java.util.function.Function;
-import org.jetbrains.annotations.ApiStatus;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+public interface ParseResult<EXCEPTED> extends RequirementFutureResult<EXCEPTED> {
 
-public class ParseResult<EXPECTED> implements RequirementResult<EXPECTED> {
-
-    private static final ParseResult<?> NULL_SUCCESS = new ParseResult<>(null, null, true, Collections.emptyList());
-
-    private final @Nullable EXPECTED successfulResult;
-    private final @Nullable FailedReason failedResult;
-    private final List<RequirementCondition> conditions;
-    private final boolean nullable;
-
-    private ParseResult(@Nullable EXPECTED successfulResult, @Nullable FailedReason failedResult, boolean nullable, List<RequirementCondition> conditions) {
-        this.conditions = conditions;
-        if (successfulResult != null && failedResult != null) {
-            throw new IllegalArgumentException("Cannot be both successful and failed");
-        }
-        else if ((successfulResult == null && !nullable) && failedResult == null) {
-            throw new IllegalArgumentException("Cannot be both empty");
-        }
-
-        this.nullable = nullable;
-        this.successfulResult = successfulResult;
-        this.failedResult = failedResult;
-    }
-
-
-    @Override
-    public boolean isSuccessful() {
-        return this.successfulResult != null;
-    }
-
-    @Override
-    public boolean isSuccessfulNull() {
-        return this.nullable && this.successfulResult == null;
-    }
-
-    @Override
-    public boolean isFailed() {
-        return this.failedResult != null;
-    }
-
-    @Override
-    public @NotNull EXPECTED getSuccess() {
-        if (this.successfulResult == null) {
-            throw new IllegalStateException("Cannot get successful result when it is empty");
-        }
-
-        return this.successfulResult;
-    }
-
-    @Override
-    public @NotNull Object getFailedReason() {
-        if (this.failedResult == null) {
-            throw new IllegalStateException("Cannot get failed reason when it is empty");
-        }
-
-        return this.failedResult.getReason();
-    }
-
-    @Override
-    public @NotNull List<RequirementCondition> getConditions() {
-        return conditions;
-    }
+    CompletableFuture<ParseCompletedResult<EXCEPTED>> asFuture();
 
     @ApiStatus.Experimental
-    public <R> ParseResult<R> map(Function<EXPECTED, R> mapper) {
-        if (this.isFailed()) {
-            return ParseResult.failure(failedResult);
-        }
-
-        return ParseResult.success(mapper.apply(getSuccess()));
-    }
+    <R> ParseResult<R> map(Function<EXCEPTED, R> mapper);
 
     @ApiStatus.Experimental
-    public <R> ParseResult<R> flatMap(Function<EXPECTED, ParseResult<R>> mapper) {
-        if (this.isFailed()) {
-            return ParseResult.failure(failedResult);
-        }
+    ParseResult<EXCEPTED> mapFailure(Function<Object, ParseResult<EXCEPTED>> mapper);
 
-        return mapper.apply(getSuccess());
-    }
+    @ApiStatus.Experimental
+    <R> ParseResult<R> flatMap(Function<EXCEPTED, ParseResult<R>> mapper);
 
-    public static <PARSED> ParseResult<PARSED> success(PARSED parsed) {
-        return new ParseResult<>(parsed, null, false, Collections.emptyList());
+    @ApiStatus.Experimental
+    ParseResult<EXCEPTED> whenSuccessful(Consumer<EXCEPTED> action);
+
+    @ApiStatus.Experimental
+    ParseResult<EXCEPTED> whenFailed(Consumer<FailedReason> action);
+
+    static <PARSED> ParseCompletedResult<PARSED> success(PARSED parsed) {
+        return new ParseCompletedResult<>(parsed, null, false, Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> ParseResult<T> successNull() {
-        return (ParseResult<T>) NULL_SUCCESS;
+    static <T> ParseCompletedResult<T> successNull() {
+        return (ParseCompletedResult<T>) ParseCompletedResult.NULL_SUCCESS;
     }
 
-    public static <EXPECTED> ParseResult<EXPECTED> failure(FailedReason failedReason) {
-        return new ParseResult<>(null, failedReason, false, Collections.emptyList());
+    static <EXPECTED> ParseCompletedResult<EXPECTED> failure(FailedReason failedReason) {
+        return new ParseCompletedResult<>(null, failedReason, false, Collections.emptyList());
     }
 
-    public static <EXPECTED> ParseResult<EXPECTED> failure(Object failedReason) {
-        return new ParseResult<>(null, FailedReason.of(failedReason), false, Collections.emptyList());
+    static <EXPECTED> ParseCompletedResult<EXPECTED> failure(Object failedReason) {
+        return new ParseCompletedResult<>(null, FailedReason.of(failedReason), false, Collections.emptyList());
     }
 
     @Deprecated
-    public static <EXPECTED> ParseResult<EXPECTED> failure() {
-        return new ParseResult<>(null, FailedReason.empty(), false, Collections.emptyList());
+    static <EXPECTED> ParseCompletedResult<EXPECTED> failure() {
+        return new ParseCompletedResult<>(null, FailedReason.empty(), false, Collections.emptyList());
     }
 
     @ApiStatus.Experimental
-    public static <EXPECTED> ParseResult<EXPECTED> conditional(EXPECTED parsed, List<RequirementCondition> conditions) {
-        return new ParseResult<>(parsed, null, false, Collections.unmodifiableList(conditions));
+    static <EXPECTED> ParseCompletedResult<EXPECTED> conditional(EXPECTED parsed, List<RequirementCondition> conditions) {
+        return new ParseCompletedResult<>(parsed, null, false, Collections.unmodifiableList(conditions));
     }
 
     @ApiStatus.Experimental
-    public static <EXPECTED> ParseResult<EXPECTED> conditional(EXPECTED parsed, RequirementCondition... conditions) {
-        return new ParseResult<>(parsed, null, false, Arrays.asList(conditions));
+    static <EXPECTED> ParseCompletedResult<EXPECTED> conditional(EXPECTED parsed, RequirementCondition... conditions) {
+        return new ParseCompletedResult<>(parsed, null, false, Arrays.asList(conditions));
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ParseResult<?> that = (ParseResult<?>) o;
-        return Objects.equals(successfulResult, that.successfulResult) && Objects.equals(failedResult, that.failedResult);
+    @ApiStatus.Experimental
+    @ApiStatus.Internal
+    static <EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<? extends ParseResult<EXPECTED>> future) {
+        return new ParseAsyncResult<>(future);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(successfulResult, failedResult);
+    @ApiStatus.Experimental
+    static <T, EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<T> future, Function<T, ? extends ParseResult<EXPECTED>> mapper) {
+        return new ParseAsyncResult<>(future.thenApply(mapper));
     }
 
-    @Override
-    public String toString() {
-        return "ParseResult{" +
-            "successfulResult=" + successfulResult +
-            ", failedResult=" + failedResult +
-            '}';
+    @ApiStatus.Experimental
+    static <EXPECTED> ParseAsyncResult<EXPECTED> async(Supplier<? extends ParseResult<EXPECTED>> supplier) {
+        return new ParseAsyncResult<>(CompletableFuture.supplyAsync(supplier));
     }
+
+    @ApiStatus.Experimental
+    static <EXPECTED> ParseAsyncResult<EXPECTED> async(Supplier<? extends ParseResult<EXPECTED>> supplier, Executor executor) {
+        return new ParseAsyncResult<>(CompletableFuture.supplyAsync(supplier, executor));
+    }
+
 }

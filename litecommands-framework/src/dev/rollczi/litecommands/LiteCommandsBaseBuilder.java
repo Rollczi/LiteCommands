@@ -42,10 +42,10 @@ import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
+import dev.rollczi.litecommands.requirement.RequirementMatchService;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.scheduler.SchedulerReference;
-import dev.rollczi.litecommands.scheduler.SchedulerSameThreadImpl;
 import dev.rollczi.litecommands.schematic.SchematicFastFormat;
 import dev.rollczi.litecommands.schematic.SchematicFastGenerator;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
@@ -69,8 +69,6 @@ import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import dev.rollczi.litecommands.wrapper.Wrapper;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -79,7 +77,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -104,7 +101,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final ResultHandleService<SENDER> resultHandleService;
     protected final CommandBuilderCollector<SENDER> commandBuilderCollector;
     protected final MessageRegistry<SENDER> messageRegistry;
-    protected final WrapperRegistry wrapperRegistry;
     protected final StrictService strictService;
     protected final SchedulerReference scheduler;
     protected final EventPublisher eventPublisher;
@@ -129,7 +125,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
             new ResultHandleServiceImpl<>(),
             new CommandBuilderCollector<>(),
             new MessageRegistry<>(),
-            new WrapperRegistry(),
             new StrictService()
         );
     }
@@ -151,7 +146,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         ResultHandleService<SENDER> resultHandleService,
         CommandBuilderCollector<SENDER> commandBuilderCollector,
         MessageRegistry<SENDER> messageRegistry,
-        WrapperRegistry wrapperRegistry,
         StrictService strictService
     ) {
         this.senderClass = senderClass;
@@ -166,12 +160,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.resultHandleService = resultHandleService;
         this.commandBuilderCollector = commandBuilderCollector;
         this.messageRegistry = messageRegistry;
-        this.wrapperRegistry = wrapperRegistry;
         this.strictService = strictService;
 
         this.scheduler = new SchedulerReference(new SchedulerExecutorPoolImpl("litecommands"));
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
-        this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, wrapperRegistry));
+        this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, parserRegistry));
     }
 
     @Override
@@ -510,13 +503,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public B schematicGenerator(SchematicFormat format) {
-        this.schematicGenerator.setSchematicGenerator(new SimpleSchematicGenerator<>(format, validatorService, wrapperRegistry));
+        this.schematicGenerator.setSchematicGenerator(new SimpleSchematicGenerator<>(format, validatorService, parserRegistry));
         return this.self();
     }
 
     @Override
     public B schematicGenerator(SchematicFastFormat format) {
-        this.schematicGenerator.setSchematicGenerator(new SchematicFastGenerator<>(format, validatorService, wrapperRegistry));
+        this.schematicGenerator.setSchematicGenerator(new SchematicFastGenerator<>(format, validatorService, parserRegistry));
         return this.self();
     }
 
@@ -529,12 +522,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @Override
     public B listener(EventListener listener) {
         this.eventPublisher.subscribe(listener);
-        return this.self();
-    }
-
-    @Override
-    public B wrapper(Wrapper wrapper) {
-        this.wrapperRegistry.registerFactory(wrapper);
         return this.self();
     }
 
@@ -628,7 +615,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     protected CommandManager<SENDER> createCommandManager() {
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, schematicGenerator, parserRegistry, contextRegistry, wrapperRegistry, bindRegistry, eventPublisher, strictService);
+        RequirementMatchService<SENDER> requirementMatchService = new RequirementMatchService<>(strictService, contextRegistry, parserRegistry, bindRegistry, scheduler);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, requirementMatchService, eventPublisher);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
 
         return new CommandManager<>(this.platform, commandExecuteService, suggestionService);
@@ -720,12 +708,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public StrictService getStrictService() {
         return this.strictService;
-    }
-
-    @Override
-    @ApiStatus.Internal
-    public WrapperRegistry getWrapperRegistry() {
-        return this.wrapperRegistry;
     }
 
     @SuppressWarnings("unchecked")

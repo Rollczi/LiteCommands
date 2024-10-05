@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.unit;
 
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.SimpleArgument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.meta.Meta;
@@ -10,7 +9,6 @@ import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.AbstractCommandExecutor;
 import dev.rollczi.litecommands.command.executor.CommandExecutorMatchResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +36,7 @@ public class TestExecutor<SENDER> extends AbstractCommandExecutor<SENDER> {
     }
 
     public <T> TestExecutor<SENDER> withArg(String name, Class<T> type, BiFunction<Invocation<SENDER>, String, ParseResult<T>> parser) {
-        testArguments.add(new SimpleArgument<>(name, WrapFormat.notWrapped(type)));
+        testArguments.add(Argument.of(name, type));
         return this;
     }
 

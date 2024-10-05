@@ -17,7 +17,7 @@ public class RootCommandAnnotationProcessor<SENDER> implements AnnotationProcess
                 }
             })
             .onClass(RootCommand.class, (classType, annotation, builder) -> CommandBuilder.<SENDER>createRoot()
-                .applyMeta(meta -> meta.apply(builder.meta()))
+                .applyMeta(meta -> meta.putAll(builder.meta()))
             );
     }
 }

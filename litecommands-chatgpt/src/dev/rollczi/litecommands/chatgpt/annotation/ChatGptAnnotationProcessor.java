@@ -1,19 +1,19 @@
 package dev.rollczi.litecommands.chatgpt.annotation;
 
-import dev.rollczi.litecommands.annotations.AnnotationInvoker;
-import dev.rollczi.litecommands.annotations.AnnotationProcessor;
-import dev.rollczi.litecommands.chatgpt.LiteChatGptExtension;
-import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.annotations.argument.profile.ProfileAnnotationProcessor;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.chatgpt.ChatGptArgumentProfile;
+import java.lang.reflect.Parameter;
 
-public class ChatGptAnnotationProcessor<SENDER> implements AnnotationProcessor<SENDER> {
+public class ChatGptAnnotationProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, ChatGpt, ChatGptArgumentProfile> {
+
+    public ChatGptAnnotationProcessor() {
+        super(ChatGpt.class);
+    }
 
     @Override
-    public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.on(ChatGpt.class, (annotation, metaHolder) -> {
-            metaHolder.meta()
-                .put(Meta.ARGUMENT_KEY, LiteChatGptExtension.ARGUMENT_KEY)
-                .put(LiteChatGptExtension.ARGUMENT_TOPIC, annotation.topic());
-        });
+    protected ChatGptArgumentProfile createProfile(Parameter parameter, ChatGpt annotation, Argument<?> argument) {
+        return new ChatGptArgumentProfile(annotation.topic());
     }
 
 }

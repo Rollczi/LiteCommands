@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.Parser;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
@@ -12,8 +14,8 @@ import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.priority.PrioritizedList;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.shared.Preconditions;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -39,13 +41,13 @@ public class JDACommandTranslator {
     private static final String DESCRIPTION_DEFAULT = "none";
     private static final String DESCRIPTION_NO_GENERATED = "no generated description";
 
-    private final WrapperRegistry wrapperRegistry;
-
     private final Map<Class<?>, JDAType<?>> jdaSupportedTypes = new HashMap<>();
     private final Map<Class<?>, JDATypeOverlay<?>> jdaTypeOverlays = new HashMap<>();
 
-    JDACommandTranslator(WrapperRegistry wrapperRegistry) {
-        this.wrapperRegistry = wrapperRegistry;
+    private final ParserRegistry<User> parserRegistry;
+
+    public JDACommandTranslator(ParserRegistry<User> parserRegistry) {
+        this.parserRegistry = parserRegistry;
     }
 
     public <T> JDACommandTranslator type(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {
@@ -173,7 +175,7 @@ public class JDACommandTranslator {
             String description = this.getDescription(argument);
             boolean isRequired = isRequired(argument);
 
-            Class<?> parsedType = argument.getWrapperFormat().getParsedType();
+            Class<?> parsedType = argument.getType().getRawType();
             if (jdaSupportedTypes.containsKey(parsedType)) {
                 JDAType<?> jdaType = jdaSupportedTypes.get(parsedType);
                 OptionType optionType = jdaType.optionType();
@@ -196,12 +198,20 @@ public class JDACommandTranslator {
         return executor;
     }
 
-    private boolean isRequired(Argument<?> argument) {
+    private <T> boolean isRequired(Argument<T> argument) {
         if (argument.hasDefaultValue()) {
             return false;
         }
 
-        return !wrapperRegistry.getWrappedExpectedFactory(argument.getWrapperFormat()).canCreateEmpty();
+        Parser<User, T> parser = parserRegistry.getParserOrNull(argument);
+
+        if (parser == null) {
+            return true;
+        }
+
+        Range range = parser.getRange(argument);
+
+        return range.getMin() > 0;
     }
 
     private interface TranslateExecutorConsumer {

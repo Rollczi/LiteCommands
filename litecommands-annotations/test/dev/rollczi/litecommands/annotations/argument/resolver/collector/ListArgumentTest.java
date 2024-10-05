@@ -1,7 +1,7 @@
 
 package dev.rollczi.litecommands.annotations.argument.resolver.collector;
 
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -11,7 +11,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Collections;
 import static java.util.Collections.*;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -184,6 +183,7 @@ class ListArgumentTest extends LiteTestSpec {
         platform.suggest("test Integer 1 ")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "");
         platform.suggest("test Integer 5")
+            .assertSuggestAndFlush("5 ", "5")
             .assertAsSuggester(NumberArgumentResolver.ofInteger(), "5");
     }
 
@@ -192,11 +192,11 @@ class ListArgumentTest extends LiteTestSpec {
         platform.suggest("test String ")
             .assertSuggest("<argument>");
         platform.suggest("test String <argument>")
-            .assertSuggest("<argument>");
+            .assertSuggest("<argument>", "<argument> ");
         platform.suggest("test String text ")
             .assertSuggest("<argument>");
         platform.suggest("test String text")
-            .assertSuggest("text");
+            .assertSuggest("text", "text ");
     }
 
     @Test
@@ -232,7 +232,7 @@ class ListArgumentTest extends LiteTestSpec {
         platform.suggest("test enum FIRST ")
             .assertSuggest("FIRST", "SECOND", "THIRD", "FOURTH");
         platform.suggest("test enum FIRST")
-            .assertSuggest("FIRST");
+            .assertSuggest("FIRST", "FIRST ");
     }
 
 

@@ -1,7 +1,6 @@
 package dev.rollczi.litecommands.annotations.permission;
 
-import dev.rollczi.litecommands.annotations.LiteConfig;
-import dev.rollczi.litecommands.annotations.LiteTestSpec;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -19,7 +18,7 @@ class MissingPermissionResultHandlerTest extends LiteTestSpec {
     static AtomicBoolean throwHandled = new AtomicBoolean(false);
     static AtomicBoolean invalidHandler = new AtomicBoolean(false);
 
-    static LiteConfig config = builder -> builder
+    static LiteTestConfig config = builder -> builder
         .missingPermission((invocation, missingPermissions, chain) -> {
             if (missingPermissions.getPermissions().contains("test.permission.throw")) {
                 throw new RuntimeException("Missing permission");

@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.meta;
 
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.cooldown.CooldownContext;
 import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
@@ -24,7 +25,7 @@ public interface Meta {
     MetaKey<PriorityLevel> PRIORITY = MetaKey.of("priority", PriorityLevel.class, PriorityLevel.NORMAL);
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
-    MetaKey<String> ARGUMENT_KEY = MetaKey.of("argument-key", String.class);
+    MetaKey<ArgumentKey> ARGUMENT_KEY = MetaKey.of("argument-key", ArgumentKey.class, ArgumentKey.of());
     MetaKey<List<Class>> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", MetaType.list(), Collections.emptyList());
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
     MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
@@ -32,19 +33,23 @@ public interface Meta {
     MetaKey<StrictMode> STRICT_MODE = MetaKey.of("strict-mode", StrictMode.class, StrictMode.DEFAULT);
 
     /**
-     * LiteCommands Annotation API
+     * @deprecated Use AnnotationsMeta#REQUIREMENT_PARAMETER instead
      */
-    @ApiStatus.Experimental
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.8.0")
     MetaKey<Parameter> REQUIREMENT_PARAMETER = MetaKey.of("requirement-parameter", Parameter.class);
 
     Meta EMPTY_META = new MetaEmptyImpl();
 
     @NotNull <T> T get(MetaKey<T> key);
 
-    @Contract("_, !null -> !null")
+    @Contract("_, !null -> !null; _, null -> _")
     <T> T get(MetaKey<T> key, T defaultValue);
 
     <T> Meta put(MetaKey<T> key, T value);
+
+    @ApiStatus.Experimental
+    <T> Meta edit(MetaKey<T> key, UnaryOperator<T> operator);
 
     <T> Meta remove(MetaKey<T> key);
 
@@ -62,7 +67,15 @@ public interface Meta {
         return operator.apply(editor).apply();
     }
 
-    Meta apply(Meta meta);
+    /**
+     * @deprecated Use {@link #putAll(Meta)} instead
+     */
+    @Deprecated
+    default Meta apply(Meta meta) {
+        return putAll(meta);
+    }
+
+    Meta putAll(Meta meta);
 
     Meta copy();
 

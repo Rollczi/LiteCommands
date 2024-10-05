@@ -1,22 +1,19 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
-import dev.rollczi.litecommands.wrapper.WrapFormat;
-import dev.rollczi.litecommands.wrapper.WrapperRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
 class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
 
-    private final WrapperRegistry wrapperRegistry;
     private final CommandBuilder<SENDER> commandBuilder;
     private final Parameter parameter;
     private final Requirement<?> requirement;
 
-    ParameterInvoker(WrapperRegistry wrapperRegistry, CommandBuilder<SENDER> commandBuilder, Parameter parameter, Requirement<?> requirement) {
-        this.wrapperRegistry = wrapperRegistry;
+    ParameterInvoker(CommandBuilder<SENDER> commandBuilder, Parameter parameter, Requirement<?> requirement) {
         this.commandBuilder = commandBuilder;
         this.parameter = parameter;
         this.requirement = requirement;
@@ -42,14 +39,8 @@ class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
             return this;
         }
 
-        listener.call(parameter, createHolder(annotation, parameter), commandBuilder, requirement);
+        listener.call(parameter, annotation, commandBuilder, requirement);
         return this;
-    }
-
-    private <A extends Annotation> AnnotationHolder<A, ?, ?> createHolder(A annotation, Parameter parameter) {
-        WrapFormat<?, ?> format = MethodParameterUtil.wrapperFormat(wrapperRegistry, parameter);
-
-        return AnnotationHolder.of(annotation, format, () -> parameter.getName());
     }
 
     @Override

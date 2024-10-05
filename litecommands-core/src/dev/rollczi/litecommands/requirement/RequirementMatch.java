@@ -1,13 +1,11 @@
 package dev.rollczi.litecommands.requirement;
 
-import dev.rollczi.litecommands.wrapper.Wrap;
-
 public class RequirementMatch {
 
     private final Requirement<?> requirement;
-    private final Wrap<?> result;
+    private final Object result;
 
-    public RequirementMatch(Requirement<?> requirement, Wrap<?> result) {
+    public RequirementMatch(Requirement<?> requirement, Object result) {
         this.requirement = requirement;
         this.result = result;
     }
@@ -16,7 +14,7 @@ public class RequirementMatch {
         return requirement;
     }
 
-    public Wrap<?> getResult() {
+    public Object getResult() {
         return result;
     }
 

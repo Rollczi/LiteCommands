@@ -15,17 +15,21 @@ import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyBalanceCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyService;
+import dev.rollczi.example.bukkit.user.User;
+import dev.rollczi.example.bukkit.user.UserArgumentResolver;
+import dev.rollczi.example.bukkit.user.UserCommand;
+import dev.rollczi.example.bukkit.user.UserService;
 import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
 import dev.rollczi.example.bukkit.validator.IsNotOp;
+import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.join.JoinArgument;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -41,7 +45,7 @@ public class ExamplePlugin extends JavaPlugin {
         // [!] you don't have to use this service, it's just for demonstration [!]
         CurrencyService currencyService = new CurrencyService();
 
-        this.liteCommands = LiteCommandsBukkit.builder()
+        this.liteCommands = LiteBukkitFactory.builder()
             // configure bukkit platform
             .settings(settings -> settings
                 .fallbackPrefix("my-plugin") // fallback prefix - used by bukkit to identify command
@@ -62,7 +66,8 @@ public class ExamplePlugin extends JavaPlugin {
                 new RandomItemCommand(),
                 new NumberCommand(),
                 new CurrencyCommand(currencyService),
-                new CurrencyBalanceCommand(currencyService)
+                new CurrencyBalanceCommand(currencyService),
+                new UserCommand()
             )
 
             // Custom annotation validators
@@ -86,10 +91,11 @@ public class ExamplePlugin extends JavaPlugin {
 
             // Arguments @Arg
             .argument(GameMode.class, new GameModeArgument())
+            .argument(User.class, new UserArgumentResolver(new UserService()))
 
             // Suggestions, if you want you can override default argument suggesters
             .argumentSuggestion(Integer.class, SuggestionResult.of("1", "2", "3"))
-            .argumentSuggestion(String.class, JoinArgument.KEY, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
+            .argumentSuggestion(String.class, ProfileNamespaces.JOIN, SuggestionResult.of("Simple suggestion", "Simple suggestion 2"))
 
             .message(LiteBukkitMessages.PLAYER_ONLY, "&cOnly player can execute this command!")
             .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> "&cPlayer &7" + input + " &cnot found!")

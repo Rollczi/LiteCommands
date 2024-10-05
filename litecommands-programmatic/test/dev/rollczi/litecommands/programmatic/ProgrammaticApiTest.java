@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import static dev.rollczi.litecommands.permission.MissingPermissions.missing;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class ProgrammaticApiTest {
+class ProgrammaticApiTest {
 
     String PERMISSION = "example.ban";
 
