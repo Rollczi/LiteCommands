@@ -20,14 +20,14 @@ public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, P
 
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
-        return invoker.onParameterRequirement(annotationType, (parameter, annotationHolder, builder, requirement) -> {
+        return invoker.onParameterRequirement(annotationType, (parameter, annotation, builder, requirement) -> {
             if (!(requirement instanceof Argument)) {
                 Executable declaringExecutable = parameter.getDeclaringExecutable();
                 throw new LiteCommandsReflectInvocationException(declaringExecutable, parameter, "@" + annotationType.getSimpleName() + " can be used only on arguments");
             }
 
             Argument<?> argument = (Argument<?>) requirement;
-            PROFILE profile = createProfile(parameter, annotationHolder.getAnnotation(), argument);
+            PROFILE profile = createProfile(parameter, annotation, argument);
 
             if (profile == null) {
                 return;

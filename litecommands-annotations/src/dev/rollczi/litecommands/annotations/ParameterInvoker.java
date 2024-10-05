@@ -39,12 +39,8 @@ class ParameterInvoker<SENDER> implements AnnotationInvoker<SENDER> {
             return this;
         }
 
-        listener.call(parameter, createHolder(annotation, parameter), commandBuilder, requirement);
+        listener.call(parameter, annotation, commandBuilder, requirement);
         return this;
-    }
-
-    private <A extends Annotation> AnnotationHolder<A, ?> createHolder(A annotation, Parameter parameter) {
-        return AnnotationHolder.of(annotation, TypeToken.ofParameter(parameter), () -> parameter.getName());
     }
 
     @Override

@@ -7,9 +7,7 @@ import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
-import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
-import java.util.function.BiFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +15,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 public class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHolder {
 
@@ -76,7 +75,7 @@ public class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHol
                 continue;
             }
 
-            Optional<Requirement<?>> requirementOptional = listener.call(parameter, createHolder(parameterAnnotation, parameter), commandBuilder);
+            Optional<Requirement<?>> requirementOptional = listener.call(parameter, parameterAnnotation, commandBuilder);
 
             registerRequirement(index, parameter, parameterAnnotation, requirementOptional);
         }
@@ -139,10 +138,6 @@ public class MethodInvoker<SENDER> implements AnnotationInvoker<SENDER>, MetaHol
         }
 
         return commandBuilder;
-    }
-
-    private <A extends Annotation> AnnotationHolder<A, ?> createHolder(A annotation, Parameter parameter) {
-        return AnnotationHolder.of(annotation, TypeToken.ofParameter(parameter), () -> parameter.getName());
     }
 
     @Override

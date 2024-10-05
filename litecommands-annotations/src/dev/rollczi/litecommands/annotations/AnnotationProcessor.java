@@ -27,11 +27,11 @@ public interface AnnotationProcessor<SENDER> {
     }
 
     interface ParameterListener<SENDER, A extends Annotation> {
-        Optional<Requirement<?>> call(Parameter parameter, AnnotationHolder<A, ?> annotationHolder, CommandBuilder<SENDER> builder);
+        Optional<Requirement<?>> call(Parameter parameter, A annotation, CommandBuilder<SENDER> builder);
     }
 
     interface ParameterRequirementListener<SENDER, A extends Annotation> {
-        void call(Parameter parameter, AnnotationHolder<A, ?> annotationHolder, CommandBuilder<SENDER> builder, Requirement<?> requirement);
+        void call(Parameter parameter, A annotation, CommandBuilder<SENDER> builder, Requirement<?> requirement);
     }
 
 }
