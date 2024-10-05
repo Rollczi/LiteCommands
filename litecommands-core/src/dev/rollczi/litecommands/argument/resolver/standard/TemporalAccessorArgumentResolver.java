@@ -75,7 +75,7 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
     }
 
     @Override
-    public boolean matchParse(Invocation<SENDER> invocation, Argument<UNIT> argument, RawInput input) {
+    public boolean match(Invocation<SENDER> invocation, Argument<UNIT> argument, RawInput input) {
         return pattern.matcher(String.join(" ", input.seeAll())).find();
     }
 

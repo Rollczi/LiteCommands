@@ -50,14 +50,14 @@ public class CompletableFutureResolver<SENDER> extends ArgumentResolverChained<S
     }
 
     @Override
-    protected boolean matchParse(Invocation<SENDER> invocation, Argument<CompletableFuture> context, String argument, ParserChainAccessor<SENDER> accessor) {
-        return matchParse(invocation, context, argument, accessor, context.getType().getParameterized());
+    protected boolean match(Invocation<SENDER> invocation, Argument<CompletableFuture> context, String argument, ParserChainAccessor<SENDER> accessor) {
+        return match(invocation, context, argument, accessor, context.getType().getParameterized());
     }
 
-    private <T> boolean matchParse(Invocation<SENDER> invocation, Argument<CompletableFuture> context, String argument, ParserChainAccessor<SENDER> accessor, TypeToken<T> type) {
+    private <T> boolean match(Invocation<SENDER> invocation, Argument<CompletableFuture> context, String argument, ParserChainAccessor<SENDER> accessor, TypeToken<T> type) {
         Parser<SENDER, T> parser = parserRegistry.getParser(context.withType(type));
 
-        return parser.matchParse(invocation, context.withType(type), RawInput.of(argument));
+        return parser.match(invocation, context.withType(type), RawInput.of(argument));
     }
 
     @Override

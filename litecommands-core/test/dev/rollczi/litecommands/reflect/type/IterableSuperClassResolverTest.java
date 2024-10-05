@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.reflect.type;
 
+import dev.rollczi.litecommands.argument.matcher.Matcher;
 import dev.rollczi.litecommands.argument.profile.ProfiledMultipleArgumentResolver;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
@@ -32,6 +33,7 @@ class IterableSuperClassResolverTest {
                 MultipleArgumentResolver.class,
                 ArgumentResolverBase.class,
                 Parser.class,
+                Matcher.class,
                 Suggester.class,
                 Rangeable.class
             );

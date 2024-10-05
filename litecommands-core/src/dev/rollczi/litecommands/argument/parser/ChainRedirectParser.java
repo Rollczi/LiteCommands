@@ -26,8 +26,8 @@ class ChainRedirectParser<SENDER, T> implements Parser<SENDER, T> {
     }
 
     @Override
-    public boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
-        return parser.matchParse(invocation, argument, input, accessor);
+    public boolean match(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
+        return parser.match(invocation, argument, input, accessor);
     }
 
     @Override

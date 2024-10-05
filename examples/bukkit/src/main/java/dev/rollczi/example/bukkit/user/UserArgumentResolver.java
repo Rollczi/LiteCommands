@@ -36,7 +36,7 @@ public class UserArgumentResolver extends ArgumentResolver<CommandSender, User> 
     }
 
     @Override
-    public boolean matchParse(Invocation<CommandSender> invocation, Argument<User> context, String argument) {
+    public boolean match(Invocation<CommandSender> invocation, Argument<User> context, String argument) {
         return VALID_USER_PATTERN.matcher(argument).matches();
     }
 

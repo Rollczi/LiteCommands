@@ -5,8 +5,8 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
-public interface Suggester<SENDER, PARSED> {
+public interface Suggester<SENDER, T> {
 
-    SuggestionResult suggest(Invocation<SENDER> invocation, Argument<PARSED> argument, SuggestionContext context);
+    SuggestionResult suggest(Invocation<SENDER> invocation, Argument<T> argument, SuggestionContext context);
 
 }

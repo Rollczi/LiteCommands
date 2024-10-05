@@ -53,15 +53,15 @@ public abstract class ProfiledParser<SENDER, T, PROFILE> implements Parser<SENDE
     protected abstract Range getRange(Argument<T> argument, PROFILE meta);
 
     @Override
-    public final boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
+    public final boolean match(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
         Meta meta = argument.meta();
         PROFILE value = meta.get(namespace.asMetaKey());
 
-        return this.matchParse(invocation, argument, input, value);
+        return this.match(invocation, argument, input, value);
     }
 
-    protected boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, PROFILE profile) {
-        return Parser.super.matchParse(invocation, argument, input);
+    protected boolean match(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, PROFILE profile) {
+        return Parser.super.match(invocation, argument, input);
     }
 
 }

@@ -27,15 +27,15 @@ public abstract class ArgumentResolver<SENDER, TYPE> implements MultipleArgument
     }
 
     @Override
-    public final boolean matchParse(Invocation<SENDER> invocation, Argument<TYPE> argument, RawInput input) {
+    public final boolean match(Invocation<SENDER> invocation, Argument<TYPE> argument, RawInput input) {
         if (!input.hasNext()) {
             return false;
         }
 
-        return this.matchParse(invocation, argument, input.next());
+        return this.match(invocation, argument, input.next());
     }
 
-    protected boolean matchParse(Invocation<SENDER> invocation, Argument<TYPE> context, String argument) {
+    protected boolean match(Invocation<SENDER> invocation, Argument<TYPE> context, String argument) {
         ParseResult<TYPE> parsed = this.parse(invocation, context, argument);
 
         if (parsed instanceof RequirementResult) {
@@ -44,7 +44,7 @@ public abstract class ArgumentResolver<SENDER, TYPE> implements MultipleArgument
             return completed.isSuccessful() || completed.isSuccessfulNull();
         }
 
-        throw new IllegalArgumentException("Async parsers should override ArgumentResolver#matchParse method! (" + this.getClass().getName() + ")");
+        throw new IllegalArgumentException("Async parsers should override ArgumentResolver#match method! (" + this.getClass().getName() + ")");
     }
 
 }

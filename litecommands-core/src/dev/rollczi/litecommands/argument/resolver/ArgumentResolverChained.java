@@ -25,15 +25,15 @@ public abstract class ArgumentResolverChained<SENDER, T> implements MultipleArgu
     protected abstract ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, String input, ParserChainAccessor<SENDER> chainAccessor);
 
     @Override
-    public final boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, ParserChainAccessor<SENDER> accessor) {
+    public final boolean match(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, ParserChainAccessor<SENDER> accessor) {
         if (!input.hasNext()) {
             return false;
         }
 
-        return this.matchParse(invocation, argument, input.next(), accessor);
+        return this.match(invocation, argument, input.next(), accessor);
     }
 
-    protected boolean matchParse(Invocation<SENDER> invocation, Argument<T> context, String argument, ParserChainAccessor<SENDER> accessor) {
+    protected boolean match(Invocation<SENDER> invocation, Argument<T> context, String argument, ParserChainAccessor<SENDER> accessor) {
         ParseResult<T> parsed = this.parse(invocation, context, argument, accessor);
 
         if (parsed instanceof RequirementResult) {
@@ -42,7 +42,7 @@ public abstract class ArgumentResolverChained<SENDER, T> implements MultipleArgu
             return completed.isSuccessful() || completed.isSuccessfulNull();
         }
 
-        throw new IllegalArgumentException("Async parsers should override ArgumentResolver#matchParse method! (" + this.getClass().getName() + ")");
+        throw new IllegalArgumentException("Async parsers should override ArgumentResolver#match method! (" + this.getClass().getName() + ")");
     }
 
     @Override

@@ -67,11 +67,11 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, COLLECTION> exte
     }
 
     @Override
-    public boolean matchParse(Invocation<SENDER> invocation, Argument<COLLECTION> context, RawInput input, VarargsProfile collectionArgument) {
-        return matchParse0(invocation, context, input, collectionArgument);
+    public boolean match(Invocation<SENDER> invocation, Argument<COLLECTION> context, RawInput input, VarargsProfile collectionArgument) {
+        return match0(invocation, context, input, collectionArgument);
     }
 
-    private <E> boolean matchParse0(Invocation<SENDER> invocation, Argument<COLLECTION> collectionArgument, RawInput input, VarargsProfile collectionArgumentContainer) {
+    private <E> boolean match0(Invocation<SENDER> invocation, Argument<COLLECTION> collectionArgument, RawInput input, VarargsProfile collectionArgumentContainer) {
         if (input.hasNext() && input.seeNext().isEmpty()) {
             input.next();
             return true;
@@ -90,7 +90,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, COLLECTION> exte
         }
 
         boolean isAllMatch = result.getSuccess().stream()
-            .allMatch(rawResult -> parser.matchParse(invocation, argument, RawInput.of(rawResult)));
+            .allMatch(rawResult -> parser.match(invocation, argument, RawInput.of(rawResult)));
 
         if (isAllMatch) {
             view.applyChanges(); // we need to apply changes to the input for next suggestions
@@ -299,7 +299,7 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, COLLECTION> exte
     }
 
     private <T> boolean isMatch(Parser<SENDER, T> parser, Argument<T> argument, Invocation<SENDER> invocation, String rawArgument) {
-        return parser.matchParse(invocation, argument, RawInput.of(StringUtil.splitBySpace(rawArgument)));
+        return parser.match(invocation, argument, RawInput.of(StringUtil.splitBySpace(rawArgument)));
     }
 
     @Nullable

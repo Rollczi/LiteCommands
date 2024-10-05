@@ -104,10 +104,10 @@ public class RawInputAnalyzer {
         }
 
         @ApiStatus.Experimental
-        public boolean matchParseArgument(Invocation<SENDER> invocation) {
+        public boolean matchArgument(Invocation<SENDER> invocation) {
             List<String> arguments = rawArguments.subList(pivotPosition, realArgumentMaxCount);
             RawInput input = RawInput.of(arguments);
-            boolean parse = parser.matchParse(invocation, argument, input);
+            boolean parse = parser.match(invocation, argument, input);
 
             pivotPosition += input.consumedCount();
 

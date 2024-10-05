@@ -67,15 +67,15 @@ public abstract class ProfiledMultipleArgumentResolver<SENDER, T, PROFILE> imple
     }
 
     @Override
-    public final boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
+    public final boolean match(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
         Meta meta = argument.meta();
         PROFILE value = meta.get(namespace.asMetaKey());
 
-        return this.matchParse(invocation, argument, input, value);
+        return this.match(invocation, argument, input, value);
     }
 
-    protected boolean matchParse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, PROFILE profile) {
-        return MultipleArgumentResolver.super.matchParse(invocation, argument, input);
+    protected boolean match(Invocation<SENDER> invocation, Argument<T> argument, RawInput input, PROFILE profile) {
+        return MultipleArgumentResolver.super.match(invocation, argument, input);
     }
 
 }
