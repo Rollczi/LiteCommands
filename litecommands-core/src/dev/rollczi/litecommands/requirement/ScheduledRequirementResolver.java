@@ -64,17 +64,7 @@ class ScheduledRequirementResolver<SENDER> {
 
     @SuppressWarnings("unchecked")
     private <T, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementFutureResult<T> matchArgument(Argument<T> argument, Invocation<SENDER> invocation, MATCHER matcher) {
-        Class<T> rawType = argument.getType().getRawType();
-        ParserSet<SENDER, T> parserSet = (ParserSet<SENDER, T>) cachedParserSets.get(rawType, argument.getKey());
-
-        if (parserSet == null) {
-            parserSet = parserRegistry.getParserSet(rawType, argument.getKey());
-            cachedParserSets.put(rawType, argument.getKey(), parserSet);
-        }
-
-        Parser<SENDER, T> parser = parserSet.getValidParserOrThrow(argument);
-
-        return matcher.nextArgument(invocation, argument, parser);
+        return matcher.nextArgument(invocation, argument, parserRegistry.getParser(argument));
     }
 
     private <T> RequirementFutureResult<T> matchContext(ContextRequirement<T> contextRequirement, Invocation<SENDER> invocation) {

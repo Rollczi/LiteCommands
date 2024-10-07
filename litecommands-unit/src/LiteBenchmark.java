@@ -39,25 +39,25 @@ public class LiteBenchmark {
             System.out.println("Iteration: " + count);
             Stopper stopper = new Stopper("string");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.executeAsync("test first second");
+                testPlatform.execute("test first second");
             }
             stopper.stop();
 
             stopper = new Stopper("number");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.executeAsync("test number 1 2");
+                testPlatform.execute("test number 1 2");
             }
             stopper.stop();
 
             stopper = new Stopper("sub");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.executeAsync("test sub first");
+                testPlatform.execute("test sub first");
             }
             stopper.stop();
 
             stopper = new Stopper("sub optional");
             for (int i = 0; i < ITERATIONS; i++) {
-                testPlatform.executeAsync("test sub first second");
+                testPlatform.execute("test sub first second");
             }
             stopper.stop();
 

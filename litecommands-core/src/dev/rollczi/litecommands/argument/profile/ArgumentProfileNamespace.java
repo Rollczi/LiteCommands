@@ -4,6 +4,8 @@ import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.meta.MetaKey;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Objects;
+
 @ApiStatus.Experimental
 public class ArgumentProfileNamespace<META_HOLDER> implements ArgumentKey {
 
@@ -40,6 +42,19 @@ public class ArgumentProfileNamespace<META_HOLDER> implements ArgumentKey {
     @Override
     public ArgumentKey withNamespace(String namespace) {
         return ArgumentKey.of(namespace, getKey());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArgumentProfileNamespace<?> that = (ArgumentProfileNamespace<?>) o;
+        return Objects.equals(argumentNamespace, that.argumentNamespace) && Objects.equals(argumentKey, that.argumentKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(argumentNamespace, argumentKey);
     }
 
     @ApiStatus.Experimental

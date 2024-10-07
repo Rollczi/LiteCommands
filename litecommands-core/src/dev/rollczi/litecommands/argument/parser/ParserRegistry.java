@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
+import org.jetbrains.annotations.ApiStatus;
 
 public interface ParserRegistry<SENDER> {
 
@@ -16,6 +17,7 @@ public interface ParserRegistry<SENDER> {
 
     <PARSED> void registerParser(TypeRange<PARSED> typeRange, ArgumentKey key, ParserChained<SENDER, PARSED> parser);
 
+    @ApiStatus.Internal
     <PARSED> ParserSet<SENDER, PARSED> getParserSet(Class<PARSED> parsedClass, ArgumentKey key);
 
     @Deprecated

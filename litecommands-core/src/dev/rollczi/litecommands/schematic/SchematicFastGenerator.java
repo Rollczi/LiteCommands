@@ -100,8 +100,7 @@ public class SchematicFastGenerator<SENDER> implements SchematicGenerator<SENDER
     }
 
     protected <T> boolean isOptional(SchematicInput<SENDER> input, Argument<T> argument) {
-        ParserSet<SENDER, T> parserSet = parserRegistry.getParserSet(argument.getType().getRawType(), argument.getKey());
-        Parser<SENDER, T> parser = parserSet.getValidParser(argument);
+        Parser<SENDER, T> parser = parserRegistry.getParserOrNull(argument);
 
         if (parser != null) {
             Range range = parser.getRange(argument);

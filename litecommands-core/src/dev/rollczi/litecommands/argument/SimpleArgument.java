@@ -1,16 +1,16 @@
 package dev.rollczi.litecommands.argument;
 
+import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
-import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.priority.MutablePrioritizedList;
-import dev.rollczi.litecommands.priority.Prioritized;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class SimpleArgument<T> implements Argument<T> {
@@ -18,6 +18,7 @@ public class SimpleArgument<T> implements Argument<T> {
     private final String name;
     private final TypeToken<T> type;
     private final Meta meta = Meta.create();
+    private @Nullable Argument<?> pattern;
     @Deprecated
     private final boolean nullable;
     private final MutablePrioritizedList<ArgumentProfile<?>> profiles = new MutablePrioritizedList<>();
@@ -33,6 +34,14 @@ public class SimpleArgument<T> implements Argument<T> {
         this.name = name;
         this.type = type;
         this.nullable = false;
+        this.meta.put(Meta.ARGUMENT_KEY, ArgumentKey.of(this.getClass().getName(), name));
+    }
+
+    protected SimpleArgument(String name, TypeToken<T> type, Argument<?> pattern) {
+        this.name = name;
+        this.type = type;
+        this.nullable = false;
+        this.pattern = pattern;
         this.meta.put(Meta.ARGUMENT_KEY, ArgumentKey.of(this.getClass().getName(), name));
     }
 
@@ -58,7 +67,7 @@ public class SimpleArgument<T> implements Argument<T> {
 
     @Override
     public @Nullable MetaHolder parentMeta() {
-        return null;
+        return pattern;
     }
 
     @Override
@@ -96,10 +105,27 @@ public class SimpleArgument<T> implements Argument<T> {
     }
 
     @Override
-    public <NEW> Argument<NEW> withType(TypeToken<NEW> type) {
-        Argument<NEW> argument = Argument.of(name, type, nullable);
-        argument.meta().putAll(meta);
-        return argument;
+    public <NEW> Argument<NEW> createChild(TypeToken<NEW> type) {
+        return new SimpleArgument<>(name, type, this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleArgument<?> that = (SimpleArgument<?>) o;
+        return Objects.equals(getKey(), that.getKey()) && Objects.equals(type, that.type);
+    }
+
+    private volatile int hashCode;
+    @Override
+    public int hashCode() {
+        int result = hashCode;
+        if (result == 0) {
+            result = Objects.hash(getKey(), type);
+            hashCode = result;
+        }
+        return result;
     }
 
 }
