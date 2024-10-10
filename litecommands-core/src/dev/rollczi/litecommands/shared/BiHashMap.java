@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.shared;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 public class BiHashMap<K1, K2, V> implements BiMap<K1, K2, V> {
@@ -22,7 +23,7 @@ public class BiHashMap<K1, K2, V> implements BiMap<K1, K2, V> {
     }
 
     public BiHashMap(int initialCapacity) {
-        this.nativeMap = new HashMap<>(initialCapacity);
+        this.nativeMap = new ConcurrentHashMap<>(initialCapacity);
     }
 
     @Override
