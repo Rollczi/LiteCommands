@@ -19,8 +19,16 @@ public final class LiteFabricFactory {
     private LiteFabricFactory() {
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * @deprecated Use {@link LiteFabricFactory#builder()} instead
+     */
+    @Deprecated
     public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B create() {
+        return builder();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B builder() {
         return (B) LiteCommandsFactory.builder(ServerCommandSource.class, new FabricPlatform(new LiteFabricSettings()))
             .selfProcessor((builder, internal) -> {
                 MessageRegistry<ServerCommandSource> messageRegistry = internal.getMessageRegistry();
@@ -36,8 +44,7 @@ public final class LiteFabricFactory {
                     .argument(World.class, new WorldArgument<>(messageRegistry))
                     .argument(ServerWorld.class, new WorldArgument<>(messageRegistry))
                 ;
-            })
-            ;
+            });
     }
 
 }
