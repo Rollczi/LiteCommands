@@ -1,7 +1,7 @@
 object Versions {
 
     // Core
-    const val JETBRAINS_ANNOTATIONS = "24.1.0"
+    const val JETBRAINS_ANNOTATIONS = "26.0.1"
 
     // Tests
     const val JUNIT_JUPITER = "5.11.2"
@@ -21,10 +21,10 @@ object Versions {
     const val JDA = "5.1.2"
 
     // Minestom
-    const val MINESTOM = "4305006e6b"
+    const val MINESTOM = "7320437640"
 
     // Sponge
-    const val SPONGE_API = "8.2.0"
+    const val SPONGE_API = "12.0.0"
 
     // Velocity
     const val VELOCITY_API = "3.2.0-SNAPSHOT"
