@@ -86,13 +86,13 @@ maven("https://repo.panda-lang.org/releases")
 
 #### ➕ Add LiteCommands to dependencies
 ```kts
-implementation("dev.rollczi:{artifact}:3.7.0")
+implementation("dev.rollczi:{artifact}:3.7.1")
 ```
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>{artifact}</artifactId>
-    <version>3.7.0</version>
+    <version>3.7.1</version>
 </dependency>
 ```
 > ⚠️ Replace `{artifact}` with [platform artifact](https://docs.rollczi.dev/documentation/litecommands/platforms.html#supported-platforms)  

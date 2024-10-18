@@ -23,7 +23,7 @@ import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.velocity.LiteVelocityFactory;
 import dev.rollczi.litecommands.velocity.tools.VelocityOnlyPlayerContextual;
 
-@Plugin(id = "example-plugin", name = "ExamplePlugin", version = "1.0.0", authors = "Rollczi")
+@Plugin(id = "example-plugin", name = "ExamplePlugin", version = "3.7.1", authors = "Rollczi")
 public class ExamplePlugin {
 
     private final ProxyServer proxyServer;
