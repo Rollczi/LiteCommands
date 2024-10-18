@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("fabric-loom") version "1.7-SNAPSHOT"
+    id("fabric-loom") version "1.8.10"
 }
 
 java {
@@ -15,11 +15,11 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:1.20.4")
-    mappings("net.fabricmc:yarn:1.20.4+build.3:v2")
+    minecraft("com.mojang:minecraft:1.21.1")
+    mappings("net.fabricmc:yarn:1.21.1+build.3")
 
-    modImplementation("net.fabricmc:fabric-loader:0.15.6")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.96.1+1.20.4")
+    modImplementation("net.fabricmc:fabric-loader:0.16.7")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.106.0+1.21.1")
 
 //    modImplementation("dev.rollczi:litecommands-fabric:3.7.1") // <-- uncomment in your project
     implementation(project(path = ":litecommands-fabric", configuration = "namedElements"))

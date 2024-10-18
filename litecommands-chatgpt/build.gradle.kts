@@ -12,7 +12,7 @@ dependencies {
 
     implementation("com.google.code.gson:gson:${Versions.GSON}")
     implementation("com.github.ben-manes.caffeine:caffeine:${Versions.CAFFEINE}")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp:${Versions.OKHTTP}")
 }
 
 litecommandsUnit {

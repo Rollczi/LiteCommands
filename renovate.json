@@ -18,7 +18,7 @@
       "matchPackagePatterns": [
         "*"
       ],
-      "excludePackagePatterns": ["org.spigotmc*"],
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
       "updateTypes": ["minor", "patch"],
       "automerge": true
     },
@@ -29,6 +29,23 @@
         "*"
       ],
       "updateTypes": ["major"],
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
+      "automerge": false
+    },
+    {
+      "groupName": "fabricmc dependencies",
+      "groupSlug": "fabricmc",
+      "matchPackagePatterns": [
+          "net.fabricmc*"
+      ],
+      "automerge": false
+    },
+    {
+      "groupName": "spigotmc dependencies",
+      "groupSlug": "spigotmc",
+      "matchPackagePatterns": [
+          "org.spigotmc*"
+      ],
       "automerge": false
     }
   ]
