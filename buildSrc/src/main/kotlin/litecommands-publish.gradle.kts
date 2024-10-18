@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.rollczi"
-version = "3.7.1"
+version = "3.7.2-SNAPSHOT"
 
 publishing {
     java {
