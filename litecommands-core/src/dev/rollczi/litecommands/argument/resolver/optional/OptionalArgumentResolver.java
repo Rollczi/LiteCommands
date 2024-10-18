@@ -28,7 +28,7 @@ public class OptionalArgumentResolver<SENDER> implements MultipleArgumentResolve
     @SuppressWarnings("unchecked")
     private <E> ParseResult<Optional> parseValue(TypeToken<E> type, Invocation<SENDER> invocation, Argument<Optional> optionalArgument, RawInput input, ParserChainAccessor<SENDER> chainAccessor) {
         Argument<E> argument = Argument.of(optionalArgument.getName(), type);
-        ParseResult parseResult = chainAccessor.parse(invocation, argument.withType(type), input);
+        ParseResult parseResult = chainAccessor.parse(invocation, argument.child(type), input);
 
         return parseResult
             .map(value -> Optional.of(value))

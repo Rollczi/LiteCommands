@@ -18,6 +18,7 @@ import dev.rollczi.litecommands.shared.Preconditions;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public abstract class TypeToken<T> {
 
@@ -90,6 +91,19 @@ public abstract class TypeToken<T> {
 
     public TypeToken<?> getComponentTypeToken() {
         return of(getComponentType());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TypeToken<?> typeToken = (TypeToken<?>) o;
+        return Objects.equals(type, typeToken.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return type.hashCode();
     }
 
     public static <T> TypeToken<T> of(Class<T> type) {

@@ -15,6 +15,7 @@ import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import dev.rollczi.litecommands.util.StringUtil;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -107,6 +108,6 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
     }
 
     private int getElementCount(DateTimeFormatter formatter) {
-        return formatter.toString().split(FORMATTER_ELEMENT_SEPARATOR).length;
+        return StringUtil.splitBySpace(formatter.toString()).size();
     }
 }

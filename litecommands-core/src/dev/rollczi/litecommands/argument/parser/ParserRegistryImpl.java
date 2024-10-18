@@ -7,12 +7,15 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.jetbrains.annotations.NotNull;
 
 public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, ParserChainAccessor<SENDER> {
 
-    // TODO Add caches for parsers
+    private final Map<Argument<?>, Parser<SENDER, ?>> cachedParsers = new HashMap<>();
     private final TypeIndex<ParserNamespacedIndex<SENDER, ?>> typeIndex = new TypeIndex<>();
 
     @Override
@@ -60,17 +63,32 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, Parse
     @Override
     public <T> Parser<SENDER, T> getParser(Argument<T> argument) {
         Class<T> argumentType = argument.getType().getRawType();
-        ParserSet<SENDER, T> parserSet = getParserSet(argumentType, argument.getKey());
+        Parser<SENDER, T> senderParser = (Parser<SENDER, T>) cachedParsers.get(argument);
 
-        return parserSet.getValidParserOrThrow(argument);
+        if (senderParser == null) {
+            ParserSet<SENDER, T> parserSet = getParserSet(argumentType, argument.getKey());
+            senderParser = parserSet.getValidParserOrThrow(argument);
+            cachedParsers.put(argument, senderParser);
+        }
+
+        return senderParser;
     }
 
     @Override
     public <T> Parser<SENDER, T> getParserOrNull(Argument<T> argument) {
         Class<T> argumentType = argument.getType().getRawType();
-        ParserSet<SENDER, T> parserSet = getParserSet(argumentType, argument.getKey());
+        Parser<SENDER, T> senderParser = (Parser<SENDER, T>) cachedParsers.get(argument);
 
-        return parserSet.getValidParser(argument);
+        if (senderParser == null) {
+            ParserSet<SENDER, T> parserSet = getParserSet(argumentType, argument.getKey());
+            senderParser = parserSet.getValidParser(argument);
+
+            if (senderParser != null) {
+                cachedParsers.put(argument, senderParser);
+            }
+        }
+
+        return senderParser;
     }
 
     @Override

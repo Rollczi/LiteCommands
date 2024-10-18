@@ -7,9 +7,9 @@ import dev.rollczi.litecommands.reflect.type.TypeToken;
 public class ChatGptArgument extends SimpleArgument<String> {
 
     public ChatGptArgument(String name, String topic) {
-        super(name, TypeToken.of(String.class), false);
-        this.withProfile(new ChatGptArgumentProfile(topic));
-        this.withProfile(new JoinProfile());
+        super(name, TypeToken.of(String.class));
+        this.addProfile(new ChatGptArgumentProfile(topic));
+        this.addProfile(new JoinProfile());
     }
 
     public ChatGptArgument(String name) {

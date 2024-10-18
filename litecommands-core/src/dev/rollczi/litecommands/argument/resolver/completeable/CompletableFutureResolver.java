@@ -32,9 +32,9 @@ public class CompletableFutureResolver<SENDER> extends ArgumentResolverChained<S
     }
 
     private <T> boolean canParse(Argument<CompletableFuture> argument, TypeToken<T> type) {
-        Parser<SENDER, T> parser = parserRegistry.getParser(argument.withType(type));
+        Parser<SENDER, T> parser = parserRegistry.getParser(argument.child(type));
 
-        return parser.canParse(argument.withType(type));
+        return parser.canParse(argument.child(type));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class CompletableFutureResolver<SENDER> extends ArgumentResolverChained<S
     }
 
     private <T> ParseResult<CompletableFuture> parse(Invocation<SENDER> invocation, Argument<CompletableFuture> argument, TypeToken<T> type, String input, ParserChainAccessor<SENDER> chainAccessor) {
-        CompletableFuture<ParseResult<T>> supply = scheduler.supply(SchedulerPoll.COMPLETABLE_FUTURE, () -> chainAccessor.parse(invocation, argument.withType(type), input));
+        CompletableFuture<ParseResult<T>> supply = scheduler.supply(SchedulerPoll.COMPLETABLE_FUTURE, () -> chainAccessor.parse(invocation, argument.child(type), input));
 
         return ParseResult.completableFuture(supply)
             .map(future -> CompletableFuture.completedFuture(future));
@@ -55,9 +55,9 @@ public class CompletableFutureResolver<SENDER> extends ArgumentResolverChained<S
     }
 
     private <T> boolean match(Invocation<SENDER> invocation, Argument<CompletableFuture> context, String argument, ParserChainAccessor<SENDER> accessor, TypeToken<T> type) {
-        Parser<SENDER, T> parser = parserRegistry.getParser(context.withType(type));
+        Parser<SENDER, T> parser = parserRegistry.getParser(context.child(type));
 
-        return parser.match(invocation, context.withType(type), RawInput.of(argument));
+        return parser.match(invocation, context.child(type), RawInput.of(argument));
     }
 
     @Override

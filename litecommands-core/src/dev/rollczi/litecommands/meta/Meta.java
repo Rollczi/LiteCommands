@@ -25,6 +25,7 @@ public interface Meta {
     MetaKey<PriorityLevel> PRIORITY = MetaKey.of("priority", PriorityLevel.class, PriorityLevel.NORMAL);
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
+    @Deprecated
     MetaKey<ArgumentKey> ARGUMENT_KEY = MetaKey.of("argument-key", ArgumentKey.class, ArgumentKey.of());
     MetaKey<List<Class>> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", MetaType.list(), Collections.emptyList());
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
