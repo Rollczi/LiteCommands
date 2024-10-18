@@ -4,6 +4,7 @@ package dev.rollczi.litecommands.annotations.argument.profile;
 import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.MutableArgument;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import java.lang.annotation.Annotation;
@@ -21,19 +22,19 @@ public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, P
     @Override
     public AnnotationInvoker<SENDER> process(AnnotationInvoker<SENDER> invoker) {
         return invoker.onParameterRequirement(annotationType, (parameter, annotation, builder, requirement) -> {
-            if (!(requirement instanceof Argument)) {
+            if (!(requirement instanceof MutableArgument)) {
                 Executable declaringExecutable = parameter.getDeclaringExecutable();
-                throw new LiteCommandsReflectInvocationException(declaringExecutable, parameter, "@" + annotationType.getSimpleName() + " can be used only on arguments");
+                throw new LiteCommandsReflectInvocationException(declaringExecutable, parameter, "@" + annotationType.getSimpleName() + " can be used only on arguments: " + requirement.getClass().getName());
             }
 
-            Argument<?> argument = (Argument<?>) requirement;
+            MutableArgument<?> argument = (MutableArgument<?>) requirement;
             PROFILE profile = createProfile(parameter, annotation, argument);
 
             if (profile == null) {
                 return;
             }
 
-            argument.withProfile(profile);
+            argument.addProfile(profile);
         });
     }
 

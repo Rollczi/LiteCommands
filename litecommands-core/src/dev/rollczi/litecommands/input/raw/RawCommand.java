@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class RawCommand {
@@ -47,19 +48,12 @@ public class RawCommand {
             ? rawInput.substring(COMMAND_SLASH.length())
             : rawInput;
 
-        String[] rawCommandParts = rawCommand.split(COMMAND_SEPARATOR);
-        String commandLabel = rawCommandParts[0];
+        List<String> rawCommandParts = StringUtil.splitBySpace(rawCommand);
+        String commandLabel = rawCommandParts.get(0);
 
-        List<String> commandArgs = new ArrayList<>();
-
-        if (rawCommandParts.length > 1) {
-            commandArgs.addAll(Arrays.asList(rawCommandParts).subList(1, rawCommandParts.length));
-        }
-
-        if (rawCommand.endsWith(COMMAND_SEPARATOR)) {
-            commandArgs = new ArrayList<>(commandArgs);
-            commandArgs.add(StringUtil.EMPTY);
-        }
+        List<String> commandArgs = rawCommandParts.size() > 1
+            ? rawCommandParts.subList(1, rawCommandParts.size())
+            : Collections.emptyList();
 
         return new RawCommand(commandLabel, commandArgs);
     }
