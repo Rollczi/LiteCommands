@@ -2,5 +2,34 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "groupName": "all dependencies",
+  "groupSlug": "all",
+  "lockFileMaintenance": {
+    "enabled": false
+  },
+  "separateMajorMinor": true,
+  "pruneStaleBranches": true,
+  "commitMessagePrefix": "[Renovate]",
+  "packageRules": [
+    {
+      "groupName": "all minor and patch dependencies",
+      "groupSlug": "minor-patch",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "excludePackagePatterns": ["org.spigotmc*"],
+      "updateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "groupName": "all major dependencies",
+      "groupSlug": "major",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "updateTypes": ["major"],
+      "automerge": false
+    }
   ]
 }
