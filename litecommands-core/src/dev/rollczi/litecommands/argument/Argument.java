@@ -33,7 +33,7 @@ public interface Argument<T> extends Requirement<T> {
 
     /**
      * Create a child of the current argument.
-     * This is useful when resolver handle types such as Optional<T> or List<T>.
+     * This is useful when resolver handles a parametrized type for class such as Optional, List, CompletableFuture, etc.
      */
     @ApiStatus.Experimental
     <NEW> Argument<NEW> child(TypeToken<NEW> type);
