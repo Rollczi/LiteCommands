@@ -24,20 +24,20 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 - [Documentation](https://docs.rollczi.dev/)
 
 ### ✨ Features
-- Simple Arguments [@Arg](https://litedevelopers.github.io/LiteDevelopers-documentation/arg.html) & Optional arguments [@OptionalArg](https://litedevelopers.github.io/LiteDevelopers-documentation/optionalarg-null-way.html)
-- Flags - [@Flag](https://litedevelopers.github.io/LiteDevelopers-documentation/flag.html)
-- Joiner - _[@Join](https://litedevelopers.github.io/LiteDevelopers-documentation/join-argument.html) remaining arguments into a string_
-- Asynchronous commands, argument parsing and completion. [@Async](https://github.com/Rollczi/minecraft-lista-plugin/blob/master/src/main/java/dev/rollczi/minecraftlista/MinecraftListaCommand.java#L19C10-L19C10)
-- Command shortcuts [@Shortcut](https://github.com/Rollczi/LiteCommands/blob/master/litecommands-annotations/test/dev/rollczi/litecommands/annotations/shortcut/ShortcutMultilevelTest.java#L21C13-L21C13)
-- Support for basic types: `int`, `double`, `Duration`, `LocalDateTime`, `Location` and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/supported-types.html)!
+- Simple Arguments [@Arg](https://docs.rollczi.dev/documentation/litecommands/arguments/arg.html#arg) & Optional arguments [@OptionalArg](https://docs.rollczi.dev/documentation/litecommands/arguments/arg-optional.html#arg-optional)
+- Flags - [@Flag](https://docs.rollczi.dev/documentation/litecommands/arguments/flag.html#flag)
+- Joiner - _[@Join](https://docs.rollczi.dev/documentation/litecommands/arguments/join.html#join) remaining arguments into a string_
+- Asynchronous commands, argument parsing and completion. [@Async](https://docs.rollczi.dev/documentation/litecommands/features/asynchronous/async-annotation.html#async)
+- Command shortcuts [@Shortcut](https://docs.rollczi.dev/documentation/litecommands/features/shortcut.html#shortcut)
+- Support for basic types: `int`, `double`, `Duration`, `LocalDateTime`, `Location` and [more](https://docs.rollczi.dev/documentation/litecommands/arguments/arg/java-types.html#java-types)!
 - Support for collection types: `List`, `Set`, `TreeSet`, `Queue`, java array `T[]` and many others!
-- [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) that provides annotation inspections, syntax highlighting and [more](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin)!
+- [IntelliJ Plugin](https://github.com/LiteDevelopers/LiteCommands-IntelliJPlugin) that provides annotation inspections, syntax highlighting and [more](https://docs.rollczi.dev/documentation/litecommands/intellij-idea-plugin.html)!
 - Custom annotation validators. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L58C21-L58C21)
 - Programmatic API for creating more dynamic commands. [(example)](https://github.com/Rollczi/LiteCommands/blob/master/examples/bukkit/src/main/java/dev/rollczi/example/bukkit/ExamplePlugin.java#L64C26-L64C26)
-- Jakarta EE annotation validation. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/jakarta-extension.html)
-- ChatGPT suggestions. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/chatgpt-extension.html)
-- Adventure Kyori support. [(extension)](https://litedevelopers.github.io/LiteDevelopers-documentation/adventure-kyori.html) 
-- and [more](https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html)! ✨
+- Jakarta EE annotation validation. [(extension)](https://docs.rollczi.dev/documentation/litecommands/extensions/jakarata.html#jakarta)
+- ChatGPT suggestions. [(extension)](https://docs.rollczi.dev/documentation/litecommands/extensions/chatgpt-extension.html#chatgpt)
+- Adventure Kyori support. [(extension)](https://docs.rollczi.dev/documentation/litecommands/extensions/kyori-adventure/adventure-kyori.html#adventure-native) 
+- and [more](https://docs.rollczi.dev/documentation/litecommands/what-is-litecommands.html)! ✨
 
 ## 📦 Platforms
 - Velocity
@@ -86,17 +86,17 @@ maven("https://repo.panda-lang.org/releases")
 
 #### ➕ Add LiteCommands to dependencies
 ```kts
-implementation("dev.rollczi:{artifact}:3.6.1")
+implementation("dev.rollczi:{artifact}:3.7.0")
 ```
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>{artifact}</artifactId>
-    <version>3.6.1</version>
+    <version>3.7.0</version>
 </dependency>
 ```
-> ⚠️ Replace `{artifact}` with [platform artifact](https://litedevelopers.github.io/LiteDevelopers-documentation/platforms.html)  
-> Add `-parameters` flag to your compiler to use all features [(read more)](https://litedevelopers.github.io/LiteDevelopers-documentation/parameters-compile-flag.html)
+> ⚠️ Replace `{artifact}` with [platform artifact](https://docs.rollczi.dev/documentation/litecommands/platforms.html#supported-platforms)  
+> Add `-parameters` flag to your compiler to use all features [(read more)](https://docs.rollczi.dev/documentation/litecommands/getting-started/dependencies.html#parameters-compile-flag)
 
 <h2> 💖 GitHub Sponsors</h2>
     

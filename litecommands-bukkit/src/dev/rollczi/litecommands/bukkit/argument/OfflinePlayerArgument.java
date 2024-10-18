@@ -35,7 +35,11 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
 
         // Server#getOfflinePlayers() can be blocking, so we don't want to call it every time
         for (OfflinePlayer offlinePlayer : server.getOfflinePlayers()) {
-            this.nicknames.add(offlinePlayer.getName());
+            String name = offlinePlayer.getName();
+
+            if (name != null) {
+                this.nicknames.add(name);
+            }
         }
 
         // Save new joining player names so our suggestions are more wide
