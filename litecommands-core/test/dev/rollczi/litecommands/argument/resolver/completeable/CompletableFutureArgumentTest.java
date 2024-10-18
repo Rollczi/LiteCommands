@@ -40,8 +40,8 @@ class CompletableFutureArgumentTest extends LiteTestSpec {
             .thenCompose(assertExecute -> assertExecute.assertSuccessAs(FUTURE_TYPE));
 
         await()
-            .atLeast(350, TimeUnit.MILLISECONDS)
-            .atMost(1850, TimeUnit.MILLISECONDS)
+            .atLeast(400, TimeUnit.MILLISECONDS)
+            .atMost(900, TimeUnit.MILLISECONDS)
             .until(() -> completableFuture.isDone());
 
         assertThat(completableFuture.join())

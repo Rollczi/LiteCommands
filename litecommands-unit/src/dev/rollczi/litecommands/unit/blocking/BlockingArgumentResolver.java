@@ -15,7 +15,7 @@ public class BlockingArgumentResolver<SENDER> extends ArgumentResolver<SENDER, B
     protected ParseResult<BlockingArgument> parse(Invocation<SENDER> invocation, Argument<BlockingArgument> context, String argument) {
         return ParseResult.async(() -> {
             try {
-                Parameter parameter = context.meta().get(MetaAnnotationKeys.SOURCE_PARAMETER);
+                Parameter parameter = context.metaCollector().findFirst(MetaAnnotationKeys.SOURCE_PARAMETER);
 
                 int blocking = 100;
                 Blocking annotation = parameter.getAnnotation(Blocking.class);
