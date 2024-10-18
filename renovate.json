@@ -11,7 +11,7 @@
   },
   "separateMajorMinor": true,
   "pruneStaleBranches": true,
-  "commitMessagePrefix": "[Renovate]",
+  "commitMessagePrefix": "dependency:",
   "packageRules": [
     {
       "groupName": "all minor and patch dependencies",
