@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.fabric.argument;
+package dev.rollczi.litecommands.fabric.server.argument;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;

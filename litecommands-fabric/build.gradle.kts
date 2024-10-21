@@ -20,7 +20,8 @@ dependencies {
 
     // Fabric loader and API
     modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
+    modImplementation("net.fabricmc.fabric-api:fabric-command-api-v2:${Versions.FABRIC_COMMAND_API_V2}")
+    modImplementation("net.fabricmc.fabric-api:fabric-command-api-v1:${Versions.FABRIC_COMMAND_API_V1}")
 }
 
 litecommandsPublish {
