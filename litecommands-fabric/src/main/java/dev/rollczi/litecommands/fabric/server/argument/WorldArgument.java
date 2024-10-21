@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.SERVER)
 public class WorldArgument<W> extends ArgumentResolver<ServerCommandSource, W> {
 
     private final MessageRegistry<ServerCommandSource> messageRegistry;

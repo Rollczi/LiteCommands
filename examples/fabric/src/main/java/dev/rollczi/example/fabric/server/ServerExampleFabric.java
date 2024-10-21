@@ -1,14 +1,14 @@
 package dev.rollczi.example.fabric.server;
 
-import dev.rollczi.example.fabric.server.command.BanCommand;
+import dev.rollczi.example.fabric.server.command.ExampleCommand;
 import dev.rollczi.litecommands.fabric.LiteFabricFactory;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.DedicatedServerModInitializer;
 
-public class ServerExampleFabric implements ModInitializer {
+public class ServerExampleFabric implements DedicatedServerModInitializer {
     @Override
-    public void onInitialize() {
+    public void onInitializeServer() {
         LiteFabricFactory.server()
-            .commands(new BanCommand())
-            .build();
+                .commands(new ExampleCommand())
+                .build();
     }
 }

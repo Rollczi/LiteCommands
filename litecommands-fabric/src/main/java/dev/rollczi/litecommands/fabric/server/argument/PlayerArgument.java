@@ -15,7 +15,6 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-@Environment(EnvType.SERVER)
 public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<ServerCommandSource, P> {
 
     private final MessageRegistry<ServerCommandSource> messageRegistry;

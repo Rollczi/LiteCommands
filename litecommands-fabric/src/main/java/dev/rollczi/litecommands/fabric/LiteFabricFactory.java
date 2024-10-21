@@ -43,7 +43,6 @@ public final class LiteFabricFactory {
     }
 
     @SuppressWarnings("unchecked")
-    @Environment(EnvType.SERVER)
     public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B server() {
         return (B) LiteCommandsFactory.builder(ServerCommandSource.class, new FabricServerPlatform(new LiteFabricSettings()))
             .self((builder, internal) -> {

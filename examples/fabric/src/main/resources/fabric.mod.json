@@ -16,7 +16,7 @@
     "icon": "assets/litecommands/icon.png",
     "entrypoints": {
         "server": [
-            "dev.rollczi.example.fabric.server.ExampleFabric"
+            "dev.rollczi.example.fabric.server.ServerExampleFabric"
         ],
         "client": [
             "dev.rollczi.example.fabric.client.ClientExampleFabric"

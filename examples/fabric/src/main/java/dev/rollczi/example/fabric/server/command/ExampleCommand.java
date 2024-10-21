@@ -8,15 +8,15 @@ import dev.rollczi.litecommands.annotations.quoted.Quoted;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-@Command(name = "ban")
-public class BanCommand {
-    @Execute
-    void execute(@Arg("player") ServerPlayerEntity player, @Join("reason") String reason) {
+@Command(name = "example")
+public class ExampleCommand {
+    @Execute(name = "kick")
+    void sendMessage(@Arg("player") ServerPlayerEntity player, @Join("reason") String reason) {
         player.networkHandler.disconnect(Text.of(reason));
     }
 
-    @Execute(name = "warnSelf")
-    Text execute(@Quoted @Arg String reason) {
-        return Text.of("You have been warned: " + reason);
+    @Execute(name = "message")
+    Text sendMessage(@Quoted @Arg String message) {
+        return Text.of("You saied: " + message);
     }
 }

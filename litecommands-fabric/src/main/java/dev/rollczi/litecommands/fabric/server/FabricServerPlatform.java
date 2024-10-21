@@ -6,11 +6,8 @@ import dev.rollczi.litecommands.fabric.FabricAbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.server.command.ServerCommandSource;
 
-@Environment(EnvType.SERVER)
 public class FabricServerPlatform extends FabricAbstractPlatform<ServerCommandSource> {
 
     public FabricServerPlatform(PlatformSettings settings) {
