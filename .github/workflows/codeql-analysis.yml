@@ -1,4 +1,4 @@
-name: "LiteCommands CodeQL"
+name: Scan with CodeQL
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           # We must fetch at least the immediate parents so that if this is

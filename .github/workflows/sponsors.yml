@@ -1,4 +1,5 @@
 name: Update Sponsors
+
 on:
   workflow_dispatch:
   schedule:
@@ -10,7 +11,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -22,7 +23,7 @@ jobs:
           file: 'README.md'
           template: <a href="https://github.com/{{{ login }}}"><img src="https://images.weserv.nl/?url=https://github.com/{{{ login }}}.png?v=4&mask=circle" width="60px" alt="{{{ name }}}" /></a>&nbsp;&nbsp;&nbsp;
 
-      - name: Deploy 🚀
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           commit-message: Update Sponsors in README.md

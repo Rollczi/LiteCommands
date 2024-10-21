@@ -35,7 +35,7 @@ include(":litecommands-bungee", tests = false)
 include(":litecommands-bukkit", tests = false)
 include(":litecommands-minestom", VERSION_21)
 include("litecommands-jda", VERSION_11)
-include(":litecommands-sponge", tests = false)
+include(":litecommands-sponge", VERSION_21, tests = false)
 include(":litecommands-fabric", VERSION_17, tests = false)
 
 // examples
@@ -44,7 +44,7 @@ include(":examples:bukkit-adventure-platform", tests = false)
 include(":examples:bukkit-chatgpt", VERSION_11, tests = false)
 include(":examples:minestom", VERSION_21, tests = false)
 include(":examples:velocity", VERSION_11, tests = false)
-include(":examples:sponge", tests = false)
+include(":examples:sponge", VERSION_21, tests = false)
 include(":examples:fabric", VERSION_17, tests = false)
 
 fun include(project: String, java: JavaVersion = VERSION_1_8, tests: Boolean = true) {
