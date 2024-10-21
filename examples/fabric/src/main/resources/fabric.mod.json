@@ -17,6 +17,9 @@
     "entrypoints": {
         "main": [
             "dev.rollczi.example.fabric.ExampleFabric"
+        ],
+        "client": [
+            "dev.rollczi.example.fabric.client.ClientExampleFabric"
         ]
     }
 }
