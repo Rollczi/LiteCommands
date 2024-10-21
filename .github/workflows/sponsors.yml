@@ -1,4 +1,4 @@
-name: Update LiteCommands Sponsors
+name: Update Sponsors
 
 on:
   workflow_dispatch:
