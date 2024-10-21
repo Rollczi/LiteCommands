@@ -1,4 +1,4 @@
-name: "LiteCommands CodeQL"
+name: Scan LiteCommands with CodeQL
 
 on:
   push:

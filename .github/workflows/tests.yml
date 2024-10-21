@@ -1,0 +1,33 @@
+name: Test LiteCommands
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  build:
+    name: "Tests with JDK${{ matrix.jdk }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        jdk: [ 8, 11, 17, 21 ]
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.jdk }}
+          distribution: 'adopt'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Tests with Gradle
+        run: ./gradlew clean test
+        env:
+          GIT_BRANCH: ${{ github.ref }}
+          GIT_COMMIT: ${{ github.sha }}
