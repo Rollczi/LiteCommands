@@ -4,6 +4,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
@@ -34,7 +36,8 @@ public abstract class FabricAbstractCommand<SOURCE> {
     }
 
     LiteralArgumentBuilder<SOURCE> toLiteral() {
-        LiteralArgumentBuilder<SOURCE> baseArgument = LiteralArgumentBuilder.literal(baseRoute.getName());
+        LiteralArgumentBuilder<SOURCE> baseArgument = LiteralArgumentBuilder.<SOURCE>literal(baseRoute.getName())
+            .executes(this::execute);
 
         this.appendRoute(baseArgument, baseRoute);
         return baseArgument;
@@ -44,7 +47,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
         boolean isBase = route == baseRoute;
         LiteralArgumentBuilder<SOURCE> literal = isBase
             ? baseLiteral
-            : LiteralArgumentBuilder.literal(route.getName());
+            : LiteralArgumentBuilder.<SOURCE>literal(route.getName()).executes(this::execute);
 
         literal.then(this.createArguments());
 
@@ -60,34 +63,40 @@ public abstract class FabricAbstractCommand<SOURCE> {
     private RequiredArgumentBuilder<SOURCE, String> createArguments() {
         return RequiredArgumentBuilder
             .<SOURCE, String>argument(FULL_ARGUMENTS, StringArgumentType.greedyString())
-            .executes(context -> {
-                RawCommand rawCommand = RawCommand.from(context.getInput());
-                ParseableInput<?> parseableInput = rawCommand.toParseableInput();
-                PlatformSender platformSender = createSender(context.getSource());
-                Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
+            .executes(this::execute)
+            .suggests(this::suggests);
+    }
 
-                invocationHook.execute(invocation, parseableInput);
-                return Command.SINGLE_SUCCESS;
-            })
-            .suggests((context, builder) -> CompletableFuture.supplyAsync(() -> {
-                String input = context.getInput();
-                RawCommand rawCommand = RawCommand.from(input);
-                SuggestionInput<?> suggestionInput = rawCommand.toSuggestionInput();
-                PlatformSender platformSender = createSender(context.getSource());
-                Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
+    private int execute(CommandContext<SOURCE> context) {
+        RawCommand rawCommand = RawCommand.from(context.getInput());
+        ParseableInput<?> parseableInput = rawCommand.toParseableInput();
+        PlatformSender platformSender = createSender(context.getSource());
+        Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
 
-                SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);
+        invocationHook.execute(invocation, parseableInput);
+        return Command.SINGLE_SUCCESS;
+    }
 
-                List<String> arguments = suggestionInput.asList();
-                int start = input.length() - arguments.get(arguments.size() - 1).length();
-                SuggestionsBuilder suggestionsBuilder = builder.createOffset(start);
+    private @NotNull CompletableFuture<Suggestions> suggests(CommandContext<SOURCE> context, SuggestionsBuilder builder) {
+        return CompletableFuture.supplyAsync(() -> {
+            String input = context.getInput();
+            RawCommand rawCommand = RawCommand.from(input);
+            SuggestionInput<?> suggestionInput = rawCommand.toSuggestionInput();
+            PlatformSender platformSender = createSender(context.getSource());
+            Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
 
-                for (String suggestion : suggest.asMultiLevelList()) {
-                    suggestionsBuilder.suggest(suggestion);
-                }
+            SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);
 
-                return suggestionsBuilder.build();
-            }));
+            List<String> arguments = suggestionInput.asList();
+            int start = input.length() - arguments.get(arguments.size() - 1).length();
+            SuggestionsBuilder suggestionsBuilder = builder.createOffset(start);
+
+            for (String suggestion : suggest.asMultiLevelList()) {
+                suggestionsBuilder.suggest(suggestion);
+            }
+
+            return suggestionsBuilder.build();
+        });
     }
 
     protected abstract PlatformSender createSender(SOURCE source);
