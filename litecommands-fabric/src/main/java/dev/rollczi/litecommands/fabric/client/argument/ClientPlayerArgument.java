@@ -1,11 +1,14 @@
 package dev.rollczi.litecommands.fabric.client.argument;
 
+import com.mojang.authlib.GameProfile;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.fabric.LiteFabricMessages;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -30,5 +33,13 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
         }
 
         return ParseResult.failure(messageRegistry.getInvoked(LiteFabricMessages.PLAYER_NOT_FOUND, invocation, argument));
+    }
+
+    @Override
+    public SuggestionResult suggest(Invocation<FabricClientCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
+        return invocation.sender().getWorld().getPlayers().stream()
+            .map(AbstractClientPlayerEntity::getGameProfile)
+            .map(GameProfile::getName)
+            .collect(SuggestionResult.collector());
     }
 }

@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.fabric.server.argument;
 
+import com.mojang.authlib.GameProfile;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
@@ -12,7 +13,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 
 public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<ServerCommandSource, P> {
 
@@ -38,8 +38,8 @@ public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<Ser
     @Override
     public SuggestionResult suggest(Invocation<ServerCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
         return invocation.sender().getServer().getPlayerManager().getPlayerList().stream()
-            .map(ServerPlayerEntity::getName)
-            .map(Text::getString)
+            .map(ServerPlayerEntity::getGameProfile)
+            .map(GameProfile::getName)
             .collect(SuggestionResult.collector());
     }
 
