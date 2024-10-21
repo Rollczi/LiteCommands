@@ -1,13 +1,15 @@
-package dev.rollczi.litecommands.fabric;
+package dev.rollczi.litecommands.fabric.server;
 
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.server.command.ServerCommandSource;
 
-public class FabricSender extends AbstractPlatformSender {
+public class FabricServerSender extends AbstractPlatformSender {
     private final ServerCommandSource source;
 
-    public FabricSender(ServerCommandSource source) {
+    public FabricServerSender(ServerCommandSource source) {
         this.source = source;
     }
 

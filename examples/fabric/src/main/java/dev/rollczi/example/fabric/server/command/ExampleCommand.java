@@ -1,25 +1,22 @@
-package dev.rollczi.example.fabric.command;
+package dev.rollczi.example.fabric.server.command;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
-import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.join.Join;
 import dev.rollczi.litecommands.annotations.quoted.Quoted;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-
-@Command(name = "ban")
-public class BanCommand {
-    @Execute
-    void execute(@Arg("player") ServerPlayerEntity player, @Join("reason") String reason) {
+@Command(name = "example")
+public class ExampleCommand {
+    @Execute(name = "kick")
+    void sendMessage(@Arg("player") ServerPlayerEntity player, @Join("reason") String reason) {
         player.networkHandler.disconnect(Text.of(reason));
     }
 
-    @Execute(name = "warnSelf")
-    Text execute(@Quoted @Arg String reason) {
-        return Text.of("You have been warned: " + reason);
+    @Execute(name = "message")
+    Text sendMessage(@Quoted @Arg String message) {
+        return Text.of("You saied: " + message);
     }
 }

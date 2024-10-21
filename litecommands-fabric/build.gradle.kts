@@ -13,6 +13,9 @@ dependencies {
     // LiteCommands
     api(project(":litecommands-framework"))
     include(project(":litecommands-framework"))
+    include(project(":litecommands-core"))
+    include(project(":litecommands-annotations"))
+    include(project(":litecommands-programmatic"))
 
     // Minecraft and mappings
     minecraft("com.mojang:minecraft:${Versions.FABRIC_MINECRAFT}")
@@ -20,7 +23,8 @@ dependencies {
 
     // Fabric loader and API
     modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
+    modImplementation("net.fabricmc.fabric-api:fabric-command-api-v2:${Versions.FABRIC_COMMAND_API_V2}")
+    modImplementation("net.fabricmc.fabric-api:fabric-command-api-v1:${Versions.FABRIC_COMMAND_API_V1}")
 }
 
 litecommandsPublish {

@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.fabric.argument;
+package dev.rollczi.litecommands.fabric.server.argument;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
@@ -8,11 +8,12 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 
 public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<ServerCommandSource, P> {
 
@@ -38,8 +39,8 @@ public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<Ser
     @Override
     public SuggestionResult suggest(Invocation<ServerCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
         return invocation.sender().getServer().getPlayerManager().getPlayerList().stream()
-            .map(ServerPlayerEntity::getName)
-            .map(Text::getString)
+            .map(serverPlayerEntity -> serverPlayerEntity.getGameProfile())
+            .map(gameProfile -> gameProfile.getName())
             .collect(SuggestionResult.collector());
     }
 

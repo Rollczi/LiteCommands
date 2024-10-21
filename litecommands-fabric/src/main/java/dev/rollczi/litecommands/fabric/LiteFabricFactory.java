@@ -2,15 +2,22 @@ package dev.rollczi.litecommands.fabric;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
-import dev.rollczi.litecommands.fabric.argument.PlayerArgument;
-import dev.rollczi.litecommands.fabric.argument.WorldArgument;
+import dev.rollczi.litecommands.fabric.client.FabricClientPlatform;
+import dev.rollczi.litecommands.fabric.client.argument.ClientPlayerArgument;
+import dev.rollczi.litecommands.fabric.server.FabricServerPlatform;
+import dev.rollczi.litecommands.fabric.server.argument.PlayerArgument;
+import dev.rollczi.litecommands.fabric.server.argument.WorldArgument;
 import dev.rollczi.litecommands.fabric.context.FabricOnlyPlayerContext;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.platform.PlatformSettings;
+import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
@@ -27,22 +34,48 @@ public final class LiteFabricFactory {
         return builder();
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * @deprecated Use {@link LiteFabricFactory#server()} instead
+     */
+    @Deprecated
     public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B builder() {
-        return (B) LiteCommandsFactory.builder(ServerCommandSource.class, new FabricPlatform(new LiteFabricSettings()))
-            .selfProcessor((builder, internal) -> {
-                MessageRegistry<ServerCommandSource> messageRegistry = internal.getMessageRegistry();
+        return server();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B server() {
+        return (B) LiteCommandsFactory.builder(ServerCommandSource.class, new FabricServerPlatform(new LiteFabricSettings()))
+            .self((builder, internal) -> {
+                MessageRegistry<ServerCommandSource> messages = internal.getMessageRegistry();
 
                 builder
-                    .context(ServerPlayerEntity.class, new FabricOnlyPlayerContext<>(messageRegistry))
-                    .context(PlayerEntity.class, new FabricOnlyPlayerContext<>(messageRegistry))
-                    .result(String.class, new StringHandler())
-                    .result(Text.class, new TextHandler())
-                    .argument(PlayerEntity.class, new PlayerArgument<>(messageRegistry))
-                    .argument(ServerPlayerEntity.class, new PlayerArgument<>(messageRegistry))
+                    .advanced()
+                    .context(ServerPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
 
-                    .argument(World.class, new WorldArgument<>(messageRegistry))
-                    .argument(ServerWorld.class, new WorldArgument<>(messageRegistry))
+                    .argument(upwards(PlayerEntity.class), new PlayerArgument<>(messages))
+                    .argument(upwards(World.class), new WorldArgument<>(messages))
+
+                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendFeedback(() -> Text.of(text), false))
+                    .result(Text.class, (invocation, text, chain) -> invocation.sender().sendFeedback(() -> text, false))
+                ;
+            });
+    }
+
+    @SuppressWarnings("unchecked")
+    @Environment(EnvType.CLIENT)
+    public static <B extends LiteCommandsBuilder<FabricClientCommandSource, PlatformSettings, B>> B client() {
+        return (B) LiteCommandsFactory.builder(FabricClientCommandSource.class, new FabricClientPlatform(new LiteFabricSettings()))
+            .self((builder, internal) -> {
+                MessageRegistry<FabricClientCommandSource> messages = internal.getMessageRegistry();
+
+                builder
+                    .advanced()
+                    .context(ClientPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
+
+                    .argument(upwards(PlayerEntity.class), new ClientPlayerArgument<>(messages))
+
+                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendFeedback(Text.of(text)))
+                    .result(Text.class, (invocation, text, chain) -> invocation.sender().sendFeedback(text))
                 ;
             });
     }

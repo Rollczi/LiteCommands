@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.fabric.argument;
+package dev.rollczi.litecommands.fabric.server.argument;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
@@ -8,6 +8,8 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -56,7 +58,7 @@ public class WorldArgument<W> extends ArgumentResolver<ServerCommandSource, W> {
             worldList.add(world);
         }
         return worldList.stream()
-            .map(this::getWorldName)
+            .map(world -> getWorldName(world))
             .collect(SuggestionResult.collector());
     }
 

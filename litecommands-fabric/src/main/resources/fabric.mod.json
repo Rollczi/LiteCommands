@@ -24,8 +24,11 @@
         }
     },
     "depends": {
-        "fabricloader": ">=0.14.0",
-        "fabric-api-base": "*",
-        "fabric-command-api-v2": "*"
+        "fabricloader": ">=0.4.0",
+        "fabric-api-base": "*"
+    },
+    "suggests": {
+        "fabric-command-api-v2": "*",
+        "fabric-command-api-v1": "*"
     }
 }

@@ -6,23 +6,26 @@ import dev.rollczi.litecommands.fabric.LiteFabricMessages;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
 
-public class FabricOnlyPlayerContext<P extends PlayerEntity> implements ContextProvider<ServerCommandSource, P> {
+import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
 
-    private final MessageRegistry<ServerCommandSource> messageRegistry;
+public class FabricOnlyPlayerContext<SOURCE, P extends PlayerEntity> implements ContextProvider<SOURCE, P> {
 
-    public FabricOnlyPlayerContext(MessageRegistry<ServerCommandSource> messageRegistry) {
+    private final Function<SOURCE, @Nullable P> playerProvider;
+    private final MessageRegistry<SOURCE> messageRegistry;
+
+    public FabricOnlyPlayerContext(Function<SOURCE, @Nullable P> playerProvider, MessageRegistry<SOURCE> messageRegistry) {
+        this.playerProvider = playerProvider;
         this.messageRegistry = messageRegistry;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public ContextResult<P> provide(Invocation<ServerCommandSource> invocation) {
-        ServerPlayerEntity player = invocation.sender().getPlayer();
+    public ContextResult<P> provide(Invocation<SOURCE> invocation) {
+        P player = this.playerProvider.apply(invocation.sender());
+
         if (player != null) {
-            return ContextResult.ok(() -> (P) player);
+            return ContextResult.ok(() -> player);
         }
 
         return ContextResult.error(messageRegistry.getInvoked(LiteFabricMessages.PLAYER_ONLY, invocation));
