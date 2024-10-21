@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.fabric;
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.server.command.ServerCommandSource;
 
 public class FabricClientSender extends AbstractPlatformSender {
     private final FabricClientCommandSource source;
@@ -14,7 +13,7 @@ public class FabricClientSender extends AbstractPlatformSender {
 
     @Override
     public String getName() {
-        return "<Client>";
+        return source.getPlayer().getGameProfile().getName();
     }
 
     @Override

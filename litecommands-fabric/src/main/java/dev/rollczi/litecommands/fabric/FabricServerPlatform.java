@@ -30,6 +30,6 @@ public class FabricServerPlatform extends FabricAbstractPlatform<ServerCommandSo
 
     @Override
     protected FabricAbstractCommand<ServerCommandSource> createCommand(CommandRoute<ServerCommandSource> commandRoute, PlatformInvocationListener<ServerCommandSource> invocationHook, PlatformSuggestionListener<ServerCommandSource> suggestionHook) {
-        return null;
+        return new FabricServerCommand(commandRoute, invocationHook, suggestionHook);
     }
 }

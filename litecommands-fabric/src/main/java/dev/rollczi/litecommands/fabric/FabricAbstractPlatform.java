@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 
 import java.util.HashMap;
 import java.util.Map;
