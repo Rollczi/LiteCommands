@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboard": true,
   "extends": [
     "config:base"
   ],
@@ -10,7 +11,7 @@
   },
   "separateMajorMinor": true,
   "pruneStaleBranches": true,
-  "commitMessagePrefix": "[Renovate]",
+  "commitMessagePrefix": "dependency:",
   "packageRules": [
     {
       "groupName": "all minor and patch dependencies",
