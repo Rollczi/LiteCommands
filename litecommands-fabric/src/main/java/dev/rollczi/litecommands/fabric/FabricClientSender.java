@@ -2,8 +2,11 @@ package dev.rollczi.litecommands.fabric;
 
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
+@Environment(EnvType.CLIENT)
 public class FabricClientSender extends AbstractPlatformSender {
     private final FabricClientCommandSource source;
 
