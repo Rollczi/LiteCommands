@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.fabric.client.argument;
 
-import com.mojang.authlib.GameProfile;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
@@ -38,8 +37,8 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
     @Override
     public SuggestionResult suggest(Invocation<FabricClientCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
         return invocation.sender().getWorld().getPlayers().stream()
-            .map(AbstractClientPlayerEntity::getGameProfile)
-            .map(GameProfile::getName)
+            .map(player -> player.getGameProfile())
+            .map(gameProfile -> gameProfile.getName())
             .collect(SuggestionResult.collector());
     }
 }

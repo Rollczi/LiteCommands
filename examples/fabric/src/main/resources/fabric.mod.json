@@ -15,8 +15,8 @@
     "license": "Apache-2.0",
     "icon": "assets/litecommands/icon.png",
     "entrypoints": {
-        "main": [
-            "dev.rollczi.example.fabric.ExampleFabric"
+        "server": [
+            "dev.rollczi.example.fabric.server.ExampleFabric"
         ],
         "client": [
             "dev.rollczi.example.fabric.client.ClientExampleFabric"

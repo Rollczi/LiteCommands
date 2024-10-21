@@ -2,23 +2,22 @@ package dev.rollczi.litecommands.fabric;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
+import dev.rollczi.litecommands.fabric.client.FabricClientPlatform;
 import dev.rollczi.litecommands.fabric.client.argument.ClientPlayerArgument;
-import dev.rollczi.litecommands.fabric.common.StringHandler;
-import dev.rollczi.litecommands.fabric.common.TextHandler;
+import dev.rollczi.litecommands.fabric.server.FabricServerPlatform;
 import dev.rollczi.litecommands.fabric.server.argument.PlayerArgument;
 import dev.rollczi.litecommands.fabric.server.argument.WorldArgument;
-import dev.rollczi.litecommands.fabric.common.context.FabricOnlyPlayerContext;
+import dev.rollczi.litecommands.fabric.context.FabricOnlyPlayerContext;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.platform.PlatformSettings;
+import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
@@ -35,26 +34,30 @@ public final class LiteFabricFactory {
         return builder();
     }
 
+    /**
+     * @deprecated Use {@link LiteFabricFactory#server()} instead
+     */
+    @Deprecated
     public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B builder() {
         return server();
     }
 
     @SuppressWarnings("unchecked")
+    @Environment(EnvType.SERVER)
     public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B server() {
         return (B) LiteCommandsFactory.builder(ServerCommandSource.class, new FabricServerPlatform(new LiteFabricSettings()))
-            .selfProcessor((builder, internal) -> {
-                MessageRegistry<ServerCommandSource> messageRegistry = internal.getMessageRegistry();
+            .self((builder, internal) -> {
+                MessageRegistry<ServerCommandSource> messages = internal.getMessageRegistry();
 
                 builder
-                    .context(ServerPlayerEntity.class, new FabricOnlyPlayerContext<>(ServerCommandSource::getPlayer, messageRegistry))
-                    .context(PlayerEntity.class, new FabricOnlyPlayerContext<>(ServerCommandSource::getPlayer, messageRegistry))
-                    .result(String.class, new StringHandler<>((source, str) -> source.sendFeedback(() -> Text.of(str), false)))
-                    .result(Text.class, new TextHandler<>((source, text) -> source.sendFeedback(() -> text, false)))
-                    .argument(PlayerEntity.class, new PlayerArgument<>(messageRegistry))
-                    .argument(ServerPlayerEntity.class, new PlayerArgument<>(messageRegistry))
+                    .advanced()
+                    .context(ServerPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
 
-                    .argument(World.class, new WorldArgument<>(messageRegistry))
-                    .argument(ServerWorld.class, new WorldArgument<>(messageRegistry))
+                    .argument(upwards(PlayerEntity.class), new PlayerArgument<>(messages))
+                    .argument(upwards(World.class), new WorldArgument<>(messages))
+
+                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendFeedback(() -> Text.of(text), false))
+                    .result(Text.class, (invocation, text, chain) -> invocation.sender().sendFeedback(() -> text, false))
                 ;
             });
     }
@@ -63,17 +66,17 @@ public final class LiteFabricFactory {
     @Environment(EnvType.CLIENT)
     public static <B extends LiteCommandsBuilder<FabricClientCommandSource, PlatformSettings, B>> B client() {
         return (B) LiteCommandsFactory.builder(FabricClientCommandSource.class, new FabricClientPlatform(new LiteFabricSettings()))
-            .selfProcessor((builder, internal) -> {
-                MessageRegistry<FabricClientCommandSource> messageRegistry = internal.getMessageRegistry();
+            .self((builder, internal) -> {
+                MessageRegistry<FabricClientCommandSource> messages = internal.getMessageRegistry();
 
                 builder
-                    .context(AbstractClientPlayerEntity.class, new FabricOnlyPlayerContext<>(FabricClientCommandSource::getPlayer, messageRegistry))
-                    .context(ClientPlayerEntity.class, new FabricOnlyPlayerContext<>(FabricClientCommandSource::getPlayer, messageRegistry))
-                    .context(PlayerEntity.class, new FabricOnlyPlayerContext<>(FabricClientCommandSource::getPlayer, messageRegistry))
-                    .result(String.class, new StringHandler<>((source, str) -> source.sendFeedback(Text.of(str))))
-                    .result(Text.class, new TextHandler<>(FabricClientCommandSource::sendFeedback))
-                    .argument(PlayerEntity.class, new ClientPlayerArgument<>(messageRegistry))
-                    .argument(AbstractClientPlayerEntity.class, new ClientPlayerArgument<>(messageRegistry))
+                    .advanced()
+                    .context(ClientPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
+
+                    .argument(upwards(PlayerEntity.class), new ClientPlayerArgument<>(messages))
+
+                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendFeedback(Text.of(text)))
+                    .result(Text.class, (invocation, text, chain) -> invocation.sender().sendFeedback(text))
                 ;
             });
     }

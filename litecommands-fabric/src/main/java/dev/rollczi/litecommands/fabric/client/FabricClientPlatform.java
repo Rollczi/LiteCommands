@@ -1,6 +1,8 @@
-package dev.rollczi.litecommands.fabric;
+package dev.rollczi.litecommands.fabric.client;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.fabric.FabricAbstractCommand;
+import dev.rollczi.litecommands.fabric.FabricAbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -11,7 +13,8 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 @Environment(EnvType.CLIENT)
 public class FabricClientPlatform extends FabricAbstractPlatform<FabricClientCommandSource> {
-    FabricClientPlatform(PlatformSettings settings) {
+
+    public FabricClientPlatform(PlatformSettings settings) {
         super(settings);
     }
 

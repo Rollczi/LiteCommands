@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.fabric;
+package dev.rollczi.litecommands.fabric.client;
 
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;

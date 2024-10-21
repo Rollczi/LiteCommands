@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SOURCE, PlatformSettings> implements Platform<SOURCE, PlatformSettings> {
+public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SOURCE, PlatformSettings> implements Platform<SOURCE, PlatformSettings> {
 
     protected final Map<UUID, FabricAbstractCommand<SOURCE>> fabricCommands = new HashMap<>();
 
@@ -25,7 +25,7 @@ abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SOURCE, P
         }
     }
 
-    FabricAbstractPlatform(PlatformSettings settings) {
+    protected FabricAbstractPlatform(PlatformSettings settings) {
         super(settings);
         registerEvents();
     }

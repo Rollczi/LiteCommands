@@ -29,15 +29,15 @@ public abstract class FabricAbstractCommand<SOURCE> {
     private final PlatformInvocationListener<SOURCE> invocationHook;
     private final PlatformSuggestionListener<SOURCE> suggestionHook;
 
-    FabricAbstractCommand(CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+    protected FabricAbstractCommand(CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
         this.baseRoute = baseRoute;
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
     }
 
-    LiteralArgumentBuilder<SOURCE> toLiteral() {
+    public LiteralArgumentBuilder<SOURCE> toLiteral() {
         LiteralArgumentBuilder<SOURCE> baseArgument = LiteralArgumentBuilder.<SOURCE>literal(baseRoute.getName())
-            .executes(this::execute);
+            .executes(context -> execute(context));
 
         this.appendRoute(baseArgument, baseRoute);
         return baseArgument;
@@ -47,7 +47,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
         boolean isBase = route == baseRoute;
         LiteralArgumentBuilder<SOURCE> literal = isBase
             ? baseLiteral
-            : LiteralArgumentBuilder.<SOURCE>literal(route.getName()).executes(this::execute);
+            : LiteralArgumentBuilder.<SOURCE>literal(route.getName()).executes(context -> execute(context));
 
         literal.then(this.createArguments());
 
@@ -63,8 +63,8 @@ public abstract class FabricAbstractCommand<SOURCE> {
     private RequiredArgumentBuilder<SOURCE, String> createArguments() {
         return RequiredArgumentBuilder
             .<SOURCE, String>argument(FULL_ARGUMENTS, StringArgumentType.greedyString())
-            .executes(this::execute)
-            .suggests(this::suggests);
+            .executes(context -> execute(context))
+            .suggests((context, builder) -> suggests(context, builder));
     }
 
     private int execute(CommandContext<SOURCE> context) {

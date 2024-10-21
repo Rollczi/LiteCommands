@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.fabric.common.context;
+package dev.rollczi.litecommands.fabric.context;
 
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.context.ContextResult;
@@ -8,20 +8,22 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
 
 public class FabricOnlyPlayerContext<SOURCE, P extends PlayerEntity> implements ContextProvider<SOURCE, P> {
-    private final Function<SOURCE, P> func;
+
+    private final Function<SOURCE, @Nullable P> playerProvider;
     private final MessageRegistry<SOURCE> messageRegistry;
 
-    public FabricOnlyPlayerContext(Function<SOURCE, P> func, MessageRegistry<SOURCE> messageRegistry) {
-        this.func = func;
+    public FabricOnlyPlayerContext(Function<SOURCE, @Nullable P> playerProvider, MessageRegistry<SOURCE> messageRegistry) {
+        this.playerProvider = playerProvider;
         this.messageRegistry = messageRegistry;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ContextResult<P> provide(Invocation<SOURCE> invocation) {
-        P player = this.func.apply(invocation.sender());
+        P player = this.playerProvider.apply(invocation.sender());
+
         if (player != null) {
             return ContextResult.ok(() -> player);
         }
