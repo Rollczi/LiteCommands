@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Universal annotation processor for requirements such as {@link Argument}, {@link ContextRequirement} and {@link BindRequirement}.
@@ -63,13 +64,7 @@ public class RequirementDefinitionProcessor<SENDER> implements AnnotationProcess
         for (String attributeName : definition.nameProviders()) {
             try {
                 Method attributeMethod = annotation.annotationType().getDeclaredMethod(attributeName);
-                Object object = attributeMethod.invoke(annotation);
-
-                if (!(object instanceof String)) {
-                    throw new LiteCommandsReflectException("Attribute " + attributeName + " in annotation " + annotation.annotationType().getSimpleName() + " must return a String");
-                }
-
-                String nameCandidate = (String) object;
+                String nameCandidate = getPrimaryName(annotation, attributeName, attributeMethod);
 
                 if (!nameCandidate.isEmpty()) {
                     return nameCandidate;
@@ -81,6 +76,26 @@ public class RequirementDefinitionProcessor<SENDER> implements AnnotationProcess
         }
 
         return parameter.getName();
+    }
+
+    private static @NotNull String getPrimaryName(Annotation annotation, String attributeName, Method attributeMethod) throws IllegalAccessException, InvocationTargetException {
+        Object object = attributeMethod.invoke(annotation);
+
+        if (object instanceof String[]) {
+            String[] array = (String[]) object;
+
+            if (array.length == 0) {
+                return "";
+            }
+
+            return array[0];
+        }
+
+        if (object instanceof String) {
+            return (String) object;
+        }
+
+        throw new LiteCommandsReflectException("Attribute " + attributeName + " in annotation " + annotation.annotationType().getSimpleName() + " must return a String");
     }
 
 }

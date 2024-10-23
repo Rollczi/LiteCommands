@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.annotations.description.DescriptionAnnotationRes
 import dev.rollczi.litecommands.annotations.execute.ExecuteAnnotationResolver;
 import dev.rollczi.litecommands.annotations.flag.FlagAnnotationProcessor;
 import dev.rollczi.litecommands.annotations.join.JoinArgumentProcessor;
+import dev.rollczi.litecommands.annotations.literal.LiteralArgumentProcessor;
 import dev.rollczi.litecommands.annotations.meta.MarkMetaAnnotationResolver;
 import dev.rollczi.litecommands.annotations.optional.OptionalArgArgumentProcessor;
 import dev.rollczi.litecommands.annotations.permission.PermissionAnnotationResolver;
@@ -67,6 +68,7 @@ public class AnnotationProcessorService<SENDER> {
             .register(new FlagAnnotationProcessor<>())
             .register(new VarargsArgumentProcessor<>())
             .register(new ArgCollectionArgumentProcessor<>())
+            .register(new LiteralArgumentProcessor<>())
             .register(new JoinArgumentProcessor<>())
             .register(new QuotedAnnotationProcessor<>())
             .register(new NullableArgumentProcessor<>())

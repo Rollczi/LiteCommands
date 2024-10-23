@@ -1,5 +1,8 @@
 package dev.rollczi.litecommands.util;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public final class LiteCommandsUtil {
 
     private LiteCommandsUtil() {
@@ -126,6 +129,10 @@ public final class LiteCommandsUtil {
      * @see #checkName(String)
      */
     public static boolean checkAliases(String[] aliases) {
+        return checkAliases(Arrays.asList(aliases));
+    }
+
+    public static boolean checkAliases(Collection<String> aliases) {
         if (aliases == null) {
             throw new NullPointerException("Aliases cannot be null");
         }

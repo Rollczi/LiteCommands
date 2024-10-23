@@ -36,6 +36,12 @@ public final class Preconditions {
         }
     }
 
+    public static void notEmpty(Object[] elements, String name) {
+        if (elements.length == 0) {
+            throw new IllegalArgumentException(name + " cannot be empty");
+        }
+    }
+
     public static void notContains(Collection<?> collection, Object element, String name, String elementName) {
         if (collection.contains(element)) {
             throw new IllegalArgumentException("Collection " + name + " already contains " + elementName);
