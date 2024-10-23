@@ -37,7 +37,7 @@ public interface Meta {
      * @deprecated Use AnnotationsMeta#REQUIREMENT_PARAMETER instead
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.8.0")
+    @ApiStatus.ScheduledForRemoval(inVersion = "3.12.0")
     MetaKey<Parameter> REQUIREMENT_PARAMETER = MetaKey.of("requirement-parameter", Parameter.class);
 
     Meta EMPTY_META = new MetaEmptyImpl();
