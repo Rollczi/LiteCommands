@@ -7,9 +7,6 @@ import org.junit.jupiter.api.Test;
 
 class LiteralTest extends LiteTestSpec {
 
-    static LiteTestConfig config = builder -> builder
-        .advanced();
-
     @Command(name = "user")
     static class LiteralTestCommand {
         @Execute

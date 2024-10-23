@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
 import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.meta.MetaType;
+import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 
 public class VarargsProfile implements ArgumentProfile<VarargsProfile> {
@@ -32,4 +33,8 @@ public class VarargsProfile implements ArgumentProfile<VarargsProfile> {
         return NAMESPACE;
     }
 
+    @Override
+    public PriorityLevel getPriority() {
+        return PriorityLevel.HIGH;
+    }
 }

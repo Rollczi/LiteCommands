@@ -1,7 +1,9 @@
 package dev.rollczi.litecommands.annotations;
 
+import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.KeyAnnotationResolver;
-import dev.rollczi.litecommands.annotations.argument.collection.ArgCollectionArgumentProcessor;
+import dev.rollczi.litecommands.annotations.optional.OptionalArg;
+import dev.rollczi.litecommands.annotations.varargs.VarargsAnyArgumentProcessor;
 import dev.rollczi.litecommands.annotations.argument.nullable.NullableArgumentProcessor;
 import dev.rollczi.litecommands.annotations.async.AsyncAnnotationResolver;
 import dev.rollczi.litecommands.annotations.command.CommandAnnotationProcessor;
@@ -67,7 +69,8 @@ public class AnnotationProcessorService<SENDER> {
             // profile processors (they apply profiles to arguments)
             .register(new FlagAnnotationProcessor<>())
             .register(new VarargsArgumentProcessor<>())
-            .register(new ArgCollectionArgumentProcessor<>())
+            .register(new VarargsAnyArgumentProcessor<>(Arg.class))
+            .register(new VarargsAnyArgumentProcessor<>(OptionalArg.class))
             .register(new LiteralArgumentProcessor<>())
             .register(new JoinArgumentProcessor<>())
             .register(new QuotedAnnotationProcessor<>())
