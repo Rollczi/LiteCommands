@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Stream;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class MutablePrioritizedList<E extends Prioritized> implements PrioritizedList<E> {
@@ -15,18 +14,15 @@ public class MutablePrioritizedList<E extends Prioritized> implements Prioritize
     private final TreeMap<PriorityLevel, Entry<E>> priorities = new TreeMap<>(Comparator.reverseOrder());
     private final HashSet<E> elements = new HashSet<>();
 
-    @ApiStatus.Experimental
     public MutablePrioritizedList() {
     }
 
-    @ApiStatus.Experimental
     public MutablePrioritizedList(Iterable<E> elements) {
         for (E element : elements) {
             this.add(element);
         }
     }
 
-    @ApiStatus.Experimental
     public void add(E element) {
         Entry<E> entry = priorities.computeIfAbsent(element.getPriority(), priority -> new Entry<>(priority));
 
@@ -34,7 +30,6 @@ public class MutablePrioritizedList<E extends Prioritized> implements Prioritize
         elements.add(element);
     }
 
-    @ApiStatus.Experimental
     public void remove(E element) {
         Entry<E> entry = priorities.get(element.getPriority());
 
@@ -49,25 +44,21 @@ public class MutablePrioritizedList<E extends Prioritized> implements Prioritize
         elements.remove(element);
     }
 
-    @ApiStatus.Experimental
     public void clear() {
         priorities.clear();
         elements.clear();
     }
 
-    @ApiStatus.Experimental
     @Override
     public boolean contains(E element) {
         return elements.contains(element);
     }
 
-    @ApiStatus.Experimental
     @Override
     public boolean isEmpty() {
         return priorities.isEmpty();
     }
 
-    @ApiStatus.Experimental
     @Override
     public int size() {
         return priorities.values().stream()
@@ -75,7 +66,6 @@ public class MutablePrioritizedList<E extends Prioritized> implements Prioritize
             .sum();
     }
 
-    @ApiStatus.Experimental
     @Override
     public E first() {
         if (this.priorities.isEmpty()) {
@@ -86,7 +76,6 @@ public class MutablePrioritizedList<E extends Prioritized> implements Prioritize
         return entry.elements.get(0);
     }
 
-    @ApiStatus.Experimental
     @Override
     public E last() {
         if (this.priorities.isEmpty()) {
@@ -97,7 +86,6 @@ public class MutablePrioritizedList<E extends Prioritized> implements Prioritize
         return entry.elements.get(entry.elements.size() - 1);
     }
 
-    @ApiStatus.Experimental
     @Override
     public Stream<E> stream() {
         return priorities.values().stream()
@@ -105,7 +93,6 @@ public class MutablePrioritizedList<E extends Prioritized> implements Prioritize
     }
 
     @Override
-    @ApiStatus.Experimental
     public @NotNull Iterator<E> iterator() {
         return priorities.values().stream()
             .flatMap(entry -> entry.elements.stream())
