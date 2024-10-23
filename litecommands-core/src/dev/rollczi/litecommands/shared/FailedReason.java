@@ -1,15 +1,20 @@
 package dev.rollczi.litecommands.shared;
 
+import dev.rollczi.litecommands.priority.Prioritized;
+import dev.rollczi.litecommands.priority.PriorityLevel;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public class FailedReason {
+public class FailedReason implements Prioritized {
 
     private final Object reason;
     private final boolean isEmpty;
+    private final PriorityLevel priorityLevel;
 
-    private FailedReason(Object reason, boolean isEmpty) {
+    private FailedReason(Object reason, boolean isEmpty, PriorityLevel priorityLevel) {
         this.reason = reason;
         this.isEmpty = isEmpty;
+        this.priorityLevel = priorityLevel;
     }
 
     public Object getReason() {
@@ -28,18 +33,49 @@ public class FailedReason {
         return !this.isEmpty;
     }
 
-    public static FailedReason of(Object reason) {
-        return new FailedReason(reason, false);
-    }
-
-    @Deprecated
-    public static FailedReason empty() {
-        return new FailedReason(null, true);
+    @Override
+    public PriorityLevel getPriority() {
+        return this.priorityLevel;
     }
 
     @Override
     public String toString() {
         return "FailedReason(" + reason + ")";
+    }
+
+    public static FailedReason of(Object reason) {
+        return new FailedReason(reason, false, PriorityLevel.NORMAL);
+    }
+
+    @ApiStatus.Experimental
+    public static FailedReason of(Object reason, PriorityLevel priorityLevel) {
+        return new FailedReason(reason, false, priorityLevel);
+    }
+
+    @Deprecated
+    public static FailedReason empty() {
+        return new FailedReason(null, true, PriorityLevel.LOW);
+    }
+
+    @ApiStatus.Experimental
+    public static FailedReason max(FailedReason... reasons) {
+        FailedReason max = null;
+        for (FailedReason reason : reasons) {
+            if (reason == null) {
+                continue;
+            }
+
+            if (max == null) {
+                max = reason;
+                continue;
+            }
+
+            if (reason.getPriority().compareTo(max.getPriority()) > 0) {
+                max = reason;
+            }
+        }
+
+        return max;
     }
 
 }

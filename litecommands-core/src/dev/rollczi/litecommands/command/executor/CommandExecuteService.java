@@ -130,7 +130,7 @@ public class CommandExecuteService<SENDER> {
             }
 
             if (foundEvent.getFlow() == ExecuteFlow.SKIP) {
-                return this.execute(executors, invocation, matcher, commandRoute, foundEvent.getFlowResult());
+                return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(foundEvent.getFlowResult(), last));
             }
         }
 
@@ -143,7 +143,7 @@ public class CommandExecuteService<SENDER> {
                 }
 
                 if (matchEvent.getFlow() == ExecuteFlow.SKIP) {
-                    return this.execute(executors, invocation, matcher, commandRoute, matchEvent.getFlowResult());
+                    return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(matchEvent.getFlowResult(), last));
                 }
             }
 
@@ -151,7 +151,7 @@ public class CommandExecuteService<SENDER> {
                 FailedReason current = match.getFailedReason();
 
                 if (current.hasResult()) {
-                    return this.execute(executors, invocation, matcher, commandRoute, current);
+                    return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(current, last));
                 }
 
                 return this.execute(executors, invocation, matcher, commandRoute, last);
@@ -164,7 +164,7 @@ public class CommandExecuteService<SENDER> {
                 }
 
                 if (executionEvent.getFlow() == ExecuteFlow.SKIP) {
-                    return this.execute(executors, invocation, matcher, commandRoute, executionEvent.getFlowResult());
+                    return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(executionEvent.getFlowResult(), last));
                 }
             }
 
