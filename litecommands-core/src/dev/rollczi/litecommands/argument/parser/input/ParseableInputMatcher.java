@@ -46,7 +46,7 @@ public interface ParseableInputMatcher<SELF extends ParseableInputMatcher<SELF>>
         }
 
         public static EndResult failed(FailedReason failedReason) {
-            return new EndResult(true, failedReason);
+            return new EndResult(false, failedReason);
         }
 
         public static EndResult failed(Object cause) {

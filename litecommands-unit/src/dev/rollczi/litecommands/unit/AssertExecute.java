@@ -139,7 +139,7 @@ public class AssertExecute {
 
     public AssertExecute assertFailure(Object reason) {
         if (!result.isFailed()) {
-            throw new AssertionError("Command was not failed.");
+            throw new AssertionError("Command was not failed. Result: " + result.getResult());
         }
 
         Object error = result.getError();

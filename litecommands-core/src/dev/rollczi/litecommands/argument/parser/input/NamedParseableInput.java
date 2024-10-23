@@ -10,6 +10,8 @@ import dev.rollczi.litecommands.invocation.Invocation;
 
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.priority.PriorityLevel;
+import dev.rollczi.litecommands.shared.FailedReason;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -91,7 +93,7 @@ class NamedParseableInput implements ParseableInput<NamedParseableInput.NamedPar
         @Override
         public EndResult endMatch(boolean isStrict) {
             if (consumedArguments.size() < namedArguments.size() && isStrict) {
-                return EndResult.failed(InvalidUsage.Cause.TOO_MANY_ARGUMENTS);
+                return EndResult.failed(FailedReason.of(InvalidUsage.Cause.TOO_MANY_ARGUMENTS, PriorityLevel.LOW));
             }
 
             return EndResult.success();
