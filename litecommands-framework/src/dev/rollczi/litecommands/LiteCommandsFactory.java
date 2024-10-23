@@ -44,6 +44,7 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsageHandlerImpl;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageResultController;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
+import dev.rollczi.litecommands.literal.LiteralArgumentResolver;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
@@ -137,6 +138,8 @@ public final class LiteCommandsFactory {
                 .argument(Optional.class, new OptionalArgumentResolver<>())
                 .argument(CompletableFuture.class, new CompletableFutureResolver<>(scheduler, parser))
                 .argument(upwards(Object.class), ProfileNamespaces.NULLABLE, new NullableArgumentResolver<>(parser, suggester))
+
+                .argument(String.class, ProfileNamespaces.LITERAL, new LiteralArgumentResolver<>())
 
                 .argument(String.class, ProfileNamespaces.QUOTED, new QuotedStringArgumentResolver<>(suggester))
                 .argumentParser(String.class, ProfileNamespaces.JOIN, new JoinStringArgumentResolver<>())

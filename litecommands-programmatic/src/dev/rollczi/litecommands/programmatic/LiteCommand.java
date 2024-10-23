@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.executor.LiteContext;
 import dev.rollczi.litecommands.flag.FlagProfile;
 import dev.rollczi.litecommands.join.JoinProfile;
+import dev.rollczi.litecommands.literal.LiteralProfile;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.quoted.QuotedProfile;
@@ -14,6 +15,7 @@ import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.strict.StrictMode;
 
 import java.util.ArrayList;
@@ -91,6 +93,20 @@ public class LiteCommand<SENDER> {
     public LiteCommand<SENDER> argumentJoin(String name, String separator, int limit) {
         this.arguments.add(Argument.profiled(name, String.class, new JoinProfile(separator, limit)));
         return this;
+    }
+
+    public LiteCommand<SENDER> literal(String... names) {
+        Preconditions.notEmpty(names, "names");
+        String name = names[0];
+
+        return this.argument(Argument.profiled(name, String.class, LiteralProfile.of(names)));
+    }
+
+    public LiteCommand<SENDER> literalIgnoreCase(String... names) {
+        Preconditions.notEmpty(names, "names");
+        String name = names[0];
+
+        return this.argument(Argument.profiled(name, String.class, LiteralProfile.ofIgnoreCase(names)));
     }
 
     public LiteCommand<SENDER> context(String name, Class<?> type) {

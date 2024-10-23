@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.resolver.collector.VarargsProfile;
 import dev.rollczi.litecommands.argument.resolver.nullable.NullableProfile;
 import dev.rollczi.litecommands.flag.FlagProfile;
 import dev.rollczi.litecommands.join.JoinProfile;
+import dev.rollczi.litecommands.literal.LiteralProfile;
 import dev.rollczi.litecommands.quoted.QuotedProfile;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -16,6 +17,13 @@ public final class ProfileNamespaces {
 
     private ProfileNamespaces() {
     }
+
+    /**
+     * Literal profile allows
+     * parsing static values such as {@code /user Rollczi group Admin} where {@code group} is a literal.
+     * @since 3.8.0
+     */
+    public static final ArgumentProfileNamespace<LiteralProfile> LITERAL = LiteralProfile.NAMESPACE;
 
     /**
      * Join profile allows joining multiple arguments into one.
