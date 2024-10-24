@@ -61,6 +61,7 @@ public class SuggestionResult {
             .map(Suggestion::multilevel)
             .collect(Collectors.toList());
     }
+
     public List<Completion> asCompletionList() {
         return this.suggestions.stream()
             .map(Suggestion::completion)
