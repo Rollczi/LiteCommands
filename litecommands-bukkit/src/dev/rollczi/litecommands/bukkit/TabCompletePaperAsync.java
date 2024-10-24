@@ -43,7 +43,7 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
 
         private static final String TAB_COMPLETE_CLASS_NAME = "com.destroystokyo.paper.event.server.AsyncTabCompleteEvent";
         private static final String TAB_COMPLETION_CLASS_NAME = "com.destroystokyo.paper.event.server.AsyncTabCompleteEvent$Completion";
-        private static final String COMPONENT_CLASS_NAME = "net.kyori.adventure.text.Component";
+        private static final String COMPONENT_CLASS_NAME = "net{}kyori{}adventure{}text{}Component";// Ignore relocation
 
         static final Class<? extends Event> TAB_COMPLETE_CLASS;
         static final Class<?> TAB_COMPLETION_CLASS;
@@ -63,8 +63,8 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
             SET_COMPLETIONS_METHOD = ReflectUtil.getMethod(TAB_COMPLETE_CLASS, "setCompletions", List.class);
 
             TAB_COMPLETION_CLASS = ReflectUtil.getClass(TAB_COMPLETION_CLASS_NAME);
-            COMPONENT_CLASS = ReflectUtil.getClass(COMPONENT_CLASS_NAME);
-            CREATE_COMPLETION_TOOLTIP = ReflectUtil.getMethod(TAB_COMPLETION_CLASS, "completion");
+            COMPONENT_CLASS = ReflectUtil.getClass(COMPONENT_CLASS_NAME.replace("{}", "."));
+            CREATE_COMPLETION_TOOLTIP = ReflectUtil.getMethod(TAB_COMPLETION_CLASS, "completion", String.class, COMPONENT_CLASS);
             COMPLETIONS_METHOD = ReflectUtil.getMethod(TAB_COMPLETE_CLASS, "completions", List.class);
             COMPONENT_TEXT_METHOD = ReflectUtil.getMethod(COMPONENT_CLASS, "text", String.class);
         }
