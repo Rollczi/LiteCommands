@@ -53,8 +53,15 @@ class SpongeCommand implements Command.Raw {
         return this.suggestionHook.suggest(invocation, input)
             .getSuggestions()
             .stream()
-            .map(suggestion -> CommandCompletion.of(suggestion.multilevel()))
+            .map(suggestion -> CommandCompletion.of(suggestion.multilevel(), tooltip(suggestion.tooltip())))// todo ComponentSerializer?
             .collect(Collectors.toList());
+    }
+
+    Component tooltip(String string) {
+        if (string == null || string.isEmpty()) {
+            return null;
+        }
+        return Component.text(string);
     }
 
     private RawCommand rawCommand(ArgumentReader.Mutable arguments) {

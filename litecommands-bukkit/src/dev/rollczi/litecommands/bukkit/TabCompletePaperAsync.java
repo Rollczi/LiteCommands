@@ -99,7 +99,7 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
         }
 
         public Object toComponent(String str) {
-            if (str.isEmpty()) {
+            if (str == null || str.isEmpty()) {
                 return null;
             }
             return ReflectUtil.invokeMethod(COMPONENT_TEXT_METHOD, null, str);// todo ComponentSerializer?
