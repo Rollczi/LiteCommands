@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.bukkit;
 
-import com.sun.org.apache.xml.internal.dtm.ref.sax2dtm.SAX2RTFDTM;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.suggestion.Completion;
@@ -94,7 +93,7 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
         public void setCompletionTooltips(List<Completion> completions) {
             ReflectUtil.invokeMethod(COMPLETIONS_METHOD, event,
                 completions.stream()
-                    .map(e -> ReflectUtil.invokeMethod(CREATE_COMPLETION_TOOLTIP, e.suggestion(), toComponent(e.tooltip())))
+                    .map(e -> ReflectUtil.invokeMethod(CREATE_COMPLETION_TOOLTIP, null, e.suggestion(), toComponent(e.tooltip())))
                     .collect(Collectors.toList())
             );
         }
