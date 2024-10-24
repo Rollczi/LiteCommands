@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.bukkit;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.suggestion.Completion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ public abstract class TabComplete {
     }
 
     @Nullable
-    protected List<String> callListener(CommandSender sender, String buffer) {
+    protected List<Completion> callListener(CommandSender sender, String buffer) {
         if (!buffer.startsWith(RawCommand.COMMAND_SLASH)) {
             return null;
         }
