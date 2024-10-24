@@ -4,19 +4,22 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.Completion;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -49,6 +52,14 @@ public class AssertSuggest {
 
     public AssertSuggest assertSuggest(String... suggestions) {
         return assertSuggest(Arrays.asList(suggestions));
+    }
+
+    public AssertSuggest assertSuggest(String[] suggestions, String... tooltips) {
+        List<Completion> completions = new ArrayList<>(suggestions.length);
+        for (int i = 0; i < suggestions.length; i++) {
+            completions.add(new Completion(suggestions[i], tooltips[i]));
+        }
+        return assertSuggestCompletion(completions);
     }
 
     /**
@@ -89,11 +100,24 @@ public class AssertSuggest {
         return assertSuggest(suggestions.asMultiLevelList());
     }
 
+    public AssertSuggest assertSuggestCompletion(SuggestionResult suggestions) {
+        return assertSuggestCompletion(suggestions.asCompletionList());
+    }
+
     public AssertSuggest assertSuggest(Collection<String> suggestions) {
         assertThat(suggest.getSuggestions()
             .stream()
             .map(Suggestion::multilevel)
             .filter(suggestion -> !suggestion.isEmpty())
+        ).containsExactlyInAnyOrderElementsOf(suggestions);
+        return this;
+    }
+
+    public AssertSuggest assertSuggestCompletion(Collection<Completion> suggestions) {
+        assertThat(suggest.getSuggestions()
+            .stream()
+            .map(Suggestion::completion)
+            .filter(completion -> !completion.suggestion().isEmpty())
         ).containsExactlyInAnyOrderElementsOf(suggestions);
         return this;
     }
