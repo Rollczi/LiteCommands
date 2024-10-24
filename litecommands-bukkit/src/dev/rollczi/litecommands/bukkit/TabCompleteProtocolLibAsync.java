@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.suggestion.Completion;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.jline.console.ConsoleReader;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 class TabCompleteProtocolLibAsync extends TabCompleteSync {
 
@@ -63,8 +65,7 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
     private Object getMinecraftServer(Object craftServer) {
         try {
             return ReflectUtil.getFromField(craftServer, "server");
-        }
-        catch (LiteCommandsReflectException exception) {
+        } catch (LiteCommandsReflectException exception) {
             return ReflectUtil.getFromField(craftServer, "cserver");
         }
     }
@@ -89,7 +90,7 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         scheduler.run(SchedulerPoll.SUGGESTER, () -> {
             try {
                 List<String> list = command.suggest(player, commandName, rawCommand.getArgs().toArray(new String[0]))
-                    .get(15, TimeUnit.SECONDS);
+                    .get(15, TimeUnit.SECONDS).stream().map(c -> c.suggestion()).collect(Collectors.toList());
 
                 if (list == null) {
                     return;
@@ -99,8 +100,7 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
                 packet.getStringArrays().write(0, list.toArray(new String[0]));
 
                 MANAGER.sendServerPacket(player, packet);
-            }
-            catch (InterruptedException | ExecutionException | TimeoutException e) {
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -129,22 +129,23 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         @Override
         public int complete(String buffer, int cursor, List<CharSequence> candidates) {
             int completed = completer.complete(buffer, cursor, candidates);
-            List<String> result = callListener(consoleSender, buffer);
+            List<Completion> result = callListener(consoleSender, buffer);
 
             if (result == null && cursor == completed) {
                 return completed;
             }
 
             if (result != null) {
-                candidates.addAll(result);
+                for (Completion completion : result) {
+                    candidates.add(completion.suggestion());
+                }
             }
 
             int lastSpace = buffer.lastIndexOf(' ');
 
             if (lastSpace == -1) {
                 return cursor - buffer.length();
-            }
-            else {
+            } else {
                 return cursor - (buffer.length() - lastSpace - 1);
             }
         }

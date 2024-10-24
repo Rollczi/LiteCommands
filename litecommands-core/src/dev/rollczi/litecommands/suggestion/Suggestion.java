@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,10 +13,12 @@ import java.util.stream.StreamSupport;
 public class Suggestion {
 
     private final String suggestion;
+    private final String tooltip;
     private final List<String> multiSuggestion;
 
-    private Suggestion(String suggestion, List<String> multiSuggestions) {
+    private Suggestion(String suggestion, String tooltip, List<String> multiSuggestions) {
         this.suggestion = suggestion;
+        this.tooltip = tooltip;
         this.multiSuggestion = multiSuggestions;
     }
 
@@ -41,6 +44,14 @@ public class Suggestion {
 
     public int lengthMultilevel() {
         return this.multiSuggestion.size();
+    }
+
+    public String tooltip() {
+        return this.tooltip;
+    }
+
+    public Completion completion() {
+        return new Completion(this.suggestion, this.tooltip);
     }
 
     public Suggestion deleteLeft(int levels) {
@@ -78,7 +89,7 @@ public class Suggestion {
         ).collect(Collectors.toList());
 
 
-        return new Suggestion(String.join(" ", list), list);
+        return new Suggestion(String.join(" ", list), "", list);
     }
 
     public Suggestion appendRight(String... right) {
@@ -102,11 +113,15 @@ public class Suggestion {
     }
 
     public static Suggestion from(List<String> suggestion) {
-        return new Suggestion(String.join(" ", suggestion), new ArrayList<>(suggestion));
+        return new Suggestion(String.join(" ", suggestion), "", new ArrayList<>(suggestion));
+    }
+
+    public static Suggestion of(String suggestion, String tooltip) {
+        return new Suggestion(suggestion, tooltip, StringUtil.splitBySpace(suggestion));
     }
 
     public static Suggestion of(String suggestion) {
-        return new Suggestion(suggestion, StringUtil.splitBySpace(suggestion));
+        return new Suggestion(suggestion, "", StringUtil.splitBySpace(suggestion));
     }
 
     @Override
