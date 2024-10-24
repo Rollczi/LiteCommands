@@ -4,7 +4,7 @@ object Versions {
     const val JETBRAINS_ANNOTATIONS = "26.0.1"
 
     // Tests
-    const val JUNIT_JUPITER = "5.11.2"
+    const val JUNIT_JUPITER = "5.11.3"
     const val ASSERTJ = "3.26.3"
     const val MOCKITO = "5.14.2"
     const val AWAITILITY = "4.2.2"
@@ -12,7 +12,7 @@ object Versions {
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
     const val SPIGOT = "1.8.8-R0.1-SNAPSHOT"
-    const val PROTOCOL_LIB = "5.1.0"
+    const val PROTOCOL_LIB = "5.3.0"
 
     // BungeeCord
     const val BUNGEECORD_API = "1.20-R0.2"
