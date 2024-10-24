@@ -14,18 +14,25 @@
   "commitMessagePrefix": "dependency:",
   "packageRules": [
     {
-      "groupName": "all minor and patch dependencies",
-      "groupSlug": "minor-patch",
+      "groupName": "patch",
       "matchPackagePatterns": [
         "*"
       ],
       "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
-      "updateTypes": ["minor", "patch"],
+      "updateTypes": ["patch"],
       "automerge": true
     },
     {
-      "groupName": "all major dependencies",
-      "groupSlug": "major",
+      "groupName": "minor",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
+      "updateTypes": ["minor"],
+      "automerge": true
+    },
+    {
+      "groupName": "all-major",
       "matchPackagePatterns": [
         "*"
       ],
@@ -33,20 +40,20 @@
       "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
       "automerge": false
     },
+
     {
-      "groupName": "fabricmc dependencies",
-      "groupSlug": "fabricmc",
+      "groupName": "fabricmc",
       "matchPackagePatterns": [
           "net.fabricmc*"
       ],
       "automerge": false
     },
     {
-      "groupName": "spigotmc dependencies",
-      "groupSlug": "spigotmc",
+      "groupName": "spigotmc",
       "matchPackagePatterns": [
           "org.spigotmc*"
       ],
+      "allowedVersions": "/^\\d+\\.\\d+(\\.\\d+)?-R\\d+\\.\\d+-SNAPSHOT$/",
       "automerge": false
     }
   ]
