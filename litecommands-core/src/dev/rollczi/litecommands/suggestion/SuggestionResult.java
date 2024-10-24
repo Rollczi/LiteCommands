@@ -2,14 +2,15 @@ package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.shared.IterableMutableArray;
 import dev.rollczi.litecommands.util.StringUtil;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.ApiStatus;
 
 public class SuggestionResult {
 
@@ -20,7 +21,7 @@ public class SuggestionResult {
     }
 
     public void addAll(Collection<Suggestion> suggestions) {
-       this.suggestions.addAll(suggestions);
+        this.suggestions.addAll(suggestions);
     }
 
     public void add(Suggestion suggestion) {
@@ -45,7 +46,7 @@ public class SuggestionResult {
         String multilevel = suggestion.multilevel();
         int levels = suggestion.lengthMultilevel();
         Set<Suggestion> filtered = this.suggestions.stream()
-            .filter(current ->  StringUtil.startsWithIgnoreCase(current.multilevel(), multilevel))
+            .filter(current -> StringUtil.startsWithIgnoreCase(current.multilevel(), multilevel))
             .map(suggestion1 -> suggestion1.deleteLeft(levels - 1))
             .collect(Collectors.toSet());
 
@@ -132,6 +133,10 @@ public class SuggestionResult {
         return of(new IterableMutableArray<>(suggestions));
     }
 
+    public static SuggestionResult tooltip(String[] suggestions, String... tooltip) {
+        return tooltip(new IterableMutableArray<>(suggestions), new IterableMutableArray<>(tooltip));
+    }
+
     public static SuggestionResult empty() {
         return new SuggestionResult(new HashSet<>());
     }
@@ -141,6 +146,20 @@ public class SuggestionResult {
 
         for (String suggestion : suggestions) {
             parsedSuggestions.add(Suggestion.of(suggestion));
+        }
+
+        return new SuggestionResult(parsedSuggestions);
+    }
+
+    public static SuggestionResult tooltip(Iterable<String> suggestions, Iterable<String> tooltips) {
+        Set<Suggestion> parsedSuggestions = new HashSet<>();
+
+        Iterator<String> iterator = suggestions.iterator();
+        Iterator<String> iterator2 = tooltips.iterator();
+        while (iterator.hasNext() && iterator2.hasNext()) {
+            String suggestion = iterator.next();
+            String tooltip = iterator2.next();
+            parsedSuggestions.add(Suggestion.of(suggestion, tooltip));
         }
 
         return new SuggestionResult(parsedSuggestions);
