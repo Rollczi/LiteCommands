@@ -89,12 +89,13 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         event.setCancelled(true);
         scheduler.run(SchedulerPoll.SUGGESTER, () -> {
             try {
-                List<String> list = command.suggest(player, commandName, rawCommand.getArgs().toArray(new String[0]))
-                    .get(15, TimeUnit.SECONDS).stream().map(c -> c.suggestion()).collect(Collectors.toList());
+                List<Completion> completions = command.suggest(player, commandName, rawCommand.getArgs().toArray(new String[0]))
+                    .get(15, TimeUnit.SECONDS);
 
-                if (list == null) {
+                if (completions == null) {
                     return;
                 }
+                List<String> list = completions.stream().map(c -> c.suggestion()).collect(Collectors.toList());
 
                 PacketContainer packet = MANAGER.createPacket(PacketType.Play.Server.TAB_COMPLETE);
                 packet.getStringArrays().write(0, list.toArray(new String[0]));

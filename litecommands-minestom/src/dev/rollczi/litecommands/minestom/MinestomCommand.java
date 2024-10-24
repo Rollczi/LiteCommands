@@ -46,7 +46,7 @@ class MinestomCommand extends Command {
             }
 
             for (Suggestion suggestion : suggestions) {
-                suggestionCallback.addEntry(new SuggestionEntry(suggestion.multilevel(), Component.empty()));
+                suggestionCallback.addEntry(new SuggestionEntry(suggestion.multilevel(), tooltip(suggestion.tooltip())));// todo ComponentSerializer?
             }
         });
 
@@ -64,6 +64,13 @@ class MinestomCommand extends Command {
 
             this.invocationHook.execute(this.createInvocation(sender, alias, raw), raw);
         }));
+    }
+
+    Component tooltip(String string) {
+        if (string == null || string.isEmpty()) {
+            return null;
+        }
+        return Component.text(string);
     }
 
     private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, Input<?> input) {
