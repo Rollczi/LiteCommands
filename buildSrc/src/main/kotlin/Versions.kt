@@ -10,7 +10,7 @@ object Versions {
     const val AWAITILITY = "4.2.2"
 
     // Bukkit
-    const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
+    const val SPIGOT_API = "1.20.2-experimental-SNAPSHOT"
     const val SPIGOT = "1.8.8-R0.1-SNAPSHOT"
     const val PROTOCOL_LIB = "5.1.0"
 
