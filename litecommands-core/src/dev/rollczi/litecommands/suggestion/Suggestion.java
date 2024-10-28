@@ -50,10 +50,6 @@ public class Suggestion {
         return this.tooltip;
     }
 
-    public Completion completion() {
-        return new Completion(this.suggestion, this.tooltip);
-    }
-
     public Suggestion deleteLeft(int levels) {
         if (levels <= 0) {
             return this;

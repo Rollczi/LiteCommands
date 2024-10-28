@@ -15,7 +15,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.suggestion.Completion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -93,8 +93,8 @@ public abstract class FabricAbstractCommand<SOURCE> {
             int start = input.length() - arguments.get(arguments.size() - 1).length();
             SuggestionsBuilder suggestionsBuilder = builder.createOffset(start);
 
-            for (Completion completion : suggest.asCompletionList()) {
-                suggestionsBuilder.suggest(completion.suggestion(), tooltip(completion.tooltip()));// todo Text.Serialization#fromJson?
+            for (Suggestion suggestion : suggest.suggestions()) {
+                suggestionsBuilder.suggest(suggestion.multilevel(), tooltip(suggestion.tooltip()));// todo Text.Serialization#fromJson?
             }
 
             return suggestionsBuilder.build();

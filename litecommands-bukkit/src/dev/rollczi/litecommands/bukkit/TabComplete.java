@@ -3,15 +3,15 @@ package dev.rollczi.litecommands.bukkit;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.suggestion.Completion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -49,7 +49,7 @@ public abstract class TabComplete {
     }
 
     @Nullable
-    protected List<Completion> callListener(CommandSender sender, String buffer) {
+    protected Set<Suggestion> callListener(CommandSender sender, String buffer) {
         if (!buffer.startsWith(RawCommand.COMMAND_SLASH)) {
             return null;
         }

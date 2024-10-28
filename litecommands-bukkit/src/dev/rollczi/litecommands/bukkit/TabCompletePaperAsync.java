@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
-import dev.rollczi.litecommands.suggestion.Completion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -13,6 +13,7 @@ import org.bukkit.plugin.PluginManager;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class TabCompletePaperAsync extends TabComplete implements Listener {
@@ -24,7 +25,7 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
 
     private void executeListener(Event event) {
         PaperAsyncTabCompleteEvent tabCompleteEvent = new PaperAsyncTabCompleteEvent(event);
-        List<Completion> result = this.callListener(tabCompleteEvent.getSender(), tabCompleteEvent.getBuffer());
+        Set<Suggestion> result = this.callListener(tabCompleteEvent.getSender(), tabCompleteEvent.getBuffer());
 
         if (result == null) {
             return;
@@ -90,10 +91,10 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
             ReflectUtil.invokeMethod(SET_COMPLETIONS_METHOD, event, completions);
         }
 
-        public void setCompletionTooltips(List<Completion> completions) {
+        public void setCompletionTooltips(Set<Suggestion> suggestions) {
             ReflectUtil.invokeMethod(COMPLETIONS_METHOD, event,
-                completions.stream()
-                    .map(e -> ReflectUtil.invokeMethod(CREATE_COMPLETION_TOOLTIP, null, e.suggestion(), toComponent(e.tooltip())))
+                suggestions.stream()
+                    .map(e -> ReflectUtil.invokeMethod(CREATE_COMPLETION_TOOLTIP, null, e.multilevel(), toComponent(e.tooltip())))
                     .collect(Collectors.toList())
             );
         }

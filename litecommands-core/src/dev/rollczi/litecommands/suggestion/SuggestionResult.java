@@ -63,10 +63,8 @@ public class SuggestionResult {
             .collect(Collectors.toList());
     }
 
-    public List<Completion> asCompletionList() {
-        return this.suggestions.stream()
-            .map(Suggestion::completion)
-            .collect(Collectors.toList());
+    public Set<Suggestion> suggestions() {
+        return Collections.unmodifiableSet(suggestions);
     }
 
     public SuggestionResult appendLeft(String... suggestions) {

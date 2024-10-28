@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
-import dev.rollczi.litecommands.suggestion.Completion;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.jline.console.ConsoleReader;
@@ -21,11 +21,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 class TabCompleteProtocolLibAsync extends TabCompleteSync {
@@ -89,13 +88,13 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         event.setCancelled(true);
         scheduler.run(SchedulerPoll.SUGGESTER, () -> {
             try {
-                List<Completion> completions = command.suggest(player, commandName, rawCommand.getArgs().toArray(new String[0]))
+                Set<Suggestion> suggestions = command.suggest(player, commandName, rawCommand.getArgs().toArray(new String[0]))
                     .get(15, TimeUnit.SECONDS);
 
-                if (completions == null) {
+                if (suggestions == null) {
                     return;
                 }
-                List<String> list = completions.stream().map(c -> c.suggestion()).collect(Collectors.toList());
+                List<String> list = suggestions.stream().map(c -> c.multilevel()).collect(Collectors.toList());
 
                 PacketContainer packet = MANAGER.createPacket(PacketType.Play.Server.TAB_COMPLETE);
                 packet.getStringArrays().write(0, list.toArray(new String[0]));
@@ -130,15 +129,15 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         @Override
         public int complete(String buffer, int cursor, List<CharSequence> candidates) {
             int completed = completer.complete(buffer, cursor, candidates);
-            List<Completion> result = callListener(consoleSender, buffer);
+            Set<Suggestion> result = callListener(consoleSender, buffer);
 
             if (result == null && cursor == completed) {
                 return completed;
             }
 
             if (result != null) {
-                for (Completion completion : result) {
-                    candidates.add(completion.suggestion());
+                for (Suggestion suggestion : result) {
+                    candidates.add(suggestion.multilevel());
                 }
             }
 

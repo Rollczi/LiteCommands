@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -45,6 +45,6 @@ public class SuggestionTooltipTest extends LiteTestSpec {
     @Test
     void testTooltip() {
         platform.suggest("test ")
-            .assertSuggest(new String[]{"1"}, "user1");
+            .assertSuggest(SuggestionResult.from(Suggestion.of("1", "user1")));
     }
 }
