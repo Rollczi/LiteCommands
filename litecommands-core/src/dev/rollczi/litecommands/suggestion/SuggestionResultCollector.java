@@ -9,6 +9,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 
 public class SuggestionResultCollector implements Collector<String, SuggestionResult, SuggestionResult> {
+    private final boolean copyTooltip;
+
+    public SuggestionResultCollector(boolean copyTooltip) {
+        this.copyTooltip = copyTooltip;
+    }
 
     @Override
     public Supplier<SuggestionResult> supplier() {
@@ -17,7 +22,13 @@ public class SuggestionResultCollector implements Collector<String, SuggestionRe
 
     @Override
     public BiConsumer<SuggestionResult, String> accumulator() {
-        return (suggestionResult, raw) -> suggestionResult.add(Suggestion.of(raw));
+        return (suggestionResult, raw) -> {
+            if (copyTooltip) {
+                suggestionResult.add(Suggestion.of(raw, raw));
+            } else {
+                suggestionResult.add(Suggestion.of(raw));
+            }
+        };
     }
 
     @Override

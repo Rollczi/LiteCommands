@@ -41,7 +41,7 @@ public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<Ser
         return invocation.sender().getServer().getPlayerManager().getPlayerList().stream()
             .map(serverPlayerEntity -> serverPlayerEntity.getGameProfile())
             .map(gameProfile -> gameProfile.getName())
-            .collect(SuggestionResult.collector());
+            .collect(SuggestionResult.tooltipCollector());
     }
 
 }

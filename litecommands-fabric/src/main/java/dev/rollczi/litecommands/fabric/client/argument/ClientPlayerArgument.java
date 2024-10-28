@@ -39,6 +39,6 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
         return invocation.sender().getWorld().getPlayers().stream()
             .map(player -> player.getGameProfile())
             .map(gameProfile -> gameProfile.getName())
-            .collect(SuggestionResult.collector());
+            .collect(SuggestionResult.tooltipCollector());
     }
 }

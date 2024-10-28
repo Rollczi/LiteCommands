@@ -180,7 +180,11 @@ public class SuggestionResult {
     }
 
     public static SuggestionResultCollector collector() {
-        return new SuggestionResultCollector();
+        return new SuggestionResultCollector(false);
+    }
+
+    public static SuggestionResultCollector tooltipCollector() {
+        return new SuggestionResultCollector(true);
     }
 
 }

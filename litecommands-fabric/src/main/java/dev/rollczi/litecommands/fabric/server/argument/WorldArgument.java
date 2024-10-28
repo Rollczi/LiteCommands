@@ -59,7 +59,7 @@ public class WorldArgument<W> extends ArgumentResolver<ServerCommandSource, W> {
         }
         return worldList.stream()
             .map(world -> getWorldName(world))
-            .collect(SuggestionResult.collector());
+            .collect(SuggestionResult.tooltipCollector());
     }
 
     private String getWorldName(ServerWorld world) {
