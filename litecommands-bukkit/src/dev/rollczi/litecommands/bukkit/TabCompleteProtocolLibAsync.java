@@ -64,7 +64,8 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
     private Object getMinecraftServer(Object craftServer) {
         try {
             return ReflectUtil.getFromField(craftServer, "server");
-        } catch (LiteCommandsReflectException exception) {
+        }
+        catch (LiteCommandsReflectException exception) {
             return ReflectUtil.getFromField(craftServer, "cserver");
         }
     }
@@ -100,7 +101,8 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
                 packet.getStringArrays().write(0, list.toArray(new String[0]));
 
                 MANAGER.sendServerPacket(player, packet);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            }
+            catch (InterruptedException | ExecutionException | TimeoutException e) {
                 throw new RuntimeException(e);
             }
         });
