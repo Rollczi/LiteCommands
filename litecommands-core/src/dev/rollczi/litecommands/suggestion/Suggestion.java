@@ -125,12 +125,12 @@ public class Suggestion {
         if (this == o) return true;
         if (!(o instanceof Suggestion)) return false;
         Suggestion that = (Suggestion) o;
-        return Objects.equals(suggestion, that.suggestion);
+        return Objects.equals(suggestion, that.suggestion) && Objects.equals(tooltip, that.tooltip);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(suggestion);
+        return Objects.hash(suggestion, tooltip);
     }
 
     @Override
