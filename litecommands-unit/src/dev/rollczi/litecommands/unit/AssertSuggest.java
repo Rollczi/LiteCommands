@@ -102,8 +102,8 @@ public class AssertSuggest {
         assertThat(suggest.getSuggestions()
             .stream()
             .map(Suggestion::tooltip)
-            .filter(suggestion -> !suggestion.isEmpty())
-        ).containsExactlyInAnyOrderElementsOf(tooltips);
+            .filter(tooltip -> tooltip != null && !tooltip.isEmpty())
+        ).containsExactlyInAnyOrderElementsOf(tooltips.stream().filter(tooltip -> tooltip != null && !tooltip.isEmpty()).collect(Collectors.toList()));
         return this;
     }
 

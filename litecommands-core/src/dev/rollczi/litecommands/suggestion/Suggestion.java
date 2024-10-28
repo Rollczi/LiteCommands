@@ -85,7 +85,7 @@ public class Suggestion {
         ).collect(Collectors.toList());
 
 
-        return new Suggestion(String.join(" ", list), "", list);
+        return new Suggestion(String.join(" ", list), null, list);
     }
 
     public Suggestion appendRight(String... right) {
@@ -109,7 +109,7 @@ public class Suggestion {
     }
 
     public static Suggestion from(List<String> suggestion) {
-        return new Suggestion(String.join(" ", suggestion), "", new ArrayList<>(suggestion));
+        return new Suggestion(String.join(" ", suggestion), null, new ArrayList<>(suggestion));
     }
 
     public static Suggestion of(String suggestion, String tooltip) {
@@ -117,7 +117,7 @@ public class Suggestion {
     }
 
     public static Suggestion of(String suggestion) {
-        return new Suggestion(suggestion, "", StringUtil.splitBySpace(suggestion));
+        return new Suggestion(suggestion, null, StringUtil.splitBySpace(suggestion));
     }
 
     @Override
