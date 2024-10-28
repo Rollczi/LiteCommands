@@ -47,6 +47,10 @@ public class AssertSuggest {
         return this;
     }
 
+    public AssertSuggest assertSuggest() {
+        return assertSuggest(new String[0]);
+    }
+
     public AssertSuggest assertSuggest(String... suggestions) {
         return assertSuggest(Arrays.asList(suggestions));
     }
@@ -86,7 +90,7 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(SuggestionResult suggestions) {
-        return assertSuggest(suggestions.asMultiLevelList()).assertTooltip(suggestions.asTooltipList());
+        return assertSuggest(suggestions.getSuggestions().toArray(new Suggestion[0]));
     }
 
     public AssertSuggest assertSuggest(Collection<String> suggestions) {
@@ -103,7 +107,12 @@ public class AssertSuggest {
             .stream()
             .map(Suggestion::tooltip)
             .filter(tooltip -> tooltip != null && !tooltip.isEmpty())
-        ).containsExactlyInAnyOrderElementsOf(tooltips.stream().filter(tooltip -> tooltip != null && !tooltip.isEmpty()).collect(Collectors.toList()));
+        ).containsExactlyInAnyOrderElementsOf(Arrays.stream(suggestions).map(Suggestion::tooltip).filter(tooltip -> tooltip != null && !tooltip.isEmpty()).collect(Collectors.toList()));
+        assertThat(suggest.getSuggestions()
+            .stream()
+            .map(Suggestion::multilevel)
+            .filter(suggestion -> !suggestion.isEmpty())
+        ).containsExactlyInAnyOrderElementsOf(Arrays.stream(suggestions).map(Suggestion::multilevel).filter(suggestion -> !suggestion.isEmpty()).collect(Collectors.toList()));
         return this;
     }
 

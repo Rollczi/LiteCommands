@@ -7,7 +7,6 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -133,10 +132,6 @@ public class SuggestionResult {
         return of(new IterableMutableArray<>(suggestions));
     }
 
-    public static SuggestionResult tooltip(String[] suggestions, String... tooltip) {
-        return tooltip(new IterableMutableArray<>(suggestions), new IterableMutableArray<>(tooltip));
-    }
-
     public static SuggestionResult empty() {
         return new SuggestionResult(new HashSet<>());
     }
@@ -146,20 +141,6 @@ public class SuggestionResult {
 
         for (String suggestion : suggestions) {
             parsedSuggestions.add(Suggestion.of(suggestion));
-        }
-
-        return new SuggestionResult(parsedSuggestions);
-    }
-
-    public static SuggestionResult tooltip(Iterable<String> suggestions, Iterable<String> tooltips) {
-        Set<Suggestion> parsedSuggestions = new HashSet<>();
-
-        Iterator<String> iterator = suggestions.iterator();
-        Iterator<String> iterator2 = tooltips.iterator();
-        while (iterator.hasNext() && iterator2.hasNext()) {
-            String suggestion = iterator.next();
-            String tooltip = iterator2.next();
-            parsedSuggestions.add(Suggestion.of(suggestion, tooltip));
         }
 
         return new SuggestionResult(parsedSuggestions);
@@ -180,11 +161,7 @@ public class SuggestionResult {
     }
 
     public static SuggestionResultCollector collector() {
-        return new SuggestionResultCollector(false);
-    }
-
-    public static SuggestionResultCollector tooltipCollector() {
-        return new SuggestionResultCollector(true);
+        return new SuggestionResultCollector();
     }
 
 }

@@ -8,8 +8,6 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -41,7 +39,7 @@ public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<Ser
         return invocation.sender().getServer().getPlayerManager().getPlayerList().stream()
             .map(serverPlayerEntity -> serverPlayerEntity.getGameProfile())
             .map(gameProfile -> gameProfile.getName())
-            .collect(SuggestionResult.tooltipCollector());
+            .collect(SuggestionResult.collector());
     }
 
 }

@@ -30,7 +30,7 @@ public class SuggestionTooltipTest extends LiteTestSpec {
 
         @Override
         public SuggestionResult suggest(Invocation<TestSender> invocation, Argument<UserData> argument, SuggestionContext context) {
-            return SuggestionResult.tooltip(new String[]{"1"}, "user1");
+            return SuggestionResult.from(Suggestion.of("1", "user1"));
         }
     }
 
