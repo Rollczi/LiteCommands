@@ -8,9 +8,12 @@ import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.velocity.LiteVelocityMessages;
+
+import java.util.stream.Collectors;
 
 public class PlayerArgument extends ArgumentResolver<CommandSource, Player> {
 
@@ -31,9 +34,11 @@ public class PlayerArgument extends ArgumentResolver<CommandSource, Player> {
 
     @Override
     public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<Player> argument, SuggestionContext context) {
-        return this.server.getAllPlayers().stream()
-            .map(player -> player.getUsername())
-            .collect(SuggestionResult.collector());
+        return SuggestionResult.from(
+            this.server.getAllPlayers().stream()
+                .map(player -> Suggestion.of(player.getUsername(), player.getUniqueId().toString()))
+                .collect(Collectors.toList())
+        );
     }
 
 }
