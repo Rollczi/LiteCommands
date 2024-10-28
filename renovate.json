@@ -12,7 +12,6 @@
   "separateMajorMinor": true,
   "pruneStaleBranches": true,
   "commitMessagePrefix": "dependency:",
-  "includePaths": ["examples/*"],
   "packageRules": [
     {
       "groupName": "patch",
