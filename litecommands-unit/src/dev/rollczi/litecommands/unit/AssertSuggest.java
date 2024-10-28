@@ -86,7 +86,7 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(SuggestionResult suggestions) {
-        return assertSuggest(suggestions.asMultiLevelList());
+        return assertSuggest(suggestions.asMultiLevelList()).assertTooltip(suggestions.asTooltipList());
     }
 
     public AssertSuggest assertSuggest(Collection<String> suggestions) {
@@ -95,6 +95,15 @@ public class AssertSuggest {
             .map(Suggestion::multilevel)
             .filter(suggestion -> !suggestion.isEmpty())
         ).containsExactlyInAnyOrderElementsOf(suggestions);
+        return this;
+    }
+
+    public AssertSuggest assertTooltip(Collection<String> tooltips) {
+        assertThat(suggest.getSuggestions()
+            .stream()
+            .map(Suggestion::tooltip)
+            .filter(suggestion -> !suggestion.isEmpty())
+        ).containsExactlyInAnyOrderElementsOf(tooltips);
         return this;
     }
 

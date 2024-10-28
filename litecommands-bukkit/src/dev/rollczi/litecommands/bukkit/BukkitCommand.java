@@ -83,7 +83,7 @@ public class BukkitCommand extends Command {
         PlatformSender platformSender = new BukkitPlatformSender(sender);
 
         return CompletableFuture.completedFuture(this.suggestionHook.suggest(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input)
-            .suggestions());
+            .getSuggestions());
     }
 
     @Override

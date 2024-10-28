@@ -93,7 +93,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
             int start = input.length() - arguments.get(arguments.size() - 1).length();
             SuggestionsBuilder suggestionsBuilder = builder.createOffset(start);
 
-            for (Suggestion suggestion : suggest.suggestions()) {
+            for (Suggestion suggestion : suggest.getSuggestions()) {
                 suggestionsBuilder.suggest(suggestion.multilevel(), tooltip(suggestion.tooltip()));// todo Text.Serialization#fromJson?
             }
 
