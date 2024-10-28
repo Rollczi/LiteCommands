@@ -8,9 +8,8 @@ import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 
-import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.priority.PriorityLevel;
+import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.shared.FailedReason;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInput.TypeMixedInputMatcher> {
 
@@ -60,23 +60,26 @@ class NamedTypedParseableInput implements ParseableInput<NamedTypedParseableInpu
 
         @Override
         @SuppressWarnings("unchecked")
-        public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, Parser<SENDER, PARSED> parser) {
+        public <SENDER, T> ParseResult<T> nextArgument(
+            Invocation<SENDER> invocation,
+            Argument<T> argument,
+            Supplier<Parser<SENDER, T>> parserProvider
+        ) {
             Object input = namedArguments.get(argument.getName());
 
             if (input == null) {
                 return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 
-            Class<PARSED> outType = argument.getType().getRawType();
+            Class<T> type = argument.getType().getRawType();
             consumedArguments.add(argument.getName());
 
-            if (outType.isAssignableFrom(input.getClass())) {
-                return ParseResult.success((PARSED) input);
+            if (ReflectUtil.instanceOf(input, type)) {
+                return ParseResult.success((T) input);
             }
 
-            RawInput rawInput = RawInput.of(input.toString().split(RawCommand.COMMAND_SEPARATOR));
-
-            return parser.parse(invocation, argument, rawInput);
+            Parser<SENDER, T> parser = parserProvider.get();
+            return parser.parse(invocation, argument, RawInput.of(input.toString().split(RawCommand.COMMAND_SEPARATOR)));
         }
 
         @Override

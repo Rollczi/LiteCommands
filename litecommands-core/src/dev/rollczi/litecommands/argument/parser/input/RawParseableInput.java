@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatcher> {
 
@@ -43,8 +44,8 @@ class RawParseableInput implements ParseableInput<RawParseableInput.RawInputMatc
         }
 
         @Override
-        public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, Parser<SENDER, PARSED> parser) {
-            RawInputAnalyzer.Context<SENDER, PARSED> context = rawInputAnalyzer.toContext(argument, parser);
+        public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, Supplier<Parser<SENDER, PARSED>> parserProvider) {
+            RawInputAnalyzer.Context<SENDER, PARSED> context = rawInputAnalyzer.toContext(argument, parserProvider.get());
 
             if (context.isMissingFullArgument()) {
                 Optional<ParseResult<PARSED>> optional = argument.getDefaultValue();

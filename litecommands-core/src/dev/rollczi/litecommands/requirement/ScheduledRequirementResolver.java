@@ -62,9 +62,8 @@ class ScheduledRequirementResolver<SENDER> {
         return new ScheduledRequirement<>(requirement, () -> scheduler.supply(requirement.meta().get(Meta.POLL_TYPE), resultSupplier));
     }
 
-    @SuppressWarnings("unchecked")
     private <T, MATCHER extends ParseableInputMatcher<MATCHER>> RequirementFutureResult<T> matchArgument(Argument<T> argument, Invocation<SENDER> invocation, MATCHER matcher) {
-        return matcher.nextArgument(invocation, argument, parserRegistry.getParser(argument));
+        return matcher.nextArgument(invocation, argument, () -> parserRegistry.getParser(argument));
     }
 
     private <T> RequirementFutureResult<T> matchContext(ContextRequirement<T> contextRequirement, Invocation<SENDER> invocation) {

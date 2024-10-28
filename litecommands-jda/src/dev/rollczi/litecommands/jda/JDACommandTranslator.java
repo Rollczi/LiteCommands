@@ -308,6 +308,20 @@ public class JDACommandTranslator {
         JDARoute(String argumentName) {
             this("", "", argumentName);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            JDARoute jdaRoute = (JDARoute) o;
+            return Objects.equals(subcommandGroup, jdaRoute.subcommandGroup) && Objects.equals(subcommandName, jdaRoute.subcommandName) && Objects.equals(argumentName, jdaRoute.argumentName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(subcommandGroup, subcommandName, argumentName);
+        }
+
     }
 
     static final class JDAType<T> {

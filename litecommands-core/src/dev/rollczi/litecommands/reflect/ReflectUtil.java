@@ -54,6 +54,10 @@ public final class ReflectUtil {
     }
 
     public static boolean instanceOf(Object obj, Class<?> instanceOf) {
+        if (obj == null) {
+            return false;
+        }
+
         return instanceOf(obj.getClass(), instanceOf);
     }
 

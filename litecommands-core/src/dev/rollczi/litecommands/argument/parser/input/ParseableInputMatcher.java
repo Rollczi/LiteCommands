@@ -6,10 +6,11 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.input.InputMatcher;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.shared.FailedReason;
+import java.util.function.Supplier;
 
 public interface ParseableInputMatcher<SELF extends ParseableInputMatcher<SELF>> extends InputMatcher {
 
-    <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, Parser<SENDER, PARSED> parser);
+    <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, Supplier<Parser<SENDER, PARSED>> parser);
 
     @Override
     boolean hasNextRoute();

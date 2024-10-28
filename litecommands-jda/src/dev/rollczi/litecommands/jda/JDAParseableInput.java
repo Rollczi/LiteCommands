@@ -1,15 +1,16 @@
 package dev.rollczi.litecommands.jda;
 
+import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
-import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
+import java.util.function.Supplier;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.HashSet;
@@ -42,31 +43,33 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
 
         @Override
         @SuppressWarnings("unchecked")
-        public <SENDER, PARSED> ParseResult<PARSED> nextArgument(Invocation<SENDER> invocation, Argument<PARSED> argument, Parser<SENDER, PARSED> parser) {
+        public <SENDER, T> ParseResult<T> nextArgument(Invocation<SENDER> invocation, Argument<T> argument, Supplier<Parser<SENDER, T>> parserProvider) {
             OptionMapping optionMapping = arguments.get(argument.getName());
 
             if (optionMapping == null) {
                 return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 
-            Class<PARSED> outType = argument.getType().getRawType();
-            consumedArguments.add(argument.getName());
-
+            Class<T> type = argument.getType().getRawType();
             Object input = command.mapArgument(toRoute(argument.getName()), optionMapping);
 
-            if (input == null) {
-                input = RawInput.of(optionMapping.getAsString().split(" "));
-            }
+            consumedArguments.add(argument.getName());
 
-            if (ReflectUtil.instanceOf(input, outType)) {
-                return ParseResult.success((PARSED) input);
+            if (ReflectUtil.instanceOf(input, type)) {
+                return ParseResult.success((T) input);
             }
 
             try {
-                throw new LiteJDAParseException("Cannot parse input to " + outType.getSimpleName() + " from " + input.getClass().getSimpleName());
-            }
-            catch (LiteJDAParseException exception) {
+                Parser<SENDER, T> parser = parserProvider.get();
+
                 return parser.parse(invocation, argument, RawInput.of(optionMapping.getAsString().split(" ")));
+            }
+            catch (IllegalArgumentException exception) {
+                if (input != null) {
+                    throw new LiteCommandsException("Input: " + input + " is not instance of " + type.getSimpleName());
+                }
+
+                throw new LiteCommandsException("Cannot parse argument: " + argument.getName(), exception);
             }
         }
 
@@ -100,12 +103,6 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
             return EndResult.success();
         }
 
-    }
-
-    private static class LiteJDAParseException extends LiteCommandsException {
-        public LiteJDAParseException(String message) {
-            super(message);
-        }
     }
 
 }
