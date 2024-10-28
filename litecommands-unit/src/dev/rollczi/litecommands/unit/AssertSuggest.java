@@ -98,7 +98,7 @@ public class AssertSuggest {
         return this;
     }
 
-    public AssertSuggest assertTooltip(Collection<String> tooltips) {
+    public AssertSuggest assertSuggest(Suggestion... suggestions) {
         assertThat(suggest.getSuggestions()
             .stream()
             .map(Suggestion::tooltip)
