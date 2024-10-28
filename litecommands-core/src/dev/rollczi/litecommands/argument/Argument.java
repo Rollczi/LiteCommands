@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.argument;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.priority.PrioritizedList;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.requirement.Requirement;
@@ -30,6 +31,8 @@ public interface Argument<T> extends Requirement<T> {
 
     @ApiStatus.Experimental
     PrioritizedList<ArgumentProfile<?>> getProfiles();
+
+    CommandExecutor<T> getExecutor();
 
     /**
      * Create a child of the current argument.

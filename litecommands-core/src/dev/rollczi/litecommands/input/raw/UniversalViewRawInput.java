@@ -4,11 +4,11 @@ import dev.rollczi.litecommands.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-class ViewBasedRawInputImpl implements RawInput {
+public class UniversalViewRawInput implements RawInput, RawInputView {
 
     private final RawInputView rawInputView;
 
-    public ViewBasedRawInputImpl(RawInputView rawInputView) {
+    public UniversalViewRawInput(RawInputView rawInputView) {
         this.rawInputView = rawInputView;
     }
 
@@ -121,6 +121,41 @@ class ViewBasedRawInputImpl implements RawInput {
         }
 
         return count - countNow;
+    }
+
+    @Override
+    public UniversalViewRawInput sub(int startInclusive, int endExclusive) {
+        return new UniversalViewRawInput(rawInputView.sub(startInclusive, endExclusive));
+    }
+
+    @Override
+    public UniversalViewRawInput sub(int startInclusive) {
+        return new UniversalViewRawInput(rawInputView.sub(startInclusive));
+    }
+
+    @Override
+    public String content() {
+        return rawInputView.content();
+    }
+
+    @Override
+    public int countOf(char character) {
+        return rawInputView.countOf(character);
+    }
+
+    @Override
+    public String sourceContent() {
+        return rawInputView.sourceContent();
+    }
+
+    @Override
+    public String claim() {
+        return rawInputView.claim();
+    }
+
+    @Override
+    public String claim(int startInclusive, int endExclusive) {
+        return rawInputView.claim(startInclusive, endExclusive);
     }
 
 }

@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfile;
 import dev.rollczi.litecommands.argument.profile.ArgumentProfileNamespace;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.priority.MutablePrioritizedList;
@@ -24,6 +25,7 @@ public class SimpleArgument<T> implements MutableArgument<T> {
     private volatile int hashCode;
 
     private @Nullable Argument<?> pattern;
+    private CommandExecutor<T> executor;
 
     private final MutablePrioritizedList<ArgumentProfile<?>> profiles = new MutablePrioritizedList<>();
 
@@ -113,6 +115,11 @@ public class SimpleArgument<T> implements MutableArgument<T> {
     @Override
     public PrioritizedList<ArgumentProfile<?>> getProfiles() {
         return profiles;
+    }
+
+    @Override
+    public CommandExecutor<T> getExecutor() {
+        return executor;
     }
 
     @Override
