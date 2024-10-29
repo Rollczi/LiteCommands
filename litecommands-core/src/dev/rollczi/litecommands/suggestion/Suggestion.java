@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.suggestion;
 
+import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.util.StringUtil;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class Suggestion {
     private final List<String> multiSuggestion;
 
     private Suggestion(String suggestion, String tooltip, List<String> multiSuggestions) {
+        Preconditions.notNull(tooltip, "tooltip");
+        Preconditions.notNull(suggestion, "suggestion");
         this.suggestion = suggestion;
         this.tooltip = tooltip;
         this.multiSuggestion = multiSuggestions;
