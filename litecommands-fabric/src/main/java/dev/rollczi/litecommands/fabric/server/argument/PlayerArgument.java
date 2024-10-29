@@ -39,12 +39,9 @@ public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<Ser
 
     @Override
     public SuggestionResult suggest(Invocation<ServerCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
-        return SuggestionResult.from(
-            invocation.sender().getServer().getPlayerManager().getPlayerList().stream()
+        return invocation.sender().getServer().getPlayerManager().getPlayerList().stream()
             .map(serverPlayerEntity -> serverPlayerEntity.getGameProfile())
-            .map(gameProfile -> Suggestion.of(gameProfile.getName(), gameProfile.getId().toString()))
-            .collect(Collectors.toList())
-        );
+            .collect(SuggestionResult.collector(profile -> profile.getName(), profile -> profile.getId().toString()));
     }
 
 }
