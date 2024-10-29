@@ -38,11 +38,8 @@ public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
 
     @Override
     public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext context) {
-        return SuggestionResult.from(
-            server.getOnlinePlayers().stream()
-                .map(player -> Suggestion.of(player.getName(), player.getUniqueId().toString()))
-                .collect(Collectors.toList())
-        );
+        return server.getOnlinePlayers().stream()
+            .collect(SuggestionResult.collector(player -> player.getName(), player -> player.getUniqueId().toString()));
     }
 
 }

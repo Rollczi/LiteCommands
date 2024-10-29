@@ -6,14 +6,11 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.sponge.LiteSpongeMessages;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-
-import java.util.stream.Collectors;
 
 public class ServerPlayerArgument extends ArgumentResolver<CommandCause, ServerPlayer> {
 
@@ -42,10 +39,7 @@ public class ServerPlayerArgument extends ArgumentResolver<CommandCause, ServerP
             return SuggestionResult.empty();
         }
 
-        return SuggestionResult.from(
-            game.server().onlinePlayers().stream()
-                .map(player -> Suggestion.of(player.name(), player.uniqueId().toString()))
-                .collect(Collectors.toList())
-        );
+        return game.server().onlinePlayers().stream()
+            .collect(SuggestionResult.collector(player -> player.name(), player -> player.uniqueId().toString()));
     }
 }
