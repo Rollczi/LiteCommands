@@ -62,12 +62,6 @@ public class SuggestionResult {
             .collect(Collectors.toList());
     }
 
-    public List<String> asTooltipList() {
-        return this.suggestions.stream()
-            .map(Suggestion::tooltip)
-            .collect(Collectors.toList());
-    }
-
     public SuggestionResult appendLeft(String... suggestions) {
         Set<Suggestion> parsedSuggestions = new HashSet<>();
 
