@@ -9,8 +9,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.jetbrains.annotations.ApiStatus;
 
 public class Suggestion {
+
+    private static final String DEFAULT_TOOLTIP = "";
 
     private final String suggestion;
     private final String tooltip;
@@ -46,6 +49,7 @@ public class Suggestion {
         return this.multiSuggestion.size();
     }
 
+    @ApiStatus.Experimental
     public String tooltip() {
         return this.tooltip;
     }
@@ -109,15 +113,16 @@ public class Suggestion {
     }
 
     public static Suggestion from(List<String> suggestion) {
-        return new Suggestion(String.join(" ", suggestion), null, new ArrayList<>(suggestion));
+        return new Suggestion(String.join(" ", suggestion), DEFAULT_TOOLTIP, new ArrayList<>(suggestion));
     }
 
+    @ApiStatus.Experimental
     public static Suggestion of(String suggestion, String tooltip) {
         return new Suggestion(suggestion, tooltip, StringUtil.splitBySpace(suggestion));
     }
 
     public static Suggestion of(String suggestion) {
-        return new Suggestion(suggestion, null, StringUtil.splitBySpace(suggestion));
+        return new Suggestion(suggestion, DEFAULT_TOOLTIP, StringUtil.splitBySpace(suggestion));
     }
 
     @Override
