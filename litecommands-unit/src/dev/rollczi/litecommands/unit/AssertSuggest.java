@@ -94,25 +94,17 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(Collection<String> suggestions) {
-        assertThat(suggest.getSuggestions()
-            .stream()
-            .map(Suggestion::multilevel)
-            .filter(suggestion -> !suggestion.isEmpty())
-        ).containsExactlyInAnyOrderElementsOf(suggestions);
+        assertThat(suggest.getSuggestions())
+            .map(suggestion -> suggestion.multilevel())
+            .filteredOn(suggestion -> !suggestion.isEmpty())
+            .containsExactlyInAnyOrderElementsOf(suggestions);
+
         return this;
     }
 
     public AssertSuggest assertSuggest(Suggestion... suggestions) {
-        assertThat(suggest.getSuggestions()
-            .stream()
-            .map(Suggestion::tooltip)
-            .filter(tooltip -> tooltip != null && !tooltip.isEmpty())
-        ).containsExactlyInAnyOrderElementsOf(Arrays.stream(suggestions).map(Suggestion::tooltip).filter(tooltip -> tooltip != null && !tooltip.isEmpty()).collect(Collectors.toList()));
-        assertThat(suggest.getSuggestions()
-            .stream()
-            .map(Suggestion::multilevel)
-            .filter(suggestion -> !suggestion.isEmpty())
-        ).containsExactlyInAnyOrderElementsOf(Arrays.stream(suggestions).map(Suggestion::multilevel).filter(suggestion -> !suggestion.isEmpty()).collect(Collectors.toList()));
+        assertThat(suggest.getSuggestions())
+            .containsExactlyInAnyOrderElementsOf(Arrays.asList(suggestions));
         return this;
     }
 
