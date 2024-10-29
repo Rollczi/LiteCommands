@@ -7,8 +7,18 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import org.jetbrains.annotations.ApiStatus;
 
-public class SuggestionResultCollector implements Collector<String, SuggestionResult, SuggestionResult> {
+@ApiStatus.Experimental
+public class SuggestionResultTooltipCollector<T> implements Collector<T, SuggestionResult, SuggestionResult> {
+
+    private final Function<T, String> suggestionProvider;
+    private final Function<T, String> tooltipProvider;
+
+    public SuggestionResultTooltipCollector(Function<T, String> suggestionProvider, Function<T, String> tooltipProvider) {
+        this.suggestionProvider = suggestionProvider;
+        this.tooltipProvider = tooltipProvider;
+    }
 
     @Override
     public Supplier<SuggestionResult> supplier() {
@@ -16,8 +26,8 @@ public class SuggestionResultCollector implements Collector<String, SuggestionRe
     }
 
     @Override
-    public BiConsumer<SuggestionResult, String> accumulator() {
-        return (suggestionResult, raw) -> suggestionResult.add(Suggestion.of(raw));
+    public BiConsumer<SuggestionResult, T> accumulator() {
+        return (suggestionResult, value) -> suggestionResult.add(Suggestion.of(suggestionProvider.apply(value), tooltipProvider.apply(value)));
     }
 
     @Override

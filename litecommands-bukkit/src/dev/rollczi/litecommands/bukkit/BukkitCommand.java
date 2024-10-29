@@ -60,7 +60,9 @@ public class BukkitCommand extends Command {
             CompletableFuture<Set<Suggestion>> future = this.suggest(sender, alias, args);
 
             try {
-                return future.get(0, TimeUnit.MILLISECONDS).stream().map(Suggestion::multilevel).collect(Collectors.toList());
+                return future.get(0, TimeUnit.MILLISECONDS).stream()
+                    .map(suggestion -> suggestion.multilevel())
+                    .collect(Collectors.toList());
             }
             catch (TimeoutException exception) {
                 if (settings.syncSuggestionWarning()) {
@@ -81,9 +83,9 @@ public class BukkitCommand extends Command {
     public CompletableFuture<Set<Suggestion>> suggest(CommandSender sender, String alias, String[] args) {
         SuggestionInput<?> input = SuggestionInput.raw(args);
         PlatformSender platformSender = new BukkitPlatformSender(sender);
+        Invocation<CommandSender> invocation = new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input);
 
-        return CompletableFuture.completedFuture(this.suggestionHook.suggest(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input)
-            .getSuggestions());
+        return CompletableFuture.completedFuture(this.suggestionHook.suggest(invocation, input).getSuggestions()); // TODO Run suggestion asynchronously inside LiteCommands platform
     }
 
     @Override

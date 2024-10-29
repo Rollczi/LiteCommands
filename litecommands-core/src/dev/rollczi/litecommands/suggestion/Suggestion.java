@@ -13,7 +13,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 public class Suggestion {
 
-    private static final String DEFAULT_TOOLTIP = "";
+    static final String DEFAULT_TOOLTIP = "";
 
     private final String suggestion;
     private final String tooltip;

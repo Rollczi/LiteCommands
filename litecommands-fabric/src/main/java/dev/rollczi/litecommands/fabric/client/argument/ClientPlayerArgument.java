@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.fabric.LiteFabricMessages;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.fabricmc.api.EnvType;
@@ -14,8 +13,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-
-import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolver<FabricClientCommandSource, P> {
@@ -39,11 +36,9 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
 
     @Override
     public SuggestionResult suggest(Invocation<FabricClientCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
-        return SuggestionResult.from(
-            invocation.sender().getWorld().getPlayers().stream()
-                .map(player -> player.getGameProfile())
-                .map(gameProfile -> Suggestion.of(gameProfile.getName(), gameProfile.getId().toString()))
-                .collect(Collectors.toList())
-        );
+        return invocation.sender().getWorld().getPlayers().stream()
+            .map(player -> player.getGameProfile())
+            .collect(SuggestionResult.collector(profile -> profile.getName(), profile -> profile.getId().toString()));
     }
+
 }

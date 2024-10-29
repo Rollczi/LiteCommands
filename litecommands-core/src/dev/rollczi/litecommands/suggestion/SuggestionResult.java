@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.shared.IterableMutableArray;
 import dev.rollczi.litecommands.util.StringUtil;
+import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
@@ -156,6 +157,16 @@ public class SuggestionResult {
 
     public static SuggestionResultCollector collector() {
         return new SuggestionResultCollector();
+    }
+
+    @ApiStatus.Experimental
+    public static <T> SuggestionResultTooltipCollector<T> collector(Function<T, String> suggestion) {
+        return new SuggestionResultTooltipCollector<>(suggestion, t -> Suggestion.DEFAULT_TOOLTIP);
+    }
+
+    @ApiStatus.Experimental
+    public static <T> SuggestionResultTooltipCollector<T> collector(Function<T, String> suggestion, Function<T, String> tooltip) {
+        return new SuggestionResultTooltipCollector<>(suggestion, tooltip);
     }
 
 }

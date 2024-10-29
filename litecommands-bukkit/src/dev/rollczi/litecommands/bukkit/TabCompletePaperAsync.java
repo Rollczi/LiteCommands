@@ -31,7 +31,7 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
             return;
         }
 
-        tabCompleteEvent.setCompletionTooltips(result);
+        tabCompleteEvent.completions(result);
     }
 
     public void close() {
@@ -91,20 +91,23 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
             ReflectUtil.invokeMethod(SET_COMPLETIONS_METHOD, event, completions);
         }
 
-        public void setCompletionTooltips(Set<Suggestion> suggestions) {
-            ReflectUtil.invokeMethod(COMPLETIONS_METHOD, event,
-                suggestions.stream()
-                    .map(e -> ReflectUtil.invokeMethod(CREATE_COMPLETION_TOOLTIP, null, e.multilevel(), toComponent(e.tooltip())))
-                    .collect(Collectors.toList())
-            );
+        public void completions(Set<Suggestion> suggestions) {
+            List<Object> completions = suggestions.stream()
+                .map(suggestion -> ReflectUtil.invokeMethod(CREATE_COMPLETION_TOOLTIP, null, suggestion.multilevel(), toComponent(suggestion.tooltip())))
+                .collect(Collectors.toList());
+
+            ReflectUtil.invokeMethod(COMPLETIONS_METHOD, event, completions);
         }
 
-        public Object toComponent(String str) {
-            if (str == null || str.isEmpty()) {
+        public Object toComponent(String text) {
+            if (text == null || text.isEmpty()) {
                 return null;
             }
-            return ReflectUtil.invokeMethod(COMPONENT_TEXT_METHOD, null, str);// todo ComponentSerializer?
-        }
 
+            // TODO ComponentSerializer support for Adventure
+            // There we can have problems with relocation for adventure platform
+            // Maybe we should use json format?
+            return ReflectUtil.invokeMethod(COMPONENT_TEXT_METHOD, null, text);
+        }
     }
 }

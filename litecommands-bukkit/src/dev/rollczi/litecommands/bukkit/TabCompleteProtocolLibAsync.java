@@ -95,10 +95,11 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
                 if (suggestions == null) {
                     return;
                 }
-                List<String> list = suggestions.stream().map(c -> c.multilevel()).collect(Collectors.toList());
+                String[] list = suggestions.stream().map(c -> c.multilevel())
+                    .toArray(String[]::new);
 
                 PacketContainer packet = MANAGER.createPacket(PacketType.Play.Server.TAB_COMPLETE);
-                packet.getStringArrays().write(0, list.toArray(new String[0]));
+                packet.getStringArrays().write(0, list);
 
                 MANAGER.sendServerPacket(player, packet);
             }
