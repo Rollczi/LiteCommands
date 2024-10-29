@@ -93,7 +93,7 @@ public class SuggestionResult {
         Set<Suggestion> parsedSuggestions = new HashSet<>();
 
         for (Suggestion suggestion : this.suggestions) {
-            parsedSuggestions.add(Suggestion.of(partToAppend + suggestion.multilevel()));
+            parsedSuggestions.add(Suggestion.of(partToAppend + suggestion.multilevel(), suggestion.tooltip()));
         }
 
         return new SuggestionResult(parsedSuggestions);

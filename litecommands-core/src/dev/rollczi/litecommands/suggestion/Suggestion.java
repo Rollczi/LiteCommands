@@ -63,7 +63,7 @@ public class Suggestion {
             throw new IllegalArgumentException("Levels cannot be greater than suggestion size " + levels + " > " + this.multiSuggestion.size());
         }
 
-        return Suggestion.from(this.multiSuggestion.subList(levels, this.multiSuggestion.size()));
+        return Suggestion.from(this.multiSuggestion.subList(levels, this.multiSuggestion.size()), this.tooltip);
     }
 
     public Suggestion deleteRight(int levels) {
@@ -75,11 +75,11 @@ public class Suggestion {
             throw new IllegalArgumentException("Levels cannot be greater than suggestion size " + levels + " > " + this.multiSuggestion.size());
         }
 
-        return Suggestion.from(this.multiSuggestion.subList(0, this.multiSuggestion.size() - levels));
+        return Suggestion.from(this.multiSuggestion.subList(0, this.multiSuggestion.size() - levels), this.tooltip);
     }
 
     public Suggestion appendLeft(String... left) {
-        return Suggestion.of(String.join(" ", left) + " " + this.suggestion);
+        return Suggestion.of(String.join(" ", left) + " " + this.suggestion, tooltip);
     }
 
     public Suggestion appendLeft(Iterable<String> left) {
@@ -89,15 +89,15 @@ public class Suggestion {
         ).collect(Collectors.toList());
 
 
-        return new Suggestion(String.join(" ", list), null, list);
+        return new Suggestion(String.join(" ", list), this.tooltip, list);
     }
 
     public Suggestion appendRight(String... right) {
-        return Suggestion.of(this.suggestion + " " + String.join(" ", right));
+        return Suggestion.of(this.suggestion + " " + String.join(" ", right), this.tooltip);
     }
 
     public Suggestion appendRight(Iterable<String> right) {
-        return Suggestion.of(this.suggestion + " " + String.join(" ", right));
+        return Suggestion.of(this.suggestion + " " + String.join(" ", right), this.tooltip);
     }
 
     @Deprecated
@@ -109,7 +109,13 @@ public class Suggestion {
         List<String> newSuggestion = new ArrayList<>(this.multiSuggestion);
         newSuggestion.add(levelPart);
 
-        return Suggestion.from(newSuggestion);
+        return Suggestion.from(newSuggestion, this.tooltip);
+    }
+
+    @ApiStatus.Experimental
+    @ApiStatus.Internal
+    public static Suggestion from(List<String> suggestion, String tooltip) {
+        return new Suggestion(String.join(" ", suggestion), tooltip, new ArrayList<>(suggestion));
     }
 
     public static Suggestion from(List<String> suggestion) {
