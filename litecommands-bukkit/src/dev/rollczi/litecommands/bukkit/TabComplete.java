@@ -73,8 +73,14 @@ public abstract class TabComplete {
 
     static TabComplete create(Scheduler scheduler, Plugin plugin) {
         try {
-            Class.forName("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent");
+            Class.forName("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent$Completion");
             return new TabCompletePaperAsync(plugin);
+        }
+        catch (ClassNotFoundException ignored) {}
+
+        try {
+            Class.forName("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent");
+            return new TabCompletePaper1_15Async(plugin);
         }
         catch (ClassNotFoundException ignored) {}
 
