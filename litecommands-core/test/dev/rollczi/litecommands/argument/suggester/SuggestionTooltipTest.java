@@ -45,6 +45,6 @@ public class SuggestionTooltipTest extends LiteTestSpec {
     @Test
     void testTooltip() {
         platform.suggest("test ")
-            .assertSuggest(SuggestionResult.from(Suggestion.of("1", "user1")));
+            .assertSuggest(Suggestion.of("1", "user1"));
     }
 }

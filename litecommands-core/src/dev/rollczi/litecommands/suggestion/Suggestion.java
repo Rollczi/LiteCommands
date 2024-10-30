@@ -121,6 +121,7 @@ public class Suggestion {
         return new Suggestion(String.join(" ", suggestion), tooltip, new ArrayList<>(suggestion));
     }
 
+    @ApiStatus.Internal
     public static Suggestion from(List<String> suggestion) {
         return new Suggestion(String.join(" ", suggestion), DEFAULT_TOOLTIP, new ArrayList<>(suggestion));
     }
