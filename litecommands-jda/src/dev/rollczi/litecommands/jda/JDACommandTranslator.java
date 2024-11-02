@@ -15,7 +15,9 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.priority.PrioritizedList;
 import dev.rollczi.litecommands.range.Range;
+import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.shared.Preconditions;
+import java.util.function.Function;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -42,7 +44,8 @@ public class JDACommandTranslator {
     private static final String DESCRIPTION_NO_GENERATED = "no generated description";
 
     private final Map<Class<?>, JDAType<?>> jdaSupportedTypes = new HashMap<>();
-    private final Map<Class<?>, JDATypeOverlay<?>> jdaTypeOverlays = new HashMap<>();
+    private final Map<Class<?>, JDAType<String>> jdaTypeOverlays = new HashMap<>();
+    private final Map<Class<?>, JDATypeWrapper<?>> jdaTypeWrappers = new HashMap<>();
 
     private final ParserRegistry<User> parserRegistry;
 
@@ -51,12 +54,29 @@ public class JDACommandTranslator {
     }
 
     public <T> JDACommandTranslator type(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {
-        jdaSupportedTypes.put(type, new JDAType<>(type, optionType, mapper));
+        return this.type(type, optionType, (invocation, option) -> mapper.map(option));
+    }
+
+    public <T> JDACommandTranslator type(Class<T> type, OptionType optionType, JDAContextTypeMapper<T> mapper) {
+        jdaSupportedTypes.put(type, new JDAType<>(optionType, mapper));
         return this;
     }
 
     public <T> JDACommandTranslator typeOverlay(Class<T> type, OptionType optionType, JDATypeMapper<String> mapper) {
-        jdaTypeOverlays.put(type, new JDATypeOverlay<>(type, optionType, mapper));
+        jdaTypeOverlays.put(type, new JDAType<>(optionType, mapper));
+        return this;
+    }
+
+    public <T> JDACommandTranslator typeOverlay(Class<T> type, OptionType optionType, JDAContextTypeMapper<String> mapper) {
+        jdaTypeOverlays.put(type, new JDAType<>(optionType, mapper));
+        return this;
+    }
+
+    /**
+     * Wrappers are only used for wrapping types that are supported by Discord API, and we want to skip LiteCommands parsing.
+     */
+    public <T> JDACommandTranslator typeWrapper(Class<T> type, Function<TypeToken<T>, TypeToken<?>> unwrapper, Function<?, T> wrapper) {
+        jdaTypeWrappers.put(type, new JDATypeWrapper<>(unwrapper, wrapper));
         return this;
     }
 
@@ -176,26 +196,33 @@ public class JDACommandTranslator {
             boolean isRequired = isRequired(argument);
 
             Class<?> parsedType = argument.getType().getRawType();
-            if (jdaSupportedTypes.containsKey(parsedType)) {
-                JDAType<?> jdaType = jdaSupportedTypes.get(parsedType);
-                OptionType optionType = jdaType.optionType();
+            JDATypeWrapper<?> wrapper = jdaTypeWrappers.get(parsedType);
 
-                consumer.translate(optionType, jdaType.mapper(), argumentName, description, isRequired, optionType.canSupportChoices());
-                continue;
+            if (wrapper != null) {
+                parsedType = wrapper.unwrapper(argument.getType()).getRawType();
             }
 
-            if (jdaTypeOverlays.containsKey(parsedType)) {
-                JDATypeOverlay<?> jdaTypeOverlay = jdaTypeOverlays.get(parsedType);
-                OptionType optionType = jdaTypeOverlay.optionType();
+            JDAType<?> type = getType(parsedType);
+            JDAContextTypeMapper<?> mapper = wrapper != null
+                ? (invocation, option) -> wrapper.wrap(type.mapper().map(invocation, option))
+                : type.mapper();
 
-                consumer.translate(optionType, jdaTypeOverlay.mapper(), argumentName, description, isRequired, optionType.canSupportChoices());
-                continue;
-            }
-
-            consumer.translate(OptionType.STRING, option -> option.getAsString(), argumentName, description, isRequired, true);
+            consumer.translate(type.optionType(), mapper, argumentName, description, isRequired, type.optionType().canSupportChoices());
         }
 
         return executor;
+    }
+
+    private JDAType<?> getType(Class<?> parsedType) {
+        if (jdaSupportedTypes.containsKey(parsedType)) {
+            return jdaSupportedTypes.get(parsedType);
+        }
+
+        if (jdaTypeOverlays.containsKey(parsedType)) {
+            return jdaTypeOverlays.get(parsedType);
+        }
+
+        return new JDAType<>(OptionType.STRING, (invocation, option) -> option.getAsString());
     }
 
     private <T> boolean isRequired(Argument<T> argument) {
@@ -215,7 +242,7 @@ public class JDACommandTranslator {
     }
 
     private interface TranslateExecutorConsumer {
-        void translate(OptionType optionType, JDATypeMapper<?> mapper, String argName, String description, boolean isRequired, boolean autocomplete);
+        void translate(OptionType optionType, JDAContextTypeMapper<?> mapper, String argName, String description, boolean isRequired, boolean autocomplete);
     }
 
     JDAParseableInput translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
@@ -224,7 +251,7 @@ public class JDACommandTranslator {
             .collect(Collectors.toList());
 
         Map<String, OptionMapping> options = interaction.getOptions().stream()
-            .collect(Collectors.toMap(OptionMapping::getName, option -> option));
+            .collect(Collectors.toMap(optionMapping -> optionMapping.getName(), option -> option));
 
         return new JDAParseableInput(routes, options, command);
     }
@@ -235,7 +262,7 @@ public class JDACommandTranslator {
             .collect(Collectors.toList());
 
         Map<String, OptionMapping> options = interaction.getOptions().stream()
-            .collect(Collectors.toMap(OptionMapping::getName, option -> option));
+            .collect(Collectors.toMap(optionMapping -> optionMapping.getName(), option -> option));
 
         return new JDASuggestionInput(routes, options, interaction.getFocusedOption());
     }
@@ -260,7 +287,7 @@ public class JDACommandTranslator {
 
     static final class JDALiteCommand {
         private final SlashCommandData jdaCommandData;
-        private final Map<JDARoute, JDATypeMapper<?>> jdaArgumentTypeMappers = new HashMap<>();
+        private final Map<JDARoute, JDAContextTypeMapper<?>> jdaArgumentTypeMappers = new HashMap<>();
 
         JDALiteCommand(SlashCommandData jdaCommandData) {
             this.jdaCommandData = jdaCommandData;
@@ -270,17 +297,17 @@ public class JDACommandTranslator {
             return jdaCommandData;
         }
 
-        Object mapArgument(JDARoute jdaRoute, OptionMapping option) {
-            JDATypeMapper<?> typeMapper = jdaArgumentTypeMappers.get(jdaRoute);
+        Object mapArgument(JDARoute jdaRoute, OptionMapping option, Invocation<?> invocation) {
+            JDAContextTypeMapper<?> typeMapper = jdaArgumentTypeMappers.get(jdaRoute);
 
             if (typeMapper == null) {
                 return null;
             }
 
-            return typeMapper.map(option);
+            return typeMapper.map(invocation, option);
         }
 
-        void addTypeMapper(JDARoute route, JDATypeMapper<?> mapper) {
+        void addTypeMapper(JDARoute route, JDAContextTypeMapper<?> mapper) {
             jdaArgumentTypeMappers.put(route, mapper);
         }
     }
@@ -324,13 +351,11 @@ public class JDACommandTranslator {
 
     }
 
-    static final class JDAType<T> {
-        private final Class<T> type;
+    static class JDAType<T> {
         private final OptionType optionType;
-        private final JDATypeMapper<T> mapper;
+        private final JDAContextTypeMapper<T> mapper;
 
-        JDAType(Class<T> type, OptionType optionType, JDATypeMapper<T> mapper) {
-            this.type = type;
+        JDAType(OptionType optionType, JDAContextTypeMapper<T> mapper) {
             this.optionType = optionType;
             this.mapper = mapper;
         }
@@ -339,28 +364,26 @@ public class JDACommandTranslator {
             return optionType;
         }
 
-        public JDATypeMapper<T> mapper() {
+        public JDAContextTypeMapper<T> mapper() {
             return mapper;
         }
     }
 
-    static final class JDATypeOverlay<T> {
-        private final Class<T> type;
-        private final OptionType optionType;
-        private final JDATypeMapper<String> mapper;
+    static final class JDATypeWrapper<T> {
+        private final Function<TypeToken<T>, TypeToken<?>> unwrapper;
+        private final Function<Object, T> wrapper;
 
-        JDATypeOverlay(Class<T> type, OptionType optionType, JDATypeMapper<String> mapper) {
-            this.type = type;
-            this.optionType = optionType;
-            this.mapper = mapper;
+        public JDATypeWrapper(Function<TypeToken<T>, TypeToken<?>> unwrapper, Function<?, T> wrapper) {
+            this.unwrapper = unwrapper;
+            this.wrapper = (Function<Object, T>) wrapper;
         }
 
-        public OptionType optionType() {
-            return optionType;
+        public TypeToken<?> unwrapper(TypeToken<?> type) {
+            return unwrapper.apply((TypeToken<T>) type);
         }
 
-        public JDATypeMapper<String> mapper() {
-            return mapper;
+        private T wrap(Object object) {
+            return wrapper.apply(object);
         }
     }
 
