@@ -11,6 +11,8 @@ import dev.rollczi.litecommands.jda.permission.DiscordPermissionValidator;
 import dev.rollczi.litecommands.jda.permission.DiscordPermissionAnnotationProcessor;
 import dev.rollczi.litecommands.jda.visibility.VisibilityAnnotationProcessor;
 import dev.rollczi.litecommands.scope.Scope;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -74,10 +76,13 @@ public final class LiteJDAFactory {
             .type(Channel.class, OptionType.CHANNEL, option -> option.getAsChannel())
             .type(GuildChannel.class, OptionType.CHANNEL, option -> option.getAsChannel())
             .type(GuildChannelUnion.class, OptionType.CHANNEL, option -> option.getAsChannel())
+            .type(Member.class, OptionType.USER, (option) -> option.getAsMember())
 
             .typeOverlay(Float.class, OptionType.NUMBER, option -> option.getAsString())
             .typeOverlay(float.class, OptionType.NUMBER, option -> option.getAsString())
-            .typeOverlay(Member.class, OptionType.USER, option -> option.getAsString()) // TODO: Add raw member parer
+
+            .typeWrapper(Optional.class, type -> type.getParameterized(), value -> Optional.of(value))
+            .typeWrapper(CompletableFuture.class, type -> type.getParameterized(), value -> CompletableFuture.completedFuture(value))
             ;
     }
 

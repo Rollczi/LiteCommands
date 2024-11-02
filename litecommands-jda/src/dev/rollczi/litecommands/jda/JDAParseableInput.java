@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.jda;
 
-import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
@@ -9,6 +8,7 @@ import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import java.util.function.Supplier;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -47,11 +47,21 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
             OptionMapping optionMapping = arguments.get(argument.getName());
 
             if (optionMapping == null) {
-                return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
+                Parser<SENDER, T> parser = parserProvider.get();
+                Range range = parser.getRange(argument);
+                ParseResult<T> defaultResult = argument.getDefaultValue()
+                    .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT));
+
+                if (range.getMin() == 0) {
+                    return parser.parse(invocation, argument, RawInput.of())
+                        .mapFailure(failure -> defaultResult);
+                }
+
+                return defaultResult;
             }
 
             Class<T> type = argument.getType().getRawType();
-            Object input = command.mapArgument(toRoute(argument.getName()), optionMapping);
+            Object input = command.mapArgument(toRoute(argument.getName()), optionMapping, invocation);
 
             consumedArguments.add(argument.getName());
 
@@ -59,18 +69,9 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
                 return ParseResult.success((T) input);
             }
 
-            try {
-                Parser<SENDER, T> parser = parserProvider.get();
+            Parser<SENDER, T> parser = parserProvider.get();
 
-                return parser.parse(invocation, argument, RawInput.of(optionMapping.getAsString().split(" ")));
-            }
-            catch (IllegalArgumentException exception) {
-                if (input != null) {
-                    throw new LiteCommandsException("Input: " + input + " is not instance of " + type.getSimpleName());
-                }
-
-                throw new LiteCommandsException("Cannot parse argument: " + argument.getName(), exception);
-            }
+            return parser.parse(invocation, argument, RawInput.of(optionMapping.getAsString().split(" ")));
         }
 
         private JDACommandTranslator.JDARoute toRoute(String argumentName) {

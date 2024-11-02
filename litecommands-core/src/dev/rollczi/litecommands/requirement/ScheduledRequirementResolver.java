@@ -30,8 +30,6 @@ class ScheduledRequirementResolver<SENDER> {
     private final BindRegistry bindRegistry;
     private final Scheduler scheduler;
 
-    private final BiMap<Class<?>, ArgumentKey, ParserSet<SENDER, ?>> cachedParserSets = new BiHashMap<>();
-
     ScheduledRequirementResolver(ContextRegistry<SENDER> contextRegistry, ParserRegistry<SENDER> parserRegistry, BindRegistry bindRegistry, Scheduler scheduler) {
         this.contextRegistry = contextRegistry;
         this.parserRegistry = parserRegistry;
