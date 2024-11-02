@@ -17,13 +17,12 @@ import dev.rollczi.example.velocity.handler.InvalidUsageHandlerImpl;
 import dev.rollczi.example.velocity.handler.PermissionMessage;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
-import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.velocity.LiteVelocityFactory;
 import dev.rollczi.litecommands.velocity.tools.VelocityOnlyPlayerContextual;
 
-@Plugin(id = "example-plugin", name = "ExamplePlugin", version = "3.8.0", authors = "Rollczi")
+@Plugin(id = "example-plugin", name = "ExamplePlugin", version = "3.9.0", authors = "Rollczi")
 public class ExamplePlugin {
 
     private final ProxyServer proxyServer;

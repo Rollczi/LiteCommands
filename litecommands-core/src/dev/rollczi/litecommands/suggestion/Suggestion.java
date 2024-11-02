@@ -52,6 +52,9 @@ public class Suggestion {
         return this.multiSuggestion.size();
     }
 
+    /**
+     * @since 3.9.0
+     */
     @ApiStatus.Experimental
     public String tooltip() {
         return this.tooltip;
@@ -115,17 +118,28 @@ public class Suggestion {
         return Suggestion.from(newSuggestion, this.tooltip);
     }
 
+    /**
+     * Creates a new suggestion with the given tooltip. The List of suggestions will be joined by space.
+     * @since 3.9.0
+     */
     @ApiStatus.Experimental
     @ApiStatus.Internal
     public static Suggestion from(List<String> suggestion, String tooltip) {
         return new Suggestion(String.join(" ", suggestion), tooltip, new ArrayList<>(suggestion));
     }
 
+    /**
+     * Creates a new suggestion from the given list of suggestions that will be joined by space.
+     */
     @ApiStatus.Internal
     public static Suggestion from(List<String> suggestion) {
         return new Suggestion(String.join(" ", suggestion), DEFAULT_TOOLTIP, new ArrayList<>(suggestion));
     }
 
+    /**
+     * Creates a new suggestion with the given tooltip.
+     * @since 3.9.0
+     */
     @ApiStatus.Experimental
     public static Suggestion of(String suggestion, String tooltip) {
         return new Suggestion(suggestion, tooltip, StringUtil.splitBySpace(suggestion));

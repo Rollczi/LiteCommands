@@ -1,12 +1,12 @@
+<div align="right">
 
-<div align="center"><img src="https://github.com/user-attachments/assets/b1b56f65-2cea-4c24-ae99-8c01f45a33cb" alt="hacktoberfest" width="85%"/></div>
-<div align="center"><h3>LiteCommands & Hacktoberfest 2024</h3></div>
-<div align="center">Register on <a href="https://hacktoberfest.com/">hacktoberfest.com</a> and start supporting open source!</div>
-<div align="center">Add/Improve/Fix features and open <a href="https://github.com/Rollczi/LiteCommands/pulls">Pull request</a>! If you don't have an idea, see  <a href="https://github.com/Rollczi/LiteCommands/issues">issues</a>!</div>
-<br>
+[![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=9372f9&name=Version)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands)
+</div>
 
 <div align="center">
 
+<img src="https://github.com/Rollczi/LiteCommands/assets/49173834/4c297b16-eacd-4c89-ba34-2767b114e391" alt="banner" width="65%"/>
+<br><br>
 
 [![Discord](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/social/discord-plural_vector.svg)](https://discord.gg/6cUhkj6uZJ)
 [![Sponsor](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/donate/ghsponsors-singular_vector.svg)](https://github.com/sponsors/Rollczi)
@@ -27,7 +27,10 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 - Simple Arguments [@Arg](https://docs.rollczi.dev/documentation/litecommands/arguments/arg.html#arg) & Optional arguments [@OptionalArg](https://docs.rollczi.dev/documentation/litecommands/arguments/arg-optional.html#arg-optional)
 - Flags - [@Flag](https://docs.rollczi.dev/documentation/litecommands/arguments/flag.html#flag)
 - Joiner - _[@Join](https://docs.rollczi.dev/documentation/litecommands/arguments/join.html#join) remaining arguments into a string_
+- Literal arguments - @Literal
+- [@Quoted](https://docs.rollczi.dev/documentation/litecommands/arguments/quoted.html) arguments for `"quoted input!"`
 - Asynchronous commands, argument parsing and completion. [@Async](https://docs.rollczi.dev/documentation/litecommands/features/asynchronous/async-annotation.html#async)
+- Context providers - e.g. `@Sender Player`, `@Context World` and [more](https://docs.rollczi.dev/documentation/litecommands/getting-started/context.html)
 - Command shortcuts [@Shortcut](https://docs.rollczi.dev/documentation/litecommands/features/shortcut.html#shortcut)
 - Support for basic types: `int`, `double`, `Duration`, `LocalDateTime`, `Location` and [more](https://docs.rollczi.dev/documentation/litecommands/arguments/arg/java-types.html#java-types)!
 - Support for collection types: `List`, `Set`, `TreeSet`, `Queue`, java array `T[]` and many others!
@@ -42,7 +45,7 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 ## 📦 Platforms
 - Velocity
 - Bukkit, Spigot, Paper
-- BungeeCord, Waterfall
+- BungeeCord, Waterfall _(by [rchomczyk](https://github.com/rchomczyk))_
 - Minestom _(by [Codestech1](https://github.com/Codestech1))_
 - Sponge _(by [BlackBaroness](https://github.com/BlackBaroness))_
 - Fabric _(by [huanmeng_qwq](https://github.com/huanmeng-qwq))_
@@ -57,7 +60,7 @@ This is an example of `/hello <name> <amount>` command:
 public class HelloCommand {
 
     @Execute
-    void command(@Context CommandSender sender, @Arg String name, @Arg int amount) {
+    void command(@Sender CommandSender sender, @Arg String name, @Arg int amount) {
         for (int i = 0; i < amount; i++) {
             sender.sendMessage("Hello " + name);
         }
@@ -86,13 +89,13 @@ maven("https://repo.panda-lang.org/releases")
 
 #### ➕ Add LiteCommands to dependencies
 ```kts
-implementation("dev.rollczi:{artifact}:3.8.0")
+implementation("dev.rollczi:{artifact}:3.9.0")
 ```
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>{artifact}</artifactId>
-    <version>3.8.0</version>
+    <version>3.9.0</version>
 </dependency>
 ```
 > ⚠️ Replace `{artifact}` with [platform artifact](https://docs.rollczi.dev/documentation/litecommands/platforms.html#supported-platforms)  
@@ -104,7 +107,7 @@ implementation("dev.rollczi:{artifact}:3.8.0")
 @@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
 ```
 
-<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/q1zZu"><img src="https://images.weserv.nl/?url=https://github.com/q1zZu.png?v=4&mask=circle" width="60px" alt="q1zZ" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/Nadwey"><img src="https://images.weserv.nl/?url=https://github.com/Nadwey.png?v=4&mask=circle" width="60px" alt="Nadwey" /></a>&nbsp;&nbsp;<!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/Nadwey"><img src="https://images.weserv.nl/?url=https://github.com/Nadwey.png?v=4&mask=circle" width="60px" alt="Nadwey" /></a>&nbsp;&nbsp;<!-- sponsors -->
 
 ## 🔮 Official IntelliJ Plugin
 
