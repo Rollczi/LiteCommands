@@ -57,8 +57,8 @@ public final class LiteJDAFactory {
         );
     }
 
-    private static JDACommandTranslator createTranslator(ParserRegistry<User> wrapperRegistry) {
-        return new JDACommandTranslator(wrapperRegistry)
+    private static JDACommandTranslator createTranslator(ParserRegistry<User> parserRegistry) {
+        return new JDACommandTranslator(parserRegistry)
             .type(String.class, OptionType.STRING, option -> option.getAsString())
             .type(Long.class, OptionType.INTEGER, option -> option.getAsLong())
             .type(long.class, OptionType.INTEGER, option -> option.getAsLong())
