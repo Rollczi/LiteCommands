@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.jda;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
@@ -218,13 +219,13 @@ public class JDACommandTranslator {
         void translate(OptionType optionType, JDATypeMapper<?> mapper, String argName, String description, boolean isRequired, boolean autocomplete);
     }
 
-    JDAParseableInput translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
+    ParseableInput<?> translateArguments(JDALiteCommand command, SlashCommandInteractionEvent interaction) {
         List<String> routes = Stream.of(interaction.getSubcommandGroup(), interaction.getSubcommandName())
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         Map<String, OptionMapping> options = interaction.getOptions().stream()
-            .collect(Collectors.toMap(OptionMapping::getName, option -> option));
+            .collect(Collectors.toMap(optionMapping -> optionMapping.getName(), option -> option));
 
         return new JDAParseableInput(routes, options, command);
     }
@@ -235,7 +236,7 @@ public class JDACommandTranslator {
             .collect(Collectors.toList());
 
         Map<String, OptionMapping> options = interaction.getOptions().stream()
-            .collect(Collectors.toMap(OptionMapping::getName, option -> option));
+            .collect(Collectors.toMap(optionMapping -> optionMapping.getName(), option -> option));
 
         return new JDASuggestionInput(routes, options, interaction.getFocusedOption());
     }

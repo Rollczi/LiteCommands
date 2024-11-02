@@ -2,15 +2,12 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
@@ -112,7 +109,7 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             }
 
             PlatformInvocationListener<User> invocationHook = commandRecord.invocationHook();
-            JDAParseableInput arguments = settings.translator().translateArguments(commandRecord.command(), event);
+            ParseableInput<?> arguments = settings.translator().translateArguments(commandRecord.command(), event);
             Invocation<User> invocation = settings.translator().translateInvocation(commandRoute, arguments, event);
 
             invocationHook.execute(invocation, arguments);

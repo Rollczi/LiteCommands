@@ -6,8 +6,10 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
+import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.unit.AssertExecute;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -30,12 +32,14 @@ public class JDAInputTest extends JDATestSpec {
             .build();
 
         Platform<User, ?> platform = liteCommands.getInternal().getPlatform();
+//        JDAParseableInput<?> raw = new JDAParseableInput("1", "2", "3");
 
-        CommandExecuteResult result = platform.execute(new Invocation<>(user, new JDAPlatformSender(user, null), "test", "test", raw), raw)
+        Invocation<User> invocation = new Invocation<>(user, new JDAPlatformSender(user, null), "test", "test", raw);
+        CommandExecuteResult result = platform.execute(invocation, raw)
             .join();
 
-        assertThat(result.getResult().toString())
-            .isEqualTo("1 2 3");
+        new AssertExecute(result, invocation)
+            .assertSuccess("1 2 3");
     }
 
 }

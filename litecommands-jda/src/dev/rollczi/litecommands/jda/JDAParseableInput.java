@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import java.util.function.Supplier;
+import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.HashSet;
@@ -44,14 +45,17 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
         @Override
         @SuppressWarnings("unchecked")
         public <SENDER, T> ParseResult<T> nextArgument(Invocation<SENDER> invocation, Argument<T> argument, Supplier<Parser<SENDER, T>> parserProvider) {
-            OptionMapping optionMapping = arguments.get(argument.getName());
+            CommandInteractionPayload payload = invocation.context().get(CommandInteractionPayload.class)
+                .orElseThrow(() -> new LiteCommandsException("Invocation context does not contain CommandInteractionPayload"));
 
-            if (optionMapping == null) {
+            OptionMapping option = payload.getOption(argument.getName());
+
+            if (option == null) {
                 return ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT);
             }
 
             Class<T> type = argument.getType().getRawType();
-            Object input = command.mapArgument(toRoute(argument.getName()), optionMapping);
+            Object input = command.mapArgument(toRoute(argument.getName()), option);
 
             consumedArguments.add(argument.getName());
 
@@ -62,7 +66,7 @@ class JDAParseableInput extends AbstractJDAInput<JDAParseableInput.JDAInputMatch
             try {
                 Parser<SENDER, T> parser = parserProvider.get();
 
-                return parser.parse(invocation, argument, RawInput.of(optionMapping.getAsString().split(" ")));
+                return parser.parse(invocation, argument, RawInput.of(option.getAsString().split(" ")));
             }
             catch (IllegalArgumentException exception) {
                 if (input != null) {

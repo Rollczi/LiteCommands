@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.opentest4j.AssertionFailedError;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -15,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 public class AssertExecute {
 
     private final CommandExecuteResult result;
-    private final Invocation<TestSender> invocation;
+    private final Invocation<?> invocation;
 
-    public AssertExecute(CommandExecuteResult result, Invocation<TestSender> invocation) {
+    public AssertExecute(CommandExecuteResult result, Invocation<?> invocation) {
         this.result = result;
         this.invocation = invocation;
     }
@@ -168,8 +169,10 @@ public class AssertExecute {
     }
 
     public AssertExecute assertMessage(String message) {
-        assertThat(invocation.sender().getMessages())
+        assertThat(invocation.sender())
+            .asInstanceOf(new InstanceOfAssertFactory<>(TestSender.class, actual -> assertThat(actual.getMessages())))
             .contains(message);
+
         return this;
     }
 
