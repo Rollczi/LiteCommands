@@ -32,8 +32,7 @@ public class PlayerArgument extends ArgumentResolver<CommandSource, Player> {
     @Override
     public SuggestionResult suggest(Invocation<CommandSource> invocation, Argument<Player> argument, SuggestionContext context) {
         return this.server.getAllPlayers().stream()
-            .map(player -> player.getUsername())
-            .collect(SuggestionResult.collector());
+            .collect(SuggestionResult.collector(player -> player.getUsername(), player -> player.getUniqueId().toString()));
     }
 
 }

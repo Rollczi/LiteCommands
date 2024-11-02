@@ -8,7 +8,6 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.sponge.LiteSpongeMessages;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.suggestion.SuggestionStream;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -41,7 +40,6 @@ public class ServerPlayerArgument extends ArgumentResolver<CommandCause, ServerP
         }
 
         return game.server().onlinePlayers().stream()
-            .map(player -> player.name())
-            .collect(SuggestionResult.collector());
+            .collect(SuggestionResult.collector(player -> player.name(), player -> player.uniqueId().toString()));
     }
 }

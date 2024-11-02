@@ -7,16 +7,16 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -45,6 +45,10 @@ public class AssertSuggest {
         }
 
         return this;
+    }
+
+    public AssertSuggest assertSuggest() {
+        return assertSuggest(new String[0]);
     }
 
     public AssertSuggest assertSuggest(String... suggestions) {
@@ -86,15 +90,21 @@ public class AssertSuggest {
     }
 
     public AssertSuggest assertSuggest(SuggestionResult suggestions) {
-        return assertSuggest(suggestions.asMultiLevelList());
+        return assertSuggest(suggestions.getSuggestions().toArray(new Suggestion[0]));
     }
 
     public AssertSuggest assertSuggest(Collection<String> suggestions) {
-        assertThat(suggest.getSuggestions()
-            .stream()
-            .map(Suggestion::multilevel)
-            .filter(suggestion -> !suggestion.isEmpty())
-        ).containsExactlyInAnyOrderElementsOf(suggestions);
+        assertThat(suggest.getSuggestions())
+            .map(suggestion -> suggestion.multilevel())
+            .filteredOn(suggestion -> !suggestion.isEmpty())
+            .containsExactlyInAnyOrderElementsOf(suggestions);
+
+        return this;
+    }
+
+    public AssertSuggest assertSuggest(Suggestion... suggestions) {
+        assertThat(suggest.getSuggestions())
+            .containsExactlyInAnyOrderElementsOf(Arrays.asList(suggestions));
         return this;
     }
 

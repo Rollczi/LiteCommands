@@ -3,6 +3,10 @@ package dev.rollczi.litecommands.bukkit;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.suggestion.Suggestion;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -11,14 +15,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+/**
+ * This class is responsible for handling tab completion for Paper 1.12-1.15 versions.
+ */
+class TabCompletePaper1_15Async extends TabComplete implements Listener {
 
-class TabCompletePaperAsync extends TabComplete implements Listener {
-
-    public TabCompletePaperAsync(Plugin plugin) {
+    public TabCompletePaper1_15Async(Plugin plugin) {
         PluginManager pluginManager = plugin.getServer().getPluginManager();
         pluginManager.registerEvent(PaperAsyncTabCompleteEvent.TAB_COMPLETE_CLASS, this, EventPriority.HIGHEST, (listener, event) -> executeListener(event), plugin);
     }
@@ -31,7 +33,10 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
             return;
         }
 
-        tabCompleteEvent.completions(result);
+        tabCompleteEvent.setCompletions(result.stream()
+            .map(suggestion -> suggestion.multilevel())
+            .collect(Collectors.toList())
+        );
     }
 
     public void close() {
@@ -42,31 +47,17 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
     static class PaperAsyncTabCompleteEvent {
 
         private static final String TAB_COMPLETE_CLASS_NAME = "com.destroystokyo.paper.event.server.AsyncTabCompleteEvent";
-        private static final String TAB_COMPLETION_CLASS_NAME = "com.destroystokyo.paper.event.server.AsyncTabCompleteEvent$Completion";
-        private static final String COMPONENT_CLASS_NAME = "net{}kyori{}adventure{}text{}Component";// Ignore relocation
 
         static final Class<? extends Event> TAB_COMPLETE_CLASS;
-        static final Class<?> TAB_COMPLETION_CLASS;
-        static final Class<?> COMPONENT_CLASS;
         static final Method GET_COMMAND_SENDER_METHOD;
         static final Method GET_BUFFER_METHOD;
         static final Method SET_COMPLETIONS_METHOD;
-
-        static final Method CREATE_COMPLETION_TOOLTIP;
-        static final Method COMPLETIONS_METHOD;
-        static final Method COMPONENT_TEXT_METHOD;
 
         static {
             TAB_COMPLETE_CLASS = ReflectUtil.getClass(TAB_COMPLETE_CLASS_NAME);
             GET_COMMAND_SENDER_METHOD = ReflectUtil.getMethod(TAB_COMPLETE_CLASS, "getSender");
             GET_BUFFER_METHOD = ReflectUtil.getMethod(TAB_COMPLETE_CLASS, "getBuffer");
             SET_COMPLETIONS_METHOD = ReflectUtil.getMethod(TAB_COMPLETE_CLASS, "setCompletions", List.class);
-
-            TAB_COMPLETION_CLASS = ReflectUtil.getClass(TAB_COMPLETION_CLASS_NAME);
-            COMPONENT_CLASS = ReflectUtil.getClass(COMPONENT_CLASS_NAME.replace("{}", "."));
-            CREATE_COMPLETION_TOOLTIP = ReflectUtil.getMethod(TAB_COMPLETION_CLASS, "completion", String.class, COMPONENT_CLASS);
-            COMPLETIONS_METHOD = ReflectUtil.getMethod(TAB_COMPLETE_CLASS, "completions", List.class);
-            COMPONENT_TEXT_METHOD = ReflectUtil.getMethod(COMPONENT_CLASS, "text", String.class);
         }
 
         private final Object event;
@@ -91,23 +82,5 @@ class TabCompletePaperAsync extends TabComplete implements Listener {
             ReflectUtil.invokeMethod(SET_COMPLETIONS_METHOD, event, completions);
         }
 
-        public void completions(Set<Suggestion> suggestions) {
-            List<Object> completions = suggestions.stream()
-                .map(suggestion -> ReflectUtil.invokeMethod(CREATE_COMPLETION_TOOLTIP, null, suggestion.multilevel(), toComponent(suggestion.tooltip())))
-                .collect(Collectors.toList());
-
-            ReflectUtil.invokeMethod(COMPLETIONS_METHOD, event, completions);
-        }
-
-        public Object toComponent(String text) {
-            if (text == null || text.isEmpty()) {
-                return null;
-            }
-
-            // TODO ComponentSerializer support for Adventure
-            // There we can have problems with relocation for adventure platform
-            // Maybe we should use json format?
-            return ReflectUtil.invokeMethod(COMPONENT_TEXT_METHOD, null, text);
-        }
     }
 }

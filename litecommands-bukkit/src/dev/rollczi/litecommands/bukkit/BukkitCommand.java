@@ -8,17 +8,20 @@ import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class BukkitCommand extends Command {
 
@@ -54,10 +57,12 @@ public class BukkitCommand extends Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         if (this.syncTabComplete) {
-            CompletableFuture<List<String>> future = this.suggest(sender, alias, args);
+            CompletableFuture<Set<Suggestion>> future = this.suggest(sender, alias, args);
 
             try {
-                return future.get(0, TimeUnit.MILLISECONDS);
+                return future.get(0, TimeUnit.MILLISECONDS).stream()
+                    .map(suggestion -> suggestion.multilevel())
+                    .collect(Collectors.toList());
             }
             catch (TimeoutException exception) {
                 if (settings.syncSuggestionWarning()) {
@@ -75,12 +80,12 @@ public class BukkitCommand extends Command {
         return Collections.emptyList();
     }
 
-    public CompletableFuture<List<String>> suggest(CommandSender sender, String alias, String[] args) {
+    public CompletableFuture<Set<Suggestion>> suggest(CommandSender sender, String alias, String[] args) {
         SuggestionInput<?> input = SuggestionInput.raw(args);
         PlatformSender platformSender = new BukkitPlatformSender(sender);
+        Invocation<CommandSender> invocation = new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input);
 
-        return CompletableFuture.completedFuture(this.suggestionHook.suggest(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input)
-            .asMultiLevelList());
+        return CompletableFuture.completedFuture(this.suggestionHook.suggest(invocation, input).getSuggestions()); // TODO Run suggestion asynchronously inside LiteCommands platform
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
     public SuggestionResult suggest(Invocation<FabricClientCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
         return invocation.sender().getWorld().getPlayers().stream()
             .map(player -> player.getGameProfile())
-            .map(gameProfile -> gameProfile.getName())
-            .collect(SuggestionResult.collector());
+            .collect(SuggestionResult.collector(profile -> profile.getName(), profile -> profile.getId().toString()));
     }
+
 }

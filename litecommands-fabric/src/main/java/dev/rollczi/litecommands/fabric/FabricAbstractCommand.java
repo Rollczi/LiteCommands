@@ -15,7 +15,9 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -91,12 +93,19 @@ public abstract class FabricAbstractCommand<SOURCE> {
             int start = input.length() - arguments.get(arguments.size() - 1).length();
             SuggestionsBuilder suggestionsBuilder = builder.createOffset(start);
 
-            for (String suggestion : suggest.asMultiLevelList()) {
-                suggestionsBuilder.suggest(suggestion);
+            for (Suggestion suggestion : suggest.getSuggestions()) {
+                suggestionsBuilder.suggest(suggestion.multilevel(), tooltip(suggestion.tooltip()));// todo Text.Serialization#fromJson?
             }
 
             return suggestionsBuilder.build();
         });
+    }
+
+    Text tooltip(String string) {
+        if (string == null || string.isEmpty()) {
+            return null;
+        }
+        return Text.literal(string);
     }
 
     protected abstract PlatformSender createSender(SOURCE source);

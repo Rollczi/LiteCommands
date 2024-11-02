@@ -3,14 +3,15 @@ package dev.rollczi.litecommands.bukkit;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -48,7 +49,7 @@ public abstract class TabComplete {
     }
 
     @Nullable
-    protected List<String> callListener(CommandSender sender, String buffer) {
+    protected Set<Suggestion> callListener(CommandSender sender, String buffer) {
         if (!buffer.startsWith(RawCommand.COMMAND_SLASH)) {
             return null;
         }
@@ -72,8 +73,14 @@ public abstract class TabComplete {
 
     static TabComplete create(Scheduler scheduler, Plugin plugin) {
         try {
-            Class.forName("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent");
+            Class.forName("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent$Completion");
             return new TabCompletePaperAsync(plugin);
+        }
+        catch (ClassNotFoundException ignored) {}
+
+        try {
+            Class.forName("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent");
+            return new TabCompletePaper1_15Async(plugin);
         }
         catch (ClassNotFoundException ignored) {}
 

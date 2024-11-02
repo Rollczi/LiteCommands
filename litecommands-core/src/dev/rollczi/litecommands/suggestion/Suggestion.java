@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.suggestion;
 
+import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,14 +10,21 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.jetbrains.annotations.ApiStatus;
 
 public class Suggestion {
 
+    static final String DEFAULT_TOOLTIP = "";
+
     private final String suggestion;
+    private final String tooltip;
     private final List<String> multiSuggestion;
 
-    private Suggestion(String suggestion, List<String> multiSuggestions) {
+    private Suggestion(String suggestion, String tooltip, List<String> multiSuggestions) {
+        Preconditions.notNull(tooltip, "tooltip");
+        Preconditions.notNull(suggestion, "suggestion");
         this.suggestion = suggestion;
+        this.tooltip = tooltip;
         this.multiSuggestion = multiSuggestions;
     }
 
@@ -43,6 +52,11 @@ public class Suggestion {
         return this.multiSuggestion.size();
     }
 
+    @ApiStatus.Experimental
+    public String tooltip() {
+        return this.tooltip;
+    }
+
     public Suggestion deleteLeft(int levels) {
         if (levels <= 0) {
             return this;
@@ -52,7 +66,7 @@ public class Suggestion {
             throw new IllegalArgumentException("Levels cannot be greater than suggestion size " + levels + " > " + this.multiSuggestion.size());
         }
 
-        return Suggestion.from(this.multiSuggestion.subList(levels, this.multiSuggestion.size()));
+        return Suggestion.from(this.multiSuggestion.subList(levels, this.multiSuggestion.size()), this.tooltip);
     }
 
     public Suggestion deleteRight(int levels) {
@@ -64,11 +78,11 @@ public class Suggestion {
             throw new IllegalArgumentException("Levels cannot be greater than suggestion size " + levels + " > " + this.multiSuggestion.size());
         }
 
-        return Suggestion.from(this.multiSuggestion.subList(0, this.multiSuggestion.size() - levels));
+        return Suggestion.from(this.multiSuggestion.subList(0, this.multiSuggestion.size() - levels), this.tooltip);
     }
 
     public Suggestion appendLeft(String... left) {
-        return Suggestion.of(String.join(" ", left) + " " + this.suggestion);
+        return Suggestion.of(String.join(" ", left) + " " + this.suggestion, tooltip);
     }
 
     public Suggestion appendLeft(Iterable<String> left) {
@@ -78,15 +92,15 @@ public class Suggestion {
         ).collect(Collectors.toList());
 
 
-        return new Suggestion(String.join(" ", list), list);
+        return new Suggestion(String.join(" ", list), this.tooltip, list);
     }
 
     public Suggestion appendRight(String... right) {
-        return Suggestion.of(this.suggestion + " " + String.join(" ", right));
+        return Suggestion.of(this.suggestion + " " + String.join(" ", right), this.tooltip);
     }
 
     public Suggestion appendRight(Iterable<String> right) {
-        return Suggestion.of(this.suggestion + " " + String.join(" ", right));
+        return Suggestion.of(this.suggestion + " " + String.join(" ", right), this.tooltip);
     }
 
     @Deprecated
@@ -98,15 +112,27 @@ public class Suggestion {
         List<String> newSuggestion = new ArrayList<>(this.multiSuggestion);
         newSuggestion.add(levelPart);
 
-        return Suggestion.from(newSuggestion);
+        return Suggestion.from(newSuggestion, this.tooltip);
     }
 
+    @ApiStatus.Experimental
+    @ApiStatus.Internal
+    public static Suggestion from(List<String> suggestion, String tooltip) {
+        return new Suggestion(String.join(" ", suggestion), tooltip, new ArrayList<>(suggestion));
+    }
+
+    @ApiStatus.Internal
     public static Suggestion from(List<String> suggestion) {
-        return new Suggestion(String.join(" ", suggestion), new ArrayList<>(suggestion));
+        return new Suggestion(String.join(" ", suggestion), DEFAULT_TOOLTIP, new ArrayList<>(suggestion));
+    }
+
+    @ApiStatus.Experimental
+    public static Suggestion of(String suggestion, String tooltip) {
+        return new Suggestion(suggestion, tooltip, StringUtil.splitBySpace(suggestion));
     }
 
     public static Suggestion of(String suggestion) {
-        return new Suggestion(suggestion, StringUtil.splitBySpace(suggestion));
+        return new Suggestion(suggestion, DEFAULT_TOOLTIP, StringUtil.splitBySpace(suggestion));
     }
 
     @Override
@@ -114,12 +140,12 @@ public class Suggestion {
         if (this == o) return true;
         if (!(o instanceof Suggestion)) return false;
         Suggestion that = (Suggestion) o;
-        return Objects.equals(suggestion, that.suggestion);
+        return Objects.equals(suggestion, that.suggestion) && Objects.equals(tooltip, that.tooltip);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(suggestion);
+        return Objects.hash(suggestion, tooltip);
     }
 
     @Override
