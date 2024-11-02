@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
 
@@ -137,11 +138,13 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             List<Command.Choice> choiceList = result.getSuggestions().stream()
                 .filter(suggestion -> !suggestion.multilevel().isEmpty())
                 .map(suggestion -> choice(event.getFocusedOption().getType(), suggestion))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
             event.replyChoices(choiceList).queue();
         }
 
+        @Nullable
         private Command.Choice choice(OptionType optionType, Suggestion suggestion) {
             String multilevel = suggestion.multilevel();
 
@@ -154,7 +157,9 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
                     return new Command.Choice(multilevel, Double.parseDouble(multilevel));
                 }
             }
-            catch (NumberFormatException ignored) {}
+            catch (NumberFormatException ignored) {
+                return null;
+            }
 
             return new Command.Choice(multilevel, multilevel);
         }
