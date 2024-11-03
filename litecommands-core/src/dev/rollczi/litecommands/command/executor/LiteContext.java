@@ -81,7 +81,7 @@ public class LiteContext<SENDER> {
             return null;
         }
 
-        if (matchResult.getClass() != format.getRawType()) {
+        if (!format.getRawType().isAssignableFrom(matchResult.getClass())) {
             throw new IllegalArgumentException("Argument with name '" + name + "' is not instance of " + format.getRawType().getName() + " but " + matchResult.getClass().getName());
         }
         return (T) matchResult;
