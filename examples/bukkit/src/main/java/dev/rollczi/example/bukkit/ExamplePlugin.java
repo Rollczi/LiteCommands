@@ -1,13 +1,13 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
-import dev.rollczi.example.bukkit.command.GiveCommand;
-import dev.rollczi.example.bukkit.command.KickAllCommand;
-import dev.rollczi.example.bukkit.command.MuteCommand;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
+import dev.rollczi.example.bukkit.command.GiveCommand;
+import dev.rollczi.example.bukkit.command.KickAllCommand;
 import dev.rollczi.example.bukkit.command.KickCommand;
+import dev.rollczi.example.bukkit.command.MuteCommand;
 import dev.rollczi.example.bukkit.command.NumberCommand;
 import dev.rollczi.example.bukkit.command.OfflineInfoCommand;
 import dev.rollczi.example.bukkit.command.RandomItemCommand;
@@ -15,22 +15,22 @@ import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyBalanceCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyService;
+import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
+import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.example.bukkit.user.User;
 import dev.rollczi.example.bukkit.user.UserArgumentResolver;
 import dev.rollczi.example.bukkit.user.UserCommand;
 import dev.rollczi.example.bukkit.user.UserService;
-import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
 import dev.rollczi.example.bukkit.validator.IsNotOp;
+import dev.rollczi.example.bukkit.validator.IsNotOpValidator;
+import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
-import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
-import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
-import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import dev.rollczi.litecommands.schematic.SchematicFormat;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -119,7 +119,7 @@ public class ExamplePlugin extends JavaPlugin {
         // unregister all commands from bukkit
         if (this.liteCommands != null) {
             this.liteCommands.unregister();
-        }    
+        }
     }
 
 }

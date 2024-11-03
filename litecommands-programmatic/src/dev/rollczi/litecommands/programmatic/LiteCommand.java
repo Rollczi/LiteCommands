@@ -1,22 +1,22 @@
 package dev.rollczi.litecommands.programmatic;
 
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.bind.BindRequirement;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.executor.LiteContext;
+import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.flag.FlagProfile;
 import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.literal.LiteralProfile;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.quoted.QuotedProfile;
-import dev.rollczi.litecommands.bind.BindRequirement;
-import dev.rollczi.litecommands.context.ContextRequirement;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
-import dev.rollczi.litecommands.requirement.Requirement;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.strict.StrictMode;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommand<SENDER> {
 
@@ -131,6 +130,15 @@ public class LiteCommand<SENDER> {
     public <T> LiteCommand<SENDER> meta(MetaKey<T> key, T value) {
         this.meta.put(key, value);
         return this;
+    }
+
+    public <T> LiteCommand<SENDER> executorMeta(MetaKey<T> key, T value) {
+        this.executorMeta.put(key, value);
+        return this;
+    }
+
+    public LiteCommand<SENDER> description(String... description) {
+        return this.executorMeta(Meta.DESCRIPTION, Arrays.asList(description));
     }
 
     /**
