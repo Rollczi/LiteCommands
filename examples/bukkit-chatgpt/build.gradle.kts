@@ -1,8 +1,8 @@
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.5"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 version = "3.9.0"
@@ -47,5 +47,5 @@ sourceSets.test {
 }
 
 tasks.runServer {
-    minecraftVersion("1.20.2")
+    minecraftVersion("1.21")
 }
