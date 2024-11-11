@@ -18,7 +18,7 @@ dependencies {
     implementation("net.minestom:minestom-snapshots:4305006e6b")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
 
-    // implementation("dev.rollczi:litecommands-minestom:3.9.0") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-minestom:3.9.1") // <-- uncomment in your project
     implementation(project(":litecommands-minestom")) // don't use this line in your build.gradle
 }
 
