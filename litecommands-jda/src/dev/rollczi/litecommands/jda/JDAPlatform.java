@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.Nullable;
 
 class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
@@ -138,7 +139,8 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             List<Command.Choice> choiceList = result.getSuggestions().stream()
                 .filter(suggestion -> !suggestion.multilevel().isEmpty())
                 .map(suggestion -> choice(event.getFocusedOption().getType(), suggestion))
-                .filter(Objects::nonNull)
+                .filter(choice -> Objects.nonNull(choice))
+                .limit(OptionData.MAX_CHOICES)
                 .collect(Collectors.toList());
 
             event.replyChoices(choiceList).queue();
