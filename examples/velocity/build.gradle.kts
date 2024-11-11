@@ -1,7 +1,7 @@
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.0.0"
-    id("xyz.jpenilla.run-velocity") version "2.3.0"
+    id("com.gradleup.shadow") version "8.3.5"
+    id("xyz.jpenilla.run-velocity") version "2.3.1"
 }
 
 java {
@@ -40,5 +40,5 @@ sourceSets.test {
 }
 
 tasks.runVelocity {
-    velocityVersion("3.2.0-SNAPSHOT")
+    velocityVersion("3.3.0-SNAPSHOT")
 }
