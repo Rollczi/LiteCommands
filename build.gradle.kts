@@ -1,7 +1,5 @@
 plugins {
     `java-library`
-    id("xyz.jpenilla.run-paper") version "2.3.1" apply false
-    id("xyz.jpenilla.run-velocity") version "2.3.1" apply false
 }
 
 tasks.withType<Test> {
