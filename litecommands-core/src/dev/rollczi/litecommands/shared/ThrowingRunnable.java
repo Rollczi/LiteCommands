@@ -4,5 +4,4 @@ package dev.rollczi.litecommands.shared;
 public interface ThrowingRunnable<E extends Throwable> {
 
     void run() throws E;
-
 }
