@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.bukkit;
 
+import com.google.common.base.Throwables;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.shared.ThrowingSupplier;
@@ -48,8 +49,7 @@ class BukkitSchedulerImpl implements Scheduler {
 
         if (delay.isZero()) {
             bukkitScheduler.runTask(plugin, () -> tryRun(type, future, supplier));
-        }
-        else {
+        } else {
             bukkitScheduler.runTaskLater(plugin, () -> tryRun(type, future, supplier), toTicks(delay));
         }
 
@@ -61,8 +61,7 @@ class BukkitSchedulerImpl implements Scheduler {
 
         if (delay.isZero()) {
             bukkitScheduler.runTaskAsynchronously(plugin, () -> tryRun(type, future, supplier));
-        }
-        else {
+        } else {
             bukkitScheduler.runTaskLaterAsynchronously(plugin, () -> tryRun(type, future, supplier), toTicks(delay));
         }
 
@@ -72,12 +71,10 @@ class BukkitSchedulerImpl implements Scheduler {
     private <T> CompletableFuture<T> tryRun(SchedulerPoll type, CompletableFuture<T> future, ThrowingSupplier<T, Throwable> supplier) {
         try {
             future.complete(supplier.get());
-        }
-        catch (Throwable throwable) {
+        } catch (Throwable throwable) {
             future.completeExceptionally(throwable);
-
             if (type.isLogging()) {
-                throwable.printStackTrace();
+                plugin.getLogger().severe("Error completing command future: \n" + Throwables.getStackTraceAsString(throwable));
             }
         }
 
