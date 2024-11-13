@@ -134,7 +134,7 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
         // It's a copy of ExecutorService#close provided in JDK 19
         boolean terminated = executorService.isTerminated();
         if (!terminated) {
-            shutdown();
+            executorService.shutdown();
             boolean interrupted = false;
             while (!terminated) {
                 try {

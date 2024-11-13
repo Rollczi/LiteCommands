@@ -32,8 +32,8 @@ public class SchedulerExecutorPoolBuilder {
              so we better handle this situation, there are practically no losses anyway
              */
             ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(1);
-            mainExecutor.allowCoreThreadTimeOut(true);
             mainExecutor.setKeepAliveTime(1, TimeUnit.HOURS);
+            mainExecutor.allowCoreThreadTimeOut(true);
 
             this.mainExecutor = mainExecutor;
             closeMainExecutorOnShutdown = true;
@@ -48,8 +48,8 @@ public class SchedulerExecutorPoolBuilder {
             so it's fine and meaningful to create a bigger pool in this case
             */
             ScheduledThreadPoolExecutor asyncExecutor = new ScheduledThreadPoolExecutor(4);
-            asyncExecutor.setMaximumPoolSize(Runtime.getRuntime().availableProcessors() * 2);
             asyncExecutor.setKeepAliveTime(3, TimeUnit.MINUTES);
+            asyncExecutor.setMaximumPoolSize(Runtime.getRuntime().availableProcessors() * 2);
 
             this.asyncExecutor = asyncExecutor;
             closeAsyncExecutorOnShutdown = true;
