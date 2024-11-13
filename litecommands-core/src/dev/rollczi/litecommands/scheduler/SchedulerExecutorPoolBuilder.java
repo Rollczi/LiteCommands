@@ -3,11 +3,8 @@ package dev.rollczi.litecommands.scheduler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class SchedulerExecutorPoolBuilder {
-
-    private Logger logger;
 
     private ScheduledExecutorService mainExecutor;
     private boolean closeMainExecutorOnShutdown;
@@ -26,10 +23,6 @@ public class SchedulerExecutorPoolBuilder {
     }
 
     public SchedulerExecutorPoolImpl build() {
-        if (logger == null) {
-            logger = Logger.getLogger("LiteCommands");
-        }
-
         if (mainExecutor == null) {
             /*
              In some cases, the main executor might never be used. We don't want to have to create a useless thread
@@ -62,6 +55,6 @@ public class SchedulerExecutorPoolBuilder {
             closeAsyncExecutorOnShutdown = true;
         }
 
-        return new SchedulerExecutorPoolImpl(logger, mainExecutor, closeMainExecutorOnShutdown, asyncExecutor, closeAsyncExecutorOnShutdown);
+        return new SchedulerExecutorPoolImpl(mainExecutor, closeMainExecutorOnShutdown, asyncExecutor, closeAsyncExecutorOnShutdown);
     }
 }

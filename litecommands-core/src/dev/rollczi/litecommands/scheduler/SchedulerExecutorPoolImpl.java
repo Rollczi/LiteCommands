@@ -9,16 +9,15 @@ import java.io.StringWriter;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 public class SchedulerExecutorPoolImpl implements Scheduler {
 
-    private final Logger logger;
     private final ScheduledExecutorService mainExecutor;
     private final boolean closeMainExecutorOnShutdown;
 
@@ -32,8 +31,6 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
 
     @Deprecated
     public SchedulerExecutorPoolImpl(String name, int pool) {
-        this.logger = Logger.getLogger("LiteCommands");
-
         this.mainExecutor = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName(String.format("scheduler-%s-main", name));
@@ -60,8 +57,7 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
      * Internal usage only. Use {@link SchedulerExecutorPoolBuilder}.
      */
     @ApiStatus.Internal
-    public SchedulerExecutorPoolImpl(Logger logger, ScheduledExecutorService mainExecutor, boolean closeMainExecutorOnShutdown, ScheduledExecutorService asyncExecutor, boolean closeAsyncExecutorOnShutdown) {
-        this.logger = logger;
+    public SchedulerExecutorPoolImpl(ScheduledExecutorService mainExecutor, boolean closeMainExecutorOnShutdown, ScheduledExecutorService asyncExecutor, boolean closeAsyncExecutorOnShutdown) {
         this.mainExecutor = mainExecutor;
         this.closeMainExecutorOnShutdown = closeMainExecutorOnShutdown;
         this.asyncExecutor = asyncExecutor;
@@ -120,19 +116,11 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
     @Override
     public void shutdown() {
         if (closeMainExecutorOnShutdown) {
-            try {
-                mainExecutor.close();
-            } catch (Throwable e) {
-                logger.severe("Error closing main executor: \n" + getStacktraceAsString(e));
-            }
+            close(mainExecutor);
         }
 
         if (closeAsyncExecutorOnShutdown) {
-            try {
-                asyncExecutor.close();
-            } catch (Throwable e) {
-                logger.severe("Error closing async executor: \n" + getStacktraceAsString(e));
-            }
+            close(asyncExecutor);
         }
     }
 
@@ -142,10 +130,25 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
             : asyncExecutor;
     }
 
-    private String getStacktraceAsString(Throwable throwable) {
-        StringWriter stringWriter = new StringWriter();
-        throwable.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
+    private void close(ExecutorService executorService) {
+        // It's a copy of ExecutorService#close provided in JDK 19
+        boolean terminated = executorService.isTerminated();
+        if (!terminated) {
+            shutdown();
+            boolean interrupted = false;
+            while (!terminated) {
+                try {
+                    terminated = executorService.awaitTermination(1L, TimeUnit.DAYS);
+                } catch (InterruptedException e) {
+                    if (!interrupted) {
+                        executorService.shutdownNow();
+                        interrupted = true;
+                    }
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
-
 }
