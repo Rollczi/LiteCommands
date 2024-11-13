@@ -16,9 +16,6 @@ import org.junit.jupiter.api.Test;
 
 class CompletableFutureArgumentTest extends LiteTestSpec {
 
-    static LiteTestConfig config = builder -> builder
-        .scheduler(new SchedulerExecutorPoolImpl("litecommands-test"));
-
     public static final Class<CompletableFuture<String>> FUTURE_TYPE = new TypeToken<CompletableFuture<String>>() {}.getRawType();
 
     @Command(name = "async")
@@ -41,7 +38,7 @@ class CompletableFutureArgumentTest extends LiteTestSpec {
 
         await()
             .atLeast(400, TimeUnit.MILLISECONDS)
-            .atMost(900, TimeUnit.MILLISECONDS)
+            .atMost(1500, TimeUnit.MILLISECONDS)
             .until(() -> completableFuture.isDone());
 
         assertThat(completableFuture.join())

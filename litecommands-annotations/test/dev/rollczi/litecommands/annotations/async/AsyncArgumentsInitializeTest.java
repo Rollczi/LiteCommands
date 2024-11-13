@@ -50,7 +50,6 @@ class AsyncArgumentsInitializeTest {
         List<CompletableFuture<AssertExecute>> futures = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             TestPlatform platform = LiteCommandsTestFactory.startPlatform(config -> config
-                .scheduler(new SchedulerExecutorPoolImpl("lite-commands", 10))
                 .commands(command)
             );
 
