@@ -1,6 +1,7 @@
 package dev.rollczi.example.fabric.client.command;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.async.Async;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Sender;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -36,4 +37,14 @@ public class ClientCommands {
         return String.valueOf(player.getHealth());
     }
 
+    @Execute(name = "thread1")
+    String thread1() {
+        return Thread.currentThread().getName();
+    }
+
+    @Execute(name = "thread2")
+    @Async
+    String thread2() {
+        return Thread.currentThread().getName();
+    }
 }

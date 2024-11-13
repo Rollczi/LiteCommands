@@ -130,7 +130,7 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
             : asyncExecutor;
     }
 
-    private void close(ExecutorService executorService) {
+    public static void close(ExecutorService executorService) {
         // It's a copy of ExecutorService#close provided in JDK 19
         boolean terminated = executorService.isTerminated();
         if (!terminated) {
