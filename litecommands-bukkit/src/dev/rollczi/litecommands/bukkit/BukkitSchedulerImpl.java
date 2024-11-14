@@ -1,9 +1,9 @@
 package dev.rollczi.litecommands.bukkit;
 
-import com.google.common.base.Throwables;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.shared.ThrowingSupplier;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -74,7 +74,7 @@ class BukkitSchedulerImpl implements Scheduler {
         } catch (Throwable throwable) {
             future.completeExceptionally(throwable);
             if (type.isLogging()) {
-                plugin.getLogger().severe("Error completing command future: \n" + Throwables.getStackTraceAsString(throwable));
+                plugin.getLogger().log(Level.SEVERE, "An error occurred while executing a task", throwable);
             }
         }
 
