@@ -23,23 +23,17 @@ public class SpongeScheduler implements Scheduler {
     @Override
     public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
         CompletableFuture<T> future = new CompletableFuture<>();
-
-        Task.Builder builder = Task.builder().plugin(plugin).execute(() -> {
-            try {
-                future.complete(supplier.get());
-            } catch (Throwable e) {
-                future.completeExceptionally(e);
-                if (type.isLogging()) {
-                    plugin.logger().error("Error completing command future:", e);
-                }
-            }
-        });
+        Task.Builder builder = Task.builder()
+            .plugin(plugin)
+            .execute(() -> tryRun(type, supplier, future));
 
         if (delay.isPositive()) {
             builder.delay(delay);
         }
 
-        if (type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS).equals(SchedulerPoll.ASYNCHRONOUS)) {
+        SchedulerPoll resolved = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
+
+        if (resolved.equals(SchedulerPoll.ASYNCHRONOUS)) {
             game.asyncScheduler().submit(builder.build());
         } else {
             game.server().scheduler().submit(builder.build());
@@ -48,7 +42,20 @@ public class SpongeScheduler implements Scheduler {
         return future;
     }
 
+    private <T> void tryRun(SchedulerPoll type, ThrowingSupplier<T, Throwable> supplier, CompletableFuture<T> future) {
+        try {
+            future.complete(supplier.get());
+        }
+        catch (Throwable throwable) {
+            future.completeExceptionally(throwable);
+            if (type.isLogging()) {
+                plugin.logger().error("Error completing command future:", throwable);
+            }
+        }
+    }
+
     @Override
     public void shutdown() {
     }
+
 }
