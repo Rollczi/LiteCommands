@@ -10,11 +10,11 @@ public class FabricClientScheduler extends FabricScheduler<Runnable> {
     }
 
     public FabricClientScheduler(int pool) {
-        super(() -> MinecraftClient.getInstance().isOnThread(), pool);
+        super(pool);
     }
 
     @Override
-    public ReentrantThreadExecutor<Runnable> getExecutor() {
+    public ReentrantThreadExecutor<Runnable> getMainThreadExecutor() {
         return MinecraftClient.getInstance();
     }
 }

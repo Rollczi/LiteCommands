@@ -4,8 +4,6 @@ import dev.rollczi.litecommands.shared.ThrowingRunnable;
 import dev.rollczi.litecommands.shared.ThrowingSupplier;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -18,11 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SchedulerExecutorPoolImpl implements Scheduler {
 
-    private final ScheduledExecutorService mainExecutor;
-    private final boolean closeMainExecutorOnShutdown;
+    protected final ScheduledExecutorService mainExecutor;
+    protected final boolean closeMainExecutorOnShutdown;
 
-    private final ScheduledExecutorService asyncExecutor;
-    private final boolean closeAsyncExecutorOnShutdown;
+    protected final ScheduledExecutorService asyncExecutor;
+    protected final boolean closeAsyncExecutorOnShutdown;
 
     @Deprecated
     public SchedulerExecutorPoolImpl(String name) {

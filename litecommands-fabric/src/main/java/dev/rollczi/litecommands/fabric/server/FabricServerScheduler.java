@@ -18,11 +18,11 @@ public class FabricServerScheduler extends FabricScheduler<ServerTask> {
     }
 
     public FabricServerScheduler(int pool) {
-        super(new ServerGetter(), pool);
+        super(pool);
     }
 
     @Override
-    public ReentrantThreadExecutor<ServerTask> getExecutor() {
+    public ReentrantThreadExecutor<ServerTask> getMainThreadExecutor() {
         return ServerGetter.currentServer;
     }
 
