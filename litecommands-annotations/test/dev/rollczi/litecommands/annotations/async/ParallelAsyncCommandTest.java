@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class ParallelAsyncCommandTest extends LiteTestSpec {
     private static final int DELAY = 100;
 
     static LiteTestConfig config = builder -> builder
+        .scheduler(new SchedulerExecutorPoolImpl("test"))
         .context(Date.class, invocation -> ContextResult.ok(() -> {
             try {
                 Thread.sleep(DELAY);
@@ -71,6 +73,5 @@ public class ParallelAsyncCommandTest extends LiteTestSpec {
                 .assertSuccess("first second");
         }
     }
-
 
 }

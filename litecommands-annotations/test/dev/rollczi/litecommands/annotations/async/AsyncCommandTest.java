@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolBuilder;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
@@ -23,19 +23,11 @@ import static org.awaitility.Awaitility.await;
 
 class AsyncCommandTest extends LiteTestSpec {
 
-    private static final String mainThreadName = "main_thread";
-    private static final String asyncThreadName = "async_thread";
-
     private static final int DELAY = 500;
     private static final int MARGIN = 200;
 
     static LiteTestConfig config = builder -> builder
-        .scheduler(
-            new SchedulerExecutorPoolBuilder()
-                .setMainExecutorThreadName(mainThreadName)
-                .setAsyncExecutorThreadName(asyncThreadName)
-                .build()
-        )
+        .scheduler(new SchedulerExecutorPoolImpl("test", 1))
         .context(Date.class, invocation -> ContextResult.ok(() -> {
             try {
                 Thread.sleep(DELAY);
@@ -100,13 +92,13 @@ class AsyncCommandTest extends LiteTestSpec {
     @Test
     void testSync() {
         platform.execute("test sync")
-            .assertSuccess(mainThreadName);
+            .assertSuccess("scheduler-test-main");
     }
 
     @Test
     void testAsync() {
         platform.execute("test async")
-            .assertSuccess(asyncThreadName);
+            .assertSuccess("scheduler-test-async-0");
     }
 
     @Test
@@ -118,7 +110,7 @@ class AsyncCommandTest extends LiteTestSpec {
             .until(() -> result.isDone());
 
         result.join()
-            .assertSuccess(mainThreadName + " args [first=" + mainThreadName + ", second=" + asyncThreadName + "]");
+            .assertSuccess("scheduler-test-main args [first=scheduler-test-main, second=scheduler-test-async-0]");
     }
 
     @Test
@@ -130,7 +122,7 @@ class AsyncCommandTest extends LiteTestSpec {
             .until(() -> result.isDone());
 
         result.join()
-            .assertSuccess(asyncThreadName + " args [first=" + asyncThreadName + ", second=" + mainThreadName + "]");
+            .assertSuccess("scheduler-test-async-0 args [first=scheduler-test-async-0, second=scheduler-test-main]");
     }
 
     @Test

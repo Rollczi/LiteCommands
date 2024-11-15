@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.annotations.async;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import static dev.rollczi.litecommands.programmatic.LiteProgrammatic.async;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.LiteCommandsTestFactory;
 import dev.rollczi.litecommands.unit.TestPlatform;
@@ -49,6 +50,7 @@ class AsyncArgumentsInitializeTest {
         List<CompletableFuture<AssertExecute>> futures = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             TestPlatform platform = LiteCommandsTestFactory.startPlatform(config -> config
+                .scheduler(new SchedulerExecutorPoolImpl("lite-commands", 10))
                 .commands(command)
             );
 

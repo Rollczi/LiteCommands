@@ -1,31 +1,23 @@
 package dev.rollczi.litecommands.programmatic;
 
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolBuilder;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.unit.TestSender;
-import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static dev.rollczi.litecommands.programmatic.LiteProgrammatic.async;
+import static dev.rollczi.litecommands.programmatic.LiteProgrammatic.*;
 
 class AsyncCommandTest extends LiteTestSpec {
 
-    private static final String mainThreadName = "main_thread";
-    private static final String asyncThreadName = "async_thread";
-
     static LiteTestConfig config = builder -> builder
-        .scheduler(
-            new SchedulerExecutorPoolBuilder()
-                .setMainExecutorThreadName(mainThreadName)
-                .setAsyncExecutorThreadName(asyncThreadName)
-                .build()
-        )
+        .scheduler(new SchedulerExecutorPoolImpl("test", 1))
         .context(Date.class, invocation -> ContextResult.ok(() -> new Date()))
         .argumentParser(String.class, new StringArgumentResolver())
         .argument(SomeClass.class, new ThrowingArgumentResolver())
@@ -99,25 +91,25 @@ class AsyncCommandTest extends LiteTestSpec {
     @Test
     void testSync() {
         platform.execute("test sync")
-            .assertSuccess(mainThreadName);
+            .assertSuccess("scheduler-test-main");
     }
 
     @Test
     void testAsync() {
         platform.execute("test async")
-            .assertSuccess(asyncThreadName);
+            .assertSuccess("scheduler-test-async-0");
     }
 
     @Test
     void testAsyncArgs() {
         platform.execute("test async-args first second")
-            .assertSuccess(mainThreadName + " args [first=" + mainThreadName + ", second=" + asyncThreadName + "]");
+            .assertSuccess("scheduler-test-main args [first=scheduler-test-main, second=scheduler-test-async-0]");
     }
 
     @Test
     void testAsyncArgsAndMethod() {
         platform.execute("test async-args-and-method first second")
-            .assertSuccess(asyncThreadName + " args [first=" + asyncThreadName + ", second=" + mainThreadName + "]");
+            .assertSuccess("scheduler-test-async-0 args [first=scheduler-test-async-0, second=scheduler-test-main]");
     }
 
     @Test
