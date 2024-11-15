@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.unit.blocking.Blocking;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgument;
@@ -14,6 +15,9 @@ import static org.awaitility.Awaitility.await;
 import org.junit.jupiter.api.Test;
 
 class CompletableFutureArgumentTest extends LiteTestSpec {
+
+    static LiteTestConfig config = builder -> builder
+        .scheduler(new SchedulerExecutorPoolImpl("litecommands-test"));
 
     public static final Class<CompletableFuture<String>> FUTURE_TYPE = new TypeToken<CompletableFuture<String>>() {}.getRawType();
 
@@ -37,7 +41,7 @@ class CompletableFutureArgumentTest extends LiteTestSpec {
 
         await()
             .atLeast(400, TimeUnit.MILLISECONDS)
-            .atMost(1500, TimeUnit.MILLISECONDS)
+            .atMost(900, TimeUnit.MILLISECONDS)
             .until(() -> completableFuture.isDone());
 
         assertThat(completableFuture.join())
