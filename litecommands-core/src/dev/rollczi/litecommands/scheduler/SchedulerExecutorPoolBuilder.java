@@ -37,7 +37,7 @@ public class SchedulerExecutorPoolBuilder {
         return this;
     }
 
-    public SchedulerExecutorPoolImpl build() {
+    public SchedulerExecutorPoolWrapperImpl build() {
         if (mainExecutorThreadName == null) {
             mainExecutorThreadName = "LiteCommands-scheduler-main";
         }
@@ -85,6 +85,6 @@ public class SchedulerExecutorPoolBuilder {
             closeAsyncExecutorOnShutdown = true;
         }
 
-        return new SchedulerExecutorPoolImpl(mainExecutor, closeMainExecutorOnShutdown, asyncExecutor, closeAsyncExecutorOnShutdown);
+        return new SchedulerExecutorPoolWrapperImpl(mainExecutor, closeMainExecutorOnShutdown, asyncExecutor, closeAsyncExecutorOnShutdown);
     }
 }

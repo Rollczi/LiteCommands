@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.fabric;
 
-import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolWrapperImpl;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.shared.ThrowingRunnable;
 import dev.rollczi.litecommands.shared.ThrowingSupplier;
@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-public abstract class FabricScheduler<R extends Runnable> extends SchedulerExecutorPoolImpl {
+public abstract class FabricScheduler<R extends Runnable> extends SchedulerExecutorPoolWrapperImpl {
 
     public FabricScheduler(int pool) {
         super("litecommands-fabric", pool);
