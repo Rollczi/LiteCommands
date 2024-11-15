@@ -1,44 +1,38 @@
 package dev.rollczi.litecommands.fabric.server;
 
 import dev.rollczi.litecommands.fabric.FabricScheduler;
+import java.util.concurrent.ExecutorService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 
-import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 public class FabricServerScheduler extends FabricScheduler<ServerTask> {
+
+    private static @Nullable MinecraftServer CURRENT_SERVER;
+
     static {
-        new ServerGetter();
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> CURRENT_SERVER = server);
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> CURRENT_SERVER = null);
     }
 
     public FabricServerScheduler() {
-        this(-1);
+        super();
     }
 
-    public FabricServerScheduler(int pool) {
-        super(pool);
+    public FabricServerScheduler(ExecutorService asyncExecutor) {
+        super(asyncExecutor);
     }
 
     @Override
     public ReentrantThreadExecutor<ServerTask> getMainThreadExecutor() {
-        return ServerGetter.currentServer;
-    }
-
-    private static class ServerGetter implements Supplier<Boolean> {
-        private static MinecraftServer currentServer;
-
-        static {
-            ServerLifecycleEvents.SERVER_STARTED.register(server -> ServerGetter.currentServer = server);
+        if (CURRENT_SERVER == null) {
+            throw new IllegalStateException("Server is not started!");
         }
 
-        @Override
-        public Boolean get() {
-            if (currentServer != null) {
-                return currentServer.isOnThread();
-            }
-            return false;
-        }
+        return CURRENT_SERVER;
     }
+
 }

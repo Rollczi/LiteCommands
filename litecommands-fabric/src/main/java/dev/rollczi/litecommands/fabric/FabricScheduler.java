@@ -1,106 +1,50 @@
 package dev.rollczi.litecommands.fabric;
 
-import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolWrapperImpl;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
-import dev.rollczi.litecommands.shared.ThrowingRunnable;
-import dev.rollczi.litecommands.shared.ThrowingSupplier;
+import dev.rollczi.litecommands.scheduler.SchedulerMainThreadBased;
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 
-import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
+public abstract class FabricScheduler<R extends Runnable> extends SchedulerMainThreadBased {
 
-public abstract class FabricScheduler<R extends Runnable> extends SchedulerExecutorPoolWrapperImpl {
+    private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+    private final ExecutorService asyncExecutor;
 
-    public FabricScheduler(int pool) {
-        super("litecommands-fabric", pool);
+    protected FabricScheduler() {
+        this.asyncExecutor = Executors.newFixedThreadPool(Math.max(1, Runtime.getRuntime().availableProcessors() / 2));
+    }
+
+    protected FabricScheduler(ExecutorService asyncExecutor) {
+        this.asyncExecutor = asyncExecutor;
     }
 
     @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        return super.supplyLater(type, delay, new LaterSupplier<>(type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS), supplier));
+    protected void runSynchronous(Runnable task, Duration delay) {
+        if (delay.isZero()) {
+            this.getMainThreadExecutor().submit(task);
+        } else {
+            this.scheduledExecutor.schedule(() -> this.getMainThreadExecutor().submit(task), delay.toMillis(), TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
-    public CompletableFuture<Void> run(SchedulerPoll type, ThrowingRunnable<Throwable> runnable) {
-        return super.run(type, new LaterRunnable(type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS), runnable));
+    protected void runAsynchronous(Runnable task, Duration delay) {
+        if (delay.isZero()) {
+            this.getMainThreadExecutor().submit(task);
+        } else {
+            this.scheduledExecutor.schedule(() -> this.getMainThreadExecutor().submit(task), delay.toMillis(), TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
-    public CompletableFuture<Void> runLater(SchedulerPoll type, Duration delay, ThrowingRunnable<Throwable> runnable) {
-        return super.runLater(type, delay, new LaterRunnable(type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS), runnable));
-    }
-
-    @Override
-    public <T> CompletableFuture<T> supply(SchedulerPoll type, ThrowingSupplier<T, Throwable> supplier) {
-        return super.supply(type, new LaterSupplier<>(type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS), supplier));
+    public void shutdown() {
+        this.scheduledExecutor.shutdown();
+        this.asyncExecutor.shutdown();
     }
 
     public abstract ReentrantThreadExecutor<R> getMainThreadExecutor();
 
-    private class LaterSupplier<T, E extends Throwable> implements ThrowingSupplier<T, E> {
-        private final SchedulerPoll resolve;
-        private final ThrowingSupplier<T, E> supplier;
-
-        public LaterSupplier(SchedulerPoll resolve, ThrowingSupplier<T, E> supplier) {
-            this.resolve = resolve;
-            this.supplier = supplier;
-        }
-
-        @Override
-        public T get() throws E {
-            if (resolve.equals(SchedulerPoll.MAIN)) {
-                CompletableFuture<T> future = new CompletableFuture<>();
-                //noinspection ResultOfMethodCallIgnored
-                getMainThreadExecutor().submit(() -> {
-                    try {
-                        future.complete(supplier.get());
-                    } catch (Throwable e) {
-                        future.completeExceptionally(e);
-                    }
-                });
-                return future.join();
-            } else {
-                return supplier.get();
-            }
-        }
-    }
-
-    private class LaterRunnable implements ThrowingRunnable<Throwable> {
-        private final SchedulerPoll resolve;
-        private final ThrowingRunnable<Throwable> runnable;
-
-        public LaterRunnable(SchedulerPoll resolve, ThrowingRunnable<Throwable> runnable) {
-            this.resolve = resolve;
-            this.runnable = runnable;
-        }
-
-        @Override
-        public void run() throws Throwable {
-            if (resolve.equals(SchedulerPoll.MAIN)) {
-                try {
-                    getMainThreadExecutor().submit(() -> {
-                        try {
-                            runnable.run();
-                        } catch (Throwable e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).join();
-                } catch (Throwable e) {
-                    if (e instanceof CompletionException) {
-                        Throwable cause = e.getCause();
-                        if (cause instanceof RuntimeException) {
-                            throw cause.getCause();
-                        } else {
-                            throw cause;
-                        }
-                    } else {
-                        throw e;
-                    }
-                }
-            } else {
-                runnable.run();
-            }
-        }
-    }
 }

@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 public class SchedulerExecutorPoolImpl implements Scheduler {
 
-
     private static final String MAIN_THREAD_NAME_FORMAT = "scheduler-%s-main";
     private static final String ASYNC_THREAD_NAME_FORMAT = "scheduler-%s-async-%d";
 
