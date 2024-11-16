@@ -33,7 +33,7 @@ public abstract class FabricScheduler<R extends Runnable> extends AbstractMainTh
     @Override
     protected void runAsynchronous(Runnable task, Duration delay) {
         if (delay.isZero()) {
-            this.getMainThreadExecutor().submit(task);
+            this.asyncExecutor.submit(task);
         } else {
             this.scheduledExecutor.schedule(() -> this.getMainThreadExecutor().submit(task), delay.toMillis(), TimeUnit.MILLISECONDS);
         }
