@@ -35,7 +35,7 @@ public abstract class FabricScheduler<R extends Runnable> extends AbstractMainTh
         if (delay.isZero()) {
             this.asyncExecutor.submit(task);
         } else {
-            this.scheduledExecutor.schedule(() -> this.getMainThreadExecutor().submit(task), delay.toMillis(), TimeUnit.MILLISECONDS);
+            this.scheduledExecutor.schedule(() -> this.asyncExecutor.submit(task), delay.toMillis(), TimeUnit.MILLISECONDS);
         }
     }
 
