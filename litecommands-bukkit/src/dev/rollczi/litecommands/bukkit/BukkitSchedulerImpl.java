@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.scheduler.SchedulerMainThreadBased;
+import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import java.time.Duration;
 
-class BukkitSchedulerImpl extends SchedulerMainThreadBased {
+class BukkitSchedulerImpl extends AbstractMainThreadBasedScheduler {
 
     private final BukkitScheduler bukkitScheduler;
     private final Plugin plugin;

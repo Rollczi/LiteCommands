@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.shared.ThrowingSupplier;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class SchedulerMainThreadBased implements Scheduler {
+public abstract class AbstractMainThreadBasedScheduler implements Scheduler {
 
     @Override
     public final  <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {

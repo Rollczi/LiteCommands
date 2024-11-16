@@ -1,6 +1,6 @@
 package dev.rollczi.litecommands.fabric;
 
-import dev.rollczi.litecommands.scheduler.SchedulerMainThreadBased;
+import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 
-public abstract class FabricScheduler<R extends Runnable> extends SchedulerMainThreadBased {
+public abstract class FabricScheduler<R extends Runnable> extends AbstractMainThreadBasedScheduler {
 
     private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
     private final ExecutorService asyncExecutor;
