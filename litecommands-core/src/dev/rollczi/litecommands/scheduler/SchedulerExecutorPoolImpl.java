@@ -109,9 +109,6 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
     /**
      * Create async executor.
      *
-     * We want to create a thread pool that both is fast and uses as few threads as possible.
-     * So we use a fixed core pool size to not create an unreasonable number of threads
-     *
      * @author BlackBaroness
      * @return async executor.
     */
