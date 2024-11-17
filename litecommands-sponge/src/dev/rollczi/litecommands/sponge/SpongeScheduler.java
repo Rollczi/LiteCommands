@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.sponge;
 
 import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
+import org.spongepowered.api.Game;
+import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
 
@@ -9,13 +11,13 @@ import java.time.Duration;
 public class SpongeScheduler extends AbstractMainThreadBasedScheduler {
 
     private final PluginContainer pluginContainer;
-    private final org.spongepowered.api.scheduler.Scheduler mainScheduler;
-    private final org.spongepowered.api.scheduler.Scheduler asyncScheduler;
+    private final Scheduler mainScheduler;
+    private final Scheduler asyncScheduler;
 
-    public SpongeScheduler(PluginContainer pluginContainer, org.spongepowered.api.scheduler.Scheduler mainScheduler, org.spongepowered.api.scheduler.Scheduler asyncScheduler) {
+    public SpongeScheduler(PluginContainer pluginContainer, Game game) {
         this.pluginContainer = pluginContainer;
-        this.mainScheduler = mainScheduler;
-        this.asyncScheduler = asyncScheduler;
+        this.mainScheduler = findMainScheduler(game);
+        this.asyncScheduler = game.asyncScheduler();
     }
 
     @Override
@@ -38,10 +40,20 @@ public class SpongeScheduler extends AbstractMainThreadBasedScheduler {
     }
 
     private Task createTask(Runnable task, Duration delay) {
-        Task.Builder builder = Task.builder().plugin(pluginContainer).execute(task);
-        if (delay.isPositive()) {
-            builder.delay(delay);
+        return Task.builder()
+            .plugin(pluginContainer)
+            .execute(task)
+            .delay(delay.isPositive() ? delay : Duration.ZERO)
+            .build();
+    }
+
+    private Scheduler findMainScheduler(Game game) {
+        if (game.isServerAvailable()) {
+            return game.server().scheduler();
+        } else if (game.isClientAvailable()) {
+            return game.client().scheduler();
+        } else {
+            throw new IllegalStateException("Nor server or client are available");
         }
-        return builder.build();
     }
 }
