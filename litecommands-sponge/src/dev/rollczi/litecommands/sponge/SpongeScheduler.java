@@ -1,61 +1,47 @@
 package dev.rollczi.litecommands.sponge;
 
-import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
-import dev.rollczi.litecommands.shared.ThrowingSupplier;
-import org.spongepowered.api.Game;
+import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 
-public class SpongeScheduler implements Scheduler {
+public class SpongeScheduler extends AbstractMainThreadBasedScheduler {
 
-    private final PluginContainer plugin;
-    private final Game game;
+    private final PluginContainer pluginContainer;
+    private final org.spongepowered.api.scheduler.Scheduler mainScheduler;
+    private final org.spongepowered.api.scheduler.Scheduler asyncScheduler;
 
-    public SpongeScheduler(PluginContainer plugin, Game game) {
-        this.plugin = plugin;
-        this.game = game;
-    }
-
-    @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-        Task.Builder builder = Task.builder()
-            .plugin(plugin)
-            .execute(() -> tryRun(type, supplier, future));
-
-        if (delay.isPositive()) {
-            builder.delay(delay);
-        }
-
-        SchedulerPoll resolved = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
-
-        if (resolved.equals(SchedulerPoll.ASYNCHRONOUS)) {
-            game.asyncScheduler().submit(builder.build());
-        } else {
-            game.server().scheduler().submit(builder.build());
-        }
-
-        return future;
-    }
-
-    private <T> void tryRun(SchedulerPoll type, ThrowingSupplier<T, Throwable> supplier, CompletableFuture<T> future) {
-        try {
-            future.complete(supplier.get());
-        }
-        catch (Throwable throwable) {
-            future.completeExceptionally(throwable);
-            if (type.isLogging()) {
-                plugin.logger().error("Error completing command future:", throwable);
-            }
-        }
+    public SpongeScheduler(PluginContainer pluginContainer, org.spongepowered.api.scheduler.Scheduler mainScheduler, org.spongepowered.api.scheduler.Scheduler asyncScheduler) {
+        this.pluginContainer = pluginContainer;
+        this.mainScheduler = mainScheduler;
+        this.asyncScheduler = asyncScheduler;
     }
 
     @Override
     public void shutdown() {
     }
 
+    @Override
+    protected void runSynchronous(Runnable task, Duration delay) {
+        mainScheduler.submit(createTask(task, delay));
+    }
+
+    @Override
+    protected void runAsynchronous(Runnable task, Duration delay) {
+        asyncScheduler.submit(createTask(task, delay));
+    }
+
+    @Override
+    protected void log(Throwable throwable) {
+        pluginContainer.logger().error("Error completing command future:", throwable);
+    }
+
+    private Task createTask(Runnable task, Duration delay) {
+        Task.Builder builder = Task.builder().plugin(pluginContainer).execute(task);
+        if (delay.isPositive()) {
+            builder.delay(delay);
+        }
+        return builder.build();
+    }
 }

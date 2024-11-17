@@ -27,6 +27,12 @@ public class LiteSpongeFactory {
         return (B) LiteCommandsFactory.builder(CommandCause.class, new SpongePlatform(plugin, settings)).selfProcessor((builder, internal) -> {
             MessageRegistry<CommandCause> messageRegistry = internal.getMessageRegistry();
 
+            if (game.isServerAvailable()) {
+                builder = builder.scheduler(new SpongeScheduler(plugin, game.server().scheduler(), game.asyncScheduler()));
+            } else if (game.isClientAvailable()) {
+                builder = builder.scheduler(new SpongeScheduler(plugin, game.client().scheduler(), game.asyncScheduler()));
+            }
+
             builder
                 .bind(Server.class, () -> game.server())
                 .bind(Client.class, () -> game.client())
@@ -36,9 +42,9 @@ public class LiteSpongeFactory {
                 .argument(ServerPlayer.class, new ServerPlayerArgument(game, messageRegistry))
                 .context(ServerPlayer.class, new ServerPlayerOnlyContext(messageRegistry))
 
-                .scheduler(new SpongeScheduler(plugin, game))
-
                 .extension(new LiteAdventureExtension<>(invocation -> invocation.sender().audience()));
+
+
         });
     }
 }
