@@ -43,8 +43,6 @@ public class LiteSpongeFactory {
                 .context(ServerPlayer.class, new ServerPlayerOnlyContext(messageRegistry))
 
                 .extension(new LiteAdventureExtension<>(invocation -> invocation.sender().audience()));
-
-
         });
     }
 }
