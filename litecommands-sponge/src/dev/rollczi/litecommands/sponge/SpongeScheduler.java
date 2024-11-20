@@ -50,10 +50,12 @@ public class SpongeScheduler extends AbstractMainThreadBasedScheduler {
     private Scheduler findMainScheduler(Game game) {
         if (game.isServerAvailable()) {
             return game.server().scheduler();
-        } else if (game.isClientAvailable()) {
-            return game.client().scheduler();
-        } else {
-            throw new IllegalStateException("Neither the server nor the client is available");
         }
+        
+        if (game.isClientAvailable()) {
+            return game.client().scheduler();
+        }
+        
+        throw new IllegalStateException("Neither the server nor the client is available");
     }
 }
