@@ -36,6 +36,7 @@ object Versions {
     const val FABRIC_LOADER = "0.16.9"
     const val FABRIC_COMMAND_API_V2 = "2.2.37+7feeb7331c"
     const val FABRIC_COMMAND_API_V1 = "1.2.56+f71b366f73"
+    const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.3.12+6c1df36019"
 
     // ChatGPT
     const val GSON = "2.11.0"

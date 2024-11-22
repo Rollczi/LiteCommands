@@ -35,6 +35,7 @@ public class LiteSpongeFactory {
 
                 .argument(ServerPlayer.class, new ServerPlayerArgument(game, messageRegistry))
                 .context(ServerPlayer.class, new ServerPlayerOnlyContext(messageRegistry))
+                .scheduler(new SpongeScheduler(plugin, game))
 
                 .extension(new LiteAdventureExtension<>(invocation -> invocation.sender().audience()));
         });

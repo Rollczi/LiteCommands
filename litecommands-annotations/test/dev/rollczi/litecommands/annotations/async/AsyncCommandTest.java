@@ -1,6 +1,5 @@
 package dev.rollczi.litecommands.annotations.async;
 
-import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -13,7 +12,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import dev.rollczi.litecommands.unit.AssertExecute;
 import dev.rollczi.litecommands.unit.TestSender;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -79,7 +78,7 @@ class AsyncCommandTest extends LiteTestSpec {
 
         @Async
         @Execute(name = "async-args-and-method")
-        public String testAsyncArgs2(@Context Date date,  @Async @Arg String first, @Arg String second) {
+        public String testAsyncArgs2(@Context Date date, @Async @Arg String first, @Arg String second) {
             return Thread.currentThread().getName() + " args [first=" + first + ", second=" + second + "]";
         }
 

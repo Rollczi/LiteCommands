@@ -1,16 +1,14 @@
 package dev.rollczi.litecommands.bukkit;
 
-import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
-import dev.rollczi.litecommands.shared.ThrowingSupplier;
+import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 
-class BukkitSchedulerImpl implements Scheduler {
+class BukkitSchedulerImpl extends AbstractMainThreadBasedScheduler {
 
     private final BukkitScheduler bukkitScheduler;
     private final Plugin plugin;
@@ -21,67 +19,35 @@ class BukkitSchedulerImpl implements Scheduler {
     }
 
     @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        SchedulerPoll resolved = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
-
-        if (resolved.equals(SchedulerPoll.MAIN)) {
-            return supplySync(type, supplier, delay);
-        }
-
-        if (resolved.equals(SchedulerPoll.ASYNCHRONOUS)) {
-            return supplyAsync(type, supplier, delay);
-        }
-
-        throw new IllegalArgumentException("Unknown scheduler poll type: " + type);
-    }
-
-    @Override
     public void shutdown() {
     }
 
-    private <T> CompletableFuture<T> supplySync(SchedulerPoll type, ThrowingSupplier<T, Throwable> supplier, Duration delay) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-
+    @Override
+    protected void runSynchronous(Runnable task, Duration delay) {
         if (Bukkit.isPrimaryThread() && delay.isZero()) {
-            return tryRun(type, future, supplier);
+            task.run();
+            return;
         }
 
         if (delay.isZero()) {
-            bukkitScheduler.runTask(plugin, () -> tryRun(type, future, supplier));
+            bukkitScheduler.runTask(plugin, task);
+        } else {
+            bukkitScheduler.runTaskLater(plugin, task, toTicks(delay));
         }
-        else {
-            bukkitScheduler.runTaskLater(plugin, () -> tryRun(type, future, supplier), toTicks(delay));
-        }
-
-        return future;
     }
 
-    private <T> CompletableFuture<T> supplyAsync(SchedulerPoll type, ThrowingSupplier<T, Throwable> supplier, Duration delay) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-
+    @Override
+    protected void runAsynchronous(Runnable task, Duration delay) {
         if (delay.isZero()) {
-            bukkitScheduler.runTaskAsynchronously(plugin, () -> tryRun(type, future, supplier));
+            bukkitScheduler.runTaskAsynchronously(plugin, task);
+        } else {
+            bukkitScheduler.runTaskLaterAsynchronously(plugin, task, toTicks(delay));
         }
-        else {
-            bukkitScheduler.runTaskLaterAsynchronously(plugin, () -> tryRun(type, future, supplier), toTicks(delay));
-        }
-
-        return future;
     }
 
-    private <T> CompletableFuture<T> tryRun(SchedulerPoll type, CompletableFuture<T> future, ThrowingSupplier<T, Throwable> supplier) {
-        try {
-            future.complete(supplier.get());
-        }
-        catch (Throwable throwable) {
-            future.completeExceptionally(throwable);
-
-            if (type.isLogging()) {
-                throwable.printStackTrace();
-            }
-        }
-
-        return future;
+    @Override
+    protected void log(Throwable throwable) {
+        this.plugin.getLogger().log(Level.SEVERE, "An error occurred while executing a task", throwable);
     }
 
     private long toTicks(Duration duration) {
