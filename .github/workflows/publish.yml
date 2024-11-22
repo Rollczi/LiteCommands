@@ -22,6 +22,7 @@ jobs:
 
       - name: Publish
         run: ./gradlew clean build publish
+        if: github.repository == 'Rollczi/LiteCommands'
         env:
           GIT_BRANCH: ${{ github.ref }}
           GIT_COMMIT: ${{ github.sha }}

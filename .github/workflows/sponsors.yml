@@ -18,6 +18,7 @@ jobs:
 
       - name: Generate Sponsors 💖
         uses: JamesIves/github-sponsors-readme-action@v1
+        if: github.repository == 'Rollczi/LiteCommands'
         with:
           token: ${{ secrets.PAT }}
           file: 'README.md'
@@ -25,6 +26,7 @@ jobs:
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
+        if: github.repository == 'Rollczi/LiteCommands'
         with:
           commit-message: Update Sponsors in README.md
           branch: master
