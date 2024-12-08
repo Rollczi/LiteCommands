@@ -26,7 +26,6 @@ public class FabricServerSender extends AbstractPlatformSender {
         list.add(source.getName());
         Entity entity = source.getEntity();
         if (entity != null) {
-            list.add(entity);
             list.add(entity.getUuid());
         }
         Object[] objects = list.toArray();
