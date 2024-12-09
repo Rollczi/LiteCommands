@@ -2,9 +2,11 @@ package dev.rollczi.litecommands.fabric.server;
 
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FabricServerSender extends AbstractPlatformSender {
     private final ServerCommandSource source;
@@ -20,7 +22,14 @@ public class FabricServerSender extends AbstractPlatformSender {
 
     @Override
     public Identifier getIdentifier() {
-        return Identifier.of(source.getEntity().getUuid());
+        List<Object> list = new ArrayList<>();
+        list.add(source.getName());
+        Entity entity = source.getEntity();
+        if (entity != null) {
+            list.add(entity.getUuid());
+        }
+        Object[] objects = list.toArray();
+        return Identifier.of(objects);
     }
 
     @Override
