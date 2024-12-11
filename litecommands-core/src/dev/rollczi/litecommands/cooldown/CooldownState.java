@@ -18,7 +18,7 @@ public class CooldownState {
     }
 
     public Duration getRemainingDuration() {
-        return  Duration.between(Instant.now(), expirationTime);
+        return Duration.between(Instant.now(), expirationTime);
     }
 
     public Instant getExpirationTime() {
