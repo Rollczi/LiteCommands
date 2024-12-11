@@ -9,10 +9,12 @@ import java.util.Map;
 public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> implements Platform<SENDER, C> {
 
     protected @NotNull C settings;
+    protected final PlatformSenderFactory<SENDER> senderFactory;
     protected final Map<String, CommandRoute<SENDER>> commandRoutes = new HashMap<>();
 
-    protected AbstractPlatform(@NotNull C settings) {
+    protected AbstractPlatform(@NotNull C settings, PlatformSenderFactory<SENDER> senderFactory) {
         this.settings = settings;
+        this.senderFactory = senderFactory;
     }
 
     @Override
@@ -24,6 +26,16 @@ public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> imple
     @NotNull
     public C getConfiguration() {
         return settings;
+    }
+
+    @Override
+    public PlatformSenderFactory<SENDER> getSenderFactory() {
+        return senderFactory;
+    }
+
+    @Override
+    public PlatformSender createSender(SENDER nativeSender) {
+        return this.getSenderFactory().create(nativeSender);
     }
 
     @Override

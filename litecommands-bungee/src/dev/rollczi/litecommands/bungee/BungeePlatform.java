@@ -19,7 +19,7 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
     private final PluginManager pluginManager;
 
     public BungeePlatform(Plugin plugin, LiteBungeeSettings liteBungeeSettings) {
-        super(liteBungeeSettings);
+        super(liteBungeeSettings, sender -> new BungeeSender(sender));
         this.plugin = plugin;
         this.pluginManager = plugin.getProxy().getPluginManager();
     }

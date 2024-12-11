@@ -3,6 +3,7 @@ package dev.rollczi.litecommands;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.cooldown.CooldownService;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
 import dev.rollczi.litecommands.editor.EditorService;
@@ -60,5 +61,8 @@ public interface LiteCommandsInternal<SENDER, C extends PlatformSettings> {
 
     @ApiStatus.Internal
     StrictService getStrictService();
+
+    @ApiStatus.Experimental
+    CooldownService getCooldownService();
 
 }

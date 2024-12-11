@@ -6,12 +6,10 @@ import java.time.Instant;
 public class CooldownState {
 
     private final CooldownContext cooldownContext;
-    private final Duration remainingDuration;
     private final Instant expirationTime;
 
-    public CooldownState(CooldownContext cooldownContext, Duration remainingDuration, Instant expirationTime) {
+    public CooldownState(CooldownContext cooldownContext, Instant expirationTime) {
         this.cooldownContext = cooldownContext;
-        this.remainingDuration = remainingDuration;
         this.expirationTime = expirationTime;
     }
 
@@ -20,18 +18,21 @@ public class CooldownState {
     }
 
     public Duration getRemainingDuration() {
-        return remainingDuration;
+        return Duration.between(Instant.now(), expirationTime);
     }
 
     public Instant getExpirationTime() {
         return expirationTime;
     }
 
+    public boolean isExpired() {
+        return Instant.now().isAfter(expirationTime);
+    }
+
     @Override
     public String toString() {
         return "CooldownState{" +
             "cooldownContext=" + cooldownContext.getKey() +
-            ", remainingDuration=" + remainingDuration +
             ", expirationTime=" + expirationTime +
             '}';
     }

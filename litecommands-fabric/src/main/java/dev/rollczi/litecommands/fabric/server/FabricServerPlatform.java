@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.fabric.server;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.fabric.FabricAbstractCommand;
 import dev.rollczi.litecommands.fabric.FabricAbstractPlatform;
+import dev.rollczi.litecommands.fabric.client.FabricClientSender;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -11,7 +12,7 @@ import net.minecraft.server.command.ServerCommandSource;
 public class FabricServerPlatform extends FabricAbstractPlatform<ServerCommandSource> {
 
     public FabricServerPlatform(PlatformSettings settings) {
-        super(settings);
+        super(settings, source -> new FabricServerSender(source));
     }
 
     @Override

@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.argument.suggester.SuggesterChained;
 import dev.rollczi.litecommands.bind.BindChainedProvider;
 import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
+import dev.rollczi.litecommands.cooldown.CooldownService;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.event.SimpleEventPublisher;
@@ -105,6 +106,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final SchedulerReference scheduler;
     protected final EventPublisher eventPublisher;
     protected final SchematicGeneratorReference<SENDER> schematicGenerator;
+    protected final CooldownService cooldownService;
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -131,6 +133,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     /**
      * Copy constructor
+     * Unstable API
      */
     @ApiStatus.Experimental
     public LiteCommandsBaseBuilder(
@@ -165,6 +168,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.scheduler = new SchedulerReference(new SchedulerExecutorPoolImpl("litecommands"));
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
         this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, parserRegistry));
+        this.cooldownService = new CooldownService(this.scheduler);
     }
 
     @Override
@@ -708,6 +712,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public StrictService getStrictService() {
         return this.strictService;
+    }
+
+    @Override
+    public CooldownService getCooldownService() {
+        return this.cooldownService;
     }
 
     @SuppressWarnings("unchecked")

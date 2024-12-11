@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSenderFactory;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 
@@ -25,8 +26,8 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SO
         }
     }
 
-    protected FabricAbstractPlatform(PlatformSettings settings) {
-        super(settings);
+    protected FabricAbstractPlatform(PlatformSettings settings, PlatformSenderFactory<SOURCE> factory) {
+        super(settings, factory);
         registerEvents();
     }
 

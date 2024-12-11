@@ -24,7 +24,7 @@ public class TestPlatform extends AbstractPlatform<TestSender, TestSettings> {
     private final Map<CommandRoute<TestSender>, PlatformSuggestionListener<TestSender>> suggestListeners = new LinkedHashMap<>();
 
     public TestPlatform() {
-        super(new TestSettings());
+        super(new TestSettings(), testSender -> new TestPlatformSender());
     }
 
     @Override

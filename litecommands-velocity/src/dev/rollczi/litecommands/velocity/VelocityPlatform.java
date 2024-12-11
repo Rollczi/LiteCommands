@@ -13,7 +13,7 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
     private final CommandManager commandManager;
 
     public VelocityPlatform(CommandManager commandManager, LiteVelocitySettings settings) {
-        super(settings);
+        super(settings, source -> new VelocitySender(source));
         this.commandManager = commandManager;
     }
 

@@ -13,7 +13,7 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
     private final CommandManager commandManager;
 
     MinestomPlatform(CommandManager commandManager) {
-        super(new LiteMinestomSettings());
+        super(new LiteMinestomSettings(), sender -> new MinestomSender(sender));
         this.commandManager = commandManager;
     }
 

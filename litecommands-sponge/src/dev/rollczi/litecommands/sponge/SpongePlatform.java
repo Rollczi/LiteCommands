@@ -20,7 +20,7 @@ public class SpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSet
     private final Map<UUID, SpongeCommand> commands = new HashMap<>();
 
     public SpongePlatform(PluginContainer plugin, LiteSpongeSettings settings) {
-        super(settings);
+        super(settings, commandCause -> new SpongeSender(commandCause));
         this.plugin = plugin;
         Sponge.eventManager().registerListeners(plugin, this);
     }

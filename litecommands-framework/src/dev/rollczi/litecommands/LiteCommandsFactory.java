@@ -108,7 +108,7 @@ public final class LiteCommandsFactory {
                 .validator(Scope.global(), new MissingPermissionValidator<>())
 
                 .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
-                .listener(new CooldownStateController<>(scheduler))
+                .listener(new CooldownStateController<>(internal.getCooldownService()))
                 .listener(new InvalidUsageResultController<>(internal.getSchematicGenerator()))
 
                 .argument(String.class, new StringArgumentResolver<>())
