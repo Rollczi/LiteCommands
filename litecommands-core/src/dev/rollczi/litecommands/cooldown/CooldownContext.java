@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.cooldown;
 
+import dev.rollczi.litecommands.util.StringUtil;
 import java.time.Duration;
 
 public class CooldownContext {
@@ -12,6 +13,10 @@ public class CooldownContext {
         this.key = key;
         this.duration = duration;
         this.bypassPermission = bypassPermission;
+    }
+
+    public CooldownContext(String key, Duration duration) {
+        this(key, duration, StringUtil.EMPTY);
     }
 
     public String getKey() {
