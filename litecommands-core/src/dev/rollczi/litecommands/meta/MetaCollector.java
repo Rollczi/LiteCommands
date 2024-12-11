@@ -2,6 +2,8 @@ package dev.rollczi.litecommands.meta;
 
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 public interface MetaCollector {
 
@@ -14,11 +16,15 @@ public interface MetaCollector {
 
     <T> T findFirst(MetaKey<T> key);
 
-    <T> T findFirst(MetaKey<T> key, T defaultValue);
+    @Nullable
+    @Contract("_,null -> _")
+    <T> T findFirst(MetaKey<T> key, @Nullable T defaultValue);
 
     <T> T findLast(MetaKey<T> key);
 
-    <T> T findLast(MetaKey<T> key, T defaultValue);
+    @Nullable
+    @Contract("_,null -> _; _,!null -> !null")
+    <T> T findLast(MetaKey<T> key, @Nullable T defaultValue);
 
     static MetaCollector of(MetaHolder metaHolder) {
         return new MetaHolderCollectorImpl(metaHolder);
