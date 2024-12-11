@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.command.CommandManager;
+import dev.rollczi.litecommands.platform.Platform;
 import org.jetbrains.annotations.ApiStatus;
 
 class LiteCommandsImpl<SENDER> implements LiteCommands<SENDER> {
@@ -16,6 +17,11 @@ class LiteCommandsImpl<SENDER> implements LiteCommands<SENDER> {
     @Override
     public CommandManager<SENDER> getCommandManager() {
         return commandManager;
+    }
+
+    @Override
+    public Platform<SENDER, ?> getPlatform() {
+        return this.internal.getPlatform();
     }
 
     @Override

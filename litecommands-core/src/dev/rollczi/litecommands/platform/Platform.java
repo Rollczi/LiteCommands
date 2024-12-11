@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.platform;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public interface Platform<SENDER, C extends PlatformSettings> {
@@ -9,6 +10,11 @@ public interface Platform<SENDER, C extends PlatformSettings> {
 
     @NotNull
     C getConfiguration();
+
+    @ApiStatus.Experimental
+    PlatformSenderFactory<SENDER> getSenderFactory();
+
+    PlatformSender createSender(SENDER nativeSender);
 
     default void start() {}
 

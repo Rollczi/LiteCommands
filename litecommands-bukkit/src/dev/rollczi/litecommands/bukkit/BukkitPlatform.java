@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 class BukkitPlatform extends AbstractPlatform<CommandSender, LiteBukkitSettings> implements Platform<CommandSender, LiteBukkitSettings> {
 
     BukkitPlatform(LiteBukkitSettings settings) {
-        super(settings);
+        super(settings, sender -> new BukkitPlatformSender(sender));
     }
 
     @Override

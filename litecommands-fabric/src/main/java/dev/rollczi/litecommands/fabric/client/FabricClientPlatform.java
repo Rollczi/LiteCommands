@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 public class FabricClientPlatform extends FabricAbstractPlatform<FabricClientCommandSource> {
 
     public FabricClientPlatform(PlatformSettings settings) {
-        super(settings);
+        super(settings, source -> new FabricClientSender(source));
     }
 
     @Override

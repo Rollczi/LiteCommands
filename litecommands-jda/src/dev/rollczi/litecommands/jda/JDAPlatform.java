@@ -57,7 +57,7 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
     }
 
     JDAPlatform(LiteJDASettings settings, JDA jda) {
-        super(settings);
+        super(settings, sender -> new JDAPlatformSender(sender));
         this.jda = jda;
         this.jda.addEventListener(new SlashCommandController());
     }
