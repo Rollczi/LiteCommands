@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.fabric.server;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.fabric.FabricAbstractCommand;
 import dev.rollczi.litecommands.fabric.FabricAbstractPlatform;
-import dev.rollczi.litecommands.fabric.client.FabricClientSender;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -19,21 +18,17 @@ public class FabricServerPlatform extends FabricAbstractPlatform<ServerCommandSo
     protected void registerEvents() {
         if (COMMAND_API_V2) {
             net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-                for (FabricAbstractCommand<ServerCommandSource> fabricCommand : fabricCommands.values()) {
-                    dispatcher.register(fabricCommand.toLiteral());
-                }
+                registerToDispatcher(dispatcher);
             });
         } else {
             net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-                for (FabricAbstractCommand<ServerCommandSource> fabricCommand : fabricCommands.values()) {
-                    dispatcher.register(fabricCommand.toLiteral());
-                }
+                registerToDispatcher(dispatcher);
             });
         }
     }
 
     @Override
     protected FabricAbstractCommand<ServerCommandSource> createCommand(CommandRoute<ServerCommandSource> commandRoute, PlatformInvocationListener<ServerCommandSource> invocationHook, PlatformSuggestionListener<ServerCommandSource> suggestionHook) {
-        return new FabricServerCommand(commandRoute, invocationHook, suggestionHook);
+        return new FabricServerCommand(this, commandRoute, invocationHook, suggestionHook);
     }
 }

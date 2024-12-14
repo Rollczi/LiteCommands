@@ -9,14 +9,14 @@ import dev.rollczi.litecommands.annotations.quoted.Quoted;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-@Command(name = "example")
+@Command(name = "example", aliases = "tutorial")
 public class ExampleCommand {
     @Execute(name = "kick")
     void sendMessage(@Arg("player") ServerPlayerEntity player, @Join("reason") String reason) {
         player.networkHandler.disconnect(Text.of(reason));
     }
 
-    @Execute(name = "message")
+    @Execute(name = "message", aliases = "msg")
     Text sendMessage(@Quoted @Arg String message) {
         return Text.of("You saied: " + message);
     }
