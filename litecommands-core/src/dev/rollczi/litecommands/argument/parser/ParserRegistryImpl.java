@@ -3,7 +3,9 @@ package dev.rollczi.litecommands.argument.parser;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.input.raw.RawInput;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.range.Range;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import dev.rollczi.litecommands.reflect.type.TypeIndex;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, ParserChainAccessor<SENDER> {
@@ -94,8 +97,20 @@ public class ParserRegistryImpl<SENDER> implements ParserRegistry<SENDER>, Parse
     @Override
     public <T> ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> argument, RawInput input) {
         Parser<SENDER, T> parser = getParser(argument);
+        Range range = parser.getRange(argument);
 
-        return parser.parse(invocation, argument, input);
+        if (range.isInRangeOrAbove(input.size())) {
+            return parser.parse(invocation, argument, input);
+        }
+
+        if (!input.hasNext()) {
+            Optional<ParseResult<T>> optional = argument.getDefaultValue();
+
+            return optional
+                .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.MISSING_ARGUMENT));
+        }
+
+        return ParseResult.failure(InvalidUsage.Cause.MISSING_PART_OF_ARGUMENT);
     }
 
 }
