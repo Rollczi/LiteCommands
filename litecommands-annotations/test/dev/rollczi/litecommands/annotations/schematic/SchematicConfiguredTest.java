@@ -1,6 +1,7 @@
 
 package dev.rollczi.litecommands.annotations.schematic;
 
+import dev.rollczi.litecommands.unit.Parsers;
 import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.async.Async;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 class SchematicConfiguredTest extends LiteTestSpec {
 
     static LiteTestConfig config = builder -> builder
+        .argumentParser(ServerRank.class, Parsers.of(new ServerRank()))
         .schematicGenerator(SchematicFormat.parentheses());
 
     static class ServerRank {}
