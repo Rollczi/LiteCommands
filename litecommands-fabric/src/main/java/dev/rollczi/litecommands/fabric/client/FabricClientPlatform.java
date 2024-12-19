@@ -24,14 +24,12 @@ public class FabricClientPlatform extends FabricAbstractPlatform<FabricClientCom
             throw new UnsupportedOperationException("The current 'fabric-api' does not include fabric-command-api-v2. Please update 'fabric-api'");
         }
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, commandRegistryAccess) -> {
-            for (FabricAbstractCommand<FabricClientCommandSource> fabricCommand : fabricCommands.values()) {
-                dispatcher.register(fabricCommand.toLiteral());
-            }
+            registerToDispatcher(dispatcher);
         });
     }
 
     @Override
     protected FabricAbstractCommand<FabricClientCommandSource> createCommand(CommandRoute<FabricClientCommandSource> commandRoute, PlatformInvocationListener<FabricClientCommandSource> invocationHook, PlatformSuggestionListener<FabricClientCommandSource> suggestionHook) {
-        return new FabricClientCommand(commandRoute, invocationHook, suggestionHook);
+        return new FabricClientCommand(this, commandRoute, invocationHook, suggestionHook);
     }
 }
