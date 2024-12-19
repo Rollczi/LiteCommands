@@ -2,7 +2,9 @@ package dev.rollczi.litecommands.argument.resolver.optional;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserChainAccessor;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.resolver.MultipleArgumentResolverChained;
 import dev.rollczi.litecommands.argument.suggester.SuggesterChainAccessor;
 import dev.rollczi.litecommands.input.raw.RawInput;
@@ -16,6 +18,12 @@ import java.util.Optional;
 
 @SuppressWarnings("rawtypes")
 public class OptionalArgumentResolver<SENDER> implements MultipleArgumentResolverChained<SENDER, Optional> {
+
+    private final ParserRegistry<SENDER> parserRegistry;
+
+    public OptionalArgumentResolver(ParserRegistry<SENDER> parserRegistry) {
+        this.parserRegistry = parserRegistry;
+    }
 
     @Override
     public ParseResult<Optional> parse(Invocation<SENDER> invocation, Argument<Optional> optionalArgument, RawInput input, ParserChainAccessor<SENDER> chainAccessor) {
@@ -40,7 +48,16 @@ public class OptionalArgumentResolver<SENDER> implements MultipleArgumentResolve
 
     @Override
     public Range getRange(Argument<Optional> optionalArgument) {
-        return Range.range(0, 1);
+        TypeToken<Optional> optionalType = optionalArgument.getType();
+        return getRange(optionalType.getParameterized(), optionalArgument);
+    }
+
+    private <T> Range getRange(TypeToken<T> parameterized, Argument<Optional> optionalArgument) {
+        Argument<T> argument = optionalArgument.child(parameterized);
+        Parser<SENDER, T> parser = parserRegistry.getParser(argument);
+        Range range = parser.getRange(argument);
+
+        return Range.range(0, range.getMax());
     }
 
     @Override
