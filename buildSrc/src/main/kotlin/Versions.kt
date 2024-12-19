@@ -5,7 +5,7 @@ object Versions {
 
     // Tests
     const val JUNIT_JUPITER = "5.11.4"
-    const val ASSERTJ = "3.26.3"
+    const val ASSERTJ = "3.27.0"
     const val MOCKITO = "4.11.0"
     const val AWAITILITY = "4.2.2"
 
