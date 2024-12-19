@@ -5,7 +5,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
-version = "3.9.2"
+version = "3.9.3"
 
 repositories {
     mavenCentral()
@@ -16,8 +16,8 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.9.2") // <-- uncomment in your project
-    // implementation("dev.rollczi:litecommands-adventure-platform:3.9.2") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.9.3") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-adventure-platform:3.9.3") // <-- uncomment in your project
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
