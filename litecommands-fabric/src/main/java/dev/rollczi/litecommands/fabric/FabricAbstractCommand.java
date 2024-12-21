@@ -27,11 +27,13 @@ public abstract class FabricAbstractCommand<SOURCE> {
 
     private static final String FULL_ARGUMENTS = "[...]";
 
+    private final FabricAbstractPlatform<SOURCE> platform;
     private final CommandRoute<SOURCE> baseRoute;
     private final PlatformInvocationListener<SOURCE> invocationHook;
     private final PlatformSuggestionListener<SOURCE> suggestionHook;
 
-    protected FabricAbstractCommand(CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+    protected FabricAbstractCommand(FabricAbstractPlatform<SOURCE> platform, CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+        this.platform = platform;
         this.baseRoute = baseRoute;
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
@@ -72,7 +74,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
     private int execute(CommandContext<SOURCE> context) {
         RawCommand rawCommand = RawCommand.from(context.getInput());
         ParseableInput<?> parseableInput = rawCommand.toParseableInput();
-        PlatformSender platformSender = createSender(context.getSource());
+        PlatformSender platformSender = this.platform.createSender(context.getSource());
         Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
 
         invocationHook.execute(invocation, parseableInput);
@@ -84,7 +86,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
             String input = context.getInput();
             RawCommand rawCommand = RawCommand.from(input);
             SuggestionInput<?> suggestionInput = rawCommand.toSuggestionInput();
-            PlatformSender platformSender = createSender(context.getSource());
+            PlatformSender platformSender = this.platform.createSender(context.getSource());
             Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
 
             SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);
@@ -108,5 +110,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
         return Text.literal(string);
     }
 
-    protected abstract PlatformSender createSender(SOURCE source);
+    public CommandRoute<SOURCE> getCommandRoute() {
+        return baseRoute;
+    }
 }

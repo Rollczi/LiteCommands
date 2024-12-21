@@ -1,5 +1,8 @@
 package dev.rollczi.litecommands.fabric;
 
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.Platform;
@@ -32,6 +35,15 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SO
     }
 
     protected abstract void registerEvents();
+
+    protected void registerToDispatcher(CommandDispatcher<SOURCE> dispatcher) {
+        for (FabricAbstractCommand<SOURCE> fabricCommand : fabricCommands.values()) {
+            LiteralCommandNode<SOURCE> commandNode = dispatcher.register(fabricCommand.toLiteral());
+            for (String alias : fabricCommand.getCommandRoute().getAliases()) {
+                dispatcher.register(LiteralArgumentBuilder.<SOURCE>literal(alias).redirect(commandNode));
+            }
+        }
+    }
 
     @Override
     protected void hook(CommandRoute<SOURCE> commandRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
