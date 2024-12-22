@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "litecommands_example",
-    "version": "3.9.1",
+    "version": "3.9.4",
     "name": "LiteCommands Fabric Example",
     "description": "Annotation based command framework for Fabric.",
     "authors": [

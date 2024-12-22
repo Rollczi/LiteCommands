@@ -89,13 +89,13 @@ maven("https://repo.panda-lang.org/releases")
 
 #### ➕ Add LiteCommands to dependencies
 ```kts
-implementation("dev.rollczi:{artifact}:3.9.1")
+implementation("dev.rollczi:{artifact}:3.9.4")
 ```
 ```xml
 <dependency>
     <groupId>dev.rollczi</groupId>
     <artifactId>{artifact}</artifactId>
-    <version>3.9.1</version>
+    <version>3.9.4</version>
 </dependency>
 ```
 > ⚠️ Replace `{artifact}` with [platform artifact](https://docs.rollczi.dev/documentation/litecommands/platforms.html#supported-platforms)  
@@ -107,7 +107,7 @@ implementation("dev.rollczi:{artifact}:3.9.1")
 @@ Special thanks to all sponsors for supporting me and my projects! ❤️ @@
 ```
 
-<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/Nadwey"><img src="https://images.weserv.nl/?url=https://github.com/Nadwey.png?v=4&mask=circle" width="60px" alt="Nadwey" /></a>&nbsp;&nbsp;<!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/P1otrulla"><img src="https://images.weserv.nl/?url=https://github.com/P1otrulla.png?v=4&mask=circle" width="60px" alt="Piotr Zych" /></a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/Nadwey"><img src="https://images.weserv.nl/?url=https://github.com/Nadwey.png?v=4&mask=circle" width="60px" alt="Nadwey" /></a>&nbsp;&nbsp;&nbsp;<!-- sponsors -->
 
 ## 🔮 Official IntelliJ Plugin
 

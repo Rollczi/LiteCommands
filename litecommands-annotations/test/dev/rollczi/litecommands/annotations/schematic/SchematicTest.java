@@ -1,5 +1,10 @@
 package dev.rollczi.litecommands.annotations.schematic;
 
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.unit.Parsers;
 import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.flag.Flag;
@@ -17,6 +22,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 class SchematicTest extends LiteTestSpec {
+
+    static LiteTestConfig config = builder -> builder
+        .argumentParser(ServerRank.class, Parsers.of(new ServerRank()));
 
     static class ServerRank {}
 

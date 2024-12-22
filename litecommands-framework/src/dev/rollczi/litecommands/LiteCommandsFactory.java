@@ -135,7 +135,7 @@ public final class LiteCommandsFactory {
                 .argument(UUID.class, new UUIDArgumentResolver<>(messageRegistry))
 
                 .argument(upwards(Enum.class), new EnumArgumentResolver<>())
-                .argument(Optional.class, new OptionalArgumentResolver<>())
+                .argument(Optional.class, new OptionalArgumentResolver<>(parser))
                 .argument(CompletableFuture.class, new CompletableFutureResolver<>(scheduler, parser))
                 .argument(upwards(Object.class), ProfileNamespaces.NULLABLE, new NullableArgumentResolver<>(parser, suggester))
 

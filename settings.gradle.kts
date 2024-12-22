@@ -32,7 +32,7 @@ include(":litecommands-jakarta", VERSION_11)
 // platforms
 include(":litecommands-velocity", VERSION_11, tests = false)
 include(":litecommands-bungee", tests = false)
-include(":litecommands-bukkit", tests = false)
+include(":litecommands-bukkit")
 include(":litecommands-minestom", VERSION_21)
 include("litecommands-jda", VERSION_11)
 include(":litecommands-sponge", VERSION_21, tests = false)

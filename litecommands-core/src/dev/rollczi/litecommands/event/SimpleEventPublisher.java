@@ -106,7 +106,7 @@ public class SimpleEventPublisher implements EventPublisher {
                 throw new LiteCommandsReflectInvocationException(declaredMethod, "Cannot access method", exception);
             }
             catch (InvocationTargetException exception) {
-                throw new LiteCommandsReflectInvocationException(declaredMethod, "Cannot invoke method", exception);
+                throw new LiteCommandsReflectInvocationException(declaredMethod, "Cannot invoke method", exception.getCause());
             }
         }
 
