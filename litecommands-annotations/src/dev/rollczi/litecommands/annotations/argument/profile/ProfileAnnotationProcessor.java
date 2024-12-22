@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, PROFILE extends ArgumentProfile<PROFILE>> implements AnnotationProcessor<SENDER> {
 
@@ -38,7 +39,7 @@ public abstract class ProfileAnnotationProcessor<SENDER, A extends Annotation, P
         });
     }
 
-    protected abstract PROFILE createProfile(Parameter parameter, A annotation, Argument<?> argument);
+    protected abstract @Nullable PROFILE createProfile(Parameter parameter, A annotation, Argument<?> argument);
 
 }
 
