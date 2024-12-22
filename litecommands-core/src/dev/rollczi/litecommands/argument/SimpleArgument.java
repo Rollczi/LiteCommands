@@ -117,7 +117,29 @@ public class SimpleArgument<T> implements MutableArgument<T> {
 
     @Override
     public <NEW> Argument<NEW> child(TypeToken<NEW> type) {
-        return new SimpleArgument<>(name, type, this);
+        SimpleArgument<NEW> newSimpleArgument = new SimpleArgument<>(name, type, this);
+        newSimpleArgument.setKey(key.withDefaultNamespace());
+        newSimpleArgument.meta.putAll(this.meta);
+        for (ArgumentProfile argumentProfile : profiles) {
+            newSimpleArgument.addProfile(argumentProfile);
+        }
+        return newSimpleArgument;
+    }
+
+    @Override
+    public Argument<T> withoutProfile(ArgumentProfileNamespace<?> profile) {
+        SimpleArgument<T> argument = new SimpleArgument<>(name, type, nullable);
+        argument.setKey(key.withDefaultNamespace());
+        argument.meta.putAll(this.meta);
+        for (ArgumentProfile argumentProfile : profiles) {
+            if (!argumentProfile.getNamespace().equals(profile)) {
+                argument.addProfile(argumentProfile);
+            }
+            else {
+                argument.meta.remove(profile.asMetaKey());
+            }
+        }
+        return argument;
     }
 
     @Override

@@ -35,7 +35,7 @@ public class OptionalArgumentResolver<SENDER> implements MultipleArgumentResolve
 
     @SuppressWarnings("unchecked")
     private <E> ParseResult<Optional> parseValue(TypeToken<E> type, Invocation<SENDER> invocation, Argument<Optional> optionalArgument, RawInput input, ParserChainAccessor<SENDER> chainAccessor) {
-        Argument<E> argument = Argument.of(optionalArgument.getName(), type);
+        Argument<E> argument = optionalArgument.child(type);
         ParseResult parseResult = chainAccessor.parse(invocation, argument.child(type), input);
 
         return parseResult
@@ -65,7 +65,7 @@ public class OptionalArgumentResolver<SENDER> implements MultipleArgumentResolve
         TypeToken<Optional> optionalType = argument.getType();
         TypeToken<?> parameterized = optionalType.getParameterized();
 
-        return chainAccessor.suggest(invocation, Argument.of(argument.getName(), parameterized), context);
+        return chainAccessor.suggest(invocation, argument.child(parameterized), context);
     }
 
 }
