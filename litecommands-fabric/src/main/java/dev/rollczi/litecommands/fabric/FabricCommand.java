@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
+import dev.rollczi.litecommands.platform.PlatformSenderFactory;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
@@ -23,17 +24,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class FabricAbstractCommand<SOURCE> {
+public class FabricCommand<SOURCE> {
 
-    private static final String FULL_ARGUMENTS = "[...]";
-
-    private final FabricAbstractPlatform<SOURCE> platform;
+    private final PlatformSenderFactory<SOURCE> senderFactory;
+    private final LiteFabricSettings settings;
     private final CommandRoute<SOURCE> baseRoute;
     private final PlatformInvocationListener<SOURCE> invocationHook;
     private final PlatformSuggestionListener<SOURCE> suggestionHook;
 
-    protected FabricAbstractCommand(FabricAbstractPlatform<SOURCE> platform, CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
-        this.platform = platform;
+    public FabricCommand(PlatformSenderFactory<SOURCE> senderFactory, LiteFabricSettings settings, CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+        this.senderFactory = senderFactory;
+        this.settings = settings;
         this.baseRoute = baseRoute;
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
@@ -66,7 +67,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
     @NotNull
     private RequiredArgumentBuilder<SOURCE, String> createArguments() {
         return RequiredArgumentBuilder
-            .<SOURCE, String>argument(FULL_ARGUMENTS, StringArgumentType.greedyString())
+            .<SOURCE, String>argument(settings.getInputInspectionDisplay(), StringArgumentType.greedyString())
             .executes(context -> execute(context))
             .suggests((context, builder) -> suggests(context, builder));
     }
@@ -74,7 +75,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
     private int execute(CommandContext<SOURCE> context) {
         RawCommand rawCommand = RawCommand.from(context.getInput());
         ParseableInput<?> parseableInput = rawCommand.toParseableInput();
-        PlatformSender platformSender = this.platform.createSender(context.getSource());
+        PlatformSender platformSender = this.senderFactory.create(context.getSource());
         Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
 
         invocationHook.execute(invocation, parseableInput);
@@ -86,7 +87,7 @@ public abstract class FabricAbstractCommand<SOURCE> {
             String input = context.getInput();
             RawCommand rawCommand = RawCommand.from(input);
             SuggestionInput<?> suggestionInput = rawCommand.toSuggestionInput();
-            PlatformSender platformSender = this.platform.createSender(context.getSource());
+            PlatformSender platformSender = this.senderFactory.create(context.getSource());
             Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
 
             SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);

@@ -11,7 +11,6 @@ import dev.rollczi.litecommands.fabric.server.FabricServerScheduler;
 import dev.rollczi.litecommands.fabric.server.argument.PlayerArgument;
 import dev.rollczi.litecommands.fabric.server.argument.WorldArgument;
 import dev.rollczi.litecommands.message.MessageRegistry;
-import dev.rollczi.litecommands.platform.PlatformSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -33,7 +32,7 @@ public final class LiteFabricFactory {
      * @deprecated Use {@link LiteFabricFactory#builder()} instead
      */
     @Deprecated
-    public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B create() {
+    public static <B extends LiteCommandsBuilder<ServerCommandSource, LiteFabricSettings, B>> B create() {
         return builder();
     }
 
@@ -41,12 +40,12 @@ public final class LiteFabricFactory {
      * @deprecated Use {@link LiteFabricFactory#server()} instead
      */
     @Deprecated
-    public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B builder() {
+    public static <B extends LiteCommandsBuilder<ServerCommandSource, LiteFabricSettings, B>> B builder() {
         return server();
     }
 
     @SuppressWarnings("unchecked")
-    public static <B extends LiteCommandsBuilder<ServerCommandSource, PlatformSettings, B>> B server() {
+    public static <B extends LiteCommandsBuilder<ServerCommandSource, LiteFabricSettings, B>> B server() {
         return (B) LiteCommandsFactory.builder(ServerCommandSource.class, new FabricServerPlatform(new LiteFabricSettings()))
             .self((builder, internal) -> {
                 MessageRegistry<ServerCommandSource> messages = internal.getMessageRegistry();
@@ -67,7 +66,7 @@ public final class LiteFabricFactory {
 
     @SuppressWarnings("unchecked")
     @Environment(EnvType.CLIENT)
-    public static <B extends LiteCommandsBuilder<FabricClientCommandSource, PlatformSettings, B>> B client() {
+    public static <B extends LiteCommandsBuilder<FabricClientCommandSource, LiteFabricSettings, B>> B client() {
         return (B) LiteCommandsFactory.builder(FabricClientCommandSource.class, new FabricClientPlatform(new LiteFabricSettings()))
             .self((builder, internal) -> {
                 MessageRegistry<FabricClientCommandSource> messages = internal.getMessageRegistry();

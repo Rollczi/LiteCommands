@@ -8,16 +8,15 @@ import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSenderFactory;
-import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SOURCE, PlatformSettings> implements Platform<SOURCE, PlatformSettings> {
+public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SOURCE, LiteFabricSettings> implements Platform<SOURCE, LiteFabricSettings> {
 
-    protected final Map<UUID, FabricAbstractCommand<SOURCE>> fabricCommands = new HashMap<>();
+    protected final Map<UUID, FabricCommand<SOURCE>> fabricCommands = new HashMap<>();
 
     protected static boolean COMMAND_API_V2 = true;
 
@@ -29,15 +28,15 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SO
         }
     }
 
-    protected FabricAbstractPlatform(PlatformSettings settings, PlatformSenderFactory<SOURCE> factory) {
+    protected FabricAbstractPlatform(LiteFabricSettings settings, PlatformSenderFactory<SOURCE> factory) {
         super(settings, factory);
         registerEvents();
     }
 
     protected abstract void registerEvents();
 
-    protected void registerToDispatcher(CommandDispatcher<SOURCE> dispatcher) {
-        for (FabricAbstractCommand<SOURCE> fabricCommand : fabricCommands.values()) {
+    protected void registerAllCommands(CommandDispatcher<SOURCE> dispatcher) {
+        for (FabricCommand<SOURCE> fabricCommand : fabricCommands.values()) {
             LiteralCommandNode<SOURCE> commandNode = dispatcher.register(fabricCommand.toLiteral());
             for (String alias : fabricCommand.getCommandRoute().getAliases()) {
                 dispatcher.register(LiteralArgumentBuilder.<SOURCE>literal(alias).redirect(commandNode));
@@ -56,5 +55,8 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SO
         // TODO: unregister command from dispatcher
     }
 
-    protected abstract FabricAbstractCommand<SOURCE> createCommand(CommandRoute<SOURCE> commandRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook);
+    protected FabricCommand<SOURCE> createCommand(CommandRoute<SOURCE> command, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+        return new FabricCommand<>(this.getSenderFactory(), settings, command, invocationHook, suggestionHook);
+    }
+
 }
