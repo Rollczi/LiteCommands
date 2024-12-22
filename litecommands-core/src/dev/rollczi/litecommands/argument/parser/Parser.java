@@ -3,10 +3,12 @@ package dev.rollczi.litecommands.argument.parser;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.matcher.Matcher;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.range.Rangeable;
 import dev.rollczi.litecommands.requirement.RequirementResult;
+import java.util.function.BiFunction;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface Parser<SENDER, PARSED> extends Matcher<SENDER, PARSED>, Rangeable<Argument<PARSED>> {
@@ -40,6 +42,16 @@ public interface Parser<SENDER, PARSED> extends Matcher<SENDER, PARSED>, Rangeab
         }
 
         throw new LiteCommandsException("Async parsers should override Parser#match method! (" + this.getClass().getName() + ")");
+    }
+
+    @ApiStatus.Experimental
+    static <SENDER, T> Parser<SENDER, T> of(BiFunction<Invocation<SENDER>, String, ParseResult<T>> parser) {
+        return new ArgumentResolver<SENDER, T>() {
+            @Override
+            protected ParseResult<T> parse(Invocation<SENDER> invocation, Argument<T> context, String argument) {
+                return parser.apply(invocation, argument);
+            }
+        };
     }
 
 }

@@ -35,7 +35,8 @@ class IterableSuperClassResolverTest {
                 Parser.class,
                 Matcher.class,
                 Suggester.class,
-                Rangeable.class
+                Rangeable.class,
+                Object.class
             );
     }
 

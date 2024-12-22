@@ -38,6 +38,9 @@ public interface Argument<T> extends Requirement<T> {
     @ApiStatus.Experimental
     <NEW> Argument<NEW> child(TypeToken<NEW> type);
 
+    @ApiStatus.Experimental
+    Argument<T> withoutProfile(ArgumentProfileNamespace<?> profile);
+
     static <T> Argument<T> of(String name, Class<T> type) {
         return new SimpleArgument<>(name, TypeToken.of(type));
     }
