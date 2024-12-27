@@ -18,7 +18,7 @@ object Versions {
     const val BUNGEECORD_API = "1.20-R0.2"
 
     // JDA
-    const val JDA = "5.2.1"
+    const val JDA = "5.2.2"
 
     // Minestom
     const val MINESTOM = "7320437640"
