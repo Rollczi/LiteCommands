@@ -48,6 +48,7 @@ public final class LiteJDAFactory {
             .context(Guild.class, invocation -> from(invocation, Guild.class))
             .context(MessageChannelUnion.class, invocation -> from(invocation, MessageChannelUnion.class))
             .context(Member.class, invocation -> from(invocation, Member.class))
+            .context(User.class, invocation -> from(invocation, SlashCommandInteractionEvent.class).map(member -> member.getUser()))
             .context(SlashCommandInteractionEvent.class, invocation -> from(invocation, SlashCommandInteractionEvent.class))
 
             .validator(Scope.global(), new DiscordPermissionValidator())
