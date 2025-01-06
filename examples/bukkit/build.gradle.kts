@@ -45,7 +45,7 @@ tasks.shadowJar {
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
-    options.release = 17
+    options.release = 21
 }
 
 sourceSets.test {
@@ -54,6 +54,6 @@ sourceSets.test {
 }
 
 tasks.runServer {
-    minecraftVersion("1.21")
+    minecraftVersion("1.21.4")
     allJvmArgs = listOf("-DPaper.IgnoreJavaVersion=true")
 }

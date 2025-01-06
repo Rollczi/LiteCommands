@@ -7,7 +7,7 @@ repositories {
 
     maven("https://maven.fabricmc.net/") // fabric
     maven("https://repo.dmulloy2.net/repository/public/") // protocol lib
-    maven("https://papermc.io/repo/repository/maven-public/") // paper, adventure, velocity
+    maven("https://repo.papermc.io/repository/maven-public/") // paper, adventure, velocity
     maven("https://repo.opencollab.dev/maven-snapshots") // nukkit
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // spigot
     maven("https://jitpack.io/") // minestom

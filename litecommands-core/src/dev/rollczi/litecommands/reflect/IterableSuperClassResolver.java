@@ -24,11 +24,14 @@ public class IterableSuperClassResolver implements Iterable<Class<?>> {
     private class TypeIterator implements Iterator<Class<?>> {
 
         private Class<?> next;
+        private Class<?> lastSuperclass;
         private final Queue<Class<?>> interfaces = new LinkedList<>();
         private final Set<Class<?>> visitedInterfaces = new HashSet<>();
 
         private TypeIterator() {
             this.next = baseType;
+            this.lastSuperclass = baseType;
+            this.interfaces.addAll(ReflectIndex.getInterfaces(baseType));
         }
 
         @Override
@@ -60,10 +63,11 @@ public class IterableSuperClassResolver implements Iterable<Class<?>> {
                 return nextToReturn;
             }
 
-            Class<?> superclass = nextToReturn.getSuperclass();
+            Class<?> superclass = this.lastSuperclass.getSuperclass();
 
             if (superclass != null) {
                 this.next = superclass;
+                this.lastSuperclass = superclass;
                 interfaces.addAll(ReflectIndex.getInterfaces(superclass));
                 return nextToReturn;
             }

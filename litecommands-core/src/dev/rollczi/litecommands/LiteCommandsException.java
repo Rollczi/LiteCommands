@@ -24,4 +24,11 @@ public class LiteCommandsException extends RuntimeException {
         exceptions.forEach(exception -> addSuppressed(exception));
     }
 
+    public RuntimeException toRuntimeException() {
+        if (getCause() instanceof Exception) {
+            return (RuntimeException) getCause();
+        }
+        return this;
+    }
+
 }

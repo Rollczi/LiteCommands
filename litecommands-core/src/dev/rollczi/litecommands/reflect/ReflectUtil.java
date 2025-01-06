@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.LiteCommandsException;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,8 +148,11 @@ public final class ReflectUtil {
         try {
             return (T) method.invoke(instance, params);
         }
-        catch (Exception exception) {
-            throw new LiteCommandsReflectException("Unable to invoke method " + method.getName() + " in " + instance.getClass(), exception);
+        catch (InvocationTargetException invocationTargetException) {
+            throw new LiteCommandsReflectException("Unable to invoke method " + method.getName() + " in " + instance.getClass(), invocationTargetException.getCause());
+        }
+        catch (IllegalAccessException exception) {
+            throw new LiteCommandsReflectException("Cannot access method " + method.getName() + " in " + instance.getClass(), exception);
         }
     }
 
