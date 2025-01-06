@@ -5,7 +5,7 @@ object Versions {
 
     // Tests
     const val JUNIT_JUPITER = "5.11.4"
-    const val ASSERTJ = "3.26.3"
+    const val ASSERTJ = "3.27.2"
     const val MOCKITO = "4.11.0"
     const val AWAITILITY = "4.2.2"
 
@@ -44,8 +44,8 @@ object Versions {
     const val OKHTTP = "4.12.0"
 
     // Adventure
-    const val ADVENTURE_MINIMESSAGES = "4.17.0"
-    const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.17.0"
+    const val ADVENTURE_MINIMESSAGES = "4.18.0"
+    const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.18.0"
     const val ADVENTURE_PLATFORM_API = "4.3.4"
 
     // Jakarta
