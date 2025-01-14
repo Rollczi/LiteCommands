@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.fabric;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
@@ -34,7 +35,7 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SO
     protected abstract void registerEvents();
 
     @Override
-    protected void hook(CommandRoute<SOURCE> commandRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+    protected void hook(CommandRoute<SOURCE> commandRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         fabricCommands.put(commandRoute.getUniqueId(), createCommand(commandRoute, invocationHook, suggestionHook));
     }
 

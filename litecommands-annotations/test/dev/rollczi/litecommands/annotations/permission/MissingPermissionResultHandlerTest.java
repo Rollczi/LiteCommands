@@ -20,7 +20,7 @@ class MissingPermissionResultHandlerTest extends LiteTestSpec {
 
     static LiteTestConfig config = builder -> builder
         .missingPermission((invocation, missingPermissions, chain) -> {
-            if (missingPermissions.getFlatPermissions().contains("test.permission.throw")) {
+            if (missingPermissions.getPermissions().contains("test.permission.throw")) {
                 throw new RuntimeException("Missing permission");
             }
 

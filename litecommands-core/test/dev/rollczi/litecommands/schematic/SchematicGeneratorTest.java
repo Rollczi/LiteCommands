@@ -6,8 +6,8 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
-import dev.rollczi.litecommands.permission.PermissionSection;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestUtil;
 import dev.rollczi.litecommands.validator.ValidatorService;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 class SchematicGeneratorTest {
@@ -28,7 +28,7 @@ class SchematicGeneratorTest {
 
     @BeforeAll
     static void beforeAll() {
-        validatorService.registerValidator(Scope.global(), new MissingPermissionValidator<>());
+        validatorService.registerValidator(Scope.global(), new MissingPermissionValidator<>(new StrictService()));
     }
 
     @Test
@@ -49,7 +49,7 @@ class SchematicGeneratorTest {
         TestExecutor executorSubTest2 = new TestExecutor<>(subTestCommand)
             .withStringArg("first")
             .withStringArg("second");
-        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singletonList(PermissionSection.and("test.permission")));
+        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singleton(Collections.singleton("test.permission")));
         subTestCommand.appendExecutor(executorSubTest2);
 
         // test subtest2

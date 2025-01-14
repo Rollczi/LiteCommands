@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.sponge;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -26,8 +27,8 @@ public class SpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSet
     }
 
     @Override
-    protected void hook(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> invocationHook, PlatformSuggestionListener<CommandCause> suggestionHook) {
-        commands.put(commandRoute.getUniqueId(), new SpongeCommand(commandRoute, invocationHook, suggestionHook));
+    protected void hook(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> invocationHook, PlatformSuggestionListener<CommandCause> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
+        commands.put(commandRoute.getUniqueId(), new SpongeCommand(commandRoute, invocationHook, suggestionHook, permissionStrictHandler));
     }
 
     @Override

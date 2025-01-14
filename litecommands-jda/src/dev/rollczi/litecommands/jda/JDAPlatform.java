@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -63,7 +64,7 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
     }
 
     @Override
-    protected void hook(CommandRoute<User> commandRoute, PlatformInvocationListener<User> invocationHook, PlatformSuggestionListener<User> suggestionHook) {
+    protected void hook(CommandRoute<User> commandRoute, PlatformInvocationListener<User> invocationHook, PlatformSuggestionListener<User> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         JDACommandTranslator.JDALiteCommand translated = settings.translator().translate(commandRoute);
 
         for (String name : commandRoute.names()) {

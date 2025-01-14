@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
@@ -21,14 +22,16 @@ class BungeeCommand extends Command implements TabExecutor {
     private final String label;
     private final PlatformInvocationListener<CommandSender> executeListener;
     private final PlatformSuggestionListener<CommandSender> suggestionListener;
+    private final PermissionStrictHandler permissionStrictHandler;
 
-    public BungeeCommand(LiteBungeeSettings settings, CommandRoute<CommandSender> command, String label, PlatformInvocationListener<CommandSender> executeListener, PlatformSuggestionListener<CommandSender> suggestionListener) {
+    public BungeeCommand(LiteBungeeSettings settings, CommandRoute<CommandSender> command, String label, PlatformInvocationListener<CommandSender> executeListener, PlatformSuggestionListener<CommandSender> suggestionListener, PermissionStrictHandler permissionStrictHandler) {
         super(label, "", label);
         this.settings = settings;
         this.commandSection = command;
         this.label = label;
         this.executeListener = executeListener;
         this.suggestionListener = suggestionListener;
+        this.permissionStrictHandler = permissionStrictHandler;
     }
 
     @Override
@@ -55,7 +58,7 @@ class BungeeCommand extends Command implements TabExecutor {
         boolean isNative = commandSection.meta().get(Meta.NATIVE_PERMISSIONS);
 
         if (isNative || settings.isNativePermissions()) {
-            MissingPermissions missingPermissions = MissingPermissions.check(new BungeeSender(sender), this.commandSection);
+            MissingPermissions missingPermissions = MissingPermissions.check(permissionStrictHandler, new BungeeSender(sender), this.commandSection);
 
             return missingPermissions.isPermitted();
         }

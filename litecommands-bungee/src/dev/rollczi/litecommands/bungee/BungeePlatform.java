@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -25,9 +26,9 @@ class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings>
     }
 
     @Override
-    protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
+    protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         for (String label : commandRoute.names()) {
-            BungeeCommand command = new BungeeCommand(settings, commandRoute, label, invocationHook, suggestionHook);
+            BungeeCommand command = new BungeeCommand(settings, commandRoute, label, invocationHook, suggestionHook, permissionStrictHandler);
 
             pluginManager.registerCommand(this.plugin, command);
         }

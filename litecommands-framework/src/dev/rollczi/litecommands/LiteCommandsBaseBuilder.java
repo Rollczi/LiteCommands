@@ -21,6 +21,7 @@ import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.bind.BindRegistry;
@@ -107,6 +108,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final EventPublisher eventPublisher;
     protected final SchematicGeneratorReference<SENDER> schematicGenerator;
     protected final CooldownService cooldownService;
+    protected final PermissionStrictHandler permissionStrictHandler;
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -169,6 +171,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
         this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, parserRegistry));
         this.cooldownService = new CooldownService(this.scheduler);
+        this.permissionStrictHandler = PermissionStrictHandler.DEFAULT;
     }
 
     @Override
@@ -524,6 +527,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    public B permissionStrict(PermissionStrictHandler permissionStrictHandler) {
+        this.strictService.setPermissionStrictHandler(permissionStrictHandler);
+        return this.self();
+    }
+
+    @Override
     public B listener(EventListener listener) {
         this.eventPublisher.subscribe(listener);
         return this.self();
@@ -623,7 +632,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, requirementMatchService, eventPublisher);
         SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
 
-        return new CommandManager<>(this.platform, commandExecuteService, suggestionService);
+        return new CommandManager<>(this.platform, commandExecuteService, suggestionService, this.strictService.getPermissionStrictHandler());
     }
 
     /**

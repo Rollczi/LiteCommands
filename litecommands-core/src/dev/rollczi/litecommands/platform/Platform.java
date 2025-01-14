@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.platform;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,11 +21,11 @@ public interface Platform<SENDER, C extends PlatformSettings> {
 
     default void stop() {}
 
-    void register(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook);
+    void register(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook, PermissionStrictHandler permissionStrictHandler);
 
     default <LISTENER extends PlatformInvocationListener<SENDER> & PlatformSuggestionListener<SENDER>>
-    void register(CommandRoute<SENDER> commandRoute, LISTENER listener) {
-        register(commandRoute, listener, listener);
+    void register(CommandRoute<SENDER> commandRoute, LISTENER listener, PermissionStrictHandler permissionStrictHandler) {
+        register(commandRoute, listener, listener, permissionStrictHandler);
     }
 
     void unregister(CommandRoute<SENDER> commandRoute);

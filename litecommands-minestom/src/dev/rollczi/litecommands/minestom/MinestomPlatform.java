@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -18,7 +19,7 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
     }
 
     @Override
-    protected void hook(CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
+    protected void hook(CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         MinestomCommand minestomMinestomCommand = this.createCommand(command, invocationHook, suggestionHook);
 
         this.commandManager.register(minestomMinestomCommand);

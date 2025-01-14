@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.platform;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -39,14 +40,14 @@ public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> imple
     }
 
     @Override
-    public final void register(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook) {
+    public final void register(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         for (String name : commandRoute.names()) {
             if (this.commandRoutes.containsKey(name)) {
                 throw new IllegalArgumentException("Command with name " + name + " already exists");
             }
         }
 
-        this.hook(commandRoute, invocationHook, suggestionHook);
+        this.hook(commandRoute, invocationHook, suggestionHook, permissionStrictHandler);
 
         for (String name : commandRoute.names()) {
             this.commandRoutes.put(name, commandRoute);
@@ -71,7 +72,7 @@ public abstract class AbstractPlatform<SENDER, C extends PlatformSettings> imple
         this.commandRoutes.clear();
     }
 
-    protected abstract void hook(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook);
+    protected abstract void hook(CommandRoute<SENDER> commandRoute, PlatformInvocationListener<SENDER> invocationHook, PlatformSuggestionListener<SENDER> suggestionHook, PermissionStrictHandler permissionStrictHandler);
 
     protected abstract void unhook(CommandRoute<SENDER> commandRoute);
 

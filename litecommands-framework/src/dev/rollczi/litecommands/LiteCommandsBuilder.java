@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.event.Subscriber;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.extension.LiteExtension;
@@ -206,6 +207,12 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      */
     @ApiStatus.Experimental
     B strictMode(StrictMode strictMode);
+
+    /**
+     * Set the default permission strict mode for all commands.
+     */
+    @ApiStatus.Experimental
+    B permissionStrict(PermissionStrictHandler permissionStrictHandler);
 
     /**
      * Register event listener for the LiteCommands event system.

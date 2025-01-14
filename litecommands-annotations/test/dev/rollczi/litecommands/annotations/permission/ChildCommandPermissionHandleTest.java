@@ -7,8 +7,6 @@ import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,7 +41,7 @@ class ChildCommandPermissionHandleTest extends LiteTestSpec {
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
-        assertEquals(Collections.singletonList("main.info"), permissions.getPermissions().get(0).getPermissions());
+        assertEquals("main.info", permissions.getPermissions().get(0));
     }
 
     @Test
@@ -52,14 +50,14 @@ class ChildCommandPermissionHandleTest extends LiteTestSpec {
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
-        assertThat(permissions.getFlatPermissions())
+        assertThat(permissions.getPermissions())
             .containsOnlyOnce("main.test");
 
         permissions = platform.execute("main test value value2")
             .assertFailedAs(MissingPermissions.class);
 
         assertEquals(1, permissions.getPermissions().size());
-        assertThat(permissions.getFlatPermissions())
+        assertThat(permissions.getPermissions())
             .containsOnlyOnce("main.test.2");
     }
 

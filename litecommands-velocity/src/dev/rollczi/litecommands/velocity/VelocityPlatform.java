@@ -4,6 +4,7 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -19,8 +20,8 @@ class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySetti
 
 
     @Override
-    protected void hook(CommandRoute<CommandSource> commandRoute, PlatformInvocationListener<CommandSource> invocationHook, PlatformSuggestionListener<CommandSource> suggestionHook) {
-        VelocityCommand velocityCommand = new VelocityCommand(settings, commandRoute, invocationHook, suggestionHook);
+    protected void hook(CommandRoute<CommandSource> commandRoute, PlatformInvocationListener<CommandSource> invocationHook, PlatformSuggestionListener<CommandSource> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
+        VelocityCommand velocityCommand = new VelocityCommand(settings, commandRoute, invocationHook, suggestionHook, permissionStrictHandler);
 
         CommandMeta meta = commandManager.metaBuilder(commandRoute.getName())
             .aliases(commandRoute.getAliases().toArray(new String[0]))

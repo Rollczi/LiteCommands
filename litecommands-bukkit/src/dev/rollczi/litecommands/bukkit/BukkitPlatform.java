@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
@@ -14,8 +15,8 @@ class BukkitPlatform extends AbstractPlatform<CommandSender, LiteBukkitSettings>
     }
 
     @Override
-    protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
-        BukkitCommand bukkitSimpleCommand = new BukkitCommand(settings, commandRoute, invocationHook, suggestionHook);
+    protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
+        BukkitCommand bukkitSimpleCommand = new BukkitCommand(settings, commandRoute, invocationHook, suggestionHook, permissionStrictHandler);
 
         this.settings.commandsRegistry().register(commandRoute.getName(), settings.fallbackPrefix(), bukkitSimpleCommand);
         this.settings.tabCompleter().register(settings.fallbackPrefix(), bukkitSimpleCommand);

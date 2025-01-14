@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
@@ -28,7 +29,7 @@ public class TestPlatform extends AbstractPlatform<TestSender, TestSettings> {
     }
 
     @Override
-    protected void hook(CommandRoute<TestSender> commandRoute, PlatformInvocationListener<TestSender> invocationHook, PlatformSuggestionListener<TestSender> suggestionHook) {
+    protected void hook(CommandRoute<TestSender> commandRoute, PlatformInvocationListener<TestSender> invocationHook, PlatformSuggestionListener<TestSender> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         this.executeListeners.put(commandRoute, invocationHook);
         this.suggestListeners.put(commandRoute, suggestionHook);
     }

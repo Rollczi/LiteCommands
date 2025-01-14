@@ -1,14 +1,13 @@
 package dev.rollczi.litecommands.meta;
 
-import dev.rollczi.litecommands.permission.PermissionSection;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,21 +47,20 @@ class MetaTest {
     @Test
     void testList() {
         Meta meta = Meta.create();
-        ArrayList<PermissionSection> test = new ArrayList<>();
-        test.add(PermissionSection.and("first"));
+        LinkedHashSet<String> test = new LinkedHashSet<>();
+        test.add("first");
 
-        meta.put(Meta.PERMISSIONS, test);
-        meta.listEditor(Meta.PERMISSIONS)
-            .add(PermissionSection.and("second"))
+        meta.put(Meta.PERMISSIONS, new LinkedHashSet<>(Collections.singleton(test)));
+        meta.setEditor(Meta.PERMISSIONS)
+            .add(Collections.singleton("second"))
             .apply();
 
-        List<String> list = meta.get(Meta.PERMISSIONS).stream()
-            .flatMap(that -> that.getPermissions().stream())
-            .collect(Collectors.toList());
+        Set<Set<String>> set = meta.get(Meta.PERMISSIONS);
+        Iterator<Set<String>> iterator = set.iterator();
 
-        assertEquals(2, list.size());
-        assertEquals("first", list.get(0));
-        assertEquals("second", list.get(1));
+        assertEquals(2, set.size());
+        assertEquals(Collections.singleton("first"), iterator.next());
+        assertEquals(Collections.singleton("second"), iterator.next());
     }
 
     @Test

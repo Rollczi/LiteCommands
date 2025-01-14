@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
@@ -23,16 +24,18 @@ class VelocityCommand implements SimpleCommand {
     private final CommandRoute<CommandSource> commandSection;
     private final PlatformInvocationListener<CommandSource> executeListener;
     private final PlatformSuggestionListener<CommandSource> suggestionListener;
+    private final PermissionStrictHandler permissionStrictHandler;
 
     public VelocityCommand(
         LiteVelocitySettings settings,
         CommandRoute<CommandSource> command, PlatformInvocationListener<CommandSource> executeListener,
-        PlatformSuggestionListener<CommandSource> suggestionListener
+        PlatformSuggestionListener<CommandSource> suggestionListener, PermissionStrictHandler permissionStrictHandler
     ) {
         this.settings = settings;
         this.commandSection = command;
         this.executeListener = executeListener;
         this.suggestionListener = suggestionListener;
+        this.permissionStrictHandler = permissionStrictHandler;
     }
 
     @Override
@@ -40,7 +43,7 @@ class VelocityCommand implements SimpleCommand {
         boolean isNative = commandSection.meta().get(Meta.NATIVE_PERMISSIONS);
 
         if (isNative || settings.isNativePermissions()) {
-            MissingPermissions missingPermissions = MissingPermissions.check(new VelocitySender(invocation.source()), this.commandSection);
+            MissingPermissions missingPermissions = MissingPermissions.check(permissionStrictHandler, new VelocitySender(invocation.source()), this.commandSection);
 
             return missingPermissions.isPermitted();
         }

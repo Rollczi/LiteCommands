@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.command.executor.CommandExecuteResult;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.input.InputMatcher;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -25,11 +26,13 @@ public class CommandManager<SENDER> {
 
     private final CommandExecuteService<SENDER> executeService;
     private final SuggestionService<SENDER> suggestionService;
+    private final PermissionStrictHandler permissionStrictHandler;
 
-    public CommandManager(Platform<SENDER, ?> platform, CommandExecuteService<SENDER> executeService, SuggestionService<SENDER> suggestionService) {
+    public CommandManager(Platform<SENDER, ?> platform, CommandExecuteService<SENDER> executeService, SuggestionService<SENDER> suggestionService, PermissionStrictHandler permissionStrictHandler) {
         this.platform = platform;
         this.executeService = executeService;
         this.suggestionService = suggestionService;
+        this.permissionStrictHandler = permissionStrictHandler;
     }
 
     public CommandRoute<SENDER> getRoot() {
@@ -39,7 +42,7 @@ public class CommandManager<SENDER> {
     public void register(CommandRoute<SENDER> commandRoute) {
         PlatformListener listener = new PlatformListener(commandRoute);
 
-        this.platform.register(commandRoute, listener);
+        this.platform.register(commandRoute, listener, permissionStrictHandler);
         this.root.appendToRoot(commandRoute);
     }
 

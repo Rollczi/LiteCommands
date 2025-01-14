@@ -2,14 +2,14 @@ package dev.rollczi.litecommands;
 
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
-import dev.rollczi.litecommands.argument.resolver.collector.CollectionArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.ArrayArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.ArrayListArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.CollectionArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.LinkedHashSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.LinkedListArgumentResolver;
-import dev.rollczi.litecommands.argument.resolver.collector.ArrayListArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.SetArgumentResolver;
-import dev.rollczi.litecommands.argument.resolver.collector.TreeSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.StackArgumentResolver;
+import dev.rollczi.litecommands.argument.resolver.collector.TreeSetArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.collector.VectorArgumentResolver;
 import dev.rollczi.litecommands.argument.resolver.completeable.CompletableFutureResolver;
 import dev.rollczi.litecommands.argument.resolver.nullable.NullableArgumentResolver;
@@ -28,14 +28,15 @@ import dev.rollczi.litecommands.argument.resolver.standard.UUIDArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.cooldown.CooldownState;
-import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
 import dev.rollczi.litecommands.cooldown.CooldownStateController;
+import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
+import dev.rollczi.litecommands.flag.FlagArgumentResolver;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
+import dev.rollczi.litecommands.handler.exception.standard.ThrowableHandler;
 import dev.rollczi.litecommands.handler.result.standard.ArrayHandler;
 import dev.rollczi.litecommands.handler.result.standard.CollectionHandler;
 import dev.rollczi.litecommands.handler.result.standard.CompletionStageHandler;
-import dev.rollczi.litecommands.handler.exception.standard.ThrowableHandler;
 import dev.rollczi.litecommands.handler.result.standard.OptionalHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
@@ -52,25 +53,13 @@ import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
-import dev.rollczi.litecommands.flag.FlagArgumentResolver;
 import dev.rollczi.litecommands.quoted.QuotedStringArgumentResolver;
-import static dev.rollczi.litecommands.reflect.type.TypeRange.downwards;
-import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.validator.ValidatorExecutionController;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-import java.util.TreeSet;
-import java.util.UUID;
-import java.util.Vector;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -78,10 +67,23 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeSet;
+import java.util.UUID;
+import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import static dev.rollczi.litecommands.reflect.type.TypeRange.downwards;
+import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 
 @SuppressWarnings("Convert2MethodRef")
 public final class LiteCommandsFactory {
@@ -95,6 +97,7 @@ public final class LiteCommandsFactory {
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
             ParserRegistry<SENDER> parser = internal.getParserRegistry();
             SuggesterRegistry<SENDER> suggester = internal.getSuggesterRegistry();
+            StrictService strictService = internal.getStrictService();
 
             List<Class<?>> excluded = Arrays.asList(Cloneable.class, Serializable.class, Object.class);
 
@@ -105,7 +108,7 @@ public final class LiteCommandsFactory {
                 .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
-                .validator(Scope.global(), new MissingPermissionValidator<>())
+                .validator(Scope.global(), new MissingPermissionValidator<>(strictService))
 
                 .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
                 .listener(new CooldownStateController<>(internal.getCooldownService()))

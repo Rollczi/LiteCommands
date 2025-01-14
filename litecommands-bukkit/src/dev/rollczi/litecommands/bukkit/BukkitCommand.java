@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -31,14 +32,16 @@ public class BukkitCommand extends Command {
     private final CommandRoute<CommandSender> commandRoute;
     private final PlatformInvocationListener<CommandSender> invocationHook;
     private final PlatformSuggestionListener<CommandSender> suggestionHook;
+    private final PermissionStrictHandler permissionStrictHandler;
     private boolean syncTabComplete = false;
 
-    BukkitCommand(LiteBukkitSettings settings, CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
+    BukkitCommand(LiteBukkitSettings settings, CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         super(commandRoute.getName(), "", "/" + commandRoute.getName(), commandRoute.getAliases());
         this.settings = settings;
         this.commandRoute = commandRoute;
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
+        this.permissionStrictHandler = permissionStrictHandler;
     }
 
     public void setSyncTabComplete(boolean syncTabComplete) {
@@ -94,7 +97,7 @@ public class BukkitCommand extends Command {
             return super.testPermissionSilent(target);
         }
 
-        MissingPermissions check = MissingPermissions.check(new BukkitPlatformSender(target), commandRoute);
+        MissingPermissions check = MissingPermissions.check(permissionStrictHandler, new BukkitPlatformSender(target), commandRoute);
 
         return check.isPermitted();
     }

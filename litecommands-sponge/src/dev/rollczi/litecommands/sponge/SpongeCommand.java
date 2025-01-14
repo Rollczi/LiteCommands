@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionStrictHandler;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import net.kyori.adventure.text.Component;
@@ -26,11 +27,13 @@ class SpongeCommand implements Command.Raw {
     private final CommandRoute<CommandCause> commandRoute;
     private final PlatformInvocationListener<CommandCause> executeHook;
     private final PlatformSuggestionListener<CommandCause> suggestionHook;
+    private final PermissionStrictHandler permissionStrictHandler;
 
-    public SpongeCommand(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> executeHook, PlatformSuggestionListener<CommandCause> suggestionHook) {
+    public SpongeCommand(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> executeHook, PlatformSuggestionListener<CommandCause> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         this.commandRoute = commandRoute;
         this.executeHook = executeHook;
         this.suggestionHook = suggestionHook;
+        this.permissionStrictHandler = permissionStrictHandler;
     }
 
     public CommandRoute<CommandCause> getCommandRoute() {
@@ -70,7 +73,7 @@ class SpongeCommand implements Command.Raw {
 
     @Override
     public boolean canExecute(CommandCause sender) {
-        MissingPermissions missingPermissions = MissingPermissions.check(new SpongeSender(sender), this.commandRoute);
+        MissingPermissions missingPermissions = MissingPermissions.check(permissionStrictHandler, new SpongeSender(sender), this.commandRoute);
         return missingPermissions.isPermitted();
     }
 
