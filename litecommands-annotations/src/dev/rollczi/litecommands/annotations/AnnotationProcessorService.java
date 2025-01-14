@@ -15,7 +15,6 @@ import dev.rollczi.litecommands.annotations.literal.LiteralArgumentProcessor;
 import dev.rollczi.litecommands.annotations.meta.MarkMetaAnnotationResolver;
 import dev.rollczi.litecommands.annotations.optional.OptionalArg;
 import dev.rollczi.litecommands.annotations.optional.OptionalArgArgumentProcessor;
-import dev.rollczi.litecommands.annotations.permission.AnyPermissionAnnotationResolver;
 import dev.rollczi.litecommands.annotations.permission.PermissionAnnotationResolver;
 import dev.rollczi.litecommands.annotations.permission.PermissionsAnnotationResolver;
 import dev.rollczi.litecommands.annotations.priority.PriorityAnnotationResolver;
@@ -61,7 +60,6 @@ public class AnnotationProcessorService<SENDER> {
             .register(new AsyncAnnotationResolver<>())
             .register(new PermissionAnnotationResolver<>())
             .register(new PermissionsAnnotationResolver<>())
-            .register(new AnyPermissionAnnotationResolver<>())
             .register(new PriorityAnnotationResolver<>())
             .register(new ValidateAnnotationResolver<>())
             .register(new CooldownAnnotationResolver<>())

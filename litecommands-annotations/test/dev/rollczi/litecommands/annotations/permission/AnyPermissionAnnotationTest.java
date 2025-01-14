@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AnyPermissionAnnotationTest extends LiteTestSpec {
 
     @Command(name = "test")
-    @AnyPermission(value = {"test.base", "test.admin"}, type = PermissionSection.Type.OR)
+    @Permission(value = {"test.base", "test.admin"}, type = PermissionSection.Type.OR)
     static class TestCommand {
 
         @Execute
-        @AnyPermission(value = {"test.permission.execute", "test.admin"}, type = PermissionSection.Type.OR)
+        @Permission(value = {"test.permission.execute", "test.admin"}, type = PermissionSection.Type.OR)
         void execute() {
         }
 
