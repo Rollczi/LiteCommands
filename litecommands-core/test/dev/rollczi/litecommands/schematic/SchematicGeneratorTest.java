@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
+import dev.rollczi.litecommands.permission.PermissionSection;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestUtil;
@@ -48,7 +49,7 @@ class SchematicGeneratorTest {
         TestExecutor executorSubTest2 = new TestExecutor<>(subTestCommand)
             .withStringArg("first")
             .withStringArg("second");
-        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singletonList("test.permission"));
+        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singletonList(PermissionSection.and("test.permission")));
         subTestCommand.appendExecutor(executorSubTest2);
 
         // test subtest2

@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.annotations.permission;
 import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.permission.PermissionSection;
 
 public class PermissionsAnnotationResolver<SENDER> implements AnnotationProcessor<SENDER> {
 
@@ -13,7 +14,7 @@ public class PermissionsAnnotationResolver<SENDER> implements AnnotationProcesso
 
             for (Permission permissionAnnotation : annotation.value()) {
                 meta.listEditor(Meta.PERMISSIONS)
-                    .addAll(permissionAnnotation.value())
+                    .add(PermissionSection.and(permissionAnnotation.value()))
                     .apply();
             }
         });

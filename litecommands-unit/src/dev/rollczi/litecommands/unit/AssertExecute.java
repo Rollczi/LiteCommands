@@ -161,7 +161,7 @@ public class AssertExecute {
 
     public AssertExecute assertMissingPermission(String... permissions) {
         MissingPermissions missingPermissions = assertFailedAs(MissingPermissions.class);
-        assertThat(missingPermissions.getPermissions().toArray(new String[0]))
+        assertThat(missingPermissions.getFlatPermissions())
             .containsOnlyOnce(permissions);
 
         return this;

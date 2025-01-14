@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MissingPermissions {
 
     private final List<String> checkedPermissions;
-    private final List<String> missingPermissions;
+    private final List<PermissionSection> missingPermissions;
 
-    private MissingPermissions(List<String> checkedPermissions, List<String> missingPermissions) {
+    private MissingPermissions(List<String> checkedPermissions, List<PermissionSection> missingPermissions) {
         this.checkedPermissions = checkedPermissions;
         this.missingPermissions = missingPermissions;
     }
@@ -23,8 +24,12 @@ public class MissingPermissions {
         return Collections.unmodifiableList(checkedPermissions);
     }
 
-    public List<String> getPermissions() {
+    public List<PermissionSection> getPermissions() {
         return Collections.unmodifiableList(missingPermissions);
+    }
+
+    public List<String> getFlatPermissions() {
+        return missingPermissions.stream().flatMap(that -> that.getPermissions().stream()).collect(Collectors.toList());
     }
 
     public String asJoinedText() {
@@ -32,7 +37,7 @@ public class MissingPermissions {
     }
 
     public String asJoinedText(String separator) {
-        return String.join(separator, missingPermissions);
+        return String.join(separator, missingPermissions.stream().flatMap(that -> that.getPermissions().stream()).toArray(String[]::new));
     }
 
     public boolean isMissing() {
@@ -45,7 +50,7 @@ public class MissingPermissions {
 
     public static MissingPermissions check(PlatformSender platformSender, MetaHolder metaHolder) {
         List<String> collected = new ArrayList<>();
-        List<String> missingPermissions = new ArrayList<>();
+        List<PermissionSection> missingPermissions = new ArrayList<>();
         MetaHolder current = metaHolder;
 
         while (current != null) {
@@ -54,13 +59,30 @@ public class MissingPermissions {
                 continue;
             }
 
-            List<String> permissions = current.meta().get(Meta.PERMISSIONS);
+            List<PermissionSection> permissions = current.meta().get(Meta.PERMISSIONS);
 
-            for (String permission : permissions) {
-                collected.add(permission);
+            for (PermissionSection permission : permissions) {
+                List<String> list = permission.getPermissions();
+                collected.addAll(list);
 
-                if (!platformSender.hasPermission(permission)) {
-                    missingPermissions.add(permission);
+                PermissionSection.Type type = permission.getType();
+                if (type == PermissionSection.Type.OR) {
+                    boolean matchOne = false;
+                    for (String perms : list) {
+                        if (platformSender.hasPermission(perms)) {
+                            matchOne = true;
+                        }
+                    }
+                    if (!matchOne) {
+                        missingPermissions.add(permission);
+                    }
+                } else if (type == PermissionSection.Type.AND) {
+                    for (String perms : list) {
+                        if (!platformSender.hasPermission(perms)) {
+                            missingPermissions.add(permission);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -71,7 +93,7 @@ public class MissingPermissions {
     }
 
     public static MissingPermissions missing(String... permissions) {
-        return new MissingPermissions(Arrays.asList(permissions), Arrays.asList(permissions));
+        return new MissingPermissions(Arrays.asList(permissions), Collections.singletonList(PermissionSection.and(permissions)));
     }
 
 }
