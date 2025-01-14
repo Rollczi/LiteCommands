@@ -108,7 +108,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final EventPublisher eventPublisher;
     protected final SchematicGeneratorReference<SENDER> schematicGenerator;
     protected final CooldownService cooldownService;
-    protected final PermissionStrictHandler permissionStrictHandler;
 
     /**
      * Constructor for {@link LiteCommandsBaseBuilder}
@@ -171,7 +170,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
         this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, parserRegistry));
         this.cooldownService = new CooldownService(this.scheduler);
-        this.permissionStrictHandler = PermissionStrictHandler.DEFAULT;
     }
 
     @Override
