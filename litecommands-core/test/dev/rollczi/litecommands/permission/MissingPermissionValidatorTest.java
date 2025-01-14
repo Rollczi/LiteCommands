@@ -13,13 +13,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MissingPermissionValidatorTest {
 
@@ -53,7 +50,7 @@ class MissingPermissionValidatorTest {
         assertNotNull(missingPermissions);
         assertTrue(missingPermissions.isMissing());
 
-        List<String> missing = missingPermissions.getFlatPermissions();
+        Set<String> missing = missingPermissions.getFlatPermissions();
         assertEquals(3, missing.size());
 
         assertTrue(missing.contains("permission.test"));

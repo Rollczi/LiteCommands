@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MissingPermissions {
@@ -28,8 +29,8 @@ public class MissingPermissions {
         return Collections.unmodifiableList(missingPermissions);
     }
 
-    public List<String> getFlatPermissions() {
-        return missingPermissions.stream().flatMap(that -> that.getPermissions().stream()).collect(Collectors.toList());
+    public Set<String> getFlatPermissions() {
+        return missingPermissions.stream().flatMap(that -> that.getPermissions().stream()).collect(Collectors.toSet());
     }
 
     public String asJoinedText() {
