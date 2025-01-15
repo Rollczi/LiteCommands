@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ParallelPermissionAnnotationTest extends LiteTestSpec {
 
     static LiteTestConfig config = builder -> builder
-        .validator(Scope.global(),new MissingPermissionValidator<>(PermissionValidator.PARALLEL));
+        .validator(Scope.global(), new MissingPermissionValidator<>(PermissionValidator.PARALLEL));
 
     @Command(name = "test")
     @Permission("test.base")
