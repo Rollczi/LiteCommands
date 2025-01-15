@@ -8,9 +8,6 @@ import org.junit.jupiter.api.Test;
 
 class NullableTest extends LiteTestSpec {
 
-    static LiteTestConfig config = builder -> builder
-        .advanced();
-
     @Command(name = "nullable")
     static class NullableTestCommand {
         @Execute

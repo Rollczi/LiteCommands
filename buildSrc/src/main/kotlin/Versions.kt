@@ -4,9 +4,9 @@ object Versions {
     const val JETBRAINS_ANNOTATIONS = "26.0.1"
 
     // Tests
-    const val JUNIT_JUPITER = "5.11.3"
+    const val JUNIT_JUPITER = "5.11.4"
     const val ASSERTJ = "3.26.3"
-    const val MOCKITO = "5.14.2"
+    const val MOCKITO = "4.11.0"
     const val AWAITILITY = "4.2.2"
 
     // Bukkit
@@ -18,7 +18,7 @@ object Versions {
     const val BUNGEECORD_API = "1.20-R0.2"
 
     // JDA
-    const val JDA = "5.2.1"
+    const val JDA = "5.2.2"
 
     // Minestom
     const val MINESTOM = "7320437640"
@@ -31,12 +31,12 @@ object Versions {
 
     // Fabric
     // check these on https://fabricmc.net/develop
-    const val FABRIC_YARN_MAPPINGS = "1.21.3+build.2"
+    const val FABRIC_YARN_MAPPINGS = "1.21.4-pre3+build.2"
     val FABRIC_MINECRAFT = FABRIC_YARN_MAPPINGS.substringBefore('+')
     const val FABRIC_LOADER = "0.16.9"
-    const val FABRIC_COMMAND_API_V2 = "2.2.37+7feeb7331c"
+    const val FABRIC_COMMAND_API_V2 = "2.2.41+e496eb1504"
     const val FABRIC_COMMAND_API_V1 = "1.2.56+f71b366f73"
-    const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.3.12+6c1df36019"
+    const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.5.1+6da5ef6940"
 
     // ChatGPT
     const val GSON = "2.11.0"
@@ -49,7 +49,7 @@ object Versions {
     const val ADVENTURE_PLATFORM_API = "4.3.4"
 
     // Jakarta
-    const val HIBERNATE_VALIDATOR = "8.0.1.Final"
+    const val HIBERNATE_VALIDATOR = "8.0.2.Final"
     const val EXPRESSLY = "5.0.0"
 
 }

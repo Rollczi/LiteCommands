@@ -12,4 +12,8 @@ public final class TestUtil {
         return new Invocation<>(new TestSender(), new TestPlatformSender(), command, command, ParseableInput.raw(args));
     }
 
+    public static <SENDER> Invocation<SENDER> invocation(SENDER sender, String command, String... args) {
+        return new Invocation<>(sender, new TestPlatformSender(), command, command, ParseableInput.raw(args));
+    }
+
 }

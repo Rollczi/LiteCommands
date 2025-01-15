@@ -11,10 +11,11 @@ public class LiteBukkitSettings implements PlatformSettings {
     private BukkitCommandsRegistry commandsRegistry;
     private TabComplete tabCompleter;
 
-    public LiteBukkitSettings() {
+    public LiteBukkitSettings(BukkitCommandsRegistry commandsRegistry) {
+        this.commandsRegistry = commandsRegistry;
     }
 
-    LiteBukkitSettings(Server server) {
+    public LiteBukkitSettings(Server server) {
         this.commandsRegistry = BukkitCommandsRegistryImpl.create(server);
     }
 

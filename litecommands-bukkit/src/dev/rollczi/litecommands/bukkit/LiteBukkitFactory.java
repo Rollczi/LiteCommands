@@ -4,6 +4,8 @@ import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
 import dev.rollczi.litecommands.bukkit.argument.OfflinePlayerArgument;
+import dev.rollczi.litecommands.bukkit.argument.OldEnumAccessor;
+import dev.rollczi.litecommands.bukkit.argument.OldEnumArgument;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.bukkit.argument.WorldArgument;
 import dev.rollczi.litecommands.bukkit.context.LocationContext;
@@ -11,6 +13,7 @@ import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.context.WorldContext;
 import dev.rollczi.litecommands.bukkit.util.BukkitFallbackPrefixUtil;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.reflect.type.TypeRange;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -75,6 +78,11 @@ public final class LiteBukkitFactory {
                 .context(Location.class, new LocationContext(messageRegistry))
 
                 .result(String.class, new StringHandler());
+
+            if (OldEnumAccessor.isAvailable()) {
+                TypeRange<Object> upwards = (TypeRange<Object>) TypeRange.upwards(OldEnumAccessor.getTypeOrThrow());
+                builder.advanced().argument(upwards, new OldEnumArgument());
+            }
         });
     }
 

@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
+import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
 import dev.rollczi.litecommands.argument.profile.ProfiledMultipleArgumentResolver;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
@@ -28,13 +29,11 @@ public class NullableArgumentResolver<SENDER> extends ProfiledMultipleArgumentRe
 
     @Override
     protected ParseResult<Object> parse(Invocation<SENDER> invocation, Argument<Object> argument, RawInput rawInput, NullableProfile unused) {
-        TypeToken<Object> optionalType = argument.getType();
-
-        return parseValue(optionalType, invocation, argument, rawInput);
+        return parseValue(invocation, argument, rawInput);
     }
 
-    private <E> ParseResult<E> parseValue(TypeToken<E> type, Invocation<SENDER> invocation, Argument<Object> optionalArgument, RawInput input) {
-        Argument<E> argument = Argument.of(optionalArgument.getName(), type);
+    private <E> ParseResult<E> parseValue(Invocation<SENDER> invocation, Argument<E> optionalArgument, RawInput input) {
+        Argument<E> argument = optionalArgument.withoutProfile(ProfileNamespaces.NULLABLE);
         Parser<SENDER, E> parser = parserRegistry.getParser(argument);
         ParseResult<E> parseResult = parser.parse(invocation, argument, input);
 
@@ -55,7 +54,15 @@ public class NullableArgumentResolver<SENDER> extends ProfiledMultipleArgumentRe
 
     @Override
     protected Range getRange(Argument<Object> argument, NullableProfile unused) {
-        return Range.range(0, 1);
+        return getRangeTyped(argument);
+    }
+
+    private <T> Range getRangeTyped(Argument<T> optionalArgument) {
+        Argument<T> argument = optionalArgument.withoutProfile(ProfileNamespaces.NULLABLE);
+        Parser<SENDER, T> parser = parserRegistry.getParser(argument);
+        Range range = parser.getRange(argument);
+
+        return Range.range(0, range.getMax());
     }
 
 }

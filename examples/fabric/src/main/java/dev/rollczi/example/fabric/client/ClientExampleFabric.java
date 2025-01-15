@@ -9,6 +9,7 @@ public class ClientExampleFabric implements ClientModInitializer {
     public void onInitializeClient() {
         LiteFabricFactory.client()
             .commands(new ClientCommands())
+            .settings(settings -> settings.inputInspectionDisplay("[....]"))
             .build();
     }
 }

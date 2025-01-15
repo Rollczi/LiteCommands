@@ -5,7 +5,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
-version = "3.9.1"
+version = "3.9.7"
 
 repositories {
     mavenCentral()
@@ -16,7 +16,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.9.1") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.9.7") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 }
 
@@ -45,7 +45,7 @@ tasks.shadowJar {
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
-    options.release = 17
+    options.release = 21
 }
 
 sourceSets.test {
@@ -54,6 +54,6 @@ sourceSets.test {
 }
 
 tasks.runServer {
-    minecraftVersion("1.21")
+    minecraftVersion("1.21.4")
     allJvmArgs = listOf("-DPaper.IgnoreJavaVersion=true")
 }

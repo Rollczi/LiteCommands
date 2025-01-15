@@ -1,6 +1,7 @@
 package dev.rollczi.example.bukkit;
 
 import dev.rollczi.example.bukkit.argument.GameModeArgument;
+import dev.rollczi.example.bukkit.command.CatCommand;
 import dev.rollczi.example.bukkit.command.ConvertCommand;
 import dev.rollczi.example.bukkit.command.FlyCommand;
 import dev.rollczi.example.bukkit.command.GameModeCommand;
@@ -67,6 +68,7 @@ public class ExamplePlugin extends JavaPlugin {
                 new NumberCommand(),
                 new CurrencyCommand(currencyService),
                 new CurrencyBalanceCommand(currencyService),
+                new CatCommand(),
                 new UserCommand()
             )
 

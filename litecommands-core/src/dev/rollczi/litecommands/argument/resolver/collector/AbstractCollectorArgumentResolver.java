@@ -78,7 +78,8 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, COLLECTION> exte
         }
 
         TypeToken<E> elementType = this.getElementType(collectionArgumentContainer);
-        Argument<E> argument = collectionArgument.child(elementType);
+        Argument<E> argument = collectionArgument.child(elementType)
+            .withoutProfile(VarargsProfile.NAMESPACE);
         Parser<SENDER, E> parser = parserRegistry.getParser(argument);
         Range range = parser.getRange(argument);
 
@@ -100,7 +101,8 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, COLLECTION> exte
     }
 
     private <E> ParseResult<List<E>> parseToList(TypeToken<E> componentType, RawInput rawInput, Argument<COLLECTION> collectionArgument, VarargsProfile collectorArgumentHolder, Invocation<SENDER> invocation) {
-        Argument<E> argument = collectionArgument.child(componentType);
+        Argument<E> argument = collectionArgument.child(componentType)
+            .withoutProfile(VarargsProfile.NAMESPACE);
 
         Parser<SENDER, E> parser = parserRegistry.getParser(argument);
 
@@ -214,7 +216,8 @@ public abstract class AbstractCollectorArgumentResolver<SENDER, COLLECTION> exte
     }
 
     private <T> SuggestionResult suggest(TypeToken<T> componentType, SuggestionContext context, Argument<COLLECTION> collectionArgument, VarargsProfile varargsProfile, Invocation<SENDER> invocation) {
-        Argument<T> argument = collectionArgument.child(componentType);
+        Argument<T> argument = collectionArgument.child(componentType)
+            .withoutProfile(VarargsProfile.NAMESPACE);
 
         Parser<SENDER, T> parser = parserRegistry.getParser(argument);
         Suggester<SENDER, T> suggester = suggesterRegistry.getSuggester(componentType.getRawType(), argument.getKey());

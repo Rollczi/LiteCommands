@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.Nullable;
 
 class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
@@ -66,10 +68,19 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
     @Override
     protected void hook(CommandRoute<User> commandRoute, PlatformInvocationListener<User> invocationHook, PlatformSuggestionListener<User> suggestionHook, PermissionStrictHandler permissionStrictHandler) {
         JDACommandTranslator.JDALiteCommand translated = settings.translator().translate(commandRoute);
+        List<Guild> guilds = settings.getGuilds(jda);
 
         for (String name : commandRoute.names()) {
-            this.jda.upsertCommand(translated.jdaCommandData().setName(name))
-                .queue();
+            SlashCommandData command = translated.jdaCommandData().setName(name);
+
+            if (command.isGuildOnly() && !guilds.isEmpty()) {
+                for (Guild guild : guilds) {
+                    guild.upsertCommand(command).queue();
+                }
+                continue;
+            }
+
+            this.jda.upsertCommand(command).queue();
         }
 
         translated.jdaCommandData().setName(commandRoute.getName());
@@ -83,14 +94,28 @@ class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
             .filter(command -> commandRoute.names().contains(command.getName()))
             .forEach(command -> this.jda.deleteCommandById(command.getIdLong()).queue())
         );
+
+        for (Guild guild : this.settings.getGuilds(jda)) {
+            guild.retrieveCommands().queue(commands -> commands.stream()
+                .filter(command -> commandRoute.names().contains(command.getName()))
+                .forEach(command -> guild.deleteCommandById(command.getIdLong()).queue())
+            );
+        }
     }
 
     @Override
     public void start() {
         jda.retrieveCommands().queue(commands -> commands.stream()
-            .filter(command -> !this.commandRoutes.containsKey(command.getName()))
+            .filter(command -> !commandRoutes.containsKey(command.getName()))
             .forEach(command -> jda.deleteCommandById(command.getIdLong()).queue())
         );
+
+        for (Guild guild : settings.getGuilds(jda)) {
+            guild.retrieveCommands().queue(commands -> commands.stream()
+                .filter(command -> !commandRoutes.containsKey(command.getName()))
+                .forEach(command -> guild.deleteCommandById(command.getIdLong()).queue())
+            );
+        }
     }
 
     class SlashCommandController extends ListenerAdapter {

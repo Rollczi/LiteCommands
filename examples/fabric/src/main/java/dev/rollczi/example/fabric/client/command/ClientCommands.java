@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 
-@Command(name = "litecommands")
+@Command(name = "litecommands", aliases = "litecmd")
 public class ClientCommands {
 
     @Execute
@@ -17,7 +17,7 @@ public class ClientCommands {
         return Text.of("Hello from LiteCommands!");
     }
 
-    @Execute(name = "my")
+    @Execute(name = "my", aliases = "myName")
     Text myName(@Sender FabricClientCommandSource sender) {
         return sender.getPlayer().getName();
     }

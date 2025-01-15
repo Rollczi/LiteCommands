@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.UnknownNullability;
 
 public interface ParseResult<EXCEPTED> extends RequirementFutureResult<EXCEPTED> {
 
@@ -71,7 +72,7 @@ public interface ParseResult<EXCEPTED> extends RequirementFutureResult<EXCEPTED>
     }
 
     @ApiStatus.Experimental
-    static <T, EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<T> future, Function<T, ? extends ParseResult<EXPECTED>> mapper) {
+    static <T, EXPECTED> ParseAsyncResult<EXPECTED> completableFuture(CompletableFuture<T> future, Function<@UnknownNullability T, ? extends ParseResult<EXPECTED>> mapper) {
         return new ParseAsyncResult<>(future.thenApply(mapper));
     }
 

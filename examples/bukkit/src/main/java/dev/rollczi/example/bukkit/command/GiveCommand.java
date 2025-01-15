@@ -21,7 +21,7 @@ public class GiveCommand {
         @Arg("item") Material item,
         @OptionalArg("amount") Integer amount
     ) {
-        if (amount != null) {
+        if (amount == null) {
             amount = 1;
         }
 
