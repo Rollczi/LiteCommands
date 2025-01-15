@@ -3,11 +3,13 @@ package dev.rollczi.litecommands.permission;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.platform.PlatformSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class MissingPermissions {
 
@@ -43,7 +45,7 @@ public class MissingPermissions {
         return missingPermissions.isEmpty();
     }
 
-    public static MissingPermissions check(PlatformSender platformSender, MetaHolder metaHolder) {
+    public static MissingPermissions check(PermissionValidator validator, PlatformSender platformSender, MetaHolder metaHolder) {
         List<String> collected = new ArrayList<>();
         List<String> missingPermissions = new ArrayList<>();
         MetaHolder current = metaHolder;
@@ -54,20 +56,19 @@ public class MissingPermissions {
                 continue;
             }
 
-            List<String> permissions = current.meta().get(Meta.PERMISSIONS);
+            @NotNull Set<Set<String>> permissions = current.meta().get(Meta.PERMISSIONS);
 
-            for (String permission : permissions) {
-                collected.add(permission);
-
-                if (!platformSender.hasPermission(permission)) {
-                    missingPermissions.add(permission);
-                }
-            }
+            validator.check(platformSender, permissions, collected, missingPermissions);
 
             current = current.parentMeta();
         }
 
         return new MissingPermissions(collected, missingPermissions);
+    }
+
+    public static MissingPermissions check(PlatformSender platformSender, MetaHolder metaHolder) {
+        // TODO: Configurable validator in `testSilent` methods
+        return check(PermissionValidator.STRICT, platformSender, metaHolder);
     }
 
     public static MissingPermissions missing(String... permissions) {

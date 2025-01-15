@@ -21,6 +21,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -119,7 +120,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> permissions(String... permissions) {
-        this.meta.listEditor(Meta.PERMISSIONS).addAll(permissions).apply();
+        this.meta.setEditor(Meta.PERMISSIONS).add(new LinkedHashSet<>(Arrays.asList(permissions))).apply();
         return this;
     }
 

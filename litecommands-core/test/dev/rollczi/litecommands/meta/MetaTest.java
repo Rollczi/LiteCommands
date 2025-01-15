@@ -2,9 +2,10 @@ package dev.rollczi.litecommands.meta;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -46,19 +47,20 @@ class MetaTest {
     @Test
     void testList() {
         Meta meta = Meta.create();
-        ArrayList<String> test = new ArrayList<>();
+        LinkedHashSet<String> test = new LinkedHashSet<>();
         test.add("first");
 
-        meta.put(Meta.PERMISSIONS, test);
-        meta.listEditor(Meta.PERMISSIONS)
-            .add("second")
+        meta.put(Meta.PERMISSIONS, new LinkedHashSet<>(Collections.singleton(test)));
+        meta.setEditor(Meta.PERMISSIONS)
+            .add(Collections.singleton("second"))
             .apply();
 
-        List<String> list = meta.get(Meta.PERMISSIONS);
+        Set<Set<String>> set = meta.get(Meta.PERMISSIONS);
+        Iterator<Set<String>> iterator = set.iterator();
 
-        assertEquals(2, list.size());
-        assertEquals("first", list.get(0));
-        assertEquals("second", list.get(1));
+        assertEquals(2, set.size());
+        assertEquals(Collections.singleton("first"), iterator.next());
+        assertEquals(Collections.singleton("second"), iterator.next());
     }
 
     @Test

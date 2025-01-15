@@ -1,19 +1,20 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.TestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MissingPermissionValidatorTest {
 
-    final MissingPermissionValidator<TestSender> validator = new MissingPermissionValidator<>();
+    final MissingPermissionValidator<TestSender> validator = new MissingPermissionValidator<>(PermissionValidator.STRICT);
 
     @Test
     @DisplayName("should scan all permissions from root to executor and check if sender has them")
@@ -33,13 +34,13 @@ class MissingPermissionValidatorTest {
 
         CommandRoute<TestSender> test = assertSingle(CommandBuilder.<TestSender>create()
             .name("test")
-            .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS)
-                .add("permission.test")
+            .applyMeta(meta -> meta.setEditor(Meta.PERMISSIONS)
+                .add(Collections.singleton("permission.test"))
                 .apply()
             )
             .appendChild("sub", childContext -> childContext
-                .applyMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub").apply())
-                .appendExecutor(parent -> new TestExecutor<>(parent).onMeta(meta -> meta.listEditor(Meta.PERMISSIONS).add("permission.sub.execute").apply()))));
+                .applyMeta(meta -> meta.setEditor(Meta.PERMISSIONS).add(Collections.singleton("permission.sub")).apply())
+                .appendExecutor(parent -> new TestExecutor<>(parent).onMeta(meta -> meta.setEditor(Meta.PERMISSIONS).add(Collections.singleton("permission.sub.execute")).apply()))));
 
         CommandRoute<TestSender> sub = assertPresent(test.getChild("sub"));
         CommandExecutor<TestSender> executor = sub.getExecutors().first();

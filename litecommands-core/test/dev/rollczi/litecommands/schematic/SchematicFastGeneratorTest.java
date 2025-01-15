@@ -6,15 +6,19 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
+import dev.rollczi.litecommands.permission.PermissionValidator;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestUtil;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import java.util.Collections;
-import java.util.List;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 class SchematicFastGeneratorTest {
@@ -25,7 +29,7 @@ class SchematicFastGeneratorTest {
 
     @BeforeAll
     static void beforeAll() {
-        validatorService.registerValidator(Scope.global(), new MissingPermissionValidator<>());
+        validatorService.registerValidator(Scope.global(), new MissingPermissionValidator<>(PermissionValidator.STRICT));
     }
 
     @Test
@@ -46,7 +50,7 @@ class SchematicFastGeneratorTest {
         TestExecutor executorSubTest2 = new TestExecutor<>(subTestCommand)
             .withStringArg("first")
             .withStringArg("second");
-        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singletonList("test.permission"));
+        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singleton(Collections.singleton("test.permission")));
         subTestCommand.appendExecutor(executorSubTest2);
 
         // test subtest2
@@ -119,7 +123,6 @@ class SchematicFastGeneratorTest {
             "/test one two <first>"
         );
     }
-
 
 
     private void assertSchematic(CommandRoute<?> commandRoute, CommandExecutor<?> executor, String... expected) {

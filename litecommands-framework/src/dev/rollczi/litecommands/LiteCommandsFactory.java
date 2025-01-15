@@ -49,6 +49,7 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionValidator;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
@@ -105,7 +106,7 @@ public final class LiteCommandsFactory {
                 .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
-                .validator(Scope.global(), new MissingPermissionValidator<>())
+                .validator(Scope.global(), new MissingPermissionValidator<>(PermissionValidator.STRICT))
 
                 .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
                 .listener(new CooldownStateController<>(internal.getCooldownService()))
