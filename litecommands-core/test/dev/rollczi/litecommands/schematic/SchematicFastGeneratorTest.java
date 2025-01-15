@@ -8,7 +8,6 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.PermissionValidator;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestUtil;
 import dev.rollczi.litecommands.validator.ValidatorService;

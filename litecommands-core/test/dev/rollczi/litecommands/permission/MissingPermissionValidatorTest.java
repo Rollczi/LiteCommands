@@ -6,7 +6,6 @@ import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.TestUtil;
