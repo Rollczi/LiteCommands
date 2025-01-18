@@ -1,3 +1,21 @@
+> important changes affecting code security - [#512](https://github.com/Rollczi/LiteCommands/pull/512)
+
+# 🚨 Announcement - LiteCommands Permissions Update 🚨
+Starting with version `3.10.0` (release: **February 1, 2025**), the way permissions are handled is changing:  
+- Old format (AND behavior): 
+  ```java
+  @Permission("admin")
+  @Permission("time.set")
+  ```  
+- **New required format (to keep AND behavior):**
+  ```java
+  @Permission("admin", "time.set")
+  ```  
+If you don’t update, **permissions will default to OR behavior** in the new versions.  
+**Update** your annotations **NOW** to avoid issues when the new version is released!
+
+---
+
 <div align="right">
 
 [![dependency](https://repo.panda-lang.org/api/badge/latest/releases/dev/rollczi/litecommands-core?color=9372f9&name=Version)](https://repo.panda-lang.org/#/releases/dev/rollczi/litecommands)
