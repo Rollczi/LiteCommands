@@ -2,10 +2,7 @@ package dev.rollczi.litecommands.annotations.permission;
 
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.MissingPermissions;
-import dev.rollczi.litecommands.permission.PermissionValidator;
-import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestPlatformSender;
 import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import org.junit.jupiter.api.Test;
@@ -13,13 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ParallelPermissionAnnotationTest extends LiteTestSpec {
-
-    static LiteTestConfig config = builder -> builder
-        .validator(Scope.global(), new MissingPermissionValidator<>(PermissionValidator.PARALLEL));
+class ParallelPermissionAnnotationTest extends LiteTestSpec {
 
     @Command(name = "test")
     @Permission("test.base")
@@ -45,12 +37,8 @@ public class ParallelPermissionAnnotationTest extends LiteTestSpec {
 
         List<String> missing = permissions.getPermissions();
 
-        assertEquals(4, missing.size());
-        assertTrue(missing.contains("test.base"));
-        assertTrue(missing.contains("test.permission.execute"));
-
         assertThat(missing)
-            .contains("test.base", "test.admin", "test.permission.execute");
+            .containsExactly("test.permission.execute",  "test.admin", "test.base");
     }
 
     @Test

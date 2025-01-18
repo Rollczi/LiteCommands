@@ -1,47 +1,26 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.platform.PlatformSender;
+import dev.rollczi.litecommands.flow.Flow;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.meta.MetaHolder;
+import dev.rollczi.litecommands.validator.Validator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+public class PermissionValidator<SENDER> implements Validator<SENDER> {
+    private final PermissionValidationService validator;
 
-public interface PermissionValidator {
-    void check(PlatformSender platformSender, Set<Set<String>> permissions, List<String> collected, List<String> missingPermissions);
+    public PermissionValidator(PermissionValidationService validator) {
+        this.validator = validator;
+    }
 
-    PermissionValidator STRICT = (platformSender, permissions, collected, missingPermissions) -> {
-        for (Set<String> permissionSet : permissions) {
-            collected.addAll(permissionSet);
+    @Override
+    public Flow validate(Invocation<SENDER> invocation, MetaHolder metaHolder) {
+        PermissionValidationResult result = this.validator.validate(metaHolder, invocation.platformSender());
 
-            for (String perms : permissionSet) {
-                if (!platformSender.hasPermission(perms)) {
-                    missingPermissions.add(perms);
-                }
-            }
+        if (!result.isPermitted()) {
+            return Flow.terminateFlow(new MissingPermissions(result.getVerdicts()));
         }
-    };
 
-    PermissionValidator PARALLEL = (platformSender, permissions, collected, missingPermissions) -> {
-        for (Set<String> permissionSet : permissions) {
-            collected.addAll(permissionSet);
-        }
-        List<String> missing = new ArrayList<>();
-        boolean match = false;
-        for (Set<String> permissionSet : permissions) {
-            boolean containMissing = false;
-            for (String perms : permissionSet) {
-                if (!platformSender.hasPermission(perms)) {
-                    missing.add(perms);
-                    containMissing = true;
-                    break;
-                }
-            }
-            if (!containMissing) {
-                match = true;
-            }
-        }
-        if (!match) {
-            missingPermissions.addAll(missing);
-        }
-    };
+        return Flow.continueFlow();
+    }
+
 }

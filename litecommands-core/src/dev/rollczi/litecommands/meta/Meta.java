@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.meta;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.cooldown.CooldownContext;
+import dev.rollczi.litecommands.permission.PermissionSet;
 import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.strict.StrictMode;
@@ -15,14 +16,13 @@ import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.UnaryOperator;
 
 @SuppressWarnings("rawtypes")
 public interface Meta {
 
     MetaKey<List<String>> DESCRIPTION = MetaKey.of("description", MetaType.list(), Collections.emptyList());
-    MetaKey<Set<Set<String>>> PERMISSIONS = MetaKey.of("permissions", MetaType.set(), Collections.emptySet());
+    MetaKey<List<PermissionSet>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
     MetaKey<PriorityLevel> PRIORITY = MetaKey.of("priority", PriorityLevel.class, PriorityLevel.NORMAL);
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
@@ -61,10 +61,6 @@ public interface Meta {
 
     default <E> MetaListEditor<E> listEditor(MetaKey<List<E>> key) {
         return new MetaListEditor<>(this.get(key), this, key);
-    }
-
-    default <E> MetaSetEditor<E> setEditor(MetaKey<Set<E>> key) {
-        return new MetaSetEditor<>(this.get(key), this, key);
     }
 
     default <E> Meta list(MetaKey<List<E>> key, UnaryOperator<MetaListEditor<E>> operator) {

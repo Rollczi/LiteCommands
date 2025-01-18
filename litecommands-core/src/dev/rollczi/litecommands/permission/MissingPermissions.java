@@ -1,32 +1,42 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.platform.PlatformSender;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
+import org.jetbrains.annotations.ApiStatus;
 
-public class MissingPermissions {
+public class MissingPermissions implements PermissionValidationResult {
 
-    private final List<String> checkedPermissions;
-    private final List<String> missingPermissions;
+    private final List<Verdict> verdicts;
 
-    private MissingPermissions(List<String> checkedPermissions, List<String> missingPermissions) {
-        this.checkedPermissions = checkedPermissions;
-        this.missingPermissions = missingPermissions;
+    MissingPermissions(List<Verdict> verdicts) {
+        this.verdicts = verdicts;
+    }
+
+    @Override
+    @ApiStatus.Experimental
+    public List<Verdict> getVerdicts() {
+        return Collections.unmodifiableList(verdicts);
     }
 
     public List<String> getChecked() {
-        return Collections.unmodifiableList(checkedPermissions);
+        return verdicts.stream()
+            .flatMap(result -> result.getChecks().stream())
+            .flatMap(check -> check.getCheckedPermissions().stream())
+            .distinct()
+            .collect(Collectors.toList());
     }
 
     public List<String> getPermissions() {
-        return Collections.unmodifiableList(missingPermissions);
+        return verdicts.stream()
+            .flatMap(result -> result.getChecks().stream())
+            .flatMap(check -> check.getMissingPermissions().stream())
+            .distinct()
+            .collect(Collectors.toList());
     }
 
     public String asJoinedText() {
@@ -34,45 +44,19 @@ public class MissingPermissions {
     }
 
     public String asJoinedText(String separator) {
-        return String.join(separator, missingPermissions);
+        return String.join(separator, getPermissions());
     }
 
     public boolean isMissing() {
-        return !missingPermissions.isEmpty();
-    }
-
-    public boolean isPermitted() {
-        return missingPermissions.isEmpty();
-    }
-
-    public static MissingPermissions check(PermissionValidator validator, PlatformSender platformSender, MetaHolder metaHolder) {
-        List<String> collected = new ArrayList<>();
-        List<String> missingPermissions = new ArrayList<>();
-        MetaHolder current = metaHolder;
-
-        while (current != null) {
-            if (!current.meta().has(Meta.PERMISSIONS)) {
-                current = current.parentMeta();
-                continue;
-            }
-
-            @NotNull Set<Set<String>> permissions = current.meta().get(Meta.PERMISSIONS);
-
-            validator.check(platformSender, permissions, collected, missingPermissions);
-
-            current = current.parentMeta();
-        }
-
-        return new MissingPermissions(collected, missingPermissions);
+        return !isPermitted();
     }
 
     public static MissingPermissions check(PlatformSender platformSender, MetaHolder metaHolder) {
-        // TODO: Configurable validator in `testSilent` methods
-        return check(PermissionValidator.STRICT, platformSender, metaHolder);
+        return new MissingPermissions(PermissionValidationServiceImpl.check(platformSender, metaHolder));
     }
 
     public static MissingPermissions missing(String... permissions) {
-        return new MissingPermissions(Arrays.asList(permissions), Arrays.asList(permissions));
+        return new MissingPermissions(Collections.singletonList(new Verdict(MetaHolder.empty(), Collections.singletonList(new Check(Arrays.asList(permissions), Arrays.asList(permissions))))));
     }
 
 }

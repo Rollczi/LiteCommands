@@ -2,11 +2,14 @@ package dev.rollczi.litecommands.schematic;
 
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.parser.ParserRegistryImpl;
+import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.event.SimpleEventPublisher;
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.permission.MissingPermissionValidator;
 import dev.rollczi.litecommands.permission.PermissionValidator;
+import dev.rollczi.litecommands.permission.PermissionSet;
+import dev.rollczi.litecommands.permission.PermissionValidationServiceImpl;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestUtil;
@@ -28,7 +31,8 @@ class SchematicFastGeneratorTest {
 
     @BeforeAll
     static void beforeAll() {
-        validatorService.registerValidator(Scope.global(), new MissingPermissionValidator<>(PermissionValidator.STRICT));
+        PermissionValidationServiceImpl service = new PermissionValidationServiceImpl(new SimpleEventPublisher(new BindRegistry()));
+        validatorService.registerValidator(Scope.global(), new PermissionValidator<>(service));
     }
 
     @Test
@@ -49,7 +53,7 @@ class SchematicFastGeneratorTest {
         TestExecutor executorSubTest2 = new TestExecutor<>(subTestCommand)
             .withStringArg("first")
             .withStringArg("second");
-        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singleton(Collections.singleton("test.permission")));
+        executorSubTest2.meta().put(Meta.PERMISSIONS, Collections.singletonList(new PermissionSet("test.permission")));
         subTestCommand.appendExecutor(executorSubTest2);
 
         // test subtest2
