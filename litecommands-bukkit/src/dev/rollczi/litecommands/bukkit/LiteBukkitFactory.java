@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.bukkit.argument.OldEnumAccessor;
 import dev.rollczi.litecommands.bukkit.argument.OldEnumArgument;
 import dev.rollczi.litecommands.bukkit.argument.PlayerArgument;
 import dev.rollczi.litecommands.bukkit.argument.WorldArgument;
+import dev.rollczi.litecommands.bukkit.context.ConsoleOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.context.LocationContext;
 import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.context.WorldContext;
@@ -19,6 +20,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -74,6 +76,7 @@ public final class LiteBukkitFactory {
                 .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, true))
 
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
+                .context(ConsoleCommandSender.class, new ConsoleOnlyContextProvider(messageRegistry))
                 .context(World.class, new WorldContext(messageRegistry))
                 .context(Location.class, new LocationContext(messageRegistry))
 

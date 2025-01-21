@@ -36,4 +36,9 @@ public class LiteBukkitMessages extends LiteMessages {
         unused -> "&cOnly player can execute this command! (PLAYER_ONLY)"
     );
 
+    public static final MessageKey<Void> CONSOLE_ONLY = MessageKey.of(
+        "only-console",
+        unused -> "&cOnly console can execute this command! (CONSOLE_ONLY)"
+    );
+
 }
