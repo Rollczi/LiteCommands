@@ -22,8 +22,10 @@ public class MinestomScheduler implements Scheduler {
         SchedulerPoll poll = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
         CompletableFuture<T> future = new CompletableFuture<>();
 
+        // ExecutionType changes, deprecation warnings suggestions:
+        // https://github.com/Minestom/Minestom/commit/a9f6d9f02b0e90e0936a2c684e17cbbfd3264dd5
         Task.Builder built = scheduler.buildTask(() -> tryRun(supplier, future))
-            .executionType(poll == SchedulerPoll.MAIN ? ExecutionType.SYNC : ExecutionType.ASYNC);
+            .executionType(poll == SchedulerPoll.MAIN ? ExecutionType.TICK_START : ExecutionType.TICK_END);
 
         if (!delay.isZero()) {
             built.delay(delay);
