@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.minestom;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
+import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
@@ -35,8 +36,15 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
         this.commandManager.unregister(commandToDelete);
     }
 
+    @Override
+    public PlatformSender createSender(CommandSender nativeSender) {
+        MinestomSender minestomSender = (MinestomSender) super.createSender(nativeSender);
+        minestomSender.setPlatform(this);
+        return minestomSender;
+    }
+
     private MinestomCommand createCommand(CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
-        return new MinestomCommand(command, invocationHook, suggestionHook);
+        return new MinestomCommand(this, command, invocationHook, suggestionHook);
     }
 
 }

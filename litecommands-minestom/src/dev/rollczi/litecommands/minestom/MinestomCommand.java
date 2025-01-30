@@ -20,12 +20,14 @@ import java.util.Set;
 
 class MinestomCommand extends Command {
 
+    private final MinestomPlatform platform;
     private final CommandRoute<CommandSender> command;
     private final PlatformInvocationListener<CommandSender> invocationHook;
     private final PlatformSuggestionListener<CommandSender> suggestionListener;
 
-    MinestomCommand(CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionListener) {
+    MinestomCommand(MinestomPlatform platform, CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionListener) {
         super(command.getName(), command.getAliases().toArray(new String[0]));
+        this.platform = platform;
         this.command = command;
         this.invocationHook = invocationHook;
         this.suggestionListener = suggestionListener;
@@ -74,7 +76,9 @@ class MinestomCommand extends Command {
     }
 
     private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, Input<?> input) {
-        return new Invocation<>(sender, new MinestomSender(sender), this.command.getName(), alias, input);
+        MinestomSender minestomSender = new MinestomSender(sender);
+        minestomSender.setPlatform(platform);
+        return new Invocation<>(sender, minestomSender, this.command.getName(), alias, input);
     }
 
     private String[] fixArguments(String[] args) {
