@@ -8,11 +8,11 @@ import dev.rollczi.litecommands.minestom.LiteMinestomMessages;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.entity.Player;
 
-public class PlayerContext implements ContextProvider<CommandSender, Player> {
+public class PlayerOnlyContextProvider implements ContextProvider<CommandSender, Player> {
 
     private final MessageRegistry<CommandSender> messageRegistry;
 
-    public PlayerContext(MessageRegistry<CommandSender> messageRegistry) {
+    public PlayerOnlyContextProvider(MessageRegistry<CommandSender> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 

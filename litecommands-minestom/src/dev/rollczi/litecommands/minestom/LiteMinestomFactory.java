@@ -6,11 +6,13 @@ import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.minestom.argument.InstanceArgument;
 import dev.rollczi.litecommands.minestom.argument.PlayerArgument;
-import dev.rollczi.litecommands.minestom.context.InstanceContext;
-import dev.rollczi.litecommands.minestom.context.PlayerContext;
+import dev.rollczi.litecommands.minestom.context.ConsoleOnlyContextProvider;
+import dev.rollczi.litecommands.minestom.context.InstanceContextProvider;
+import dev.rollczi.litecommands.minestom.context.PlayerOnlyContextProvider;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
+import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceManager;
@@ -45,8 +47,9 @@ public final class LiteMinestomFactory {
                 .scheduler(new MinestomScheduler(schedulerManager))
                 .argument(Player.class, new PlayerArgument(connectionManager, messageRegistry))
                 .argument(Instance.class, new InstanceArgument(instanceManager, messageRegistry))
-                .context(Player.class, new PlayerContext(messageRegistry))
-                .context(Instance.class, new InstanceContext(messageRegistry))
+                .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
+                .context(ConsoleSender.class, new ConsoleOnlyContextProvider(messageRegistry))
+                .context(Instance.class, new InstanceContextProvider(messageRegistry))
                 .bind(Server.class, () -> server);
         });
     }
