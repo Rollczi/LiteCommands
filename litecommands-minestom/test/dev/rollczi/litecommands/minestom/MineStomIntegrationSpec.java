@@ -9,6 +9,7 @@ import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.ConnectionManager;
+import net.minestom.server.network.player.GameProfile;
 import net.minestom.server.timer.SchedulerManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +49,8 @@ public class MineStomIntegrationSpec {
             commands.put(field, command);
         }
 
-        MinecraftServer.getConnectionManager().setPlayerProvider((uuid, s, playerConnection) -> new TestPlayer(uuid, s));
+        MinecraftServer.getConnectionManager().setPlayerProvider(
+            (connection, gameProfile) -> new TestPlayer(connection, gameProfile));
 
         liteCommands = LiteMinestomFactory.builder()
             .commands(commands.values().toArray())
@@ -68,7 +70,8 @@ public class MineStomIntegrationSpec {
 
     protected static TestPlayer player(String name) {
         ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
-        Player player = connectionManager.createPlayer(new TestPlayerConnection(), UUID.nameUUIDFromBytes(name.getBytes()), name);
+        GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes(name.getBytes()), name);
+        Player player = connectionManager.createPlayer(new TestPlayerConnection(), gameProfile);
         connectionManager.transitionConfigToPlay(player);
         connectionManager.tick(0);
 
