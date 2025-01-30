@@ -30,6 +30,7 @@ public class MineStomIntegrationSpec {
 
     @BeforeAll
     static void beforeAll(TestInfo testInfo) throws ReflectiveOperationException {
+        System.setProperty("minestom.inside-test", "true");
         minecraftServer = MinecraftServer.init();
 
         Class<?> type =  testInfo.getTestClass().orElseThrow();
