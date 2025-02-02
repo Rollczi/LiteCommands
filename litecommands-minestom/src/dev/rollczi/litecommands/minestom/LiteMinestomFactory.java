@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.minestom.argument.PlayerArgument;
 import dev.rollczi.litecommands.minestom.context.ConsoleOnlyContextProvider;
 import dev.rollczi.litecommands.minestom.context.InstanceContextProvider;
 import dev.rollczi.litecommands.minestom.context.PlayerOnlyContextProvider;
+import dev.rollczi.litecommands.scheduler.SchedulerExecutorPoolImpl;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.CommandSender;
@@ -44,7 +45,7 @@ public final class LiteMinestomFactory {
                 .extension(new LiteAdventureExtension<>(), configuration -> configuration
                     .legacyColor(true)
                 )
-                .scheduler(new MinestomScheduler(schedulerManager))
+                .scheduler(new MinestomScheduler(schedulerManager, new SchedulerExecutorPoolImpl("litecommands")))
                 .argument(Player.class, new PlayerArgument(connectionManager, messageRegistry))
                 .argument(Instance.class, new InstanceArgument(instanceManager, messageRegistry))
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
