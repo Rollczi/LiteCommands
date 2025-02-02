@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.jda;
 
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.platform.AbstractPlatform;
+import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.Nullable;
 
-class JDAPlatform extends AbstractPlatform<User, LiteJDASettings> {
+class JDAPlatform extends AbstractSimplePlatform<User, LiteJDASettings> {
 
     private final JDA jda;
     private final Map<CommandRoute<User>, JDACommandRecord> commands = new HashMap<>();

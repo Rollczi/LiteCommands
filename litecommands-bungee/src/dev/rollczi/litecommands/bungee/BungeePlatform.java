@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.bungee;
 
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.platform.AbstractPlatform;
+import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import net.md_5.bungee.api.CommandSender;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-class BungeePlatform extends AbstractPlatform<CommandSender, LiteBungeeSettings> {
+class BungeePlatform extends AbstractSimplePlatform<CommandSender, LiteBungeeSettings> {
 
     private final Plugin plugin;
     private final PluginManager pluginManager;

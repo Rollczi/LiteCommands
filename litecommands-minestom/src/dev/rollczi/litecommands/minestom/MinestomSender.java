@@ -2,7 +2,7 @@ package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
-import dev.rollczi.litecommands.platform.PlatformSender;
+import net.kyori.adventure.pointer.Pointer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.ServerSender;
@@ -11,14 +11,16 @@ import net.minestom.server.entity.Player;
 class MinestomSender extends AbstractPlatformSender {
 
     private final CommandSender handle;
+    private final MinestomPlatform platform;
 
-    public MinestomSender(CommandSender handle) {
+    public MinestomSender(CommandSender handle, MinestomPlatform platform) {
         this.handle = handle;
+        this.platform = platform;
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return this.handle.hasPermission(permission);
+        return this.platform.getConfiguration().hasPermission(this.handle, permission);
     }
 
     @Override

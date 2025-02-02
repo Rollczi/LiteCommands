@@ -9,11 +9,11 @@ import net.minestom.server.command.CommandSender;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 
-public class InstanceContext implements ContextProvider<CommandSender, Instance> {
+public class InstanceContextProvider implements ContextProvider<CommandSender, Instance> {
 
     private final MessageRegistry<CommandSender> messageRegistry;
 
-    public InstanceContext(MessageRegistry<CommandSender> messageRegistry) {
+    public InstanceContextProvider(MessageRegistry<CommandSender> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 

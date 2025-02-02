@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.platform.AbstractPlatform;
+import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class TestPlatform extends AbstractPlatform<TestSender, TestSettings> {
+public class TestPlatform extends AbstractSimplePlatform<TestSender, TestSettings> {
 
     private static final TestPlatformSender DEFAULT_SENDER = new TestPlatformSender();
     private final Map<CommandRoute<TestSender>, PlatformInvocationListener<TestSender>> executeListeners = new LinkedHashMap<>();

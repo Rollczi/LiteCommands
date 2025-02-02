@@ -4,11 +4,11 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.platform.AbstractPlatform;
+import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 
-class VelocityPlatform extends AbstractPlatform<CommandSource, LiteVelocitySettings> {
+class VelocityPlatform extends AbstractSimplePlatform<CommandSource, LiteVelocitySettings> {
 
     private final CommandManager commandManager;
 

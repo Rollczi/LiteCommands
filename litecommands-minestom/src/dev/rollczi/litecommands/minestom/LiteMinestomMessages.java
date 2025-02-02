@@ -26,4 +26,9 @@ public class LiteMinestomMessages extends LiteMessages {
         unused -> "&cOnly player can execute this command! (PLAYER_ONLY)"
     );
 
+    public static final MessageKey<Void> CONSOLE_ONLY = MessageKey.of(
+        "only-player",
+        unused -> "&cOnly the console can execute this command! (CONSOLE_ONLY)"
+    );
+
 }
