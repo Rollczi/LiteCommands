@@ -1,6 +1,6 @@
 > important changes affecting code security - [#512](https://github.com/Rollczi/LiteCommands/pull/512)
 
-# 🚨 Announcement - LiteCommands Permissions Update 🚨
+#  Announcement - LiteCommands Permissions Update
 Starting with version `3.10.0` (release: **February 1, 2025**), the way permissions are handled is changing:  
 - Old format (AND behavior): 
   ```java
