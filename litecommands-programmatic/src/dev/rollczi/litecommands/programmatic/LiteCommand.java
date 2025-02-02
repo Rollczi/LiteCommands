@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.join.JoinProfile;
 import dev.rollczi.litecommands.literal.LiteralProfile;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaKey;
+import dev.rollczi.litecommands.permission.PermissionSet;
 import dev.rollczi.litecommands.quoted.QuotedProfile;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
@@ -119,7 +120,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> permissions(String... permissions) {
-        this.meta.listEditor(Meta.PERMISSIONS).addAll(permissions).apply();
+        this.meta.listEditor(Meta.PERMISSIONS).add(new PermissionSet(permissions)).apply();
         return this;
     }
 

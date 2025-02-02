@@ -30,6 +30,7 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.cooldown.CooldownStateResultHandler;
 import dev.rollczi.litecommands.cooldown.CooldownStateController;
+import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.handler.exception.standard.InvocationTargetExceptionHandler;
 import dev.rollczi.litecommands.handler.exception.standard.LiteCommandsExceptionHandler;
 import dev.rollczi.litecommands.handler.result.standard.ArrayHandler;
@@ -47,8 +48,9 @@ import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
 import dev.rollczi.litecommands.literal.LiteralArgumentResolver;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
-import dev.rollczi.litecommands.permission.MissingPermissionValidator;
+import dev.rollczi.litecommands.permission.PermissionValidator;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionValidationServiceImpl;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
@@ -95,6 +97,7 @@ public final class LiteCommandsFactory {
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
             ParserRegistry<SENDER> parser = internal.getParserRegistry();
             SuggesterRegistry<SENDER> suggester = internal.getSuggesterRegistry();
+            EventPublisher eventPublisher = internal.getEventPublisher();
 
             List<Class<?>> excluded = Arrays.asList(Cloneable.class, Serializable.class, Object.class);
 
@@ -105,7 +108,7 @@ public final class LiteCommandsFactory {
                 .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
-                .validator(Scope.global(), new MissingPermissionValidator<>())
+                .validator(Scope.global(), new PermissionValidator<>(new PermissionValidationServiceImpl(eventPublisher)))
 
                 .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
                 .listener(new CooldownStateController<>(internal.getCooldownService()))

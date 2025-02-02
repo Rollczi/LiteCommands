@@ -2,6 +2,7 @@ package dev.rollczi.litecommands.meta;
 
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.cooldown.CooldownContext;
+import dev.rollczi.litecommands.permission.PermissionSet;
 import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.strict.StrictMode;
@@ -21,7 +22,7 @@ import java.util.function.UnaryOperator;
 public interface Meta {
 
     MetaKey<List<String>> DESCRIPTION = MetaKey.of("description", MetaType.list(), Collections.emptyList());
-    MetaKey<List<String>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
+    MetaKey<List<PermissionSet>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
     MetaKey<PriorityLevel> PRIORITY = MetaKey.of("priority", PriorityLevel.class, PriorityLevel.NORMAL);
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
     MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);

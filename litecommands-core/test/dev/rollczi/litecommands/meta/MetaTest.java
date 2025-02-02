@@ -1,10 +1,13 @@
 package dev.rollczi.litecommands.meta;
 
+import dev.rollczi.litecommands.permission.PermissionSet;
+import java.util.LinkedList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -46,19 +49,21 @@ class MetaTest {
     @Test
     void testList() {
         Meta meta = Meta.create();
-        ArrayList<String> test = new ArrayList<>();
-        test.add("first");
 
-        meta.put(Meta.PERMISSIONS, test);
+        meta.put(Meta.PERMISSIONS, new LinkedList<>());
         meta.listEditor(Meta.PERMISSIONS)
-            .add("second")
+            .add(new PermissionSet("first"))
+            .apply();
+        meta.listEditor(Meta.PERMISSIONS)
+            .add(new PermissionSet("second"))
             .apply();
 
-        List<String> list = meta.get(Meta.PERMISSIONS);
+        List<PermissionSet> set = meta.get(Meta.PERMISSIONS);
+        Iterator<PermissionSet> iterator = set.iterator();
 
-        assertEquals(2, list.size());
-        assertEquals("first", list.get(0));
-        assertEquals("second", list.get(1));
+        assertEquals(2, set.size());
+        assertEquals(Collections.singleton("first"), iterator.next().getPermissions());
+        assertEquals(Collections.singleton("second"), iterator.next().getPermissions());
     }
 
     @Test

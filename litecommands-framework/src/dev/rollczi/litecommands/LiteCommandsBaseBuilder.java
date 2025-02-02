@@ -649,6 +649,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     }
 
     @Override
+    public EventPublisher getEventPublisher() {
+        return this.eventPublisher;
+    }
+
+    @Override
     @ApiStatus.Internal
     public SchematicGenerator<SENDER> getSchematicGenerator() {
         return this.schematicGenerator;

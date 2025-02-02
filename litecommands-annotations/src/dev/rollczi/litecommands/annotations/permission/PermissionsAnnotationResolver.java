@@ -4,6 +4,8 @@ import dev.rollczi.litecommands.annotations.AnnotationInvoker;
 import dev.rollczi.litecommands.annotations.AnnotationProcessor;
 import dev.rollczi.litecommands.meta.Meta;
 
+import dev.rollczi.litecommands.permission.PermissionSet;
+
 public class PermissionsAnnotationResolver<SENDER> implements AnnotationProcessor<SENDER> {
 
     @Override
@@ -13,7 +15,7 @@ public class PermissionsAnnotationResolver<SENDER> implements AnnotationProcesso
 
             for (Permission permissionAnnotation : annotation.value()) {
                 meta.listEditor(Meta.PERMISSIONS)
-                    .addAll(permissionAnnotation.value())
+                    .add(new PermissionSet(permissionAnnotation.value()))
                     .apply();
             }
         });
