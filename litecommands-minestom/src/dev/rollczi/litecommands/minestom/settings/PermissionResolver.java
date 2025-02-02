@@ -6,4 +6,5 @@ import net.minestom.server.command.CommandSender;
 public interface PermissionResolver {
 
     boolean hasPermission(CommandSender sender, String permission);
+
 }

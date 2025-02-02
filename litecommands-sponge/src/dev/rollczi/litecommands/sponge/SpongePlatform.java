@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.sponge;
 
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.platform.AbstractPlatform;
+import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.plugin.PluginContainer;
 
-public class SpongePlatform extends AbstractPlatform<CommandCause, LiteSpongeSettings> {
+public class SpongePlatform extends AbstractSimplePlatform<CommandCause, LiteSpongeSettings> {
 
     private final PluginContainer plugin;
     private final Map<UUID, SpongeCommand> commands = new HashMap<>();

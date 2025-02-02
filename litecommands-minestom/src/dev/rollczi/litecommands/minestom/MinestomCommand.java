@@ -76,9 +76,7 @@ class MinestomCommand extends Command {
     }
 
     private Invocation<CommandSender> createInvocation(CommandSender sender, String alias, Input<?> input) {
-        MinestomSender minestomSender = new MinestomSender(sender);
-        minestomSender.setPlatform(platform);
-        return new Invocation<>(sender, minestomSender, this.command.getName(), alias, input);
+        return new Invocation<>(sender, platform.createSender(sender), this.command.getName(), alias, input);
     }
 
     private String[] fixArguments(String[] args) {
