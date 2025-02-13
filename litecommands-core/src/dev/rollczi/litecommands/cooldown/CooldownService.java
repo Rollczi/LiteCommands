@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.cooldown;
 
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.cooldown.event.CooldownApiEvent;
 import dev.rollczi.litecommands.cooldown.event.CooldownCommandEvent;
 import dev.rollczi.litecommands.cooldown.event.CooldownEvent;
 import dev.rollczi.litecommands.event.EventPublisher;
@@ -11,7 +12,6 @@ import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,25 +29,14 @@ public class CooldownService {
         this.publisher = publisher;
     }
 
-
-
-    @Deprecated
-    Optional<CooldownState> getState(CommandExecutor<?> executor, PlatformSender sender) {
+    public Optional<CooldownState> getCooldown(CommandExecutor<?> executor, PlatformSender sender) {
         return this.getOperativeContext(executor, sender)
-            .map(context -> new CooldownCommandEvent())
-
-        if (cooldownContext == null) {
-            return Optional.empty();
-        }
-
-        return getState(cooldownContext.getKey(), sender.getIdentifier());
+            .flatMap(cooldownContext -> this.getCooldown(cooldownContext.getKey(), sender.getIdentifier()));
     }
 
-    @Deprecated
-    public Optional<CooldownState> getState(String key, Identifier senderIdentifier) {
+    public Optional<CooldownState> getCooldown(String key, Identifier senderIdentifier) {
         CooldownCompositeKey compositeKey = new CooldownCompositeKey(senderIdentifier, key);
         CooldownState cooldownState = cooldowns.get(compositeKey);
-
         if (cooldownState != null && !cooldownState.isExpired()) {
             return Optional.of(cooldownState);
         }
@@ -61,11 +50,8 @@ public class CooldownService {
             .flatMap(event -> this.processChange(event));
     }
 
-    public boolean markCooldown(CooldownContext context, Identifier senderIdentifier) {
-        Instant now = Instant.now();
-        Instant expirationTime = now.plus(context.getDuration());
-
-        return true;
+    public Optional<CooldownState> markCooldown(CooldownContext context, Identifier senderIdentifier) {
+        return this.processChange(new CooldownApiEvent(senderIdentifier, context.getKey(), context.getDuration()));
     }
 
     private Optional<CooldownState> processChange(CooldownEvent event) {
@@ -83,9 +69,7 @@ public class CooldownService {
         return Optional.of(state);
     }
 
-
-
-    public boolean clearState(String key, Identifier senderIdentifier) {
+    public boolean removeCooldown(String key, Identifier senderIdentifier) {
         CooldownCompositeKey compositeKey = new CooldownCompositeKey(senderIdentifier, key);
 
         return cooldowns.remove(compositeKey) != null;

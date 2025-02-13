@@ -168,7 +168,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.scheduler = new SchedulerReference(new SchedulerExecutorPoolImpl("litecommands"));
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
         this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, parserRegistry));
-        this.cooldownService = new CooldownService(this.scheduler);
+        this.cooldownService = new CooldownService(this.scheduler, eventPublisher);
     }
 
     @Override
