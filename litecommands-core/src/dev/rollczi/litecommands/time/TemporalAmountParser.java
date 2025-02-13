@@ -43,7 +43,6 @@ import java.util.function.Predicate;
 public abstract class TemporalAmountParser<T extends TemporalAmount> {
 
     private static final Map<ChronoUnit, BigInteger> UNIT_TO_NANO = new LinkedHashMap<>();
-    private static final Map<ChronoUnit, Integer> PART_TIME_UNITS = new LinkedHashMap<>();
 
     static {
         UNIT_TO_NANO.put(ChronoUnit.NANOS, BigInteger.valueOf(1L));
@@ -57,17 +56,6 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
         UNIT_TO_NANO.put(ChronoUnit.MONTHS, BigInteger.valueOf(30 * 24 * 60 * 60 * 1_000_000_000L));
         UNIT_TO_NANO.put(ChronoUnit.YEARS, BigInteger.valueOf(365 * 24 * 60 * 60 * 1_000_000_000L));
         UNIT_TO_NANO.put(ChronoUnit.DECADES, BigInteger.valueOf(10 * 365 * 24 * 60 * 60 * 1_000_000_000L));
-
-        PART_TIME_UNITS.put(ChronoUnit.NANOS, 1000);
-        PART_TIME_UNITS.put(ChronoUnit.MICROS, 1000);
-        PART_TIME_UNITS.put(ChronoUnit.MILLIS, 1000);
-        PART_TIME_UNITS.put(ChronoUnit.SECONDS, 60);
-        PART_TIME_UNITS.put(ChronoUnit.MINUTES, 60);
-        PART_TIME_UNITS.put(ChronoUnit.HOURS, 24);
-        PART_TIME_UNITS.put(ChronoUnit.DAYS, 7);
-        PART_TIME_UNITS.put(ChronoUnit.WEEKS, 4);
-        PART_TIME_UNITS.put(ChronoUnit.MONTHS, 12);
-        PART_TIME_UNITS.put(ChronoUnit.YEARS, Integer.MAX_VALUE);
     }
 
     private final ChronoUnit defaultZero;
