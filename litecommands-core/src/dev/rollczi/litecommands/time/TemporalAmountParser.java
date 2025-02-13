@@ -1,6 +1,8 @@
 package dev.rollczi.litecommands.time;
 
+import dev.rollczi.litecommands.shared.Lazy;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,9 +11,11 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -38,21 +42,21 @@ import java.util.function.Predicate;
  */
 public abstract class TemporalAmountParser<T extends TemporalAmount> {
 
-    private static final Map<ChronoUnit, Long> UNIT_TO_NANO = new LinkedHashMap<>();
+    private static final Map<ChronoUnit, BigInteger> UNIT_TO_NANO = new LinkedHashMap<>();
     private static final Map<ChronoUnit, Integer> PART_TIME_UNITS = new LinkedHashMap<>();
 
     static {
-        UNIT_TO_NANO.put(ChronoUnit.NANOS, 1L);
-        UNIT_TO_NANO.put(ChronoUnit.MICROS, 1_000L);
-        UNIT_TO_NANO.put(ChronoUnit.MILLIS, 1_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.SECONDS, 1_000_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.MINUTES, 60 * 1_000_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.HOURS, 60 * 60 * 1_000_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.DAYS, 24 * 60 * 60 * 1_000_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.WEEKS, 7 * 24 * 60 * 60 * 1_000_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.MONTHS, 30 * 24 * 60 * 60 * 1_000_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.YEARS, 365 * 24 * 60 * 60 * 1_000_000_000L);
-        UNIT_TO_NANO.put(ChronoUnit.DECADES, 10 * 365 * 24 * 60 * 60 * 1_000_000_000L);
+        UNIT_TO_NANO.put(ChronoUnit.NANOS, BigInteger.valueOf(1L));
+        UNIT_TO_NANO.put(ChronoUnit.MICROS, BigInteger.valueOf(1_000L));
+        UNIT_TO_NANO.put(ChronoUnit.MILLIS, BigInteger.valueOf(1_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.SECONDS, BigInteger.valueOf(1_000_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.MINUTES, BigInteger.valueOf(60 * 1_000_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.HOURS, BigInteger.valueOf(60 * 60 * 1_000_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.DAYS, BigInteger.valueOf(24 * 60 * 60 * 1_000_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.WEEKS, BigInteger.valueOf(7 * 24 * 60 * 60 * 1_000_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.MONTHS, BigInteger.valueOf(30 * 24 * 60 * 60 * 1_000_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.YEARS, BigInteger.valueOf(365 * 24 * 60 * 60 * 1_000_000_000L));
+        UNIT_TO_NANO.put(ChronoUnit.DECADES, BigInteger.valueOf(10 * 365 * 24 * 60 * 60 * 1_000_000_000L));
 
         PART_TIME_UNITS.put(ChronoUnit.NANOS, 1000);
         PART_TIME_UNITS.put(ChronoUnit.MICROS, 1000);
@@ -66,16 +70,28 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
         PART_TIME_UNITS.put(ChronoUnit.YEARS, Integer.MAX_VALUE);
     }
 
+    private final ChronoUnit defaultZero;
+    private final Lazy<String> defaultZeroSymbol;
     private final Map<String, ChronoUnit> units = new LinkedHashMap<>();
+    private final Set<TimeModifier> modifiers = new HashSet<>();
     private final LocalDateTimeProvider baseForTimeEstimation;
 
-    protected TemporalAmountParser(LocalDateTimeProvider baseForTimeEstimation) {
-        this.baseForTimeEstimation = baseForTimeEstimation;
+    protected TemporalAmountParser(ChronoUnit defaultZero, Map<String, ChronoUnit> units, Set<TimeModifier> modifiers, LocalDateTimeProvider baseForTimeEstimation) {
+        this(defaultZero, baseForTimeEstimation);
+        this.units.putAll(units);
+        this.modifiers.addAll(modifiers);
     }
 
-    protected TemporalAmountParser(Map<String, ChronoUnit> units, LocalDateTimeProvider baseForTimeEstimation) {
+    protected TemporalAmountParser(ChronoUnit defaultZero, LocalDateTimeProvider baseForTimeEstimation) {
+        this.defaultZero = defaultZero;
         this.baseForTimeEstimation = baseForTimeEstimation;
-        this.units.putAll(units);
+        this.defaultZeroSymbol = new Lazy<>(() -> this.units.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue() == defaultZero)
+            .map(entry -> entry.getKey())
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Can not find default zero symbol for " + defaultZero))
+        );
     }
 
     public TemporalAmountParser<T> withUnit(String symbol, ChronoUnit chronoUnit) {
@@ -89,14 +105,61 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
 
         Map<String, ChronoUnit> newUnits = new LinkedHashMap<>(this.units);
         newUnits.put(symbol, chronoUnit);
-        return clone(newUnits, this.baseForTimeEstimation);
+        return clone(this.defaultZero, newUnits, this.modifiers, this.baseForTimeEstimation);
     }
 
     public TemporalAmountParser<T> withLocalDateTimeProvider(LocalDateTimeProvider baseForTimeEstimation) {
-        return clone(this.units, baseForTimeEstimation);
+        return clone(this.defaultZero, this.units, this.modifiers, baseForTimeEstimation);
     }
 
-    protected abstract TemporalAmountParser<T> clone(Map<String, ChronoUnit> units, LocalDateTimeProvider baseForTimeEstimation);
+    public TemporalAmountParser<T> withDefaultZero(ChronoUnit defaultZero) {
+        return clone(defaultZero, this.units, this.modifiers, this.baseForTimeEstimation);
+    }
+
+    public TemporalAmountParser<T> withRounded(ChronoUnit unit, RoundingMode roundingMode) {
+        return withTimeModifier(duration -> {
+            BigInteger nanosInUnit = UNIT_TO_NANO.get(unit);
+            BigInteger nanos = durationToNano(duration);
+            BigInteger rounded = round(roundingMode, nanos, nanosInUnit);
+
+            return Duration.ofNanos(rounded.longValue());
+        });
+    }
+
+    private static BigInteger round(RoundingMode roundingMode, BigInteger nanos, BigInteger nanosInUnit) {
+        BigInteger remainder = nanos.remainder(nanosInUnit);
+        BigInteger subtract = nanos.subtract(remainder);
+        BigInteger add = subtract.add(nanosInUnit);
+
+        BigInteger roundedUp = remainder.equals(BigInteger.ZERO) ? nanos : (nanos.signum() > 0 ? add : subtract.subtract(nanosInUnit));
+        BigInteger roundedDown = remainder.equals(BigInteger.ZERO) ? nanos : (nanos.signum() > 0 ? subtract : add.subtract(nanosInUnit));
+
+        int compare = remainder.abs().multiply(BigInteger.valueOf(2)).compareTo(nanosInUnit);
+        switch (roundingMode) {
+            case UP:
+                return roundedUp;
+            case DOWN:
+                return roundedDown;
+            case CEILING:
+                return nanos.signum() >= 0 ? roundedUp : roundedDown;
+            case FLOOR:
+                return nanos.signum() >= 0 ? roundedDown : roundedUp;
+            case HALF_UP:
+                return compare >= 0 ? roundedUp : roundedDown;
+            case HALF_DOWN:
+                return (compare > 0) ? roundedUp : roundedDown;
+            default: throw new IllegalArgumentException("Unsupported rounding mode " + roundingMode);
+        }
+    }
+
+
+    private TemporalAmountParser<T> withTimeModifier(TimeModifier modifier) {
+        Set<TimeModifier> newRoundedUnits = new HashSet<>(this.modifiers);
+        newRoundedUnits.add(modifier);
+        return clone(this.defaultZero, this.units, newRoundedUnits, this.baseForTimeEstimation);
+    }
+
+    protected abstract TemporalAmountParser<T> clone(ChronoUnit defaultZeroUnit, Map<String, ChronoUnit> units, Set<TimeModifier> modifiers, LocalDateTimeProvider baseForTimeEstimation);
 
     private boolean validCharacters(String content, Predicate<Character> predicate) {
         for (int i = 0; i < content.length(); i++) {
@@ -265,6 +328,9 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
     public String format(T temporalAmount) {
         StringBuilder builder = new StringBuilder();
         Duration duration = this.toDuration(this.baseForTimeEstimation, temporalAmount);
+        for (TimeModifier modifier : this.modifiers) {
+            duration = modifier.modify(duration);
+        }
 
         if (duration.isNegative()) {
             builder.append('-');
@@ -275,26 +341,34 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
         Collections.reverse(keys);
 
         for (String key : keys) {
-            ChronoUnit chronoUnit = this.units.get(key);
-            Long part = UNIT_TO_NANO.get(chronoUnit);
+            ChronoUnit unit = this.units.get(key);
+            BigInteger nanosInOneUnit = UNIT_TO_NANO.get(unit);
 
-            if (part == null) {
-                throw new IllegalArgumentException("Unsupported unit " + chronoUnit);
+            if (nanosInOneUnit == null) {
+                throw new IllegalArgumentException("Unsupported unit " + unit);
             }
 
-            BigInteger currentCount = this.durationToNano(duration).divide(BigInteger.valueOf(part));
-            BigInteger maxCount = BigInteger.valueOf(PART_TIME_UNITS.get(chronoUnit));
-            BigInteger count = currentCount.equals(maxCount) ? BigInteger.ONE : currentCount.mod(maxCount);
+            BigInteger nanosCount = this.durationToNano(duration);
+            BigInteger count = nanosCount.divide(nanosInOneUnit);
 
             if (count.equals(BigInteger.ZERO)) {
                 continue;
             }
 
+            BigInteger nanosCountCleared = count.multiply(nanosInOneUnit);
+
             builder.append(count).append(key);
-            duration = duration.minusNanos(count.longValue() * part);
+            duration = duration.minusNanos(nanosCountCleared.longValue());
         }
 
-        return builder.toString();
+        String result = builder.toString();
+
+        if (result.isEmpty()) {
+            String defaultSymbol = this.defaultZeroSymbol.get();
+            return "0" + defaultSymbol;
+        }
+
+        return result;
     }
 
     protected abstract Duration toDuration(LocalDateTimeProvider baseForTimeEstimation, T temporalAmount);
@@ -325,8 +399,12 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
         }
 
     }
+    
+    protected interface TimeModifier {
+        Duration modify(Duration duration);
+    }
 
-    BigInteger durationToNano(Duration duration) {
+    private BigInteger durationToNano(Duration duration) {
         return BigInteger.valueOf(duration.getSeconds())
             .multiply(BigInteger.valueOf(1_000_000_000))
             .add(BigInteger.valueOf(duration.getNano()));

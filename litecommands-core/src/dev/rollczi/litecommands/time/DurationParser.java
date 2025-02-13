@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.Set;
 
 public class DurationParser extends TemporalAmountParser<Duration> {
 
@@ -26,20 +27,24 @@ public class DurationParser extends TemporalAmountParser<Duration> {
         .withUnit("y", ChronoUnit.YEARS);
 
     public DurationParser() {
-        super(LocalDateTimeProvider.now());
+        super(ChronoUnit.SECONDS, LocalDateTimeProvider.now());
     }
 
-    public DurationParser(LocalDateTimeProvider localDateTimeProvider) {
-        super(localDateTimeProvider);
+    public DurationParser(ChronoUnit defaultZero) {
+        super(defaultZero, LocalDateTimeProvider.now());
     }
 
-    private DurationParser(Map<String, ChronoUnit> units, LocalDateTimeProvider baseForTimeEstimation) {
-        super(units, baseForTimeEstimation);
+    public DurationParser(ChronoUnit defaultZero, LocalDateTimeProvider localDateTimeProvider) {
+        super(defaultZero, localDateTimeProvider);
+    }
+
+    private DurationParser(ChronoUnit defaultZero, Map<String, ChronoUnit> units, Set<TimeModifier> modifiers, LocalDateTimeProvider baseForTimeEstimation) {
+        super(defaultZero, units, modifiers, baseForTimeEstimation);
     }
 
     @Override
-    protected TemporalAmountParser<Duration> clone(Map<String, ChronoUnit> units, LocalDateTimeProvider baseForTimeEstimation) {
-        return new DurationParser(units, baseForTimeEstimation);
+    protected TemporalAmountParser<Duration> clone(ChronoUnit defaultZero, Map<String, ChronoUnit> units, Set<TimeModifier> modifiers, LocalDateTimeProvider baseForTimeEstimation) {
+        return new DurationParser(defaultZero, units, modifiers, baseForTimeEstimation);
     }
 
     @Override
