@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.time;
 
 import dev.rollczi.litecommands.time.TemporalAmountParser.LocalDateTimeProvider;
+import java.math.RoundingMode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TemporalAmountParserTest {
 
     @CsvSource({
+        "0s,0",
         "1m20s,80",
         "1m,60",
         "1h,3600",
@@ -169,7 +171,9 @@ class TemporalAmountParserTest {
     }
 
     @CsvSource({
+        "0,0s",
         "60,1m",
+        "61,1m1s",
         "3600,1h",
         "86400,1d",
         "87000,1d10m",
@@ -186,6 +190,159 @@ class TemporalAmountParserTest {
 
         Duration duration = Duration.ofSeconds(seconds);
         String formatted = temporalAmountParser.format(duration);
+
+        assertEquals(expected, formatted);
+    }
+
+    @CsvSource({
+        "0,0s",
+        "60,1m",
+        "61,1m",
+        "3601,1h",
+        "86400,1d",
+        "87000,1d10m",
+        "87020,1d10m",
+        "1814402,3w",
+        "2592010,1mo",
+        "31536010,1y",
+        "-60,-1m",
+        "-61,-1m",
+        "-3661,-1h1m",
+    })
+    @ParameterizedTest
+    void testRoundedDownFormat(int seconds, String expected) {
+        TemporalAmountParser<Duration> temporalAmountParser = DurationParser.DATE_TIME_UNITS
+            .withRounded(ChronoUnit.MINUTES, RoundingMode.DOWN);
+        String formatted = temporalAmountParser.format(Duration.ofSeconds(seconds));
+
+        assertEquals(expected, formatted);
+    }
+
+    @CsvSource({
+        "0,0s",
+        "60,1m",
+        "61,2m",
+        "3601,1h1m",
+        "86400,1d",
+        "87000,1d10m",
+        "87020,1d11m",
+        "1814402,3w1m",
+        "2592010,1mo1m",
+        "31536010,1y1m",
+        "-60,-1m",
+        "-61,-2m",
+        "-3661,-1h2m",
+    })
+    @ParameterizedTest
+    void testRoundedUpFormat(int seconds, String expected) {
+        TemporalAmountParser<Duration> temporalAmountParser = DurationParser.DATE_TIME_UNITS
+            .withRounded(ChronoUnit.MINUTES, RoundingMode.UP);
+        String formatted = temporalAmountParser.format(Duration.ofSeconds(seconds));
+
+        assertEquals(expected, formatted);
+    }
+
+    @CsvSource({
+        "0,0s",
+        "60,1m",
+        "61,2m",
+        "3601,1h1m",
+        "86400,1d",
+        "87000,1d10m",
+        "87020,1d11m",
+        "1814402,3w1m",
+        "2592010,1mo1m",
+        "31536010,1y1m",
+        "-60,-1m",
+        "-61,-1m",
+        "-3661,-1h1m",
+    })
+    @ParameterizedTest
+    void testRoundedCeilingFormat(int seconds, String expected) {
+        TemporalAmountParser<Duration> temporalAmountParser = DurationParser.DATE_TIME_UNITS
+            .withRounded(ChronoUnit.MINUTES, RoundingMode.CEILING);
+        String formatted = temporalAmountParser.format(Duration.ofSeconds(seconds));
+
+        assertEquals(expected, formatted);
+    }
+
+    @CsvSource({
+        "0,0s",
+        "60,1m",
+        "61,1m",
+        "3601,1h",
+        "86400,1d",
+        "87000,1d10m",
+        "87020,1d10m",
+        "1814402,3w",
+        "2592010,1mo",
+        "31536010,1y",
+        "-60,-1m",
+        "-61,-2m",
+        "-3661,-1h2m",
+    })
+    @ParameterizedTest
+    void testRoundedFloorFormat(int seconds, String expected) {
+        TemporalAmountParser<Duration> temporalAmountParser = DurationParser.DATE_TIME_UNITS
+            .withRounded(ChronoUnit.MINUTES, RoundingMode.FLOOR);
+        String formatted = temporalAmountParser.format(Duration.ofSeconds(seconds));
+
+        assertEquals(expected, formatted);
+    }
+
+    @CsvSource({
+        "0,0s",
+        "60,1m",
+        "89,1m",
+        "90,2m",
+        "91,2m",
+        "3601,1h",
+        "86400,1d",
+        "87000,1d10m",
+        "87030,1d11m",
+        "1814402,3w",
+        "2592010,1mo",
+        "31536010,1y",
+        "-60,-1m",
+        "-89,-1m",
+        "-90,-2m",
+        "-91,-2m",
+        "-3661,-1h1m",
+    })
+    @ParameterizedTest
+    void testRoundedHalfUpFormat(int seconds, String expected) {
+        TemporalAmountParser<Duration> temporalAmountParser = DurationParser.DATE_TIME_UNITS
+            .withRounded(ChronoUnit.MINUTES, RoundingMode.HALF_UP);
+        String formatted = temporalAmountParser.format(Duration.ofSeconds(seconds));
+
+        assertEquals(expected, formatted);
+    }
+
+    @CsvSource({
+        "0,0s",
+        "60,1m",
+        "89,1m",
+        "90,1m",
+        "91,2m",
+        "3601,1h",
+        "86400,1d",
+        "87000,1d10m",
+        "87030,1d10m",
+        "87031,1d11m",
+        "1814402,3w",
+        "2592010,1mo",
+        "31536010,1y",
+        "-60,-1m",
+        "-89,-1m",
+        "-90,-1m",
+        "-91,-2m",
+        "-3661,-1h1m",
+    })
+    @ParameterizedTest
+    void testRoundedHalfDownFormat(int seconds, String expected) {
+        TemporalAmountParser<Duration> temporalAmountParser = DurationParser.DATE_TIME_UNITS
+            .withRounded(ChronoUnit.MINUTES, RoundingMode.HALF_DOWN);
+        String formatted = temporalAmountParser.format(Duration.ofSeconds(seconds));
 
         assertEquals(expected, formatted);
     }

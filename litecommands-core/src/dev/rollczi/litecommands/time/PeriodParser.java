@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.Set;
 
 public class PeriodParser extends TemporalAmountParser<Period> {
 
@@ -15,20 +16,29 @@ public class PeriodParser extends TemporalAmountParser<Period> {
         .withUnit("y", ChronoUnit.YEARS);
 
     public PeriodParser() {
-        super(LocalDateTimeProvider.now());
+        super(ChronoUnit.DAYS, LocalDateTimeProvider.now());
+    }
+
+    public PeriodParser(ChronoUnit defaultZero) {
+        super(defaultZero, LocalDateTimeProvider.now());
     }
 
     public PeriodParser(LocalDateTimeProvider baseForTimeEstimation) {
-        super(baseForTimeEstimation);
+        super(ChronoUnit.DAYS, baseForTimeEstimation);
     }
 
-    private PeriodParser(Map<String, ChronoUnit> units, LocalDateTimeProvider baseForTimeEstimation) {
-        super(units, baseForTimeEstimation);
+
+    public PeriodParser(ChronoUnit defaultZero, LocalDateTimeProvider baseForTimeEstimation) {
+        super(defaultZero, baseForTimeEstimation);
+    }
+
+    private PeriodParser(ChronoUnit defaultZero, Map<String, ChronoUnit> units, Set<TimeModifier> modifiers, LocalDateTimeProvider baseForTimeEstimation) {
+        super(defaultZero, units, modifiers, baseForTimeEstimation);
     }
 
     @Override
-    protected TemporalAmountParser<Period> clone(Map<String, ChronoUnit> units, LocalDateTimeProvider baseForTimeEstimation) {
-        return new PeriodParser(units, baseForTimeEstimation);
+    protected TemporalAmountParser<Period> clone(ChronoUnit defaultZero, Map<String, ChronoUnit> units, Set<TimeModifier> modifiers, LocalDateTimeProvider baseForTimeEstimation) {
+        return new PeriodParser(defaultZero, units, modifiers, baseForTimeEstimation);
     }
 
     @Override
