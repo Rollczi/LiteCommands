@@ -30,17 +30,11 @@ public class LuckPermsResolver<SENDER> implements PermissionResolver<SENDER> {
         if (CONSOLE.equals(uuid)) {
             return true;
         }
-        User user;
+
         UserManager userManager = this.getUserManager.get();
-        if (userManager.isLoaded(uuid)) {
-            user = userManager.getUser(uuid);
-        } else {
-            try {
-                user = userManager.loadUser(uuid).get();
-            } catch (InterruptedException | ExecutionException e) {
-                return false;
-            }
-        }
+        User user = userManager.isLoaded(uuid)
+            ? userManager.getUser(uuid)
+            : userManager.loadUser(uuid);
         if (user == null) {
             return false;
         }

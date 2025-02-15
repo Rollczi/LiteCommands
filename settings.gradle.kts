@@ -23,6 +23,8 @@ include(":litecommands-programmatic")
 include(":litecommands-framework")
 include(":litecommands-unit")
 
+include(":litecommands-minecraft")
+
 // extensions
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform", tests = false)
@@ -50,9 +52,9 @@ include(":examples:sponge", VERSION_21, tests = false)
 include(":examples:velocity", VERSION_11, tests = false)
 
 fun include(project: String, java: JavaVersion = VERSION_1_8, tests: Boolean = true) {
-    compatibleWith("including $project", java, tests, {
+    compatibleWith("including $project", java, tests) {
         settings.include(project)
-    })
+    }
 }
 
 fun compatibleWith(action: String, java: JavaVersion, tests: Boolean = true, block: () -> Unit) {
