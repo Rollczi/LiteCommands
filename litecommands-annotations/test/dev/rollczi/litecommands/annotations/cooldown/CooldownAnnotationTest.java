@@ -47,8 +47,8 @@ class CooldownAnnotationTest extends LiteTestSpec {
         CooldownState cooldownState = platform.execute("test")
             .assertFailedAs(CooldownState.class);
 
-        assertEquals("test-cooldown", cooldownState.getCooldownContext().getKey());
-        assertEquals(Duration.ofMillis(400), cooldownState.getCooldownContext().getDuration());
+        assertEquals("test-cooldown", cooldownState.getKey());
+        assertEquals(Duration.ofMillis(400), cooldownState.getDuration());
         assertFalse(cooldownState.getRemainingDuration().isZero());
 
         Awaitility.await()
@@ -73,8 +73,8 @@ class CooldownAnnotationTest extends LiteTestSpec {
         CooldownState cooldownState = platform.execute("test with-args 10")
             .assertFailedAs(CooldownState.class);
 
-        assertEquals("test-cooldown-with-args", cooldownState.getCooldownContext().getKey());
-        assertEquals(Duration.ofMillis(600), cooldownState.getCooldownContext().getDuration());
+        assertEquals("test-cooldown-with-args", cooldownState.getKey());
+        assertEquals(Duration.ofMillis(600), cooldownState.getDuration());
         assertFalse(cooldownState.getRemainingDuration().isZero());
 
         Awaitility.await()
@@ -93,8 +93,8 @@ class CooldownAnnotationTest extends LiteTestSpec {
         CooldownState cooldownState = platform.execute("bypass-test")
             .assertFailedAs(CooldownState.class);
 
-        assertEquals("bypass-test-cooldown", cooldownState.getCooldownContext().getKey());
-        assertEquals(Duration.ofMillis(400), cooldownState.getCooldownContext().getDuration());
+        assertEquals("bypass-test-cooldown", cooldownState.getKey());
+        assertEquals(Duration.ofMillis(400), cooldownState.getDuration());
         assertFalse(cooldownState.getRemainingDuration().isZero());
 
         Awaitility.await()

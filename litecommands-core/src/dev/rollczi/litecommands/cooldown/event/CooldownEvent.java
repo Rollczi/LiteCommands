@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.cooldown.event;
 import dev.rollczi.litecommands.event.Event;
 import dev.rollczi.litecommands.identifier.Identifier;
 import java.time.Duration;
+import org.jetbrains.annotations.ApiStatus;
 
 public interface CooldownEvent extends Event {
 
@@ -20,6 +21,7 @@ public interface CooldownEvent extends Event {
 
     void setCancelled(boolean cancelled);
 
+    @ApiStatus.Experimental
     Cause getCause();
 
     enum Cause {

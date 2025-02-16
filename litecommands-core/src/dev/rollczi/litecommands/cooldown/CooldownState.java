@@ -35,4 +35,9 @@ public class CooldownState {
         return Instant.now().isAfter(expirationTime);
     }
 
+    @Deprecated
+    public CooldownContext getCooldownContext() {
+        return new CooldownContext(key, duration);
+    }
+
 }

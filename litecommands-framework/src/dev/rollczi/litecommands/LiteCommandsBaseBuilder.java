@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.bind.BindChainedProvider;
 import dev.rollczi.litecommands.command.CommandMerger;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.cooldown.CooldownService;
+import dev.rollczi.litecommands.event.Event;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.event.SimpleEventPublisher;
@@ -70,6 +71,7 @@ import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorService;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -526,6 +528,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @Override
     public B listener(EventListener listener) {
         this.eventPublisher.subscribe(listener);
+        return this.self();
+    }
+
+    @Override
+    public <E extends Event> B listener(Class<E> event, Consumer<E> listener) {
+        this.eventPublisher.subscribe(event, listener);
         return this.self();
     }
 
