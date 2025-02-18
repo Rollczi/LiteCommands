@@ -5,16 +5,22 @@ import java.time.Instant;
 
 public class CooldownState {
 
-    private final CooldownContext cooldownContext;
+    private final String key;
+    private final Duration duration;
     private final Instant expirationTime;
 
-    public CooldownState(CooldownContext cooldownContext, Instant expirationTime) {
-        this.cooldownContext = cooldownContext;
-        this.expirationTime = expirationTime;
+    public CooldownState(String key, Duration duration) {
+        this.key = key;
+        this.duration = duration;
+        this.expirationTime = Instant.now().plus(duration);
     }
 
-    public CooldownContext getCooldownContext() {
-        return cooldownContext;
+    public String getKey() {
+        return key;
+    }
+
+    public Duration getDuration() {
+        return duration;
     }
 
     public Duration getRemainingDuration() {
@@ -29,11 +35,9 @@ public class CooldownState {
         return Instant.now().isAfter(expirationTime);
     }
 
-    @Override
-    public String toString() {
-        return "CooldownState{" +
-            "cooldownContext=" + cooldownContext.getKey() +
-            ", expirationTime=" + expirationTime +
-            '}';
+    @Deprecated
+    public CooldownContext getCooldownContext() {
+        return new CooldownContext(key, duration);
     }
+
 }

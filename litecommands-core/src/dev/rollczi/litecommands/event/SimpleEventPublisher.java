@@ -2,19 +2,24 @@ package dev.rollczi.litecommands.event;
 
 import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.bind.BindResult;
+import dev.rollczi.litecommands.reflect.IterableSuperClassResolver;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectInvocationException;
+import dev.rollczi.litecommands.reflect.ReflectUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public class SimpleEventPublisher implements EventPublisher {
 
-    private final Map<Class<?>, Set<SubscriberMethod>> listeners = new HashMap<>();
+    private final Map<Class<?>, Set<Consumer<?>>> listeners = new HashMap<>();
+    private final Map<Class<?>, Set<Class<?>>> superTypesCache = new HashMap<>();
     private final BindRegistry bindRegistry;
 
     public SimpleEventPublisher(BindRegistry bindRegistry) {
@@ -23,19 +28,26 @@ public class SimpleEventPublisher implements EventPublisher {
 
     @Override
     public boolean hasSubscribers(Class<? extends Event> eventClass) {
-        return listeners.containsKey(eventClass);
+        for (Class<?> type : extractSuperTypes(eventClass)) {
+            if (listeners.containsKey(eventClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public <E extends Event> E publish(E event) {
-        Set<SubscriberMethod> methods = listeners.get(event.getClass());
+        for (Class<?> type : extractSuperTypes(event.getClass())) {
+            Set<Consumer<?>> listeners = this.listeners.get(type);
 
-        if (methods == null) {
-            return event;
-        }
+            if (listeners == null) {
+                continue;
+            }
 
-        for (SubscriberMethod method : methods) {
-            method.invoke(event);
+            for (Consumer<?> listener : listeners) {
+                ((Consumer<E>) listener).accept(event);
+            }
         }
 
         return event;
@@ -73,7 +85,28 @@ public class SimpleEventPublisher implements EventPublisher {
         }
     }
 
-    private class SubscriberMethod {
+    @Override
+    public <E extends Event> void subscribe(Class<E> event, Consumer<E> listener) {
+        listeners.computeIfAbsent(event, key -> new HashSet<>()).add(listener);
+    }
+
+    private Iterable<Class<?>> extractSuperTypes(Class<?> baseType) {
+        Set<Class<?>> cached = superTypesCache.get(baseType);
+        if (cached != null) {
+            return cached;
+        }
+
+        Set<Class<?>> superTypes = new HashSet<>();
+        for (Class<?> type : new IterableSuperClassResolver(baseType)) {
+            if (Event.class.isAssignableFrom(type)) {
+                superTypes.add(type);
+            }
+        }
+        superTypesCache.put(baseType, superTypes);
+        return superTypes;
+    }
+
+    private class SubscriberMethod implements Consumer<Event> {
 
         private final EventListener listener;
         private final Method declaredMethod;
@@ -85,7 +118,8 @@ public class SimpleEventPublisher implements EventPublisher {
             this.bindClasses = bindClasses;
         }
 
-        public void invoke(Event event) {
+        @Override
+        public void accept(Event event) {
             Object[] args = new Object[bindClasses.length + 1];
             args[0] = event;
 
