@@ -35,6 +35,7 @@ import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorScope;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Supplier;
@@ -230,6 +231,11 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
      */
     @ApiStatus.Experimental
     B listener(EventListener listener);
+
+
+    @ApiStatus.Experimental
+    <E extends Event>
+    B listener(Class<E> event, Consumer<E> listener);
 
     /**
      * @deprecated use {@link LiteCommandsBuilder#self(LiteBuilderAction)} instead

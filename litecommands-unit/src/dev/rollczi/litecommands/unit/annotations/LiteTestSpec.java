@@ -47,11 +47,7 @@ public class LiteTestSpec {
     }
 
     private static LiteCommandsBuilder<TestSender, TestSettings, ?> configureLiteTest(LiteCommandsBuilder<TestSender, TestSettings, ?> builder, Class<?> type) {
-        LiteTest annotation = type.getAnnotation(LiteTest.class);
-
-        if (annotation == null || annotation.universalHandler()) {
-            builder.result(Object.class, (invocation, result, chain) -> {});
-        }
+        builder.result(Object.class, (invocation, result, chain) -> {});
 
         for (Field field : type.getDeclaredFields()) {
             if (field.getType() != LiteTestConfig.class) {

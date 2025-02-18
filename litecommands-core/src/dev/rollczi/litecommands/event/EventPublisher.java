@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.event;
 
+import java.util.function.Consumer;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
@@ -10,5 +11,7 @@ public interface EventPublisher {
     <E extends Event> E publish(E event);
 
     void subscribe(EventListener listener);
+
+    <E extends Event> void subscribe(Class<E> event, Consumer<E> listener);
 
 }

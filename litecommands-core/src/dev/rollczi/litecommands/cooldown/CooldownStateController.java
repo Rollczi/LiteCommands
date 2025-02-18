@@ -22,7 +22,7 @@ public class CooldownStateController<SENDER> implements EventListener {
     public void onEvent(CommandPreExecutionEvent<SENDER> event) {
         Invocation<SENDER> invocation = event.getInvocation();
         PlatformSender sender = invocation.platformSender();
-        Optional<CooldownState> currentState = this.cooldownService.getState(event.getExecutor(), sender);
+        Optional<CooldownState> currentState = this.cooldownService.getCooldown(event.getExecutor(), sender);
 
         if (currentState.isPresent()) {
             event.stopFlow(FailedReason.of(currentState.get()));
@@ -37,9 +37,7 @@ public class CooldownStateController<SENDER> implements EventListener {
             return;
         }
 
-        Invocation<SENDER> invocation = event.getInvocation();
-        PlatformSender sender = invocation.platformSender();
-        cooldownService.updateState(event.getExecutor(), sender);
+        cooldownService.markCooldown(event.getInvocation(), event.getExecutor());
     }
 
 }
