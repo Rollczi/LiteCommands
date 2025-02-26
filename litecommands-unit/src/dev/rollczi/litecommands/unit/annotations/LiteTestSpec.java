@@ -6,6 +6,8 @@ import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.permission.PermissionResolver;
+import dev.rollczi.litecommands.unit.TestPlatformSender;
 import dev.rollczi.litecommands.unit.TestSettings;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
@@ -41,6 +43,10 @@ public class LiteTestSpec {
 
         liteCommands = configureLiteTest(LiteCommandsFactory.builder(TestSender.class, platform)
             .commands(LiteCommandsAnnotations.ofClasses(commands))
+            .permissionResolver(PermissionResolver.createDefault((platformSender, permission) -> {
+                TestPlatformSender sender = (TestPlatformSender) platformSender;
+                return sender.hasPermission(permission);
+            }))
             .exceptionUnexpected((invocation, exception, chain) -> {}), type)
             .argument(BlockingArgument.class, new BlockingArgumentResolver<>())
             .build();

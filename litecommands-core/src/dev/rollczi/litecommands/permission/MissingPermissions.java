@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.permission;
 import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.platform.PlatformSender;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +53,7 @@ public class MissingPermissions implements PermissionValidationResult {
     }
 
     public static MissingPermissions check(PlatformSender platformSender, MetaHolder metaHolder) {
-        return new MissingPermissions(PermissionValidationServiceImpl.check(platformSender, metaHolder));
+        return new MissingPermissions(new ArrayList<>()); //TODO
     }
 
     public static MissingPermissions missing(String... permissions) {

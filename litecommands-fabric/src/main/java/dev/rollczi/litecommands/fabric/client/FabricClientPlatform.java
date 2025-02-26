@@ -28,11 +28,11 @@ public class FabricClientPlatform extends FabricAbstractPlatform<FabricClientCom
 
     @Override
     public PlatformSenderFactory<FabricClientCommandSource> getSenderFactory() {
-        return this::createSender;
+        return nativeSender -> createSender(nativeSender);
     }
 
     @Override
     public PlatformSender createSender(FabricClientCommandSource nativeSender) {
-        return new FabricClientSender(nativeSender, this);
+        return new FabricClientSender(nativeSender);
     }
 }

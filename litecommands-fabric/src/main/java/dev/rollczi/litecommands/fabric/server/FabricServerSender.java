@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FabricServerSender extends AbstractPlatformSender {
-    private final ServerCommandSource source;
-    private final FabricServerPlatform platform;
 
-    public FabricServerSender(ServerCommandSource source, FabricServerPlatform platform) {
+    private final ServerCommandSource source;
+
+    public FabricServerSender(ServerCommandSource source) {
         this.source = source;
-        this.platform = platform;
     }
 
     @Override
@@ -30,12 +29,12 @@ public class FabricServerSender extends AbstractPlatformSender {
         if (entity != null) {
             list.add(entity.getUuid());
         }
-        Object[] objects = list.toArray();
-        return Identifier.of(objects);
+        return Identifier.of(list.toArray());
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return this.platform.getConfiguration().hasPermission(this.source, permission);
+    public Object getHandle() {
+        return (SENDER) this.source;
     }
+
 }

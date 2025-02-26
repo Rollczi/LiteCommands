@@ -46,9 +46,5 @@ class FlowImpl implements Flow {
         return failedReason;
     }
 
-    @Override
-    public boolean hasReason() {
-        return failedReason.hasResult();
-    }
 
 }

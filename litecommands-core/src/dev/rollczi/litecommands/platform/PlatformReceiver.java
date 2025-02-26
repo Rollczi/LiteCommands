@@ -6,6 +6,6 @@ import org.jetbrains.annotations.ApiStatus;
 public interface PlatformReceiver {
 
     @ApiStatus.Experimental
-    Comparable<Void> sendMessage(String message);
+    void sendMessage(String message);
 
 }

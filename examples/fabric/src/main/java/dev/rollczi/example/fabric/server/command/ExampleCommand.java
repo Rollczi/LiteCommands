@@ -35,10 +35,4 @@ public class ExampleCommand {
         return Thread.currentThread().getName();
     }
 
-    @Execute(name = "testPermission")
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.12.0")
-    String testPermission(@Sender PlatformSender sender, @Arg String permission) {
-        return permission + ": " + sender.hasPermission(permission);
-    }
 }

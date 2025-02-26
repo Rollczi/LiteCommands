@@ -1,14 +1,11 @@
 package dev.rollczi.litecommands.fabric;
 
 import dev.rollczi.litecommands.platform.PlatformSettings;
-import dev.rollczi.litecommands.settings.PermissionResolver;
-import net.minecraft.command.CommandSource;
 import org.jetbrains.annotations.ApiStatus;
 
 public class LiteFabricSettings implements PlatformSettings {
 
     private String inputInspectionDisplay = "[...]";
-    private PermissionResolver<CommandSource> permissionResolver = (sender, permission) -> true;
 
     String getInputInspectionDisplay() {
         return this.inputInspectionDisplay;
@@ -25,12 +22,4 @@ public class LiteFabricSettings implements PlatformSettings {
         return this;
     }
 
-    public boolean hasPermission(CommandSource source, String permission) {
-        return this.permissionResolver.hasPermission(source, permission);
-    }
-
-    public LiteFabricSettings permissionResolver(PermissionResolver<CommandSource> permissionResolver) {
-        this.permissionResolver = permissionResolver;
-        return this;
-    }
 }

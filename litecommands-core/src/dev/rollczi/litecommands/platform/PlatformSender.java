@@ -17,19 +17,8 @@ public interface PlatformSender {
 
     Identifier getIdentifier();
 
-    /**
-     * Checks if the user has a specific permission.
-     *
-     * @param permission the permission to check
-     * @return true if the user has the permission, false otherwise
-     *
-     * @deprecated This method is deprecated and should not be used anymore.
-     *             It will be removed in future versions of LiteCommands.
-     *             Use {@link Invocation#sender()} instead and check permissions.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "3.10.0")
-    boolean hasPermission(String permission);
+    @ApiStatus.Internal
+    Object getHandle();
 
     <T> T getProperty(MetaKey<T> key);
 

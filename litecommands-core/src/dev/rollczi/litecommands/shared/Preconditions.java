@@ -56,4 +56,16 @@ public final class Preconditions {
         }
     }
 
+    public static void isInstanceOf(Object value, Class<?> clazz, String name) {
+        if (!clazz.isInstance(value)) {
+            throw new IllegalArgumentException(name + " must be instance of " + clazz.getName());
+        }
+    }
+
+    public static void isNotInstanceOf(Object value, Class<?> clazz, String name) {
+        if (clazz.isInstance(value)) {
+            throw new IllegalArgumentException(name + " cannot be instance of " + clazz.getName());
+        }
+    }
+
 }

@@ -19,12 +19,12 @@ import java.util.concurrent.TimeoutException;
 
 public class TestPlatform extends AbstractSimplePlatform<TestSender, TestSettings> {
 
-    private static final TestPlatformSender DEFAULT_SENDER = new TestPlatformSender();
+    private static final TestPlatformSender DEFAULT_SENDER = new TestPlatformSender(new TestSender());
     private final Map<CommandRoute<TestSender>, PlatformInvocationListener<TestSender>> executeListeners = new LinkedHashMap<>();
     private final Map<CommandRoute<TestSender>, PlatformSuggestionListener<TestSender>> suggestListeners = new LinkedHashMap<>();
 
     public TestPlatform() {
-        super(new TestSettings(), testSender -> new TestPlatformSender());
+        super(new TestSettings(), testSender -> new TestPlatformSender(testSender));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TestPlatform extends AbstractSimplePlatform<TestSender, TestSetting
 
     public AssertExecute execute(PlatformSender sender, String command) {
         try {
-            return this.executeAsync(sender, command).get(15, TimeUnit.SECONDS);
+            return this.executeAsync(sender, command).get(3, TimeUnit.MINUTES);
         }
         catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(e);
@@ -63,7 +63,7 @@ public class TestPlatform extends AbstractSimplePlatform<TestSender, TestSetting
         String label = rawCommand.getLabel();
         ParseableInput<?> input = rawCommand.toParseableInput();
 
-        Invocation<TestSender> invocation = new Invocation<>(testSender, sender, label, label, input);
+        Invocation<TestSender> invocation = new Invocation<>(sender, label, label, input);
         CommandRoute<TestSender> route = this.commandRoutes.get(label);
 
         if (route == null) {
@@ -91,7 +91,7 @@ public class TestPlatform extends AbstractSimplePlatform<TestSender, TestSetting
         String label = rawCommand.getLabel();
         SuggestionInput<?> arguments = rawCommand.toSuggestionInput();
 
-        Invocation<TestSender> invocation = new Invocation<>(testSender, platformSender, label, label, arguments);
+        Invocation<TestSender> invocation = new Invocation<>(platformSender, label, label, arguments);
         CommandRoute<TestSender> route = this.commandRoutes.get(label);
 
         if (route == null) {

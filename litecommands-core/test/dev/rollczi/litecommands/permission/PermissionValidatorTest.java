@@ -1,11 +1,8 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.bind.BindRegistry;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
-import dev.rollczi.litecommands.event.SimpleEventPublisher;
-import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.unit.TestExecutor;
@@ -19,14 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PermissionValidatorTest {
 
-    private final PermissionValidationServiceImpl service = new PermissionValidationServiceImpl(new SimpleEventPublisher(new BindRegistry()));
-    final PermissionValidator<TestSender> validator = new PermissionValidator<>(service);
+    final PermissionService validator = new PermissionServiceImpl();
 
     @Test
     @DisplayName("should scan all permissions from root to executor and check if sender has them")
@@ -46,12 +41,7 @@ class PermissionValidatorTest {
         CommandRoute<TestSender> sub = assertPresent(test.getChild("sub"));
         CommandExecutor<TestSender> executor = sub.getExecutors().first();
 
-        Flow result = validator.validate(invocation, executor);
-
-        assertTrue(result.isTerminate());
-        assertTrue(result.hasReason());
-
-        MissingPermissions missingPermissions = assertInstanceOf(MissingPermissions.class, result.getReason());
+        MissingPermissions missingPermissions = validator.validate(invocation.platformSender(), executor);
 
         assertNotNull(missingPermissions);
         assertTrue(missingPermissions.isMissing());

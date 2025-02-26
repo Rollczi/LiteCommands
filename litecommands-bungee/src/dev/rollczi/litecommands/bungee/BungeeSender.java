@@ -37,8 +37,8 @@ class BungeeSender extends AbstractPlatformSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return this.handle.hasPermission(permission);
+    public Object getHandle() {
+        return this.handle;
     }
 
 }
