@@ -51,8 +51,7 @@ class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBots
         String text = message.getText();
         if (text.isEmpty()) return false;
 
-        char firstChar = text.charAt(0);
-        if (settings.getCommandPrefixes().stream().noneMatch(prefix -> prefix == firstChar)) return false;
+        if (text.charAt(0) != '/') return false;
 
         String label;
         ParseableInput<?> input;
