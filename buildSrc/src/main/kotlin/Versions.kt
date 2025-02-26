@@ -52,4 +52,7 @@ object Versions {
     const val HIBERNATE_VALIDATOR = "8.0.2.Final"
     const val EXPRESSLY = "5.0.0"
 
+    // TelegramBots
+    const val TELEGRAM_BOTS = "8.2.0"
+
 }
