@@ -9,7 +9,7 @@ import java.util.function.BiPredicate;
 public class LiteTelegramBotsSettings implements PlatformSettings {
 
     private BiPredicate<User, String> permissionChecker = (user, permission) -> {
-        throw new NotImplementedException("Override permissionChecker in LiteTelegramBotsSettings if you want to use permissions");
+        throw new NotImplementedException("Override permissionChecker in LiteTelegramBotsSettings if you would like to use permissions");
     };
 
     public BiPredicate<User, String> getPermissionChecker() {
