@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.TestUtil;
+import dev.rollczi.litecommands.unit.permission.TestPermissionResolver;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PermissionValidatorTest {
+class PermissionServiceTest {
 
-    final PermissionService validator = new PermissionServiceImpl();
+    final PermissionService permissionService = new PermissionServiceImpl(new TestPermissionResolver());
 
     @Test
     @DisplayName("should scan all permissions from root to executor and check if sender has them")
@@ -41,7 +42,7 @@ class PermissionValidatorTest {
         CommandRoute<TestSender> sub = assertPresent(test.getChild("sub"));
         CommandExecutor<TestSender> executor = sub.getExecutors().first();
 
-        MissingPermissions missingPermissions = validator.validate(invocation.platformSender(), executor);
+        MissingPermissions missingPermissions = permissionService.validate(invocation.platformSender(), executor);
 
         assertNotNull(missingPermissions);
         assertTrue(missingPermissions.isMissing());

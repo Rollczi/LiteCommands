@@ -27,7 +27,7 @@ public class FabricClientSender extends AbstractPlatformSender {
 
     @Override
     public Object getHandle() {
-        return (SENDER) this.source;
+        return this.source;
     }
 
 }

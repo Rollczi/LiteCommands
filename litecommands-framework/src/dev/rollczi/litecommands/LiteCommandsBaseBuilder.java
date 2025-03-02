@@ -25,6 +25,7 @@ import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorEx
 import dev.rollczi.litecommands.permission.PermissionResolver;
 import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.permission.PermissionServiceImpl;
+import dev.rollczi.litecommands.platform.PlatformFactory;
 import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.bind.BindRegistry;
@@ -75,6 +76,7 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -120,10 +122,34 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      * @param senderClass class of sender
      * @param platform platform
      */
-    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, PlatformFactory<SENDER, C> platform) {
         this(
             senderClass,
             platform,
+            new EditorService<>(),
+            new PermissionServiceImpl(),
+            new ValidatorService<>(),
+            new ParserRegistryImpl<>(),
+            new SuggesterRegistryImpl<>(),
+            new BindRegistry(),
+            new ContextRegistry<>(),
+            new ResultHandleServiceImpl<>(),
+            new CommandBuilderCollector<>(),
+            new MessageRegistry<>(),
+            new StrictService()
+        );
+    }
+
+    /**
+     * Constructor for {@link LiteCommandsBaseBuilder}
+     *
+     * @param senderClass class of sender
+     * @param platform platform
+     */
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+        this(
+            senderClass,
+            builder -> platform,
             new EditorService<>(),
             new PermissionServiceImpl(),
             new ValidatorService<>(),
@@ -145,7 +171,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Experimental
     public LiteCommandsBaseBuilder(
         Class<SENDER> senderClass,
-        Platform<SENDER, C> platform,
+        PlatformFactory<SENDER, C> platform,
 
         EditorService<SENDER> editorService,
         PermissionServiceImpl permissionService,
@@ -160,7 +186,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         StrictService strictService
     ) {
         this.senderClass = senderClass;
-        this.platform = platform;
+        this.platform = platform.createPlatform(this.self());
 
         this.editorService = editorService;
         this.validatorService = validatorService;

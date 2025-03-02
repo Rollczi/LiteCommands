@@ -6,7 +6,9 @@ import dev.rollczi.litecommands.platform.PlatformSender;
 
 public class PermissionServiceImpl implements PermissionService {
 
-    private PermissionResolver permissionResolver = PermissionResolver.createDefault((sender, permission) -> false);
+    private PermissionResolver permissionResolver = PermissionResolver.createDefault((sender, permission) -> {
+        throw new UnsupportedOperationException("Your platform does not support permissions. Please provide a custom PermissionResolver.");
+    });
 
     public PermissionServiceImpl() {
     }

@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.permission.PermissionResolver;
 import dev.rollczi.litecommands.sponge.argument.ServerPlayerArgument;
 import dev.rollczi.litecommands.sponge.context.ServerPlayerOnlyContext;
 import org.spongepowered.api.Client;
@@ -24,10 +25,12 @@ public class LiteSpongeFactory {
 
     @SuppressWarnings("unchecked")
     public static <B extends LiteCommandsBuilder<CommandCause, LiteSpongeSettings, B>> B builder(PluginContainer plugin, Game game, LiteSpongeSettings settings) {
-        return (B) LiteCommandsFactory.builder(CommandCause.class, new SpongePlatform(plugin, settings)).selfProcessor((builder, internal) -> {
+        return (B) LiteCommandsFactory.builder(CommandCause.class, new SpongePlatform(plugin, settings)).self((builder, internal) -> {
             MessageRegistry<CommandCause> messageRegistry = internal.getMessageRegistry();
 
             builder
+                .permissionResolver(PermissionResolver.createDefault(CommandCause.class, (sender, permission) -> sender.hasPermission(permission)))
+
                 .bind(Server.class, () -> game.server())
                 .bind(Client.class, () -> game.client())
                 .bind(Game.class, () -> game)

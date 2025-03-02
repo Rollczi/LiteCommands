@@ -71,7 +71,6 @@ class VelocityCommand implements SimpleCommand {
 
     private dev.rollczi.litecommands.invocation.Invocation<CommandSource> newInvocation(Invocation invocation, Input<?> input) {
         return new dev.rollczi.litecommands.invocation.Invocation<>(
-            invocation.source(),
             new VelocitySender(invocation.source()),
             this.commandSection.getName(),
             invocation.alias(),

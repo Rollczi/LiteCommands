@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.permission.PermissionResolver;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgument;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgumentResolver;
+import dev.rollczi.litecommands.unit.permission.TestPermissionResolver;
 import java.util.function.UnaryOperator;
 
 public final class LiteCommandsTestFactory {
@@ -21,10 +22,7 @@ public final class LiteCommandsTestFactory {
             .result(String.class, (invocation, result, chain) -> invocation.sender().sendMessage(result))
             .argument(BlockingArgument.class, new BlockingArgumentResolver<>())
             .invalidUsage((invocation, result, chain) -> {})
-            .permissionResolver(PermissionResolver.createDefault((platformSender, permission) -> {
-                TestPlatformSender sender = (TestPlatformSender) platformSender;
-                return sender.hasPermission(permission);
-            }))
+            .permissionResolver(new TestPermissionResolver())
             .build()
             .register();
 

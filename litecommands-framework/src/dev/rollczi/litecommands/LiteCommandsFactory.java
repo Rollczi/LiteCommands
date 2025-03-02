@@ -54,6 +54,7 @@ import dev.rollczi.litecommands.permission.PermissionSuggestionController;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.PermissionServiceImpl;
 import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.platform.PlatformFactory;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.flag.FlagArgumentResolver;
@@ -86,6 +87,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 
 @SuppressWarnings("Convert2MethodRef")
 public final class LiteCommandsFactory {
@@ -94,6 +96,10 @@ public final class LiteCommandsFactory {
     }
 
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+        return builder(senderClass, builder -> platform);
+    }
+
+    public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, PlatformFactory<SENDER, C> platform) {
         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).self((builder, internal) -> {
             Scheduler scheduler = internal.getScheduler();
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();

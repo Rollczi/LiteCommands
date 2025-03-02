@@ -11,11 +11,11 @@ import net.luckperms.api.query.QueryOptions;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class LuckPermsPermissionFactory extends PermissionDefaultResolver {
+public class LuckPermsPermissionResolver extends PermissionDefaultResolver {
 
     private static final Supplier<UserManager> USER_MANAGER = () -> LuckPermsProvider.get().getUserManager();
 
-    public LuckPermsPermissionFactory() {
+    public LuckPermsPermissionResolver() {
         super((sender, permission) -> hasPermission(sender, permission));
     }
 

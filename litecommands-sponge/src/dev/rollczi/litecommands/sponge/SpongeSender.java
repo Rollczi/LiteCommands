@@ -33,7 +33,7 @@ public class SpongeSender extends AbstractPlatformSender {
 
     @Override
     public Object getHandle() {
-        return (SENDER) handle;
+        return handle;
     }
 
 }

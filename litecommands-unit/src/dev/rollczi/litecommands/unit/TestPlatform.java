@@ -57,8 +57,6 @@ public class TestPlatform extends AbstractSimplePlatform<TestSender, TestSetting
     }
 
     public CompletableFuture<AssertExecute> executeAsync(PlatformSender sender, String command) {
-        TestSender testSender = new TestSender();
-
         RawCommand rawCommand = RawCommand.from(command);
         String label = rawCommand.getLabel();
         ParseableInput<?> input = rawCommand.toParseableInput();

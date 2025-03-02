@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgument;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgumentResolver;
+import dev.rollczi.litecommands.unit.permission.TestPermissionResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 
@@ -43,10 +44,7 @@ public class LiteTestSpec {
 
         liteCommands = configureLiteTest(LiteCommandsFactory.builder(TestSender.class, platform)
             .commands(LiteCommandsAnnotations.ofClasses(commands))
-            .permissionResolver(PermissionResolver.createDefault((platformSender, permission) -> {
-                TestPlatformSender sender = (TestPlatformSender) platformSender;
-                return sender.hasPermission(permission);
-            }))
+            .permissionResolver(new TestPermissionResolver())
             .exceptionUnexpected((invocation, exception, chain) -> {}), type)
             .argument(BlockingArgument.class, new BlockingArgumentResolver<>())
             .build();

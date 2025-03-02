@@ -21,17 +21,17 @@ class VelocitySender extends AbstractPlatformSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return this.handle.hasPermission(permission);
-    }
-
-    @Override
     public Identifier getIdentifier() {
         if (this.handle instanceof Player) {
             return Identifier.of(((Player) this.handle).getUniqueId());
         }
 
         return Identifier.CONSOLE;
+    }
+
+    @Override
+    public Object getHandle() {
+        return this.handle;
     }
 
 }

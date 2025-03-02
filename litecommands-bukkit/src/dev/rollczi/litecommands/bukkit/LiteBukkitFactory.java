@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.bukkit;
 
+import dev.rollczi.litecommands.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
@@ -14,6 +15,9 @@ import dev.rollczi.litecommands.bukkit.context.PlayerOnlyContextProvider;
 import dev.rollczi.litecommands.bukkit.context.WorldContext;
 import dev.rollczi.litecommands.bukkit.util.BukkitFallbackPrefixUtil;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.permission.PermissionResolver;
+import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -25,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 
 public final class LiteBukkitFactory {
 
@@ -56,12 +61,20 @@ public final class LiteBukkitFactory {
         return builder(plugin, server, settings);
     }
 
+
     @SuppressWarnings("unchecked")
     public static <B extends LiteCommandsBuilder<CommandSender, LiteBukkitSettings, B>> B builder(Plugin plugin, Server server, LiteBukkitSettings settings) {
-        return (B) LiteCommandsFactory.builder(CommandSender.class, new BukkitPlatform(settings)).self((builder, internal) -> {
+        return (B) builder0(plugin, server, settings);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <B extends LiteCommandsBaseBuilder<CommandSender, LiteBukkitSettings, B>> B builder0(Plugin plugin, Server server, LiteBukkitSettings settings) {
+        return LiteCommandsFactory.<CommandSender, LiteBukkitSettings, B>builder(CommandSender.class, builder -> new BukkitPlatform(settings, builder.getPermissionService())).self((builder, internal) -> {
             MessageRegistry<CommandSender> messageRegistry = internal.getMessageRegistry();
 
             builder
+                .permissionResolver(PermissionResolver.createDefault(CommandSender.class, (sender, permission) -> sender.hasPermission(permission)))
+
                 .bind(Plugin.class, () -> plugin)
                 .bind(Server.class, () -> server)
                 .bind(BukkitScheduler.class, () -> server.getScheduler())

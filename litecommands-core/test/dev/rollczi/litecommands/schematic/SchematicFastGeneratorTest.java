@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.permission.PermissionSet;
 import dev.rollczi.litecommands.permission.PermissionServiceImpl;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestUtil;
+import dev.rollczi.litecommands.unit.permission.TestPermissionResolver;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 class SchematicFastGeneratorTest {
 
     static ParserRegistry parserRegistry = new ParserRegistryImpl();
-    static SchematicGenerator schematicGenerator = new SchematicFastGenerator(SchematicFormat.angleBrackets(), new PermissionServiceImpl(), parserRegistry);
+    static SchematicGenerator schematicGenerator = new SchematicFastGenerator(SchematicFormat.angleBrackets(), new PermissionServiceImpl(new TestPermissionResolver()), parserRegistry);
 
     @Test
     void test() {
