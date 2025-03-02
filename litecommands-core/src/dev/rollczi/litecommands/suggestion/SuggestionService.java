@@ -9,8 +9,11 @@ import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.event.SuggestionCommandRouteEvent;
+import dev.rollczi.litecommands.suggestion.event.SuggestionExecutorEvent;
 import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.validator.ValidatorService;
 
@@ -18,12 +21,12 @@ public class SuggestionService<SENDER> {
 
     private final ParserRegistry<SENDER> parserRegistry;
     private final SuggesterRegistry<SENDER> suggesterRegistry;
-    private final ValidatorService<SENDER> validatorService;
+    private final EventPublisher publisher;
 
-    public SuggestionService(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry, ValidatorService<SENDER> validatorService) {
+    public SuggestionService(ParserRegistry<SENDER> parserRegistry, SuggesterRegistry<SENDER> suggesterRegistry, ValidatorService<SENDER> validatorService, EventPublisher publisher) {
         this.parserRegistry = parserRegistry;
         this.suggesterRegistry = suggesterRegistry;
-        this.validatorService = validatorService;
+        this.publisher = publisher;
     }
 
     public SuggestionResult suggest(
@@ -40,9 +43,9 @@ public class SuggestionService<SENDER> {
         CommandRoute<SENDER> commandRoute
     ) {
         if (matcher.hasNoNextRouteAndArguments()) {
-            Flow flow = this.validatorService.validate(invocation, commandRoute);
+            SuggestionCommandRouteEvent event = this.publisher.publish(new SuggestionCommandRouteEvent(invocation, commandRoute));
 
-            if (flow.isTerminate() || flow.isStopCurrent()) {
+            if (event.isCancelled()) {
                 return SuggestionResult.empty();
             }
 
@@ -52,9 +55,9 @@ public class SuggestionService<SENDER> {
         SuggestionResult all = SuggestionResult.empty();
 
         for (CommandExecutor<SENDER> executor : commandRoute.getExecutors()) {
-            Flow flow = this.validatorService.validate(invocation, executor);
+            SuggestionExecutorEvent executorEvent = this.publisher.publish(new SuggestionExecutorEvent(invocation, executor));
 
-            if (flow.isTerminate() || flow.isStopCurrent()) {
+            if (executorEvent.isCancelled()) {
                 continue;
             }
 
@@ -87,16 +90,16 @@ public class SuggestionService<SENDER> {
     }
 
     private boolean isAnyExecutorValid(Invocation<SENDER> invocation, CommandRoute<SENDER> route) {
-        Flow flow = this.validatorService.validate(invocation, route);
+        SuggestionCommandRouteEvent event = this.publisher.publish(new SuggestionCommandRouteEvent(invocation, route));
 
-        if (flow.isTerminate() || flow.isStopCurrent()) {
+        if (event.isCancelled()) {
             return false;
         }
 
         for (CommandExecutor<SENDER> executor : route.getExecutors()) {
-            Flow flowExecutor = this.validatorService.validate(invocation, executor);
+            SuggestionExecutorEvent executorEvent = this.publisher.publish(new SuggestionExecutorEvent(invocation, executor));
 
-            if (flowExecutor.isTerminate() || flowExecutor.isStopCurrent()) {
+            if (executorEvent.isCancelled()) {
                 continue;
             }
 

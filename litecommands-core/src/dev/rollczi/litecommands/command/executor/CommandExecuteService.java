@@ -3,25 +3,23 @@ package dev.rollczi.litecommands.command.executor;
 import dev.rollczi.litecommands.LiteCommandsException;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInputMatcher;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.executor.event.CandidateExecutorFoundEvent;
-import dev.rollczi.litecommands.command.executor.event.CandidateExecutorMatchEvent;
+import dev.rollczi.litecommands.command.executor.event.CommandExecutorFoundEvent;
+import dev.rollczi.litecommands.command.executor.event.CommandExecutorNotFoundEvent;
 import dev.rollczi.litecommands.command.executor.event.CommandPostExecutionEvent;
 import dev.rollczi.litecommands.command.executor.event.CommandPreExecutionEvent;
-import dev.rollczi.litecommands.command.executor.flow.ExecuteFlow;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
+import dev.rollczi.litecommands.priority.MutablePrioritizedList;
+import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.requirement.RequirementMatchService;
 import dev.rollczi.litecommands.shared.FailedReason;
-import dev.rollczi.litecommands.flow.Flow;
-import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
-import dev.rollczi.litecommands.validator.ValidatorService;
 import java.util.Iterator;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -30,20 +28,17 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class CommandExecuteService<SENDER> {
 
-    private final ValidatorService<SENDER> validatorService;
     private final ResultHandleService<SENDER> resultResolver;
     private final Scheduler scheduler;
     private final RequirementMatchService<SENDER> requirementMatchService;
     private final EventPublisher publisher;
 
     public CommandExecuteService(
-        ValidatorService<SENDER> validatorService,
         ResultHandleService<SENDER> resultResolver,
         Scheduler scheduler,
         RequirementMatchService<SENDER> requirementMatchService,
         EventPublisher publisher
     ) {
-        this.validatorService = validatorService;
         this.resultResolver = resultResolver;
         this.scheduler = scheduler;
         this.requirementMatchService = requirementMatchService;
@@ -92,7 +87,7 @@ public class CommandExecuteService<SENDER> {
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute
     ) {
-        return this.execute(commandRoute.getExecutors().iterator(), invocation, matcher, commandRoute, null);
+        return this.execute(commandRoute.getExecutors().iterator(), invocation, matcher, commandRoute, new MutablePrioritizedList<>());
     }
 
     private <MATCHER extends ParseableInputMatcher<MATCHER>> CompletableFuture<CommandExecuteResult> execute(
@@ -100,78 +95,43 @@ public class CommandExecuteService<SENDER> {
         Invocation<SENDER> invocation,
         ParseableInputMatcher<MATCHER> matcher,
         CommandRoute<SENDER> commandRoute,
-        @Nullable FailedReason last
+        MutablePrioritizedList<FailedReason> failedReasons
     ) {
         // Handle failed
         if (!executors.hasNext()) {
-            // Route valid
-            Flow validate = validatorService.validate(invocation, commandRoute);
-            if (validate.isTerminate() || validate.isStopCurrent()) {
-                return completedFuture(CommandExecuteResult.failed(validate.getReason()));
-            } // TODO: event (CommandExcutorNotFoundEvent)
-
-            CommandExecutor<SENDER> executor = commandRoute.getExecutors().isEmpty()
-                ? null :
-                commandRoute.getExecutors().last();
-
-            if (last != null && last.hasResult()) {
-                return completedFuture(CommandExecuteResult.failed(executor, last));
+            if (commandRoute.getExecutors().isEmpty()) {
+                failedReasons.add(FailedReason.of(Cause.UNKNOWN_COMMAND, PriorityLevel.LOW));
             }
 
-            return completedFuture(CommandExecuteResult.failed(InvalidUsage.Cause.UNKNOWN_COMMAND));
+            CommandExecutorNotFoundEvent event = publisher.publish(new CommandExecutorNotFoundEvent(invocation, commandRoute, failedReasons));
+
+            return completedFuture(CommandExecuteResult.failed(event.getFailedReason().getReason()));
         }
 
         CommandExecutor<SENDER> executor = executors.next();
 
-        if (publisher.hasSubscribers(CandidateExecutorFoundEvent.class)) {
-            CandidateExecutorFoundEvent<SENDER> foundEvent = publisher.publish(new CandidateExecutorFoundEvent<>(invocation, executor));
-            if (foundEvent.getFlow() == ExecuteFlow.STOP) {
-                return completedFuture(CommandExecuteResult.failed(executor, foundEvent.getFlowResult()));
-            }
-
-            if (foundEvent.getFlow() == ExecuteFlow.SKIP) {
-                return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(foundEvent.getFlowResult(), last));
-            }
-        }
-
         // Handle matching arguments
         return this.requirementMatchService.match(executor, invocation, matcher.copy()).thenCompose(match -> {
-            if (publisher.hasSubscribers(CandidateExecutorMatchEvent.class)) {
-                CandidateExecutorMatchEvent<SENDER> matchEvent = publisher.publish(new CandidateExecutorMatchEvent<>(invocation, executor, match));
-                if (matchEvent.getFlow() == ExecuteFlow.STOP) {
-                    return completedFuture(CommandExecuteResult.failed(executor, matchEvent.getFlowResult()));
-                }
-
-                if (matchEvent.getFlow() == ExecuteFlow.SKIP) {
-                    return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(matchEvent.getFlowResult(), last));
-                }
+            CommandExecutorFoundEvent<SENDER> matchEvent = publisher.publish(new CommandExecutorFoundEvent<>(invocation, executor, match));
+            if (matchEvent.isCancelled()) {
+                return completedFuture(CommandExecuteResult.failed(executor, matchEvent.getCancelReason()));
             }
 
-            if (match.isFailed()) {
-                FailedReason current = match.getFailedReason();
-
-                if (current.hasResult()) {
-                    return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(current, last));
-                }
-
-                return this.execute(executors, invocation, matcher, commandRoute, last);
+            CommandExecutorMatchResult processedMatch = matchEvent.getResult();
+            if (processedMatch.isFailed()) {
+                failedReasons.add(processedMatch.getFailedReason());
+                return this.execute(executors, invocation, matcher, commandRoute, failedReasons);
             }
 
-            if (publisher.hasSubscribers(CommandPreExecutionEvent.class)) {
-                CommandPreExecutionEvent<SENDER> executionEvent = publisher.publish(new CommandPreExecutionEvent<>(invocation, executor));
-                if (executionEvent.getFlow() == ExecuteFlow.STOP) {
-                    return completedFuture(CommandExecuteResult.failed(executor, executionEvent.getFlowResult()));
-                }
-
-                if (executionEvent.getFlow() == ExecuteFlow.SKIP) {
-                    return this.execute(executors, invocation, matcher, commandRoute, FailedReason.max(executionEvent.getFlowResult(), last));
-                }
+            CommandPreExecutionEvent<SENDER> executionEvent = publisher.publish(new CommandPreExecutionEvent<>(invocation, executor));
+            if (executionEvent.isCancelled()) {
+                return completedFuture(CommandExecuteResult.failed(executor, executionEvent.getCancelReason()));
             }
 
             // Execution
             SchedulerPoll type = executor.metaCollector().findFirst(Meta.POLL_TYPE);
 
-            return scheduler.supply(type, () -> execute(match, executor));
+            return scheduler.supply(type, () -> execute(processedMatch, executor));
         }).exceptionally(throwable -> toThrown(executor, throwable));
     }
 

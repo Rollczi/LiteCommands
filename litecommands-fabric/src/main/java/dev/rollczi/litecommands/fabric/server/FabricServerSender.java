@@ -5,10 +5,8 @@ import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class FabricServerSender extends AbstractPlatformSender {
+
     private final ServerCommandSource source;
 
     public FabricServerSender(ServerCommandSource source) {
@@ -22,18 +20,17 @@ public class FabricServerSender extends AbstractPlatformSender {
 
     @Override
     public Identifier getIdentifier() {
-        List<Object> list = new ArrayList<>();
-        list.add(source.getName());
         Entity entity = source.getEntity();
-        if (entity != null) {
-            list.add(entity.getUuid());
+        if (entity == null) {
+            return Identifier.CONSOLE;
         }
-        Object[] objects = list.toArray();
-        return Identifier.of(objects);
+
+        return Identifier.of(source.getName(), entity.getUuid());
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return false;
+    public Object getHandle() {
+        return this.source;
     }
+
 }

@@ -29,7 +29,9 @@ public interface Meta {
     @Deprecated
     MetaKey<ArgumentKey> ARGUMENT_KEY = MetaKey.of("argument-key", ArgumentKey.class, ArgumentKey.of());
     MetaKey<List<Class>> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", MetaType.list(), Collections.emptyList());
+    @Deprecated
     MetaKey<List<Class<? extends Validator<?>>>> VALIDATORS = MetaKey.of("validators", MetaType.list(), Collections.emptyList());
+    @Deprecated
     MetaKey<List<RequirementValidator<?, ?>>> REQUIREMENT_VALIDATORS = MetaKey.of("requirement-validators", MetaType.list(), Collections.emptyList());
     MetaKey<CooldownContext> COOLDOWN = MetaKey.of("cooldown", CooldownContext.class);
     MetaKey<StrictMode> STRICT_MODE = MetaKey.of("strict-mode", StrictMode.class, StrictMode.DEFAULT);

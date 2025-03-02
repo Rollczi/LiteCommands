@@ -40,7 +40,7 @@ class SpongeCommand implements Command.Raw {
     @Override
     public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) {
         ParseableInput<?> input = rawCommand(arguments).toParseableInput();
-        Invocation<CommandCause> invocation = new Invocation<>(cause, new SpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
+        Invocation<CommandCause> invocation = new Invocation<>(new SpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
         this.executeHook.execute(invocation, input);
         return CommandResult.success();
     }
@@ -48,7 +48,7 @@ class SpongeCommand implements Command.Raw {
     @Override
     public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments) {
         SuggestionInput<?> input = rawCommand(arguments).toSuggestionInput();
-        Invocation<CommandCause> invocation = new Invocation<>(cause, new SpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
+        Invocation<CommandCause> invocation = new Invocation<>(new SpongeSender(cause), commandRoute.getName(), commandRoute.getName(), input);
 
         return this.suggestionHook.suggest(invocation, input)
             .getSuggestions()

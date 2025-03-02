@@ -3,11 +3,14 @@ package dev.rollczi.example.fabric.server.command;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.async.Async;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Sender;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.join.Join;
 import dev.rollczi.litecommands.annotations.quoted.Quoted;
+import dev.rollczi.litecommands.platform.PlatformSender;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.ApiStatus;
 
 @Command(name = "example", aliases = "tutorial")
 public class ExampleCommand {
@@ -31,4 +34,5 @@ public class ExampleCommand {
     String thread2() {
         return Thread.currentThread().getName();
     }
+
 }

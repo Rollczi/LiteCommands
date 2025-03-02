@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.meta.Meta;
 
 import java.lang.annotation.Annotation;
 
+@Deprecated
 public class AnnotatedValidatorProcessor<SENDER, T, A extends Annotation> implements AnnotationProcessor<SENDER> {
 
     private final Class<A> annotationClass;

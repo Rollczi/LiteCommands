@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.validator.ValidatorResult;
 
 import java.lang.annotation.Annotation;
 
+@Deprecated
 @FunctionalInterface
 public interface AnnotatedValidator<SENDER, T, A extends Annotation> {
 

@@ -50,7 +50,7 @@ public class BukkitCommand extends Command {
         ParseableInput<?> input = ParseableInput.raw(args);
         PlatformSender platformSender = new BukkitPlatformSender(sender);
 
-        this.invocationHook.execute(new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input), input);
+        this.invocationHook.execute(new Invocation<>(platformSender, commandRoute.getName(), alias, input), input);
         return true;
     }
 
@@ -83,7 +83,7 @@ public class BukkitCommand extends Command {
     public CompletableFuture<Set<Suggestion>> suggest(CommandSender sender, String alias, String[] args) {
         SuggestionInput<?> input = SuggestionInput.raw(args);
         PlatformSender platformSender = new BukkitPlatformSender(sender);
-        Invocation<CommandSender> invocation = new Invocation<>(sender, platformSender, commandRoute.getName(), alias, input);
+        Invocation<CommandSender> invocation = new Invocation<>(platformSender, commandRoute.getName(), alias, input);
 
         return CompletableFuture.completedFuture(this.suggestionHook.suggest(invocation, input).getSuggestions()); // TODO Run suggestion asynchronously inside LiteCommands platform
     }

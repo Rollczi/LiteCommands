@@ -74,7 +74,7 @@ public class AssertSuggest {
     public AssertSuggest assertAsSuggester(Suggester<TestSender, ?> suggester, Argument<?> argument, Function<String, String> mapper, String input) {
         Suggestion suggestion = Suggestion.of(input);
         SuggestionInput<?> suggestionInput = SuggestionInput.raw(suggestion.multilevelList().toArray(new String[0]));
-        Invocation<TestSender> invocation = new Invocation<>(new TestSender(), TestPlatformSender.permittedAll(), "-", "-", suggestionInput);
+        Invocation<TestSender> invocation = new Invocation<>(TestPlatformSender.permittedAll(), "-", "-", suggestionInput);
         SuggestionResult suggestionResult = suggester.suggest(invocation, (Argument) argument, new SuggestionContext(suggestion));
 
         SuggestionResult result = suggestionResult

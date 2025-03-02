@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
 import dev.rollczi.litecommands.editor.EditorService;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.scheduler.Scheduler;
@@ -38,6 +39,9 @@ public interface LiteCommandsInternal<SENDER, C extends PlatformSettings> {
 
     @ApiStatus.Internal
     EditorService<SENDER> getEditorService();
+
+    @ApiStatus.Internal
+    PermissionService getPermissionService();
 
     @ApiStatus.Internal
     ValidatorService<SENDER> getValidatorService();

@@ -25,7 +25,7 @@ public class CooldownStateController<SENDER> implements EventListener {
         Optional<CooldownState> currentState = this.cooldownService.getCooldown(event.getExecutor(), sender);
 
         if (currentState.isPresent()) {
-            event.stopFlow(FailedReason.of(currentState.get()));
+            event.cancel(FailedReason.of(currentState.get()));
         }
     }
 

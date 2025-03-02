@@ -8,8 +8,8 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Represents an event fired when a command executor is executed.
  * Flow:
- * - {@link CandidateExecutorFoundEvent}
- * - {@link CandidateExecutorMatchEvent}
+ * - {@link CommandExecutorFoundEvent}
+ * - {@link CommandExecutorFoundEvent}
  * - {@link CommandPreExecutionEvent}
  * - {@link CommandPostExecutionEvent}
  */

@@ -23,9 +23,8 @@ class JDAPlatformSender extends AbstractPlatformSender {
     }
 
     @Override
-    @Deprecated
-    public boolean hasPermission(String permission) {
-        return false;
+    public Object getHandle() {
+        return this.user;
     }
 
 }

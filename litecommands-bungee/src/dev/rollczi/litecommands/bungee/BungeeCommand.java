@@ -35,7 +35,7 @@ class BungeeCommand extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         ParseableInput<?> input = ParseableInput.raw(args);
         BungeeSender platformSender = new BungeeSender(sender);
-        Invocation<CommandSender> invocation = new Invocation<>(sender, platformSender, this.commandSection.getName(), this.label, input);
+        Invocation<CommandSender> invocation = new Invocation<>(platformSender, this.commandSection.getName(), this.label, input);
 
         this.executeListener.execute(invocation, input);
     }
@@ -44,7 +44,7 @@ class BungeeCommand extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         SuggestionInput<?> input = SuggestionInput.raw(args);
         BungeeSender platformSender = new BungeeSender(sender);
-        Invocation<CommandSender> invocation = new Invocation<>(sender, platformSender, this.commandSection.getName(), this.label, input);
+        Invocation<CommandSender> invocation = new Invocation<>(platformSender, this.commandSection.getName(), this.label, input);
 
         return this.suggestionListener.suggest(invocation, input)
             .asMultiLevelList();

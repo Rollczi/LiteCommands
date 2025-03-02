@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
 
 import java.lang.annotation.Annotation;
 
+@Deprecated
 class RequirementAnnotatedValidatorImpl<SENDER, T, A extends Annotation> implements RequirementValidator<SENDER, T> {
 
     private final AnnotatedValidator<SENDER, T, A> validator;

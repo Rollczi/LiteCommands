@@ -29,7 +29,7 @@ public class SimpleEventPublisher implements EventPublisher {
     @Override
     public boolean hasSubscribers(Class<? extends Event> eventClass) {
         for (Class<?> type : extractSuperTypes(eventClass)) {
-            if (listeners.containsKey(eventClass)) {
+            if (listeners.containsKey(type)) {
                 return true;
             }
         }
@@ -71,10 +71,6 @@ public class SimpleEventPublisher implements EventPublisher {
 
             if (!Event.class.isAssignableFrom(firstEventParameter)) {
                 throw new IllegalArgumentException("First parameter in method " + declaredMethod.getName() + " in " + listenerClass.getName() + " must be a subclass of Event");
-            }
-
-            if (firstEventParameter.isInterface()) {
-                throw new IllegalArgumentException("First parameter in method " + declaredMethod.getName() + " in " + listenerClass.getName() + " cannot be an interface");
             }
 
             Class<?>[] bindClasses = new Class[declaredMethod.getParameterCount() - 1];

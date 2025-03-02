@@ -81,7 +81,7 @@ public class CommandExecuteResult {
         Preconditions.notNull(executor, "executor");
         Preconditions.notNull(failedReason, "failed cannot be null");
 
-        return new CommandExecuteResult(executor, null, null, failedReason.getReasonOr(null));
+        return new CommandExecuteResult(executor, null, null, failedReason.getReason());
     }
 
 }

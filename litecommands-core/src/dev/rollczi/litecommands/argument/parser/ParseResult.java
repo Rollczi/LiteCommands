@@ -50,11 +50,6 @@ public interface ParseResult<EXCEPTED> extends RequirementFutureResult<EXCEPTED>
         return new ParseCompletedResult<>(null, FailedReason.of(failedReason), false, Collections.emptyList());
     }
 
-    @Deprecated
-    static <EXPECTED> ParseCompletedResult<EXPECTED> failure() {
-        return new ParseCompletedResult<>(null, FailedReason.empty(), false, Collections.emptyList());
-    }
-
     @ApiStatus.Experimental
     static <EXPECTED> ParseCompletedResult<EXPECTED> conditional(EXPECTED parsed, List<RequirementCondition> conditions) {
         return new ParseCompletedResult<>(parsed, null, false, Collections.unmodifiableList(conditions));

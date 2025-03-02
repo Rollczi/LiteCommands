@@ -32,7 +32,8 @@ public class SpongeSender extends AbstractPlatformSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return handle.hasPermission(permission);
+    public Object getHandle() {
+        return (SENDER) handle;
     }
+
 }

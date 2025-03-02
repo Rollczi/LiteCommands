@@ -76,7 +76,7 @@ public class FabricCommand<SOURCE> {
         RawCommand rawCommand = RawCommand.from(context.getInput());
         ParseableInput<?> parseableInput = rawCommand.toParseableInput();
         PlatformSender platformSender = this.senderFactory.create(context.getSource());
-        Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
+        Invocation<SOURCE> invocation = new Invocation<>(platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
 
         invocationHook.execute(invocation, parseableInput);
         return Command.SINGLE_SUCCESS;
@@ -88,7 +88,7 @@ public class FabricCommand<SOURCE> {
             RawCommand rawCommand = RawCommand.from(input);
             SuggestionInput<?> suggestionInput = rawCommand.toSuggestionInput();
             PlatformSender platformSender = this.senderFactory.create(context.getSource());
-            Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
+            Invocation<SOURCE> invocation = new Invocation<>(platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
 
             SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);
 
