@@ -23,8 +23,6 @@ include(":litecommands-programmatic")
 include(":litecommands-framework")
 include(":litecommands-unit")
 
-include(":litecommands-minecraft")
-
 // extensions
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform", tests = false)
