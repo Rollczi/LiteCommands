@@ -42,7 +42,3 @@ sourceSets.test {
     java.setSrcDirs(emptyList<String>())
     resources.setSrcDirs(emptyList<String>())
 }
-
-loom {
-    accessWidenerPath = project.file("src/main/resources/litecommands-example.accesswidener")
-}
