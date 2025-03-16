@@ -37,4 +37,8 @@ public class CooldownContext {
         return bypassPermission;
     }
 
+    Meta getPermissions() {
+        return meta;
+    }
+
 }
