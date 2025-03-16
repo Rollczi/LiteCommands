@@ -9,7 +9,7 @@ public class ServerExampleFabric implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         LiteFabricFactory.server()
-            .permissionResolver(new LuckPermsPermissionResolver())
+            .permissionResolver(LuckPermsPermissionResolver.lazy())
             .commands(new ExampleCommand())
             .build();
     }
