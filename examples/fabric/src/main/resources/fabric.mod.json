@@ -24,6 +24,5 @@
     },
     "depends": {
         "luckperms": "*"
-    },
-    "accessWidener": "litecommands-example.accesswidener"
+    }
 }
