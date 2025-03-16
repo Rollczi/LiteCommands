@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.sponge;
 
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -17,17 +18,19 @@ import org.spongepowered.plugin.PluginContainer;
 public class SpongePlatform extends AbstractSimplePlatform<CommandCause, LiteSpongeSettings> {
 
     private final PluginContainer plugin;
+    private final PermissionService permissionService;
     private final Map<UUID, SpongeCommand> commands = new HashMap<>();
 
-    public SpongePlatform(PluginContainer plugin, LiteSpongeSettings settings) {
+    public SpongePlatform(PluginContainer plugin, LiteSpongeSettings settings, PermissionService permissionService) {
         super(settings, commandCause -> new SpongeSender(commandCause));
         this.plugin = plugin;
+        this.permissionService = permissionService;
         Sponge.eventManager().registerListeners(plugin, this);
     }
 
     @Override
     protected void hook(CommandRoute<CommandCause> commandRoute, PlatformInvocationListener<CommandCause> invocationHook, PlatformSuggestionListener<CommandCause> suggestionHook) {
-        commands.put(commandRoute.getUniqueId(), new SpongeCommand(commandRoute, invocationHook, suggestionHook));
+        commands.put(commandRoute.getUniqueId(), new SpongeCommand(permissionService, commandRoute, invocationHook, suggestionHook));
     }
 
     @Override

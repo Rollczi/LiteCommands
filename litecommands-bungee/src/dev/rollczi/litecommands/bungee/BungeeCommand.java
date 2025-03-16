@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
@@ -17,14 +18,16 @@ import java.util.Objects;
 class BungeeCommand extends Command implements TabExecutor {
 
     private final LiteBungeeSettings settings;
+    private final PermissionService permissionService;
     private final CommandRoute<CommandSender> commandSection;
     private final String label;
     private final PlatformInvocationListener<CommandSender> executeListener;
     private final PlatformSuggestionListener<CommandSender> suggestionListener;
 
-    public BungeeCommand(LiteBungeeSettings settings, CommandRoute<CommandSender> command, String label, PlatformInvocationListener<CommandSender> executeListener, PlatformSuggestionListener<CommandSender> suggestionListener) {
+    public BungeeCommand(LiteBungeeSettings settings, PermissionService permissionService, CommandRoute<CommandSender> command, String label, PlatformInvocationListener<CommandSender> executeListener, PlatformSuggestionListener<CommandSender> suggestionListener) {
         super(label, "", label);
         this.settings = settings;
+        this.permissionService = permissionService;
         this.commandSection = command;
         this.label = label;
         this.executeListener = executeListener;
@@ -55,9 +58,7 @@ class BungeeCommand extends Command implements TabExecutor {
         boolean isNative = commandSection.meta().get(Meta.NATIVE_PERMISSIONS);
 
         if (isNative || settings.isNativePermissions()) {
-            MissingPermissions missingPermissions = MissingPermissions.check(new BungeeSender(sender), this.commandSection);
-
-            return missingPermissions.isPermitted();
+            return permissionService.isPermitted(new BungeeSender(sender), this.commandSection);
         }
 
         return super.hasPermission(sender);

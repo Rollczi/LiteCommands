@@ -52,10 +52,7 @@ public class MissingPermissions implements PermissionValidationResult {
         return !isPermitted();
     }
 
-    public static MissingPermissions check(PlatformSender platformSender, MetaHolder metaHolder) {
-        return new MissingPermissions(new ArrayList<>()); //TODO
-    }
-
+    @Deprecated
     public static MissingPermissions missing(String... permissions) {
         return new MissingPermissions(Collections.singletonList(new Verdict(MetaHolder.empty(), Collections.singletonList(new Check(Arrays.asList(permissions), Arrays.asList(permissions))))));
     }
