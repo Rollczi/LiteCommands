@@ -186,7 +186,6 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         StrictService strictService
     ) {
         this.senderClass = senderClass;
-        this.platform = platform.createPlatform(this.self());
 
         this.editorService = editorService;
         this.validatorService = validatorService;
@@ -204,6 +203,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
         this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), permissionService, parserRegistry));
         this.cooldownService = new CooldownService(this.scheduler, permissionService, eventPublisher);
+
+        this.platform = platform.createPlatform(this.self());
     }
 
     @Override

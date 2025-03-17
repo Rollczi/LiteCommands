@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSenderFactory;
@@ -31,19 +32,22 @@ public class FabricCommand<SOURCE> {
     private final CommandRoute<SOURCE> baseRoute;
     private final PlatformInvocationListener<SOURCE> invocationHook;
     private final PlatformSuggestionListener<SOURCE> suggestionHook;
+    private final PermissionService permissionService;
 
-    public FabricCommand(PlatformSenderFactory<SOURCE> senderFactory, LiteFabricSettings settings, CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+    public FabricCommand(PlatformSenderFactory<SOURCE> senderFactory, LiteFabricSettings settings, CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook, PermissionService permissionService) {
         this.senderFactory = senderFactory;
         this.settings = settings;
         this.baseRoute = baseRoute;
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
+        this.permissionService = permissionService;
     }
 
     public LiteralArgumentBuilder<SOURCE> toLiteral() {
         LiteralArgumentBuilder<SOURCE> baseArgument = LiteralArgumentBuilder.<SOURCE>literal(baseRoute.getName())
-            .executes(context -> execute(context));
-
+            .requires(context -> permissionService.isPermitted(senderFactory.create(context), baseRoute))
+            .executes(context -> execute(context))
+            ;
         this.appendRoute(baseArgument, baseRoute);
         return baseArgument;
     }
