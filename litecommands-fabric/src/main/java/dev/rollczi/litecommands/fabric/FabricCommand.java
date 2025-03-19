@@ -10,6 +10,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.PermissionService;
@@ -45,9 +46,8 @@ public class FabricCommand<SOURCE> {
 
     public LiteralArgumentBuilder<SOURCE> toLiteral() {
         LiteralArgumentBuilder<SOURCE> baseArgument = LiteralArgumentBuilder.<SOURCE>literal(baseRoute.getName())
-            .requires(context -> permissionService.isPermitted(senderFactory.create(context), baseRoute))
-            .executes(context -> execute(context))
-            ;
+            .requires(context -> !settings.isNativePermission() || permissionService.isPermitted(senderFactory.create(context), baseRoute))
+            .executes(context -> execute(context));
         this.appendRoute(baseArgument, baseRoute);
         return baseArgument;
     }
@@ -56,9 +56,11 @@ public class FabricCommand<SOURCE> {
         boolean isBase = route == baseRoute;
         LiteralArgumentBuilder<SOURCE> literal = isBase
             ? baseLiteral
-            : LiteralArgumentBuilder.<SOURCE>literal(route.getName()).executes(context -> execute(context));
+            : LiteralArgumentBuilder.<SOURCE>literal(route.getName())
+                .requires(source -> this.hasAnyPermission(source, route))
+                .executes(context -> execute(context));
 
-        literal.then(this.createArguments());
+        literal.then(this.createArguments(route));
 
         for (CommandRoute<SOURCE> child : route.getChildren()) {
             this.appendRoute(literal, child);
@@ -69,11 +71,23 @@ public class FabricCommand<SOURCE> {
     }
 
     @NotNull
-    private RequiredArgumentBuilder<SOURCE, String> createArguments() {
+    private RequiredArgumentBuilder<SOURCE, String> createArguments(CommandRoute<SOURCE> route) {
         return RequiredArgumentBuilder
             .<SOURCE, String>argument(settings.getInputInspectionDisplay(), StringArgumentType.greedyString())
+            .requires(source -> hasAnyPermission(source, route))
             .executes(context -> execute(context))
             .suggests((context, builder) -> suggests(context, builder));
+    }
+
+    private boolean hasAnyPermission(SOURCE source, CommandRoute<SOURCE> route) {
+        PlatformSender sender = senderFactory.create(source);
+        for (CommandExecutor<SOURCE> child : route.getExecutors()) {
+            if (permissionService.isPermitted(sender, child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private int execute(CommandContext<SOURCE> context) {

@@ -27,17 +27,10 @@ dependencies {
     modLocalRuntime("maven.modrinth:luckperms:v5.4.140-fabric")
     modLocalRuntime("com.terraformersmc:modmenu:11.0.3")
 
-//    modImplementation("dev.rollczi:litecommands-fabric:3.9.7") // <-- uncomment in your project
-    implementation(project(path = ":litecommands-fabric", configuration = "namedElements"))
-    /*"dev.rollczi:litecommands-luckperms:3.9.7".also {
-        api(it)
-        include(it)
-    }*/
-    project(":litecommands-luckperms").also {
-        api(it)
-        include(it)
-    }
-
+    // modImplementation("dev.rollczi:litecommands-fabric:3.9.7") <-- uncomment in your project
+    // modImplementation("dev.rollczi:litecommands-luckperms:3.9.7") <-- uncomment in your project
+    implementation(project(path = ":litecommands-fabric", configuration = "namedElements")) // <-- REMOVE THIS
+    implementation(project(":litecommands-luckperms")) // <-- REMOVE THIS
 }
 
 sourceSets.test {
