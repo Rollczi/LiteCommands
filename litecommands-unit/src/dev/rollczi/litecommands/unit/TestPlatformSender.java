@@ -15,9 +15,15 @@ public class TestPlatformSender extends AbstractPlatformSender {
 
     public static final MetaKey<Locale> LOCALE = MetaKey.of("locale", Locale.class);
 
+    private final TestSender handle;
+
     private final List<String> permissions = new ArrayList<>();
     private boolean permittedAll = false;
     private String name = "TestSender";
+
+    public TestPlatformSender(TestSender handle) {
+        this.handle = handle;
+    }
 
     public static PlatformSender named(String name) {
         return builder()
@@ -36,12 +42,8 @@ public class TestPlatformSender extends AbstractPlatformSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        if (this.permittedAll) {
-            return true;
-        }
-
-        return this.permissions.contains(permission);
+    public Object getHandle() {
+        return handle;
     }
 
     public static Builder builder() {
@@ -66,9 +68,17 @@ public class TestPlatformSender extends AbstractPlatformSender {
             .build();
     }
 
+    public boolean hasPermission(String permission) {
+        if (this.permittedAll) {
+            return true;
+        }
+
+        return this.permissions.contains(permission);
+    }
+
     public static class Builder {
 
-        private final TestPlatformSender sender = new TestPlatformSender();
+        private final TestPlatformSender sender = new TestPlatformSender(new TestSender());
 
         public Builder permission(String permission) {
             this.sender.permissions.add(permission);

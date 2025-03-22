@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.event.EventListener;
 import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.event.Subscriber;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
+import dev.rollczi.litecommands.permission.PermissionResolver;
 import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.context.ContextProvider;
 import dev.rollczi.litecommands.extension.LiteExtension;
@@ -173,8 +174,10 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
 
     B editor(Scope scope, Editor<SENDER> editor);
 
+    @Deprecated
     B validatorGlobal(Validator<SENDER> validator);
 
+    @Deprecated
     B validator(Scope scope, Validator<SENDER> validator);
 
     default B validatorMarked(Validator<SENDER> validator) {
@@ -266,6 +269,8 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     B beforeBuild(LiteBuilderAction<SENDER, SETTINGS> action);
 
     B afterBuild(LiteBuilderAction<SENDER, SETTINGS> action);
+
+    B permissionResolver(PermissionResolver permissionResolver);
 
     /**
      * Register extension for this builder.

@@ -6,7 +6,7 @@ TODO
 - [x] @Async @Execute
 - [ ] @Timeout(second = 10)
 - [x] @Arg
-- [x] @Arg Option<T>
+- [x] @Arg Optional<T>
 - [ ] @Arg @Strict Option<T>
 - [x] @Arg Optional<T>
 - [x] @Arg CompletableFuture<User>
@@ -22,7 +22,7 @@ TODO
 - [x] @Arg Set<T> // for example 1, 4, 5
 - [ ] @Arg Map<K, V> // for example key1=value1, key2=value2 // do wyrzucenia chyba
 - [ ] @Suggest
-- [ ] @Literal
+- [x] @Literal
 - [x] @Validate(validator = MyValidator.class)
 - [x] @Cooldown - Określa cza s, przez który użytkownik nie może ponownie użyć danej komendy po jej wykonaniu.
 - [ ] @Cooldown(second = 10, bypass = "myplugin.bypass.cooldown", scope = CooldownScope.GLOBAL)
@@ -362,5 +362,17 @@ Command banCommand = new Command("ban")
     }
 }
 
+class Main {
+    
+    public static void main(String[] args) {
+        
+      LiteCommands liteCommands = LiteBukkitPlatform.create()
+         .commands(new BanCommand())
+         .argument();
+      
+      
+    }
+    
+}
 
 ```

@@ -38,6 +38,9 @@ object Versions {
     const val FABRIC_COMMAND_API_V1 = "1.2.56+f71b366f73"
     const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.5.1+6da5ef6940"
 
+    // TelegramBots
+    const val TELEGRAM_BOTS = "8.2.0"
+
     // ChatGPT
     const val GSON = "2.11.0"
     const val CAFFEINE = "3.1.8"
@@ -52,7 +55,7 @@ object Versions {
     const val HIBERNATE_VALIDATOR = "8.0.2.Final"
     const val EXPRESSLY = "5.0.0"
 
-    // TelegramBots
-    const val TELEGRAM_BOTS = "8.2.0"
+    // LuckPerms
+    const val LUCKPERMS_API = "5.4"
 
 }

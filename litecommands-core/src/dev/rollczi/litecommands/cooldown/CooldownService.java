@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
@@ -21,11 +22,13 @@ import org.jetbrains.annotations.ApiStatus;
 public class CooldownService {
 
     private final Scheduler scheduler;
+    private final PermissionService permissionService;
     private final EventPublisher publisher;
     private final Map<CooldownCompositeKey, CooldownState> cooldowns = new HashMap<>();
 
-    public CooldownService(Scheduler scheduler, EventPublisher publisher) {
+    public CooldownService(Scheduler scheduler, PermissionService permissionService, EventPublisher publisher) {
         this.scheduler = scheduler;
+        this.permissionService = permissionService;
         this.publisher = publisher;
     }
 
@@ -76,17 +79,16 @@ public class CooldownService {
     }
 
     private Optional<CooldownContext> getOperativeContext(CommandExecutor<?> executor, PlatformSender sender) {
-        CooldownContext cooldownContext = executor.metaCollector().findFirst(Meta.COOLDOWN, null);
-        if (cooldownContext == null) {
+        CooldownContext context = executor.metaCollector().findFirst(Meta.COOLDOWN, null);
+        if (context == null) {
             return Optional.empty();
         }
 
-        String bypassPermission = cooldownContext.getBypassPermission();
-        if (!bypassPermission.isEmpty() && sender.hasPermission(bypassPermission)) {
+        if (!context.getBypassPermission().isEmpty() && permissionService.isPermitted(sender, context.getPermissions())) {
             return Optional.empty();
         }
 
-        return Optional.of(cooldownContext);
+        return Optional.of(context);
     }
 
 }

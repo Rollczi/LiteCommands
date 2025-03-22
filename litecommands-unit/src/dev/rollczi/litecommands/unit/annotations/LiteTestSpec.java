@@ -6,11 +6,14 @@ import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
 import dev.rollczi.litecommands.annotations.command.RootCommand;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.permission.PermissionResolver;
+import dev.rollczi.litecommands.unit.TestPlatformSender;
 import dev.rollczi.litecommands.unit.TestSettings;
 import dev.rollczi.litecommands.unit.TestPlatform;
 import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgument;
 import dev.rollczi.litecommands.unit.blocking.BlockingArgumentResolver;
+import dev.rollczi.litecommands.unit.permission.TestPermissionResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 
@@ -41,6 +44,7 @@ public class LiteTestSpec {
 
         liteCommands = configureLiteTest(LiteCommandsFactory.builder(TestSender.class, platform)
             .commands(LiteCommandsAnnotations.ofClasses(commands))
+            .permissionResolver(new TestPermissionResolver())
             .exceptionUnexpected((invocation, exception, chain) -> {}), type)
             .argument(BlockingArgument.class, new BlockingArgumentResolver<>())
             .build();

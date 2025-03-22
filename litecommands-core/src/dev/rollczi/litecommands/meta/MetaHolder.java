@@ -17,4 +17,8 @@ public interface MetaHolder {
         return MetaHolderEmptyImpl.INSTANCE;
     }
 
+    static MetaHolder of(Meta meta) {
+        return new MetaHolderImpl(meta);
+    }
+
 }

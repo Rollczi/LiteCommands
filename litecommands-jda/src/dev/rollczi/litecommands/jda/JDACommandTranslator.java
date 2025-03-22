@@ -276,7 +276,6 @@ public class JDACommandTranslator {
             .build();
 
         return new Invocation<>(
-            interaction.getUser(),
             new JDAPlatformSender(interaction.getUser()),
             route.getName(),
             interaction.getName(),

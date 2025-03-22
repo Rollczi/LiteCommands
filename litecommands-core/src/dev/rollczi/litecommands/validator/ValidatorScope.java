@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.scope.Scopeable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class ValidatorScope implements Scope {
 
     private final Class<?> type;

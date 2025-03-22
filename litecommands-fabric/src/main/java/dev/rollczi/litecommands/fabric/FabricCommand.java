@@ -10,8 +10,10 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSenderFactory;
@@ -31,19 +33,21 @@ public class FabricCommand<SOURCE> {
     private final CommandRoute<SOURCE> baseRoute;
     private final PlatformInvocationListener<SOURCE> invocationHook;
     private final PlatformSuggestionListener<SOURCE> suggestionHook;
+    private final PermissionService permissionService;
 
-    public FabricCommand(PlatformSenderFactory<SOURCE> senderFactory, LiteFabricSettings settings, CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
+    public FabricCommand(PlatformSenderFactory<SOURCE> senderFactory, LiteFabricSettings settings, CommandRoute<SOURCE> baseRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook, PermissionService permissionService) {
         this.senderFactory = senderFactory;
         this.settings = settings;
         this.baseRoute = baseRoute;
         this.invocationHook = invocationHook;
         this.suggestionHook = suggestionHook;
+        this.permissionService = permissionService;
     }
 
     public LiteralArgumentBuilder<SOURCE> toLiteral() {
         LiteralArgumentBuilder<SOURCE> baseArgument = LiteralArgumentBuilder.<SOURCE>literal(baseRoute.getName())
+            .requires(context -> !settings.isNativePermission() || permissionService.isPermitted(senderFactory.create(context), baseRoute))
             .executes(context -> execute(context));
-
         this.appendRoute(baseArgument, baseRoute);
         return baseArgument;
     }
@@ -52,9 +56,11 @@ public class FabricCommand<SOURCE> {
         boolean isBase = route == baseRoute;
         LiteralArgumentBuilder<SOURCE> literal = isBase
             ? baseLiteral
-            : LiteralArgumentBuilder.<SOURCE>literal(route.getName()).executes(context -> execute(context));
+            : LiteralArgumentBuilder.<SOURCE>literal(route.getName())
+                .requires(source -> this.hasAnyPermission(source, route))
+                .executes(context -> execute(context));
 
-        literal.then(this.createArguments());
+        literal.then(this.createArguments(route));
 
         for (CommandRoute<SOURCE> child : route.getChildren()) {
             this.appendRoute(literal, child);
@@ -65,18 +71,30 @@ public class FabricCommand<SOURCE> {
     }
 
     @NotNull
-    private RequiredArgumentBuilder<SOURCE, String> createArguments() {
+    private RequiredArgumentBuilder<SOURCE, String> createArguments(CommandRoute<SOURCE> route) {
         return RequiredArgumentBuilder
             .<SOURCE, String>argument(settings.getInputInspectionDisplay(), StringArgumentType.greedyString())
+            .requires(source -> hasAnyPermission(source, route))
             .executes(context -> execute(context))
             .suggests((context, builder) -> suggests(context, builder));
+    }
+
+    private boolean hasAnyPermission(SOURCE source, CommandRoute<SOURCE> route) {
+        PlatformSender sender = senderFactory.create(source);
+        for (CommandExecutor<SOURCE> child : route.getExecutors()) {
+            if (permissionService.isPermitted(sender, child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private int execute(CommandContext<SOURCE> context) {
         RawCommand rawCommand = RawCommand.from(context.getInput());
         ParseableInput<?> parseableInput = rawCommand.toParseableInput();
         PlatformSender platformSender = this.senderFactory.create(context.getSource());
-        Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
+        Invocation<SOURCE> invocation = new Invocation<>(platformSender, baseRoute.getName(), rawCommand.getLabel(), parseableInput);
 
         invocationHook.execute(invocation, parseableInput);
         return Command.SINGLE_SUCCESS;
@@ -88,7 +106,7 @@ public class FabricCommand<SOURCE> {
             RawCommand rawCommand = RawCommand.from(input);
             SuggestionInput<?> suggestionInput = rawCommand.toSuggestionInput();
             PlatformSender platformSender = this.senderFactory.create(context.getSource());
-            Invocation<SOURCE> invocation = new Invocation<>(context.getSource(), platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
+            Invocation<SOURCE> invocation = new Invocation<>(platformSender, baseRoute.getName(), rawCommand.getLabel(), suggestionInput);
 
             SuggestionResult suggest = suggestionHook.suggest(invocation, suggestionInput);
 

@@ -22,6 +22,10 @@ import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
+import dev.rollczi.litecommands.permission.PermissionResolver;
+import dev.rollczi.litecommands.permission.PermissionService;
+import dev.rollczi.litecommands.permission.PermissionServiceImpl;
+import dev.rollczi.litecommands.platform.PlatformFactory;
 import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.bind.BindRegistry;
@@ -72,6 +76,7 @@ import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorService;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -96,6 +101,7 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     protected final List<LiteCommandsProviderExtension<SENDER, ?>> commandsProviderExtensions = new ArrayList<>();
 
     protected final EditorService<SENDER> editorService;
+    protected final PermissionServiceImpl permissionService;
     protected final ValidatorService<SENDER> validatorService;
     protected final ParserRegistry<SENDER> parserRegistry;
     protected final SuggesterRegistry<SENDER> suggesterRegistry;
@@ -116,11 +122,36 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
      * @param senderClass class of sender
      * @param platform platform
      */
-    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, PlatformFactory<SENDER, C> platform) {
         this(
             senderClass,
             platform,
             new EditorService<>(),
+            new PermissionServiceImpl(),
+            new ValidatorService<>(),
+            new ParserRegistryImpl<>(),
+            new SuggesterRegistryImpl<>(),
+            new BindRegistry(),
+            new ContextRegistry<>(),
+            new ResultHandleServiceImpl<>(),
+            new CommandBuilderCollector<>(),
+            new MessageRegistry<>(),
+            new StrictService()
+        );
+    }
+
+    /**
+     * Constructor for {@link LiteCommandsBaseBuilder}
+     *
+     * @param senderClass class of sender
+     * @param platform platform
+     */
+    public LiteCommandsBaseBuilder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+        this(
+            senderClass,
+            builder -> platform,
+            new EditorService<>(),
+            new PermissionServiceImpl(),
             new ValidatorService<>(),
             new ParserRegistryImpl<>(),
             new SuggesterRegistryImpl<>(),
@@ -140,9 +171,10 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Experimental
     public LiteCommandsBaseBuilder(
         Class<SENDER> senderClass,
-        Platform<SENDER, C> platform,
+        PlatformFactory<SENDER, C> platform,
 
         EditorService<SENDER> editorService,
+        PermissionServiceImpl permissionService,
         ValidatorService<SENDER> validatorService,
         ParserRegistry<SENDER> parserRegistry,
         SuggesterRegistry<SENDER> suggesterRegistry,
@@ -154,10 +186,10 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         StrictService strictService
     ) {
         this.senderClass = senderClass;
-        this.platform = platform;
 
         this.editorService = editorService;
         this.validatorService = validatorService;
+        this.permissionService = permissionService;
         this.parserRegistry = parserRegistry;
         this.suggesterRegistry = suggesterRegistry;
         this.bindRegistry = bindRegistry;
@@ -169,8 +201,10 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
         this.scheduler = new SchedulerReference(new SchedulerExecutorPoolImpl("litecommands"));
         this.eventPublisher = new SimpleEventPublisher(bindRegistry);
-        this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), validatorService, parserRegistry));
-        this.cooldownService = new CooldownService(this.scheduler, eventPublisher);
+        this.schematicGenerator = new SchematicGeneratorReference<>(new SchematicFastGenerator<>(SchematicFormat.angleBrackets(), permissionService, parserRegistry));
+        this.cooldownService = new CooldownService(this.scheduler, permissionService, eventPublisher);
+
+        this.platform = platform.createPlatform(this.self());
     }
 
     @Override
@@ -509,13 +543,13 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     @Override
     public B schematicGenerator(SchematicFormat format) {
-        this.schematicGenerator.setSchematicGenerator(new SimpleSchematicGenerator<>(format, validatorService, parserRegistry));
+        this.schematicGenerator.setSchematicGenerator(new SimpleSchematicGenerator<>(format, permissionService, parserRegistry));
         return this.self();
     }
 
     @Override
     public B schematicGenerator(SchematicFastFormat format) {
-        this.schematicGenerator.setSchematicGenerator(new SchematicFastGenerator<>(format, validatorService, parserRegistry));
+        this.schematicGenerator.setSchematicGenerator(new SchematicFastGenerator<>(format, permissionService, parserRegistry));
         return this.self();
     }
 
@@ -552,6 +586,12 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @Override
     public B afterBuild(LiteBuilderAction<SENDER, C> action) {
         this.postProcessors.add(action);
+        return this.self();
+    }
+
+    @Override
+    public B permissionResolver(PermissionResolver permissionResolver) {
+        this.permissionService.setPermissionResolver(permissionResolver);
         return this.self();
     }
 
@@ -628,8 +668,8 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
 
     protected CommandManager<SENDER> createCommandManager() {
         RequirementMatchService<SENDER> requirementMatchService = new RequirementMatchService<>(strictService, contextRegistry, parserRegistry, bindRegistry, scheduler);
-        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(validatorService, resultHandleService, scheduler, requirementMatchService, eventPublisher);
-        SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService);
+        CommandExecuteService<SENDER> commandExecuteService = new CommandExecuteService<>(resultHandleService, scheduler, requirementMatchService, eventPublisher);
+        SuggestionService<SENDER> suggestionService = new SuggestionService<>(parserRegistry, suggesterRegistry, validatorService, eventPublisher);
 
         return new CommandManager<>(this.platform, commandExecuteService, suggestionService);
     }
@@ -671,6 +711,11 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
     @ApiStatus.Internal
     public EditorService<SENDER> getEditorService() {
         return this.editorService;
+    }
+
+    @Override
+    public PermissionService getPermissionService() {
+        return this.permissionService;
     }
 
     @Override

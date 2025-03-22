@@ -1,5 +1,6 @@
 package dev.rollczi.litecommands.fabric;
 
+import dev.rollczi.litecommands.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.fabric.client.FabricClientPlatform;
@@ -11,6 +12,7 @@ import dev.rollczi.litecommands.fabric.server.FabricServerScheduler;
 import dev.rollczi.litecommands.fabric.server.argument.PlayerArgument;
 import dev.rollczi.litecommands.fabric.server.argument.WorldArgument;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.permission.PermissionResolver;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -32,7 +34,7 @@ public final class LiteFabricFactory {
      * @deprecated Use {@link LiteFabricFactory#builder()} instead
      */
     @Deprecated
-    public static <B extends LiteCommandsBuilder<ServerCommandSource, LiteFabricSettings, B>> B create() {
+    public static <B extends LiteCommandsBaseBuilder<ServerCommandSource, LiteFabricSettings, B>> B create() {
         return builder();
     }
 
@@ -40,18 +42,19 @@ public final class LiteFabricFactory {
      * @deprecated Use {@link LiteFabricFactory#server()} instead
      */
     @Deprecated
-    public static <B extends LiteCommandsBuilder<ServerCommandSource, LiteFabricSettings, B>> B builder() {
+    public static <B extends LiteCommandsBaseBuilder<ServerCommandSource, LiteFabricSettings, B>> B builder() {
         return server();
     }
 
     @SuppressWarnings("unchecked")
-    public static <B extends LiteCommandsBuilder<ServerCommandSource, LiteFabricSettings, B>> B server() {
-        return (B) LiteCommandsFactory.builder(ServerCommandSource.class, new FabricServerPlatform(new LiteFabricSettings()))
+    public static <B extends LiteCommandsBaseBuilder<ServerCommandSource, LiteFabricSettings, B>> B server() {
+        return LiteCommandsFactory.<ServerCommandSource, LiteFabricSettings, B>builder(ServerCommandSource.class, builder -> new FabricServerPlatform(new LiteFabricSettings(), builder.getPermissionService()))
             .self((builder, internal) -> {
                 MessageRegistry<ServerCommandSource> messages = internal.getMessageRegistry();
 
                 builder
                     .advanced()
+                    .permissionResolver(PermissionResolver.createDefault((sender, permission) -> true))
                     .context(ServerPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
                     .scheduler(new FabricServerScheduler())
 
@@ -64,15 +67,15 @@ public final class LiteFabricFactory {
             });
     }
 
-    @SuppressWarnings("unchecked")
     @Environment(EnvType.CLIENT)
-    public static <B extends LiteCommandsBuilder<FabricClientCommandSource, LiteFabricSettings, B>> B client() {
-        return (B) LiteCommandsFactory.builder(FabricClientCommandSource.class, new FabricClientPlatform(new LiteFabricSettings()))
+    public static <B extends LiteCommandsBaseBuilder<FabricClientCommandSource, LiteFabricSettings, B>> B client() {
+        return LiteCommandsFactory.<FabricClientCommandSource, LiteFabricSettings, B>builder(FabricClientCommandSource.class, builder -> new FabricClientPlatform(new LiteFabricSettings(), builder.getPermissionService()))
             .self((builder, internal) -> {
                 MessageRegistry<FabricClientCommandSource> messages = internal.getMessageRegistry();
 
                 builder
                     .advanced()
+                    .permissionResolver(PermissionResolver.createDefault((sender, permission) -> true))
                     .context(ClientPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
 
                     .argument(upwards(PlayerEntity.class), new ClientPlayerArgument<>(messages))

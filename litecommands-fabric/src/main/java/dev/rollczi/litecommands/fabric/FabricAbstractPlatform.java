@@ -4,21 +4,21 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
+import dev.rollczi.litecommands.permission.PermissionService;
+import dev.rollczi.litecommands.platform.AbstractPlatform;
 import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
-import dev.rollczi.litecommands.platform.PlatformSenderFactory;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class FabricAbstractPlatform<SOURCE> extends AbstractSimplePlatform<SOURCE, LiteFabricSettings> implements Platform<SOURCE, LiteFabricSettings> {
+public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SOURCE, LiteFabricSettings> implements Platform<SOURCE, LiteFabricSettings> {
+    protected static boolean COMMAND_API_V2 = true;
 
     protected final Map<UUID, FabricCommand<SOURCE>> fabricCommands = new HashMap<>();
-
-    protected static boolean COMMAND_API_V2 = true;
+    private final PermissionService permissionService;
 
     static {
         try {
@@ -28,8 +28,9 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractSimplePlatf
         }
     }
 
-    protected FabricAbstractPlatform(LiteFabricSettings settings, PlatformSenderFactory<SOURCE> factory) {
-        super(settings, factory);
+    protected FabricAbstractPlatform(LiteFabricSettings settings, PermissionService permissionService) {
+        super(settings);
+        this.permissionService = permissionService;
         registerEvents();
     }
 
@@ -46,7 +47,7 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractSimplePlatf
 
     @Override
     protected void hook(CommandRoute<SOURCE> commandRoute, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
-        fabricCommands.put(commandRoute.getUniqueId(), createCommand(commandRoute, invocationHook, suggestionHook));
+        fabricCommands.put(commandRoute.getUniqueId(), createCommand(commandRoute, invocationHook, suggestionHook, permissionService));
     }
 
     @Override
@@ -55,8 +56,8 @@ public abstract class FabricAbstractPlatform<SOURCE> extends AbstractSimplePlatf
         // TODO: unregister command from dispatcher
     }
 
-    protected FabricCommand<SOURCE> createCommand(CommandRoute<SOURCE> command, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook) {
-        return new FabricCommand<>(this.getSenderFactory(), settings, command, invocationHook, suggestionHook);
+    protected FabricCommand<SOURCE> createCommand(CommandRoute<SOURCE> command, PlatformInvocationListener<SOURCE> invocationHook, PlatformSuggestionListener<SOURCE> suggestionHook, PermissionService permissionService) {
+        return new FabricCommand<>(this.getSenderFactory(), settings, command, invocationHook, suggestionHook, permissionService);
     }
 
 }
