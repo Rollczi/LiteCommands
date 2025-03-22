@@ -5,15 +5,13 @@ import dev.rollczi.litecommands.platform.PlatformSender;
 
 public class Invocation<SENDER> {
 
-    private final SENDER handle;
     private final PlatformSender platformSender;
     private final String command;
     private final String label;
     private final Input<?> arguments;
     private final InvocationContext context;
 
-    public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, Input<?> input, InvocationContext context) {
-        this.handle = handle;
+    public Invocation(PlatformSender platformSender, String command, String label, Input<?> input, InvocationContext context) {
         this.platformSender = platformSender;
         this.command = command;
         this.label = label;
@@ -21,8 +19,7 @@ public class Invocation<SENDER> {
         this.context = context;
     }
 
-    public Invocation(SENDER handle, PlatformSender platformSender, String command, String label, Input<?> input) {
-        this.handle = handle;
+    public Invocation(PlatformSender platformSender, String command, String label, Input<?> input) {
         this.platformSender = platformSender;
         this.command = command;
         this.label = label;
@@ -31,7 +28,7 @@ public class Invocation<SENDER> {
     }
 
     public SENDER sender() {
-        return this.handle;
+        return (SENDER) this.platformSender.getHandle();
     }
 
     public PlatformSender platformSender() {

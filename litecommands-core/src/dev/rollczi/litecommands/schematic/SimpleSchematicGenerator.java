@@ -3,11 +3,10 @@ package dev.rollczi.litecommands.schematic;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.Parser;
 import dev.rollczi.litecommands.argument.parser.ParserRegistry;
-import dev.rollczi.litecommands.argument.parser.ParserSet;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.range.Range;
-import dev.rollczi.litecommands.validator.ValidatorService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,12 +17,12 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
     private static final String SEPARATOR = " ";
 
     protected final SchematicFormat format;
-    protected final ValidatorService<SENDER> validatorService;
+    protected final PermissionService permissionService;
     protected final ParserRegistry<SENDER> parserRegistry;
 
-    public SimpleSchematicGenerator(SchematicFormat format, ValidatorService<SENDER> validatorService, ParserRegistry<SENDER> parserRegistry) {
+    public SimpleSchematicGenerator(SchematicFormat format, PermissionService permissionService, ParserRegistry<SENDER> parserRegistry) {
         this.format = format;
-        this.validatorService = validatorService;
+        this.permissionService = permissionService;
         this.parserRegistry = parserRegistry;
     }
 
@@ -85,7 +84,7 @@ public class SimpleSchematicGenerator<SENDER> implements SchematicGenerator<SEND
     }
 
     protected boolean isVisible(SchematicInput<SENDER> input, CommandExecutor<SENDER> executor) {
-        return validatorService.validate(input.getInvocation(), executor).isContinue();
+        return permissionService.validate(input.getInvocation().platformSender(), executor).isPermitted();
     }
 
     protected <T> boolean isOptional(SchematicInput<SENDER> input, Argument<T> argument) {

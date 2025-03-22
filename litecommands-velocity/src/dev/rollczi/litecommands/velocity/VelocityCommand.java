@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.MissingPermissions;
+import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInput;
@@ -21,16 +22,20 @@ class VelocityCommand implements SimpleCommand {
 
     private final LiteVelocitySettings settings;
     private final CommandRoute<CommandSource> commandSection;
+    private final PermissionService permissionService;
     private final PlatformInvocationListener<CommandSource> executeListener;
     private final PlatformSuggestionListener<CommandSource> suggestionListener;
 
     public VelocityCommand(
         LiteVelocitySettings settings,
-        CommandRoute<CommandSource> command, PlatformInvocationListener<CommandSource> executeListener,
+        CommandRoute<CommandSource> command,
+        PermissionService permissionService,
+        PlatformInvocationListener<CommandSource> executeListener,
         PlatformSuggestionListener<CommandSource> suggestionListener
     ) {
         this.settings = settings;
         this.commandSection = command;
+        this.permissionService = permissionService;
         this.executeListener = executeListener;
         this.suggestionListener = suggestionListener;
     }
@@ -40,9 +45,7 @@ class VelocityCommand implements SimpleCommand {
         boolean isNative = commandSection.meta().get(Meta.NATIVE_PERMISSIONS);
 
         if (isNative || settings.isNativePermissions()) {
-            MissingPermissions missingPermissions = MissingPermissions.check(new VelocitySender(invocation.source()), this.commandSection);
-
-            return missingPermissions.isPermitted();
+            return permissionService.isPermitted(new VelocitySender(invocation.source()), this.commandSection);
         }
 
         return true;
@@ -71,7 +74,6 @@ class VelocityCommand implements SimpleCommand {
 
     private dev.rollczi.litecommands.invocation.Invocation<CommandSource> newInvocation(Invocation invocation, Input<?> input) {
         return new dev.rollczi.litecommands.invocation.Invocation<>(
-            invocation.source(),
             new VelocitySender(invocation.source()),
             this.commandSection.getName(),
             invocation.alias(),

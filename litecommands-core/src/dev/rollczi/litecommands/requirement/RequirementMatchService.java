@@ -84,6 +84,7 @@ public class RequirementMatchService<SENDER> {
 
             Object success = requirementResult.getSuccess();
 
+            // TODO remove START
             List<RequirementValidator<?, ?>> validators = requirement.meta().get(Meta.REQUIREMENT_VALIDATORS);
 
             for (RequirementValidator<?, ?> validator : validators) {
@@ -93,6 +94,7 @@ public class RequirementMatchService<SENDER> {
                     return completedFuture(CommandExecutorMatchResult.failed(validatorResult.getInvalidResult()));
                 }
             }
+            // TODO remove END Add event
 
             matches.add(toMatch(requirement, success));
             return match(invocation, executor, matches, requirementIterator, matcher).thenApply(executorMatchResult -> {
@@ -111,6 +113,7 @@ public class RequirementMatchService<SENDER> {
 
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     private <T> ValidatorResult validateRequirement(
         Invocation<SENDER> invocation,
         CommandExecutor<SENDER> executor,
@@ -124,7 +127,6 @@ public class RequirementMatchService<SENDER> {
         return casted.validate(invocation, executor, castedRequirement, value);
     }
 
-    @SuppressWarnings("unchecked")
     private <R extends Requirement<? extends T>, T> RequirementMatch toMatch(R requirement, T result) {
         return new RequirementMatch(requirement, result);
     }

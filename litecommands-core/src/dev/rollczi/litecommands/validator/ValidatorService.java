@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class ValidatorService<SENDER> {
 
     private final Map<Scope, Map<Class<?>, Validator<SENDER>>> commandValidators = new HashMap<>();

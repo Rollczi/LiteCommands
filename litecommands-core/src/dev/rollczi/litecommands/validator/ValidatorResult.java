@@ -3,6 +3,7 @@ package dev.rollczi.litecommands.validator;
 import dev.rollczi.litecommands.shared.Preconditions;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated
 public class ValidatorResult {
 
     private final boolean valid;

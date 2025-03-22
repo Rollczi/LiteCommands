@@ -16,11 +16,6 @@ class BukkitPlatformSender extends AbstractPlatformSender implements PlatformRec
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return this.handle.hasPermission(permission);
-    }
-
-    @Override
     public String getName() {
         return this.handle.getName();
     }
@@ -49,9 +44,13 @@ class BukkitPlatformSender extends AbstractPlatformSender implements PlatformRec
     }
 
     @Override
-    public Comparable<Void> sendMessage(String message) {
+    public Object getHandle() {
+        return this.handle;
+    }
+
+    @Override
+    public void sendMessage(String message) {
         this.handle.sendMessage(message);
-        return null;
     }
 
 }

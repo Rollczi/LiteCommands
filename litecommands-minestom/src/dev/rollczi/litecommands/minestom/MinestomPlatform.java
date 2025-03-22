@@ -44,7 +44,7 @@ class MinestomPlatform extends AbstractPlatform<CommandSender, LiteMinestomSetti
 
     @Override
     public PlatformSender createSender(CommandSender nativeSender) {
-        return new MinestomSender(nativeSender, this);
+        return new MinestomSender(nativeSender);
     }
 
     private MinestomCommand createCommand(CommandRoute<CommandSender> command, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {

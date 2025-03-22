@@ -25,8 +25,6 @@ public interface Flow {
 
     FailedReason failedReason();
 
-    boolean hasReason();
-
     /**
      * Flow status
      * CONTINUE - continue current flow
@@ -40,7 +38,7 @@ public interface Flow {
     }
 
     static Flow continueFlow() {
-        return new FlowImpl(Status.CONTINUE, null);
+        return new FlowImpl(Status.CONTINUE, "NONE");
     }
 
     static Flow stopCurrentFlow(Object reason) {

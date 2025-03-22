@@ -48,10 +48,13 @@ import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
 import dev.rollczi.litecommands.literal.LiteralArgumentResolver;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissionResultHandler;
-import dev.rollczi.litecommands.permission.PermissionValidator;
+import dev.rollczi.litecommands.permission.PermissionExecutionController;
+import dev.rollczi.litecommands.permission.PermissionService;
+import dev.rollczi.litecommands.permission.PermissionSuggestionController;
 import dev.rollczi.litecommands.permission.MissingPermissions;
-import dev.rollczi.litecommands.permission.PermissionValidationServiceImpl;
+import dev.rollczi.litecommands.permission.PermissionServiceImpl;
 import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.platform.PlatformFactory;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.flag.FlagArgumentResolver;
@@ -60,7 +63,7 @@ import static dev.rollczi.litecommands.reflect.type.TypeRange.downwards;
 import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scope.Scope;
-import dev.rollczi.litecommands.validator.ValidatorExecutionController;
+import dev.rollczi.litecommands.validator.ValidatorExecutorController;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,6 +87,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 
 @SuppressWarnings("Convert2MethodRef")
 public final class LiteCommandsFactory {
@@ -92,13 +96,16 @@ public final class LiteCommandsFactory {
     }
 
     public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, Platform<SENDER, C> platform) {
+        return builder(senderClass, builder -> platform);
+    }
+
+    public static <SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> LiteCommandsBuilder<SENDER, C, B> builder(Class<SENDER> senderClass, PlatformFactory<SENDER, C> platform) {
         return new LiteCommandsBaseBuilder<SENDER, C, B>(senderClass, platform).self((builder, internal) -> {
             Scheduler scheduler = internal.getScheduler();
             MessageRegistry<SENDER> messageRegistry = internal.getMessageRegistry();
             ParserRegistry<SENDER> parser = internal.getParserRegistry();
             SuggesterRegistry<SENDER> suggester = internal.getSuggesterRegistry();
-            EventPublisher eventPublisher = internal.getEventPublisher();
-
+            PermissionService permissionService = internal.getPermissionService();
             List<Class<?>> excluded = Arrays.asList(Cloneable.class, Serializable.class, Object.class);
 
             builder.advanced()
@@ -108,11 +115,11 @@ public final class LiteCommandsFactory {
                 .context(PlatformSender.class, invocation -> ContextResult.ok(() -> invocation.platformSender()))
                 .context(Invocation.class, invocation -> ContextResult.ok(() -> invocation)) // Do not use short method reference here (it will cause bad return type in method reference on Java 8)
 
-                .validator(Scope.global(), new PermissionValidator<>(new PermissionValidationServiceImpl(eventPublisher)))
-
-                .listener(new ValidatorExecutionController<>(internal.getValidatorService()))
+                .listener(new ValidatorExecutorController<>(internal.getValidatorService())) // TODO remove
                 .listener(new CooldownStateController<>(internal.getCooldownService()))
                 .listener(new InvalidUsageResultController<>(internal.getSchematicGenerator()))
+                .listener(new PermissionSuggestionController(permissionService))
+                .listener(new PermissionExecutionController(permissionService))
 
                 .argument(String.class, new StringArgumentResolver<>())
                 .argument(Boolean.class, new BooleanArgumentResolver<>())

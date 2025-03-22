@@ -1,29 +1,35 @@
 package dev.rollczi.litecommands.permission;
 
-import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
-import dev.rollczi.litecommands.permission.event.PermissionValidationEvent;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
+import org.jetbrains.annotations.Nullable;
 
-public class PermissionValidationServiceImpl implements PermissionValidationService {
+public class PermissionDefaultResolver implements PermissionResolver {
 
-    private final EventPublisher publisher;
+    private final BiPredicate<PlatformSender, String> hasPermission;
 
-    public PermissionValidationServiceImpl(EventPublisher publisher) {
-        this.publisher = publisher;
+    public PermissionDefaultResolver(BiPredicate<PlatformSender, String> hasPermission) {
+        this.hasPermission = hasPermission;
+    }
+
+    public <SENDER> PermissionDefaultResolver(Class<SENDER> type, BiPredicate<SENDER, String> hasPermission) {
+        this.hasPermission = (sender, permission) -> {
+            Object handle = sender.getHandle();
+            if (!type.isAssignableFrom(handle.getClass())) {
+                return false;
+            }
+
+            return hasPermission.test(type.cast(handle), permission);
+        };
     }
 
     @Override
-    public PermissionValidationResult validate(MetaHolder metaHolder, PlatformSender sender) {
-        List<PermissionValidationResult.Verdict> checked = check(sender, metaHolder);
-        return publisher.publish(new PermissionValidationEvent(metaHolder, checked));
-    }
-
-    static List<PermissionValidationResult.Verdict> check(PlatformSender platformSender, MetaHolder metaHolder) {
-        MetaHolder current = metaHolder;
+    public List<PermissionValidationResult.Verdict> resolve(PlatformSender sender, MetaHolder metaHolder) {
+        @Nullable MetaHolder current = metaHolder;
 
         List<PermissionValidationResult.Verdict> results = new ArrayList<>();
         while (current != null) {
@@ -32,14 +38,14 @@ public class PermissionValidationServiceImpl implements PermissionValidationServ
                 continue;
             }
 
-            results.add(checkCurrent(platformSender, current));
+            results.add(checkCurrent(sender, current));
             current = current.parentMeta();
         }
 
         return results;
     }
 
-    private static PermissionValidationResult.Verdict checkCurrent(PlatformSender platformSender, MetaHolder current) {
+    private PermissionValidationResult.Verdict checkCurrent(PlatformSender sender, MetaHolder current) {
         List<PermissionValidationResult.Check> checks = new ArrayList<>();
         for (PermissionSet permissionSet : current.meta().get(Meta.PERMISSIONS)) {
             List<String> checked = new ArrayList<>();
@@ -48,7 +54,7 @@ public class PermissionValidationServiceImpl implements PermissionValidationServ
             for (String permission : permissionSet.getPermissions()) {
                 checked.add(permission);
 
-                if (!platformSender.hasPermission(permission)) {
+                if (!hasPermission.test(sender, permission)) {
                     missing.add(permission);
                 }
             }
