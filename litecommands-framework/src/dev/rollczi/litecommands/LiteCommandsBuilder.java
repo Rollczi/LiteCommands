@@ -240,6 +240,30 @@ public interface LiteCommandsBuilder<SENDER, SETTINGS extends PlatformSettings, 
     <E extends Event>
     B listener(Class<E> event, Consumer<E> listener);
 
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#self(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B selfProcessor(LiteBuilderAction<SENDER, SETTINGS> processor) {
+        return self(processor);
+    }
+
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#beforeBuild(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B preProcessor(LiteBuilderAction<SENDER, SETTINGS> preProcessor) {
+        return beforeBuild(preProcessor);
+    }
+
+    /**
+     * @deprecated use {@link LiteCommandsBuilder#afterBuild(LiteBuilderAction)} instead
+     */
+    @Deprecated
+    default B postProcessor(LiteBuilderAction<SENDER, SETTINGS> postProcessor) {
+        return afterBuild(postProcessor);
+    }
+
     B self(LiteBuilderAction<SENDER, SETTINGS> action);
 
     B beforeBuild(LiteBuilderAction<SENDER, SETTINGS> action);

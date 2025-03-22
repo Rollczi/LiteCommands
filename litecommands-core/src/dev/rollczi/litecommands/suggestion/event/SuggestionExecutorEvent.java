@@ -3,7 +3,9 @@ package dev.rollczi.litecommands.suggestion.event;
 import dev.rollczi.litecommands.command.CommandNode;
 import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.invocation.Invocation;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Experimental
 public class SuggestionExecutorEvent implements SuggestionNodeEvent {
 
     private final Invocation<?> invocation;
