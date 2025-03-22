@@ -32,7 +32,7 @@ If you don’t update, **permissions will default to OR behavior** in the new ve
 [![Java](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/built-with/java8_vector.svg)](https://www.java.com/)
 
 ### LiteCommands
-Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, Sponge, Fabric, JDA and future implementations.
+Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Minestom, Sponge, Fabric, JDA, TelegramBots and future implementations.
 
 </div>
 
@@ -68,6 +68,7 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 - Sponge _(by [BlackBaroness](https://github.com/BlackBaroness))_
 - Fabric _(by [huanmeng_qwq](https://github.com/huanmeng-qwq))_
 - JDA
+- TelegramBots _(by [BlackBaroness](https://github.com/BlackBaroness))_
 
 ## 💡 Command Example
 This is an example of `/hello <name> <amount>` command:
