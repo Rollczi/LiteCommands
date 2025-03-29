@@ -8,7 +8,7 @@ plugins {
 dependencies {
     api(project(":litecommands-framework"))
 
-    compileOnly("org.telegram:telegrambots-meta:${Versions.TELEGRAM_BOTS}")
+    compileOnly("org.telegram:telegrambots-longpolling:8.2.0")
 }
 
 litecommandsPublish {

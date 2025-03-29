@@ -14,13 +14,14 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBotsSettings> {
 
     private final Map<String, TelegramBotsCommand> commands = new ConcurrentHashMap<>();
 
     public TelegramBotsPlatform(LiteTelegramBotsSettings liteTelegramBotsSettings) {
-        super(liteTelegramBotsSettings, sender -> new TelegramBotsSender(sender, liteTelegramBotsSettings));
+        super(liteTelegramBotsSettings, sender -> new TelegramBotsSender(sender));
     }
 
     @Override
@@ -42,6 +43,8 @@ class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBots
      * @return true if input was handled (it was a command), false otherwise (it was a message or other content)
      */
     public boolean handleUpdate(Update update) {
+        TelegramClient client;
+        client.
         Preconditions.notNull(update, "update");
 
         if (!update.hasMessage()) return false;
@@ -69,7 +72,7 @@ class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBots
         if (command == null) return false; // todo: do something instead?
 
         User sender = message.getFrom();
-        Invocation<User> invocation = new Invocation<>(sender, new TelegramBotsSender(sender, settings), command.commandRoute().getName(), label, input);
+        Invocation<User> invocation = new Invocation<>(new TelegramBotsSender(sender), command.commandRoute().getName(), label, input);
         command.invocationHook().execute(invocation, input);
         return true;
     }

@@ -7,11 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.User;
 class TelegramBotsSender extends AbstractPlatformSender {
 
     private final User handle;
-    private final LiteTelegramBotsSettings liteTelegramBotsSettings;
 
-    public TelegramBotsSender(User handle, LiteTelegramBotsSettings liteTelegramBotsSettings) {
+    public TelegramBotsSender(User handle) {
         this.handle = handle;
-        this.liteTelegramBotsSettings = liteTelegramBotsSettings;
     }
 
     @Override
@@ -30,8 +28,8 @@ class TelegramBotsSender extends AbstractPlatformSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return this.liteTelegramBotsSettings.getPermissionChecker().test(handle, permission);
+    public Object getHandle() {
+        return this.handle;
     }
 
 }
