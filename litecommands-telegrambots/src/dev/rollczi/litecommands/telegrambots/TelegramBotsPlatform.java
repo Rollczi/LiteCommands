@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.invocation.InvocationContext;
 import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
@@ -79,7 +80,7 @@ class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBots
 
         Message message = update.getMessage();
         String text = message.getText();
-        if (text != null && text.startsWith(settings.getCommandPrefix())) {
+        if (text == null || !text.startsWith(settings.getCommandPrefix())) {
             return false;
         }
 
@@ -91,9 +92,16 @@ class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBots
 
         User sender = message.getFrom();
         ParseableInput<?> input = command.toParseableInput();
-        Invocation<User> invocation = new Invocation<>(new TelegramBotsSender(sender), telegramCommand.commandRoute().getName(), command.getLabel(), input);
+        String name = telegramCommand.commandRoute().getName();
+        Invocation<User> invocation = new Invocation<>(new TelegramBotsSender(sender), name, command.getLabel(), input, createContext(update));
         telegramCommand.invocationHook().execute(invocation, input);
         return true;
+    }
+
+    private static InvocationContext createContext(Update update) {
+        return InvocationContext.builder()
+            .put(Update.class, update)
+            .build();
     }
 
 }
