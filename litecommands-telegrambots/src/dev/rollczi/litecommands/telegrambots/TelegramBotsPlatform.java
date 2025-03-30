@@ -2,26 +2,46 @@ package dev.rollczi.litecommands.telegrambots;
 
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractSimplePlatform;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
-import dev.rollczi.litecommands.shared.Preconditions;
+import java.util.ArrayList;
+import java.util.List;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBotsSettings> {
 
+    private final LiteTelegramDriver driver;
     private final Map<String, TelegramBotsCommand> commands = new ConcurrentHashMap<>();
 
-    public TelegramBotsPlatform(LiteTelegramBotsSettings liteTelegramBotsSettings) {
-        super(liteTelegramBotsSettings, sender -> new TelegramBotsSender(sender));
+    public TelegramBotsPlatform(LiteTelegramDriver driver, LiteTelegramBotsSettings settings) {
+        super(settings, sender -> new TelegramBotsSender(sender));
+        this.driver = driver;
+    }
+
+    @Override
+    public void start() {
+        try {
+            driver.registerHandler(updates -> this.handleUpdates(updates));
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    @Override
+    public void stop() {
+        try {
+            driver.unregisterHandler();
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     @Override
@@ -39,41 +59,41 @@ class TelegramBotsPlatform extends AbstractSimplePlatform<User, LiteTelegramBots
         }
     }
 
-    /**
-     * @return true if input was handled (it was a command), false otherwise (it was a message or other content)
-     */
-    public boolean handleUpdate(Update update) {
-        TelegramClient client;
-        client.
-        Preconditions.notNull(update, "update");
+    private List<Update> handleUpdates(List<Update> updates) {
+        List<Update> unhandled = new ArrayList<>();
+        for (Update update : updates) {
+            if (this.handleUpdate(update)) {
+                continue;
+            }
 
-        if (!update.hasMessage()) return false;
-        Message message = update.getMessage();
-
-        if (!message.hasText()) return false;
-        String text = message.getText();
-        if (text.isEmpty()) return false;
-
-        if (text.charAt(0) != '/') return false;
-
-        String label;
-        ParseableInput<?> input;
-
-        int firstIndexOfSpace = text.indexOf(' ');
-        if (firstIndexOfSpace == -1) {
-            label = text.substring(1);
-            input = ParseableInput.raw(Collections.emptyList());
-        } else {
-            label = text.substring(1, firstIndexOfSpace + 1);
-            input = ParseableInput.raw(text.substring(firstIndexOfSpace + 1).split(" "));
+            unhandled.add(update);
         }
 
-        TelegramBotsCommand command = commands.get(label);
-        if (command == null) return false; // todo: do something instead?
+        return unhandled;
+    }
+
+    private boolean handleUpdate(Update update) {
+        if (!update.hasMessage()) {
+            return false;
+        }
+
+        Message message = update.getMessage();
+        String text = message.getText();
+        if (text != null && text.startsWith(settings.getCommandPrefix())) {
+            return false;
+        }
+
+        RawCommand command = RawCommand.from(text);
+        TelegramBotsCommand telegramCommand = commands.get(command.getLabel());
+        if (telegramCommand == null) {
+            return false;
+        }
 
         User sender = message.getFrom();
-        Invocation<User> invocation = new Invocation<>(new TelegramBotsSender(sender), command.commandRoute().getName(), label, input);
-        command.invocationHook().execute(invocation, input);
+        ParseableInput<?> input = command.toParseableInput();
+        Invocation<User> invocation = new Invocation<>(new TelegramBotsSender(sender), telegramCommand.commandRoute().getName(), command.getLabel(), input);
+        telegramCommand.invocationHook().execute(invocation, input);
         return true;
     }
+
 }
