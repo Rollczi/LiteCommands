@@ -44,8 +44,12 @@ public class RawCommand {
     }
 
     public static RawCommand from(String rawInput) {
-        String rawCommand = rawInput.startsWith(COMMAND_SLASH)
-            ? rawInput.substring(COMMAND_SLASH.length())
+        return from(rawInput, COMMAND_SLASH);
+    }
+
+    public static RawCommand from(String rawInput, String commandPrefix) {
+        String rawCommand = rawInput.startsWith(commandPrefix)
+            ? rawInput.substring(commandPrefix.length())
             : rawInput;
 
         List<String> rawCommandParts = StringUtil.splitBySpace(rawCommand);

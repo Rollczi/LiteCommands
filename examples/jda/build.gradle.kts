@@ -10,7 +10,6 @@ version = "3.9.7"
 repositories {
     mavenCentral()
     maven("https://repo.panda-lang.org/releases")
-    maven("https://repo.eternalcode.pl/snapshots")
 }
 
 dependencies {
