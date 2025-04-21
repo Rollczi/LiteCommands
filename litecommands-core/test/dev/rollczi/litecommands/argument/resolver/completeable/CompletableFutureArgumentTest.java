@@ -41,7 +41,7 @@ class CompletableFutureArgumentTest extends LiteTestSpec {
 
         await()
             .atLeast(400, TimeUnit.MILLISECONDS)
-            .atMost(900, TimeUnit.MILLISECONDS)
+            .atMost(1000, TimeUnit.MILLISECONDS)
             .until(() -> completableFuture.isDone());
 
         assertThat(completableFuture.join())

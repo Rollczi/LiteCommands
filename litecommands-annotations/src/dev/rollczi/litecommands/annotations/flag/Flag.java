@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @RequirementDefinition(type = RequirementDefinition.Type.ARGUMENT, nameProviders = { "value" })
 public @interface Flag {
 
-    String value();
+    String[] value();
     
 }

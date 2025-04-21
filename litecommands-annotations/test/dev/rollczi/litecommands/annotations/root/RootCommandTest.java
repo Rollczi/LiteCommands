@@ -1,4 +1,4 @@
-package dev.rollczi.litecommands.annotations.route;
+package dev.rollczi.litecommands.annotations.root;
 
 import dev.rollczi.litecommands.unit.annotations.LiteTestSpec;
 import dev.rollczi.litecommands.annotations.argument.Arg;

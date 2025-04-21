@@ -81,7 +81,13 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> argumentFlag(String name) {
-        this.arguments.add(Argument.profiled(name, Boolean.class, new FlagProfile(name)));
+        this.arguments.add(Argument.profiled(name, Boolean.class, new FlagProfile(Collections.singletonList(name))));
+        return this;
+    }
+
+    public LiteCommand<SENDER> argumentFlag(String... names) {
+        Preconditions.notEmpty(names, "names");
+        this.arguments.add(Argument.profiled(names[0], Boolean.class, new FlagProfile(Arrays.asList(names))));
         return this;
     }
 

@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.annotations.argument.profile.ProfileAnnotationPr
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.flag.FlagProfile;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 
 public class FlagAnnotationProcessor<SENDER> extends ProfileAnnotationProcessor<SENDER, Flag, FlagProfile> {
 
@@ -13,7 +14,7 @@ public class FlagAnnotationProcessor<SENDER> extends ProfileAnnotationProcessor<
 
     @Override
     protected FlagProfile createProfile(Parameter parameter, Flag annotation, Argument<?> argument) {
-        return new FlagProfile(annotation.value());
+        return new FlagProfile(Arrays.asList(annotation.value()));
     }
 
 }

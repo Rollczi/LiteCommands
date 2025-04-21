@@ -17,13 +17,12 @@ public class FlagArgumentResolver<SENDER> extends ProfiledMultipleArgumentResolv
 
     @Override
     public ParseResult<Boolean> parse(Invocation<SENDER> invocation, Argument<Boolean> argument, RawInput rawInput, FlagProfile meta) {
-        String key = argument.getName();
-
         if (!rawInput.hasNext()) {
             return ParseResult.success(false);
         }
 
-        if (rawInput.seeNext().equals(key)) {
+        String currentValue = rawInput.seeNext();
+        if (meta.getNames().contains(currentValue)) {
             rawInput.next();
             return ParseResult.success(true);
         }
@@ -38,7 +37,7 @@ public class FlagArgumentResolver<SENDER> extends ProfiledMultipleArgumentResolv
 
     @Override
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<Boolean>  argument, SuggestionContext context, FlagProfile meta) {
-        return SuggestionResult.of(argument.getName());
+        return SuggestionResult.of(meta.getNames());
     }
 
 }

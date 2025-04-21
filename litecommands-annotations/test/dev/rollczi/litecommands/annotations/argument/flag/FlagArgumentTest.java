@@ -26,6 +26,10 @@ class FlagArgumentTest extends LiteTestSpec {
             return flagA + " " + test;
         }
 
+        @Execute(name = "alias")
+        String test(@Flag({"--a", "--alias"}) boolean flagA) {
+            return flagA + " alias";
+        }
 
     }
 
@@ -54,7 +58,7 @@ class FlagArgumentTest extends LiteTestSpec {
     @DisplayName("Should suggest flag argument")
     void testSuggestFlagArgument() {
         platform.suggest("test ")
-            .assertSuggest("-a", "<test>", "last");
+            .assertSuggest("-a", "<test>", "last", "alias");
     }
 
     @Test
@@ -71,6 +75,22 @@ class FlagArgumentTest extends LiteTestSpec {
             .assertSuccess("false -a");
     }
 
+    @Test
+    @DisplayName("Should parse flag argument with alias")
+    void testParseFlagArgumentWithAlias() {
+        platform.execute("test alias --a")
+            .assertSuccess("true alias");
+
+        platform.execute("test alias --alias")
+            .assertSuccess("true alias");
+    }
+
+    @Test
+    @DisplayName("Should suggest flag argument with alias")
+    void testSuggestFlagArgumentWithAlias() {
+        platform.suggest("test alias ")
+            .assertSuggest("--a", "--alias");
+    }
 
 
 }
