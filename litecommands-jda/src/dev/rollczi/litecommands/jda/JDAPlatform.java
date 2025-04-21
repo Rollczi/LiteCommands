@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
@@ -120,6 +121,7 @@ class JDAPlatform extends AbstractSimplePlatform<User, LiteJDASettings> {
     class SlashCommandController extends ListenerAdapter {
 
         @Override
+        @SubscribeEvent
         public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
             CommandRoute<User> commandRoute = commandRoutes.get(event.getName());
 
@@ -143,6 +145,7 @@ class JDAPlatform extends AbstractSimplePlatform<User, LiteJDASettings> {
         }
 
         @Override
+        @SubscribeEvent
         public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
             CommandRoute<User> commandRoute = commandRoutes.get(event.getName());
 
