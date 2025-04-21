@@ -24,7 +24,7 @@ public class ContextRegistry<SENDER> implements ContextChainAccessor<SENDER>  {
             return (ContextResult<T>) bindContextual.get().provide(invocation, this);
         }
 
-        return ContextResult.error("Cannot find binding for " + clazz.getName());
+        return ContextResult.error("Cannot find context provider for " + clazz.getName());
     }
 
 }

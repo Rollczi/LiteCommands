@@ -7,25 +7,16 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import dev.rollczi.litecommands.input.raw.RawCommand;
-import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
-import dev.rollczi.litecommands.reflect.ReflectUtil;
 import dev.rollczi.litecommands.scheduler.Scheduler;
 import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import dev.rollczi.litecommands.suggestion.Suggestion;
-import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.jline.console.ConsoleReader;
-import org.bukkit.craftbukkit.libs.jline.console.completer.Completer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 class TabCompleteProtocolLibAsync extends TabCompleteSync {
 
@@ -36,7 +27,6 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
 
     TabCompleteProtocolLibAsync(Plugin plugin, Scheduler scheduler) {
         this.scheduler = scheduler;
-        this.tryReplaceConsoleTabCompleter(plugin.getServer());
         MANAGER.addPacketListener(listener = new PacketAdapter(plugin, PacketType.Play.Client.TAB_COMPLETE) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
@@ -44,30 +34,6 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
             }
         });
 
-    }
-
-    private void tryReplaceConsoleTabCompleter(Server server) {
-        Object craftServer = ReflectUtil.getFromMethod(server, "getHandle");
-        Object minecraftServer = getMinecraftServer(craftServer);
-        ConsoleReader reader = ReflectUtil.getFromField(minecraftServer, "reader");
-
-        Collection<Completer> completers = reader.getCompleters();
-
-        if (completers.size() == 1) {
-            Completer completer = completers.iterator().next();
-
-            reader.removeCompleter(completer);
-            reader.addCompleter(new ProtocolLibConsoleTabConsoleCompleter(server.getConsoleSender(), completer));
-        }
-    }
-
-    private Object getMinecraftServer(Object craftServer) {
-        try {
-            return ReflectUtil.getFromField(craftServer, "server");
-        }
-        catch (LiteCommandsReflectException exception) {
-            return ReflectUtil.getFromField(craftServer, "cserver");
-        }
     }
 
     private void handlePacket(PacketEvent event) {
@@ -119,39 +85,4 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         }
     }
 
-    private class ProtocolLibConsoleTabConsoleCompleter implements Completer {
-
-        private final Completer completer;
-        private final CommandSender consoleSender;
-
-        public ProtocolLibConsoleTabConsoleCompleter(CommandSender consoleSender, Completer completer) {
-            this.completer = completer;
-            this.consoleSender = consoleSender;
-        }
-
-        @Override
-        public int complete(String buffer, int cursor, List<CharSequence> candidates) {
-            int completed = completer.complete(buffer, cursor, candidates);
-            Set<Suggestion> result = callListener(consoleSender, buffer);
-
-            if (result == null && cursor == completed) {
-                return completed;
-            }
-
-            if (result != null) {
-                for (Suggestion suggestion : result) {
-                    candidates.add(suggestion.multilevel());
-                }
-            }
-
-            int lastSpace = buffer.lastIndexOf(' ');
-
-            if (lastSpace == -1) {
-                return cursor - buffer.length();
-            } else {
-                return cursor - (buffer.length() - lastSpace - 1);
-            }
-        }
-
-    }
 }
