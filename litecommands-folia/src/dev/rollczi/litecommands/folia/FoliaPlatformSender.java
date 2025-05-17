@@ -1,0 +1,56 @@
+package dev.rollczi.litecommands.folia;
+
+import dev.rollczi.litecommands.identifier.Identifier;
+import dev.rollczi.litecommands.platform.AbstractPlatformSender;
+import dev.rollczi.litecommands.platform.PlatformReceiver;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
+import org.bukkit.entity.Player;
+
+class FoliaPlatformSender extends AbstractPlatformSender implements PlatformReceiver {
+
+    private final CommandSender handle;
+
+    public FoliaPlatformSender(CommandSender handle) {
+        this.handle = handle;
+    }
+
+    @Override
+    public String getName() {
+        return this.handle.getName();
+    }
+
+    @Override
+    public String getDisplayName() {
+        if (this.handle instanceof Player) {
+            return ((Player) this.handle).getDisplayName();
+        }
+
+        return this.handle.getName();
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        if (this.handle instanceof Player) {
+            return Identifier.of(((Player) this.handle).getUniqueId());
+        }
+
+        if (this.handle instanceof RemoteConsoleCommandSender) {
+            RemoteConsoleCommandSender commandSender = (RemoteConsoleCommandSender) this.handle;
+            return Identifier.of(RemoteConsoleCommandSender.class, commandSender.getName());
+        }
+
+        return Identifier.CONSOLE;
+    }
+
+    @Override
+    public Object getHandle() {
+        return this.handle;
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        this.handle.sendMessage(message);
+    }
+
+}
