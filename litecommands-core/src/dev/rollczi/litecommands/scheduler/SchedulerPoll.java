@@ -51,6 +51,10 @@ public class SchedulerPoll {
         this.logging = logging;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public boolean isLogging() {
         return logging;
     }

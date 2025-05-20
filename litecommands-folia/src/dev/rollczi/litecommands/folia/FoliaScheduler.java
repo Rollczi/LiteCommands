@@ -1,24 +1,27 @@
 package dev.rollczi.litecommands.folia;
 
 import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
+import dev.rollczi.litecommands.scheduler.SchedulerPoll;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-class FoliaSchedulerImpl extends AbstractMainThreadBasedScheduler {
+class FoliaScheduler extends AbstractMainThreadBasedScheduler {
 
     private final GlobalRegionScheduler globalScheduler;
     private final AsyncScheduler asyncScheduler;
     private final Plugin plugin;
+    private final RegionScheduler regionScheduler;
 
-    FoliaSchedulerImpl(Plugin plugin) {
+    FoliaScheduler(Plugin plugin) {
         this.plugin = plugin;
+        this.regionScheduler = plugin.getServer().getRegionScheduler();
         this.globalScheduler = plugin.getServer().getGlobalRegionScheduler();
         this.asyncScheduler = plugin.getServer().getAsyncScheduler();
     }
@@ -31,7 +34,7 @@ class FoliaSchedulerImpl extends AbstractMainThreadBasedScheduler {
 
     @Override
     protected void runSynchronous(Runnable task, Duration delay) {
-        if (isGlobalRegionThread() && delay.isZero()) {
+        if (plugin.getServer().isGlobalTickThread() && delay.isZero()) {
             task.run();
             return;
         }
@@ -61,21 +64,21 @@ class FoliaSchedulerImpl extends AbstractMainThreadBasedScheduler {
         return duration.toMillis() / 50;
     }
 
-    private boolean isGlobalRegionThread() {
-        try {
-            Class<?> regionizedServer = Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            Method getGlobalThread = regionizedServer.getDeclaredMethod("getGlobalRegionThread");
-            Thread globalThread = (Thread) getGlobalThread.invoke(null);
-            return Thread.currentThread() == globalThread;
-        } catch (ClassNotFoundException e) {
-            this.plugin.getLogger().warning("Folia RegionizedServer class not found. Falling back to non-global region thread.");
-            return false;
-        } catch (NoSuchMethodException e) {
-            this.plugin.getLogger().warning("Folia getGlobalRegionThread method not found.");
-            return false;
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            this.plugin.getLogger().log(Level.SEVERE, "Failed to invoke getGlobalRegionThread", e);
+    @Override
+    protected boolean runUnknown(SchedulerPoll type, Duration delay, Runnable task) {
+        if (!(type instanceof FoliaSchedulerPoll)) {
             return false;
         }
+
+        FoliaSchedulerPoll foliaSchedulerPoll = (FoliaSchedulerPoll) type;
+        Location location = foliaSchedulerPoll.getLocation();
+
+        if (delay.isZero()) {
+            regionScheduler.execute(plugin, location, task);
+        } else {
+            regionScheduler.runDelayed(plugin, location, (scheduledTask) -> task.run(), toTicks(delay));
+        }
+        return true;
     }
+
 }
