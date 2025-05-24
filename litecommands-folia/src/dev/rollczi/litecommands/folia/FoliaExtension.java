@@ -30,11 +30,15 @@ public final class FoliaExtension implements LiteExtension<CommandSender, FoliaE
             Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
             Class.forName("io.papermc.paper.threadedregions.scheduler.RegionScheduler");
             Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            builder.scheduler(new FoliaScheduler(plugin));
+            FoliaInternalExtension.enableFoliaSupport(plugin, builder);
         } catch (ClassNotFoundException notFoundException) {
-            if (settings.fallbackScheduler != null) {
-                builder.scheduler(settings.fallbackScheduler.get());
-            }
+            fallback(builder);
+        }
+    }
+
+    private void fallback(LiteCommandsBuilder<CommandSender, ?, ?> builder) {
+        if (settings.fallbackScheduler != null) {
+            builder.scheduler(settings.fallbackScheduler.get());
         }
     }
 
