@@ -4,17 +4,20 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.jda.integration.Integration;
 import dev.rollczi.litecommands.jda.visibility.Visibility;
-import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.IntegrationType;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 @Command(name = "level")
-@Visibility(VisibilityScope.GUILD)
+@Visibility({InteractionContextType.GUILD, InteractionContextType.BOT_DM})
+@Integration({IntegrationType.GUILD_INSTALL, IntegrationType.USER_INSTALL})
 public class LevelCommand {
 
     private final LevelService levelService;

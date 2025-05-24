@@ -5,14 +5,14 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.description.Description;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.jda.visibility.Visibility;
-import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
 import java.util.List;
 import java.util.Random;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 @Command(name = "catboy")
 @Description("Get a random catboy message!")
-@Visibility(VisibilityScope.GUILD)
+@Visibility(InteractionContextType.GUILD)
 public class CatboyCommand {
 
     private static final Random RANDOM = new Random();

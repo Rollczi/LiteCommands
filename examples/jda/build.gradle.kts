@@ -16,7 +16,7 @@ dependencies {
     // implementation("dev.rollczi:litecommands-jda:3.9.7") // <-- uncomment in your project
     implementation(project(":litecommands-jda")) // don't use this line in your build.gradle
 
-    implementation("net.dv8tion:JDA:5.2.2")
+    implementation("net.dv8tion:JDA:5.5.1")
 }
 
 application {

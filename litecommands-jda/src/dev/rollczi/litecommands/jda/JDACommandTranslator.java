@@ -8,8 +8,8 @@ import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.input.Input;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.invocation.InvocationContext;
+import dev.rollczi.litecommands.jda.integration.Integration;
 import dev.rollczi.litecommands.jda.visibility.Visibility;
-import dev.rollczi.litecommands.jda.visibility.VisibilityScope;
 import dev.rollczi.litecommands.jda.permission.DiscordPermission;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.meta.MetaHolder;
@@ -21,6 +21,8 @@ import java.util.function.Function;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.IntegrationType;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.CommandAutoCompleteInteraction;
 import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -84,7 +86,11 @@ public class JDACommandTranslator {
         CommandRoute<SENDER> commandRoute
     ) {
         CommandDataImpl commandData = new CommandDataImpl(commandRoute.getName(), this.getDescription(commandRoute));
-        commandData.setGuildOnly(commandRoute.meta().get(Visibility.META_KEY) == VisibilityScope.GUILD);
+        List<InteractionContextType> contextTypes = commandRoute.meta().get(Visibility.META_KEY);
+        commandData.setContexts(contextTypes);
+
+        List<IntegrationType> integrationTypes = commandRoute.meta().get(Integration.META_KEY);
+        commandData.setIntegrationTypes(integrationTypes);
 
         JDALiteCommand jdaLiteCommand = new JDALiteCommand(commandData);
 
