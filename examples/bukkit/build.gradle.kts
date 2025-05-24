@@ -17,6 +17,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 
     // implementation("dev.rollczi:litecommands-bukkit:3.9.7") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-folia:3.9.7") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
     implementation(project(":litecommands-folia")) // don't use this line in your build.gradle
 }
@@ -58,5 +59,4 @@ sourceSets.test {
 tasks.runServer {
     minecraftVersion("1.21.4")
     allJvmArgs = listOf("-DPaper.IgnoreJavaVersion=true")
-    serverJar(file("/run/folia-server.jar"))
 }
