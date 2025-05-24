@@ -10,8 +10,6 @@ dependencies {
     api(project(":litecommands-framework"))
 
     compileOnly("dev.folia:folia-api:${Versions.FOLIA_API}")
-    compileOnly("com.comphenix.protocol:ProtocolLib:${Versions.PROTOCOL_LIB}")
-    testImplementation("dev.folia:folia-api:${Versions.FOLIA_API}")
 }
 
 litecommandsPublish {
