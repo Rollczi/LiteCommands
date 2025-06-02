@@ -16,6 +16,7 @@ import dev.rollczi.example.bukkit.command.TeleportCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyBalanceCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyCommand;
 import dev.rollczi.example.bukkit.command.currency.CurrencyService;
+import dev.rollczi.example.bukkit.command.currency.DoubleSlashCommand;
 import dev.rollczi.example.bukkit.handler.ExampleInvalidUsageHandler;
 import dev.rollczi.example.bukkit.handler.ExampleMissingPermissionsHandler;
 import dev.rollczi.example.bukkit.user.User;
@@ -72,7 +73,8 @@ public class ExamplePlugin extends JavaPlugin {
                 new CurrencyCommand(currencyService),
                 new CurrencyBalanceCommand(currencyService),
                 new CatCommand(),
-                new UserCommand()
+                new UserCommand(),
+                new DoubleSlashCommand()
             )
 
             // Custom annotation validators

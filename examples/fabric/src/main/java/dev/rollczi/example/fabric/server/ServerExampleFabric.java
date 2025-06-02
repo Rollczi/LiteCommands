@@ -1,5 +1,6 @@
 package dev.rollczi.example.fabric.server;
 
+import dev.rollczi.example.fabric.server.command.DoubleSlashCommand;
 import dev.rollczi.example.fabric.server.command.ExampleCommand;
 import dev.rollczi.litecommands.fabric.LiteFabricFactory;
 import dev.rollczi.litecommands.luckperms.LuckPermsPermissionResolver;
@@ -10,7 +11,10 @@ public class ServerExampleFabric implements DedicatedServerModInitializer {
     public void onInitializeServer() {
         LiteFabricFactory.server()
             .permissionResolver(LuckPermsPermissionResolver.lazy())
-            .commands(new ExampleCommand())
+            .commands(
+                new ExampleCommand(),
+                new DoubleSlashCommand()
+            )
             .build();
     }
 }
