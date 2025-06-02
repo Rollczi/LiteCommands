@@ -63,6 +63,7 @@ Annotation based command framework for Velocity, Bukkit, Paper, BungeeCord, Mine
 ## 📦 Platforms
 - Velocity
 - Bukkit, Spigot, Paper
+- Folia (extension) _(by [Kropsk](https://github.com/Kropsk))_
 - BungeeCord, Waterfall _(by [rchomczyk](https://github.com/rchomczyk))_
 - Minestom _(by [Codestech1](https://github.com/Codestech1))_
 - Sponge _(by [BlackBaroness](https://github.com/BlackBaroness))_

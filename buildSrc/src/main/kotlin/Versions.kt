@@ -11,6 +11,7 @@ object Versions {
 
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
+    const val FOLIA_API = "1.21.4-R0.1-SNAPSHOT"
     const val SPIGOT = "1.8.8-R0.1-SNAPSHOT"
     const val PROTOCOL_LIB = "5.3.0"
 

@@ -28,6 +28,7 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.argument.profile.ProfileNamespaces;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
+import dev.rollczi.litecommands.folia.FoliaExtension;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import dev.rollczi.litecommands.strict.StrictMode;
@@ -52,6 +53,8 @@ public class ExamplePlugin extends JavaPlugin {
                 .fallbackPrefix("my-plugin") // fallback prefix - used by bukkit to identify command
                 .nativePermissions(false) // enable/disable bukkit permissions system
             )
+
+            .extension(new FoliaExtension(this))
 
             // Commands
             .commands(

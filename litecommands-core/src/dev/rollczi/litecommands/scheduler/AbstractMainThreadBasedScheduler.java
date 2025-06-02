@@ -7,21 +7,35 @@ import java.util.concurrent.CompletableFuture;
 public abstract class AbstractMainThreadBasedScheduler implements Scheduler {
 
     @Override
-    public final  <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+    public final <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
         SchedulerPoll resolved = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
         CompletableFuture<T> future = new CompletableFuture<>();
+        Runnable task = () -> tryRun(type, future, supplier);
 
         if (resolved.equals(SchedulerPoll.MAIN)) {
-            runSynchronous(() -> tryRun(type, future, supplier), delay);
+            runSynchronous(task, delay);
             return future;
         }
 
         if (resolved.equals(SchedulerPoll.ASYNCHRONOUS)) {
-            runAsynchronous(() -> tryRun(type, future, supplier), delay);
+            runAsynchronous(task, delay);
+            return future;
+        }
+
+        boolean isResolved = runUnknown(type, delay, task);
+        if (isResolved) {
             return future;
         }
 
         throw new IllegalArgumentException("Unknown scheduler poll type: " + type);
+    }
+
+    /**
+     * Run task with an unknown scheduler poll type
+     * @return true if a task was run, false otherwise
+     */
+    protected boolean runUnknown(SchedulerPoll type, Duration delay, Runnable task) {
+        return false;
     }
 
     abstract protected void runSynchronous(Runnable task, Duration delay);
