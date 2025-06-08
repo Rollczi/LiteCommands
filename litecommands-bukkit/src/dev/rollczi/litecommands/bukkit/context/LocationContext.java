@@ -6,8 +6,9 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import org.bukkit.Location;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 public class LocationContext implements ContextProvider<CommandSender, Location> {
 
@@ -21,13 +22,17 @@ public class LocationContext implements ContextProvider<CommandSender, Location>
     public ContextResult<Location> provide(Invocation<CommandSender> invocation) {
         CommandSender sender = invocation.sender();
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Entity) {
+            Entity entity = (Entity) sender;
 
-            return ContextResult.ok(() -> player.getLocation());
+            return ContextResult.ok(() -> entity.getLocation());
+        } else if (sender instanceof BlockCommandSender) {
+            BlockCommandSender blockCommandSender = (BlockCommandSender) sender;
+
+            return ContextResult.ok(() -> blockCommandSender.getBlock().getLocation());
         }
 
-        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.LOCATION_PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.LOCATION_NON_CONSOLE_ONLY, invocation));
     }
 
 }
