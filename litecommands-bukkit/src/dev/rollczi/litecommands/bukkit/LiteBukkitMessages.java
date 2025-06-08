@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.bukkit;
 
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.message.MessageKey;
-import org.bukkit.command.CommandSender;
 
 public class LiteBukkitMessages extends LiteMessages {
 
@@ -16,6 +15,11 @@ public class LiteBukkitMessages extends LiteMessages {
         unused -> "&cOnly player can execute this command! (WORLD_PLAYER_ONLY)"
     );
 
+    public static final MessageKey<Void> WORLD_NON_CONSOLE_ONLY = MessageKey.of(
+        "location-non-console-only",
+        unused -> "&cConsole cannot execute this command! (WORLD_NON_CONSOLE_ONLY)"
+    );
+
     public static final MessageKey<String> LOCATION_INVALID_FORMAT = MessageKey.of(
         "location-invalid-format",
         input -> "&cInvalid location format '" + input + "'! Use: <x> <y> <z> (LOCATION_INVALID_FORMAT)"
@@ -24,6 +28,11 @@ public class LiteBukkitMessages extends LiteMessages {
     public static final MessageKey<Void> LOCATION_PLAYER_ONLY = MessageKey.of(
         "location-player-only",
         unused -> "&cOnly player can execute this command! (LOCATION_PLAYER_ONLY)"
+    );
+
+    public static final MessageKey<Void> LOCATION_NON_CONSOLE_ONLY = MessageKey.of(
+        "location-player-only",
+        unused -> "&cConsole cannot execute this command! (LOCATION_NON_CONSOLE_ONLY)"
     );
 
     public static final MessageKey<String> PLAYER_NOT_FOUND = MessageKey.of(
