@@ -26,7 +26,7 @@ public class ServerInfoArgument extends ArgumentResolver<CommandSource, ServerIn
     protected ParseResult<ServerInfo> parse(Invocation<CommandSource> invocation, Argument<ServerInfo> context, String argument) {
         return this.server.getServer(argument)
             .map(parsed -> ParseResult.success(parsed.getServerInfo()))
-            .orElseGet(() -> ParseResult.failure(messageRegistry.getInvoked(LiteVelocityMessages.SERVER_NOT_FOUND, invocation, argument)));
+            .orElseGet(() -> ParseResult.failure(messageRegistry.get(LiteVelocityMessages.SERVER_NOT_FOUND, invocation, argument)));
     }
 
     @Override

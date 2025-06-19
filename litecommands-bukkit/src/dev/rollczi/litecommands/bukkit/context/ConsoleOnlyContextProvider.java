@@ -7,7 +7,6 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 
 public class ConsoleOnlyContextProvider implements ContextProvider<CommandSender, ConsoleCommandSender> {
 
@@ -23,7 +22,7 @@ public class ConsoleOnlyContextProvider implements ContextProvider<CommandSender
             return ContextResult.ok(() -> (ConsoleCommandSender) invocation.sender());
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteBukkitMessages.CONSOLE_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.CONSOLE_ONLY, invocation));
     }
 
 }

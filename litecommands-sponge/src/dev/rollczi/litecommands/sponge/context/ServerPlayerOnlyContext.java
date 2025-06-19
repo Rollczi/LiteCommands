@@ -22,7 +22,7 @@ public class ServerPlayerOnlyContext implements ContextProvider<CommandCause, Se
             return ContextResult.ok(() -> (ServerPlayer) invocation.sender().root());
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteSpongeMessages.PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteSpongeMessages.PLAYER_ONLY, invocation));
     }
 
 }

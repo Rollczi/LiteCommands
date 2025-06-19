@@ -17,7 +17,7 @@ public class MissingPermissionResultHandler<SENDER> implements ResultHandler<SEN
 
     @Override
     public void handle(Invocation<SENDER> invocation, MissingPermissions missingPermissions, ResultHandlerChain<SENDER> chain) {
-        this.messageRegistry.getInvoked(MISSING_PERMISSIONS, invocation, missingPermissions)
+        this.messageRegistry.get(MISSING_PERMISSIONS, invocation, missingPermissions)
             .ifPresent(object -> chain.resolve(invocation, object));
     }
 

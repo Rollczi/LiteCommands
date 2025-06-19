@@ -49,7 +49,7 @@ public class LocationArgument implements MultipleArgumentResolver<CommandSender,
             return ParseResult.success(new Location(null, x, y, z));
         }
         catch (NumberFormatException exception) {
-            return ParseResult.failure(this.messageRegistry.getInvoked(LiteBukkitMessages.LOCATION_INVALID_FORMAT, invocation, input));
+            return ParseResult.failure(this.messageRegistry.get(LiteBukkitMessages.LOCATION_INVALID_FORMAT, invocation, input));
         }
     }
 

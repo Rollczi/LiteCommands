@@ -10,7 +10,6 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.velocity.LiteVelocityMessages;
-import java.util.Optional;
 
 /**
  * Built-in context provider that provides a server connection instance if the sender is a player and is connected to a server.
@@ -40,10 +39,10 @@ public class ServerConnectionContextProvider implements ContextProvider<CommandS
 
             return sender.getCurrentServer()
                 .map(serverConnection -> ContextResult.ok(() -> serverConnection))
-                .orElseGet(() -> ContextResult.error(messageRegistry.getInvoked(LiteVelocityMessages.NOT_CONNECTED_TO_ANY_SERVER, invocation, sender)));
+                .orElseGet(() -> ContextResult.error(messageRegistry.get(LiteVelocityMessages.NOT_CONNECTED_TO_ANY_SERVER, invocation, sender)));
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteVelocityMessages.PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteVelocityMessages.PLAYER_ONLY, invocation));
     }
 
 }

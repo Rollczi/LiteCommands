@@ -27,7 +27,7 @@ public class WorldContext implements ContextProvider<CommandSender, World> {
             return ContextResult.ok(() -> player.getWorld());
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteBukkitMessages.WORLD_PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.WORLD_PLAYER_ONLY, invocation));
     }
 
 }

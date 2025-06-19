@@ -30,7 +30,7 @@ public class InstanceArgument extends ArgumentResolver<CommandSender, Instance> 
             .orElse(null);
 
         if (instance == null) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteMinestomMessages.INSTANCE_NOT_FOUND, invocation, argument));
+            return ParseResult.failure(messageRegistry.get(LiteMinestomMessages.INSTANCE_NOT_FOUND, invocation, argument));
         }
 
         return ParseResult.success(instance);

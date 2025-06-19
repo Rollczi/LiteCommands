@@ -28,7 +28,7 @@ public class FabricOnlyPlayerContext<SOURCE, P extends PlayerEntity> implements 
             return ContextResult.ok(() -> player);
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteFabricMessages.PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteFabricMessages.PLAYER_ONLY, invocation));
     }
 
 }

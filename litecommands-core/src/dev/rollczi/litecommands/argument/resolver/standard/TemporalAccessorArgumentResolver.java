@@ -71,7 +71,7 @@ class TemporalAccessorArgumentResolver<SENDER, UNIT extends TemporalAccessor> im
             String rawInstant = String.join(ARGUMENT_SEPARATOR, rawInput.next(this.argumentCount));
             return success(this.formatter.parse(rawInstant, query));
         } catch (DateTimeException exception) {
-            return failure(this.messageRegistry.getInvoked(this.invalidFormatMessage, invocation, commandInput));
+            return failure(this.messageRegistry.get(this.invalidFormatMessage, invocation, commandInput));
         }
     }
 

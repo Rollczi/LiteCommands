@@ -27,7 +27,7 @@ public class LocationContext implements ContextProvider<CommandSender, Location>
             return ContextResult.ok(() -> player.getLocation());
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteBukkitMessages.LOCATION_PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.LOCATION_PLAYER_ONLY, invocation));
     }
 
 }

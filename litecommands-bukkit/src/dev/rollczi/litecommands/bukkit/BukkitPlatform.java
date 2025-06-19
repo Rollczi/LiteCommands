@@ -21,15 +21,15 @@ class BukkitPlatform extends AbstractSimplePlatform<CommandSender, LiteBukkitSet
     protected void hook(CommandRoute<CommandSender> commandRoute, PlatformInvocationListener<CommandSender> invocationHook, PlatformSuggestionListener<CommandSender> suggestionHook) {
         BukkitCommand bukkitSimpleCommand = new BukkitCommand(settings, commandRoute, invocationHook, suggestionHook, permissionService);
 
-        this.settings.tabCompleter().register(settings.fallbackPrefix(), bukkitSimpleCommand);
-        this.settings.commandsRegistry().register(commandRoute.getName(), settings.fallbackPrefix(), bukkitSimpleCommand);
+        this.settings.getTabCompleter().register(settings.getFallbackPrefix(), bukkitSimpleCommand);
+        this.settings.getCommandsRegistry().register(commandRoute.getName(), settings.getFallbackPrefix(), bukkitSimpleCommand);
     }
 
     @Override
     protected void unhook(CommandRoute<CommandSender> commandRoute) {
         for (String name : commandRoute.names()) {
-            this.settings.commandsRegistry().unregister(name, settings.fallbackPrefix());
-            this.settings.tabCompleter().unregister(name);
+            this.settings.getCommandsRegistry().unregister(name, settings.getFallbackPrefix());
+            this.settings.getTabCompleter().unregister(name);
         }
     }
 

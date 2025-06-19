@@ -30,7 +30,7 @@ public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
         Player player = this.connectionManager.getOnlinePlayerByUsername(argument);
 
         if (player == null) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteMinestomMessages.PLAYER_NOT_FOUND, invocation, argument));
+            return ParseResult.failure(messageRegistry.get(LiteMinestomMessages.PLAYER_NOT_FOUND, invocation, argument));
         }
 
         return ParseResult.success(player);
