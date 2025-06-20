@@ -14,11 +14,33 @@
   "commitMessagePrefix": "dependency:",
   "packageRules": [
     {
+      "groupName": "gradle",
+      "matchPackagePatterns": [
+        "gradle*"
+      ],
+      "automerge": true
+    },
+    {
+      "groupName": "fabricmc",
+      "matchPackagePatterns": [
+        "net.fabricmc*",
+        "fabric-loom*"
+      ],
+      "automerge": false
+    },
+    {
+      "groupName": "spigotmc",
+      "matchPackagePatterns": [
+        "org.spigotmc*"
+      ],
+      "allowedVersions": "/^\\d+\\.\\d+(\\.\\d+)?-R\\d+\\.\\d+-SNAPSHOT$/",
+      "automerge": false
+    },
+    {
       "groupName": "patch",
       "matchPackagePatterns": [
         "*"
       ],
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
       "updateTypes": ["patch"],
       "automerge": true
     },
@@ -27,7 +49,6 @@
       "matchPackagePatterns": [
         "*"
       ],
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
       "updateTypes": ["minor"],
       "automerge": true
     },
@@ -37,23 +58,6 @@
         "*"
       ],
       "updateTypes": ["major"],
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*"],
-      "automerge": false
-    },
-
-    {
-      "groupName": "fabricmc",
-      "matchPackagePatterns": [
-          "net.fabricmc*"
-      ],
-      "automerge": false
-    },
-    {
-      "groupName": "spigotmc",
-      "matchPackagePatterns": [
-          "org.spigotmc*"
-      ],
-      "allowedVersions": "/^\\d+\\.\\d+(\\.\\d+)?-R\\d+\\.\\d+-SNAPSHOT$/",
       "automerge": false
     }
   ]
