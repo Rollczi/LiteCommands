@@ -42,7 +42,8 @@
         "*"
       ],
       "updateTypes": ["patch"],
-      "automerge": true
+      "automerge": true,
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*", "gradle*"]
     },
     {
       "groupName": "minor",
@@ -50,7 +51,8 @@
         "*"
       ],
       "updateTypes": ["minor"],
-      "automerge": true
+      "automerge": true,
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*", "gradle*"]
     },
     {
       "groupName": "all-major",
@@ -58,7 +60,8 @@
         "*"
       ],
       "updateTypes": ["major"],
-      "automerge": false
+      "automerge": false,
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*", "gradle*"]
     }
   ]
 }
