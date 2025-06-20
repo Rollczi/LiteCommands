@@ -6,14 +6,11 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
-import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.stream.Collectors;
 
 public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
 
@@ -33,7 +30,7 @@ public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
             return ParseResult.success(player);
         }
 
-        return ParseResult.failure(messageRegistry.getInvoked(LiteBukkitMessages.PLAYER_NOT_FOUND, invocation, argument));
+        return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.PLAYER_NOT_FOUND, invocation, argument));
     }
 
     @Override

@@ -8,7 +8,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.PermissionSet;
 import dev.rollczi.litecommands.permission.PermissionServiceImpl;
 import dev.rollczi.litecommands.unit.TestExecutor;
-import dev.rollczi.litecommands.unit.TestUtil;
+import dev.rollczi.litecommands.unit.Invocations;
 import dev.rollczi.litecommands.unit.permission.TestPermissionResolver;
 import org.junit.jupiter.api.Test;
 
@@ -117,7 +117,7 @@ class SchematicFastGeneratorTest {
 
 
     private void assertSchematic(CommandRoute<?> commandRoute, CommandExecutor<?> executor, String... expected) {
-        Schematic schematic = schematicGenerator.generate(new SchematicInput(commandRoute, executor, TestUtil.invocation("")));
+        Schematic schematic = schematicGenerator.generate(new SchematicInput(commandRoute, executor, Invocations.invocation("")));
         List<String> schematicLines = schematic.all();
 
         assertThat(schematicLines)

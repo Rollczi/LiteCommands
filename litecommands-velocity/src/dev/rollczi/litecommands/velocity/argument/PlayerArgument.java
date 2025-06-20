@@ -26,7 +26,7 @@ public class PlayerArgument extends ArgumentResolver<CommandSource, Player> {
     protected ParseResult<Player> parse(Invocation<CommandSource> invocation, Argument<Player> context, String argument) {
         return this.server.getPlayer(argument)
             .map(parsed -> ParseResult.success(parsed))
-            .orElseGet(() -> ParseResult.failure(messageRegistry.getInvoked(LiteVelocityMessages.PLAYER_NOT_FOUND, invocation, argument)));
+            .orElseGet(() -> ParseResult.failure(messageRegistry.get(LiteVelocityMessages.PLAYER_NOT_FOUND, invocation, argument)));
     }
 
     @Override

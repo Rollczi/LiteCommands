@@ -3,7 +3,6 @@ package dev.rollczi.litecommands.bukkit;
 import dev.rollczi.litecommands.argument.parser.input.ParseableInput;
 import dev.rollczi.litecommands.command.CommandRoute;
 import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSender;
@@ -61,27 +60,31 @@ public class BukkitCommand extends Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         if (this.syncTabComplete) {
-            CompletableFuture<Set<Suggestion>> future = this.suggest(sender, alias, args);
-
-            try {
-                return future.get(0, TimeUnit.MILLISECONDS).stream()
-                    .map(suggestion -> suggestion.multilevel())
-                    .collect(Collectors.toList());
-            }
-            catch (TimeoutException exception) {
-                if (settings.syncSuggestionWarning()) {
-                    LOGGER.warning("Asynchronous tab completions are not supported on current server version.");
-                    LOGGER.warning("Use server 1.12+ Paper version or install ProtocolLib plugin.");
-                }
-
-                return Collections.emptyList();
-            }
-            catch (InterruptedException | ExecutionException exception) {
-                throw new RuntimeException(exception);
-            }
+            return invokeLegacySynchronizedSuggestion(sender, alias, args);
         }
 
         return Collections.emptyList();
+    }
+
+    private List<String> invokeLegacySynchronizedSuggestion(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        CompletableFuture<Set<Suggestion>> future = this.suggest(sender, alias, args);
+
+        try {
+            return future.get(0, TimeUnit.MILLISECONDS).stream()
+                .map(suggestion -> suggestion.multilevel())
+                .collect(Collectors.toList());
+        }
+        catch (TimeoutException exception) {
+            if (settings.isSyncSuggestionWarning()) {
+                LOGGER.warning("Asynchronous tab completions are not supported on current server version.");
+                LOGGER.warning("Use server 1.12+ Paper version or install ProtocolLib plugin.");
+            }
+
+            return Collections.emptyList();
+        }
+        catch (InterruptedException | ExecutionException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     public CompletableFuture<Set<Suggestion>> suggest(CommandSender sender, String alias, String[] args) {
@@ -94,7 +97,7 @@ public class BukkitCommand extends Command {
 
     @Override
     public boolean testPermissionSilent(@NotNull CommandSender target) {
-        if (!settings.nativePermission()) {
+        if (!settings.isNativePermissionEnabled()) {
             return super.testPermissionSilent(target);
         }
 

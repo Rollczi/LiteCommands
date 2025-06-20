@@ -16,7 +16,7 @@ public class DiscordMissingPermissionsHandler<SENDER> implements ResultHandler<S
 
     @Override
     public void handle(Invocation<SENDER> invocation, DiscordMissingPermissions result, ResultHandlerChain<SENDER> chain) {
-        messageRegistry.getInvoked(LiteJDAMessages.DISCORD_MISSING_PERMISSIONS, invocation, result)
+        messageRegistry.get(LiteJDAMessages.DISCORD_MISSING_PERMISSIONS, invocation, result)
             .ifPresent(message -> chain.resolve(invocation, message));
     }
 

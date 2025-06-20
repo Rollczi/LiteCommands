@@ -24,7 +24,7 @@ public class ConsoleOnlyContextProvider implements ContextProvider<CommandSender
             return ContextResult.ok(() -> console);
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteMinestomMessages.CONSOLE_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteMinestomMessages.CONSOLE_ONLY, invocation));
     }
 
 }

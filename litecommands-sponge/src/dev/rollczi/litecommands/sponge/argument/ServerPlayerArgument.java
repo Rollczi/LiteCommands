@@ -25,12 +25,12 @@ public class ServerPlayerArgument extends ArgumentResolver<CommandCause, ServerP
     @Override
     protected ParseResult<ServerPlayer> parse(Invocation<CommandCause> invocation, Argument<ServerPlayer> context, String argument) {
         if (!game.isServerAvailable()) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteSpongeMessages.SERVER_UNAVAILABLE, invocation));
+            return ParseResult.failure(messageRegistry.get(LiteSpongeMessages.SERVER_UNAVAILABLE, invocation));
         }
 
         return game.server().player(argument)
             .map(player -> ParseResult.success(player))
-            .orElseGet(() -> ParseResult.failure(messageRegistry.getInvoked(LiteSpongeMessages.PLAYER_NOT_FOUND, invocation, argument)));
+            .orElseGet(() -> ParseResult.failure(messageRegistry.get(LiteSpongeMessages.PLAYER_NOT_FOUND, invocation, argument)));
     }
 
     @Override

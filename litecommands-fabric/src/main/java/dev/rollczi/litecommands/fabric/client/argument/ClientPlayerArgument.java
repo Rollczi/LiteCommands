@@ -31,7 +31,7 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
             return ParseResult.success((P) player);
         }
 
-        return ParseResult.failure(messageRegistry.getInvoked(LiteFabricMessages.PLAYER_NOT_FOUND, invocation, argument));
+        return ParseResult.failure(messageRegistry.get(LiteFabricMessages.PLAYER_NOT_FOUND, invocation, argument));
     }
 
     @Override

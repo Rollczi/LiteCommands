@@ -5,9 +5,13 @@ import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
 
-public final class TestUtil {
+public final class Invocations {
 
-    private TestUtil() {
+    private Invocations() {
+    }
+
+    public static Invocation<TestSender> empty() {
+        return invocation("test");
     }
 
     public static Invocation<TestSender> invocation(String command, String... args) {

@@ -37,12 +37,12 @@ public class WorldArgument<W> extends ArgumentResolver<ServerCommandSource, W> {
             }
         }
         if (worldRegistryKey == null) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteFabricMessages.WORLD_NOT_EXIST, invocation, argument));
+            return ParseResult.failure(messageRegistry.get(LiteFabricMessages.WORLD_NOT_EXIST, invocation, argument));
         }
         World world = server.getWorld(worldRegistryKey);
 
         if (world == null) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteFabricMessages.WORLD_NOT_EXIST, invocation, argument));
+            return ParseResult.failure(messageRegistry.get(LiteFabricMessages.WORLD_NOT_EXIST, invocation, argument));
         }
 
         return ParseResult.success((W) world);

@@ -10,7 +10,6 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.stream.Stream;
 
 public class BigDecimalArgumentResolver<SENDER> extends ArgumentResolver<SENDER, BigDecimal> {
@@ -30,7 +29,7 @@ public class BigDecimalArgumentResolver<SENDER> extends ArgumentResolver<SENDER,
         try {
             return ParseResult.success(new BigDecimal(argument));
         } catch (NumberFormatException ignored) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteMessages.INVALID_NUMBER, invocation, argument));
+            return ParseResult.failure(messageRegistry.get(LiteMessages.INVALID_NUMBER, invocation, argument));
         }
     }
 

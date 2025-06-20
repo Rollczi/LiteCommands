@@ -2,7 +2,6 @@ package dev.rollczi.litecommands.velocity.context;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.context.ContextProvider;
@@ -40,10 +39,10 @@ public class RegisteredServerContextProvider implements ContextProvider<CommandS
 
             return sender.getCurrentServer()
                 .map(serverConnection -> ContextResult.ok(() -> serverConnection.getServer()))
-                .orElseGet(() -> ContextResult.error(messageRegistry.getInvoked(LiteVelocityMessages.NOT_CONNECTED_TO_ANY_SERVER, invocation, sender)));
+                .orElseGet(() -> ContextResult.error(messageRegistry.get(LiteVelocityMessages.NOT_CONNECTED_TO_ANY_SERVER, invocation, sender)));
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteVelocityMessages.PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteVelocityMessages.PLAYER_ONLY, invocation));
     }
 
 }

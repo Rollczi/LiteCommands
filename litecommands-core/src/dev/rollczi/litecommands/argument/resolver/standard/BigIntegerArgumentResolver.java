@@ -29,7 +29,7 @@ public class BigIntegerArgumentResolver<SENDER> extends ArgumentResolver<SENDER,
         try {
             return ParseResult.success(new BigInteger(argument));
         } catch (NumberFormatException ignored) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteMessages.INVALID_NUMBER, invocation, argument));
+            return ParseResult.failure(messageRegistry.get(LiteMessages.INVALID_NUMBER, invocation, argument));
         }
     }
 

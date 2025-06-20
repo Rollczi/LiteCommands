@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.unit.TestExecutor;
 import dev.rollczi.litecommands.unit.TestSender;
-import dev.rollczi.litecommands.unit.TestUtil;
+import dev.rollczi.litecommands.unit.Invocations;
 import dev.rollczi.litecommands.unit.permission.TestPermissionResolver;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class PermissionServiceTest {
     @Test
     @DisplayName("should scan all permissions from root to executor and check if sender has them")
     void test() {
-        Invocation<TestSender> invocation = TestUtil.invocation("test", "sub");
+        Invocation<TestSender> invocation = Invocations.invocation("test", "sub");
 
         CommandRoute<TestSender> test = assertSingle(CommandBuilder.<TestSender>create()
             .name("test")

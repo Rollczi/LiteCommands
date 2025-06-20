@@ -23,13 +23,13 @@ public class InstanceContextProvider implements ContextProvider<CommandSender, I
             Instance instance = player.getInstance();
 
             if (instance == null) {
-                return ContextResult.error(messageRegistry.getInvoked(LiteMinestomMessages.PLAYER_IS_NOT_IN_INSTANCE, invocation, player));
+                return ContextResult.error(messageRegistry.get(LiteMinestomMessages.PLAYER_IS_NOT_IN_INSTANCE, invocation, player));
             }
 
             return ContextResult.ok(() -> instance);
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteMinestomMessages.PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteMinestomMessages.PLAYER_ONLY, invocation));
     }
 
 }

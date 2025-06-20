@@ -30,7 +30,7 @@ public class WorldArgument extends ArgumentResolver<CommandSender, World> {
         World world = server.getWorld(argument);
 
         if (world == null) {
-            return ParseResult.failure(messageRegistry.getInvoked(LiteBukkitMessages.WORLD_NOT_EXIST, invocation, argument));
+            return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.WORLD_NOT_EXIST, invocation, argument));
         }
 
         return ParseResult.success(world);

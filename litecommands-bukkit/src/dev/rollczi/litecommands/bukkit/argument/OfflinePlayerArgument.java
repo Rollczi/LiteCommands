@@ -3,44 +3,49 @@ package dev.rollczi.litecommands.bukkit.argument;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
+import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
+import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
-
-import java.time.Instant;
 
 public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, OfflinePlayer> {
 
     private static final int SUGGESTION_LIMIT = 256;
 
     private final Server server;
-    private final Plugin plugin;
-    private final boolean enableThreadCheck;
-
+    private final MessageRegistry<CommandSender> messageRegistry;
+    private final boolean allowParseUnknownPlayers;
+    private final Pattern playerNamePattern;
     private final TreeSet<String> nicknames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-    private Instant nextWarningDate = Instant.EPOCH;
 
-    public OfflinePlayerArgument(Server server, Plugin plugin, boolean enableThreadCheck) {
+    public OfflinePlayerArgument(Server server, Plugin plugin, MessageRegistry<CommandSender> messageRegistry, boolean allowParseUnknownPlayers, Pattern playerNamePattern) {
         this.server = server;
-        this.plugin = plugin;
-        this.enableThreadCheck = enableThreadCheck;
+        this.messageRegistry = messageRegistry;
+        this.allowParseUnknownPlayers = allowParseUnknownPlayers;
+        this.playerNamePattern = playerNamePattern;
 
         // Server#getOfflinePlayers() can be blocking, so we don't want to call it every time
-        for (OfflinePlayer offlinePlayer : server.getOfflinePlayers()) {
-            String name = offlinePlayer.getName();
-
-            if (name != null) {
-                this.nicknames.add(name);
+        server.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onServerStart(ServerLoadEvent event) {
+                nicknames.clear();
+                for (OfflinePlayer player : server.getOfflinePlayers()) {
+                    nicknames.add(player.getName());
+                }
             }
-        }
+        }, plugin);
 
         // Save new joining player names so our suggestions are more wide
         // TODO: Unregister this listener on Platform#unregister()
@@ -55,13 +60,18 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
     @SuppressWarnings("deprecation")
     @Override
     protected ParseResult<OfflinePlayer> parse(Invocation<CommandSender> invocation, Argument<OfflinePlayer> context, String argument) {
-        // TODO: Use async argument parsing: https://github.com/Rollczi/LiteCommands/pull/435
-        if (enableThreadCheck && server.isPrimaryThread() && Instant.now().isAfter(nextWarningDate)) {
-            plugin.getLogger().warning("LiteCommands | OfflinePlayer argument resolved synchronously! This might cause server freeze! Add @Async to '" + context.getName() + "' argument. (command /" + invocation.name() + ")");
-            nextWarningDate = Instant.now().plusSeconds(60);
-        }
+        return ParseResult.async(() -> {
+            OfflinePlayer offlinePlayer = server.getOfflinePlayer(argument);
+            if (offlinePlayer.hasPlayedBefore() && !allowParseUnknownPlayers) {
+                return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.OFFLINE_PLAYER_NOT_FOUND, invocation, argument));
+            }
+            return ParseResult.success(offlinePlayer);
+        });
+    }
 
-        return ParseResult.success(server.getOfflinePlayer(argument));
+    @Override
+    protected boolean match(Invocation<CommandSender> invocation, Argument<OfflinePlayer> context, String argument) {
+        return playerNamePattern.matcher(argument).matches();
     }
 
     @Override

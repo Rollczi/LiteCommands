@@ -37,7 +37,7 @@ public class PlayerOnlyContextProvider implements ContextProvider<CommandSource,
             return ContextResult.ok(() -> (Player) invocation.sender());
         }
 
-        return ContextResult.error(messageRegistry.getInvoked(LiteVelocityMessages.PLAYER_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteVelocityMessages.PLAYER_ONLY, invocation));
     }
 
 }

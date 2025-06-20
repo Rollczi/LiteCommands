@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.Nullable;
 
 public class MessageRegistry<SENDER> {
 
@@ -20,36 +21,41 @@ public class MessageRegistry<SENDER> {
         invokedMessages.put(key, message);
     }
 
-    public Optional<Object> getInvoked(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<Void> key, Invocation<SENDER> invocation) {
-        return getInvoked(key, invocation, null);
+    public Optional<Object> get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<Void> key, Invocation<SENDER> invocation) {
+        return get(key, invocation, null);
     }
 
     @SuppressWarnings("unchecked")
-    public <CONTEXT> Optional<Object> getInvoked(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<CONTEXT> key, Invocation<SENDER> invocation, CONTEXT context) {
-        InvokedMessage<SENDER, ?, CONTEXT> invokedMessage = (InvokedMessage<SENDER, ?, CONTEXT>) invokedMessages.get(key);
-
+    public <CONTEXT> Optional<Object> get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<CONTEXT> key, Invocation<SENDER> invocation, CONTEXT context) {
+        Object invokedMessage = getRegisteredMessage(key, invocation, context);
         if (invokedMessage != null) {
-            return Optional.of(invokedMessage.get(invocation, context));
+            return Optional.of(invokedMessage);
         }
 
-        return get(key, context);
+        for (MessageKey<CONTEXT> fallback : key.getFallbacks()) {
+            Object fallbackMessage = getRegisteredMessage(fallback, invocation, context);
+            if (fallbackMessage != null) {
+                return Optional.of(fallbackMessage);
+            }
+        }
+
+        return Optional.of(key.getDefaultMessage(context));
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
-    @Deprecated
-    public <CONTEXT> Optional<Object> get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<CONTEXT> key, CONTEXT context) {
-        Message<?, CONTEXT> message = (Message<?, CONTEXT>) messages.get(key);
-
-        if (message == null) {
-            return Optional.of(key.getDefaultMessage(context));
+    private <CONTEXT> Object getRegisteredMessage(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<CONTEXT> key, Invocation<SENDER> invocation, CONTEXT context) {
+        InvokedMessage<SENDER, ?, CONTEXT> invokedMessage = (InvokedMessage<SENDER, ?, CONTEXT>) invokedMessages.get(key);
+        if (invokedMessage != null) {
+            return invokedMessage.get(invocation, context);
         }
 
-        return Optional.of(message.get(context));
-    }
+        Message<?, CONTEXT> message = (Message<?, CONTEXT>) messages.get(key);
+        if (message != null) {
+            return message.get(context);
+        }
 
-    @Deprecated
-    public Optional<Object> get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<Void> key) {
-        return get(key, null);
+        return null;
     }
 
 }

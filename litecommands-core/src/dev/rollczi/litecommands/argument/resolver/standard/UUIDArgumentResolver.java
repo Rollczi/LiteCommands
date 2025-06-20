@@ -3,18 +3,14 @@ package dev.rollczi.litecommands.argument.resolver.standard;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
-import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class UUIDArgumentResolver<SENDER> extends ArgumentResolver<SENDER, UUID> {
@@ -55,7 +51,7 @@ public class UUIDArgumentResolver<SENDER> extends ArgumentResolver<SENDER, UUID>
         } catch (IllegalArgumentException ignored) {
         }
 
-        return ParseResult.failure(messageRegistry.getInvoked(LiteMessages.UUID_INVALID_FORMAT, invocation, argument));
+        return ParseResult.failure(messageRegistry.get(LiteMessages.UUID_INVALID_FORMAT, invocation, argument));
     }
 
     @Override

@@ -26,7 +26,7 @@ public class RegisteredServerArgument extends ArgumentResolver<CommandSource, Re
     protected ParseResult<RegisteredServer> parse(Invocation<CommandSource> invocation, Argument<RegisteredServer> context, String argument) {
         return this.server.getServer(argument)
             .map(parsed -> ParseResult.success(parsed))
-            .orElseGet(() -> ParseResult.failure(messageRegistry.getInvoked(LiteVelocityMessages.SERVER_NOT_FOUND, invocation, argument)));
+            .orElseGet(() -> ParseResult.failure(messageRegistry.get(LiteVelocityMessages.SERVER_NOT_FOUND, invocation, argument)));
     }
 
     @Override
