@@ -32,7 +32,7 @@ public class LocationContext implements ContextProvider<CommandSender, Location>
             return ContextResult.ok(() -> blockCommandSender.getBlock().getLocation());
         }
 
-        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.LOCATION_NON_CONSOLE_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.LOCATION_NO_CONSOLE, invocation));
     }
 
 }

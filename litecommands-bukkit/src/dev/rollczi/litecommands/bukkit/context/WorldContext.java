@@ -32,7 +32,7 @@ public class WorldContext implements ContextProvider<CommandSender, World> {
             return ContextResult.ok(() -> blockCommandSender.getBlock().getWorld());
         }
 
-        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.WORLD_NON_CONSOLE_ONLY, invocation));
+        return ContextResult.error(messageRegistry.get(LiteBukkitMessages.WORLD_NO_CONSOLE, invocation));
     }
 
 }
