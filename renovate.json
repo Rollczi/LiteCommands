@@ -6,7 +6,8 @@
   ],
   "includePaths": [
     "**",
-    "examples/**"
+    "examples/fabric",
+    "examples/fabric/build.gradle.kts"
   ],
   "groupName": "all dependencies",
   "groupSlug": "all",
