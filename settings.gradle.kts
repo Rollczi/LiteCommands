@@ -13,7 +13,7 @@ compatibleWith("fabric maven", VERSION_17, tests = false) {
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 // core
@@ -27,7 +27,7 @@ include(":litecommands-unit")
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform", tests = false)
 include(":litecommands-chatgpt", VERSION_11)
-include(":litecommands-jakarta", VERSION_11)
+include(":litecommands-jakarta", VERSION_17)
 include(":litecommands-luckperms")
 
 // platforms

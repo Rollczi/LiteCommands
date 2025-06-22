@@ -11,7 +11,6 @@ dependencies {
     testImplementation(project(":litecommands-unit"))
     testImplementation(kotlin("stdlib-jdk8"))
 
-    testImplementation("org.mockito:mockito-core:${Versions.MOCKITO}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.JUNIT_JUPITER}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.JUNIT_JUPITER}")
     testImplementation("org.assertj:assertj-core:${Versions.ASSERTJ}")
