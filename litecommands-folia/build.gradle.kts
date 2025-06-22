@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":litecommands-framework"))
+    api(project(":litecommands-bukkit"))
 
     compileOnly("dev.folia:folia-api:${Versions.FOLIA_API}")
 }

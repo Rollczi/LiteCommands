@@ -12,11 +12,12 @@ import org.jetbrains.annotations.Nullable;
 
 public final class FoliaExtension implements LiteExtension<CommandSender, FoliaExtension.Settings> {
 
-    private final Settings settings = new Settings(null);
+    private final Settings settings;
     private final Plugin plugin;
 
     public FoliaExtension(Plugin plugin) {
         this.plugin = plugin;
+        this.settings = new Settings(() -> new dev.rollczi.litecommands.bukkit.BukkitScheduler(plugin));
     }
 
     @Override
@@ -45,12 +46,6 @@ public final class FoliaExtension implements LiteExtension<CommandSender, FoliaE
     public record Settings(@Nullable Supplier<Scheduler> fallbackScheduler) {
         public Settings fallbackScheduler(Supplier<Scheduler> fallbackScheduler) {
             return new Settings(fallbackScheduler);
-        }
-
-        public Settings throwWhenFallback(Supplier<RuntimeException> exceptionSupplier) {
-            return new Settings(() -> {
-                throw exceptionSupplier.get();
-            });
         }
     }
 

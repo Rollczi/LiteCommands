@@ -4,16 +4,20 @@ import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.time.Duration;
 
-class BukkitSchedulerImpl extends AbstractMainThreadBasedScheduler {
+public class BukkitScheduler extends AbstractMainThreadBasedScheduler {
 
-    private final BukkitScheduler bukkitScheduler;
+    private final org.bukkit.scheduler.BukkitScheduler bukkitScheduler;
     private final Plugin plugin;
 
-    BukkitSchedulerImpl(BukkitScheduler bukkitScheduler, Plugin plugin) {
+    public BukkitScheduler(Plugin plugin) {
+        this.bukkitScheduler = plugin.getServer().getScheduler();
+        this.plugin = plugin;
+    }
+
+    public BukkitScheduler(org.bukkit.scheduler.BukkitScheduler bukkitScheduler, Plugin plugin) {
         this.bukkitScheduler = bukkitScheduler;
         this.plugin = plugin;
     }

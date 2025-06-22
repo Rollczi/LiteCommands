@@ -26,7 +26,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 public final class LiteBukkitFactory {
 
@@ -74,9 +73,9 @@ public final class LiteBukkitFactory {
 
                 .bind(Plugin.class, () -> plugin)
                 .bind(Server.class, () -> server)
-                .bind(BukkitScheduler.class, () -> server.getScheduler())
+                .bind(org.bukkit.scheduler.BukkitScheduler.class, () -> server.getScheduler())
 
-                .scheduler(new BukkitSchedulerImpl(server.getScheduler(), plugin))
+                .scheduler(new BukkitScheduler(server.getScheduler(), plugin))
 
                 .settings(bukkitSettings -> bukkitSettings.tabCompleter(TabComplete.create(internal.getScheduler(), plugin)))
 
