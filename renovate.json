@@ -1,14 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": true,
   "extends": [
     "config:base"
   ],
-  "includePaths": [
-    "**",
-    "examples/fabric",
-    "examples/fabric/build.gradle.kts"
-  ],
+  "dependencyDashboard": true,
+  "ignorePaths": [],
   "groupName": "all dependencies",
   "groupSlug": "all",
   "lockFileMaintenance": {
