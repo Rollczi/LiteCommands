@@ -1,14 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": true,
   "extends": [
     "config:base"
   ],
-  "includePaths": [
-    "**",
-    "examples/fabric",
-    "examples/fabric/build.gradle.kts"
-  ],
+  "dependencyDashboard": true,
+  "ignorePaths": [],
   "groupName": "all dependencies",
   "groupSlug": "all",
   "lockFileMaintenance": {
@@ -18,13 +14,6 @@
   "pruneStaleBranches": true,
   "commitMessagePrefix": "dependency:",
   "packageRules": [
-    {
-      "groupName": "gradle",
-      "matchPackagePatterns": [
-        "gradle*"
-      ],
-      "automerge": true
-    },
     {
       "groupName": "fabricmc",
       "matchPackagePatterns": [
@@ -48,7 +37,7 @@
       ],
       "updateTypes": ["patch"],
       "automerge": true,
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*", "gradle*"]
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*"]
     },
     {
       "groupName": "minor",
@@ -57,7 +46,7 @@
       ],
       "updateTypes": ["minor"],
       "automerge": true,
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*", "gradle*"]
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*"]
     },
     {
       "groupName": "all-major",
@@ -66,7 +55,7 @@
       ],
       "updateTypes": ["major"],
       "automerge": false,
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*", "gradle*"]
+      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*"]
     }
   ]
 }
