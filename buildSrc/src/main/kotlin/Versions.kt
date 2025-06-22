@@ -6,7 +6,7 @@ object Versions {
     // Tests
     const val JUNIT_JUPITER = "5.11.4"
     const val ASSERTJ = "3.26.3"
-    const val MOCKITO = "4.11.0"
+    const val MOCKITO = "5.18.0"
     const val AWAITILITY = "4.2.2"
 
     // Bukkit
@@ -22,10 +22,10 @@ object Versions {
     const val JDA = "5.5.1"
 
     // Minestom
-    const val MINESTOM = "32735340d7"
+    const val MINESTOM = "7320437640"
 
     // Sponge
-    const val SPONGE_API = "12.0.0"
+    const val SPONGE_API = "13.0.0"
 
     // Velocity
     const val VELOCITY_API = "3.2.0-SNAPSHOT"
@@ -53,8 +53,8 @@ object Versions {
     const val ADVENTURE_PLATFORM_API = "4.3.4"
 
     // Jakarta
-    const val HIBERNATE_VALIDATOR = "8.0.2.Final"
-    const val EXPRESSLY = "5.0.0"
+    const val HIBERNATE_VALIDATOR = "9.0.1.Final"
+    const val EXPRESSLY = "6.0.0"
 
     // LuckPerms
     const val LUCKPERMS_API = "5.4"

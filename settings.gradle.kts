@@ -27,7 +27,7 @@ include(":litecommands-unit")
 include(":litecommands-adventure")
 include(":litecommands-adventure-platform", tests = false)
 include(":litecommands-chatgpt", VERSION_11)
-include(":litecommands-jakarta", VERSION_11)
+include(":litecommands-jakarta", VERSION_17)
 include(":litecommands-luckperms")
 
 // platforms

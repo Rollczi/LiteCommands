@@ -27,7 +27,7 @@ dependencies {
 
     modLocalRuntime("maven.modrinth:fabric-permissions-api:0.3.3")
     modLocalRuntime("maven.modrinth:luckperms:v5.4.140-fabric")
-    modLocalRuntime("com.terraformersmc:modmenu:11.0.3")
+    modLocalRuntime("com.terraformersmc:modmenu:13.0.3")
 
     // modImplementation("dev.rollczi:litecommands-fabric:3.10.0") <-- uncomment in your project
     // modImplementation("dev.rollczi:litecommands-luckperms:3.10.0") <-- uncomment in your project

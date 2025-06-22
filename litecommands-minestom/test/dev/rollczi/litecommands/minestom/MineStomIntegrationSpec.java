@@ -51,7 +51,7 @@ public class MineStomIntegrationSpec {
         }
 
         MinecraftServer.getConnectionManager().setPlayerProvider(
-            (connection, gameProfile) -> new TestPlayer(connection, gameProfile));
+            (uuid, name, connection) -> new TestPlayer(name, uuid, connection));
 
         liteCommands = LiteMinestomFactory.builder()
             .commands(commands.values().toArray())
@@ -71,8 +71,7 @@ public class MineStomIntegrationSpec {
 
     protected static TestPlayer player(String name) {
         ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
-        GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes(name.getBytes()), name);
-        Player player = connectionManager.createPlayer(new TestPlayerConnection(), gameProfile);
+        Player player = connectionManager.createPlayer(new TestPlayerConnection(), UUID.nameUUIDFromBytes(name.getBytes()), name);
         connectionManager.transitionConfigToPlay(player);
         connectionManager.tick(0);
 
