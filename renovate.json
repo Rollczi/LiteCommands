@@ -4,6 +4,10 @@
   "extends": [
     "config:base"
   ],
+  "includePaths": [
+    "**",
+    "examples/**"
+  ],
   "groupName": "all dependencies",
   "groupSlug": "all",
   "lockFileMaintenance": {
