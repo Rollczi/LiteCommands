@@ -5,9 +5,9 @@ object Versions {
 
     // Tests
     const val JUNIT_JUPITER = "5.13.3"
-    const val ASSERTJ = "3.26.3"
+    const val ASSERTJ = "3.27.3"
     const val MOCKITO = "5.18.0"
-    const val AWAITILITY = "4.2.2"
+    const val AWAITILITY = "4.3.0"
 
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
@@ -16,10 +16,10 @@ object Versions {
     const val PROTOCOL_LIB = "5.3.0"
 
     // BungeeCord
-    const val BUNGEECORD_API = "1.20-R0.2"
+    const val BUNGEECORD_API = "1.21-R0.3"
 
     // JDA
-    const val JDA = "5.5.1"
+    const val JDA = "5.6.1"
 
     // Minestom
     const val MINESTOM = "7320437640"
@@ -43,20 +43,20 @@ object Versions {
     const val TELEGRAM_BOTS = "9.0.0"
 
     // ChatGPT
-    const val GSON = "2.11.0"
-    const val CAFFEINE = "3.1.8"
+    const val GSON = "2.13.1"
+    const val CAFFEINE = "3.2.1"
     const val OKHTTP = "5.0.0"
 
     // Adventure
-    const val ADVENTURE_MINIMESSAGES = "4.17.0"
-    const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.17.0"
-    const val ADVENTURE_PLATFORM_API = "4.3.4"
+    const val ADVENTURE_MINIMESSAGES = "4.23.0"
+    const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.23.0"
+    const val ADVENTURE_PLATFORM_API = "4.4.0"
 
     // Jakarta
     const val HIBERNATE_VALIDATOR = "9.0.1.Final"
     const val EXPRESSLY = "6.0.0"
 
     // LuckPerms
-    const val LUCKPERMS_API = "5.4"
+    const val LUCKPERMS_API = "5.5"
 
 }
