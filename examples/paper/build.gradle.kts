@@ -14,7 +14,7 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-bukkit:3.10.1") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-bukkit:3.10.2") // <-- uncomment in your project
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
 }
 
