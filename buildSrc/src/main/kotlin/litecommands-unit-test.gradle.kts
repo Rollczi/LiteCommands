@@ -11,11 +11,13 @@ dependencies {
     testImplementation(project(":litecommands-unit"))
     testImplementation(kotlin("stdlib-jdk8"))
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.JUNIT_JUPITER}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.JUNIT_JUPITER}")
+    testImplementation(platform("org.junit:junit-bom:${Versions.JUNIT_JUPITER}"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.assertj:assertj-core:${Versions.ASSERTJ}")
     testImplementation("org.awaitility:awaitility:${Versions.AWAITILITY}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.JUNIT_JUPITER}")
 }
 
 tasks.getByName<Test>("test") {
