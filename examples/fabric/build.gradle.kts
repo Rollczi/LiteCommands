@@ -17,13 +17,13 @@ repositories {
 }
 
 dependencies {
-    val yarnVersion = "1.21.6+build.1"
+    val yarnVersion = "1.21.7+build.4"
     val minecraftVersion = yarnVersion.substringBefore('+')
     mappings("net.fabricmc:yarn:$yarnVersion")
     minecraft("com.mojang:minecraft:$minecraftVersion")
 
     modImplementation("net.fabricmc:fabric-loader:0.16.14")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.127.1+1.21.6")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.128.2+1.21.7")
 
     modLocalRuntime("maven.modrinth:fabric-permissions-api:0.3.3")
     modLocalRuntime("maven.modrinth:luckperms:v5.4.140-fabric")
