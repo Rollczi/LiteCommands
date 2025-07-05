@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.requirement;
 
 import dev.rollczi.litecommands.meta.Meta;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -23,7 +23,7 @@ class ScheduledRequirement<T> {
         return match.get();
     }
 
-    public SchedulerPoll type() {
+    public SchedulerType type() {
         return requirement.meta().get(Meta.POLL_TYPE);
     }
 

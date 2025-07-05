@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.input.raw.RawInput;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.util.concurrent.CompletableFuture;
@@ -43,7 +43,7 @@ public class CompletableFutureResolver<SENDER> extends ArgumentResolverChained<S
     }
 
     private <T> ParseResult<CompletableFuture> parse(Invocation<SENDER> invocation, Argument<CompletableFuture> argument, TypeToken<T> type, String input, ParserChainAccessor<SENDER> chainAccessor) {
-        CompletableFuture<ParseResult<T>> supply = scheduler.supply(SchedulerPoll.COMPLETABLE_FUTURE, () -> chainAccessor.parse(invocation, argument.child(type), input));
+        CompletableFuture<ParseResult<T>> supply = scheduler.supply(SchedulerType.COMPLETABLE_FUTURE, () -> chainAccessor.parse(invocation, argument.child(type), input));
 
         return ParseResult.completableFuture(supply)
             .map(future -> CompletableFuture.completedFuture(future));

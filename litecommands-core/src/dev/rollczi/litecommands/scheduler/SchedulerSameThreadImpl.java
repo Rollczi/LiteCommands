@@ -9,7 +9,7 @@ public class SchedulerSameThreadImpl implements Scheduler {
 
 
     @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+    public <T> CompletableFuture<T> supplyLater(SchedulerType type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         try {

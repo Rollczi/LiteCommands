@@ -14,11 +14,9 @@ import dev.rollczi.litecommands.meta.MetaKey;
 import dev.rollczi.litecommands.permission.PermissionSet;
 import dev.rollczi.litecommands.quoted.QuotedProfile;
 import dev.rollczi.litecommands.reflect.type.TypeToken;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.strict.StrictMode;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +25,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommand<SENDER> {
 
@@ -131,7 +130,7 @@ public class LiteCommand<SENDER> {
     }
 
     public LiteCommand<SENDER> async() {
-        return this.meta(Meta.POLL_TYPE, SchedulerPoll.ASYNCHRONOUS);
+        return this.meta(Meta.POLL_TYPE, SchedulerType.ASYNCHRONOUS);
     }
 
     public <T> LiteCommand<SENDER> meta(MetaKey<T> key, T value) {

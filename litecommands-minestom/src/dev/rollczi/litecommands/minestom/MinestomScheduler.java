@@ -1,7 +1,7 @@
 package dev.rollczi.litecommands.minestom;
 
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import dev.rollczi.litecommands.shared.ThrowingSupplier;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -18,11 +18,12 @@ public class MinestomScheduler implements Scheduler {
     }
 
     @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        SchedulerPoll poll = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
+    public <T> CompletableFuture<T> supplyLater(SchedulerType type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+        SchedulerType poll = type.resolve(SchedulerType.MAIN, SchedulerType.ASYNCHRONOUS)
+            .orElseThrow(() -> new IllegalStateException("Cannot resolve the thread type"));
         CompletableFuture<T> future = new CompletableFuture<>();
         Task.Builder built = scheduler.buildTask(() -> tryRun(supplier, future))
-            .executionType(poll.equals(SchedulerPoll.MAIN) ? ExecutionType.SYNC : ExecutionType.ASYNC);
+            .executionType(poll.equals(SchedulerType.MAIN) ? ExecutionType.SYNC : ExecutionType.ASYNC);
 
         if (!delay.isZero()) {
             built.delay(delay);

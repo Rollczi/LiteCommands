@@ -10,11 +10,10 @@ import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.join.JoinStringArgumentResolver;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,7 +65,7 @@ class ChatGptStringArgumentResolver<SENDER> extends JoinStringArgumentResolver<S
 
         UUID signed = this.sign(identifier);
 
-        CompletableFuture<SuggestionResult> future = scheduler.supplyLater(SchedulerPoll.SUGGESTER, settings.cooldown(), () -> {
+        CompletableFuture<SuggestionResult> future = scheduler.supplyLater(SchedulerType.SUGGESTER, settings.cooldown(), () -> {
             if (!this.checkSignature(identifier, signed)) {
                 return suggestionResult;
             }

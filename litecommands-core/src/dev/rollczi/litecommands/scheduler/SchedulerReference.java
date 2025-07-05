@@ -20,7 +20,7 @@ public class SchedulerReference implements Scheduler {
     }
 
     @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+    public <T> CompletableFuture<T> supplyLater(SchedulerType type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
         return scheduler.supplyLater(type, delay, supplier);
     }
 

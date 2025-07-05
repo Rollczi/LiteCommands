@@ -7,17 +7,17 @@ import java.util.concurrent.CompletableFuture;
 public abstract class AbstractMainThreadBasedScheduler implements Scheduler {
 
     @Override
-    public final <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        SchedulerPoll resolved = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
+    public final <T> CompletableFuture<T> supplyLater(SchedulerType type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+        SchedulerType resolved = type.resolve(SchedulerType.MAIN, SchedulerType.ASYNCHRONOUS).orElse(type);
         CompletableFuture<T> future = new CompletableFuture<>();
         Runnable task = () -> tryRun(type, future, supplier);
 
-        if (resolved.equals(SchedulerPoll.MAIN)) {
+        if (resolved.equals(SchedulerType.MAIN)) {
             runSynchronous(task, delay);
             return future;
         }
 
-        if (resolved.equals(SchedulerPoll.ASYNCHRONOUS)) {
+        if (resolved.equals(SchedulerType.ASYNCHRONOUS)) {
             runAsynchronous(task, delay);
             return future;
         }
@@ -34,7 +34,7 @@ public abstract class AbstractMainThreadBasedScheduler implements Scheduler {
      * Run task with an unknown scheduler poll type
      * @return true if a task was run, false otherwise
      */
-    protected boolean runUnknown(SchedulerPoll type, Duration delay, Runnable task) {
+    protected boolean runUnknown(SchedulerType type, Duration delay, Runnable task) {
         return false;
     }
 
@@ -42,7 +42,7 @@ public abstract class AbstractMainThreadBasedScheduler implements Scheduler {
 
     protected abstract void runAsynchronous(Runnable task, Duration delay);
 
-    private <T> void tryRun(SchedulerPoll type, CompletableFuture<T> future, ThrowingSupplier<T, Throwable> supplier) {
+    private <T> void tryRun(SchedulerType type, CompletableFuture<T> future, ThrowingSupplier<T, Throwable> supplier) {
         try {
             future.complete(supplier.get());
         }

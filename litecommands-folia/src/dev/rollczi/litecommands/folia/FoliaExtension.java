@@ -17,7 +17,7 @@ public final class FoliaExtension implements LiteExtension<CommandSender, FoliaE
 
     public FoliaExtension(Plugin plugin) {
         this.plugin = plugin;
-        this.settings = new Settings(() -> new dev.rollczi.litecommands.bukkit.BukkitScheduler(plugin));
+        this.settings = new Settings(true, () -> new dev.rollczi.litecommands.bukkit.BukkitScheduler(plugin));
     }
 
     @Override
@@ -31,7 +31,7 @@ public final class FoliaExtension implements LiteExtension<CommandSender, FoliaE
             Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
             Class.forName("io.papermc.paper.threadedregions.scheduler.RegionScheduler");
             Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            FoliaInternalExtension.enableFoliaSupport(plugin, builder);
+            FoliaInternalExtension.enableFoliaSupport(plugin, builder, settings.useRegionSchedulerIfAvailable);
         } catch (ClassNotFoundException notFoundException) {
             fallback(builder);
         }
@@ -43,9 +43,12 @@ public final class FoliaExtension implements LiteExtension<CommandSender, FoliaE
         }
     }
 
-    public record Settings(@Nullable Supplier<Scheduler> fallbackScheduler) {
+    public record Settings(
+        boolean useRegionSchedulerIfAvailable,
+        @Nullable Supplier<Scheduler> fallbackScheduler
+    ) {
         public Settings fallbackScheduler(Supplier<Scheduler> fallbackScheduler) {
-            return new Settings(fallbackScheduler);
+            return new Settings(this.useRegionSchedulerIfAvailable, fallbackScheduler);
         }
     }
 

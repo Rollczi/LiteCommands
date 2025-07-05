@@ -1,13 +1,13 @@
 package dev.rollczi.litecommands.folia;
 
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import org.bukkit.Location;
 
-class FoliaSchedulerPoll extends SchedulerPoll {
+class FoliaSchedulerType extends SchedulerType {
 
     private final Location location;
 
-    public FoliaSchedulerPoll(Location location) {
+    public FoliaSchedulerType(Location location) {
         super(location.getWorld().getName() + ":" + location.getX() + ":" + location.getY() + ":" + location.getZ());
         this.location = location;
     }

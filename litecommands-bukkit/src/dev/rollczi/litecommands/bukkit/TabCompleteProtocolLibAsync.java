@@ -8,15 +8,14 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import dev.rollczi.litecommands.input.raw.RawCommand;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import dev.rollczi.litecommands.suggestion.Suggestion;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 class TabCompleteProtocolLibAsync extends TabCompleteSync {
 
@@ -53,7 +52,7 @@ class TabCompleteProtocolLibAsync extends TabCompleteSync {
         }
 
         event.setCancelled(true);
-        scheduler.run(SchedulerPoll.SUGGESTER, () -> {
+        scheduler.run(SchedulerType.SUGGESTER, () -> {
             try {
                 Set<Suggestion> suggestions = command.suggest(player, commandName, rawCommand.getArgs().toArray(new String[0]))
                     .get(15, TimeUnit.SECONDS);

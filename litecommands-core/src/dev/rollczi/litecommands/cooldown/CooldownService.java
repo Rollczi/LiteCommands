@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.permission.PermissionService;
 import dev.rollczi.litecommands.platform.PlatformSender;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class CooldownService {
         CooldownState state = new CooldownState(publishedEvent.getKey(), duration);
 
         cooldowns.put(compositeKey, state);
-        scheduler.supplyLater(SchedulerPoll.MAIN, duration, () -> cooldowns.remove(compositeKey));
+        scheduler.supplyLater(SchedulerType.MAIN, duration, () -> cooldowns.remove(compositeKey));
         return Optional.of(state);
     }
 

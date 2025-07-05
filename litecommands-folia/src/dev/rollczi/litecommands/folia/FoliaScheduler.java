@@ -1,16 +1,15 @@
 package dev.rollczi.litecommands.folia;
 
 import dev.rollczi.litecommands.scheduler.AbstractMainThreadBasedScheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
-import org.bukkit.Location;
-import org.bukkit.plugin.Plugin;
-
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 class FoliaScheduler extends AbstractMainThreadBasedScheduler {
 
@@ -65,13 +64,12 @@ class FoliaScheduler extends AbstractMainThreadBasedScheduler {
     }
 
     @Override
-    protected boolean runUnknown(SchedulerPoll type, Duration delay, Runnable task) {
-        if (!(type instanceof FoliaSchedulerPoll)) {
+    protected boolean runUnknown(SchedulerType type, Duration delay, Runnable task) {
+        if (!(type instanceof FoliaSchedulerType foliaSchedulerType)) {
             return false;
         }
 
-        FoliaSchedulerPoll foliaSchedulerPoll = (FoliaSchedulerPoll) type;
-        Location location = foliaSchedulerPoll.getLocation();
+        Location location = foliaSchedulerType.getLocation();
 
         if (delay.isZero()) {
             regionScheduler.execute(plugin, location, task);

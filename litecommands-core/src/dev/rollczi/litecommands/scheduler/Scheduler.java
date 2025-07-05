@@ -18,7 +18,7 @@ public interface Scheduler {
      * @param runnable the runnable to run
      * @return the supplier result
      */
-    default CompletableFuture<Void> run(SchedulerPoll type, ThrowingRunnable<Throwable> runnable) {
+    default CompletableFuture<Void> run(SchedulerType type, ThrowingRunnable<Throwable> runnable) {
         return supply(type, () -> {
             runnable.run();
             return null;
@@ -33,7 +33,7 @@ public interface Scheduler {
      * @param runnable the runnable to run
      * @return the supplier result
      */
-    default CompletableFuture<Void> runLater(SchedulerPoll type, Duration delay, ThrowingRunnable<Throwable> runnable) {
+    default CompletableFuture<Void> runLater(SchedulerType type, Duration delay, ThrowingRunnable<Throwable> runnable) {
         return supplyLater(type, delay, () -> {
             runnable.run();
             return null;
@@ -48,7 +48,7 @@ public interface Scheduler {
      * @param <T> the supplier return type
      * @return the supplier result
      */
-    default <T> CompletableFuture<T> supply(SchedulerPoll type, ThrowingSupplier<T, Throwable> supplier) {
+    default <T> CompletableFuture<T> supply(SchedulerType type, ThrowingSupplier<T, Throwable> supplier) {
         return supplyLater(type, Duration.ZERO, supplier);
     }
 
@@ -61,7 +61,7 @@ public interface Scheduler {
      * @param <T> the supplier return type
      * @return the supplier result
      */
-    <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier);
+    <T> CompletableFuture<T> supplyLater(SchedulerType type, Duration delay, ThrowingSupplier<T, Throwable> supplier);
 
     void shutdown();
 

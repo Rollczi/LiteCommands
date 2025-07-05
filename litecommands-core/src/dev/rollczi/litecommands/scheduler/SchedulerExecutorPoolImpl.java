@@ -37,15 +37,16 @@ public class SchedulerExecutorPoolImpl implements Scheduler {
     }
 
     @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerPoll type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        SchedulerPoll resolve = type.resolve(SchedulerPoll.MAIN, SchedulerPoll.ASYNCHRONOUS);
+    public <T> CompletableFuture<T> supplyLater(SchedulerType type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+        SchedulerType resolve = type.resolve(SchedulerType.MAIN, SchedulerType.ASYNCHRONOUS)
+            .orElseThrow(() -> new IllegalStateException("Cannot resolve the thread type"));
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        if (resolve.equals(SchedulerPoll.MAIN) && delay.isZero() && isMainThread.get()) {
+        if (resolve.equals(SchedulerType.MAIN) && delay.isZero() && isMainThread.get()) {
             return tryRun(supplier, future);
         }
 
-        ExecutorService executor = resolve.equals(SchedulerPoll.MAIN) ? mainExecutor : asyncExecutor;
+        ExecutorService executor = resolve.equals(SchedulerType.MAIN) ? mainExecutor : asyncExecutor;
 
         if (delay.isZero()) {
             executor.submit(() -> tryRun(supplier, future));

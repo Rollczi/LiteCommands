@@ -7,24 +7,21 @@ import dev.rollczi.litecommands.command.executor.event.CommandExecutorFoundEvent
 import dev.rollczi.litecommands.command.executor.event.CommandExecutorNotFoundEvent;
 import dev.rollczi.litecommands.command.executor.event.CommandPostExecutionEvent;
 import dev.rollczi.litecommands.command.executor.event.CommandPreExecutionEvent;
-import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
-import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
 import dev.rollczi.litecommands.event.EventPublisher;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage.Cause;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageException;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.priority.MutablePrioritizedList;
 import dev.rollczi.litecommands.priority.PriorityLevel;
 import dev.rollczi.litecommands.requirement.RequirementMatchService;
-import dev.rollczi.litecommands.shared.FailedReason;
-import dev.rollczi.litecommands.invocation.Invocation;
-import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scheduler.Scheduler;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
+import dev.rollczi.litecommands.shared.FailedReason;
 import java.util.Iterator;
-
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import java.util.concurrent.CompletionException;
 
 public class CommandExecuteService<SENDER> {
 
@@ -48,7 +45,7 @@ public class CommandExecuteService<SENDER> {
     public CompletableFuture<CommandExecuteResult> execute(Invocation<SENDER> invocation, ParseableInputMatcher<?> matcher, CommandRoute<SENDER> commandRoute) {
         return execute0(invocation, matcher, commandRoute)
             .thenApply(result -> publishAndApplyEvent(invocation, commandRoute, result))
-            .thenCompose(executeResult -> scheduler.supply(SchedulerPoll.MAIN, () -> this.handleResult(invocation, executeResult)))
+            .thenCompose(executeResult -> scheduler.supply(SchedulerType.MAIN, () -> this.handleResult(invocation, executeResult)))
             .exceptionally(new LastExceptionHandler<>(resultResolver, invocation));
     }
 
@@ -129,9 +126,8 @@ public class CommandExecuteService<SENDER> {
             }
 
             // Execution
-            SchedulerPoll type = executor.metaCollector().findFirst(Meta.POLL_TYPE);
 
-            return scheduler.supply(type, () -> execute(processedMatch, executor));
+            return scheduler.supply(executionEvent.getSchedulerType(), () -> execute(processedMatch, executor));
         }).exceptionally(throwable -> toThrown(executor, throwable));
     }
 

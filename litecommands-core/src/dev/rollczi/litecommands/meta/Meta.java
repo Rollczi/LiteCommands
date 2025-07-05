@@ -4,7 +4,7 @@ import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.cooldown.CooldownContext;
 import dev.rollczi.litecommands.permission.PermissionSet;
 import dev.rollczi.litecommands.priority.PriorityLevel;
-import dev.rollczi.litecommands.scheduler.SchedulerPoll;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.requirement.RequirementValidator;
@@ -25,7 +25,7 @@ public interface Meta {
     MetaKey<List<PermissionSet>> PERMISSIONS = MetaKey.of("permissions", MetaType.list(), Collections.emptyList());
     MetaKey<PriorityLevel> PRIORITY = MetaKey.of("priority", PriorityLevel.class, PriorityLevel.NORMAL);
     MetaKey<Boolean> NATIVE_PERMISSIONS = MetaKey.of("native-permissions", Boolean.class, false);
-    MetaKey<SchedulerPoll> POLL_TYPE = MetaKey.of("poll-type", SchedulerPoll.class, SchedulerPoll.MAIN);
+    MetaKey<SchedulerType> POLL_TYPE = MetaKey.of("scheduler-type", SchedulerType.class, SchedulerType.MAIN);
     @Deprecated
     MetaKey<ArgumentKey> ARGUMENT_KEY = MetaKey.of("argument-key", ArgumentKey.class, ArgumentKey.of());
     MetaKey<List<Class>> COMMAND_ORIGIN_TYPE = MetaKey.of("command-origin-class", MetaType.list(), Collections.emptyList());
