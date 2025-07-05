@@ -4,7 +4,7 @@ import org.spongepowered.plugin.metadata.model.PluginDependency
 plugins {
     id("java")
     id("com.gradleup.shadow") version "8.3.8"
-    id("org.spongepowered.gradle.plugin") version "2.2.0"
+    id("org.spongepowered.gradle.plugin") version "2.3.0"
 }
 
 java {

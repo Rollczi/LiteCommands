@@ -18,8 +18,8 @@ dependencies {
 
     // implementation("dev.rollczi:litecommands-bukkit:3.10.1") // <-- uncomment in your project
     // implementation("dev.rollczi:litecommands-adventure-platform:3.10.1") // <-- uncomment in your project
-    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
+    implementation("net.kyori:adventure-text-minimessage:4.23.0")
 
     implementation(project(":litecommands-bukkit")) // don't use this line in your build.gradle
     implementation(project(":litecommands-adventure-platform")) // don't use this line in your build.gradle
