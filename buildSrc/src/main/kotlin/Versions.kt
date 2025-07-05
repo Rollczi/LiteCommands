@@ -40,7 +40,7 @@ object Versions {
     const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.6.3+db4dfd856c"
 
     // TelegramBots
-    const val TELEGRAM_BOTS = "8.2.0"
+    const val TELEGRAM_BOTS = "9.0.0"
 
     // ChatGPT
     const val GSON = "2.11.0"
