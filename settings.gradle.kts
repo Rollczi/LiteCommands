@@ -12,10 +12,6 @@ compatibleWith("fabric maven", VERSION_17, tests = false) {
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
-}
-
 // core
 include(":litecommands-core")
 include(":litecommands-annotations")
