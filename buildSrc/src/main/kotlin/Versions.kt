@@ -32,7 +32,7 @@ object Versions {
 
     // Fabric
     // check these on https://fabricmc.net/develop
-    const val FABRIC_YARN_MAPPINGS = "1.21.7+build.4"
+    const val FABRIC_YARN_MAPPINGS = "1.21.7+build.6"
     val FABRIC_MINECRAFT = FABRIC_YARN_MAPPINGS.substringBefore('+')
     const val FABRIC_LOADER = "0.16.14"
     const val FABRIC_COMMAND_API_V2 = "2.2.53+946bf4c36c"
