@@ -23,7 +23,7 @@ public class MinestomScheduler implements Scheduler {
             .orElseThrow(() -> new IllegalStateException("Cannot resolve the thread type"));
         CompletableFuture<T> future = new CompletableFuture<>();
         Task.Builder built = scheduler.buildTask(() -> tryRun(supplier, future))
-            .executionType(poll.equals(SchedulerType.MAIN) ? ExecutionType.SYNC : ExecutionType.ASYNC);
+            .executionType(poll.equals(SchedulerType.MAIN) ? ExecutionType.TICK_START : ExecutionType.TICK_END);
 
         if (!delay.isZero()) {
             built.delay(delay);
