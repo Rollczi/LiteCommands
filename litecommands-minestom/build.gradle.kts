@@ -10,8 +10,8 @@ dependencies {
     api(project(":litecommands-framework"))
     api(project(":litecommands-adventure"))
     testImplementation(project(":litecommands-annotations"))
-    compileOnly("net.minestom:minestom-snapshots:${Versions.MINESTOM}")
-    testImplementation("net.minestom:minestom-snapshots:${Versions.MINESTOM}")
+    compileOnly("net.minestom:minestom:${Versions.MINESTOM}")
+    testImplementation("net.minestom:minestom:${Versions.MINESTOM}")
 }
 
 litecommandsPublish {
