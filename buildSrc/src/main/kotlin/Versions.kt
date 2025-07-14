@@ -22,7 +22,7 @@ object Versions {
     const val JDA = "5.6.1"
 
     // Minestom
-    const val MINESTOM = "7320437640"
+    const val MINESTOM = "2025.07.11-1.21.7"
 
     // Sponge
     const val SPONGE_API = "13.0.0"
