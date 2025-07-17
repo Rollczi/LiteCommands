@@ -25,7 +25,7 @@ object Versions {
     const val MINESTOM = "7320437640"
 
     // Sponge
-    const val SPONGE_API = "13.0.0"
+    const val SPONGE_API = "14.0.0"
 
     // Velocity
     const val VELOCITY_API = "3.2.0-SNAPSHOT"
