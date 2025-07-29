@@ -62,7 +62,7 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
     protected ParseResult<OfflinePlayer> parse(Invocation<CommandSender> invocation, Argument<OfflinePlayer> context, String argument) {
         return ParseResult.async(() -> {
             OfflinePlayer offlinePlayer = server.getOfflinePlayer(argument);
-            if (offlinePlayer.hasPlayedBefore() && !allowParseUnknownPlayers) {
+            if (!offlinePlayer.hasPlayedBefore() && !allowParseUnknownPlayers) {
                 return ParseResult.failure(messageRegistry.get(LiteBukkitMessages.OFFLINE_PLAYER_NOT_FOUND, invocation, argument));
             }
             return ParseResult.success(offlinePlayer);
