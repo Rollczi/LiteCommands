@@ -42,7 +42,13 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
             public void onServerStart(ServerLoadEvent event) {
                 nicknames.clear();
                 for (OfflinePlayer player : server.getOfflinePlayers()) {
-                    nicknames.add(player.getName());
+                    final String name = player.getName();
+                    // According to Bukkit API documentation, offline player objects may have no name
+                    //  if the server only knows about their unique ID when requested,
+                    //  so this check could prevent NullPointerException in this case
+                    if (name != null) {
+                        nicknames.add(name);
+                    }
                 }
             }
         }, plugin);
