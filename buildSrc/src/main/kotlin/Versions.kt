@@ -50,7 +50,7 @@ object Versions {
     // Adventure
     const val ADVENTURE_MINIMESSAGES = "4.23.0"
     const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.23.0"
-    const val ADVENTURE_PLATFORM_API = "4.4.0"
+    const val ADVENTURE_PLATFORM_API = "4.4.1"
 
     // Jakarta
     const val HIBERNATE_VALIDATOR = "9.0.1.Final"
