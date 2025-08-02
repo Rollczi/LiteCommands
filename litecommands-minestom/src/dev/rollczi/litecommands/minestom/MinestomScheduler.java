@@ -21,7 +21,7 @@ public class MinestomScheduler implements Scheduler {
 
     @Override
     public <T> CompletableFuture<T> supplyLater(SchedulerType origin, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        SchedulerType type = origin.resolve(SchedulerType.MAIN, SchedulerType.ASYNCHRONOUS)
+        SchedulerType type = origin.resolve(SchedulerType.MAIN, MinestomSchedulerType.TICK_START, MinestomSchedulerType.TICK_END, SchedulerType.ASYNCHRONOUS)
             .orElseThrow(() -> new IllegalStateException("Cannot resolve the thread type"));
         CompletableFuture<T> future = new CompletableFuture<>();
 
@@ -58,7 +58,6 @@ public class MinestomScheduler implements Scheduler {
         } catch (Throwable throwable) {
             future.completeExceptionally(throwable);
         }
-
     }
 
 }
