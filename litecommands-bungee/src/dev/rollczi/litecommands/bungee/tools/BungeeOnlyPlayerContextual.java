@@ -8,6 +8,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.function.Supplier;
 
+@Deprecated
 public class BungeeOnlyPlayerContextual<MESSAGE> implements ContextProvider<CommandSender, ProxiedPlayer> {
 
     private final Supplier<MESSAGE> onlyPlayerMessage;
