@@ -36,7 +36,7 @@ public class ServerInfoArgument extends ArgumentResolver<CommandSender, ServerIn
     @Override
     public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<ServerInfo> argument, SuggestionContext context) {
         return this.server.getServers().values().stream()
-            .collect(SuggestionResult.collector(serverInfo -> serverInfo.getName(), server -> server.getAddress().toString()));
+            .collect(SuggestionResult.collector(server -> server.getName(), server -> server.getAddress().toString()));
     }
 
 }

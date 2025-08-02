@@ -1,15 +1,14 @@
 package dev.rollczi.litecommands.bungee.context;
 
 import dev.rollczi.litecommands.LiteCommandsBuilder;
-import dev.rollczi.litecommands.context.ContextProvider;
+import dev.rollczi.litecommands.context.ContextChainAccessor;
+import dev.rollczi.litecommands.context.ContextChainedProvider;
 import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageKey;
-import dev.rollczi.litecommands.message.MessageRegistry;
-import dev.rollczi.litecommands.bungee.LiteBungeeMessages;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 
 /**
  * Built-in context provider that provides a server instance if the sender is a player and is connected to a server.
@@ -24,27 +23,12 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
  * builder.message(LiteBungeeMessages.NOT_CONNECTED_TO_ANY_SERVER, (invocation, player) -> "Hello, " + player.getName() + "! You are not connected to any server!");
  * </pre></blockquote>
  */
-public class ServerInfoContextProvider implements ContextProvider<CommandSender, ServerInfo> {
-
-    private final MessageRegistry<CommandSender> messageRegistry;
-
-    public ServerInfoContextProvider(MessageRegistry<CommandSender> messageRegistry) {
-        this.messageRegistry = messageRegistry;
-    }
+public class ServerInfoContextProvider implements ContextChainedProvider<CommandSender, ServerInfo> {
 
     @Override
-    public ContextResult<ServerInfo> provide(Invocation<CommandSender> invocation) {
-        if (invocation.sender() instanceof ProxiedPlayer) {
-            ProxiedPlayer sender = (ProxiedPlayer) invocation.sender();
-
-            if (sender.getServer() == null) {
-                return ContextResult.error(messageRegistry.get(LiteBungeeMessages.NOT_CONNECTED_TO_ANY_SERVER, invocation, sender));
-            }
-
-            return ContextResult.ok(() -> sender.getServer().getInfo());
-        }
-
-        return ContextResult.error(messageRegistry.get(LiteBungeeMessages.PLAYER_ONLY, invocation));
+    public ContextResult<ServerInfo> provide(Invocation<CommandSender> invocation, ContextChainAccessor<CommandSender> accessor) {
+        return accessor.provideContext(Server.class, invocation)
+            .map(server -> server.getInfo());
     }
 
 }

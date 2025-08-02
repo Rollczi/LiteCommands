@@ -36,7 +36,7 @@ public class PlayerArgument extends ArgumentResolver<CommandSender, ProxiedPlaye
     @Override
     public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<ProxiedPlayer> argument, SuggestionContext context) {
         return this.server.getPlayers().stream()
-            .collect(SuggestionResult.collector(ProxiedPlayer::getName, player -> player.getUniqueId().toString()));
+            .collect(SuggestionResult.collector(player -> player.getName(), player -> player.getUniqueId().toString()));
     }
 
 }
