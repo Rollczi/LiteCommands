@@ -10,28 +10,30 @@ import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBase;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolverBaseChained;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterChained;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
+import dev.rollczi.litecommands.argument.suggester.SuggesterRegistryImpl;
 import dev.rollczi.litecommands.bind.BindChainedProvider;
+import dev.rollczi.litecommands.bind.BindRegistry;
+import dev.rollczi.litecommands.command.CommandManager;
 import dev.rollczi.litecommands.command.CommandMerger;
+import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.builder.CommandBuilder;
+import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
+import dev.rollczi.litecommands.command.executor.CommandExecuteService;
 import dev.rollczi.litecommands.configurator.LiteConfigurator;
-import dev.rollczi.litecommands.cooldown.CooldownService;
-import dev.rollczi.litecommands.event.Event;
-import dev.rollczi.litecommands.event.EventPublisher;
-import dev.rollczi.litecommands.event.EventListener;
-import dev.rollczi.litecommands.event.SimpleEventPublisher;
 import dev.rollczi.litecommands.context.ContextChainedProvider;
+import dev.rollczi.litecommands.context.ContextRegistry;
+import dev.rollczi.litecommands.cooldown.CooldownService;
+import dev.rollczi.litecommands.editor.Editor;
+import dev.rollczi.litecommands.editor.EditorService;
+import dev.rollczi.litecommands.event.Event;
+import dev.rollczi.litecommands.event.EventListener;
+import dev.rollczi.litecommands.event.EventPublisher;
+import dev.rollczi.litecommands.event.SimpleEventPublisher;
 import dev.rollczi.litecommands.extension.LiteCommandsProviderExtension;
+import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.extension.annotations.AnnotationsExtension;
 import dev.rollczi.litecommands.extension.annotations.LiteAnnotationsProcessorExtension;
-import dev.rollczi.litecommands.permission.PermissionResolver;
-import dev.rollczi.litecommands.permission.PermissionService;
-import dev.rollczi.litecommands.permission.PermissionServiceImpl;
-import dev.rollczi.litecommands.platform.PlatformFactory;
-import dev.rollczi.litecommands.processor.LiteBuilderAction;
-import dev.rollczi.litecommands.command.executor.CommandExecuteService;
-import dev.rollczi.litecommands.bind.BindRegistry;
-import dev.rollczi.litecommands.extension.LiteExtension;
-import dev.rollczi.litecommands.context.ContextRegistry;
-import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.handler.exception.ExceptionHandler;
 import dev.rollczi.litecommands.handler.result.ResultHandleService;
 import dev.rollczi.litecommands.handler.result.ResultHandleServiceImpl;
@@ -44,7 +46,14 @@ import dev.rollczi.litecommands.message.MessageKey;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.MissingPermissions;
 import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
+import dev.rollczi.litecommands.permission.PermissionResolver;
+import dev.rollczi.litecommands.permission.PermissionService;
+import dev.rollczi.litecommands.permission.PermissionServiceImpl;
+import dev.rollczi.litecommands.platform.Platform;
+import dev.rollczi.litecommands.platform.PlatformFactory;
+import dev.rollczi.litecommands.platform.PlatformSettings;
 import dev.rollczi.litecommands.platform.PlatformSettingsConfigurator;
+import dev.rollczi.litecommands.processor.LiteBuilderAction;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.programmatic.LiteCommandsProgrammatic;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
@@ -59,32 +68,21 @@ import dev.rollczi.litecommands.schematic.SchematicGenerator;
 import dev.rollczi.litecommands.schematic.SchematicGeneratorReference;
 import dev.rollczi.litecommands.schematic.SimpleSchematicGenerator;
 import dev.rollczi.litecommands.scope.Scope;
+import dev.rollczi.litecommands.shared.Preconditions;
 import dev.rollczi.litecommands.strict.StrictMode;
 import dev.rollczi.litecommands.strict.StrictService;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.rollczi.litecommands.suggestion.SuggestionService;
-import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
-import dev.rollczi.litecommands.argument.suggester.SuggesterRegistryImpl;
-import dev.rollczi.litecommands.shared.Preconditions;
-import dev.rollczi.litecommands.command.CommandManager;
-import dev.rollczi.litecommands.command.CommandRoute;
-import dev.rollczi.litecommands.command.builder.CommandBuilder;
-import dev.rollczi.litecommands.command.builder.CommandBuilderCollector;
-import dev.rollczi.litecommands.editor.EditorService;
-import dev.rollczi.litecommands.platform.PlatformSettings;
-import dev.rollczi.litecommands.platform.Platform;
 import dev.rollczi.litecommands.validator.Validator;
 import dev.rollczi.litecommands.validator.ValidatorService;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.ApiStatus;
 
 public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B extends LiteCommandsBaseBuilder<SENDER, C, B>> implements
     LiteCommandsBuilder<SENDER, C, B>,
@@ -238,6 +236,16 @@ public class LiteCommandsBaseBuilder<SENDER, C extends PlatformSettings, B exten
         List<Object> instances = new ArrayList<>();
 
         for (Object command : commands) {
+            if (command instanceof Collection) {
+                this.commands(((Collection<?>) command).toArray());
+                continue;
+            }
+
+            if (command.getClass().isArray()) {
+                this.commands((Object[]) command);
+                continue;
+            }
+
             if (command instanceof LiteCommandsProvider) {
                 providers.add((LiteCommandsProvider<SENDER>) command);
                 continue;

@@ -1,6 +1,6 @@
 plugins {
     `litecommands-java`
-    `litecommands-java-11`
+    `litecommands-java-17`
     `litecommands-repositories`
     `litecommands-publish`
 }

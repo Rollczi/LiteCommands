@@ -12,7 +12,6 @@ object Versions {
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
     const val FOLIA_API = "1.21.4-R0.1-SNAPSHOT"
-    const val SPIGOT = "1.8.8-R0.1-SNAPSHOT"
     const val PROTOCOL_LIB = "5.3.0"
 
     // BungeeCord
@@ -22,13 +21,13 @@ object Versions {
     const val JDA = "5.6.1"
 
     // Minestom
-    const val MINESTOM = "7320437640"
+    const val MINESTOM = "2025.07.11-1.21.7"
 
     // Sponge
     const val SPONGE_API = "13.0.0"
 
     // Velocity
-    const val VELOCITY_API = "3.2.0-SNAPSHOT"
+    const val VELOCITY_API = "3.4.0-SNAPSHOT"
 
     // Fabric
     // check these on https://fabricmc.net/develop

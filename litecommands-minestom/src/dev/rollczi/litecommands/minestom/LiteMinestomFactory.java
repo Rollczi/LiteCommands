@@ -45,7 +45,7 @@ public final class LiteMinestomFactory {
                 .extension(new LiteAdventureExtension<>(), configuration -> configuration
                     .legacyColor(true)
                 )
-                .scheduler(new MinestomScheduler(schedulerManager))
+                .scheduler(new MinestomScheduler(schedulerManager, new SchedulerExecutorPoolImpl("minestom-async", 8)))
                 .argument(Player.class, new PlayerArgument(connectionManager, messageRegistry))
                 .argument(Instance.class, new InstanceArgument(instanceManager, messageRegistry))
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))

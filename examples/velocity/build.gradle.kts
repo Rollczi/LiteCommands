@@ -5,8 +5,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
-    annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 
     // implementation("dev.rollczi:litecommands-velocity:3.10.2") // <-- uncomment in your project
     implementation(project(":litecommands-velocity")) // don't use this line in your build.gradle

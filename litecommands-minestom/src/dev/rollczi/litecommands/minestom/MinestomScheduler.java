@@ -12,39 +12,52 @@ import net.minestom.server.timer.Task;
 public class MinestomScheduler implements Scheduler {
 
     private final SchedulerManager scheduler;
+    private final Scheduler asyncScheduler;
 
-    public MinestomScheduler(SchedulerManager scheduler) {
+    public MinestomScheduler(SchedulerManager scheduler, Scheduler asyncScheduler) {
         this.scheduler = scheduler;
+        this.asyncScheduler = asyncScheduler;
     }
 
     @Override
-    public <T> CompletableFuture<T> supplyLater(SchedulerType type, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
-        SchedulerType poll = type.resolve(SchedulerType.MAIN, SchedulerType.ASYNCHRONOUS)
+    public <T> CompletableFuture<T> supplyLater(SchedulerType origin, Duration delay, ThrowingSupplier<T, Throwable> supplier) {
+        SchedulerType type = origin.resolve(SchedulerType.MAIN, MinestomSchedulerType.TICK_START, MinestomSchedulerType.TICK_END, SchedulerType.ASYNCHRONOUS)
             .orElseThrow(() -> new IllegalStateException("Cannot resolve the thread type"));
         CompletableFuture<T> future = new CompletableFuture<>();
-        Task.Builder built = scheduler.buildTask(() -> tryRun(supplier, future))
-            .executionType(poll.equals(SchedulerType.MAIN) ? ExecutionType.SYNC : ExecutionType.ASYNC);
 
-        if (!delay.isZero()) {
-            built.delay(delay);
+        if (type == SchedulerType.MAIN || type == MinestomSchedulerType.TICK_START || type == MinestomSchedulerType.TICK_END) {
+            Task.Builder built = scheduler.buildTask(() -> tryRun(supplier, future));
+
+            if (!delay.isZero()) {
+                built.delay(delay);
+            }
+
+            if (type == MinestomSchedulerType.TICK_START) {
+                built.executionType(ExecutionType.TICK_START);
+            }
+
+            if (type == MinestomSchedulerType.TICK_END) {
+                built.executionType(ExecutionType.TICK_END);
+            }
+
+            built.schedule();
+            return future;
         }
 
-        built.schedule();
-        return future;
+        return asyncScheduler.supplyLater(SchedulerType.ASYNCHRONOUS, delay, supplier);
     }
 
     @Override
     public void shutdown() {
+        asyncScheduler.shutdown();
     }
 
-    private <T> CompletableFuture<T> tryRun(ThrowingSupplier<T, Throwable> supplier, CompletableFuture<T> future) {
+    private <T> void tryRun(ThrowingSupplier<T, Throwable> supplier, CompletableFuture<T> future) {
         try {
             future.complete(supplier.get());
         } catch (Throwable throwable) {
             future.completeExceptionally(throwable);
         }
-
-        return future;
     }
 
 }
