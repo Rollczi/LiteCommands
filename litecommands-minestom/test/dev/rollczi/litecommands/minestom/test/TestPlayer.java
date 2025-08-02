@@ -9,17 +9,16 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.minestom.server.entity.Player;
+import net.minestom.server.network.player.GameProfile;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 public class TestPlayer extends Player {
 
     private final List<Object> messages = new ArrayList<>();
 
-    public TestPlayer(String name, UUID uuid, @NotNull PlayerConnection connection) {
-        super(uuid, name, connection);
+    public TestPlayer(@NotNull PlayerConnection connection, GameProfile profile) {
+        super(connection, profile);
     }
 
     @Override
