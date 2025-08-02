@@ -7,14 +7,14 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.programmatic.LiteCommand;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.unit.TestSender;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 // TODO move to framework test
 class EditorTest extends LiteTestSpec {
 
     static LiteTestConfig config = builder -> builder
-        .commands(new ProgrammaticToEdit())
-        .commands(new NamedProgrammaticToEdit())
+        .commands(Arrays.asList(new ProgrammaticToEdit(), new NamedProgrammaticToEdit()))
         .editor(Scope.command(CommandToEdit.class), context -> context.name("class-after"))
         .editor(Scope.command(ProgrammaticToEdit.class), context -> context.name("programmatic-class-after"))
         .editor(Scope.command("named-before"), context -> context.name("named-after"))
