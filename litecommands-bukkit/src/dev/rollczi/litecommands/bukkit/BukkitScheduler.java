@@ -19,13 +19,10 @@ public class BukkitScheduler extends AbstractMainThreadBasedScheduler {
     public BukkitScheduler(org.bukkit.scheduler.BukkitScheduler bukkitScheduler, Plugin plugin) {
         this.bukkitScheduler = bukkitScheduler;
         this.plugin = plugin;
-        try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
-            Class.forName("io.papermc.paper.threadedregions.scheduler.RegionScheduler");
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
+        if (Environment.isFolia()) {
             plugin.getLogger().log(Level.WARNING, "[LiteCommands] Folia detected, but Folia extension is not enabled. " +
                 "To enable Folia support see https://docs.rollczi.dev/documentation/litecommands/extensions/folia.html");
-        } catch (ClassNotFoundException ignored) {}
+        }
     }
 
     @Override
