@@ -57,4 +57,8 @@ public class LiteBukkitMessages extends LiteMessages {
         input -> "&cPlayer " + input + " not found! (OFFLINE_PLAYER_NOT_FOUND)"
     ).withFallbacks(PLAYER_NOT_FOUND);
 
+    public static final MessageKey<String> NAMESPACED_KEY_INVALID = MessageKey.of(
+        "namespaced-key-invalid",
+        unused -> "&cNamespaced key is not valid! (NAMESPACED_KEY_INVALID)"
+    );
 }
