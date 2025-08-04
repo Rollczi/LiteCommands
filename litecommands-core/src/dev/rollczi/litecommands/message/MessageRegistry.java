@@ -1,10 +1,8 @@
 package dev.rollczi.litecommands.message;
 
 import dev.rollczi.litecommands.invocation.Invocation;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,25 +19,24 @@ public class MessageRegistry<SENDER> {
         invokedMessages.put(key, message);
     }
 
-    public Optional<Object> get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<Void> key, Invocation<SENDER> invocation) {
+    public Object get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<Void> key, Invocation<SENDER> invocation) {
         return get(key, invocation, null);
     }
 
-    @SuppressWarnings("unchecked")
-    public <CONTEXT> Optional<Object> get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<CONTEXT> key, Invocation<SENDER> invocation, CONTEXT context) {
+    public <CONTEXT> Object get(@MagicConstant(valuesFromClass = LiteMessages.class) MessageKey<CONTEXT> key, Invocation<SENDER> invocation, CONTEXT context) {
         Object invokedMessage = getRegisteredMessage(key, invocation, context);
         if (invokedMessage != null) {
-            return Optional.of(invokedMessage);
+            return invokedMessage;
         }
 
         for (MessageKey<CONTEXT> fallback : key.getFallbacks()) {
             Object fallbackMessage = getRegisteredMessage(fallback, invocation, context);
             if (fallbackMessage != null) {
-                return Optional.of(fallbackMessage);
+                return fallbackMessage;
             }
         }
 
-        return Optional.of(key.getDefaultMessage(context));
+        return key.getDefaultMessage(context);
     }
 
     @Nullable

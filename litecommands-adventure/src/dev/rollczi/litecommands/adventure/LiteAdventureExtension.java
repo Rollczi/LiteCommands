@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.configurator.LiteConfigurator;
 import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 
@@ -57,6 +58,8 @@ public class LiteAdventureExtension<SENDER> implements LiteExtension<SENDER, Lit
             .argumentParser(Component.class, ProfileNamespaces.JOIN, settings.colorizeArgument ? joinColor : joinRaw)
             .argumentParser(Component.class, ProfileNamespaces.JOIN.withKey("raw"), joinRaw)
             .argumentParser(Component.class, ProfileNamespaces.JOIN.withKey("color"), joinColor)
+
+            .argumentParser(Key.class, new AdventureKeyArgument<>(internal.getMessageRegistry()))
 
             .context(Audience.class, new AdventureAudienceContextual<>(adventureAudienceProvider))
 

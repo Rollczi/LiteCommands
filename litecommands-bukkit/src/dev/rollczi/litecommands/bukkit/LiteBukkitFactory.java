@@ -4,6 +4,7 @@ import dev.rollczi.litecommands.LiteCommandsBaseBuilder;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.LiteCommandsFactory;
 import dev.rollczi.litecommands.bukkit.argument.LocationArgument;
+import dev.rollczi.litecommands.bukkit.argument.NamespacedKeyArgument;
 import dev.rollczi.litecommands.bukkit.argument.OfflinePlayerArgument;
 import dev.rollczi.litecommands.bukkit.argument.OldEnumAccessor;
 import dev.rollczi.litecommands.bukkit.argument.OldEnumArgument;
@@ -18,6 +19,7 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.PermissionResolver;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -83,6 +85,7 @@ public final class LiteBukkitFactory {
                 .argument(World.class, new WorldArgument(server, messageRegistry))
                 .argument(Location.class, new LocationArgument(messageRegistry))
                 .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, messageRegistry, settings.isParseUnknownPlayersAllowed(), settings.getPlayerNamePattern()))
+                .argument(NamespacedKey.class, new NamespacedKeyArgument(plugin, messageRegistry))
 
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
                 .context(ConsoleCommandSender.class, new ConsoleOnlyContextProvider(messageRegistry))

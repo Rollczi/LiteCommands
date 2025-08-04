@@ -1,14 +1,9 @@
 package dev.rollczi.litecommands.message;
 
-import dev.rollczi.litecommands.unit.TestSender;
 import dev.rollczi.litecommands.unit.Invocations;
+import dev.rollczi.litecommands.unit.TestSender;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MessageRegistryTest {
 
@@ -39,8 +34,7 @@ class MessageRegistryTest {
 
     private static void assertMessage(MessageRegistry<TestSender> registry, MessageKey<Void> key, String message) {
         assertThat(registry.get(key, Invocations.empty()))
-            .isPresent()
-            .hasValue(message);
+            .isEqualTo(message);
     }
 
 }
