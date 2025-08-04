@@ -268,28 +268,19 @@ internal class VarargsArgumentTest : LiteTestSpec() {
             .assertFailureInvalid(Cause.INVALID_ARGUMENT)
 
         platform.execute("$command Instant 2021-01-01 Invalid")
-            .assertOptionalFailure("Invalid date format '2021-01-01 Invalid'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
+            .assertFailure("Invalid date format '2021-01-01 Invalid'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
 
         platform.execute("$command Instant 2021-01-01 00:05:50${del}2023-04-17 Invalid${del}2016-12-31 23:59:59")
-            .assertOptionalFailure("Invalid date format '2023-04-17 Invalid'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
+            .assertFailure("Invalid date format '2023-04-17 Invalid'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
 
          platform.execute("$command Instant Invalid 00:05:50${del}2023-04-17 00:05:50${del}2016-12-31 23:59:59")
-            .assertOptionalFailure("Invalid date format 'Invalid 00:05:50'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
+            .assertFailure("Invalid date format 'Invalid 00:05:50'! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
 
         platform.execute("$command Instant 2021-01-01 00:05:50${del}2023-04-17 11:03:00${del}2016-12-31 ")
-            .assertOptionalFailure("Invalid date format '2016-12-31 '! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
+            .assertFailure("Invalid date format '2016-12-31 '! Use: <yyyy-MM-dd> <HH:mm:ss> (INSTANT_INVALID_FORMAT)")
 
         platform.execute("$command Instant 2021-01-01 00:05:50${del}2023-04-17 11:03:00${del}")
             .assertFailureInvalid(Cause.MISSING_PART_OF_ARGUMENT)
-    }
-
-    private fun AssertExecute.assertOptionalFailure(message: String) {
-        val optional = assertFailedAs(Optional::class.java)
-            .map { it as String }
-
-        assertThat(optional)
-            .isPresent
-            .hasValue(message)
     }
 
     @ParameterizedTest

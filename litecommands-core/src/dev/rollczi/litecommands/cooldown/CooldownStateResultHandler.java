@@ -17,8 +17,7 @@ public class CooldownStateResultHandler<SENDER> implements ResultHandler<SENDER,
 
     @Override
     public void handle(Invocation<SENDER> invocation, CooldownState cooldownState, ResultHandlerChain<SENDER> chain) {
-        this.messageRegistry.get(COMMAND_COOLDOWN, invocation, cooldownState)
-            .ifPresent(object -> chain.resolve(invocation, object));
+        chain.resolve(invocation, this.messageRegistry.get(COMMAND_COOLDOWN, invocation, cooldownState));
     }
 
 }

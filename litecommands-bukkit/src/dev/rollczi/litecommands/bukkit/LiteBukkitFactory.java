@@ -85,7 +85,7 @@ public final class LiteBukkitFactory {
                 .argument(World.class, new WorldArgument(server, messageRegistry))
                 .argument(Location.class, new LocationArgument(messageRegistry))
                 .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, messageRegistry, settings.isParseUnknownPlayersAllowed(), settings.getPlayerNamePattern()))
-                .argument(NamespacedKey.class, new NamespacedKeyArgument(messageRegistry))
+                .argument(NamespacedKey.class, new NamespacedKeyArgument(plugin, messageRegistry))
 
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
                 .context(ConsoleCommandSender.class, new ConsoleOnlyContextProvider(messageRegistry))

@@ -15,8 +15,7 @@ public class InvalidUsageHandlerImpl<SENDER> implements InvalidUsageHandler<SEND
 
     @Override
     public void handle(Invocation<SENDER> invocation, InvalidUsage<SENDER> result, ResultHandlerChain<SENDER> chain) {
-        this.messageRegistry.get(LiteMessages.INVALID_USAGE, invocation, result)
-            .ifPresent(object -> chain.resolve(invocation, object));
+       chain.resolve(invocation, this.messageRegistry.get(LiteMessages.INVALID_USAGE, invocation, result));
     }
 
 }

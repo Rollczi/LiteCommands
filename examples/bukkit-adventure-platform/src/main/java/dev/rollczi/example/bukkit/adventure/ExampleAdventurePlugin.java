@@ -1,10 +1,10 @@
 package dev.rollczi.example.bukkit.adventure;
 
+import dev.rollczi.example.bukkit.adventure.command.KeyCommand;
 import dev.rollczi.example.bukkit.adventure.command.NoticeCommand;
-import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
 import dev.rollczi.example.bukkit.adventure.command.TeleportCommand;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.annotations.LiteCommandsAnnotations;
+import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import net.kyori.adventure.platform.AudienceProvider;
@@ -37,6 +37,7 @@ public class ExampleAdventurePlugin extends JavaPlugin {
 
             .commands(
                 new TeleportCommand(),
+                new KeyCommand(),
                 new NoticeCommand(audienceProvider)
             )
 
