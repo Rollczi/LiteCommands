@@ -91,7 +91,7 @@ maven("https://repo.panda-lang.org/releases")
 
 #### ➕ Add LiteCommands to dependencies
 ```kts
-implementation("dev.rollczi:{artifact}:3.10.4")
+implementation("dev.rollczi:{artifact}:3.10.5")
 ```
 ```xml
 <dependency>

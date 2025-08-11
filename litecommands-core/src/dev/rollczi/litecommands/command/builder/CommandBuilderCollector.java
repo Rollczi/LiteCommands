@@ -17,20 +17,7 @@ public class CommandBuilderCollector<SENDER> {
         List<CommandBuilder<SENDER>> collectedBuilders = new ArrayList<>();
 
         for (CommandBuilderProvider<SENDER> provider : this.providers) {
-
-            nextBuilder:
-            for (CommandBuilder<SENDER> builder : provider.getCommands()) {
-                for (CommandBuilder<SENDER> collectedBuilder : collectedBuilders) {
-                    if (!collectedBuilder.hasSimilarNames(builder)) {
-                        continue;
-                    }
-
-                    collectedBuilder.meagre(builder);
-                    continue nextBuilder;
-                }
-
-                collectedBuilders.add(builder);
-            }
+            collectedBuilders.addAll(provider.getCommands());
         }
 
         return collectedBuilders;

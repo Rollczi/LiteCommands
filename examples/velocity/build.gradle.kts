@@ -19,7 +19,7 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 
-    // implementation("dev.rollczi:litecommands-velocity:3.10.4") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-velocity:3.10.5") // <-- uncomment in your project
     implementation(project(":litecommands-velocity")) // don't use this line in your build.gradle
 }
 

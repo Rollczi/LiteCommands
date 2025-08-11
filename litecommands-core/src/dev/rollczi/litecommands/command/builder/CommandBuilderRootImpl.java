@@ -7,9 +7,7 @@ import dev.rollczi.litecommands.meta.MetaHolder;
 import dev.rollczi.litecommands.util.StringUtil;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> implements CommandBuilder<SENDER> {
 
     private Meta meta = Meta.create();
-    private final Map<String, Meta> childrenMeta = new HashMap<>();
 
     @Override
     public @NotNull CommandBuilder<SENDER> name(String name) {
@@ -133,25 +130,7 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
 
     @Override
     public void meagre(CommandBuilder<SENDER> context) {
-        for (CommandBuilder<SENDER> child : context.children()) {
-            if (children.containsKey(child.name())) {
-                children.get(child.name()).meagre(child);
-
-                if (childrenMeta.containsKey(child.name())) {
-                    childrenMeta.get(child.name()).putAll(context.meta());
-                }
-                else {
-                    childrenMeta.put(child.name(), context.meta().copy().putAll(this.meta));
-                }
-
-            }
-            else {
-                children.put(child.name(), child);
-                childrenMeta.put(child.name(), context.meta().copy());
-            }
-
-
-        }
+        throw new UnsupportedOperationException("Cannot meagre root command");
     }
 
     @Override
@@ -177,9 +156,7 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     @Override
     public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
         return this.children.values().stream()
-            .map(senderCommandEditorContext -> senderCommandEditorContext.build(parent))
-            .flatMap(Collection::stream)
-            .peek(route -> route.meta().putAll(this.childrenMeta.getOrDefault(route.getName(), this.meta)))
+            .flatMap(builder -> builder.build(parent).stream())
             .collect(Collectors.toList());
     }
 

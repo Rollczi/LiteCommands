@@ -103,13 +103,10 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
         List<String> aliases = new ArrayList<>(this.aliases);
         aliases.addAll(toMerge.getAliases());
 
-        CommandRouteImpl<SENDER> merged = new CommandRouteImpl<SENDER>(this.name, aliases, this.parent) {
-            @Override
-            public boolean isReference() {
-                return CommandRouteImpl.this.isReference(); // because parent is the same. TODO: refactor
-            }
-        };
+        // TODO: Bridge should be other type of command node
+        CommandRouteBridge merged = new CommandRouteBridge(aliases);
 
+        // TODO: Bridge should have multiple source of metadata
         merged.meta().putAll(this.meta());
         merged.meta().putAll(toMerge.meta());
 
@@ -146,7 +143,11 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
     public void appendChildren(CommandRoute<SENDER> children) {
         for (String name : children.names()) {
             if (this.childrenByName.containsKey(name)) {
-                throw new IllegalArgumentException("Route with name or alias '" + name + "' already exists!");
+                CommandRoute<SENDER> toMerge = this.childrenByName.get(name);
+                this.childRoutes.remove(toMerge);
+                this.childrenByName.remove(name);
+
+                children = toMerge.merge(children);
             }
         }
 
@@ -171,5 +172,16 @@ class CommandRouteImpl<SENDER> implements CommandRoute<SENDER> {
             ", aliases=" + aliases +
             ", meta=" + meta +
             '}';
+    }
+
+    private class CommandRouteBridge extends CommandRouteImpl<SENDER> {
+        public CommandRouteBridge(List<String> aliases) {
+            super(CommandRouteImpl.this.name, aliases, CommandRouteImpl.this.parent);
+        }
+
+        @Override
+        public boolean isReference() {
+            return CommandRouteImpl.this.isReference(); // because parent is the same. TODO: refactor
+        }
     }
 }
