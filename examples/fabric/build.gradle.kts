@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    val yarnVersion = "1.21.8+build.1"
+    val yarnVersion = "25w14craftmine+build.5"
     val minecraftVersion = yarnVersion.substringBefore('+')
     mappings("net.fabricmc:yarn:$yarnVersion")
     minecraft("com.mojang:minecraft:$minecraftVersion")
