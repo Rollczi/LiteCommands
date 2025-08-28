@@ -157,6 +157,7 @@ class CommandBuilderRootImpl<SENDER> extends CommandBuilderChildrenBase<SENDER> 
     public Collection<CommandRoute<SENDER>> build(CommandRoute<SENDER> parent) {
         return this.children.values().stream()
             .flatMap(builder -> builder.build(parent).stream())
+            .peek(route -> route.meta().putAll(this.meta))
             .collect(Collectors.toList());
     }
 
