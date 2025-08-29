@@ -10,7 +10,7 @@ dependencies {
     api(project(":litecommands-framework"))
 
     compileOnly("org.spigotmc:spigot-api:${Versions.SPIGOT_API}")
-    compileOnly("com.comphenix.protocol:ProtocolLib:${Versions.PROTOCOL_LIB}")
+    compileOnly("net.dmulloy2:ProtocolLib:${Versions.PROTOCOL_LIB}")
     testImplementation("org.spigotmc:spigot-api:${Versions.SPIGOT_API}")
     testImplementation("org.mockito:mockito-core:${Versions.MOCKITO}")
 }
