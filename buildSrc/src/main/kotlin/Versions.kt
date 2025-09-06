@@ -1,7 +1,7 @@
 object Versions {
 
     // Core
-    const val JETBRAINS_ANNOTATIONS = "26.0.2"
+    const val JETBRAINS_ANNOTATIONS = "26.0.2-1"
 
     // Tests
     const val JUNIT_JUPITER = "5.13.4"
