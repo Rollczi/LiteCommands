@@ -6,13 +6,13 @@ object Versions {
     // Tests
     const val JUNIT_JUPITER = "5.13.4"
     const val ASSERTJ = "3.27.4"
-    const val MOCKITO = "5.18.0"
+    const val MOCKITO = "5.19.0"
     const val AWAITILITY = "4.3.0"
 
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
     const val FOLIA_API = "1.21.4-R0.1-SNAPSHOT"
-    const val PROTOCOL_LIB = "5.3.0"
+    const val PROTOCOL_LIB = "5.4.0"
 
     // BungeeCord
     const val BUNGEECORD_API = "1.21-R0.3"
