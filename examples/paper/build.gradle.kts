@@ -1,8 +1,8 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "8.3.9"
+    id("com.gradleup.shadow") version "9.1.0"
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.0"
 }
 
 repositories {
