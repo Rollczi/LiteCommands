@@ -42,7 +42,7 @@ object Versions {
     const val TELEGRAM_BOTS = "9.0.0"
 
     // ChatGPT
-    const val GSON = "2.13.1"
+    const val GSON = "2.13.2"
     const val CAFFEINE = "3.2.2"
     const val OKHTTP = "5.1.0"
 
