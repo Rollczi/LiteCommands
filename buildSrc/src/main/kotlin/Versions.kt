@@ -6,13 +6,13 @@ object Versions {
     // Tests
     const val JUNIT_JUPITER = "5.13.4"
     const val ASSERTJ = "3.27.4"
-    const val MOCKITO = "5.18.0"
+    const val MOCKITO = "5.19.0"
     const val AWAITILITY = "4.3.0"
 
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
     const val FOLIA_API = "1.21.4-R0.1-SNAPSHOT"
-    const val PROTOCOL_LIB = "5.3.0"
+    const val PROTOCOL_LIB = "5.4.0"
 
     // BungeeCord
     const val BUNGEECORD_API = "1.21-R0.3"
@@ -39,7 +39,7 @@ object Versions {
     const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.6.7+33df5e6e5d"
 
     // TelegramBots
-    const val TELEGRAM_BOTS = "9.0.0"
+    const val TELEGRAM_BOTS = "9.1.0"
 
     // ChatGPT
     const val GSON = "2.13.2"
