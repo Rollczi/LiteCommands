@@ -19,7 +19,6 @@ import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.permission.PermissionResolver;
 import dev.rollczi.litecommands.reflect.type.TypeRange;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -65,10 +64,18 @@ public final class LiteBukkitFactory {
         return (B) builder0(plugin, server, settings);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static <B extends LiteCommandsBaseBuilder<CommandSender, LiteBukkitSettings, B>> B builder0(Plugin plugin, Server server, LiteBukkitSettings settings) {
         return LiteCommandsFactory.<CommandSender, LiteBukkitSettings, B>builder(CommandSender.class, builder -> new BukkitPlatform(settings, builder.getPermissionService())).self((builder, internal) -> {
             MessageRegistry<CommandSender> messageRegistry = internal.getMessageRegistry();
+
+            Class namespacedKeyClass = null;
+            try {
+                namespacedKeyClass = Class.forName("org.bukkit.NamespacedKey");
+            }
+            catch (ClassNotFoundException e) {
+                // NO-OP
+            }
 
             builder
                 .permissionResolver(PermissionResolver.createDefault(CommandSender.class, (sender, permission) -> sender.hasPermission(permission)))
@@ -84,14 +91,17 @@ public final class LiteBukkitFactory {
                 .argument(Player.class, new PlayerArgument(server, messageRegistry))
                 .argument(World.class, new WorldArgument(server, messageRegistry))
                 .argument(Location.class, new LocationArgument(messageRegistry))
-                .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, messageRegistry, settings.isParseUnknownPlayersAllowed(), settings.getPlayerNamePattern()))
-                .argument(NamespacedKey.class, new NamespacedKeyArgument(plugin, messageRegistry))
+                .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, messageRegistry, settings.isParseUnknownPlayersAllowed(), settings.getPlayerNamePattern()));
 
+            if (namespacedKeyClass != null) {
+                builder.argument(namespacedKeyClass, new NamespacedKeyArgument(plugin, messageRegistry));
+            }
+
+            builder
                 .context(Player.class, new PlayerOnlyContextProvider(messageRegistry))
                 .context(ConsoleCommandSender.class, new ConsoleOnlyContextProvider(messageRegistry))
                 .context(World.class, new WorldContext(messageRegistry))
                 .context(Location.class, new LocationContext(messageRegistry))
-
                 .result(String.class, new StringHandler());
 
             if (OldEnumAccessor.isAvailable()) {
