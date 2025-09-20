@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("fabric-loom") version "1.11.7"
+    id("fabric-loom") version "1.11.8"
 }
 
 java {
@@ -17,13 +17,13 @@ repositories {
 }
 
 dependencies {
-    val yarnVersion = "1.21.8+build.1"
+    val yarnVersion = "1.21.9-pre2+build.2"
     val minecraftVersion = yarnVersion.substringBefore('+')
     mappings("net.fabricmc:yarn:$yarnVersion")
     minecraft("com.mojang:minecraft:$minecraftVersion")
 
     modImplementation("net.fabricmc:fabric-loader:0.17.2")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.133.0+1.21.9")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.133.10+1.21.9")
 
     modLocalRuntime("maven.modrinth:fabric-permissions-api:0.4.0")
     modLocalRuntime("maven.modrinth:luckperms:5.4.36-forge")
