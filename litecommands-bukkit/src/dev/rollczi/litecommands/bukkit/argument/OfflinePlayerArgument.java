@@ -11,13 +11,14 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
 
 public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, OfflinePlayer> {
@@ -37,21 +38,18 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
         this.playerNamePattern = playerNamePattern;
 
         // Server#getOfflinePlayers() can be blocking, so we don't want to call it every time
-        server.getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onServerStart(ServerLoadEvent event) {
-                nicknames.clear();
-                for (OfflinePlayer player : server.getOfflinePlayers()) {
-                    final String name = player.getName();
-                    // According to Bukkit API documentation, offline player objects may have no name
-                    //  if the server only knows about their unique ID when requested,
-                    //  so this check could prevent NullPointerException in this case
-                    if (name != null) {
-                        nicknames.add(name);
-                    }
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            nicknames.clear();
+            for (OfflinePlayer player : server.getOfflinePlayers()) {
+                final String name = player.getName();
+                // According to Bukkit API documentation, offline player objects may have no name
+                //  if the server only knows about their unique ID when requested,
+                //  so this check could prevent NullPointerException in this case
+                if (name != null) {
+                    nicknames.add(name);
                 }
             }
-        }, plugin);
+        });
 
         // Save new joining player names so our suggestions are more wide
         // TODO: Unregister this listener on Platform#unregister()
