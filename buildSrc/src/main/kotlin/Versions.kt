@@ -15,7 +15,7 @@ object Versions {
     const val PROTOCOL_LIB = "5.3.0"
 
     // BungeeCord
-    const val BUNGEECORD_API = "1.21-R0.3"
+    const val BUNGEECORD_API = "1.21-R0.4"
 
     // JDA
     const val JDA = "5.6.1"
