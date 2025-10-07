@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    // implementation("dev.rollczi:litecommands-telegrambots:3.10.5") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-telegrambots:3.10.6") // <-- uncomment in your project
     implementation(project(":litecommands-telegrambots")) // don't use this line in your build.gradle
 
     implementation("org.telegram:telegrambots-longpolling:${Versions.TELEGRAM_BOTS}")
