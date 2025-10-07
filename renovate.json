@@ -5,12 +5,9 @@
   ],
   "dependencyDashboard": true,
   "ignorePaths": [],
-  "groupName": "all dependencies",
-  "groupSlug": "all",
   "lockFileMaintenance": {
     "enabled": false
   },
-  "separateMajorMinor": true,
   "pruneStaleBranches": true,
   "commitMessagePrefix": "dependency:",
   "packageRules": [
