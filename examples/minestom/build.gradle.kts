@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     implementation("net.minestom:minestom:${Versions.MINESTOM}")
-    implementation("net.kyori:adventure-text-minimessage:4.24.0")
+    implementation("net.kyori:adventure-text-minimessage:4.25.0")
 
     // implementation("dev.rollczi:litecommands-minestom:3.10.5") // <-- uncomment in your project
     implementation(project(":litecommands-minestom")) // don't use this line in your build.gradle
