@@ -29,33 +29,6 @@
       ],
       "allowedVersions": "/^\\d+\\.\\d+(\\.\\d+)?-R\\d+\\.\\d+-SNAPSHOT$/",
       "automerge": false
-    },
-    {
-      "groupName": "patch",
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "updateTypes": ["patch"],
-      "automerge": true,
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*"]
-    },
-    {
-      "groupName": "minor",
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "updateTypes": ["minor"],
-      "automerge": true,
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*"]
-    },
-    {
-      "groupName": "all-major",
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "updateTypes": ["major"],
-      "automerge": false,
-      "excludePackagePatterns": ["org.spigotmc*", "net.fabricmc*", "fabric-loom*"]
     }
   ]
 }
