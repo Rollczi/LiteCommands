@@ -4,7 +4,7 @@ object Versions {
     const val JETBRAINS_ANNOTATIONS = "26.0.2-1"
 
     // Tests
-    const val JUNIT_JUPITER = "5.13.4"
+    const val JUNIT_JUPITER = "6.0.0"
     const val ASSERTJ = "3.27.6"
     const val MOCKITO = "5.18.0"
     const val AWAITILITY = "4.3.0"
@@ -24,7 +24,7 @@ object Versions {
     const val MINESTOM = "2025.08.29-1.21.8"
 
     // Sponge
-    const val SPONGE_API = "13.0.0"
+    const val SPONGE_API = "14.0.0"
 
     // Velocity
     const val VELOCITY_API = "3.4.0-SNAPSHOT"
