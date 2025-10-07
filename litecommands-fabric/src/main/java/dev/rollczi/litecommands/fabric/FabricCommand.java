@@ -87,6 +87,12 @@ public class FabricCommand<SOURCE> {
             }
         }
 
+        for (CommandRoute<SOURCE> child : route.getChildren()) {
+            if (this.hasAnyPermission(source, child)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
