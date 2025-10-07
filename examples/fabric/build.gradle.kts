@@ -23,11 +23,11 @@ dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
 
     modImplementation("net.fabricmc:fabric-loader:0.17.2")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.133.0+1.21.9")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.132.0+1.21.8")
 
     modLocalRuntime("maven.modrinth:fabric-permissions-api:0.4.0")
-    modLocalRuntime("maven.modrinth:luckperms:5.4.36-forge")
-    modLocalRuntime("com.terraformersmc:modmenu:13.0.3")
+    modLocalRuntime("maven.modrinth:luckperms:v5.5.10-fabric")
+    modLocalRuntime("com.terraformersmc:modmenu:15.0.0")
 
     // modImplementation("dev.rollczi:litecommands-fabric:3.10.5") <-- uncomment in your project
     // modImplementation("dev.rollczi:litecommands-luckperms:3.10.5") <-- uncomment in your project

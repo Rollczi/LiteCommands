@@ -2,7 +2,7 @@ plugins {
     `litecommands-java-17`
     `litecommands-repositories`
     `litecommands-publish`
-    id("fabric-loom") version "1.11.7"
+    id("fabric-loom") version Versions.FABRIC_LOOM_PLUGIN
 }
 
 repositories {
