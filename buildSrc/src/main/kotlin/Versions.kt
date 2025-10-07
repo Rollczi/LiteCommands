@@ -12,7 +12,7 @@ object Versions {
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
     const val FOLIA_API = "1.21.4-R0.1-SNAPSHOT"
-    const val PROTOCOL_LIB = "5.3.0"
+    const val PROTOCOL_LIB = "5.4.0"
 
     // BungeeCord
     const val BUNGEECORD_API = "1.21-R0.4"
@@ -21,7 +21,7 @@ object Versions {
     const val JDA = "5.6.1"
 
     // Minestom
-    const val MINESTOM = "2025.08.29-1.21.8"
+    const val MINESTOM = "2025.10.05-1.21.8"
 
     // Sponge
     const val SPONGE_API = "13.0.0"
@@ -40,7 +40,7 @@ object Versions {
     const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.6.7+33df5e6e5d"
 
     // TelegramBots
-    const val TELEGRAM_BOTS = "9.0.0"
+    const val TELEGRAM_BOTS = "9.1.0"
 
     // ChatGPT
     const val GSON = "2.13.2"
@@ -48,8 +48,8 @@ object Versions {
     const val OKHTTP = "5.1.0"
 
     // Adventure
-    const val ADVENTURE_MINIMESSAGES = "4.24.0"
-    const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.24.0"
+    const val ADVENTURE_MINIMESSAGES = "4.25.0"
+    const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.25.0"
     const val ADVENTURE_PLATFORM_API = "4.4.1"
 
     // Jakarta
