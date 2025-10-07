@@ -8,6 +8,7 @@
   "lockFileMaintenance": {
     "enabled": false
   },
+  "automerge": true,
   "pruneStaleBranches": true,
   "commitMessagePrefix": "dependency:",
   "packageRules": [
