@@ -45,7 +45,7 @@ object Versions {
     // ChatGPT
     const val GSON = "2.13.2"
     const val CAFFEINE = "3.2.2"
-    const val OKHTTP = "5.1.0"
+    const val OKHTTP = "5.2.0"
 
     // Adventure
     const val ADVENTURE_MINIMESSAGES = "4.24.0"
