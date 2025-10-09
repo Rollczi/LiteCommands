@@ -26,7 +26,7 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.132.0+1.21.8")
 
     modLocalRuntime("maven.modrinth:fabric-permissions-api:0.4.0")
-    modLocalRuntime("maven.modrinth:luckperms:v5.5.10-fabric")
+    modLocalRuntime("maven.modrinth:luckperms:v5.5.16-forge")
     modLocalRuntime("com.terraformersmc:modmenu:15.0.0")
 
     // modImplementation("dev.rollczi:litecommands-fabric:3.10.6") <-- uncomment in your project
