@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "8.3.9"
+    id("com.gradleup.shadow") version "9.2.2"
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
     id("xyz.jpenilla.run-paper") version "3.0.1"
 }
