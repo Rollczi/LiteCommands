@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("com.gradleup.shadow") version "9.2.2"
-    id("xyz.jpenilla.run-velocity") version "2.3.1"
+    id("xyz.jpenilla.run-velocity") version "3.0.1"
 }
 
 java {
