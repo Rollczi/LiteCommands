@@ -7,6 +7,9 @@ import dev.rollczi.litecommands.platform.PlatformInvocationListener;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.JDA;
@@ -16,12 +19,9 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
+import net.dv8tion.jda.api.interactions.IntegrationType;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +73,7 @@ class JDAPlatform extends AbstractSimplePlatform<User, LiteJDASettings> {
         for (String name : commandRoute.names()) {
             SlashCommandData command = translated.jdaCommandData().setName(name);
 
-            if (command.isGuildOnly() && !guilds.isEmpty()) {
+            if (command.getIntegrationTypes().contains(IntegrationType.GUILD_INSTALL) && !guilds.isEmpty()) {
                 for (Guild guild : guilds) {
                     guild.upsertCommand(command).queue();
                 }
