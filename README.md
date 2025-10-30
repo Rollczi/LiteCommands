@@ -134,7 +134,7 @@ and other useful features to make your development experience smoother and more 
 <div>
     <h2>💖 Thanks for our partners!</h2>
     <a  href="https://www.jetbrains.com/idea/">
-        <img src="https://github.com/Rollczi/LiteCommands/assets/49173834/44190624-9da5-4f2c-ac43-dcb5caab1c62" alt="JetBrains" width="7%"/>
+        <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" alt="JetBrains" width="20%"/>
     </a>
     <p>
         <b>JetBrains</b><br>
