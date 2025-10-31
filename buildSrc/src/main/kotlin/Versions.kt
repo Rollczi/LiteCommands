@@ -4,7 +4,7 @@ object Versions {
     const val JETBRAINS_ANNOTATIONS = "26.0.2-1"
 
     // Tests
-    const val JUNIT_JUPITER = "5.14.0"
+    const val JUNIT_JUPITER = "5.14.1"
     const val ASSERTJ = "3.27.6"
     const val MOCKITO = "5.20.0"
     const val AWAITILITY = "4.3.0"
