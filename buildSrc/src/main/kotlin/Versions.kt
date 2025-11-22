@@ -53,7 +53,7 @@ object Versions {
     const val ADVENTURE_PLATFORM_API = "4.4.1"
 
     // Jakarta
-    const val HIBERNATE_VALIDATOR = "9.0.1.Final"
+    const val HIBERNATE_VALIDATOR = "9.1.0.Final"
     const val EXPRESSLY = "6.0.0"
 
     // LuckPerms
