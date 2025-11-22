@@ -4,15 +4,15 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
-import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
+import dev.rollczi.litecommands.scheduler.Scheduler;
+import dev.rollczi.litecommands.scheduler.SchedulerType;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -31,14 +31,14 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
     private final Pattern playerNamePattern;
     private final TreeSet<String> nicknames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 
-    public OfflinePlayerArgument(Server server, Plugin plugin, MessageRegistry<CommandSender> messageRegistry, boolean allowParseUnknownPlayers, Pattern playerNamePattern) {
+    public OfflinePlayerArgument(Server server, Plugin plugin, MessageRegistry<CommandSender> messageRegistry, boolean allowParseUnknownPlayers, Pattern playerNamePattern, Scheduler scheduler) {
         this.server = server;
         this.messageRegistry = messageRegistry;
         this.allowParseUnknownPlayers = allowParseUnknownPlayers;
         this.playerNamePattern = playerNamePattern;
 
         // Server#getOfflinePlayers() can be blocking, so we don't want to call it every time
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        scheduler.run(SchedulerType.MAIN, () -> {
             nicknames.clear();
             for (OfflinePlayer player : server.getOfflinePlayers()) {
                 final String name = player.getName();

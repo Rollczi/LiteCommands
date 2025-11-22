@@ -91,7 +91,7 @@ public final class LiteBukkitFactory {
                 .argument(Player.class, new PlayerArgument(server, messageRegistry))
                 .argument(World.class, new WorldArgument(server, messageRegistry))
                 .argument(Location.class, new LocationArgument(messageRegistry))
-                .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, messageRegistry, settings.isParseUnknownPlayersAllowed(), settings.getPlayerNamePattern()));
+                .argument(OfflinePlayer.class, new OfflinePlayerArgument(server, plugin, messageRegistry, settings.isParseUnknownPlayersAllowed(), settings.getPlayerNamePattern(), internal.getScheduler()));
 
             if (namespacedKeyClass != null) {
                 builder.argument(namespacedKeyClass, new NamespacedKeyArgument(plugin, messageRegistry));
