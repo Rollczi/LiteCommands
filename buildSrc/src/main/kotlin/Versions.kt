@@ -12,7 +12,7 @@ object Versions {
     // Bukkit
     const val SPIGOT_API = "1.20.2-R0.1-SNAPSHOT"
     const val FOLIA_API = "1.21.4-R0.1-SNAPSHOT"
-    const val PROTOCOL_LIB = "5.3.0"
+    const val PROTOCOL_LIB = "5.4.0"
 
     // BungeeCord
     const val BUNGEECORD_API = "1.21-R0.4"
