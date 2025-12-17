@@ -48,7 +48,7 @@ object Versions {
     const val OKHTTP = "5.3.2"
 
     // Adventure
-    const val ADVENTURE_MINIMESSAGES = "4.25.0"
+    const val ADVENTURE_MINIMESSAGES = "4.26.1"
     const val ADVENTURE_TEXT_SERIALIZER_LEGACY = "4.25.0"
     const val ADVENTURE_PLATFORM_API = "4.4.1"
 
