@@ -9,7 +9,7 @@ repositories {
 dependencies {
     implementation("net.kyori:indra-git:3.2.0")
     implementation("com.google.guava:guava:33.5.0-jre")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.21")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0")
 }
 
 sourceSets {
