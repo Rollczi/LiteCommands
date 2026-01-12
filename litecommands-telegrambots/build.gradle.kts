@@ -8,7 +8,7 @@ plugins {
 dependencies {
     api(project(":litecommands-framework"))
 
-    compileOnly("org.telegram:telegrambots-meta:9.2.0")
+    compileOnly("org.telegram:telegrambots-meta:9.2.1")
 }
 
 litecommandsPublish {
