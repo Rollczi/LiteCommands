@@ -24,12 +24,18 @@ jobs:
                   git config user.name "Rollczi";
                   git config user.email "Rollczi@users.noreply.github.com"
                   
-                  # Create Release tag
+                  # Read Release tag
                   RELEASE_VERSION=$(jq -r '.versionRelease' .github/release/version.json)
-                  git tag "v$RELEASE_VERSION" && git push origin "v$RELEASE_VERSION"
+                  
+                  # Push tag
+                  if git ls-remote --tags origin | grep -q "refs/tags/v$RELEASE_VERSION"; then
+                    echo "⚠️ Skipped tag"
+                  else
+                    git tag "v$RELEASE_VERSION" && git push origin "v$RELEASE_VERSION"
+                  fi
                   
                   # Create
-                  sed "s/{version}/$REL/g" .github/release/template.md > final_notes.md
+                  sed "s/{version}/v$RELEASE_VERSION/g" .github/release/template.md > final_notes.md
                   gh release create "RELEASE_VERSION" \
                     --title "RELEASE_VERSION" \
                     --notes-file final_notes.md \
