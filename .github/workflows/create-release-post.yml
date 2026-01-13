@@ -15,31 +15,40 @@ jobs:
             - uses: actions/checkout@v6
               with:
                 ref: ${{ github.event.pull_request.base.ref }}
+                token: ${{ secrets.PAT }}
             - name: Tag and Bump Snapshot
+              env:
+                  GH_TOKEN: ${{ secrets.PAT }}
               run: |
                   # Set git user
-                  git config user.name "github-actions[bot]";
-                  git config user.email "actions@github.com"
+                  git config user.name "Rollczi";
+                  git config user.email "Rollczi@users.noreply.github.com"
                   
-                  # Create Release tag
-                  RELEASE_VERSION=$(jq -r '.versionRelease' .github/version.json)
-                  git tag "v$RELEASE_VERSION" && git push origin "v$RELEASE_VERSION"
+                  # Read Release tag
+                  RELEASE_VERSION=$(jq -r '.versionRelease' .github/release/version.json)
+                  
+                  # Push tag
+                  if git ls-remote --tags origin | grep -q "refs/tags/v$VERSION"; then
+                    echo "⚠️ Skipped tag"
+                  else
+                    git tag "v$VERSION" && git push origin "v$VERSION"
+                  fi
                   
                   # Create
-                  sed "s/{version}/$REL/g" .github/release-template.md > final_notes.md
-                  gh release create "RELEASE_VERSION" \
-                    --title "RELEASE_VERSION" \
+                  sed "s/{version}/$VERSION/g" .github/release/template.md > final_notes.md
+                  gh release create "v$VERSION" \
+                    --title "LiteCommands $VERSION" \
                     --notes-file final_notes.md \
                     --generate-notes
                   
                   # Create Snapshot version
-                  IFS='.' read -ra V <<< "$RELEASE_VERSION"
+                  IFS='.' read -ra V <<< "$VERSION"
                   NEXT_SNAPSHOT="${V[0]}.${V[1]}.$((V[2]+1))-SNAPSHOT"
                   
                   # Update files litecommands-publish.gradle.kts (releaseVersion -> nextSnapshot)
-                  sed -i "s/$RELEASE_VERSION/$NEXT_SNAPSHOT/g" buildSrc/src/main/kotlin/litecommands-publish.gradle.kts
-                  jq ".versionSnapshot = \"$NEXT_SNAPSHOT\"" .github/version.json > t.json && mv t.json .github/version.json
+                  sed -i "s/$VERSION/$NEXT_SNAPSHOT/g" buildSrc/src/main/kotlin/litecommands-publish.gradle.kts
+                  jq ".versionSnapshot = \"$NEXT_SNAPSHOT\"" .github/release/version.json > t.json && mv t.json .github/release/version.json
                   
                   # Commit & push Snapshot
-                  git commit -am "(Snapshot $NEXT_SNAPSHOT)"
+                  git commit -am "Snapshot $NEXT_SNAPSHOT"
                   git push
