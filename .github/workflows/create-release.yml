@@ -55,7 +55,7 @@ jobs:
             -   name: Update Files
                 run: |
                     NEW_RELEASE="${{ steps.vars.outputs.NEW_RELEASE }}"
-                    OLD_REL="${{ steps.vars.outputs.OLD_RELEASE }}"
+                    OLD_RELEASE="${{ steps.vars.outputs.OLD_RELEASE }}"
                     VERSION_SNAPSHOT="${{ steps.vars.outputs.VERSION_SNAPSHOT }}"
                     
                     # Global update all files (old release -> new release)
