@@ -22,11 +22,11 @@ jobs:
                   git config user.email "actions@github.com"
                   
                   # Create Release tag
-                  RELEASE_VERSION=$(jq -r '.versionRelease' .github/version.json)
+                  RELEASE_VERSION=$(jq -r '.versionRelease' .github/release/version.json)
                   git tag "v$RELEASE_VERSION" && git push origin "v$RELEASE_VERSION"
                   
                   # Create
-                  sed "s/{version}/$REL/g" .github/release-template.md > final_notes.md
+                  sed "s/{version}/$REL/g" .github/release/template.md > final_notes.md
                   gh release create "RELEASE_VERSION" \
                     --title "RELEASE_VERSION" \
                     --notes-file final_notes.md \
@@ -38,7 +38,7 @@ jobs:
                   
                   # Update files litecommands-publish.gradle.kts (releaseVersion -> nextSnapshot)
                   sed -i "s/$RELEASE_VERSION/$NEXT_SNAPSHOT/g" buildSrc/src/main/kotlin/litecommands-publish.gradle.kts
-                  jq ".versionSnapshot = \"$NEXT_SNAPSHOT\"" .github/version.json > t.json && mv t.json .github/version.json
+                  jq ".versionSnapshot = \"$NEXT_SNAPSHOT\"" .github/release/version.json > t.json && mv t.json .github/release/version.json
                   
                   # Commit & push Snapshot
                   git commit -am "(Snapshot $NEXT_SNAPSHOT)"

@@ -28,8 +28,8 @@ jobs:
                 id: vars
                 run: |
                     # Parse versions from JSON
-                    OLD_RELEASE=$(jq -r '.versionRelease' .github/version.json)
-                    VERSION_SNAPSHOT=$(jq -r '.versionSnapshot' .github/version.json)
+                    OLD_RELEASE=$(jq -r '.versionRelease' .github/release/version.json)
+                    VERSION_SNAPSHOT=$(jq -r '.versionSnapshot' .github/release/version.json)
                     
                     # Split into version parts
                     IFS='.' read -ra ADDR <<< "$OLD_RELEASE"
@@ -61,8 +61,8 @@ jobs:
                     # Global update all files (old release -> new release)
                     grep -rl "$OLD_RELEASE" . --exclude-dir=.git --exclude=*.yml | xargs sed -i "s/$OLD_RELEASE/$NEW_RELEASE/g"
                     
-                    # Update .github/version.json
-                    jq ".versionRelease = \"$NEW_RELEASE\"" .github/version.json > temp.json && mv temp.json .github/version.json
+                    # Update .github/release/version.json
+                    jq ".versionRelease = \"$NEW_RELEASE\"" .github/release/version.json > temp.json && mv temp.json .github/release/version.json
                     
                     # Update gradle.kts (snapshot -> release)
                     sed -i "s/$VERSION_SNAPSHOT/$NEW_RELEASE/g" buildSrc/src/main/kotlin/litecommands-publish.gradle.kts
