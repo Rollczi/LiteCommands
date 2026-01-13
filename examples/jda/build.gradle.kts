@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.rollczi"
-version = "3.10.6"
+version = "3.10.7"
 
 repositories {
     mavenCentral()
@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    // implementation("dev.rollczi:litecommands-jda:3.10.6") // <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-jda:3.10.7") // <-- uncomment in your project
     implementation(project(":litecommands-jda")) // don't use this line in your build.gradle
 
     implementation("net.dv8tion:JDA:6.3.0")

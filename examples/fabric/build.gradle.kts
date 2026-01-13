@@ -29,8 +29,8 @@ dependencies {
     modLocalRuntime("maven.modrinth:luckperms:5.4.36-forge")
     modLocalRuntime("com.terraformersmc:modmenu:15.0.1")
 
-    // modImplementation("dev.rollczi:litecommands-fabric:3.10.6") <-- uncomment in your project
-    // modImplementation("dev.rollczi:litecommands-luckperms:3.10.6") <-- uncomment in your project
+    // modImplementation("dev.rollczi:litecommands-fabric:3.10.7") <-- uncomment in your project
+    // modImplementation("dev.rollczi:litecommands-luckperms:3.10.7") <-- uncomment in your project
     implementation(project(path = ":litecommands-fabric", configuration = "namedElements")) // <-- REMOVE THIS
     implementation(project(":litecommands-luckperms")) // <-- REMOVE THIS
 }

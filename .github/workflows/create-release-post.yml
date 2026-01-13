@@ -1,0 +1,45 @@
+name: Post Release Snapshot
+on:
+    pull_request:
+        types: [ closed ]
+        branches: [ master ]
+
+permissions:
+    contents: write
+
+jobs:
+    snapshot:
+        if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'Release ')
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                ref: ${{ github.event.pull_request.base.ref }}
+            - name: Tag and Bump Snapshot
+              run: |
+                  # Set git user
+                  git config user.name "github-actions[bot]";
+                  git config user.email "actions@github.com"
+                  
+                  # Create Release tag
+                  RELEASE_VERSION=$(jq -r '.versionRelease' .github/version.json)
+                  git tag "v$RELEASE_VERSION" && git push origin "v$RELEASE_VERSION"
+                  
+                  # Create
+                  sed "s/{version}/$REL/g" .github/release-template.md > final_notes.md
+                  gh release create "RELEASE_VERSION" \
+                    --title "RELEASE_VERSION" \
+                    --notes-file final_notes.md \
+                    --generate-notes
+                  
+                  # Create Snapshot version
+                  IFS='.' read -ra V <<< "$RELEASE_VERSION"
+                  NEXT_SNAPSHOT="${V[0]}.${V[1]}.$((V[2]+1))-SNAPSHOT"
+                  
+                  # Update files litecommands-publish.gradle.kts (releaseVersion -> nextSnapshot)
+                  sed -i "s/$RELEASE_VERSION/$NEXT_SNAPSHOT/g" buildSrc/src/main/kotlin/litecommands-publish.gradle.kts
+                  jq ".versionSnapshot = \"$NEXT_SNAPSHOT\"" .github/version.json > t.json && mv t.json .github/version.json
+                  
+                  # Commit & push Snapshot
+                  git commit -am "(Snapshot $NEXT_SNAPSHOT)"
+                  git push
