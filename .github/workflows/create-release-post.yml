@@ -18,8 +18,8 @@ jobs:
             - name: Tag and Bump Snapshot
               run: |
                   # Set git user
-                  git config user.name "github-actions[bot]";
-                  git config user.email "actions@github.com"
+                  git config user.name "Rollczi";
+                  git config user.email "Rollczi@users.noreply.github.com"
                   
                   # Create Release tag
                   RELEASE_VERSION=$(jq -r '.versionRelease' .github/release/version.json)
