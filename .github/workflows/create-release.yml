@@ -70,7 +70,7 @@ jobs:
                     sed -i "s/$VERSION_SNAPSHOT/$NEW_RELEASE/g" buildSrc/src/main/kotlin/litecommands-publish.gradle.kts
 
             -   name: Create Pull Request
-                uses: peter-evans/create-pull-request@v5
+                uses: peter-evans/create-pull-request@v8
                 with:
                     token: ${{ secrets.PAT }}
                     commit-message: "Release ${{ steps.vars.outputs.NEW_RELEASE }}"
