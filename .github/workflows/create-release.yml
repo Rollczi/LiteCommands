@@ -1,79 +1,36 @@
-name: Release PR
-
+name: Release
 on:
-    workflow_dispatch:
-        inputs:
-            bump_type:
-                description: 'Bump (patch, minor, major)'
-                required: true
-                default: 'patch'
-                type: choice
-                options:
-                    - patch
-                    - minor
-                    - major
-
-permissions:
-    contents: write
-    pull-requests: write
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version Bump'
+        type: choice
+        options: [ patch, minor, major ]
+        default: 'patch'
 
 jobs:
-    release:
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Checkout code
-                uses: actions/checkout@v6
-                with:
-                  persist-credentials: false
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.PAT }}
 
-            -   name: Calculate New Version
-                id: vars
-                run: |
-                    # Parse versions from JSON
-                    OLD_RELEASE=$(jq -r '.versionRelease' .github/release/version.json)
-                    VERSION_SNAPSHOT=$(jq -r '.versionSnapshot' .github/release/version.json)
-                    
-                    # Split into version parts
-                    IFS='.' read -ra ADDR <<< "$OLD_RELEASE"
-                    MAJOR=${ADDR[0]}
-                    MINOR=${ADDR[1]}
-                    PATCH=${ADDR[2]}
-                    
-                    # Update release version
-                    if [ "${{ github.event.inputs.bump_type }}" == "major" ]; then
-                      MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
-                    elif [ "${{ github.event.inputs.bump_type }}" == "minor" ]; then
-                      MINOR=$((MINOR + 1)); PATCH=0
-                    else
-                      PATCH=$((PATCH + 1))
-                    fi
-                    
-                    NEW_RELEASE="$MAJOR.$MINOR.$PATCH"
-                    
-                    echo "OLD_RELEASE=$OLD_RELEASE" >> $GITHUB_OUTPUT
-                    echo "NEW_RELEASE=$NEW_RELEASE" >> $GITHUB_OUTPUT
-                    echo "VERSION_SNAPSHOT=$VERSION_SNAPSHOT" >> $GITHUB_OUTPUT
+      - name: Run Lite Release
+        uses: Rollczi/lite-release@v0.0.1-alpha
+        with:
+          token: ${{ secrets.PAT }}
+          bump_type: ${{ github.event.inputs.bump }}
 
-            -   name: Update Files
-                run: |
-                    NEW_RELEASE="${{ steps.vars.outputs.NEW_RELEASE }}"
-                    OLD_RELEASE="${{ steps.vars.outputs.OLD_RELEASE }}"
-                    VERSION_SNAPSHOT="${{ steps.vars.outputs.VERSION_SNAPSHOT }}"
-                    
-                    # Global update all files (old release -> new release)
-                    grep -rl "$OLD_RELEASE" . --exclude-dir=.git --exclude=*.yml | xargs sed -i "s/$OLD_RELEASE/$NEW_RELEASE/g"
-                    
-                    # Update .github/release/version.json
-                    jq ".versionRelease = \"$NEW_RELEASE\"" .github/release/version.json > temp.json && mv temp.json .github/release/version.json
-                    
-                    # Update gradle.kts (snapshot -> release)
-                    sed -i "s/$VERSION_SNAPSHOT/$NEW_RELEASE/g" buildSrc/src/main/kotlin/litecommands-publish.gradle.kts
+          commit_release: 'Release {VERSION}'
+          commit_release_update_files: 'README.md, **/*.gradle.kts, **/ExamplePlugin.java, **/fabric.mod.json'
 
-            -   name: Create Pull Request
-                uses: peter-evans/create-pull-request@v8
-                with:
-                    token: ${{ secrets.PAT }}
-                    commit-message: "Release ${{ steps.vars.outputs.NEW_RELEASE }}"
-                    branch: "release/${{ steps.vars.outputs.NEW_RELEASE }}"
-                    title: "Release ${{ steps.vars.outputs.NEW_RELEASE }}"
-                    body: "Automatic PR preparing version ${{ steps.vars.outputs.NEW_RELEASE }}. After the merge, the version will be bumped to the next Snapshot."
+          commit_snapshot: 'Snapshot {VERSION}'
+          commit_snapshot_update_files: 'buildSrc/src/main/kotlin/litecommands-publish.gradle.kts'
+
+          git_user_name: 'Rollczi'
+          git_user_email: 'Rollczi@users.noreply.github.com'
+
+          github_release_title: 'LiteCommands v{VERSION}'
+          github_release_template: '.github/release/template.md'
