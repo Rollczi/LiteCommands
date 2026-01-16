@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.PAT }}
 
       - name: Run Lite Release
-        uses: Rollczi/lite-release@v0.0.2-alpha
+        uses: Rollczi/lite-release@v0.0.3-alpha
         with:
           token: ${{ secrets.PAT }}
           bump_type: ${{ github.event.inputs.bump }}
