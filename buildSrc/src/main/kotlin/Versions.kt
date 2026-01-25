@@ -27,7 +27,7 @@ object Versions {
     const val SPONGE_API = "17.0.0"
 
     // Velocity
-    const val VELOCITY_API = "3.4.0-SNAPSHOT"
+    const val VELOCITY_API = "3.4.0"
 
     // Fabric
     // check these on https://fabricmc.net/develop
