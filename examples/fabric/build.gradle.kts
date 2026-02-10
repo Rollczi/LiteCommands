@@ -25,7 +25,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:0.17.2")
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.132.0+1.21.8")
 
-    modLocalRuntime("maven.modrinth:fabric-permissions-api:0.5.0")
+    modLocalRuntime("maven.modrinth:fabric-permissions-api:0.6.1")
     modLocalRuntime("maven.modrinth:luckperms:5.4.36-forge")
     modLocalRuntime("com.terraformersmc:modmenu:16.0.0")
 
