@@ -7,9 +7,9 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ElementKind;
 import jakarta.validation.Validator;
 import jakarta.validation.executable.ExecutableValidator;
-import org.hibernate.validator.internal.engine.path.NodeImpl;
-import org.hibernate.validator.internal.engine.path.PathImpl;
+import jakarta.validation.Path;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,18 +33,20 @@ class JakartaMethodValidator<SENDER> implements MethodValidator<SENDER> {
 
         List<JakartaRawResult.Entry> violationsList = violations.stream()
             .map(objectConstraintViolation -> {
-                if (!(objectConstraintViolation.getPropertyPath() instanceof PathImpl)) {
-                    throw new IllegalStateException("Invalid property path type: " + objectConstraintViolation.getPropertyPath().getClass());
+                Path propertyPath = objectConstraintViolation.getPropertyPath();
+                Path.Node leafNode = null;
+
+                for (Path.Node node : propertyPath) {
+                    leafNode = node;
                 }
 
-                PathImpl path = (PathImpl) objectConstraintViolation.getPropertyPath();
-                NodeImpl leafNode = path.getLeafNode();
-
-                if (leafNode.getKind() != ElementKind.PARAMETER) {
-                    throw new IllegalStateException("Invalid leaf node kind: " + leafNode.getKind());
+                if (leafNode == null || leafNode.getKind() != ElementKind.PARAMETER) {
+                    throw new IllegalStateException("Invalid leaf node: " + (leafNode == null ? "null" : leafNode.getKind()));
                 }
 
-                return new JakartaRawResult.Entry(objectConstraintViolation, context.getDefinition().getRequirement(leafNode.getParameterIndex()));
+                Path.ParameterNode parameterNode = leafNode.as(Path.ParameterNode.class);
+
+                return new JakartaRawResult.Entry(objectConstraintViolation, context.getDefinition().getRequirement(parameterNode.getParameterIndex()));
             }).collect(Collectors.toList());
 
         return ValidatorResult.invalid(new JakartaRawResult(violationsList));
