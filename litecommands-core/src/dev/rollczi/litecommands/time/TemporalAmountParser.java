@@ -78,7 +78,7 @@ public abstract class TemporalAmountParser<T extends TemporalAmount> {
             .filter(entry -> entry.getValue() == defaultZero)
             .map(entry -> entry.getKey())
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Can not find default zero symbol for " + defaultZero))
+            .orElseGet(() -> { throw new IllegalStateException("Can not find default zero symbol for " + defaultZero); })
         );
     }
 
