@@ -36,6 +36,7 @@ include("litecommands-jda", VERSION_11)
 include(":litecommands-sponge", VERSION_21, tests = false)
 include(":litecommands-fabric", VERSION_17, tests = false)
 include(":litecommands-telegrambots", VERSION_17, tests = false)
+include(":litecommands-hytale", VERSION_25, tests = false)
 
 // examples
 include(":examples:bukkit", tests = false)
