@@ -25,12 +25,12 @@ public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum>
         Class<Enum> enumClass = context.getType().getRawType();
         boolean caseInsensitive = Boolean.TRUE.equals(context.metaCollector().findFirst(CASE_INSENSITIVE));
 
-        if (!caseInsensitive) return ParseResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT);
-
-        for (Enum enumConstant : enumClass.getEnumConstants()) {
-            if (enumConstant.name().equalsIgnoreCase(argument)) {
-                return ParseResult.success(enumConstant);
-            }
+        if (caseInsensitive) {
+            return Arrays.stream(enumClass.getEnumConstants())
+                .filter(enumConstant -> enumConstant.name().equalsIgnoreCase(argument))
+                .findFirst()
+                .map(ParseResult::success)
+                .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT));
         }
 
         try {
