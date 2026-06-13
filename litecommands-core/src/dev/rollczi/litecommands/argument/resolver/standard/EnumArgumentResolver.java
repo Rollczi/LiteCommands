@@ -8,6 +8,7 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 
+import dev.rollczi.litecommands.meta.MetaKey;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,11 +16,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("rawtypes")
 public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum> {
 
+    public static final MetaKey<Boolean> CASE_INSENSITIVE = MetaKey.of("enum-case-insensitive", Boolean.class, false);
+
     private final Map<Class<Enum>, SuggestionResult> cachedEnumSuggestions = new ConcurrentHashMap<>();
 
     @Override
     protected ParseResult<Enum> parse(Invocation<SENDER> invocation, Argument<Enum> context, String argument) {
         Class<Enum> enumClass = context.getType().getRawType();
+        boolean caseInsensitive = Boolean.TRUE.equals(context.metaCollector().findFirst(CASE_INSENSITIVE));
+
+        if (caseInsensitive) {
+            return Arrays.stream(enumClass.getEnumConstants())
+                .filter(enumConstant -> enumConstant.name().equalsIgnoreCase(argument))
+                .findFirst()
+                .map(ParseResult::success)
+                .orElseGet(() -> ParseResult.failure(InvalidUsage.Cause.INVALID_ARGUMENT));
+        }
 
         try {
             return ParseResult.success(getEnum(enumClass, argument));
@@ -39,7 +51,7 @@ public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum>
             }
 
             return Arrays.stream(enums)
-                .map(anEnum -> anEnum.name())
+                .map(Enum::name)
                 .collect(SuggestionResult.collector());
         });
     }
