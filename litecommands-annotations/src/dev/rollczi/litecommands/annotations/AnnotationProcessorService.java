@@ -1,6 +1,7 @@
 package dev.rollczi.litecommands.annotations;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.argument.CaseInsensitiveAnnotationResolver;
 import dev.rollczi.litecommands.annotations.argument.KeyAnnotationResolver;
 import dev.rollczi.litecommands.annotations.optional.OptionalArg;
 import dev.rollczi.litecommands.annotations.varargs.VarargsAnyArgumentProcessor;
@@ -76,6 +77,7 @@ public class AnnotationProcessorService<SENDER> {
             .register(new OptionalArgArgumentProcessor<>())
             // argument meta processors
             .register(new KeyAnnotationResolver<>())
+            .register(new CaseInsensitiveAnnotationResolver<>())
             ;
     }
 
