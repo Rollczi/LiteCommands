@@ -3,16 +3,16 @@ package dev.rollczi.litecommands.bukkit.argument;
 import dev.rollczi.litecommands.reflect.LiteCommandsReflectException;
 import dev.rollczi.litecommands.reflect.ReflectUtil;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.NotNull;
 
 public class OldEnumAccessor {
 
-    private static final Map<Class<?>, Method> VALUE_OF_METHODS = new HashMap<>();
-    private static final Map<Class<?>, Method> NAME_METHODS = new HashMap<>();
-    private static final Map<Class<?>, Method> VALUES_METHODS = new HashMap<>();
+    private static final Map<Class<?>, Method> VALUE_OF_METHODS = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Method> NAME_METHODS = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Method> VALUES_METHODS = new ConcurrentHashMap<>();
 
     public static boolean isAvailable() {
         return getType().isPresent();

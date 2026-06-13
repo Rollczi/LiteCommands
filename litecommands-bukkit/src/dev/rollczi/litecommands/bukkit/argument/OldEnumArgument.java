@@ -8,13 +8,13 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.command.CommandSender;
 
 public class OldEnumArgument extends ArgumentResolver<CommandSender, Object> {
 
-    private final Map<Class<?>, SuggestionResult> cachedOldEnumSuggestions = new HashMap<>();
+    private final Map<Class<?>, SuggestionResult> cachedOldEnumSuggestions = new ConcurrentHashMap<>();
 
     @Override
     public boolean canParse(Argument<Object> argument) {
@@ -42,7 +42,7 @@ public class OldEnumArgument extends ArgumentResolver<CommandSender, Object> {
             }
 
             return Arrays.stream(oldEnums)
-                .map(oldEnum -> OldEnumAccessor.invokeName(oldEnum))
+                .map(OldEnumAccessor::invokeName)
                 .collect(SuggestionResult.collector());
         });
     }

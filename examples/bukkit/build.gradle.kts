@@ -9,6 +9,7 @@ version = "3.10.9"
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven { url = uri("https://repo.panda-lang.org/releases/") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
 }
