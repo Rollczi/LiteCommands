@@ -52,10 +52,16 @@ class MetaHolderCollectorImpl implements MetaCollector {
 
     @Override
     public <T> T findFirst(MetaKey<T> key) {
-        T first = this.findFirst(key, key.getDefaultValue());
+        T first = this.findFirst(key, null);
 
         if (first == null) {
-            throw new NoSuchElementException("Meta value with key " + key.getKey() + " not found!");
+            T defaultValue = key.getDefaultValue();
+
+            if (defaultValue == null) {
+                throw new NoSuchElementException("Meta value with key " + key.getKey() + " not found!");
+            }
+
+            return defaultValue;
         }
 
         return first;
