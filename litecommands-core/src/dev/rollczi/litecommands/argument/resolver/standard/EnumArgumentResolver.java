@@ -19,11 +19,20 @@ public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum>
     public static final MetaKey<Boolean> CASE_INSENSITIVE = MetaKey.of("enum-case-insensitive", Boolean.class, false);
 
     private final Map<Class<Enum>, SuggestionResult> cachedEnumSuggestions = new ConcurrentHashMap<>();
+    private final boolean defaultCaseInsensitive;
+
+    public EnumArgumentResolver() {
+        this(false);
+    }
+
+    public EnumArgumentResolver(boolean defaultCaseInsensitive) {
+        this.defaultCaseInsensitive = defaultCaseInsensitive;
+    }
 
     @Override
     protected ParseResult<Enum> parse(Invocation<SENDER> invocation, Argument<Enum> context, String argument) {
         Class<Enum> enumClass = context.getType().getRawType();
-        boolean caseInsensitive = Boolean.TRUE.equals(context.metaCollector().findFirst(CASE_INSENSITIVE));
+        boolean caseInsensitive = Boolean.TRUE.equals(context.metaCollector().findFirst(CASE_INSENSITIVE, defaultCaseInsensitive));
 
         if (caseInsensitive) {
             return Arrays.stream(enumClass.getEnumConstants())
