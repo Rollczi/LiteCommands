@@ -51,7 +51,7 @@ public class EnumArgumentResolver<SENDER> extends ArgumentResolver<SENDER, Enum>
             }
 
             return Arrays.stream(enums)
-                .map(Enum::name)
+                .map(someEnum -> someEnum.name())
                 .collect(SuggestionResult.collector());
         });
     }

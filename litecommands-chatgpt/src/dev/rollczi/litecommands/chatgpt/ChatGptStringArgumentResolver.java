@@ -49,7 +49,7 @@ class ChatGptStringArgumentResolver<SENDER> extends JoinStringArgumentResolver<S
     public SuggestionResult suggest(Invocation<SENDER> invocation, Argument<String> argument, SuggestionContext context) {
         String firstPart = context.getCurrent().multilevel();
         String topic = argument.getProfile(ChatGptArgumentProfile.NAMESPACE)
-            .map(ChatGptArgumentProfile::getTopic)
+            .map(chatGptProfile -> chatGptProfile.getTopic())
             .orElse("");
 
         NavigableMap<String, String> navigableSuggestions = this.suggestions.computeIfAbsent(topic, key -> new ConcurrentSkipListMap<>());

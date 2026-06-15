@@ -5,12 +5,13 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.util.MapUtil;
 
 import dev.rollczi.litecommands.util.ObjectsUtil;
+
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ResultHandleServiceImpl<SENDER> implements ResultHandleService<SENDER> {
 
-    private final Map<Class<?>, ResultHandler<SENDER, ?>> handlers = new ConcurrentHashMap<>();
+    private final Map<Class<?>, ResultHandler<SENDER, ?>> handlers = new HashMap<>();
 
     @Override
     public <T> void registerHandler(Class<T> resultType, ResultHandler<SENDER, ? extends T> handler) {

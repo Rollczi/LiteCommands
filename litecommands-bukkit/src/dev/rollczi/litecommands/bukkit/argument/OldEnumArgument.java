@@ -42,7 +42,7 @@ public class OldEnumArgument extends ArgumentResolver<CommandSender, Object> {
             }
 
             return Arrays.stream(oldEnums)
-                .map(OldEnumAccessor::invokeName)
+                .map(oldEnum -> OldEnumAccessor.invokeName(oldEnum))
                 .collect(SuggestionResult.collector());
         });
     }
