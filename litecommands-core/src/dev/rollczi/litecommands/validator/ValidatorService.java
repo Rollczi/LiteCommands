@@ -6,16 +6,16 @@ import dev.rollczi.litecommands.meta.Meta;
 import dev.rollczi.litecommands.scope.Scope;
 import dev.rollczi.litecommands.scope.Scopeable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Deprecated
 public class ValidatorService<SENDER> {
 
-    private final Map<Scope, Map<Class<?>, Validator<SENDER>>> commandValidators = new HashMap<>();
-    private final Map<Class<?>, Validator<SENDER>> validatorsByClass = new HashMap<>();
-    private final Map<Class<?>, Validator<SENDER>> commandGlobalValidators = new HashMap<>();
+    private final Map<Scope, Map<Class<?>, Validator<SENDER>>> commandValidators = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Validator<SENDER>> validatorsByClass = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Validator<SENDER>> commandGlobalValidators = new ConcurrentHashMap<>();
 
     public void registerValidatorGlobal(Validator<SENDER> validator) {
         this.commandGlobalValidators.put(validator.getClass(), validator);
@@ -38,7 +38,7 @@ public class ValidatorService<SENDER> {
             return;
         }
 
-        commandValidators.computeIfAbsent(scope, key -> new HashMap<>()).put(clazz, validator);
+        commandValidators.computeIfAbsent(scope, key -> new ConcurrentHashMap<>()).put(clazz, validator);
     }
 
     /* Kinda shitty, but I don't know how to do it better without losing performance https://github.com/Rollczi/LiteCommands/commit/3ac889d82e3e4d39fea27eee91cf5b01adacb412 */

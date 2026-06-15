@@ -16,13 +16,13 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -33,7 +33,7 @@ class ChatGptStringArgumentResolver<SENDER> extends JoinStringArgumentResolver<S
     private final ChatGptClient chatGptClient;
     private final ChatGptSettings settings;
 
-    private final Map<String, NavigableMap<String, String>> suggestions = new HashMap<>();
+    private final Map<String, NavigableMap<String, String>> suggestions = new ConcurrentHashMap<>();
     private final Cache<Identifier, UUID> lastRequestPerPlayer;
 
     ChatGptStringArgumentResolver(Scheduler scheduler, ChatGptClient chatGptClient, ChatGptSettings settings) {
@@ -52,7 +52,7 @@ class ChatGptStringArgumentResolver<SENDER> extends JoinStringArgumentResolver<S
             .map(chatGptProfile -> chatGptProfile.getTopic())
             .orElse("");
 
-        NavigableMap<String, String> navigableSuggestions = this.suggestions.computeIfAbsent(topic, key -> new TreeMap<>());
+        NavigableMap<String, String> navigableSuggestions = this.suggestions.computeIfAbsent(topic, key -> new ConcurrentSkipListMap<>());
         Collection<String> suggestions = navigableSuggestions.subMap(firstPart, firstPart + Character.MAX_VALUE).values();
 
         if (!settings.shouldGenerate(firstPart)) {
