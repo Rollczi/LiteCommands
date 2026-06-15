@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.minestom.server.entity.Player;
@@ -27,7 +25,7 @@ public class TestPlayer extends Player {
     }
 
     @Override
-    public void sendMessage(@NotNull Identity source, @NotNull Component message, @NotNull MessageType type) {
+    public void sendMessage(@NotNull Component message) {
         messages.add(componentToString(message));
     }
 
