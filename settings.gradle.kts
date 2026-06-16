@@ -17,7 +17,7 @@ include(":litecommands-core")
 include(":litecommands-annotations")
 include(":litecommands-programmatic")
 include(":litecommands-framework")
-include(":litecommands-unit")
+include(":litecommands-unit", VERSION_17)
 
 // extensions
 include(":litecommands-adventure")

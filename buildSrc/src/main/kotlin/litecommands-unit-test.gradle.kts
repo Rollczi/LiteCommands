@@ -1,15 +1,11 @@
 import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.add
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java-library")
-    id("org.jetbrains.kotlin.jvm")
 }
 
 dependencies {
     testImplementation(project(":litecommands-unit"))
-    testImplementation(kotlin("stdlib-jdk8"))
 
     testImplementation(platform("org.junit:junit-bom:${Versions.JUNIT_JUPITER}"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -30,13 +26,16 @@ tasks.getByName<Test>("test") {
     }
 }
 
+tasks.named<JavaCompile>("compileTestJava") {
+    if (java.targetCompatibility < JavaVersion.VERSION_17) {
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
+    }
+}
+
 sourceSets.test {
     java.setSrcDirs(listOf("test"))
     resources.setSrcDirs(emptyList<String>())
-}
-
-kotlin {
-    jvmToolchain(java.targetCompatibility.ordinal + 1)
 }
 
 open class TestImplementation {

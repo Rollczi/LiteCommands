@@ -8,7 +8,6 @@ plugins {
 
 dependencies {
     api(project(":litecommands-framework"))
-    api(project(":litecommands-unit"))
 
     implementation("com.google.code.gson:gson:${Versions.GSON}")
     implementation("com.github.ben-manes.caffeine:caffeine:${Versions.CAFFEINE}")
