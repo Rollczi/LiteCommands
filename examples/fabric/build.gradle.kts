@@ -37,9 +37,8 @@ dependencies {
 //    localRuntime("net.fabricmc.fabric-api:fabric-networking-v0:0.1.0+f1618918")
 //    localRuntime("com.terraformersmc:modmenu:18.0.0") TODO: bump to 19 when relased https://www.curseforge.com/minecraft/mc-mods/modmenu/files/all?page=1&pageSize=20&showAlphaFiles=hide
 
-
-    // implementation("dev.rollczi:litecommands-fabric:3.10.9") <-- uncomment in your project
-    // implementation("dev.rollczi:litecommands-luckperms:3.10.9") <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-fabric:3.11.0") <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-luckperms:3.11.0") <-- uncomment in your project
     implementation(project(":litecommands-fabric")) // <-- REMOVE THIS
 //    implementation(project(":litecommands-luckperms")) // <-- REMOVE THIS // TODO uncomment this
 }
