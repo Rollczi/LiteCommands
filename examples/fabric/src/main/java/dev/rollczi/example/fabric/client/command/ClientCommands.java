@@ -6,24 +6,24 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Sender;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 
 @Command(name = "litecommands", aliases = "litecmd")
 public class ClientCommands {
 
     @Execute
-    Text info() {
-        return Text.of("Hello from LiteCommands!");
+    Component info() {
+        return Component.literal("Hello from LiteCommands!");
     }
 
     @Execute(name = "my", aliases = "myName")
-    Text myName(@Sender FabricClientCommandSource sender) {
+    Component myName(@Sender FabricClientCommandSource sender) {
         return sender.getPlayer().getName();
     }
 
     @Execute(name = "sleeping")
-    String ping(@Sender ClientPlayerEntity player) {
+    String ping(@Sender LocalPlayer player) {
         return "You are " + (player.isSleeping() ? "" : "not ") + "sleeping";
     }
 
@@ -33,7 +33,7 @@ public class ClientCommands {
     }
 
     @Execute(name = "health")
-    String health(@Arg ClientPlayerEntity player) {
+    String health(@Arg LocalPlayer player) {
         return String.valueOf(player.getHealth());
     }
 

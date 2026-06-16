@@ -31,12 +31,11 @@ object Versions {
 
     // Fabric
     // check these on https://fabricmc.net/develop
-    const val FABRIC_YARN_MAPPINGS = "1.21.11-pre5+build.1"
-    val FABRIC_MINECRAFT = FABRIC_YARN_MAPPINGS.substringBefore('+')
+    const val FABRIC_MINECRAFT = "26.2"
     const val FABRIC_LOOM_PLUGIN = "1.17.11"
     const val FABRIC_LOADER = "0.19.3"
+    const val FABRIC_API = "0.152.1+26.2"
     const val FABRIC_COMMAND_API_V2 = "2.4.8+9c919dacc9"
-    const val FABRIC_COMMAND_API_V1 = "1.2.56+f71b366f73"
     const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.6.16+9c919dacc9"
 
     // TelegramBots

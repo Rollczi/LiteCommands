@@ -8,24 +8,24 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
-public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<ServerCommandSource, P> {
+public class PlayerArgument<P extends Player> extends ArgumentResolver<CommandSourceStack, P> {
 
-    private final MessageRegistry<ServerCommandSource> messageRegistry;
+    private final MessageRegistry<CommandSourceStack> messageRegistry;
 
-    public PlayerArgument(MessageRegistry<ServerCommandSource> messageRegistry) {
+    public PlayerArgument(MessageRegistry<CommandSourceStack> messageRegistry) {
         this.messageRegistry = messageRegistry;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected ParseResult<P> parse(Invocation<ServerCommandSource> invocation, Argument<P> context, String argument) {
-        PlayerManager playerManager = invocation.sender().getServer().getPlayerManager();
-        ServerPlayerEntity player = playerManager.getPlayer(argument);
+    protected ParseResult<P> parse(Invocation<CommandSourceStack> invocation, Argument<P> context, String argument) {
+        PlayerList playerList = invocation.sender().getServer().getPlayerList();
+        ServerPlayer player = playerList.getPlayerByName(argument);
 
         if (player != null) {
             return ParseResult.success((P) player);
@@ -35,10 +35,10 @@ public class PlayerArgument<P extends PlayerEntity> extends ArgumentResolver<Ser
     }
 
     @Override
-    public SuggestionResult suggest(Invocation<ServerCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
-        return invocation.sender().getServer().getPlayerManager().getPlayerList().stream()
-            .map(serverPlayerEntity -> serverPlayerEntity.getGameProfile())
-            .collect(SuggestionResult.collector(profile -> profile.getName(), profile -> profile.getId().toString()));
+    public SuggestionResult suggest(Invocation<CommandSourceStack> invocation, Argument<P> argument, SuggestionContext context) {
+        return invocation.sender().getServer().getPlayerList().getPlayers().stream()
+            .map(serverPlayer -> serverPlayer.getGameProfile())
+            .collect(SuggestionResult.collector(profile -> profile.name(), profile -> profile.id().toString()));
     }
 
 }

@@ -11,11 +11,11 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.world.entity.player.Player;
 
 @Environment(EnvType.CLIENT)
-public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolver<FabricClientCommandSource, P> {
+public class ClientPlayerArgument<P extends Player> extends ArgumentResolver<FabricClientCommandSource, P> {
     private final MessageRegistry<FabricClientCommandSource> messageRegistry;
 
     public ClientPlayerArgument(MessageRegistry<FabricClientCommandSource> messageRegistry) {
@@ -25,7 +25,7 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
     @SuppressWarnings("unchecked")
     @Override
     protected ParseResult<P> parse(Invocation<FabricClientCommandSource> invocation, Argument<P> context, String argument) {
-        AbstractClientPlayerEntity player = invocation.sender().getWorld().getPlayers().stream().filter(p -> p.getGameProfile().getName().equalsIgnoreCase(argument)).findFirst().orElse(null);
+        AbstractClientPlayer player = invocation.sender().getLevel().players().stream().filter(p -> p.getGameProfile().name().equalsIgnoreCase(argument)).findFirst().orElse(null);
 
         if (player != null) {
             return ParseResult.success((P) player);
@@ -36,9 +36,9 @@ public class ClientPlayerArgument<P extends PlayerEntity> extends ArgumentResolv
 
     @Override
     public SuggestionResult suggest(Invocation<FabricClientCommandSource> invocation, Argument<P> argument, SuggestionContext context) {
-        return invocation.sender().getWorld().getPlayers().stream()
+        return invocation.sender().getLevel().players().stream()
             .map(player -> player.getGameProfile())
-            .collect(SuggestionResult.collector(profile -> profile.getName(), profile -> profile.getId().toString()));
+            .collect(SuggestionResult.collector(profile -> profile.name(), profile -> profile.id().toString()));
     }
 
 }

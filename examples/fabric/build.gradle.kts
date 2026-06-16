@@ -1,11 +1,13 @@
+import org.jetbrains.kotlin.gradle.utils.extendsFrom
+
 plugins {
     id("java")
-    id("fabric-loom") version "1.17.11"
+    id("net.fabricmc.fabric-loom") version "1.17.11"
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
@@ -16,23 +18,30 @@ repositories {
     maven("https://maven.terraformersmc.com/releases/")
 }
 
+
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom(localRuntime)
+    testRuntimeOnly.extendsFrom(localRuntime)
+}
+
 dependencies {
-    val yarnVersion = "1.21.11-pre5+build.1"
-    val minecraftVersion = yarnVersion.substringBefore('+')
-    mappings("net.fabricmc:yarn:$yarnVersion")
-    minecraft("com.mojang:minecraft:$minecraftVersion")
+    minecraft("com.mojang:minecraft:26.2")
 
-    modImplementation("net.fabricmc:fabric-loader:0.19.3")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:0.152.1+26.2")
+    implementation("net.fabricmc:fabric-loader:0.19.3")
+    implementation("net.fabricmc.fabric-api:fabric-api:0.152.1+26.2")
 
-    modLocalRuntime("maven.modrinth:fabric-permissions-api:0.7.0")
-    modLocalRuntime("maven.modrinth:luckperms:5.4.36-forge")
-    modLocalRuntime("com.terraformersmc:modmenu:16.0.0")
+    localRuntime("maven.modrinth:fabric-permissions-api:0.7.0")
+//    localRuntime("maven.modrinth:luckperms:5.4.36-fabric") TODO we need wait for release
+//    localRuntime("net.fabricmc.fabric-api:fabric-command-api-v1:1.2.56+f71b366f73")
+//    localRuntime("net.fabricmc.fabric-api:fabric-networking-v0:0.1.0+f1618918")
+//    localRuntime("com.terraformersmc:modmenu:18.0.0") TODO: bump to 19 when relased https://www.curseforge.com/minecraft/mc-mods/modmenu/files/all?page=1&pageSize=20&showAlphaFiles=hide
 
-    // modImplementation("dev.rollczi:litecommands-fabric:3.10.9") <-- uncomment in your project
-    // modImplementation("dev.rollczi:litecommands-luckperms:3.10.9") <-- uncomment in your project
-    implementation(project(path = ":litecommands-fabric", configuration = "namedElements")) // <-- REMOVE THIS
-    implementation(project(":litecommands-luckperms")) // <-- REMOVE THIS
+
+    // implementation("dev.rollczi:litecommands-fabric:3.10.9") <-- uncomment in your project
+    // implementation("dev.rollczi:litecommands-luckperms:3.10.9") <-- uncomment in your project
+    implementation(project(":litecommands-fabric")) // <-- REMOVE THIS
+//    implementation(project(":litecommands-luckperms")) // <-- REMOVE THIS // TODO uncomment this
 }
 
 sourceSets.test {

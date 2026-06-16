@@ -9,19 +9,19 @@ import dev.rollczi.litecommands.annotations.join.Join;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import dev.rollczi.litecommands.annotations.quoted.Quoted;
 import dev.rollczi.litecommands.platform.PlatformSender;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 @Command(name = "example", aliases = "tutorial")
 public class ExampleCommand {
     @Execute(name = "kick")
-    void sendMessage(@Arg("player") ServerPlayerEntity player, @Join("reason") String reason) {
-        player.networkHandler.disconnect(Text.of(reason));
+    void sendMessage(@Arg("player") ServerPlayer player, @Join("reason") String reason) {
+        player.connection.disconnect(Component.literal(reason));
     }
 
     @Execute(name = "message", aliases = "msg")
-    Text sendMessage(@Quoted @Arg String message) {
-        return Text.of("You saied: " + message);
+    Component sendMessage(@Quoted @Arg String message) {
+        return Component.literal("You saied: " + message);
     }
 
     @Execute(name = "thread1")

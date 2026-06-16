@@ -2,20 +2,20 @@ package dev.rollczi.litecommands.fabric.server;
 
 import dev.rollczi.litecommands.identifier.Identifier;
 import dev.rollczi.litecommands.platform.AbstractPlatformSender;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.commands.CommandSourceStack;
 
 public class FabricServerSender extends AbstractPlatformSender {
 
-    private final ServerCommandSource source;
+    private final CommandSourceStack source;
 
-    public FabricServerSender(ServerCommandSource source) {
+    public FabricServerSender(CommandSourceStack source) {
         this.source = source;
     }
 
     @Override
     public String getName() {
-        return source.getName();
+        return source.getTextName();
     }
 
     @Override
@@ -25,7 +25,7 @@ public class FabricServerSender extends AbstractPlatformSender {
             return Identifier.CONSOLE;
         }
 
-        return Identifier.of(source.getName(), entity.getUuid());
+        return Identifier.of(source.getTextName(), entity.getUUID());
     }
 
     @Override

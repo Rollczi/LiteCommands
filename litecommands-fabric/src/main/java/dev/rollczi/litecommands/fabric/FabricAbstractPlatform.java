@@ -15,18 +15,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class FabricAbstractPlatform<SOURCE> extends AbstractPlatform<SOURCE, LiteFabricSettings> implements Platform<SOURCE, LiteFabricSettings> {
-    protected static boolean COMMAND_API_V2 = true;
 
     protected final Map<UUID, FabricCommand<SOURCE>> fabricCommands = new HashMap<>();
     private final PermissionService permissionService;
-
-    static {
-        try {
-            Class.forName("net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback");
-        } catch (ClassNotFoundException e) {
-            COMMAND_API_V2 = false;
-        }
-    }
 
     protected FabricAbstractPlatform(LiteFabricSettings settings, PermissionService permissionService) {
         super(settings);
