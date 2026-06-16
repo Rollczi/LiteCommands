@@ -1,4 +1,3 @@
-
 plugins {
     `litecommands-java`
     `litecommands-java-25`
