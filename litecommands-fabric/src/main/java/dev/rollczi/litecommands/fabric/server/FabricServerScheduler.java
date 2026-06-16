@@ -4,12 +4,12 @@ import dev.rollczi.litecommands.fabric.FabricScheduler;
 import java.util.concurrent.ExecutorService;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerTask;
-import net.minecraft.util.thread.ReentrantThreadExecutor;
+import net.minecraft.server.TickTask;
+import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 
 import org.jetbrains.annotations.Nullable;
 
-public class FabricServerScheduler extends FabricScheduler<ServerTask> {
+public class FabricServerScheduler extends FabricScheduler<TickTask> {
 
     private static @Nullable MinecraftServer CURRENT_SERVER;
 
@@ -27,7 +27,7 @@ public class FabricServerScheduler extends FabricScheduler<ServerTask> {
     }
 
     @Override
-    public ReentrantThreadExecutor<ServerTask> getMainThreadExecutor() {
+    public ReentrantBlockableEventLoop<TickTask> getMainThreadExecutor() {
         if (CURRENT_SERVER == null) {
             throw new IllegalStateException("Server is not started!");
         }

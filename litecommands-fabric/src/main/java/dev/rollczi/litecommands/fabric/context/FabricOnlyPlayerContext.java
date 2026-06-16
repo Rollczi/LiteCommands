@@ -5,12 +5,12 @@ import dev.rollczi.litecommands.context.ContextResult;
 import dev.rollczi.litecommands.fabric.LiteFabricMessages;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.MessageRegistry;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
-public class FabricOnlyPlayerContext<SOURCE, P extends PlayerEntity> implements ContextProvider<SOURCE, P> {
+public class FabricOnlyPlayerContext<SOURCE, P extends Player> implements ContextProvider<SOURCE, P> {
 
     private final Function<SOURCE, @Nullable P> playerProvider;
     private final MessageRegistry<SOURCE> messageRegistry;

@@ -20,7 +20,7 @@ import dev.rollczi.litecommands.platform.PlatformSenderFactory;
 import dev.rollczi.litecommands.platform.PlatformSuggestionListener;
 import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -128,11 +128,11 @@ public class FabricCommand<SOURCE> {
         });
     }
 
-    Text tooltip(String string) {
+    Component tooltip(String string) {
         if (string == null || string.isEmpty()) {
             return null;
         }
-        return Text.literal(string);
+        return Component.literal(string);
     }
 
     public CommandRoute<SOURCE> getCommandRoute() {

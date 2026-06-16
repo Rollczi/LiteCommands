@@ -16,12 +16,12 @@ import dev.rollczi.litecommands.permission.PermissionResolver;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.world.World;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 
 import static dev.rollczi.litecommands.reflect.type.TypeRange.upwards;
 
@@ -34,7 +34,7 @@ public final class LiteFabricFactory {
      * @deprecated Use {@link LiteFabricFactory#builder()} instead
      */
     @Deprecated
-    public static <B extends LiteCommandsBaseBuilder<ServerCommandSource, LiteFabricSettings, B>> B create() {
+    public static <B extends LiteCommandsBaseBuilder<CommandSourceStack, LiteFabricSettings, B>> B create() {
         return builder();
     }
 
@@ -42,27 +42,27 @@ public final class LiteFabricFactory {
      * @deprecated Use {@link LiteFabricFactory#server()} instead
      */
     @Deprecated
-    public static <B extends LiteCommandsBaseBuilder<ServerCommandSource, LiteFabricSettings, B>> B builder() {
+    public static <B extends LiteCommandsBaseBuilder<CommandSourceStack, LiteFabricSettings, B>> B builder() {
         return server();
     }
 
     @SuppressWarnings("unchecked")
-    public static <B extends LiteCommandsBaseBuilder<ServerCommandSource, LiteFabricSettings, B>> B server() {
-        return LiteCommandsFactory.<ServerCommandSource, LiteFabricSettings, B>builder(ServerCommandSource.class, builder -> new FabricServerPlatform(new LiteFabricSettings(), builder.getPermissionService()))
+    public static <B extends LiteCommandsBaseBuilder<CommandSourceStack, LiteFabricSettings, B>> B server() {
+        return LiteCommandsFactory.<CommandSourceStack, LiteFabricSettings, B>builder(CommandSourceStack.class, builder -> new FabricServerPlatform(new LiteFabricSettings(), builder.getPermissionService()))
             .self((builder, internal) -> {
-                MessageRegistry<ServerCommandSource> messages = internal.getMessageRegistry();
+                MessageRegistry<CommandSourceStack> messages = internal.getMessageRegistry();
 
                 builder
                     .advanced()
                     .permissionResolver(PermissionResolver.createDefault((sender, permission) -> true))
-                    .context(ServerPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
+                    .context(ServerPlayer.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
                     .scheduler(new FabricServerScheduler())
 
-                    .argument(upwards(PlayerEntity.class), new PlayerArgument<>(messages))
-                    .argument(upwards(World.class), new WorldArgument<>(messages))
+                    .argument(upwards(Player.class), new PlayerArgument<>(messages))
+                    .argument(upwards(Level.class), new WorldArgument<>(messages))
 
-                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendFeedback(() -> Text.of(text), false))
-                    .result(Text.class, (invocation, text, chain) -> invocation.sender().sendFeedback(() -> text, false))
+                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendSuccess(() -> Component.literal(text), false))
+                    .result(Component.class, (invocation, text, chain) -> invocation.sender().sendSuccess(() -> text, false))
                 ;
             });
     }
@@ -76,13 +76,13 @@ public final class LiteFabricFactory {
                 builder
                     .advanced()
                     .permissionResolver(PermissionResolver.createDefault((sender, permission) -> true))
-                    .context(ClientPlayerEntity.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
+                    .context(LocalPlayer.class, new FabricOnlyPlayerContext<>(source -> source.getPlayer(), messages))
 
-                    .argument(upwards(PlayerEntity.class), new ClientPlayerArgument<>(messages))
+                    .argument(upwards(Player.class), new ClientPlayerArgument<>(messages))
                     .scheduler(new FabricClientScheduler())
 
-                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendFeedback(Text.of(text)))
-                    .result(Text.class, (invocation, text, chain) -> invocation.sender().sendFeedback(text))
+                    .result(String.class, (invocation, text, chain) -> invocation.sender().sendFeedback(Component.literal(text)))
+                    .result(Component.class, (invocation, text, chain) -> invocation.sender().sendFeedback(text))
                 ;
             });
     }
