@@ -18,15 +18,3 @@ dependencies {
 litecommandsPublish {
     artifactId = "litecommands-bukkit"
 }
-
-tasks.compileTestJava {
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
-}
-
-tasks.test {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    })
-}
