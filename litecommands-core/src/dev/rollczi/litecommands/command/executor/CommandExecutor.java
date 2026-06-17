@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * CommandExecutor is a node of the command tree.
- * Argument, ContextRequirement, and BindRequirement are used to match the command.
+ * Argument, ContextRequirement and BindRequirement are used to match the command.
  * @see CommandExecutor#match(RequirementsResult)
  */
 public interface CommandExecutor<SENDER> extends Scopeable, CommandNode<SENDER>, Prioritized {

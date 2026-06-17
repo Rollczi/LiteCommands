@@ -181,7 +181,6 @@ public class JakartaCommand {
 
     }
 
-    // Custom annotations and custom validators
     @Execute(name = "custom")
     private String custom(@NotAdmin @Arg String name) {
         return "Hello, " + name;

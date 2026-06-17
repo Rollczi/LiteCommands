@@ -2,17 +2,21 @@ package dev.rollczi.litecommands.jakarta;
 
 import dev.rollczi.litecommands.annotations.meta.MetaAnnotationKeys;
 import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.suggestion.Suggestion;
 import dev.rollczi.litecommands.suggestion.event.SuggestionResultEvent;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ElementKind;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 class JakartaSuggestionListener implements Consumer<SuggestionResultEvent> {
@@ -41,42 +45,70 @@ class JakartaSuggestionListener implements Consumer<SuggestionResultEvent> {
         }
 
         Object handle = event.getExecutor().getInstance();
-        event.getResult().removeIf(suggestion -> {
-            Object parsedValue = parse(suggestion.multilevel(), argument.getType().getRawType());
-            if (parsedValue == null) {
-                return false;
-            }
 
-            Object[] parameters = new Object[method.getParameterCount()];
-            Class<?>[] parameterTypes = method.getParameterTypes();
+        event.getResult().removeIf(suggestion ->
+            !isValidSuggestion(suggestion, argument, method, handle, parameterIndex)
+        );
+    }
 
-            for (int i = 0; i < parameters.length; i++) {
-                parameters[i] = i == parameterIndex ? parsedValue : defaultValue(parameterTypes[i]);
-            }
+    private boolean isValidSuggestion(
+        Suggestion suggestion,
+        Argument<?> argument,
+        Method method,
+        Object handle,
+        int parameterIndex
+    ) {
+        Object parsedValue = Parser.parse(
+            suggestion.multilevel(),
+            argument.getType().getRawType()
+        );
 
-            try {
-                Set<ConstraintViolation<Object>> violations = validator.forExecutables().validateParameters(handle, method, parameters);
+        if (parsedValue == null) {
+            return false;
+        }
 
-                for (ConstraintViolation<Object> violation : violations) {
-                    for (Path.Node node : violation.getPropertyPath()) {
-                        if (node.getKind() != ElementKind.PARAMETER) {
-                            continue;
-                        }
+        Object[] parameters = buildParameters(method, parameterIndex, parsedValue);
 
-                        Path.ParameterNode parameterNode = node.as(Path.ParameterNode.class);
+        try {
+            Set<ConstraintViolation<Object>> violations =
+                validator.forExecutables().validateParameters(handle, method, parameters);
 
-                        if (parameterNode.getParameterIndex() == parameterIndex) {
-                            return true;
-                        }
-                    }
+            return !hasViolationForParameter(violations, parameterIndex);
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.warning(e.getMessage());
+            return false;
+        }
+    }
+
+    private Object[] buildParameters(Method method, int index, Object value) {
+        Class<?>[] types = method.getParameterTypes();
+        Object[] params = new Object[types.length];
+
+        for (int i = 0; i < types.length; i++) {
+            params[i] = (i == index) ? value : Defaults.get(types[i]);
+        }
+
+        return params;
+    }
+
+    private boolean hasViolationForParameter(
+        Set<ConstraintViolation<Object>> violations,
+        int parameterIndex
+    ) {
+        for (ConstraintViolation<Object> violation : violations) {
+            for (Path.Node node : violation.getPropertyPath()) {
+
+                if (node.getKind() != ElementKind.PARAMETER) {
+                    continue;
                 }
 
-                return false;
-            } catch (IllegalArgumentException e) {
-                LOGGER.warning(e.getMessage());
-                return false;
+                if (((Path.ParameterNode) node).getParameterIndex() == parameterIndex) {
+                    return true;
+                }
             }
-        });
+        }
+        return false;
     }
 
     private int getParameterIndex(Parameter parameter) {
@@ -89,34 +121,72 @@ class JakartaSuggestionListener implements Consumer<SuggestionResultEvent> {
         return -1;
     }
 
-    private Object defaultValue(Class<?> type) {
-        if (type.isPrimitive()) {
-            if (type == boolean.class) return false;
-            if (type == char.class) return '\0';
-            if (type == byte.class) return (byte) 0;
-            if (type == short.class) return (short) 0;
-            if (type == int.class) return 0;
-            if (type == long.class) return 0L;
-            if (type == float.class) return 0.0f;
-            if (type == double.class) return 0.0d;
+    private static final class Parser {
+
+        private static final Map<Class<?>, Function<String, ?>> PARSERS = Map.of(
+            Byte.class, Byte::parseByte,
+            Short.class, Short::parseShort,
+            Integer.class, Integer::parseInt,
+            Long.class, Long::parseLong,
+            Float.class, Float::parseFloat,
+            Double.class, Double::parseDouble,
+            Boolean.class, Boolean::parseBoolean,
+            Character.class, s -> s.isEmpty() ? null : s.charAt(0),
+            String.class, Function.identity()
+        );
+
+        @SuppressWarnings("unchecked")
+        @Nullable
+        private static <T> T parse(String value, Class<T> type) {
+            Function<String, ?> parser = PARSERS.get(normalize(type));
+
+            if (parser == null) {
+                return null;
+            }
+
+            try {
+                return (T) parser.apply(value);
+            } catch (RuntimeException e) {
+                return null;
+            }
         }
 
-        return null;
-    }
+        private static Class<?> normalize(Class<?> type) {
+            if (!type.isPrimitive()) {
+                return type;
+            }
 
-    private Object parse(String value, Class<?> type) {
-        try {
-            if (type == int.class || type == Integer.class) return Integer.parseInt(value);
-            if (type == long.class || type == Long.class) return Long.parseLong(value);
-            if (type == double.class || type == Double.class) return Double.parseDouble(value);
-            if (type == float.class || type == Float.class) return Float.parseFloat(value);
-            if (type == short.class || type == Short.class) return Short.parseShort(value);
-            if (type == byte.class || type == Byte.class) return Byte.parseByte(value);
-            if (type == String.class) return value;
-        } catch (NumberFormatException e) {
-            return null;
+            // When java 21 comes, switch to type matching `(switch(type))`
+            return switch (type.getName()) {
+                case "byte" -> Byte.class;
+                case "short" -> Short.class;
+                case "int" -> Integer.class;
+                case "long" -> Long.class;
+                case "float" -> Float.class;
+                case "double" -> Double.class;
+                case "boolean" -> Boolean.class;
+                case "char" -> Character.class;
+                default -> type;
+            };
         }
-        return null;
     }
 
+    private static final class Defaults {
+
+        private static final Map<Class<?>, Object> DEFAULTS = Map.of(
+            boolean.class, false,
+            char.class, '\0',
+            byte.class, (byte) 0,
+            short.class, (short) 0,
+            int.class, 0,
+            long.class, 0L,
+            float.class, 0f,
+            double.class, 0d
+        );
+
+        @Nullable
+        private static Object get(Class<?> type) {
+            return DEFAULTS.get(type);
+        }
+    }
 }
