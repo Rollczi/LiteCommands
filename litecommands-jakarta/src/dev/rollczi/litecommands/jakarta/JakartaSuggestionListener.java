@@ -31,7 +31,7 @@ class JakartaSuggestionListener implements Consumer<SuggestionResultEvent> {
 
     @Override
     public void accept(SuggestionResultEvent event) {
-        Argument<?> argument = event.getArgument();
+        Argument<?> argument = event.argument();
         Parameter parameter = argument.meta().get(MetaAnnotationKeys.SOURCE_PARAMETER);
 
         Executable executable = parameter.getDeclaringExecutable();
@@ -44,9 +44,9 @@ class JakartaSuggestionListener implements Consumer<SuggestionResultEvent> {
             return;
         }
 
-        Object handle = event.getExecutor().getInstance();
+        Object handle = event.executor().getInstance();
 
-        event.getResult().removeIf(suggestion ->
+        event.result().removeIf(suggestion ->
             !isValidSuggestion(suggestion, argument, method, handle, parameterIndex)
         );
     }
