@@ -147,7 +147,7 @@ public class SuggestionService<SENDER> {
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.getKey());
 
         SuggestionInputResult result = matcher.nextArgument(invocation, argument, parser, suggester);
-        this.publisher.publish(new SuggestionResultEvent(invocation, executor, argument, parser, result.getResult()));
+        this.publisher.publish(new SuggestionResultEvent(executor, argument, result.getResult()));
 
         if (result.isEnd() && matcher.isOptionalArgument(invocation, argument, parser)) {
             return SuggestionInputResult.continueWith(result);
