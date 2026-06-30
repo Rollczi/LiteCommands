@@ -2,18 +2,18 @@ package dev.rollczi.litecommands.suggestion;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.Parser;
+import dev.rollczi.litecommands.argument.parser.ParserRegistry;
 import dev.rollczi.litecommands.argument.suggester.Suggester;
 import dev.rollczi.litecommands.argument.suggester.SuggesterRegistry;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputMatcher;
 import dev.rollczi.litecommands.argument.suggester.input.SuggestionInputResult;
-import dev.rollczi.litecommands.argument.parser.ParserRegistry;
-import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.command.CommandRoute;
+import dev.rollczi.litecommands.command.executor.CommandExecutor;
 import dev.rollczi.litecommands.event.EventPublisher;
-import dev.rollczi.litecommands.flow.Flow;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.event.SuggestionCommandRouteEvent;
 import dev.rollczi.litecommands.suggestion.event.SuggestionExecutorEvent;
+import dev.rollczi.litecommands.suggestion.event.SuggestionResultEvent;
 import dev.rollczi.litecommands.util.StringUtil;
 import dev.rollczi.litecommands.validator.ValidatorService;
 
@@ -123,7 +123,7 @@ public class SuggestionService<SENDER> {
         SuggestionResult collector = SuggestionResult.empty();
 
         for (Argument<?> argument : executor.getArguments()) {
-            SuggestionInputResult result = suggestArgument(invocation, matcher, argument);
+            SuggestionInputResult result = suggestArgument(invocation, executor, matcher, argument);
             collector.addAll(result.getResult());
 
             switch (result.getCause()) {
@@ -138,6 +138,7 @@ public class SuggestionService<SENDER> {
 
     private <PARSED, MATCHER extends SuggestionInputMatcher<MATCHER>> SuggestionInputResult suggestArgument(
         Invocation<SENDER> invocation,
+        CommandExecutor<SENDER> executor,
         MATCHER matcher,
         Argument<PARSED> argument
     ) {
@@ -146,6 +147,7 @@ public class SuggestionService<SENDER> {
         Suggester<SENDER, PARSED> suggester = suggesterRegistry.getSuggester(parsedType, argument.getKey());
 
         SuggestionInputResult result = matcher.nextArgument(invocation, argument, parser, suggester);
+        this.publisher.publish(new SuggestionResultEvent(executor, argument, result.getResult()));
 
         if (result.isEnd() && matcher.isOptionalArgument(invocation, argument, parser)) {
             return SuggestionInputResult.continueWith(result);
