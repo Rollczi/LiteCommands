@@ -19,9 +19,6 @@ public class FabricClientPlatform extends FabricAbstractPlatform<FabricClientCom
 
     @Override
     protected void registerEvents() {
-        if (!COMMAND_API_V2) {
-            throw new UnsupportedOperationException("The current 'fabric-api' does not include fabric-command-api-v2. Please update 'fabric-api'");
-        }
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, commandRegistryAccess) -> {
             this.registerAllCommands(dispatcher);
         });

@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import net.minecraft.util.thread.ReentrantThreadExecutor;
+import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 
 public abstract class FabricScheduler<R extends Runnable> extends AbstractMainThreadBasedScheduler {
 
@@ -45,6 +45,6 @@ public abstract class FabricScheduler<R extends Runnable> extends AbstractMainTh
         this.asyncExecutor.shutdown();
     }
 
-    public abstract ReentrantThreadExecutor<R> getMainThreadExecutor();
+    public abstract ReentrantBlockableEventLoop<R> getMainThreadExecutor();
 
 }

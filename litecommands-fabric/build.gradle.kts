@@ -1,8 +1,8 @@
 plugins {
-    `litecommands-java-17`
+    `litecommands-java-25`
     `litecommands-repositories`
     `litecommands-publish`
-    id("fabric-loom") version Versions.FABRIC_LOOM_PLUGIN
+    id("net.fabricmc.fabric-loom") version Versions.FABRIC_LOOM_PLUGIN
 }
 
 repositories {
@@ -17,15 +17,14 @@ dependencies {
     include(project(":litecommands-annotations"))
     include(project(":litecommands-programmatic"))
 
-    // Minecraft and mappings
+    // Minecraft
     minecraft("com.mojang:minecraft:${Versions.FABRIC_MINECRAFT}")
-    mappings("net.fabricmc:yarn:${Versions.FABRIC_YARN_MAPPINGS}:v2")
 
     // Fabric loader and API
-    modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
-    modImplementation("net.fabricmc.fabric-api:fabric-command-api-v2:${Versions.FABRIC_COMMAND_API_V2}")
-    modImplementation("net.fabricmc.fabric-api:fabric-command-api-v1:${Versions.FABRIC_COMMAND_API_V1}")
-    modImplementation("net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${Versions.FABRIC_LIFECYCLE_EVENTS_V1}")
+    implementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
+    implementation("net.fabricmc.fabric-api:fabric-command-api-v2:${Versions.FABRIC_COMMAND_API_V2}")
+    implementation("net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${Versions.FABRIC_LIFECYCLE_EVENTS_V1}")
 }
 
 litecommandsPublish {

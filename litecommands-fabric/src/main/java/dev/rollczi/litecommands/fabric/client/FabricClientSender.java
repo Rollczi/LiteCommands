@@ -17,12 +17,12 @@ public class FabricClientSender extends AbstractPlatformSender {
 
     @Override
     public String getName() {
-        return source.getPlayer().getGameProfile().getName();
+        return source.getPlayer().getGameProfile().name();
     }
 
     @Override
     public Identifier getIdentifier() {
-        return Identifier.of(source.getEntity().getUuid());
+        return Identifier.of(source.getEntity().getUUID());
     }
 
     @Override

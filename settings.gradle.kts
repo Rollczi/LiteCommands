@@ -33,7 +33,7 @@ include(":litecommands-bukkit")
 include(":litecommands-folia", VERSION_21, tests = false)
 include(":litecommands-minestom", toVersion("25"))
 include("litecommands-jda")
-include(":litecommands-sponge", VERSION_21, tests = false)
+include(":litecommands-sponge", VERSION_25, tests = false)
 include(":litecommands-fabric", tests = false)
 include(":litecommands-telegrambots", tests = false)
 
