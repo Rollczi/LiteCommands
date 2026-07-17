@@ -35,8 +35,8 @@ object Versions {
     const val FABRIC_LOOM_PLUGIN = "1.17.11"
     const val FABRIC_LOADER = "0.19.3"
     const val FABRIC_API = "0.152.1+26.2"
-    const val FABRIC_COMMAND_API_V2 = "2.4.8+9c919dacc9"
-    const val FABRIC_LIFECYCLE_EVENTS_V1 = "2.6.16+9c919dacc9"
+    const val FABRIC_COMMAND_API_V2 = "3.1.0+00cb0346f5"
+    const val FABRIC_LIFECYCLE_EVENTS_V1 = "4.1.4+bca5816925"
 
     // TelegramBots
     const val TELEGRAM_BOTS = "9.3.0"
