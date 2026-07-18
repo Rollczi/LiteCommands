@@ -46,6 +46,7 @@ public class MethodCommandExecutor<SENDER> extends AbstractCommandExecutor<SENDE
         this.meta.putAll(meta);
     }
 
+    @Override
     public Object getInstance() {
         return instance;
     }

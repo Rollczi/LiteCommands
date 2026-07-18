@@ -5,11 +5,10 @@ import dev.rollczi.litecommands.annotations.validator.method.MethodValidatorCont
 import dev.rollczi.litecommands.validator.ValidatorResult;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ElementKind;
+import jakarta.validation.Path;
 import jakarta.validation.Validator;
 import jakarta.validation.executable.ExecutableValidator;
-import jakarta.validation.Path;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,17 +33,17 @@ class JakartaMethodValidator<SENDER> implements MethodValidator<SENDER> {
         List<JakartaRawResult.Entry> violationsList = violations.stream()
             .map(objectConstraintViolation -> {
                 Path propertyPath = objectConstraintViolation.getPropertyPath();
-                Path.Node leafNode = null;
+                Path.ParameterNode parameterNode = null;
 
                 for (Path.Node node : propertyPath) {
-                    leafNode = node;
+                    if (node.getKind() == ElementKind.PARAMETER) {
+                        parameterNode = node.as(Path.ParameterNode.class);
+                    }
                 }
 
-                if (leafNode == null || leafNode.getKind() != ElementKind.PARAMETER) {
-                    throw new IllegalStateException("Invalid leaf node: " + (leafNode == null ? "null" : leafNode.getKind()));
+                if (parameterNode == null) {
+                    throw new IllegalStateException("No parameter node found in path: " + propertyPath);
                 }
-
-                Path.ParameterNode parameterNode = leafNode.as(Path.ParameterNode.class);
 
                 return new JakartaRawResult.Entry(objectConstraintViolation, context.getDefinition().getRequirement(parameterNode.getParameterIndex()));
             }).collect(Collectors.toList());

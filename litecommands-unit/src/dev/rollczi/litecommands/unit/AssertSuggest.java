@@ -151,4 +151,11 @@ public class AssertSuggest {
         return this;
     }
 
+    public AssertSuggest assertNotSuggest(String... suggestions) {
+        assertThat(suggest.getSuggestions())
+            .map(Suggestion::multilevel)
+            .doesNotContain(suggestions);
+
+        return this;
+    }
 }
