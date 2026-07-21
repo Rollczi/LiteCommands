@@ -110,7 +110,7 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
                 File storageDir = ReflectUtil.getFromMethod(playerDataStorage, "getPlayerDir");
 
                 // mimic the getOfflinePlayers() behavior we care about on an executor thread
-                scheduler.run(SchedulerType.EXECUTOR, () -> {
+                Thread thread = new Thread(() -> {
                     // use a map here so we can dedupe ids
                     Map<UUID, String> nicknames = new HashMap<>();
 
@@ -132,6 +132,9 @@ public class OfflinePlayerArgument extends ArgumentResolver<CommandSender, Offli
                         this.nicknames.addAll(nicknames.values());
                     });
                 });
+                thread.setName("OfflinePlayerNameCachingThread");
+                thread.setDaemon(true);
+                thread.start();
                 return;
             }
         }
